@@ -47,6 +47,7 @@ export function resolveRecruiterCompanyScope(
 export async function getRecruiterCompanyTeam(
   context: RequestContext,
   requestedCollegeId?: string | null,
+  includeTeam = true,
 ) {
   const scope = resolveRecruiterCompanyScope(context, requestedCollegeId);
   if (scope.status !== "READY") return scope;
@@ -112,8 +113,10 @@ export async function getRecruiterCompanyTeam(
   // a silently guessed company. Nullable expiry remains valid until revoked.
   if (!company) throw new AuthorizationError("placements.recruiter.read");
 
-  const team = await db
-    .selectDistinct({
+  // Company overview remains available even if the Team roster is slow or
+  // unavailable; query colleagues only on the explicitly selected Team tab.
+  const team = includeTeam ? await db
+    .select({
       userId: users.id,
       displayName: users.displayName,
       email: users.email,
@@ -138,7 +141,7 @@ export async function getRecruiterCompanyTeam(
       eq(placementRecruiterProfiles.status, "ACTIVE"),
       eq(users.platformStatus, "ACTIVE"),
     ))
-    .orderBy(asc(users.displayName), asc(users.email));
+    .orderBy(asc(users.displayName), asc(users.email)) : [];
 
   return {
     status: "READY" as const,

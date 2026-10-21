@@ -1,4 +1,6 @@
 import { DataTable } from "@/components/ui/data-table";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
+import { z } from "zod";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
@@ -11,7 +13,9 @@ import { hasActiveRecruiter } from "@/modules/identity/context";
 import { getRecruiterSelfProfile } from "@/modules/placements/recruiter-profile-service";
 import { getRecruiterSelfGrantOverview } from "@/modules/placements/recruiter-self-grants-service";
 
-export default async function HrProfilePage() {
+export default async function HrProfilePage({ searchParams }: {
+  searchParams?: Promise<{ collegeId?: string | string[] }>;
+}) {
   const context = await getCurrentRequestContext();
   if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)
    return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
@@ -19,8 +23,29 @@ export default async function HrProfilePage() {
       description="Your signed-in account has no active recruiter identity. Choose an authorized workspace or sign in with your recruiter work email."
       action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Choose workspace</Link>}/>
    </div>;
+  const search = searchParams ? await searchParams : {};
+  const grants = context.recruiter.grants;
+  const requestedId = typeof search.collegeId === "string" ? search.collegeId : null;
+  if (search.collegeId && (!requestedId ||
+    !z.string().uuid().safeParse(requestedId).success ||
+    !grants.some(grant => grant.collegeId === requestedId))) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Your Profile"/>
+      <ErrorState title="College access unavailable"
+        description="Choose an authorized college to view its recruiter grant."
+        retryHref="/hr/profile" retryLabel="Choose college"/>
+    </div>;
+  }
+  if (grants.length > 1 && !requestedId) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Your Profile" description="Select a college to review the recruiter account and grant for that workspace."/>
+    <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant=>({
+      key:grant.collegeId,label:grant.collegeName,
+      href:"/hr/profile?collegeId="+encodeURIComponent(grant.collegeId),
+    }))}/>
+  </div>;
+  const scopedCollegeId = requestedId ?? grants[0]?.collegeId;
   const [profileResult,overviewResult]=await Promise.allSettled([
-    getRecruiterSelfProfile(context),getRecruiterSelfGrantOverview(context),
+    getRecruiterSelfProfile(context, scopedCollegeId),getRecruiterSelfGrantOverview(context),
   ]);
   if(profileResult.status==="rejected"||overviewResult.status==="rejected")
    return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
@@ -28,7 +53,9 @@ export default async function HrProfilePage() {
       description="Your recruiter profile or college access could not be verified. No other account details have been substituted."
       action={<Link href="/hr/profile" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
    </div>;
-  const profile=profileResult.value,overview=overviewResult.value;
+  const profile=profileResult.value;
+  const allOverview=overviewResult.value;
+  const overview={...allOverview,grants:allOverview.grants.filter(grant=>!scopedCollegeId||grant.collegeId===scopedCollegeId)};
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -44,7 +71,7 @@ export default async function HrProfilePage() {
         <details className="mt-2 min-w-0">
           <summary className="flex min-h-11 cursor-pointer items-center text-xs font-semibold text-primary-text min-[768px]:min-h-9">About these details</summary>
           <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</p>
-          <p className="mt-2 max-w-2xl text-xs leading-5 text-muted-foreground">Edit your name, designation and optional mobile together, then choose Save changes. Your work email remains your sign-in identity.</p>
+          <p className="mt-2 max-w-2xl text-xs leading-5 text-muted-foreground">Edit your name, designation and optional mobile together, then choose Save changes. Your work email is how you sign in, so it can&apos;t be changed here.</p>
         </details>
         <div className="mt-3 max-w-3xl">
           <RecruiterProfileDetailsEditor key={context.user.id} initialName={profile.displayName}
@@ -56,7 +83,7 @@ export default async function HrProfilePage() {
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Work email</dt>
             <dd className="mt-1 break-all text-sm text-foreground">{profile.email ?? "—"}</dd>
-            <p className="mt-1 max-w-2xl break-words text-xs leading-5 text-muted-foreground">You sign in with this, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
+            <p className="mt-1 max-w-2xl break-words text-xs leading-5 text-muted-foreground">Your work email is how you sign in, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
           </div>
 
         </dl>

@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 
 import {
   getCurrentRequestContext,
@@ -51,6 +53,7 @@ type SearchParams = {
   date?: string | string[];
   view?: string | string[];
   category?:string|string[];
+  collegeId?: string | string[];
 };
 
 const VIEWS: readonly PlacementCalendarView[] = [
@@ -87,6 +90,7 @@ function calendarHref(
   date: string,
   view: PlacementCalendarView,
   category:HrCalendarCategory="ALL",
+  collegeId?: string | null,
 ) {
   const params = new URLSearchParams({
     date,
@@ -94,6 +98,7 @@ function calendarHref(
     category,
   });
 
+  if (collegeId) params.set("collegeId", collegeId);
   return `/hr/calendar?${params.toString()}`;
 }
 
@@ -282,19 +287,41 @@ export default async function HrCalendarPage({
       (candidate) => candidate === requestedView,
     ) ?? "week";
 
-  const window = placementCalendarWindow(
-    anchor,
-    view,
-  );
-
-  const calendar =
-    await listRecruiterCalendarEvents(
-      context,
-      {
-        from: window.from,
-        to: window.to,
-      },
-    );
+  const window = placementCalendarWindow(anchor, view);
+  const grants = context.recruiter?.grants ?? [];
+  const requestedCollegeId = first(query.collegeId);
+  if (requestedCollegeId && (!z.string().uuid().safeParse(requestedCollegeId).success ||
+      !grants.some(grant => grant.collegeId === requestedCollegeId))) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Recruiter Calendar"/>
+      <ErrorState title="College calendar unavailable"
+        description="Select a college where your recruiter access is active."
+        retryHref="/hr/calendar" retryLabel="Choose college"/>
+    </div>;
+  }
+  if (grants.length > 1 && !requestedCollegeId) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Recruiter Calendar" description="Choose the college whose drive calendar you want to view."/>
+      <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant => ({
+        key: grant.collegeId, label: grant.collegeName,
+        href: calendarHref(anchor, view, category, grant.collegeId),
+      }))}/>
+    </div>;
+  }
+  const selectedCollegeId = requestedCollegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
+  let calendar: Awaited<ReturnType<typeof listRecruiterCalendarEvents>>;
+  try {
+    calendar = await listRecruiterCalendarEvents(context, {
+      from: window.from, to: window.to,
+    }, selectedCollegeId ?? undefined);
+  } catch {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Recruiter Calendar"/>
+      <ErrorState title="Could not load the calendar"
+        description="Your calendar could not be loaded. Your saved rounds and interview dates have not changed."
+        retryHref={calendarHref(anchor, view, category, selectedCollegeId)} retryLabel="Retry calendar"/>
+    </div>;
+  }
 
   const noCollegeAccess =
     (context.recruiter?.grants.length ?? 0) === 0;
@@ -370,27 +397,27 @@ export default async function HrCalendarPage({
               <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
                 className="w-full min-[768px]:w-auto"
                 items={VIEWS.map(option=>({value:option,label:option.charAt(0).toUpperCase()+option.slice(1),
-                  href:calendarHref(anchor,option,category)}))}/>
+                  href:calendarHref(anchor,option,category,selectedCollegeId)}))}/>
             </div>
 
             <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
               items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
                 label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
                   option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
-                href:calendarHref(anchor,view,option)}))}/>
+                href:calendarHref(anchor,view,option,selectedCollegeId)}))}/>
 
             <div className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 min-[1100px]:flex-row min-[1100px]:items-start min-[1100px]:justify-between">
               <nav aria-label="Calendar period navigation" className={styles.nav}>
-                <Link href={calendarHref(previous,view,category)}
+                <Link href={calendarHref(previous,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Previous week":"Previous month"}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                   ← Previous
                 </Link>
-                <Link href={calendarHref(today,view,category)}
+                <Link href={calendarHref(today,view,category,selectedCollegeId)}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                   Today
                 </Link>
-                <Link href={calendarHref(next,view,category)}
+                <Link href={calendarHref(next,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Next week":"Next month"}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                   Next →
@@ -442,11 +469,11 @@ export default async function HrCalendarPage({
           {eventCount === 0 ? (
             <EmptyState title={view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
               description="Rounds, slots and deadlines appear here as soon as they are dated."
-              action={<Link href={calendarHref(today,view,category)}
+              action={<Link href={calendarHref(today,view,category,selectedCollegeId)}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text min-[768px]:min-h-9">Today</Link>} />
           ) : null}
 
-          {view !== "agenda" && eventCount > 0 ? (
+          {view === "month" && eventCount > 0 ? (
             <section
               aria-label={`${view} recruiter calendar`}
               className={styles.boardFrame}
@@ -578,7 +605,7 @@ export default async function HrCalendarPage({
             </section>
           ) : null}
 
-          {view === "agenda" && eventCount > 0 ? (
+          {view !== "month" && eventCount > 0 ? (
             <section
               aria-label="Recruiter calendar agenda"
               className="space-y-6"
@@ -632,7 +659,7 @@ export default async function HrCalendarPage({
               ))}
             </section>
           ) : null}
-          {view !== "agenda" && (category === "ALL" || category === "RESULTS_DUE") ? (
+          {view === "month" && (category === "ALL" || category === "RESULTS_DUE") ? (
             <section aria-label="Results due in this period"
               className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
               <div>

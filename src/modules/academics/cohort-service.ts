@@ -5,6 +5,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import { z } from "zod";
 import {
   cohorts,
 } from "@/db/schema";
@@ -30,6 +31,22 @@ import {
   type CreateCohortInput,
   type UpdateCohortInput,
 } from "./validation";
+
+/** Legacy batch names are unique per program, ignoring case. */
+async function assertCohortNameUnique(programId: string, name: string, excludeId?: string) {
+  const conditions = [
+    eq(cohorts.programId, programId),
+    sql<boolean>`lower(${cohorts.name}) = ${name.toLowerCase()}`,
+    sql<boolean>`${cohorts.status} <> 'ARCHIVED'`,
+    ...(excludeId ? [sql<boolean>`${cohorts.id} <> ${excludeId}`] : []),
+  ];
+  const [existing] = await getDb().select({ id: cohorts.id })
+    .from(cohorts).where(and(...conditions)).limit(1);
+  if (existing) throw new z.ZodError([{
+    code: "custom", path: ["name"],
+    message: `A batch named ${name} already exists for this program`,
+  }]);
+}
 
 async function assertCohortCodeUnique(
   programId: string,
@@ -61,7 +78,11 @@ async function assertCohortCodeUnique(
   }
 }
 
-function mapCohortConstraint(error: unknown) {
+function mapCohortConstraint(error: unknown, name?: string) {
+  if (postgresConstraintName(error) === "cohorts_program_active_name_uq") {
+    return new z.ZodError([{ code: "custom", path: ["name"],
+      message: `A batch named ${name ?? "this"} already exists for this program` }]);
+  }
   if (
     postgresConstraintName(error) ===
     "cohorts_program_code_uq"
@@ -154,8 +175,24 @@ export async function createCohort(
   context: RequestContext,
   rawInput: CreateCohortInput,
 ) {
-  const input =
-    createCohortInputSchema.parse(rawInput);
+  const input = createCohortInputSchema.parse(rawInput);
+  // These optional historical fields preserve the legacy BatchDTO data without
+  // pretending an academic period and a calendar year are the same identity.
+  const legacy = z.object({
+    academicYear: z.string().trim().regex(/^\\d{4}-\\d{2}$/).optional(),
+    startDate: z.iso.date().nullable().optional(),
+    endDate: z.iso.date().nullable().optional(),
+    status: z.enum(["PLANNED","ACTIVE"]).optional(),
+  }).parse(rawInput);
+  if (legacy.academicYear) {
+    const start = Number(legacy.academicYear.slice(0,4));
+    if (Number(legacy.academicYear.slice(5)) !== (start + 1) % 100)
+      throw new z.ZodError([{code:"custom",path:["academicYear"],
+        message:"Use consecutive years, e.g. 2026-27"}]);
+  }
+  if (legacy.startDate && legacy.endDate && legacy.startDate > legacy.endDate)
+    throw new z.ZodError([{code:"custom",path:["endDate"],
+      message:"Batch end date cannot precede start date"}]);
   const program = await loadProgramScope(
     input.programId,
   );
@@ -165,11 +202,16 @@ export async function createCohort(
     collegeId: program.collegeId,
   });
 
-  await loadAndValidatePeriodWindow(
+  const periodWindow = await loadAndValidatePeriodWindow(
     program.collegeId,
     input.startPeriodId,
     input.expectedEndPeriodId,
   );
+  if (legacy.startDate && legacy.startDate < periodWindow.start.startDate ||
+      legacy.endDate && legacy.endDate > (periodWindow.expectedEnd?.endDate ?? periodWindow.start.endDate))
+    throw new z.ZodError([{code:"custom",path:["startDate"],
+      message:"Batch dates must follow the selected academic period range"}]);
+  await assertCohortNameUnique(input.programId, input.name);
   await assertCohortCodeUnique(
     input.programId,
     input.code,
@@ -185,6 +227,10 @@ export async function createCohort(
         programId: input.programId,
         name: input.name,
         code: input.code,
+        status: legacy.status ?? "PLANNED",
+        academicYear: legacy.academicYear ?? null,
+        startDate: legacy.startDate ?? null,
+        endDate: legacy.endDate ?? null,
         startPeriodId: input.startPeriodId,
         expectedEndPeriodId:
           input.expectedEndPeriodId ?? null,
@@ -202,7 +248,7 @@ export async function createCohort(
     return created;
    });
   } catch (error) {
-    throw mapCohortConstraint(error);
+    throw mapCohortConstraint(error, input.name);
   }
 }
 
@@ -230,6 +276,7 @@ export async function updateCohort(
     );
   }
 
+  if (input.name) await assertCohortNameUnique(current.programId, input.name, cohortId);
   if (input.code) {
     await assertCohortCodeUnique(
       current.programId,
@@ -286,7 +333,7 @@ export async function updateCohort(
     if (error instanceof AcademicsServiceError) {
       throw error;
     }
-    throw mapCohortConstraint(error);
+    throw mapCohortConstraint(error, input.name);
   }
 }
 
