@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { apiErrorResponse } from "@/lib/api-error";
 import {
-  getMyQuizAttempts,
+  getMyQuizAttempts,resolveOwnQuizDeliveryId,
 } from "@/modules/courses/quiz-attempt-service";
 
 export const runtime = "nodejs";
@@ -20,13 +20,11 @@ export async function GET(
       await getCurrentRequestContext();
     const { quizId } = await params;
     const url = new URL(request.url);
-    const attempts = await getMyQuizAttempts(
-      context,
-      quizId,
-      url.searchParams.get("deliveryId") ?? "",
-    );
+    const explicit=url.searchParams.get("deliveryId");
+    const deliveryId=explicit||await resolveOwnQuizDeliveryId(context,quizId);
+    const attempts = await getMyQuizAttempts(context,quizId,deliveryId);
 
-    return NextResponse.json({ attempts }, {headers:{"Cache-Control":"private, no-store"}});
+    return NextResponse.json({ attempts,deliveryId }, {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
