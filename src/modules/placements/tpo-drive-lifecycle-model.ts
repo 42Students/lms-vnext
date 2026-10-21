@@ -7,6 +7,23 @@ export const legacyTpoDriveLifecycleLabels = {
  REQUEST: "Request", SENT_BACK: "Sent back", REJECTED: "Rejected",
  DRAFT: "Draft", PUBLISHED: "Live", CLOSED: "Closed", CANCELLED: "Cancelled",
 } as const;
+/** Preserve the old request decision graph separately from the published
+ * drive lifecycle: approving REQUEST creates a scoped DRAFT, never a live job. */
+export const legacyRecruiterRequestTransitions = {
+  REQUEST: ["DRAFT", "SENT_BACK", "REJECTED", "CANCELLED"],
+  SENT_BACK: ["REQUEST", "REJECTED", "CANCELLED"],
+  DRAFT: [],
+  REJECTED: [],
+  CANCELLED: [],
+} as const;
+export type LegacyRecruiterRequestStatus = keyof typeof legacyRecruiterRequestTransitions;
+export function canTransitionLegacyRecruiterRequest(
+  from: LegacyRecruiterRequestStatus,
+  to: LegacyRecruiterRequestStatus,
+): boolean {
+  return (legacyRecruiterRequestTransitions[from] as readonly string[]).includes(to);
+}
+
 export const tpoDriveLifecycleSchema = z.object({
   action: z.enum(["PUBLISH", "CLOSE", "REOPEN"]),
   expectedStatus: z.enum(["DRAFT", "PUBLISHED", "CLOSED"]),

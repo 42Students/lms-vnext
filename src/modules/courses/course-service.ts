@@ -656,6 +656,21 @@ export async function restoreCourse(
       if (!locked || locked.status !== "ARCHIVED") {
         throw new CoursesServiceError("COURSE_NOT_FOUND");
       }
+      // Report exact name/code collisions before UPDATE instead of relying on
+      // a database violation, while the active unique indexes remain the final
+      // protection against concurrent writes.
+      const conflicts = await tx.select({
+        name: courses.name, code: courses.code,
+      }).from(courses).where(and(
+        eq(courses.departmentId, scope.departmentId),
+        eq(courses.status, "ACTIVE"),
+        ne(courses.id, courseId),
+        sql`(lower(${courses.name}) = ${locked.name.toLowerCase()}
+          or lower(${courses.code}) = ${locked.code.toLowerCase()})`,
+      )).limit(10);
+      if (conflicts.some(item => item.name.toLowerCase() === locked.name.toLowerCase()))
+        throw new CoursesServiceError("COURSE_NAME_CONFLICT");
+      if (conflicts.length) throw new CoursesServiceError("COURSE_CODE_CONFLICT");
       // The existing database unique indexes guard concurrent restores that
       // conflict with a new active name or code in the same department.
       await assertCourseShortTitleUnique(
