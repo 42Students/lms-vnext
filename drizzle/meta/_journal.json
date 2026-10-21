@@ -1303,6 +1303,27 @@
       "when": 1792352471266,
       "tag": "0185_lane15_bug_tracker_legacy_lookup",
       "breakpoints": true
+    },
+    {
+      "idx": 186,
+      "version": "7",
+      "when": 1792352531266,
+      "tag": "0186_lane15_assignment_snapshot_legacy_identity",
+      "breakpoints": true
+    },
+    {
+      "idx": 187,
+      "version": "7",
+      "when": 1792352591266,
+      "tag": "0187_lane15_membership_legacy_role_translation",
+      "breakpoints": true
+    },
+    {
+      "idx": 188,
+      "version": "7",
+      "when": 1792352651266,
+      "tag": "0188_lane15_private_profile_legacy_provenance",
+      "breakpoints": true
     }
   ]
 }

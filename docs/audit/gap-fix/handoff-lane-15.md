@@ -591,3 +591,60 @@
 - G2-7-019-029 — src/modules/projects/admin workspace list query/parser and caller pages: Render row range plus total with exact legacy suffix.
 - G2-7-019-033 — src/modules/projects/admin workspace list query/parser and caller pages: Match status picker clear button and placeholder `Status`.
 - G2-7-019-070 — src/modules/projects/admin workspace list query/parser and caller pages: Compare search width and toolbar wrapping at 375,768,1280; match legacy compact layout.
+
+## Wave2 assessments cross-file service and UI mapping
+- G2-2-026-015 — src/modules/assessments grade and submission services/UI: Map display names and assignment snapshots; assess downstream expectations of renamed fields.
+- G2-2-026-020 — src/modules/assessments grade and submission services/UI: Specify datetime presentation in IST and overflow/precision conversion for legacy long grade values.
+- G2-2-026-095 — src/modules/assessments grade and submission services/UI: Maintain explicit identity translation for reports/legacy imports, no integer-to-UUID casting.
+- G2-2-026-098 — src/modules/assessments grade and submission services/UI: Define archived/deleted submission visibility and remove/restore parity under permission scope.
+- G2-2-026-100 — src/modules/assessments grade and submission services/UI: Clarify historical snapshot policy for renamed learners/edited max scores.
+- G2-3-016-001 — src/modules/assessments grade and submission services/UI: Legacy student_assignment rows keyed to lesson_content_id and learner numeric student_id, vNext assignment_submissions keyed assignment UUID, delivery UUID, membership UUID. Map learner assignment route and archived content references.
+- G2-3-016-003 — src/modules/assessments grade and submission services/UI: Legacy one flat entity holds learner names, assignment name, content, type, points and grading; vNext normalized submission with joins to assignment/users/files. Ensure frontend section field/order parity.
+- G2-3-016-005 — src/modules/assessments grade and submission services/UI: Legacy stored student first/last names, gradingDate string and graded 0/1; vNext derives learnerDisplayName and gradedAt timestamp/gradingStatus enum. Match full name display and empty placeholder.
+- G2-3-016-008 — src/modules/assessments grade and submission services/UI: Legacy gradingDate string, HTML answer, submissionLink, submissionAssets JSON list; vNext timestamp gradedAt, textContent, submissionUrl and normalized link/file children. Map rich HTML and multi-part assets.
+- G2-3-016-009 — src/modules/assessments grade and submission services/UI: Legacy points and pointsObtained long (64bit), vNext pointsAwarded int and assignment maxPoints parent; enforce max range and preserve large historic marks conversion.
+- G2-3-016-018 — src/modules/assessments grade and submission services/UI: Legacy written response uses rich HTML string and submission types uppercase names; vNext TEXT uses plain text and LINK URL. Preserve sanitization and rendering of rich student content.
+- G2-3-016-035 — src/modules/assessments grade and submission services/UI: Legacy grade max bound is stored StudentAssignment.points, vNext compares to parent maxPoints; if changed after submission, old grade could become invalid. Snapshot maximum points at submission.
+- G2-3-016-046 — src/modules/assessments grade and submission services/UI: Legacy long points and previousPoints zero defaults, vNext nullable int previousPoints and pointsAwarded. Normalize old 0 ungraded to null and avoid overflow.
+- G2-3-016-051 — src/modules/assessments grade and submission services/UI: Legacy @Version and semester attempt semantics vs vNext unique assignmentId/membershipId, ATTEMPT >=1 and 2-state grading check; update relational constraints for historic/regrade parity.
+- G2-4-004-095 — src/modules/assessments grade and submission services/UI: Maintain field mapping for status/scope/grade/version, inspect migration constraints and historical data behavior.
+- G2-4-010-095 — src/modules/assessments grade and submission services/UI: Maintain field mapping for status/scope/grade/version, inspect migration constraints and historical data behavior.
+- G2-4-012-015 — src/modules/assessments grade and submission services/UI: Specify canonical legacy date parsing/transfer with timezone.
+- G2-4-012-087 — src/modules/assessments grade and submission services/UI: Define foreign-key and due/point history migration rules.
+- G2-4-012-013 — src/modules/assessments grade and submission services/UI: Fallback to Untitled for historical blank title.
+
+## Wave2 memberships cross-file service and UI mapping
+- G2-1-001-007 — src/modules/people membership lifecycle and role-service UI: Show counts based on membership-scoped state while matching visible Active/Suspended counters and document cross-college distinction.
+- G2-1-001-048 — src/modules/people membership lifecycle and role-service UI: Use membership version or timestamp CAS consistently for all generic lifecycle mutations if stale-client conflict matters.
+- G2-1-008-086 — src/modules/people membership lifecycle and role-service UI: Crosswalk dual-role de-duplication and statuses, tenant uniqueness and name.
+- G2-1-021-050 — src/modules/people membership lifecycle and role-service UI: Document role name/id migration with college scope and prevent unauthorized ADMIN grants.
+- G2-13-016-001 — src/modules/people membership lifecycle and role-service UI: Document intentionally noneditable role catalog and map old role IDs/names to scoped enums during import
+- G2-13-016-007 — src/modules/people membership lifecycle and role-service UI: Retain original descriptions in a migration map if needed for audit/help text; don't invent user-editable free-text roles
+- G2-13-016-008 — src/modules/people membership lifecycle and role-service UI: Create old role-ID mapping; document removed updatedAt/isDeleted semantics and derive revocation from row deletion/audit
+- G2-13-016-013 — src/modules/people membership lifecycle and role-service UI: Represent role removal with explicit revoke event instead of allowing soft-deleted role definition
+- G2-13-016-038 — src/modules/people membership lifecycle and role-service UI: Map role IDs to names first, normalize case and reject duplicate/missing seed roles
+- G2-13-016-041 — src/modules/people membership lifecycle and role-service UI: Write migration/connector dependency map for old USER_ROLES join references and role ID mapping
+- G2-4-020-001 — src/modules/people membership lifecycle and role-service UI: Map all legacy faculty account lookup routes and authority boundaries to membership-scoped data.
+- G2-4-020-042 — src/modules/people membership lifecycle and role-service UI: Define deleted-vs-ended retention and restore semantics for foreign keys.
+- G2-4-020-057 — src/modules/people membership lifecycle and role-service UI: Avoid N+1 joins and JSON decode across large faculty directory pages.
+- G2-5-019-033 — src/modules/people membership lifecycle and role-service UI: Rebuild active blast-radius counters using persisted status.
+- G2-6-004-070 — src/modules/people membership lifecycle and role-service UI: Define duplicate handling and labels for multi-role users across All/Teachers/Students
+- G2-8-001-048 — src/modules/people membership lifecycle and role-service UI: Add explicit DTO mapping/source for legacy contactPhone and image if required, avoid duplicating PII tables
+- G2-8-003-045 — src/modules/people membership lifecycle and role-service UI: Provide read-model mapping for role image/secondary phone or explicit approved omission; migration is not required
+- G2-8-002-047 — src/modules/people membership lifecycle and role-service UI: Record legacy-to-new mapping for identifiers, role duplicates, contact and profile fields in migration reference; no data migration requested
+
+## Wave2 profiles cross-file service and UI mapping
+- G2-1-004-010 — src/modules/people learner/faculty profile read and storage services: Map legacy IDs, program/college names and profile image to visible header.
+- G2-20-030-029 — src/modules/people learner/faculty profile read and storage services: Preserve section completeness and independent partial-data status when switching storage
+- G2-4-020-001 — src/modules/people learner/faculty profile read and storage services: Map all legacy faculty account lookup routes and authority boundaries to membership-scoped data.
+- G2-4-020-004 — src/modules/people learner/faculty profile read and storage services: Reproduce original About/card ordering, and profile section navigation.
+- G2-4-020-057 — src/modules/people learner/faculty profile read and storage services: Avoid N+1 joins and JSON decode across large faculty directory pages.
+- G2-4-020-066 — src/modules/people learner/faculty profile read and storage services: Map optimistic token between entity and profile JSON mutation, avoid lost updates.
+- G2-5-019-029 — src/modules/people learner/faculty profile read and storage services: Map to signed storage receipt and timestamp.
+- G2-5-019-031 — src/modules/people learner/faculty profile read and storage services: Map to private verified resume receipt.
+- G2-5-019-054 — src/modules/people learner/faculty profile read and storage services: Implement signed receipt-based access/migration.
+- G2-5-019-059 — src/modules/people learner/faculty profile read and storage services: Compare exact labels, keys and fallback text.
+- G2-5-019-066 — src/modules/people learner/faculty profile read and storage services: Plan private storage migration and authorized download.
+- G2-6-019-007 — src/modules/people learner/faculty profile read and storage services: Keep 1:1 scoped mapping from legacy learner to active membership; resolve transfers/duplicates.
+- G2-8-001-048 — src/modules/people learner/faculty profile read and storage services: Add explicit DTO mapping/source for legacy contactPhone and image if required, avoid duplicating PII tables
+- G2-8-003-045 — src/modules/people learner/faculty profile read and storage services: Provide read-model mapping for role image/secondary phone or explicit approved omission; migration is not required

@@ -17,11 +17,16 @@ export const learnerProfiles = pgTable("learner_profiles", {
     .primaryKey()
     .references(() => collegeMemberships.id, { onDelete: "restrict" }),
   rollNumber: varchar("roll_number", { length: 128 }),
+  legacyLearnerId: integer("legacy_learner_id"),
+  /** Only private key is stored; signed URL is created per-authorized request. */
+  avatarObjectPath: varchar("avatar_object_path",{length:1024}),
   /** Legacy student uniqueId is distinct from roll and auth identityUid. */
   legacyUniqueId: varchar("legacy_unique_id", { length: 128 }),
   registrationNumber: varchar("registration_number", { length: 128 }),
   /** Private storage key, never an expired signed URL or a client-supplied path. */
   resumeObjectPath: varchar("resume_object_path", { length: 1024 }),
+  resumeScanStatus: varchar("resume_scan_status",{length:16}),
+  resumeVerifiedAt: timestamp("resume_verified_at",{withTimezone:true}),
   /** Independent compare-and-swap revision for learner document updates. */
   profileDocumentVersion: integer("profile_document_version").notNull().default(0),
   profileDocument: jsonb("profile_document")
@@ -36,6 +41,12 @@ export const learnerProfiles = pgTable("learner_profiles", {
     .defaultNow(),
 }, (t) => [
   check("learner_profiles_document_version_ck", sql`${t.profileDocumentVersion} >= 0`),
+  index("learner_profiles_legacy_student_idx").on(t.legacyLearnerId)
+    .where(sql`${t.legacyLearnerId} is not null`),
+  check("learner_profiles_resume_scan_ck",sql`
+    ${t.resumeScanStatus} is null or ${t.resumeScanStatus} in ('PENDING','CLEAN','REJECTED')`),
+  check("learner_profiles_resume_verified_ck",sql`
+    ${t.resumeVerifiedAt} is null or ${t.resumeScanStatus}='CLEAN'`),
 ]);
 
 export const facultyProfiles = pgTable(
@@ -48,6 +59,7 @@ export const facultyProfiles = pgTable(
       () => departments.id,
       { onDelete: "restrict" },
     ),
+    legacyFacultyId: integer("legacy_faculty_id"),
     /** Staff code is not a login credential or a membership role. */
     legacyFacultyCode: varchar("legacy_faculty_code", { length: 128 }),
     employmentType: varchar("employment_type", { length: 128 }),
@@ -69,6 +81,8 @@ export const facultyProfiles = pgTable(
       .defaultNow(),
   },
   (table) => [
+    index("faculty_profiles_legacy_faculty_idx").on(table.legacyFacultyId)
+      .where(sql`${table.legacyFacultyId} is not null`),
     index("faculty_profiles_primary_department_idx").on(
       table.primaryDepartmentId,
     ),
