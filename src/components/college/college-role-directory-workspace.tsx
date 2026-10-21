@@ -16,6 +16,7 @@ import { StudentClassMoveAction } from "@/components/college/student-class-move-
 import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
 import { CollegeFacultyScheduleReassign } from "@/components/college/college-faculty-schedule-reassign";
 import { CollegeStudentBulkModuleAccess } from "@/components/college/college-student-bulk-module-access";
+import { CollegeRoleDirectoryAutocomplete } from "@/components/college/college-role-directory-autocomplete";
 import { CollegePersonEditAction } from "@/components/college/college-person-edit-action";
 import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
 import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
@@ -246,6 +247,13 @@ export async function CollegeRoleDirectoryWorkspace({
         <Link href="/college/faculty-assignment"
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Faculty Assignment →</Link>
       </div> : null}
+      <p className="text-xs leading-5 text-muted-foreground" role="note">
+        Permanent deletion and direct OTP lockout clearing from the old LMS are not
+        offered to college roster administrators. Suspending a membership preserves
+        shared user identity, academic work, placement history and audit events.
+        Authentication recovery remains an identity-support workflow, never a roster
+        action. Active faculty can reassign class schedules before suspension.
+      </p>
       {kind === "FACULTY" ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Import faculty CSV</Link>
         <Link href={collegeRoleDirectoryHref(kind,result.filter)}
@@ -277,18 +285,14 @@ export async function CollegeRoleDirectoryWorkspace({
         <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             {collegeDirectorySearchHint(kind)}
-            <Input className="min-h-11 w-full min-w-0 md:min-h-9"
-              type="search"
-              name="q"
-              maxLength={100}
-              list={kind==="LEARNER"?"learner-directory-suggestions":"faculty-directory-suggestions"}
+            <CollegeRoleDirectoryAutocomplete
+              kind={kind} collegeId={context.membership.collegeId}
               defaultValue={result.filter.q}
-              placeholder="Search this college"
+              popular={result.items.slice(0,15).map(row=>({
+                membershipId:row.membershipId,name:row.name??"Unnamed",
+              }))}
             />
-            <datalist id={kind==="LEARNER"?"learner-directory-suggestions":"faculty-directory-suggestions"}>
-              {result.items.slice(0,15).map(row=><option key={row.membershipId} value={row.name}/>)}
-            </datalist>
-            <span className="text-xs font-normal text-muted-foreground">Suggestions are limited to visible results in this college.</span>
+            <span className="text-xs font-normal text-muted-foreground">200ms suggestions search this college only. Recent searches remain in this browser session.</span>
           </label>
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Membership status
