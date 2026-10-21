@@ -4,18 +4,62 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {useRef,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {OtherTenantSettings} from "@/components/admin/tenant-settings-other-keys";
-import {LEGACY_TENANT_SETTING_SPECS} from "@/modules/platform-settings/legacy-setting-specs";
+import {LEGACY_TENANT_SETTING_SPECS,type LegacyTenantSettingSpec} from "@/modules/platform-settings/legacy-setting-specs";
+import {useToast} from "@/components/ui/toast";
 type Entry={key:string;value:string;version:number};
 type Result={key:string;status:"SAVED"|"DELETED"|"FAILED";message:string;version?:number};
+function validateValue(spec:LegacyTenantSettingSpec,raw:string):string|null{
+ const value=raw.trim();
+ // Empty is intentionally allowed: it deletes this override and restores
+ // the source default. Do not invent a mandatory value for optional keys.
+ if(!value)return null;
+ if(value.length>4096)return "Must be 4,096 characters or fewer.";
+ if(spec.type==="int"||spec.type==="decimal"){
+  const number=Number(value);
+  if(!Number.isFinite(number)||(spec.type==="int"&&!Number.isSafeInteger(number)))
+   return spec.type==="int"?"Must be a whole number.":"Must be a valid number.";
+  if("min" in spec&&typeof spec.min==="number"&&
+     "max" in spec&&typeof spec.max==="number"&&
+     (number<spec.min||number>spec.max))
+   return "Must be between "+spec.min+" and "+spec.max+".";
+  return null;
+ }
+ if(spec.key==="cookieSameSite"&&!["Strict","Lax","None"].includes(value))
+  return "Choose Strict, Lax or None.";
+ if(["baseDomain","globalHost","cookieDomain"].includes(spec.key)){
+  const host=value.replace(/^\./,"");
+  if(!/^[a-z0-9](?:[a-z0-9-]*\.)+[a-z]{2,}$/i.test(host)||host.length>253)
+   return "Enter a valid DNS hostname.";
+ }
+ return null;
+}
+function runtimeHint(spec:LegacyTenantSettingSpec):string{
+ if(spec.key.startsWith("sms.")){
+  return "Exotel sender/provider setup and India's registered DLT template must match the approved text and variable order exactly. Use approved {#var#} placeholders or the registered provider mapping; do not paste credentials here. A stored override is not proof of SMS delivery.";
+ }
+ if(spec.key.startsWith("otp.")){
+  return "OTP attempt/window overrides are stored policy, not evidence that login throttling consumers have switched to these values. Confirm active limiter configuration before relying on this change.";
+ }
+ if(spec.dangerous){
+  return "Requires an owner-approved deployment or runtime consumer cutover. Saving this value does not instantly modify live DNS, cookies, identity, or messaging.";
+ }
+ return "Blank restores the source default. Saving an override is distinct from verifying which operational reader is using it.";
+}
+
 export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  scopeType:"GLOBAL"|"COLLEGE";collegeId?:string;ready:boolean;entries:readonly Entry[];
 }){
  const router=useRouter();
+ const {showToast}=useToast();
+ const sectionRef=useRef<HTMLElement|null>(null);
+ const bypassUnload=useRef(false);
+ const [leaveHref,setLeaveHref]=useState<string|null>(null);
+ const [otherDirty,setOtherDirty]=useState(false);
  const keys=LEGACY_TENANT_SETTING_SPECS.filter(item=>item.scope===scopeType);
  const existing=new Map(entries.map(row=>[row.key,row]));
  const [draft,setDraft]=useState<Record<string,string>>(()=>Object.fromEntries(
@@ -25,9 +69,40 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   [error,setError]=useState("");
  const changed=keys.filter(item=>draft[item.key]!== (existing.get(item.key)?.value??""));
  const impact=changed.some(item=>item.dangerous);
+ const dirty=changed.length>0||otherDirty;
+ const invalid=changed.map(spec=>({key:spec.key,message:validateValue(spec,draft[spec.key]??"")}))
+  .filter((item):item is {key:string;message:string}=>item.message!==null);
+ const invalidKeys=new Map(invalid.map(item=>[item.key,item.message]));
+ useEffect(()=>{
+  if(!dirty)return;
+  const beforeUnload=(event:BeforeUnloadEvent)=>{
+   if(bypassUnload.current)return;
+   event.preventDefault();event.returnValue="";
+  };
+  const guardLink=(event:MouseEvent)=>{
+   if(event.defaultPrevented||event.button!==0||event.metaKey||event.ctrlKey||event.shiftKey||event.altKey)return;
+   const target=event.target;
+   if(!(target instanceof Element))return;
+   const anchor=target.closest("a[href]");
+   if(!(anchor instanceof HTMLAnchorElement)||anchor.target==="_blank"||anchor.hasAttribute("download"))return;
+   const link=new URL(anchor.href,window.location.href);
+   if(link.origin!==window.location.origin||
+     (link.pathname===window.location.pathname&&link.search===window.location.search))return;
+   event.preventDefault();event.stopPropagation();
+   setLeaveHref(link.pathname+link.search+link.hash);
+  };
+  document.addEventListener("click",guardLink,true);
+  window.addEventListener("beforeunload",beforeUnload);
+  return ()=>{
+   document.removeEventListener("click",guardLink,true);
+   window.removeEventListener("beforeunload",beforeUnload);
+  };
+ },[dirty]);
  const [impactConfirm,setImpactConfirm]=useState(false);
  async function save(confirmedHighImpact=false){
-  if(!ready||saving||inFlight.current||changed.length===0)return;
+  if(!ready||saving||inFlight.current)return;
+  if(changed.length===0){showToast({tone:"info",title:"No changes to save."});return;}
+  if(invalid.length){setError("Fix the highlighted values before saving.");return;}
   if(impact&&!confirmedHighImpact){setImpactConfirm(true);return;}
   setImpactConfirm(false);
   inFlight.current=true;
@@ -53,7 +128,14 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
       typeof receipt.saved!=="number"||typeof receipt.failed!=="number"||
       receipt.saved+receipt.failed!==changed.length)
      throw Error("Settings response could not be verified. Refresh before retrying.");
-   setResults(receipt.results as Result[]);router.refresh();
+   const savedCount=receipt.saved;
+   const failedCount=receipt.failed;
+   setResults(receipt.results as Result[]);
+   if(savedCount>0)showToast({tone:failedCount>0?"warning":"success",
+    title:"Saved "+savedCount+" setting(s).",
+    description:failedCount>0?"Not saved: "+failedCount+" setting(s). Review the errors and refresh before retrying.":"Stored overrides saved; live activation depends on the consumer and deployment."});
+   if(failedCount>0)setError("Saved "+savedCount+" setting(s). Not saved: "+failedCount+" setting(s). Refresh stored versions before retrying failed keys.");
+   router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Save failed");}
   finally{inFlight.current=false;setSaving(false);}
  }
