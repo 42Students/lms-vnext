@@ -474,6 +474,9 @@ export default async function LearnerPlacementsPage({
               | "WITHDRAWN",
           annualCtcInr:
             row.offer.annualCtcInr,
+          companyLogoUrl:row.company.logoPublicUrl,
+          legacyCtcLpa:row.offer.legacyCtcLpa,
+          respondedAt:row.offer.respondedAt?.toISOString()??null,
           joiningDate:
             row.offer.joiningDate,
           expiresAt:
