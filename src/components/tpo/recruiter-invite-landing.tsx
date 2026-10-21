@@ -47,6 +47,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const [busy, setBusy] = useState(false);
   const busyRef=useRef(false);
   const errorRef=useRef<HTMLDivElement>(null);
+  const [requestedEmail,setRequestedEmail]=useState("");
+  const [codeSentTo,setCodeSentTo]=useState("");
   const [actionError, setActionError] = useState("");
   const [fieldErrors,setFieldErrors] = useState<Partial<Record<Field,string>>>({});
   const [joinedEmail,setJoinedEmail] = useState("");
@@ -92,6 +94,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     setActionError(fallback);
   };
   useEffect(()=>{if(actionError)errorRef.current?.focus();},[actionError]);
+  useEffect(()=>{
+   const first=(["email","name","mobile","code"] as const)
+    .find(field=>Boolean(fieldErrors[field]));
+   if(first)document.getElementById("invite-"+first)?.focus();
+  },[fieldErrors]);
   const [codeSent,setCodeSent]=useState(false);
   const [code,setCode]=useState("");
   const [name,setName]=useState("");
@@ -113,6 +120,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       setInvite(data.invite??null);
       setName(data.invite?.contactName??"");
       setDesignation(data.invite?.designation??"");
+      setRequestedEmail(data.invite?.contactEmail??"");
+      setCodeSentTo("");
       setFieldErrors({});
       setJoinedEmail("");
       setState("ready");
@@ -149,6 +158,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     if(busyRef.current)return;
     const problems:Partial<Record<Field,string>>={};
     if(!name.trim())problems.name="Enter your name.";
+    else if(name.trim().length>100)problems.name="Name cannot exceed 100 characters.";
     if(!code.trim())problems.code="Enter the 6-digit code";
     else if(!/^[0-9]{6}$/.test(code))problems.code="The code has 6 digits";
     const digits=mobile.replace(/\D/g,"");
@@ -202,7 +212,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     try{
       if(!invite?.contactEmail?.trim() ||
          !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(invite.contactEmail)){
-        setFieldErrors({email:"Ask the placement cell to add your work email to the invitation."});
+        setFieldErrors({email:"Ask the placement cell to verify your work email before a code can be sent."});
         return;
       }
       const delivery=await apiFetch<unknown>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
@@ -213,6 +223,10 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         setActionError("We couldn't confirm that the code was sent. Please retry.");
         return;
       }
+      // The endpoint does not echo a mailbox; it only delivers to the
+      // persisted, verified invite email. Never present arbitrary client
+      // input as the confirmed recipient.
+      setCodeSentTo(invite.contactEmail.trim());
       setCodeSent(true);
       setCode("");
       setFieldErrors({});
@@ -222,8 +236,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   const shell = (children: React.ReactNode) => (
-    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center px-4 py-8 md:py-12`}>
-      <Card as="section" className="w-full max-w-md">
+    <main className={`${authStyles.page} flex min-h-dvh min-w-0 items-center justify-center bg-[#f5f7f9] px-4 py-8 md:py-12`}>
+      <Card as="section" className="w-full max-w-[440px]">
         {children}
       </Card>
     </main>
@@ -231,7 +245,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   if (state === "loading") {
     return shell(
-      <Skeleton variant="form" count={3} label="Loading invitation…" />,
+      <Skeleton variant="form" count={4} label="Loading invitation…" />,
     );
   }
 
@@ -247,7 +261,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   if (state === "invalid" || !invite) {
     return shell(
-      <div className="text-center">
+      <div className="space-y-3 text-center" role="alert">
         <PageHeader title="This link is no longer valid" />
         <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
           It may have expired or already been used. Ask the placement cell to send you a new one. Already joined? Sign in with your work email.
@@ -288,14 +302,22 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   return shell(
     <>
       <PageHeader title={invite.collegeName+" would like you to hire from their students"} />
+      {invite.reviewDrive?<p className="mt-3 text-sm font-semibold text-body">
+        Please review {invite.reviewDrive} for the students at {invite.collegeName}.
+      </p>:null}
       <p className="mt-3 text-sm text-muted-foreground leading-[22px]">
-        {invite.reviewDrive ? "They posted a drive, " + invite.reviewDrive + ", and would like you to review it. " : ""}
+
         {invite.companyName ? "You are joining as " + invite.companyName + ". " : ""}
         You can request placement drives and review the students who apply.
         Contact details are shared only as the placement cell allows.
       </p>
+      <p className="mt-2 text-xs text-muted-foreground">
+       Invitation expires {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
+        day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",
+        hour12:true}).format(new Date(invite.expiresAt))} IST.
+      </p>
 
-      <div className="mt-5 min-w-0 space-y-2 border-y border-[var(--lms-canvas-border)] py-3 text-sm leading-6 text-body [overflow-wrap:anywhere]">
+      <div className="mt-4 min-w-0 space-y-2 text-sm leading-6 text-body [overflow-wrap:anywhere]">
         <p><strong>Contact:</strong> {invite.contactName}</p>
         {invite.designation ? <p><strong>Designation:</strong> {invite.designation}</p> : null}
       </div>
@@ -303,16 +325,19 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <div className="mt-5 space-y-3">
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Work email
-          <Input type="email" readOnly value={invite.contactEmail??""} autoComplete="email" required
+          <Input id="invite-email" type="email" readOnly={Boolean(invite.contactEmail)}
+            value={invite.contactEmail??requestedEmail} autoComplete="email" required
+            onChange={event=>{if(!invite.contactEmail){setRequestedEmail(event.target.value);clearField("email");}}}
             aria-invalid={Boolean(errorFor("email"))} aria-describedby={errorFor("email")?"invite-email-error":undefined}
             className="mt-[6px] min-h-11 w-full md:min-h-9"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
-            {invite.contactEmail?"From your invitation. You'll sign in with it.":"Ask the placement cell to add your work email before you join."}
+            {invite.contactEmail?"From your invitation. You'll sign in with it.":
+             "Enter your work email, then ask the placement cell to verify it on this invitation before requesting a code."}
           </span>
           {errorFor("email")?<span id="invite-email-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("email")}</span>:null}
         </label>
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Your name
-         <Input required maxLength={150} autoComplete="name" value={name}
+         <Input id="invite-name" required maxLength={100} autoComplete="name" value={name}
            aria-invalid={Boolean(errorFor("name"))} aria-describedby={errorFor("name")?"invite-name-error":undefined}
            onChange={event=>{setName(event.target.value);clearField("name");}}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
@@ -323,7 +348,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
            className="mt-1 min-h-11 w-full md:min-h-9"/>
         </label>
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Mobile (optional)
-         <Input type="tel" autoComplete="tel" maxLength={30} value={mobile}
+         <Input id="invite-mobile" type="tel" autoComplete="tel" maxLength={14} value={mobile}
            aria-invalid={Boolean(errorFor("mobile"))} aria-describedby={errorFor("mobile")?"invite-mobile-error":undefined}
            onChange={event=>{setMobile(event.target.value);clearField("mobile");}}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
@@ -337,8 +362,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         ):(
           <>
             <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-              Code sent to {invite.contactEmail}
-              <Input type="text" inputMode="numeric" autoComplete="one-time-code"
+              Code sent to {codeSentTo || invite.contactEmail}
+              <Input id="invite-code" type="text" inputMode="numeric" autoComplete="one-time-code"
                 pattern="[0-9]{6}" maxLength={6} value={code}
                 aria-invalid={Boolean(errorFor("code"))} aria-describedby={errorFor("code")?"invite-code-error":undefined}
                 onChange={event=>{setCode(event.target.value);clearField("code");}}
@@ -347,7 +372,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
             </label>
             <Button className="min-h-11 w-full md:min-h-9" type="button" loading={busy}
               onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</Button>
-            <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</Button>
+            <Button className="min-h-11 w-full justify-start text-link underline md:min-h-9" variant="link" type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</Button>
           </>
         )}
         <p className="text-xs text-muted-foreground leading-[20px]">
@@ -355,13 +380,15 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         </p>
       </div>
 
-      {actionError ? <div ref={errorRef} tabIndex={-1} className="mt-4 outline-none"><InlineNotice tone="error" message={actionError} /></div> : null}
+      {actionError ? <div ref={errorRef} tabIndex={-1} className="mt-4 outline-none">
+       <InlineNotice tone="error" message={"⚠ "+actionError} />
+      </div> : null}
 
       <div className="mt-5 space-y-2 border-t border-[var(--lms-canvas-border)] pt-4">
-        <Button type="button" className="min-h-11 w-full md:min-h-9" variant="secondary" disabled={busy} onClick={() => void answer("not-hiring")}>
+        <Button type="button" className="min-h-11 w-full justify-start text-link underline md:min-h-9" variant="link" disabled={busy} onClick={() => void answer("not-hiring")}>
           Not hiring from this college this season
         </Button>
-        <Button type="button" className="min-h-11 w-full md:min-h-9" variant="ghost" disabled={busy} onClick={() => void answer("unsubscribe")}>
+        <Button type="button" className="min-h-11 w-full justify-start text-link underline md:min-h-9" variant="link" disabled={busy} onClick={() => void answer("unsubscribe")}>
           Stop contacting me
         </Button>
       </div>
