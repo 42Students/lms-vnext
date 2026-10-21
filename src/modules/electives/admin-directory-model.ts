@@ -4,6 +4,8 @@ export const adminElectiveQuerySchema = z.strictObject({
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   programId: z.string().uuid().optional(),
   semesterNumber: z.coerce.number().int().min(1).max(12).optional(),
+  page: z.coerce.number().int().min(1).max(100000).default(1),
+  pageSize: z.coerce.number().int().refine(n=>n===20||n===50||n===100).default(20),
 });
 export type AdminElectiveRow = {
   id: string; name: string; programId: string; programName: string; semesterNumber: number;
