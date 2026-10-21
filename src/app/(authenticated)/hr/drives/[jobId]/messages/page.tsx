@@ -28,7 +28,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
    actions={<Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>}/>
   <section aria-label="Drive conversation" className="min-w-0 space-y-3 border-b border-border pb-4">
    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Drive conversation</h2>
-   <p className="max-w-2xl text-sm text-body">Open or resume the conversation tied to this authorized employer drive.</p>
+   <p className="max-w-2xl text-sm text-body leading-[22px]">Open or resume the conversation tied to this authorized employer drive.</p>
    {result.threads.length ? <>
     <ol className="divide-y divide-border border-y border-border">
      {result.threads.map(thread=><li key={thread.id} className="flex min-h-11 min-w-0 items-center py-3">

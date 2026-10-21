@@ -32,16 +32,16 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
    <Button className="min-h-11 w-full sm:w-auto md:min-h-9">Search students</Button>
    {q ? <Link href="/college/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear</Link> : null}
   </form>
-  {!data ? <p role="status" className="max-w-[70ch] text-sm leading-6 text-body">{q.length>0?"Enter at least three characters to search student placements.":"Search by name, roll number or email to review a student’s recorded applications, offers and joining outcomes."}</p> : null}
+  {!data ? <p role="status" className="max-w-[70ch] text-sm leading-[22px] text-body">{q.length>0?"Enter at least three characters to search student placements.":"Search by name, roll number or email to review a student’s recorded applications, offers and joining outcomes."}</p> : null}
   {data&&!data.students.length?<EmptyState title="No matching students" description="No matching college students."/>:null}
   {data?.students.map((person,index)=><section key={person.membershipId} className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
    <Disclosure defaultOpen={index===0} title={<span className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]"><strong className="break-words [overflow-wrap:anywhere]">{person.name??person.roll??"Student"}</strong><StatusBadge tone={person.placed?"success":"neutral"}>{person.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge></span>}>
-    <p className="min-w-0 break-words [overflow-wrap:anywhere] pb-[var(--lms-space-3)] text-xs text-muted-foreground">{person.roll??"No roll number"} · {person.email??"No email"}</p>
+    <p className="min-w-0 break-words [overflow-wrap:anywhere] pb-[var(--lms-space-3)] text-xs text-muted-foreground leading-5">{person.roll??"No roll number"} · {person.email??"No email"}</p>
    <DataTable caption={`${person.name??person.roll??"Student"} placement applications`} columns={columns}
     rows={person.applications.map((row,i)=>({...row,uiKey:row.jobId+":"+i}))}
     getRowKey={row=>row.uiKey}
     empty={<EmptyState title="No applications" description="No applications found."/>}/>
-   {person.truncated?<p className="max-w-[70ch] py-[var(--lms-space-2)] text-xs text-muted-foreground">Showing newest 100 application/offer records.</p>:null}
+   {person.truncated?<p className="max-w-[70ch] py-[var(--lms-space-2)] text-xs text-muted-foreground leading-5">Showing newest 100 application/offer records.</p>:null}
    </Disclosure>
   </section>)}
   {data?.truncated?<p role="status" className="max-w-[70ch] text-xs leading-5 text-muted-foreground">Showing first 15 matching students; narrow the search.</p>:null}

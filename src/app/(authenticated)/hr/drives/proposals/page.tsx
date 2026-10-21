@@ -61,7 +61,7 @@ export default async function RecruiterDriveProposalHistory({
      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
      Export this page (summary CSV)
     </Link>:null}
-   <p role="status" className="max-w-2xl text-sm text-body">
+   <p role="status" className="max-w-2xl text-sm text-body leading-[22px]">
     {data.total} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
    </p>
@@ -83,15 +83,15 @@ export default async function RecruiterDriveProposalHistory({
      className="min-w-0 py-3">
      <Link href={"/hr/conversations/"+row.threadId}
       className="block break-words font-semibold text-primary-text min-h-11 min-[768px]:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{row.title}</Link>
-     <p className="mt-2 text-xs text-muted-foreground">
+     <p className="mt-2 text-xs text-muted-foreground leading-5">
       Proposal reference: {row.referenceId}
      </p>
-     <p className="mt-1 text-xs text-muted-foreground">
+     <p className="mt-1 text-xs text-muted-foreground leading-5">
       Sent for discussion on {new Intl.DateTimeFormat("en-IN",{
         dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
       }).format(row.createdAt)} IST
      </p>
-     <p className="mt-2 text-xs text-[var(--lms-muted-text)]">No approval or drive publication is implied.</p>
+     <p className="mt-2 text-xs text-[var(--lms-muted-text)] leading-5">No approval or drive publication is implied.</p>
     </li>)}
    </ol></>:<EmptyState title="No sent proposals" description="No persisted drive proposals for this college. Draft a proposal to start a discussion."
     action={<Link href="/hr/drives/new" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9">Draft another proposal</Link>} />}

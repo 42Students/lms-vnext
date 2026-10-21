@@ -209,7 +209,7 @@ export default async function CollegeElectiveAllocatePage({
           ]}
         />
       </ScrollCue>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-5">
         Showing up to 500 matching active learners. Filter by section or search for a smaller list.</p>
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Or paste roll numbers / learner membership IDs
         <Textarea name="identifiers" rows={3} maxLength={12000} className={fieldStyle}

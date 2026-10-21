@@ -65,7 +65,7 @@ export default async function CollegeCorrectionReadPage({searchParams}:{searchPa
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty correction window</dt><dd className="mt-2 text-[var(--lms-body-text)]">{data.policy.correctionWindowHours} hours after class end</dd></div>
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Policy source</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{data.policySource==="SAVED"?"Saved college policy":"System defaults (no saved college row)"}</dd></div>
       </dl>
-      <p className="mt-3 text-xs text-muted-foreground">
+      <p className="mt-3 text-xs text-muted-foreground leading-5">
         This window describes faculty marking eligibility. College Admin correction permissions have separate rules.
         No separate correction-request table is registered; request history and request totals are unavailable.
       </p>

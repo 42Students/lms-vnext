@@ -74,7 +74,7 @@ export default async function CollegeCompaniesPage({
         <Button variant="primary" type="submit" className="min-h-11 w-full md:hidden">Filter</Button>
       </form>
     </FilterBar>
-    <p role="status" className="text-sm leading-5 text-[var(--lms-muted-text)]">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
+    <p role="status" className="text-sm leading-[22px] text-[var(--lms-muted-text)]">Showing {data.items.length} of {data.total} companies {query.showDeleted==="1"?"(including deleted)":""}, searching name &amp; industry only.</p>
     <PlacementEmployerRelationships key={[query.q,query.status,query.page,query.pageSize,query.sort,query.showDeleted].join(":")}
       relationships={data.items.map(item => ({
         relationshipId: item.relationshipId,

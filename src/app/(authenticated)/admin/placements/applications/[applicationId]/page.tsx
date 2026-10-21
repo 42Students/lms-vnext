@@ -24,7 +24,7 @@ export default async function SuperAdminApplicationDetail({params}:{params:Promi
    </div>
   </details>:undefined}/>
   <section aria-label="Application stage history" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
-   <h2 className="text-base font-semibold text-foreground">Status history</h2>
+   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Status history</h2>
    {history?.length?<ol className="min-w-0 divide-y divide-border border-y border-border">{history.map(event=><li key={event.id} className="min-w-0 py-[var(--lms-space-3)] first:pt-0 text-sm">
      <p className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] break-words font-semibold text-[var(--lms-heading)]"><span>{event.fromStage??"New application"} →</span><StatusBadge tone="info">{event.toStage}</StatusBadge></p>
      <p className="mt-[var(--lms-space-1)] break-words text-body">{event.reason}</p>

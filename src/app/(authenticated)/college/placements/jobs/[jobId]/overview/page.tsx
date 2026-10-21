@@ -38,7 +38,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
       <span className="inline-flex items-center gap-2">Status: <StatusBadge tone={drive.status==="PUBLISHED"?"success":drive.status==="DRAFT"?"warning":drive.status==="CANCELLED"?"error":"neutral"}>{drive.status}</StatusBadge></span><span>Type: {drive.employmentType}</span>
       <span>Mode: {drive.workMode}</span><span>Openings: {drive.openings ?? "Not recorded"}</span>
     </div>
-    <section aria-label="Drive description" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]"><p className="max-w-[85ch] whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{drive.description}</p></section>
+    <section aria-label="Drive description" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]"><p className="max-w-[85ch] whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-[22px] text-body">{drive.description}</p></section>
     <section aria-label="Drive pipeline metrics" className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] min-[768px]:grid-cols-3 min-[992px]:grid-cols-5">
       {(["applications","shortlisted","selected","offered"] as const).map(name=>
         <StatTile key={name} label={name.charAt(0).toUpperCase()+name.slice(1)}
@@ -51,6 +51,6 @@ export default async function CollegeDriveOverviewPage({ params }: {
     </section>
     <CollegeDrivePipelineOverview jobId={jobId} data={funnel} attention={attention}/>
 
-    <p className="text-xs text-muted-foreground">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
+    <p className="text-xs text-muted-foreground leading-5">These are persisted operational counts, not a sequential funnel. No missing selection data is inferred.</p>
   </div>;
 }

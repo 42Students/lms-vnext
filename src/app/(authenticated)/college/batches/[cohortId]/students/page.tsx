@@ -93,7 +93,7 @@ export default async function CollegeBatchStudentsPage({
       </form>
     </FilterBar>
     <section aria-label="Students in this batch" className="min-w-0 space-y-[var(--lms-space-3)]">
-      <p className="text-xs text-muted-foreground">Showing up to 500 matching students in this batch.</p>
+      <p className="text-xs text-muted-foreground leading-5">Showing up to 500 matching students in this batch.</p>
       <DataTable
         caption="Students in this batch"
         rows={students}
