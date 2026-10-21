@@ -224,8 +224,9 @@ export async function startProjectSprint(
       const [started] = await tx
         .update(projectSprints)
         .set({
-          status: "ACTIVE",
-          updatedAt: new Date(),
+          status:"ACTIVE",startedAt:new Date(),
+          startedByMembershipId:context.membership?.id??null,
+          updatedAt:new Date(),
         })
         .where(
           and(
@@ -339,7 +340,7 @@ export async function completeProjectSprint(
         and(
           eq(projectTasks.projectId, scope.project.id),
           eq(projectTasks.sprintId, sprint.id),
-          ne(projectTasks.status, "DONE"),
+          isNull(projectTasks.deletedAt),ne(projectTasks.status,"DONE"),
         ),
       )
       .for("update")
@@ -351,7 +352,8 @@ export async function completeProjectSprint(
         sprintId:null,carriedFromSprintId:sprint.id,
         carriedOverAt:new Date(),updatedAt:new Date(),
       }).where(and(eq(projectTasks.projectId,scope.project.id),
-        eq(projectTasks.sprintId,sprint.id),ne(projectTasks.status,"DONE"))).returning({id:projectTasks.id});
+        eq(projectTasks.sprintId,sprint.id),isNull(projectTasks.deletedAt),
+        ne(projectTasks.status,"DONE"))).returning({id:projectTasks.id});
       await recordActivityEventInTransaction(tx,context,{
         eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
         collegeId:scope.collegeId,organizationId:scope.organizationId,
@@ -365,8 +367,9 @@ export async function completeProjectSprint(
     const [completed] = await tx
       .update(projectSprints)
       .set({
-        status: "COMPLETED",
-        updatedAt: new Date(),
+        status:"COMPLETED",completedAt:new Date(),
+        completedByMembershipId:context.membership?.id??null,
+        updatedAt:new Date(),
       })
       .where(
         and(
@@ -410,7 +413,7 @@ export async function reopenProjectSprint(
         .for("update")
         .limit(1);
 
-      if (!project || project.status === "ARCHIVED") {
+      if (!project || !projectAllowsExecution(project.status)) {
         throw new ProjectsServiceError(
           "PROJECT_SPRINT_INVALID_STATE",
         );
@@ -482,8 +485,10 @@ export async function reopenProjectSprint(
       const [reopened] = await tx
         .update(projectSprints)
         .set({
-          status: "ACTIVE",
-          updatedAt: new Date(),
+          status:"ACTIVE",startedAt:new Date(),
+          startedByMembershipId:context.membership?.id??null,
+          completedAt:null,completedByMembershipId:null,
+          updatedAt:new Date(),
         })
         .where(
           and(
