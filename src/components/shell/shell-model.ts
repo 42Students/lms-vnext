@@ -11,6 +11,36 @@ export type LearnerNavigationAccess = {
   driveDayEnabled?: boolean;
 };
 
+/** Current principal's resolved module grants, supplied by the shell loader.
+ * Unknown is not a denial: this preserves navigation while grants load. */
+export type PrincipalShellModuleAccess = {
+ projectsEnabled:boolean;
+ placementsEnabled:boolean;
+ tpoTeamActive?:boolean;
+};
+export const TPO_TEAM_NOT_ASSIGNED_MESSAGE =
+ "No placement team assignment is available for this account.";
+export function filterPrincipalShellNavigation(
+ items:readonly ShellNavItem[], access:PrincipalShellModuleAccess|null|undefined,
+):ShellNavItem[]{
+ if(!access)return [...items];
+ return items.filter(item=>{
+  const path=item.href;
+  if(!access.projectsEnabled&&(
+   path==="/mentor/projects"||path.startsWith("/mentor/projects/")||
+   path==="/learn/projects"||path.startsWith("/learn/projects/")||
+   path==="/college/projects"||path.startsWith("/college/projects/")||
+   path==="/admin/projects/templates"))return false;
+  if(!access.placementsEnabled&&(
+   path==="/learn/my-placements"||path.startsWith("/learn/my-placements/")||
+   path==="/tpo/placements"||path.startsWith("/tpo/placements/")||
+   path==="/college/placements"||path.startsWith("/college/placements/")||
+   path==="/hr/drives"||path.startsWith("/hr/drives/")))return false;
+  if(access.tpoTeamActive===false&&path==="/tpo/team")return false;
+  return true;
+ });
+}
+
 export type ShellNavIconName =
  | "home" | "dashboard" | "school" | "building" | "sliders"
  | "puzzle" | "settings" | "history" | "mail" | "book"
@@ -401,9 +431,12 @@ export function getShellNavigation(
   context: RequestContext,
   learnerAccess?: LearnerNavigationAccess | null,
   tpoVerificationEnabled = false,
+  principalAccess: PrincipalShellModuleAccess | null = learnerAccess ?? null,
 ) {
+  const visible=(items:readonly ShellNavItem[])=>
+    filterPrincipalShellNavigation(items,principalAccess);
   if (isSuperAdmin(context)) {
-    return superAdminItems;
+    return visible(superAdminItems);
   }
 
   // Clone-first parity: a learner-only membership gets the exact legacy
@@ -416,7 +449,7 @@ export function getShellNavigation(
     hasMembershipRole(context, "LEARNER") &&
     !hasActiveRecruiter(context)
   ) {
-    return getLearnerItems(learnerAccess);
+    return visible(getLearnerItems(learnerAccess));
   }
 
   // A teaching-only Faculty account uses the legacy seven-entry sidebar,
@@ -427,7 +460,7 @@ export function getShellNavigation(
     hasMembershipRole(context, "FACULTY") &&
     !hasActiveRecruiter(context)
   ) {
-    return facultyItems;
+    return visible(facultyItems);
   }
 
   // Mentor-only accounts use their legacy three-surface sidebar without a generic Dashboard.
@@ -437,7 +470,7 @@ export function getShellNavigation(
     hasMembershipRole(context, "MENTOR") &&
     !hasActiveRecruiter(context)
   ) {
-    return mentorItems;
+    return visible(mentorItems);
   }
 
   // A College Admin-only account uses the legacy grouped ten-item sidebar,
@@ -448,17 +481,17 @@ export function getShellNavigation(
     hasMembershipRole(context, "COLLEGE_ADMIN") &&
     !hasActiveRecruiter(context)
   ) {
-    return collegeAdminItems;
+    return visible(collegeAdminItems);
   }
 
   // A TPO-only or recruiter-only account must see exactly the legacy
   // sidebar, rather than a generic Dashboard plus role-specific links.
   if (context.membership && context.membership.roles.length === 1 &&
       hasMembershipRole(context, "TPO") && !hasActiveRecruiter(context)) {
-    return filterTpoVerificationNav(tpoItems,tpoVerificationEnabled);
+    return visible(filterTpoVerificationNav(tpoItems,tpoVerificationEnabled));
   }
   if (!context.membership && hasActiveRecruiter(context)) {
-    return recruiterItems;
+    return visible(recruiterItems);
   }
 
   const items: ShellNavItem[] = hasMembershipRole(context, "COLLEGE_ADMIN")
@@ -481,7 +514,7 @@ export function getShellNavigation(
     pushUnique(items, collegeAdminItems);
   }
 
-  return qualifyDuplicateLabels(items);
+  return visible(qualifyDuplicateLabels(items));
 }
 
 const PORTAL_QUALIFIERS: readonly (readonly [string, string])[] = [
