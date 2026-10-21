@@ -17,6 +17,7 @@ export function CollegeCourseBulkVisibility({courses,collegeName="this college"}
  const [confirmTarget,setConfirmTarget]=useState<boolean|null>(null);
  const [failedIds,setFailedIds]=useState<string[]>([]);
  const [retryOnly,setRetryOnly]=useState(false);
+ const [lastTarget,setLastTarget]=useState<boolean|null>(null);
  const [busy,setBusy]=useState(false);
  const [message,setMessage]=useState("");
  const [warning,setWarning]=useState(false);
@@ -27,6 +28,7 @@ export function CollegeCourseBulkVisibility({courses,collegeName="this college"}
   if(lock.current||confirmTarget===null)return;
   lock.current=true;setBusy(true);setWarning(false);setMessage("");
   const target=confirmTarget;
+  setLastTarget(target);
   const failed:string[]=[];
   let updated=0;
   for(const id of candidates){
@@ -59,7 +61,7 @@ export function CollegeCourseBulkVisibility({courses,collegeName="this college"}
     <Button type="button" variant="secondary" size="sm" disabled={busy||!selected.length}
      onClick={()=>{setRetryOnly(false);setConfirmTarget(true);}}>Show selected</Button>
     {failedIds.length?<Button type="button" size="sm" variant="secondary" disabled={busy}
-     onClick={()=>{setRetryOnly(true);setConfirmTarget(courses.some(course=>failedIds.includes(course.id)&&!course.enabled));}}>
+     onClick={()=>{setRetryOnly(true);setConfirmTarget(lastTarget);}}>
       Retry failed
      </Button>:null}
    </div>
