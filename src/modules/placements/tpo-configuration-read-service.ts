@@ -20,9 +20,9 @@ export async function getTpoJobTypes(ctx:RequestContext){
    collegeId,organizationId:college.organizationId,
   });
   const rows=ready?await tx.select({
-   id:tpoJobTypes.id,label:tpoJobTypes.label,active:tpoJobTypes.active,countsAsPlaced:tpoJobTypes.countsAsPlaced,isBuiltin:tpoJobTypes.isBuiltin,updatedAt:tpoJobTypes.updatedAt,
+   id:tpoJobTypes.id,label:tpoJobTypes.label,active:tpoJobTypes.active,countsAsPlaced:tpoJobTypes.countsAsPlaced,isBuiltin:tpoJobTypes.isBuiltin,updatedAt:tpoJobTypes.updatedAt,sortOrder:tpoJobTypes.sortOrder,
   }).from(tpoJobTypes).where(eq(tpoJobTypes.collegeId,collegeId))
-   .orderBy(asc(tpoJobTypes.updatedAt),asc(tpoJobTypes.id)):[];
+   .orderBy(asc(tpoJobTypes.sortOrder),asc(tpoJobTypes.id)):[];
   const usage=ready?await tx.select({
    label:sql<string>`lower(${placementJobs.jobTypeLabel})`,
    drives:sql<number>`count(*)::integer`,
