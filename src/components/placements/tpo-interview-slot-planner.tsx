@@ -93,7 +93,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   </div>:null}
   <details open={slots.length===0} className="group min-w-0 border-t border-border pt-4">
    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Interview day setup</summary>
-  <div className="min-w-0 border-t border-border pt-4">
+  <div className="min-w-0 pt-4">
    <h2 className="font-semibold text-foreground">Generate interview day</h2>
    <p className="mt-1 text-sm text-body">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -170,9 +170,9 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      <details className="group min-w-0 border-t border-border pt-2">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Change room <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
       <div className="flex min-w-0 flex-col gap-2 pt-2 sm:flex-row sm:items-end">
-      <label className="min-w-0 flex-1 text-sm">Change room
-       <Input value={roomChange[slot.id]??slot.room} onChange={e=>setRoomChange(p=>({...p,[slot.id]:e.target.value}))}
-        className="mt-1 min-h-11 w-full min-w-0 md:min-h-9"/></label>
+      <div className="min-w-0 flex-1 text-sm">
+       <Input aria-label={"Change room for slot "+format(slot.startsAt)} value={roomChange[slot.id]??slot.room} onChange={e=>setRoomChange(p=>({...p,[slot.id]:e.target.value}))}
+        className="mt-1 min-h-11 w-full min-w-0 md:min-h-9"/></div>
       <Button variant="secondary" type="button" disabled={busy||(roomChange[slot.id]??slot.room)===slot.room}
        onClick={()=>void action({action:"ASSIGN_ROOM",slotId:slot.id,expectedVersion:slot.version,room:roomChange[slot.id]})}
        className="min-h-11 w-full sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm disabled:opacity-50">Save room</Button>

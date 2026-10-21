@@ -134,7 +134,11 @@ export function TpoDriveActOnPanel(){
      <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void copyFailed()} >Copy failed</Button>
     </div>:null}
    </div>:null}
-   {notice?<InlineNotice tone="info" message={notice}/>:null}
+   {notice?<InlineNotice
+    tone={results.some(item=>item.status==="failed")||notice.startsWith("Could not")||
+      notice.startsWith("Select at least")||notice.startsWith("Explain")||
+      notice.startsWith("No applicable")?"error":"info"}
+    message={notice}/>:null}
   </div>:null}
   <ConfirmDialog open={confirmRetry!==null}
     onOpenChange={next=>{if(!next&&!pending)setConfirmRetry(null);}}
