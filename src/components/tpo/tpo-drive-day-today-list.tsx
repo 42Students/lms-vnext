@@ -6,7 +6,6 @@ import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
-import { StatusBadge } from "@/components/ui/status-badge";
 
 export type TpoDriveDayTodayRound = {
   id: string;
@@ -28,11 +27,11 @@ function isRound(value: unknown): value is TpoDriveDayTodayRound {
     typeof item.status === "string";
 }
 
-function when(value: string | null) {
-  if (!value || Number.isNaN(new Date(value).getTime())) return "Time not scheduled";
-  return new Intl.DateTimeFormat("en-IN", {
-    dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
-  }).format(new Date(value));
+function when(value:string|null):string|null{
+  if(!value||!Number.isFinite(Date.parse(value)))return null;
+  return new Intl.DateTimeFormat("en-IN",{
+    hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata",
+  }).format(new Date(value)).toUpperCase();
 }
 
 /** Store only the last good same-user, same-college, same-IST-day snapshot. */
@@ -63,12 +62,12 @@ export function TpoDriveDayTodayList({
   const visible = failed ? previous : rows;
   const retry = () => startRefresh(() => router.refresh());
   return (
-    <section aria-label="Today's on-campus rounds" className="space-y-3 border-b border-border pb-4">
+    <section aria-label="Today's on-campus rounds" className="min-w-0 space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="text-lg font-semibold">Today&apos;s on-campus rounds</h2>
+        <h2 className="sr-only">Today&apos;s on-campus rounds</h2>
         <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
           disabled={refreshing} onClick={retry}>
-          {refreshing ? "Refreshing drive-day assignments…" : "Refresh"}
+          {refreshing ? "Refreshing…" : "Reload"}
         </Button>
       </div>
       {refreshing && visible.length > 0 ?
@@ -86,22 +85,31 @@ export function TpoDriveDayTodayList({
         </Alert>
       ) : null}
       {visible.length === 0 && !failed ? (
-        <EmptyState title="No on-campus rounds scheduled today"
-          description="No published on-campus drive rounds are scheduled for today in your college."
-          action={<Link href="/tpo/calendar" className="font-semibold text-link underline">See upcoming rounds</Link>} />
+        <div className="rounded-[13px] border border-border bg-white p-6 text-center">
+          <EmptyState title="There is no drive day for you today."
+            action={<Link href="/tpo/calendar"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-white px-4 font-semibold text-link md:min-h-9">See upcoming rounds</Link>}/>
+        </div>
       ) : null}
       {visible.length > 0 ? (
-        <div className="divide-y divide-border">
+        <div className="grid min-w-0 gap-3 md:grid-cols-2">
           {visible.map(round => (
-            <div key={round.id} className="flex min-w-0 flex-col justify-between gap-2 py-3 sm:flex-row sm:items-center">
+            <article key={round.id}
+              className="flex min-h-[132px] min-w-0 flex-col justify-between gap-4 rounded-[13px] border border-[#e5e9f0] bg-white p-4 shadow-none transition-[border-color,box-shadow,transform] duration-150 hover:-translate-y-[2px] hover:border-[#a8dfe5] hover:shadow-md sm:flex-row sm:items-center">
               <div className="min-w-0">
-                <h3 className="font-semibold">{round.companyName} · {round.name}</h3>
-                <p className="text-sm text-body">{round.jobTitle} · {when(round.scheduledAt)} · {round.venue ?? "Venue not recorded"}</p>
-                <StatusBadge tone={round.status === "COMPLETED" ? "success" : "info"}>{round.status}</StatusBadge>
+                <p className="text-xs font-semibold uppercase tracking-wide text-link">Assigned round</p>
+                <h3 className="mt-1 break-words text-lg font-semibold leading-snug text-foreground">
+                  {round.companyName} · {round.jobTitle}
+                </h3>
+                <p className="mt-1 text-sm text-body">
+                  {[round.name,when(round.scheduledAt),round.venue].filter(Boolean).join(" · ")}
+                </p>
               </div>
               <Link href={"/tpo/drive-day/" + encodeURIComponent(round.id)}
-                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Open round</Link>
-            </div>
+                className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary hover:bg-primary-hover md:min-h-9">
+                Open round
+              </Link>
+            </article>
           ))}
         </div>
       ) : null}

@@ -5,6 +5,7 @@ import { SuperAdminPlacementOversightNav } from "@/components/admin/super-admin-
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PlacementOperationsWorkspace } from "@/components/placements/placement-operations-workspace";
 import { EmptyState } from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
 import { PageHeader } from "@/components/ui/page-header";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -47,7 +48,7 @@ export default async function AdminPlacementsPage({ searchParams }: {
     return (
       <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
         <PageHeader
-          title="Drives"
+          title="Placement Drives"
           description="Placement administration requires a college safety scope."
           actions={<Link href="/admin/placements/drives" className={secondaryActionClass}>
             Open All drives table →
@@ -55,10 +56,12 @@ export default async function AdminPlacementsPage({ searchParams }: {
         />
         <SuperAdminPlacementOversightNav />
         <SuperAdminPlatformPlacementPolicy initial={policy} />
-        <EmptyState
-          title="Select a college to continue"
-          description="To manage drives, choose an Organization + College in the header. Platform-wide policy is shown above. Select a college for operations."
-        />
+        <Alert tone="warning" title="Select a college to continue">
+          Choose a college in the header to manage its drives. Platform-wide policy is shown above.
+          <Link href="/admin/colleges" className="ml-2 font-semibold text-link underline">
+            Choose a college
+          </Link>
+        </Alert>
         <Disclosure title="Related directories" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
           {directoryActions}
         </Disclosure>
@@ -71,19 +74,42 @@ export default async function AdminPlacementsPage({ searchParams }: {
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
-        title="Drives"
+        title="Placement Drives"
         description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
-        actions={<Link
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+          <Link
             href="/admin/placements/new"
             className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary motion-safe:transition-colors motion-reduce:transition-none md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
             New drive
-          </Link>}
+          </Link>
+          <Link href="/admin/placements/drives" className={secondaryActionClass}>All drives</Link>
+        </div>}
       />
       <SuperAdminPlacementOversightNav />
-      <Disclosure title="Related directories" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
-        {directoryActions}
-      </Disclosure>
+      <section aria-label="Placements policy" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-white p-4">
+        <h2 className="text-lg font-semibold text-foreground">Placements policy</h2>
+        <p className="mt-1 text-xs text-muted-foreground">
+          Platform-wide — clear the college selection in the header to edit.
+        </p>
+        <dl className="mt-4 grid gap-x-6 gap-y-3 sm:grid-cols-2">
+          {policy.map(setting=><div key={setting.key} className="min-w-0 border-b border-border pb-2">
+            <dt className="text-sm font-semibold text-foreground">{setting.label}</dt>
+            <dd className="mt-1 text-sm text-body">{setting.value} {setting.unit}
+              <span className="ml-2 text-xs text-muted-foreground">
+                {setting.isOverridden?"Platform override":"Platform default"}
+              </span>
+            </dd>
+          </div>)}
+        </dl>
+      </section>
+
+      <PlacementOperationsWorkspace
+        context={context}
+        collegeId={collegeId}
+        basePath="/admin/placements"
+        staleDays={staleDays}
+      />
       <Disclosure title="Drive actions" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
         <p className="mb-[var(--lms-space-3)] text-sm text-body">
           Open, duplicate or extend a published drive from this overview. All actions remain scoped to the selected college.
@@ -115,12 +141,6 @@ export default async function AdminPlacementsPage({ searchParams }: {
           </div>
         )}
       </Disclosure>
-      <PlacementOperationsWorkspace
-        context={context}
-        collegeId={collegeId}
-        basePath="/admin/placements"
-        staleDays={staleDays}
-      />
       <AdminRetentionInlinePreview key={collegeId} collegeId={collegeId} />
       <section aria-label="Student placement lookup" className="min-w-0 border-b border-border pb-4">
         <h2 className="mb-2 font-semibold text-foreground">Find a student's placement status</h2>
@@ -132,10 +152,8 @@ export default async function AdminPlacementsPage({ searchParams }: {
           <Button type="submit" className="min-h-11 w-full shrink-0 sm:w-auto">Search students</Button>
         </form>
       </section>
-      <Disclosure title="Platform-wide placement policy" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
-        <p className="text-sm text-body">
-          Clear the college selection in the header to edit GLOBAL placement policy. This view does not edit college policy.
-        </p>
+      <Disclosure title="Related directories" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-[var(--lms-space-3)]">
+        {directoryActions}
       </Disclosure>
     </div>
   );
