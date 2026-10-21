@@ -23,7 +23,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
  if(!context.membership||!hasMembershipRole(context,"TPO")) redirect("/dashboard");
  const {jobId}=await params;const query=await searchParams;
  const urlError=tpoApplicationFilterError(query,jobId);
- if(urlError)return <div className="space-y-4">
+ if(urlError)return <div className="min-w-0 space-y-4">
   <PageHeader title="Invalid applicant filters"
    description="No private application records were loaded."/>
   <Alert tone="error">{urlError}</Alert>

@@ -47,7 +47,7 @@ export default async function TpoReportsPage({
   if (tpoReportHasAmbiguousFilters(query)) return <TpoReportInvalidFilters path="/tpo/reports" />;
   const parsedSearch=tpoReportGallerySearchSchema.safeParse(first(query.q)??"");
   const parsedGroup=tpoReportGalleryGroupSchema.safeParse(first(query.group)??"ALL");
-  if(!parsedSearch.success||!parsedGroup.success)return <section className="space-y-3">
+  if(!parsedSearch.success||!parsedGroup.success)return <section className="min-w-0 space-y-3">
     <PageHeader title="Invalid report search" />
     <Alert tone="error">
     <p className="mt-2 text-sm text-body">Enter up to 80 characters to filter reports.</p>
