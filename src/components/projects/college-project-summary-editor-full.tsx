@@ -116,28 +116,11 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
    <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",160)}
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style}
-     value={legacyStatus} onChange={event=>{
-       const choice=event.target.value;
-       const nextStatus=choice==="PLANNED"?"PLANNED":choice==="COMPLETED"?"COMPLETED":
-         choice==="BLOCKED"&&form.status!=="ACTIVE"?"PLANNED":"ACTIVE";
-       const nextPhase=choice==="READY"?"Ready":
-         choice==="BLOCKED"?"Blocked":choice==="IN_PROGRESS"?"In progress":
-           choice==="PLANNED"?"Planning":form.phase;
-       setForm(current=>({...current,status:nextStatus,phase:nextPhase}));
-     }}>
-      <option value="PLANNED" disabled={p.status==="ACTIVE"||p.status==="COMPLETED"}>Planning</option>
-      <option value="ACTIVE" disabled={p.status==="COMPLETED"}>Active</option>
-      <option value="IN_PROGRESS" disabled={p.status==="COMPLETED"}>In progress</option>
-      <option value="READY" disabled={p.status==="COMPLETED"}>Ready</option>
-      <option value="BLOCKED" disabled={p.status==="COMPLETED"}>Blocked</option>
-      {p.status==="ACTIVE"||p.status==="COMPLETED"?
-        <option value="COMPLETED">Completed</option>:null}
+     value={form.status} onChange={e=>change("status",e.target.value)}>
+      {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
+       <option key={v} value={v}>{v}</option>)}
       <option value="ARCHIVED" disabled>Archived (use Archive action)</option>
-    </Select>
-      <span className="mt-1 block text-xs font-normal text-body">
-        In progress, Ready and Blocked remain in Phase; execution lifecycle is Planned/Active.
-      </span>
-    </label>
+    </Select></label>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
      disabled={hasTaskData} value={derivedProgress??form.progressPercent}
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
@@ -175,11 +158,9 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
    </label>)}
    <p className="text-xs text-muted-foreground">
      Activating requires a Mentor; completing requires an approved final submission.
+     Historical In progress, Ready and Blocked stages remain in the Phase field
+     while vNext uses the Planned/Active lifecycle.
    </p>
-   {overviewHref!==pathname?<Link href={overviewHref}
-     className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
-     Open Overview
-   </Link>:null}
    {dirty&&form.title.trim().length===0?<p role="alert" className="text-sm text-error">Title is required</p>:null}
    <Button type="button" disabled={busy} onClick={()=>void save()}
     >{busy?"Saving…":"Save changes"}</Button>
