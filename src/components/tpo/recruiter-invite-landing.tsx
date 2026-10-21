@@ -26,6 +26,7 @@ type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "join
 type Field = "email" | "name" | "mobile" | "code";
 
 const UNCONFIRMED = "We could not confirm that the invitation was accepted. Your form is still here; please retry.";
+const ACCOUNT_UNAVAILABLE = "This account can't be used. Please contact the placement cell.";
 const fieldErrorMessages:Record<string,{field:Field;message:string}> = {
  INVALID_MOBILE:{field:"mobile",message:"Enter a valid 10-digit mobile number, or leave it blank."},
  FIRST_NAME_REQUIRED:{field:"name",message:"Enter your name."},
@@ -49,6 +50,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const [actionError, setActionError] = useState("");
   const [fieldErrors,setFieldErrors] = useState<Partial<Record<Field,string>>>({});
   const [joinedEmail,setJoinedEmail] = useState("");
+  // Only a server-attested outcome can display JOINED or PENDING_HR.
+  // The current backend returns JOINED; retain the legacy pending result
+  // presentation for an explicitly verified future consent handoff.
   const errorFor=(field:Field)=>fieldErrors[field];
   const clearField=(field:Field)=>setFieldErrors(previous=>({...previous,[field]:undefined}));
   const showError=(error:unknown,fallback:string)=>{
@@ -57,6 +61,10 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       return;
     }
     if(error instanceof FriendlyFetchError){
+      if(error.code==="ACCOUNT_UNAVAILABLE"){
+        setActionError(ACCOUNT_UNAVAILABLE);
+        return;
+      }
       const mapped=error.code?fieldErrorMessages[error.code]:undefined;
       if(mapped){
         setFieldErrors(previous=>({...previous,[mapped.field]:mapped.message}));
@@ -79,7 +87,9 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         return;
       }
     }
-    setActionError(error instanceof Error?error.message:fallback);
+    // Do not render raw transport/server exception bodies on a public invite.
+    // Field-level messages above are vetted and match the old LMS wording.
+    setActionError(fallback);
   };
   useEffect(()=>{if(actionError)errorRef.current?.focus();},[actionError]);
   const [codeSent,setCodeSent]=useState(false);
@@ -248,7 +258,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   }
 
   if(state==="pending"){
-    return shell(<div className="text-center space-y-3">
+    return shell(<div className="text-center space-y-3" role="status" aria-live="polite">
       <span aria-hidden="true" className="mx-auto flex size-12 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-2xl text-[var(--lms-primary)]">i</span>
       <PageHeader title="One more step" />
       <p className="text-sm text-muted-foreground leading-[22px]">You already have a 42LMS account. Sign in on {invite.collegeName}&apos;s placement address with your work email to accept the invitation.</p>
@@ -256,7 +266,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     </div>);
   }
   if(state==="joined"){
-    return shell(<div className="text-center space-y-3">
+    return shell(<div className="text-center space-y-3" role="status" aria-live="polite">
       <span aria-hidden="true" className="mx-auto flex size-12 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-2xl text-[var(--lms-primary)]">✓</span>
       <PageHeader title={"You now have access to "+invite.collegeName} />
       <p className="text-sm text-muted-foreground leading-[22px]">Sign in with your work email, {joinedEmail}. We&apos;ll email you a code each time.</p>
@@ -292,7 +302,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       <div className="mt-5 space-y-3">
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Work email
-          <Input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
+          <Input type="email" readOnly value={invite.contactEmail??""} autoComplete="email" required
             aria-invalid={Boolean(errorFor("email"))} aria-describedby={errorFor("email")?"invite-email-error":undefined}
             className="mt-[6px] min-h-11 w-full md:min-h-9"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">

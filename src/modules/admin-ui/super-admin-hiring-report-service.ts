@@ -45,6 +45,17 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
       query.programId?eq(programs.id,query.programId):undefined,
       query.cohortId?eq(cohorts.id,query.cohortId):undefined))) : undefined;
  const stage=sql<string>`coalesce(${placementCollegeApplicationStages.stage}, case when ${placementApplicationScreenings.status} = 'SHORTLISTED' then 'SHORTLISTED' when ${placementApplicationScreenings.status} = 'REJECTED' then 'REJECTED' else 'APPLIED' end)`;
+ // Persisted first application time survives a withdrawal/reapplication. It
+ // is the legacy applied-at clock for date filters and time-to-shortlist.
+ const appliedAt=sql<Date>`coalesce(${placementApplications.firstAppliedAt}, ${placementApplications.submittedAt})`;
+ const verifiedJoined=sql<boolean>`exists (
+   select 1 from ${placementOffers}
+   inner join ${placementJoiningOutcomes}
+     on ${placementJoiningOutcomes.offerId} = ${placementOffers.id}
+   where ${placementOffers.applicationId} = ${placementApplications.id}
+     and ${placementOffers.status} = 'ACCEPTED'
+     and ${placementJoiningOutcomes.status} = 'JOINED'
+ )`;
  const tally=(name:string)=>sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplications.status} = 'SUBMITTED' and ${stage} = ${name})::integer`.mapWith(Number);
  const reached=(name:string)=>sql<number>`count(distinct ${placementApplications.id}) filter (
    where ${placementApplications.id} is not null
@@ -55,8 +66,8 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
    ))
  )::integer`.mapWith(Number);
  const applicationFilters=and(
-  query.appliedFrom?gte(placementApplications.submittedAt,istStartOfDay(query.appliedFrom)):undefined,
-  query.appliedTo?lt(placementApplications.submittedAt,istStartOfNextDay(query.appliedTo)):undefined,
+  query.appliedFrom?gte(appliedAt,istStartOfDay(query.appliedFrom)):undefined,
+  query.appliedTo?lt(appliedAt,istStartOfNextDay(query.appliedTo)):undefined,
   matchingAcademic,
  );
  const result=await db.select({
@@ -74,14 +85,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   // historical offers inflating the same applicant.
   hired:sql<number>`count(distinct ${placementApplications.id}) filter (
     where ${placementApplications.status} = 'SUBMITTED'
-    and exists (
-      select 1 from ${placementOffers}
-      inner join ${placementJoiningOutcomes}
-        on ${placementJoiningOutcomes.offerId} = ${placementOffers.id}
-      where ${placementOffers.applicationId} = ${placementApplications.id}
-        and ${placementOffers.status} = 'ACCEPTED'
-        and ${placementJoiningOutcomes.status} = 'JOINED'
-    )
+    and ${verifiedJoined}
   )::integer`.mapWith(Number),
   rejected:tally("REJECTED"),
   // Cumulative funnel distinct from mutually exclusive snapshot metrics:
@@ -91,12 +95,23 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   funnelAssessment:reached("ASSESSMENT"),
   funnelInterview:reached("INTERVIEW"),
   funnelOffered:reached("OFFERED"),
-  funnelHired:reached("HIRED"),
+  // A joined placement is not always accompanied by a synthetic HIRED
+  // college stage. Use the real offer+joining evidence as a second route.
+  funnelHired:sql<number>`count(distinct ${placementApplications.id}) filter (
+    where ${placementApplications.id} is not null and (
+      ${stage} = 'HIRED' or ${verifiedJoined} or exists (
+        select 1 from ${placementCollegeApplicationStageHistory} h
+        where h.stage_id = ${placementCollegeApplicationStages.id}
+          and h.to_stage = 'HIRED'
+      )
+    )
+  )::integer`.mapWith(Number),
   firstShortlistHours:sql<number|null>`avg((
-    select extract(epoch from (min(h.moved_at)-${placementApplications.submittedAt}))/3600
+    select extract(epoch from (min(h.moved_at)-${appliedAt}))/3600
     from ${placementCollegeApplicationStageHistory} h
     where h.stage_id = ${placementCollegeApplicationStages.id}
       and h.to_stage = 'SHORTLISTED'
+      and h.moved_at >= ${appliedAt}
   ))`.mapWith(Number),
  }).from(placementJobs)
   .innerJoin(placementCompanyRelationships,and(
@@ -106,6 +121,8 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
   .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),
     eq(colleges.id,selected.collegeId),
     selected.organizationId?eq(colleges.organizationId,selected.organizationId):undefined))
+  // A legacy free-text-only company is normalized to a required per-college
+  // relationship on import. This join must NOT invent a cross-college job.
   // Keep zero-application jobs in this LEFT JOIN, but never let an
   // application with a foreign-college membership into the aggregates.
   // A separate LEFT JOIN on memberships is insufficient: COUNT(application.id)
@@ -149,6 +166,10 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
    snapshot:"CURRENT_STAGE" as const,
    funnel:"EVER_REACHED" as const,
    totalApplicationsIncludesWithdrawn:true,
+   applicationClock:"FIRST_APPLIED_AT_OR_SUBMITTED_AT" as const,
+   hiredEvidence:"ACCEPTED_OFFER_AND_JOINED_OUTCOME" as const,
+   firstShortlistLatency:"FIRST_VALID_SHORTLIST_TRANSITION" as const,
+   sharedJobs:"SELECTED_COLLEGE_ONLY" as const,
   },
  };
 }
