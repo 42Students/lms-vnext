@@ -307,14 +307,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/projects/project-admin-at-risk-page.tsx`
 - [x] `src/components/projects/project-admin-workspace-list.tsx`
 - [x] `src/components/projects/project-admin-workspace-page-export.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-list.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/project-template-view.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/public/error-page-view.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/projects/project-list.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/project-template-view.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/public/error-page-view.tsx`
 - [ ] `src/components/public/graceful-screen.tsx`
 - [ ] `src/components/public/public-page-loading.tsx`
 - [ ] `src/components/shell/app-shell.tsx`
