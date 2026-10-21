@@ -539,9 +539,8 @@ async function loadApplicationDetails(
       ),
     )
     .orderBy(
-      asc(
-        placementApplicationStatusHistory.createdAt,
-      ),
+      asc(placementApplicationStatusHistory.createdAt),
+      asc(placementApplicationStatusHistory.id),
     );
 
   return { ...row, history };
@@ -873,6 +872,26 @@ export async function applyToPlacementJob(
           fromStatus: "WITHDRAWN", toStatus: "SUBMITTED",
           actorUserId: context.user.id,
         });
+        // An early withdrawal and legitimate re-apply is a new submission
+        // attempt, not a silent return of the old receipt. Record one
+        // post-commit-deliverable event inside this same successful CAS.
+        const resubmittedEvent=await recordActivityEventInTransaction(tx,context,{
+          eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_APPLICATION_SUBMITTED,
+          collegeId:job.collegeId,
+          subjectType:"placement_application",
+          subjectId:restored.id,
+          subjectLabel:roleOption.title,
+          summary:`Application resubmitted for ${roleOption.title}`,
+          metadata:{jobId:job.id,roleOptionId:roleOption.id,
+            membershipId:membership.id,channel,reactivated:true},
+          groupKey:`placement-job:${job.id}:applications`,
+          dedupeKey:`placement-application:${restored.id}:resubmitted:${restored.submittedAt.toISOString()}`,
+        });
+        await deliverRecordedLearnerPlacementEvent(tx,{
+          eventId:resubmittedEvent.id,collegeId:job.collegeId,
+          membershipId:membership.id,kind:"APPLICATION_STATUS_CHANGED",
+          subject:"Application resubmitted for "+roleOption.title,
+        });
         return restored;
       }
 
@@ -1044,7 +1063,7 @@ export async function listOwnPlacementApplications(
         membership.id,
       ),
     )
-    .orderBy(desc(placementApplications.submittedAt));
+    .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id));
 }
 
 /** Calendar data is drawn from the learner's own persisted applications,
