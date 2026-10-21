@@ -49,14 +49,14 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/delivery.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/index.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/meetings.js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js`
-- [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js`
-- [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/summary.js`
-- [ ] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js`
-- [ ] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/team.js`
-- [ ] U018 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/deleted.js`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/overview.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/readiness.js`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/resources.js`
+- [x] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/sprints.js`
+- [x] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/summary.js`
+- [x] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/tasks.js`
+- [x] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/[workspaceId]/team.js`
+- [x] U018 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/deleted.js`
 - [ ] U019 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/index.js`
 - [ ] U020 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/new.js`
 - [ ] U021 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/reassign-mentor.js`
