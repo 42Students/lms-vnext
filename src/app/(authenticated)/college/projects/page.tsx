@@ -128,6 +128,7 @@ export default async function CollegeProjectsPage({
         </summary>
         <nav aria-label="Project workspace tools" className="flex min-w-0 flex-col items-stretch gap-2 pt-3 md:flex-row md:flex-wrap md:items-center">
       <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold hover:bg-primary-subtle md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/workspaces/new">Split class into teams / Add whole class</Link>
+      <Link className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-center text-sm font-semibold hover:bg-primary-subtle md:min-h-9 focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]" href="/college/projects/deleted">Deleted workspaces</Link>
 </nav>
       </details>
 
