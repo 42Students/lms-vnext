@@ -83,7 +83,7 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
  const metrics:Metric[]=[
   {title:SUPER_ADMIN_TODAY_LABELS[0],count:data?.attendanceNotTaken??null,
    href:"/admin/academics",icon:0,tone:"danger",
-   empty:"Every class held in the last 7 days has attendance.",
+   empty:"No ended scheduled class in the last 7 days is waiting for an attendance mark.",
    detail:"Last 7 days · ended scheduled classes with no marked attendance session.",
    rows:pendingRows.map(row=>({primary:row.title+" · "+row.section,
     secondary:row.when+" · "+row.faculty})),
