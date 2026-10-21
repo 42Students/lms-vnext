@@ -2,8 +2,9 @@ import "server-only";
 import {and,desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
- db10AuditFindings,db10AuditFindingEvents,db10AuditFindingFiles,db10AuditFindingSyncs,
+ db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs,
 } from "@/db/schema/db10-audit-findings.draft";
+import {db10AuditFindingFiles} from "./independent-audit-inbox-ledger-schema";
 import {readAuditGithubInbox,independentAuditGithubConfigured} from "./independent-audit-github-client";
 import {
  validateIndependentAuditInboxFile,type IndependentAuditInboxPayload,
