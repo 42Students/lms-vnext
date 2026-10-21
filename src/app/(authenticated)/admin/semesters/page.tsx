@@ -80,7 +80,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     <AcademicSetupSteps step={3} showRefresh={false} />
     <CollegeSemesterCreateForm programs={data.programs.filter(program => program.status === "ACTIVE")} />
     <section className="border-b border-border pb-4" aria-label="Semester filters">
-      <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]">
+      <form method="get" action="/admin/semesters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto_auto_auto]" aria-label="Search semesters">
         <label className="grid min-w-44 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester or program
           <Input name="q" type="search" defaultValue={data.query.q} maxLength={100}
             className="min-h-11 w-full min-w-0 md:min-h-9" />
