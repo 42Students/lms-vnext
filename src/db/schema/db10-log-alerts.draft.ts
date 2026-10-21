@@ -146,3 +146,32 @@ export const db10LogAlertObservedEvents = pgTable(
     check("db10_log_alert_observed_hash_ck", sql`${t.eventHash} ~ '^[0-9a-f]{64}$'`),
   ],
 );
+
+/** Offline import guide: old signature ID maps to UUID only via a collision-
+ * reviewed identity table. Legacy CHAR(64) keys must be trimmed for trailing
+ * padding and validated BEFORE hashing; an overlong key is an import error,
+ * never a truncated key that could merge distinct alert signatures.
+ * Preserve old firstSeenAt/fixedAt as source-local instants converted from
+ * a verified source timezone. Never use current import time as first seen. */
+export const LEGACY_LOG_ALERT_FIELD_CROSSWALK={
+  signatureId:"verified import mapping to UUID",
+  signatureKey:"trim CHAR padding, reject >64 chars and sign canonical digest",
+  firstSeenAt:"source wall time converted with known timezone",
+  fixedAt:"source wall time converted with known timezone",
+  accountId:"verified typed user+role HMAC only",
+  stateCursor:"bounded first poll; no historic replay alerts",
+} as const;
+export function logAlertImportSignatureKey(raw:unknown):string{
+ if(typeof raw!=="string")throw new Error("Invalid legacy log signature key");
+ const key=raw.replace(/ +$/g,"");
+ if(!key||key.length>64)throw new Error("Legacy log signature key exceeds 64 characters");
+ return key;
+}
+/** A first poll starts at the configured lookback, not at the beginning of
+ * retained logs. Replays may update counts but cannot generate first alerts. */
+export function logAlertInitialCursor(now:Date,lookbackMinutes:number):Date{
+ if(!Number.isFinite(now.getTime())||!Number.isFinite(lookbackMinutes))
+  throw new Error("Invalid log cursor");
+ const bounded=Math.min(60,Math.max(1,Math.trunc(lookbackMinutes)));
+ return new Date(now.getTime()-bounded*60_000);
+}

@@ -1,11 +1,15 @@
 import { sql } from "drizzle-orm";
-import { check, foreignKey, index, integer, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
+import { check, foreignKey, index, integer, bigint, pgTable, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 import { colleges } from "./colleges";
 import { academicPeriods, groupBackedClassOfferings, programs } from "./academics";
 import { courses, courseSectionDeliveries } from "./courses";
 import { lmsGroups } from "./groups";
 export const electiveSlots = pgTable("elective_slots", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
+  legacySlotId:integer("legacy_slot_id"),
+  legacyProgramId:integer("legacy_program_id"),
+  legacyRevision:bigint("legacy_revision",{mode:"bigint"}),
+  legacyCreatedAtLocal:varchar("legacy_created_at_local",{length:36}),
   collegeId: uuid("college_id").notNull().references(() => colleges.id, { onDelete: "restrict" }),
   programId: uuid("program_id").notNull().references(() => programs.id, { onDelete: "restrict" }),
   academicPeriodId: uuid("academic_period_id").references(() => academicPeriods.id, { onDelete: "restrict" }),
@@ -22,6 +26,8 @@ export const electiveSlots = pgTable("elective_slots", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, t => [
+  uniqueIndex("elective_slots_legacy_id_uq").on(t.legacySlotId)
+    .where(sql`${t.legacySlotId} is not null`),
   index("elective_slots_college_program_term_idx").on(t.collegeId, t.programId, t.semesterNumber),
   index("elective_slots_period_status_idx").on(t.academicPeriodId, t.status),
   check("elective_slots_semester_ck", sql.raw("\"semester_number\" BETWEEN 1 AND 12")),
@@ -33,6 +39,10 @@ export const electiveSlots = pgTable("elective_slots", {
 
 export const electiveOfferings = pgTable("elective_offerings", {
   id: uuid("id").defaultRandom().primaryKey().notNull(),
+  legacyOfferingId:integer("legacy_offering_id"),
+  legacyClassId:integer("legacy_class_id"),
+  legacyCourseId:integer("legacy_course_id"),
+  legacyRevision:bigint("legacy_revision",{mode:"bigint"}),
   slotId: uuid("slot_id").notNull().references(() => electiveSlots.id, { onDelete: "restrict" }),
   courseId: uuid("course_id").notNull().references(() => courses.id, { onDelete: "restrict" }),
   groupId: uuid("group_id").notNull().references(() => lmsGroups.id, { onDelete: "restrict" }),
@@ -46,6 +56,10 @@ export const electiveOfferings = pgTable("elective_offerings", {
   createdAt: timestamp("created_at", { withTimezone: true }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).defaultNow().notNull(),
 }, t => [
+  uniqueIndex("elective_offerings_legacy_id_uq").on(t.legacyOfferingId)
+    .where(sql`${t.legacyOfferingId} is not null`),
+  index("elective_offerings_legacy_class_idx").on(t.legacyClassId)
+    .where(sql`${t.legacyClassId} is not null`),
   uniqueIndex("elective_offerings_group_uq").on(t.groupId),
   uniqueIndex("elective_offerings_delivery_uq").on(t.backedDeliveryId),
   uniqueIndex("elective_offerings_backed_class_uq").on(t.backedClassOfferingId).where(sql`${t.backedClassOfferingId} is not null`),
