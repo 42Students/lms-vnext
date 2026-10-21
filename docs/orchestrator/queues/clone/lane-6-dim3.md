@@ -12,14 +12,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/admin/super-admin-placement-oversight-nav.tsx`
 - [x] `src/components/courses/college-content-aggregate.tsx`
 - [x] `src/components/placements/drive-day-roster.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/projects/project-admin-submissions-page.tsx`
-- [ ] `src/components/ui/filter-bar.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/legacy-project-board.module.css`
-- [ ] `src/components/projects/mentor-release-editor.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/projects/project-admin-submissions-page.tsx`
+- [x] `src/components/ui/filter-bar.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/legacy-project-board.module.css`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
 - [ ] `src/components/projects/project-workspace-readiness.module.css`
 - [ ] `src/components/shell/legacy-mobile-footer.css`
 - [ ] `src/components/tpo/recruiter-inline-owner.tsx`
