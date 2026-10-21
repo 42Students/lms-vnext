@@ -284,15 +284,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
 - [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
 - [x] `src/components/tpo/tpo-students-bulk-debar.tsx`
-- [ ] `src/components/tpo/tpo-team-away-form.tsx`
-- [ ] `src/components/tpo/tpo-team-forms.tsx`
-- [ ] `src/components/tpo/tpo-team-message-actions.tsx`
-- [ ] `src/components/tpo/tpo-team-rename.tsx`
-- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
-- [ ] `src/components/tracker/audit-finding-status-action.tsx`
-- [ ] `src/components/tracker/tracker-issue-copy-actions.tsx`
-- [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
-- [ ] `src/components/ui/action-pagination.tsx`
+- [x] `src/components/tpo/tpo-team-away-form.tsx`
+- [x] `src/components/tpo/tpo-team-forms.tsx`
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`
+- [x] `src/components/tpo/tpo-team-rename.tsx`
+- [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
+- [x] `src/components/tracker/audit-finding-status-action.tsx`
+- [x] `src/components/tracker/tracker-issue-copy-actions.tsx`
+- [x] `src/components/tracker/tracker-issue-saved-views.tsx`
+- [x] `src/components/ui/action-pagination.tsx`
 - [ ] `src/components/ui/button.tsx`
 - [ ] `src/components/ui/dialog.tsx`
 - [ ] `src/components/ui/drawer.tsx`
