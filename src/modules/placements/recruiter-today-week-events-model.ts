@@ -27,7 +27,7 @@ export function recruiterTodayWeekEvents(input:{
  // other drives. Use IST days, not the server's local timezone.
  const folded=row.filter(e=>e.kind!=="SLOT").map(e=>({...e,slots:0}));
  for(const slot of row.filter(e=>e.kind==="SLOT")){
-  const title=slot.title.replace(/\\s+slot$/i,"").trim()||slot.title;
+  const title=slot.title.replace(/\s+slot$/i,"").trim()||slot.title;
   const owner=folded.find(e=>e.jobId===slot.jobId&&
    istDayKey(e.startsAt)===istDayKey(slot.startsAt)&&
    e.title.trim()===title&&(e.kind==="ROUND"||e.kind==="SLOT"));

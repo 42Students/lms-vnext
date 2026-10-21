@@ -30,6 +30,9 @@ export async function getTpoJoiningFollowups(context:RequestContext,raw:unknown,
   offerId:placementOffers.id,jobId:placementJobs.id,jobTitle:placementJobs.title,
   companyName:placementCompanies.name,candidateName:users.displayName,
   roleTitle:placementOffers.roleTitle,offerStatus:placementOffers.status,
+  acceptanceChannel:placementOffers.acceptanceChannel,
+  acceptedDisputableUntil:placementOffers.acceptedDisputableUntil,
+  cascadeId:placementOffers.cascadeId,
   joiningStatus:placementJoiningOutcomes.status,
   outcomeDate:placementJoiningOutcomes.joiningDate,offerJoiningDate:placementOffers.joiningDate,
  }).from(placementOffers)
@@ -53,6 +56,18 @@ export async function getTpoJoiningFollowups(context:RequestContext,raw:unknown,
   candidateName:r.candidateName,roleTitle:r.roleTitle,offerStatus:r.offerStatus,
   joiningStatus:r.joiningStatus,scheduledDate:r.outcomeDate??r.offerJoiningDate,
  })),today,input.state);
+ // Legacy JobOffer kept acceptance provenance, dispute window and cascade
+ // identifiers beside joiningStatus. vNext retains the three offer columns
+ // and resolves joiningStatus from the one-row-per-offer outcome record.
+ // Keep null outcome distinct from a recorded PENDING status for review.
+ const acceptanceEvidence=offers.slice(0,500).map(offer=>({
+  offerId:offer.offerId,
+  acceptanceChannel:offer.acceptanceChannel,
+  acceptedDisputableUntil:offer.acceptedDisputableUntil?.toISOString()??null,
+  cascadeId:offer.cascadeId,
+  joiningOutcomeStatus:offer.joiningStatus,
+ }));
  return {...report,season,seasons,state:input.state,
+   acceptanceEvidence,
    truncated:offers.length>500,asOf:now.toISOString()};
 }
