@@ -122,21 +122,16 @@ export function placementCalendarWindow(
   anchor: string,
   view: PlacementCalendarView,
 ) {
-  // The learner calendar agenda is a rolling 30 days from the anchor, but the
-  // placement/recruiter agenda spans the selected calendar month.
-  const period = careerCalendarPeriod(
-    [],
-    anchor,
-    view === "agenda" ? "month" : view,
-  );
-
+  // Legacy placement agenda starts on the selected day and includes day +30.
+  // Unlike the learner 30-day agenda, this is an inclusive 31-day window.
   if (view === "agenda") {
     return {
-      from: period.start,
-      to: period.end,
+      from: anchor,
+      to: shiftCareerCalendarDay(anchor, "day", 30),
       days: [] as string[],
     };
   }
+  const period = careerCalendarPeriod([], anchor, view);
 
   if (view === "week") {
     const days = Array.from(
