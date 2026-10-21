@@ -1,4 +1,4 @@
-export type HrBellNotification={id:string;label:string;unread:boolean;at:string;href:string};
+export type HrBellNotification={id:string;label:string;title?:string;unread:boolean;at:string;href:string};
 export type HrBellResponse={status:string;unread:number;hiddenUnread:number;items:HrBellNotification[]};
 export function relativeHrBellTime(at:string,now:number):string{
  const time=new Date(at).getTime();
@@ -45,10 +45,12 @@ export function parseHrBellResponse(raw:unknown):HrBellResponse|null{
      typeof item.at!=="string"||typeof item.href!=="string"||
      typeof item.unread!=="boolean"||item.label.length>500||
      !Number.isFinite(Date.parse(item.at))||
-     !/^\/hr\/placements\/jobs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(item.href)){
+     !/^\/hr\/placements\/jobs\/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?:\?tab=(?:overview|applicants|rounds|offers|requests|discussion))?$/i.test(item.href)){
    return null;
   }
-  items.push({id:item.id,label:item.label,unread:item.unread,at:item.at,href:item.href});
+  if(item.title!==undefined&&(typeof item.title!=="string"||item.title.length>300))return null;
+  items.push({id:item.id,label:item.label,title:typeof item.title==="string"?item.title:undefined,
+    unread:item.unread,at:item.at,href:item.href});
  }
  const hiddenUnread = candidate.hiddenUnread === undefined
   ? Math.max(0,candidate.unread-items.filter(item=>item.unread).length)
