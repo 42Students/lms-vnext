@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {listMyProjectInstances} from "@/modules/projects/member-service";
@@ -33,7 +34,26 @@ function first(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-export default async function MentorNotificationsPage({
+function MentorNotificationsLoading() {
+  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading notifications">
+    <PageHeader title="Notifications" />
+    <div className="space-y-3" aria-hidden="true">
+      {[1,2,3].map(value=><div key={value} className="flex items-start gap-3 border-b border-border py-4">
+        <span className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-muted" />
+        <div className="w-full space-y-2"><div className="h-4 w-2/5 animate-pulse rounded bg-muted"/>
+          <div className="h-3 w-4/5 animate-pulse rounded bg-muted"/></div>
+      </div>)}
+    </div>
+  </div>;
+}
+
+export default function MentorNotificationsPage({searchParams}:{searchParams:Promise<Params>}) {
+  return <Suspense fallback={<MentorNotificationsLoading />}>
+    <MentorNotificationsContent searchParams={searchParams}/>
+  </Suspense>;
+}
+
+async function MentorNotificationsContent({
   searchParams,
 }: { searchParams: Promise<Params> }) {
   const raw = await searchParams;
@@ -90,6 +110,14 @@ export default async function MentorNotificationsPage({
   }));
   const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
+  const allSourcesEmpty = failedSources.length===0 && items.length===0 &&
+    visibleAlerts.length===0 && announcements.length===0 && !nextHref;
+  const retryParams = new URLSearchParams();
+  if(parsed.data.view!=="all")retryParams.set("view",parsed.data.view);
+  if(kind.data!=="ALL")retryParams.set("kind",kind.data);
+  if(projectId.data)retryParams.set("projectId",projectId.data);
+  if(attentionOrder.data!=="RECENT")retryParams.set("attentionOrder",attentionOrder.data);
+  const retryHref = MENTOR_INBOX+(retryParams.size?"?"+retryParams.toString():"");
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
@@ -98,10 +126,17 @@ export default async function MentorNotificationsPage({
       <p className="mt-1 text-sm text-body leading-[22px]">
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
       </p>
-      <Link href={MENTOR_INBOX}
+      <Link href={retryHref}
         className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Retry sources</Link>
     </Alert> : null}
-    <section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
+    {allSourcesEmpty?<div role="status" className="flex items-center gap-3 border-b border-border py-6">
+      <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
+        className="h-8 w-8 shrink-0 text-success">
+        <circle cx="12" cy="12" r="9"/><path d="m8 12 3 3 5-6"/>
+      </svg>
+      <p className="text-sm font-semibold text-body">Nothing needs your attention right now.</p>
+    </div>:null}
+    {!allSourcesEmpty?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
       <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Personal notifications
       </h2>
@@ -126,7 +161,8 @@ export default async function MentorNotificationsPage({
               </Link>
             </div> : null}
           </>}
-    </section>    <section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
+    </section>:null}
+    {!allSourcesEmpty?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
       <h2 id="mentor-attention" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
@@ -182,13 +218,13 @@ export default async function MentorNotificationsPage({
                 </div>
                 <p className="mt-2 text-sm text-body leading-[22px]">{alert.description}</p>
               </Link>)}</div>}
-    </section>
-    <AnnouncementFeed enabled={announcementsEnabled}
+    </section>:null}
+    {!allSourcesEmpty?<AnnouncementFeed enabled={announcementsEnabled}
       items={announcements.map(item=>({
         id:item.id,title:item.title,message:item.message,
         senderType:item.senderType,receiverType:item.receiverType,
         isPinned:item.isPinned,createdAt:item.createdAt,
-      }))} />
+      }))} />:null}
 
   </div>;
 }

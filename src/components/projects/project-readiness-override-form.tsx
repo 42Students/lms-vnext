@@ -3,10 +3,9 @@ import { Button } from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
-import { Select } from "@/components/ui/select";
 
 import { useRouter } from "next/navigation";
-import { useRef, useState, type FormEvent } from "react";
+import { useId, useRef, useState, type FormEvent } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { apiFetch } from "@/lib/api-fetch";
 import { projectReadinessLegacyCopy as copy } from "@/modules/projects/readiness-override-copy";
@@ -26,6 +25,7 @@ export function ProjectReadinessOverrideForm({
   compactLayout?: boolean;
 }) {
   const router = useRouter();
+  const overrideId=useId();
   const {showToast}=useToast();
   const [state, setState] = useState<ReadinessOverrideState | "">(initialState ?? "");
   const [note, setNote] = useState(initialNote ?? "");
@@ -36,6 +36,15 @@ export function ProjectReadinessOverrideForm({
   const [liveHasSubmission,setLiveHasSubmission]=useState(hasSubmission);
   const [checking,setChecking]=useState(false);
   const gateSnapshot=useRef<boolean|null>(null);
+
+  function chooseOverride(nextState:ReadinessOverrideState) {
+    if(nextState!==state&&nextState!=="CLEAR"&&
+       (state!==""&&state!=="CLEAR"||(initialState!==null&&nextState!==initialState))) {
+      setNote("");
+    }
+    setState(nextState);
+    setFeedback(null);
+  }
 
   async function readSubmissionGate(){
     const response=await fetch("/api/projects/"+encodeURIComponent(projectId)+"/readiness",
@@ -111,28 +120,30 @@ export function ProjectReadinessOverrideForm({
           <Alert tone="warning">
             Force Unlock/Block will have no effect here while a submission already exists.
             Review or reopen the delivery first, then return to readiness before allowing a new submission.
+            This manual override is recorded but cannot unlock a workspace with a final submission.
+            Ask the mentor or college administrator to resolve that submission before applying again.
           </Alert>
         ) : null}
-        <div className="grid min-w-0 gap-[6px]">
-        <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-override">{copy.stateLabel}</label>
-        <Select
-          id="project-readiness-override"
-          className="w-full"
-          value={state}
-          disabled={pending}
-          onChange={(event) => {
-            const nextState = event.target.value as ReadinessOverrideState;
-            if (nextState !== state) setNote("");
-            setState(nextState);
-            setFeedback(null);
-          }}
-        >
-          <option value="" disabled>Choose an override state</option>
-          <option value="FORCE_UNLOCK">{copy.unlock}</option>
-          <option value="FORCE_BLOCK">{copy.block}</option>
-          <option value="CLEAR">{copy.clear}</option>
-        </Select>
-        </div>
+        <fieldset className="min-w-0 space-y-2" disabled={pending||checking}>
+          <legend className="mb-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{copy.stateLabel}</legend>
+          <div className="flex min-w-0 flex-wrap gap-2" role="radiogroup" aria-label="Override state">
+            {([
+              {value:"FORCE_UNLOCK" as const,label:copy.unlock},
+              {value:"FORCE_BLOCK" as const,label:copy.block},
+              ...(initialState&&initialState!=="CLEAR"?[{value:"CLEAR" as const,label:copy.clear}]:[]),
+            ]).map(option=><label key={option.value} htmlFor={overrideId+option.value} className="min-w-0">
+              <input id={overrideId+option.value} type="radio" name={overrideId+"-override"}
+                value={option.value} checked={state===option.value}
+                onChange={()=>chooseOverride(option.value)}
+                className="peer sr-only"/>
+              <span className={"inline-flex min-h-11 cursor-pointer items-center rounded-lg border px-4 text-sm font-semibold md:min-h-9 "+
+                "peer-focus-visible:outline-2 peer-focus-visible:outline-offset-[3px] peer-focus-visible:outline-[var(--lms-primary)] "+
+                (state===option.value?"border-primary bg-primary text-white":"border-border bg-surface text-body hover:border-primary hover:bg-primary-subtle")}>
+                {option.label}
+              </span>
+            </label>)}
+          </div>
+        </fieldset>
         {Boolean(state) && state !== "CLEAR" ? (
           <div className="grid min-w-0 gap-[6px]">
             <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor="project-readiness-note">{copy.note}</label>
@@ -148,6 +159,9 @@ export function ProjectReadinessOverrideForm({
               rows={3}
               className="w-full"
             />
+            <p className="text-right text-xs tabular-nums text-muted-foreground" aria-live="polite">
+              {note.length} / 2000 characters
+            </p>
           </div>
         ) : null}
         <div className="flex min-w-0 justify-stretch md:justify-end">
@@ -160,7 +174,8 @@ export function ProjectReadinessOverrideForm({
         open={confirmOpen}
         onOpenChange={next=>{if(!pending)setConfirmOpen(next);}}
         title={state === "CLEAR" ? copy.clearConfirm : copy.applyConfirm}
-        description={state === "CLEAR" ? "The manual override will be removed." : "The chosen override will be visible to mentors and learners."}
+        description={state === "CLEAR" ? "The manual override will be removed." :
+          "This changes the learner's ability to make a final delivery. The chosen override and your note will be visible to mentors and learners."}
         confirmLabel="Apply override"
         confirmVariant="primary"
         pending={pending}
