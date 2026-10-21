@@ -95,7 +95,7 @@ export function validateResolvedResourceUploadScope(input:{
    input.deliveryId!==null&&(!uuid.test(input.deliveryId)||input.deliveryOfferingId!==input.offeringId))
   return {ok:false,message:"This Resource is not part of the selected course and class."};
  const valid=validateStorageDeclaration("project-resource",input.file);
- if(!valid.ok||!LEGACY_RESOURCE_MIME.has(valid.value.contentType as string))
+ if(!valid.ok||!LEGACY_RESOURCE_MIME.has(valid.value.contentType))
   return {ok:false,message:"Choose a supported Resource file up to 50 MiB."};
  return {ok:true,request:{lessonContentId:input.lessonContentId,
   deliveryId:input.deliveryId,...valid.value}};
