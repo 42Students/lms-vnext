@@ -7,6 +7,7 @@ const retainedKeys=[
   // Preserve the open task and page cursor while switching tabs. A task form
   // may have unsaved edits; silently clearing taskId closes the dialog.
   "taskId","taskPage","page","before","beforeId",
+  "taskSort","assignee","activityBeforeTime","activityBeforeId",
 ] as const;
 /** Keep open task context and paging during tab transitions. */
 export function learnerProjectTabHref(

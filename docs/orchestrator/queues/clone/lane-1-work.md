@@ -79,7 +79,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_pr-s2-04-task-fields-model.ts.md` (edit src/modules/projects/pr-s2-04-task-fields-model.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-sprint-delete-service.ts.md` (edit src/modules/projects/mentor-sprint-delete-service.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-sprint-write-service.ts.md` (edit src/modules/projects/mentor-sprint-write-service.ts; 4 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_learner-project-tab-href-model.ts.md` (edit src/modules/projects/learner-project-tab-href-model.ts; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_learner-project-tab-href-model.ts.md` (edit src/modules/projects/learner-project-tab-href-model.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_app_api_projects_route.ts.md` (edit src/app/api/projects/route.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_admin-submissions-query-model.ts.md` (edit src/modules/projects/admin-submissions-query-model.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-readiness-override-form.tsx.md` (edit src/components/projects/project-readiness-override-form.tsx; 4 findings; best P1)
