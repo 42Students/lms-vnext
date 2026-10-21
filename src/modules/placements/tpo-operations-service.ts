@@ -260,139 +260,79 @@ db
   ]);
   const jobs = [...activeJobs, ...otherJobs];
   const sampledJobIds = jobs.map(({ job }) => job.id);
-  const [applications, rounds, resultRows, offerRows] = await Promise.all([
-      db
-        .select({
-          application: placementApplications,
-          screening:
-            placementApplicationScreenings,
-        })
-        .from(placementApplications)
-        .innerJoin(
-          placementApplicationScreenings,
-          eq(
-            placementApplicationScreenings.applicationId,
-            placementApplications.id,
-          ),
-        )
-        .innerJoin(
-          placementJobs,
-          eq(
-            placementJobs.id,
-            placementApplications.jobId,
-          ),
-        )
-        .where(
-          and(
-            eq(placementJobs.collegeId, collegeId),
-            isNull(placementJobs.archivedAt),
-            inArray(placementJobs.id, sampledJobIds),
-            eq(
-              placementApplications.status,
-              "SUBMITTED",
-            ),
-          ),
-        ),
-      db
-        .select({
-          round: placementJobRounds,
-        })
-        .from(placementJobRounds)
-        .innerJoin(
-          placementJobs,
-          eq(
-            placementJobs.id,
-            placementJobRounds.jobId,
-          ),
-        )
-        .where(
-          and(
-            eq(placementJobs.collegeId, collegeId),
-            isNull(placementJobs.archivedAt),
-            inArray(placementJobs.id, sampledJobIds),
-            ne(
-              placementJobRounds.status,
-              "CANCELLED",
-            ),
-          ),
-        )
-        .orderBy(
-          asc(placementJobRounds.sequence),
-        ),
-      db
-        .select({
-          result: placementRoundResults,
-          jobId: placementJobRounds.jobId,
-        })
-        .from(placementRoundResults)
-        .innerJoin(
-          placementJobRounds,
-          eq(
-            placementJobRounds.id,
-            placementRoundResults.roundId,
-          ),
-        )
-        .innerJoin(
-          placementJobs,
-          eq(
-            placementJobs.id,
-            placementJobRounds.jobId,
-          ),
-        )
-        .where(
-          and(
-            eq(placementJobs.collegeId, collegeId),
-            isNull(placementJobs.archivedAt),
-            inArray(placementJobs.id, sampledJobIds),
-            ne(
-              placementRoundResults.status,
-              "SUPERSEDED",
-            ),
-          ),
-        ),
-      db
-        .select({
-          offer: placementOffers,
-          joining: placementJoiningOutcomes,
-          jobId: placementApplications.jobId,
-        })
-        .from(placementOffers)
-        .innerJoin(
-          placementApplications,
-          eq(
-            placementApplications.id,
-            placementOffers.applicationId,
-          ),
-        )
-        .innerJoin(
-          placementJobs,
-          eq(
-            placementJobs.id,
-            placementApplications.jobId,
-          ),
-        )
-        .leftJoin(
-          placementJoiningOutcomes,
-          eq(
-            placementJoiningOutcomes.offerId,
-            placementOffers.id,
-          ),
-        )
-        .where(
-          and(
-            eq(
-              placementJobs.collegeId,
-              collegeId,
-            ),
-            isNull(
-              placementJobs.archivedAt,
-            ),
-            inArray(placementJobs.id, sampledJobIds),
-          ),
-        ),
+
+  // Group all learner-dependent metrics in SQL: the response is proportional
+  // to sampled drives, never to their applicant, result or offer row counts.
+  const staleBefore = new Date(now.getTime() -
+    Math.max(1, Math.min(90, staleApplicationDays)) * 86400000);
+  const [applicationStats, roundStats, resultStats, offerStats, scheduledRows] =
+    await Promise.all([
+      db.select({
+        jobId: placementApplications.jobId,
+        submitted: sql<number>`count(*)::int`,
+        pending: sql<number>`count(*) filter (where ${placementApplicationScreenings.status} in ('PENDING', 'HOLD'))::int`,
+        shortlisted: sql<number>`count(*) filter (where ${placementApplicationScreenings.status} = 'SHORTLISTED')::int`,
+        rejected: sql<number>`count(*) filter (where ${placementApplicationScreenings.status} = 'REJECTED')::int`,
+        stale: sql<number>`count(*) filter (where ${placementApplicationScreenings.status} in ('PENDING', 'HOLD') and ${placementApplications.submittedAt} <= ${staleBefore})::int`,
+      }).from(placementApplications)
+        .innerJoin(placementApplicationScreenings, eq(placementApplicationScreenings.applicationId, placementApplications.id))
+        .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+        .where(and(eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
+          inArray(placementJobs.id, sampledJobIds), eq(placementApplications.status, "SUBMITTED")))
+        .groupBy(placementApplications.jobId),
+      db.select({
+        jobId: placementJobRounds.jobId,
+        total: sql<number>`count(*)::int`,
+        pending: sql<number>`count(*) filter (where ${placementJobRounds.status} = 'PENDING')::int`,
+        scheduled: sql<number>`count(*) filter (where ${placementJobRounds.status} = 'SCHEDULED')::int`,
+        completed: sql<number>`count(*) filter (where ${placementJobRounds.status} = 'COMPLETED')::int`,
+        interviews: sql<number>`count(*) filter (where ${placementJobRounds.kind} = 'INTERVIEW')::int`,
+        scheduledInterviews: sql<number>`count(*) filter (where ${placementJobRounds.kind} = 'INTERVIEW' and ${placementJobRounds.status} = 'SCHEDULED')::int`,
+      }).from(placementJobRounds)
+        .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
+        .where(and(eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
+          inArray(placementJobs.id, sampledJobIds), ne(placementJobRounds.status, "CANCELLED")))
+        .groupBy(placementJobRounds.jobId),
+      db.select({
+        jobId: placementJobRounds.jobId,
+        staged: sql<number>`count(*) filter (where ${placementRoundResults.status} = 'STAGED')::int`,
+        applied: sql<number>`count(*) filter (where ${placementRoundResults.status} = 'APPLIED')::int`,
+      }).from(placementRoundResults)
+        .innerJoin(placementJobRounds, eq(placementJobRounds.id, placementRoundResults.roundId))
+        .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
+        .where(and(eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
+          inArray(placementJobs.id, sampledJobIds), ne(placementRoundResults.status, "SUPERSEDED")))
+        .groupBy(placementJobRounds.jobId),
+      db.select({
+        jobId: placementApplications.jobId,
+        issued: sql<number>`count(*) filter (where ${placementOffers.status} = 'ISSUED')::int`,
+        acceptedPending: sql<number>`count(*) filter (where ${placementOffers.status} = 'ACCEPTED' and ${placementJoiningOutcomes.status} = 'PENDING')::int`,
+        joined: sql<number>`count(*) filter (where ${placementJoiningOutcomes.status} = 'JOINED')::int`,
+        missingLetter: sql<number>`count(*) filter (where ${placementOffers.status} in ('ISSUED', 'ACCEPTED') and (${placementOffers.offerLetterUrl} is null or ${placementOffers.offerLetterUrl} = ''))::int`,
+      }).from(placementOffers)
+        .innerJoin(placementApplications, eq(placementApplications.id, placementOffers.applicationId))
+        .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+        .leftJoin(placementJoiningOutcomes, eq(placementJoiningOutcomes.offerId, placementOffers.id))
+        .where(and(eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
+          inArray(placementJobs.id, sampledJobIds)))
+        .groupBy(placementApplications.jobId),
+      db.select({
+        round: placementJobRounds,
+        jobId: placementJobs.id,
+        jobTitle: placementJobs.title,
+        companyName: placementCompanies.name,
+      }).from(placementJobRounds)
+        .innerJoin(placementJobs, eq(placementJobs.id, placementJobRounds.jobId))
+        .innerJoin(placementCompanyRelationships,
+          eq(placementCompanyRelationships.id, placementJobs.companyRelationshipId))
+        .innerJoin(placementCompanies,
+          eq(placementCompanies.id, placementCompanyRelationships.companyId))
+        .where(and(eq(placementJobs.collegeId, collegeId), isNull(placementJobs.archivedAt),
+          eq(placementJobRounds.status, "SCHEDULED"),
+          sql`${placementJobRounds.scheduledAt} >= ${now}`))
+        .orderBy(asc(placementJobRounds.scheduledAt), asc(placementJobRounds.id))
+        .limit(20),
     ]);
-
-
 
   // Dashboard cards are bounded; headline counts are NOT card-array lengths.
   // Metrics represent all non-archived jobs for the selected college.
@@ -438,54 +378,14 @@ db
           isNull(placementJobs.archivedAt), ne(placementJobRounds.status, "CANCELLED"))),
     ]);
 
-  const applicationsByJob = new Map<
-    string,
-    typeof applications
-  >();
-  for (const row of applications) {
-    const list =
-      applicationsByJob.get(
-        row.application.jobId,
-      ) ?? [];
-    list.push(row);
-    applicationsByJob.set(
-      row.application.jobId,
-      list,
-    );
-  }
 
-  const roundsByJob = new Map<
-    string,
-    Array<(typeof rounds)[number]["round"]>
-  >();
-  for (const { round } of rounds) {
-    const list =
-      roundsByJob.get(round.jobId) ?? [];
-    list.push(round);
-    roundsByJob.set(round.jobId, list);
-  }
-
-  const resultsByJob = new Map<
-    string,
-    Array<(typeof resultRows)[number]["result"]>
-  >();
-  for (const row of resultRows) {
-    const list =
-      resultsByJob.get(row.jobId) ?? [];
-    list.push(row.result);
-    resultsByJob.set(row.jobId, list);
-  }
-
-  const offersByJob = new Map<
-    string,
-    typeof offerRows
-  >();
-  for (const row of offerRows) {
-    const list =
-      offersByJob.get(row.jobId) ?? [];
-    list.push(row);
-    offersByJob.set(row.jobId, list);
-  }
+  const byJob = <T extends {jobId: string}>(rows: readonly T[]) =>
+    new Map(rows.map(row => [row.jobId, row] as const));
+  const applicationByJob = byJob(applicationStats);
+  const roundByJob = byJob(roundStats);
+  const resultByJob = byJob(resultStats);
+  const offerByJob = byJob(offerStats);
+  const count = (value: number | null | undefined) => Number(value ?? 0);
 
   const workQueue: Array<{
     priority: QueuePriority;
@@ -495,206 +395,77 @@ db
     companyName: string;
     count: number;
   }> = [];
-
-  const jobViews = jobs.map(({ job, company }) => {
-    const jobApplications =
-      applicationsByJob.get(job.id) ?? [];
-    const jobRounds =
-      roundsByJob.get(job.id) ?? [];
-    const jobResults =
-      resultsByJob.get(job.id) ?? [];
-    const jobOffers =
-      offersByJob.get(job.id) ?? [];
-    const pendingScreening =
-      jobApplications.filter(
-        ({ screening }) =>
-          screening.status === "PENDING" ||
-          screening.status === "HOLD",
-      ).length;
-    const shortlisted = jobApplications.filter(
-      ({ screening }) =>
-        screening.status === "SHORTLISTED",
-    ).length;
-    const rejected = jobApplications.filter(
-      ({ screening }) =>
-        screening.status === "REJECTED",
-    ).length;
-    const stagedResults = jobResults.filter(
-      (result) => result.status === "STAGED",
-    ).length;
-    const appliedResults = jobResults.filter(
-      (result) => result.status === "APPLIED",
-    ).length;
-    const unscheduledRounds = jobRounds.filter(
-      (round) => round.status === "PENDING",
-    ).length;
-    const scheduledRounds = jobRounds.filter(
-      (round) => round.status === "SCHEDULED",
-    ).length;
-    const completedRounds = jobRounds.filter(
-      (round) => round.status === "COMPLETED",
-    ).length;
-    const issuedOffers = jobOffers.filter(
-      ({ offer }) =>
-        offer.status === "ISSUED",
-    ).length;
-    const acceptedPendingJoining =
-      jobOffers.filter(
-        ({ offer, joining }) =>
-          offer.status === "ACCEPTED" &&
-          joining?.status === "PENDING",
-      ).length;
-    const joinedOffers = jobOffers.filter(
-      ({ joining }) =>
-        joining?.status === "JOINED",
-    ).length;
-
-    const pushQueue = (
-      priority: QueuePriority,
-      code: string,
-      count: number,
-    ) => {
-      if (count <= 0) return;
-      workQueue.push({
-        priority,
-        code,
-        jobId: job.id,
-        jobTitle: job.title,
-        companyName: company.name,
-        count,
-      });
+  const jobViews = jobs.map(({job, company}) => {
+    const a = applicationByJob.get(job.id);
+    const r = roundByJob.get(job.id);
+    const results = resultByJob.get(job.id);
+    const offers = offerByJob.get(job.id);
+    const submitted = count(a?.submitted);
+    const pending = count(a?.pending);
+    const shortlisted = count(a?.shortlisted);
+    const rejected = count(a?.rejected);
+    const staged = count(results?.staged);
+    const applied = count(results?.applied);
+    const roundCount = count(r?.total);
+    const unscheduled = count(r?.pending);
+    const scheduled = count(r?.scheduled);
+    const completed = count(r?.completed);
+    const issued = count(offers?.issued);
+    const acceptedPending = count(offers?.acceptedPending);
+    const joined = count(offers?.joined);
+    const pushQueue = (priority: QueuePriority, code: string, amount: number) => {
+      if (amount <= 0) return;
+      workQueue.push({priority, code, jobId: job.id,
+        jobTitle: job.title, companyName: company.name, count: amount});
     };
-
-    if (job.status === "DRAFT") {
-      pushQueue("LOW", "JOB_DRAFT", 1);
-    }
-    if (
-      job.status === "PUBLISHED" &&
-      jobRounds.length === 0
-    ) {
-      pushQueue(
-        "MEDIUM",
-        "EVALUATION_PLAN_MISSING",
-        1,
-      );
-    }
-    if (
-      job.status === "PUBLISHED" &&
-      jobRounds.length > 0 &&
-      jobRounds.every(
-        (round) => round.status === "PENDING",
-      )
-    ) {
-      pushQueue(
-        "MEDIUM",
-        "DRIVE_NOT_SCHEDULED",
-        unscheduledRounds,
-      );
-    }
-    pushQueue(
-      "HIGH",
-      "SCREENING_PENDING",
-      pendingScreening,
-    );
-    pushQueue(
-      "HIGH",
-      "RESULTS_AWAITING_APPLY",
-      stagedResults,
-    );
-    if(job.status==="PUBLISHED"){
-      const withoutLetter=jobOffers.filter(({offer})=>
-        (offer.status==="ISSUED"||offer.status==="ACCEPTED") && !offer.offerLetterUrl).length;
-      pushQueue("HIGH","OFFERED_NO_LETTER",withoutLetter);
-    }
-    pushQueue(
-      "MEDIUM",
-      "OFFERS_AWAITING_RESPONSE",
-      issuedOffers,
-    );
-    pushQueue(
-      "MEDIUM",
-      "JOINING_OUTCOME_PENDING",
-      acceptedPendingJoining,
-    );
+    if (job.status === "DRAFT") pushQueue("LOW", "JOB_DRAFT", 1);
+    if (job.status === "PUBLISHED" && roundCount === 0)
+      pushQueue("MEDIUM", "EVALUATION_PLAN_MISSING", 1);
+    if (job.status === "PUBLISHED" && roundCount > 0 && roundCount === unscheduled)
+      pushQueue("MEDIUM", "DRIVE_NOT_SCHEDULED", unscheduled);
+    pushQueue("HIGH", "SCREENING_PENDING", pending);
+    pushQueue("HIGH", "RESULTS_AWAITING_APPLY", staged);
+    // Hired learners remain ACCEPTED in the offer model and JOINED in the
+    // joining model; include them in missing-letter attention.
+    if (job.status === "PUBLISHED")
+      pushQueue("HIGH", "OFFERED_NO_LETTER", count(offers?.missingLetter));
+    pushQueue("MEDIUM", "OFFERS_AWAITING_RESPONSE", issued);
+    pushQueue("MEDIUM", "JOINING_OUTCOME_PENDING", acceptedPending);
     if (job.status === "PUBLISHED") {
-      const stale = jobApplications.filter(({application,screening}) =>
-        (screening.status === "PENDING" || screening.status === "HOLD") &&
-        now.getTime()-application.submittedAt.getTime() >= Math.max(1,Math.min(90,staleApplicationDays))*86400000).length;
-      pushQueue("HIGH","STALE_APPLICATIONS",stale);
-      if(shortlisted > 0 && jobRounds.some(round=>round.kind==="INTERVIEW") &&
-        !jobRounds.some(round=>round.kind==="INTERVIEW" && round.status==="SCHEDULED")){
-        pushQueue("MEDIUM","INTERVIEW_UNSCHEDULED",shortlisted);
-      }
-      if(job.applicationDeadline && job.openings &&
-        job.applicationDeadline.getTime()>now.getTime() &&
-        job.applicationDeadline.getTime()-now.getTime()<=7*86400000 &&
-        jobApplications.length < Math.ceil(job.openings/2)){
-        pushQueue("MEDIUM","CLOSING_SOON_LOW_CONVERSION",jobApplications.length || 1);
-      }
+      pushQueue("HIGH", "STALE_APPLICATIONS", count(a?.stale));
+      if (shortlisted > 0 && count(r?.interviews) > 0 &&
+          count(r?.scheduledInterviews) === 0)
+        pushQueue("MEDIUM", "INTERVIEW_UNSCHEDULED", shortlisted);
+      if (job.applicationDeadline && job.openings &&
+          job.applicationDeadline.getTime() > now.getTime() &&
+          job.applicationDeadline.getTime() - now.getTime() <= 7 * 86400000 &&
+          submitted < Math.ceil(job.openings / 2))
+        pushQueue("MEDIUM", "CLOSING_SOON_LOW_CONVERSION", submitted || 1);
     }
-
-    const nextScheduledRound =
-      jobRounds
-        .filter(
-          (round) =>
-            round.status === "SCHEDULED" &&
-            round.scheduledAt &&
-            round.scheduledAt.getTime() >=
-              now.getTime(),
-        )
-        .sort(
-          (left, right) =>
-            left.scheduledAt!.getTime() -
-            right.scheduledAt!.getTime(),
-        )[0] ?? null;
-
+    const nextScheduledRound = scheduledRows.find(item => item.jobId === job.id)?.round ?? null;
     return {
       job: {
-        id: job.id,
-        title: job.title,
-        status: job.status,
-        applicationDeadline:
-          job.applicationDeadline,
-        employmentType: job.employmentType,
-        locations: job.locations,
+        id: job.id, title: job.title, status: job.status,
+        applicationDeadline: job.applicationDeadline,
+        employmentType: job.employmentType, locations: job.locations,
         publishedAt: job.publishedAt,
-        company: {
-          id: company.id,
-          name: company.name,
-        },
+        company: {id: company.id, name: company.name},
       },
       metrics: {
-        submittedApplications:
-          jobApplications.length,
-        pendingScreening,
-        shortlisted,
-        rejected,
-        roundCount: jobRounds.length,
-        unscheduledRounds,
-        scheduledRounds,
-        completedRounds,
-        stagedResults,
-        appliedResults,
-        issuedOffers,
-        acceptedPendingJoining,
-        joinedOffers,
+        submittedApplications: submitted, pendingScreening: pending, shortlisted,
+        rejected, roundCount, unscheduledRounds: unscheduled,
+        scheduledRounds: scheduled, completedRounds: completed,
+        stagedResults: staged, appliedResults: applied,
+        issuedOffers: issued, acceptedPendingJoining: acceptedPending,
+        joinedOffers: joined,
       },
-      nextScheduledRound: nextScheduledRound
-        ? {
-            id: nextScheduledRound.id,
-            sequence:
-              nextScheduledRound.sequence,
-            kind: nextScheduledRound.kind,
-            name: nextScheduledRound.name,
-            scheduledAt:
-              nextScheduledRound.scheduledAt,
-            timezone: nextScheduledRound.timezone,
-            mode: nextScheduledRound.mode,
-            venue: nextScheduledRound.venue,
-            meetingUrl:
-              nextScheduledRound.meetingUrl,
-          }
-        : null,
+      nextScheduledRound: nextScheduledRound ? {
+        id: nextScheduledRound.id, sequence: nextScheduledRound.sequence,
+        kind: nextScheduledRound.kind, name: nextScheduledRound.name,
+        scheduledAt: nextScheduledRound.scheduledAt,
+        timezone: nextScheduledRound.timezone, mode: nextScheduledRound.mode,
+        venue: nextScheduledRound.venue, meetingUrl: nextScheduledRound.meetingUrl,
+      } : null,
     };
   });
 
@@ -717,47 +488,12 @@ db
     );
   });
 
-  const upcomingRounds = rounds
-    .map(({ round }) => {
-      const jobView = jobViews.find(
-        (item) => item.job.id === round.jobId,
-      );
-      if (
-        round.status !== "SCHEDULED" ||
-        !round.scheduledAt ||
-        round.scheduledAt.getTime() <
-          now.getTime() ||
-        !jobView
-      ) {
-        return null;
-      }
-      return {
-        jobId: jobView.job.id,
-        jobTitle: jobView.job.title,
-        companyName: jobView.job.company.name,
-        roundId: round.id,
-        sequence: round.sequence,
-        kind: round.kind,
-        name: round.name,
-        scheduledAt: round.scheduledAt,
-        timezone: round.timezone,
-        mode: round.mode,
-        venue: round.venue,
-        meetingUrl: round.meetingUrl,
-      };
-    })
-    .filter(
-      (
-        round,
-      ): round is NonNullable<typeof round> =>
-        round !== null,
-    )
-    .sort(
-      (left, right) =>
-        left.scheduledAt.getTime() -
-        right.scheduledAt.getTime(),
-    )
-    .slice(0, 20);
+  const upcomingRounds = scheduledRows.map(({round, jobId, jobTitle, companyName}) => ({
+    jobId, jobTitle, companyName, roundId: round.id,
+    sequence: round.sequence, kind: round.kind, name: round.name,
+    scheduledAt: round.scheduledAt!, timezone: round.timezone,
+    mode: round.mode, venue: round.venue, meetingUrl: round.meetingUrl,
+  }));
 
   const [
     jobAnalytics,

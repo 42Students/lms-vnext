@@ -8,7 +8,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { AdminAssessmentDirectory } from "@/components/courses/admin-assessment-read-directory";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
-import {getCollegeAssignmentAuthoringOptions} from "@/modules/courses/college-assignment-authoring-options";
+import {getCollegeAssignmentAuthoringCatalog} from "@/modules/courses/college-assignment-authoring-options";
 import { adminAssessmentExportHref } from "@/modules/courses/admin-assessment-directory-model";
 import {parseSuperAdminAssignmentQuery} from "@/modules/admin-ui/super-admin-quiz-query-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
@@ -38,7 +38,7 @@ export default async function SuperAdminAssignmentsPage({
   // directory. A failed directory query must never be shown as an empty list.
   const [dataResult,lessonsResult]=await Promise.allSettled([
     listCollegeAssessmentAggregate(context,"ASSIGNMENT",query.data),
-    getCollegeAssignmentAuthoringOptions(context),
+    getCollegeAssignmentAuthoringCatalog(context),
   ]);
   if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
@@ -49,12 +49,12 @@ export default async function SuperAdminAssignmentsPage({
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-    <PageHeader title="Assignments" />
-    {lessonsResult.status==="fulfilled"
-      ?<CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>
-      :<Alert tone="warning" role="status">
-        Assignment creation options are temporarily unavailable. Existing assignments remain visible.
-      </Alert>}
+    <PageHeader title="Assignments" actions={lessonsResult.status==="fulfilled"?
+      <CollegeAssignmentCreate lessons={lessonsResult.value.lessons} deliveries={lessonsResult.value.deliveries}/>:
+      null}/>
+    {lessonsResult.status==="rejected"?<Alert tone="warning" role="status">
+      Assignment creation options are temporarily unavailable. Existing assignments remain visible.
+    </Alert>:null}
     <AdminAssessmentDirectory data={data} showHeader={false} />
     <div className="flex min-w-0 flex-wrap justify-start gap-2 print:hidden">
       {data.items.length ? <a download href={adminAssessmentExportHref("ASSIGNMENT",query.data,"PAGE")}

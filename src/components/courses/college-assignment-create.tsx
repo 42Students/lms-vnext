@@ -24,7 +24,9 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const router=useRouter();
  const [opened,setOpened]=useState(false);
  const [keepOpen,setKeepOpen]=useState(false);
+ const [offeringId,setOfferingId]=useState(lessons[0]?.offeringId??"");
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
+ const [audience,setAudience]=useState<"SHARED"|"SECTION">("SHARED");
  const [deliveryId,setDeliveryId]=useState("");
  const [title,setTitle]=useState("");
  const [description,setDescription]=useState("");
@@ -37,17 +39,21 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const [confirmCreate,setConfirmCreate]=useState(false),[confirmDiscard,setConfirmDiscard]=useState(false);
  const lock=useRef(false);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
- const chosen=lessons.find(x=>x.id===lessonId);
+ const courses=useMemo(()=>lessons.filter((lesson,index)=>
+  lessons.findIndex(candidate=>candidate.offeringId===lesson.offeringId)===index),[lessons]);
+ const availableLessons=useMemo(()=>lessons.filter(lesson=>lesson.offeringId===offeringId),
+  [lessons,offeringId]);
+ const chosen=availableLessons.find(x=>x.id===lessonId);
  const pointsValid=points.trim().length>0&&Number.isInteger(Number(points))&&Number(points)>=0&&Number(points)<=10000;
  const sections=useMemo(()=>deliveries.filter(d=>d.offeringId===chosen?.offeringId),
    [deliveries,chosen?.offeringId]);
  function discardDraft(){
   setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("0");
-  setDeliveryId("");setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);setError("");setConfirmDiscard(false);
+  setDeliveryId("");setAudience("SHARED");setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);setError("");setConfirmDiscard(false);
  }
  function close(){
   if(pending)return;
-  const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||points!=="0"||
+  const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||audience!=="SHARED"||points!=="0"||
    allowedMethods.length!==DEFAULT_ASSIGNMENT_METHODS.length||
    DEFAULT_ASSIGNMENT_METHODS.some(method=>!allowedMethods.includes(method)));
   if(dirty){setConfirmDiscard(true);return;}
@@ -64,8 +70,8 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   if((nextOverride[chosen.id]??chosen.nextSequence)>10000){
    setError("This lesson has reached the assignment ordering limit.");return;
   }
-  const delivery=sections.find(x=>x.deliveryId===deliveryId);
-  if(deliveryId&&!delivery){setError("Choose a Section belonging to this course offering.");return;}
+  const delivery=audience==="SECTION"?sections.find(x=>x.deliveryId===deliveryId):undefined;
+  if(audience==="SECTION"&&!delivery){setError("Choose a Section belonging to this course offering.");return;}
   const dueIso=dueAt?parseCollegeIstLocal(dueAt):null;
   if(dueAt&&!dueIso){
    setError("Enter a valid deadline.");return;
@@ -103,21 +109,39 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    title="Create Assignment" description="Select a course, audience and assignment details."
    className="max-w-[720px]">
    <div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / Lesson
-    <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
-     className="min-h-11 w-full md:min-h-9">
-     {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
-      {lesson.courseCode} · {lesson.course} · {lesson.name}
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
+    <Select value={offeringId} disabled={pending} onChange={e=>{
+      const next=e.target.value;setOfferingId(next);
+      setLessonId(lessons.find(lesson=>lesson.offeringId===next)?.id??"");
+      setDeliveryId("");setAudience("SHARED");
+    }} className="min-h-11 w-full md:min-h-9">
+     {courses.map(course=><option key={course.offeringId} value={course.offeringId}>
+      {course.courseCode} · {course.course}
      </option>)}
     </Select></label>
-   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
+    <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
+     className="min-h-11 w-full md:min-h-9">
+     {availableLessons.map(lesson=><option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
+    </Select></label>
+   <fieldset className="min-w-0 space-y-2 sm:col-span-2">
+    <legend className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Audience</legend>
+    <div className="flex flex-wrap gap-4 text-sm">
+     <label className="flex items-center gap-2"><input type="radio" name="assignment-audience"
+      checked={audience==="SHARED"} disabled={pending} onChange={()=>{setAudience("SHARED");setDeliveryId("");}}/>All Sections</label>
+     <label className="flex items-center gap-2"><input type="radio" name="assignment-audience"
+      checked={audience==="SECTION"} disabled={pending||!sections.length}
+      onChange={()=>{setAudience("SECTION");setDeliveryId(sections[0]?.deliveryId??"");}}/>Specific Section</label>
+    </div>
+    <p className="text-xs text-muted-foreground">{sections.length} eligible Section(s) in this course offering</p>
+   </fieldset>
+   {audience==="SECTION"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Section
     <Select value={deliveryId} disabled={pending} onChange={e=>setDeliveryId(e.target.value)}
      className="min-h-11 w-full md:min-h-9">
-     <option value="">All currently eligible sections (shared offering)</option>
      {sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
       {section.sectionName} ({section.sectionCode})
      </option>)}
-    </Select></label>
+    </Select></label>:null}
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
     <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
      className="min-h-11 w-full md:min-h-9"/></label>
