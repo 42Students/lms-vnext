@@ -60,8 +60,10 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
  async function save(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
   const data=new FormData(event.currentTarget);
-  const description=String(data.get("description")??"").replace(/<[^>]*>/g,"").trim();
-  if(!description){setError("Please enter job description.");return;}
+  const description=String(data.get("description")??"").trim();
+  if(!description.replace(/<[^>]*>/g,"").trim()){
+   setError("Please enter job description.");return;
+  }
   const enteredDeadline=String(data.get("deadline")??"");
   const applicationDeadline=enteredDeadline===istLocal(job.applicationDeadline)
    ? job.applicationDeadline : driveDeadlineIstToIso(enteredDeadline);
