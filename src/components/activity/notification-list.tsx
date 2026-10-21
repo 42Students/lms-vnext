@@ -53,7 +53,7 @@ function parseLegacyNotificationDate(value:string):Date {
   if(Array.isArray(value)){
     const parts=value as readonly number[];
     if(parts.length<3||parts.some(v=>!Number.isSafeInteger(v)))return new Date(NaN);
-    return new Date(Date.UTC(parts[0]!,parts[1]!,parts[2]!,parts[3]??0,parts[4]??0,parts[5]??0));
+    return new Date(Date.UTC(parts[0]!,parts[1]!,parts[2]!,parts[3]??0,parts[4]??0,parts[5]??0)-330*60_000);
   }
   return new Date(value);
 }

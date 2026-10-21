@@ -21,6 +21,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
 }){
  const router=useRouter(),{showToast}=useToast();
  const lock=useRef(false);
+ const requestSequence=useRef(0);
  const [open,setOpen]=useState(false);
  const [loaded,setLoaded]=useState(false);
  const [busy,setBusy]=useState(false);
@@ -35,32 +36,40 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const [error,setError]=useState("");
  const endpoint="/api/projects/"+encodeURIComponent(projectId);
  async function load(){
+  const sequence=++requestSequence.current;
   setError("");setLoaded(false);setSearching(true);
   try{
    const [members,candidates]=await Promise.all([
     apiFetch<{members:Member[]}>(endpoint+"/members",{cache:"no-store"}),
     apiFetch<{candidates:Candidate[]}>(endpoint+"/member-candidates?role=LEARNER&limit=20",{cache:"no-store"}),
    ]);
+   if(sequence!==requestSequence.current)return;
    const learners=members.members.filter(member=>member.role==="LEARNER");
    const choices=[...learners,...candidates.candidates];
    setOptions([...new Map(choices.map(candidate=>[candidate.membershipId,candidate])).values()]);
    const ids=learners.map(x=>x.membershipId);
    setSelected(ids);setInitial(ids);setVersion(expectedUpdatedAt);setLoaded(true);
-  }catch{setError("Could not load the learner roster. Try opening it again.");}
-  finally{setSearching(false);}
+  }catch{if(sequence===requestSequence.current)
+    setError("Failed to load learner options. Try again.");}
+  finally{if(sequence===requestSequence.current)setSearching(false);}
  }
  async function find(){
-  if(searching||busy)return;
+  if(busy)return;
+  const sequence=++requestSequence.current;
   setSearching(true);setError("");
   try{
    const params=new URLSearchParams({role:"LEARNER",q:search.trim(),limit:"20"});
    const response=await apiFetch<{candidates:Candidate[]}>(endpoint+"/member-candidates?"+params,{cache:"no-store"});
+   if(sequence!==requestSequence.current)return;
    setOptions(previous=>[...new Map([...previous,...response.candidates].map(row=>[row.membershipId,row])).values()]);
-  }catch{setError("Could not find learners. Your roster changes have been kept.");}
-  finally{setSearching(false);}
+  }catch{if(sequence===requestSequence.current)
+    setError("Failed to search learners. Your roster changes have been kept.");}
+  finally{if(sequence===requestSequence.current)setSearching(false);}
  }
  async function save(){
   if(lock.current||!loaded)return;
+  if(!selected.length){setError("Select at least one student.");return;}
+  if(selected.length>500){setError("Select no more than 500 students.");return;}
    lock.current=true;setBusy(true);setError("");
   try{
    const result=await apiFetch<Result>(endpoint+"/roster",{
@@ -81,8 +90,8 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const changed=selected.length!==initial.length||selected.some(x=>!initial.includes(x));
  const removeCount=initial.filter(id=>!selected.includes(id)).length;
  return <>
-  <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>Manage students</Button>
-  <Dialog open={open} onOpenChange={value=>{if(!busy)setOpen(value);}}
+  <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>Manage students…</Button>
+  <Dialog open={open} onOpenChange={value=>{if(!busy){setOpen(value);if(!value)requestSequence.current++;}}}
    title="Manage students"
    description="Choose learners for this workspace. Changes are saved together only after confirmation.">
    <div className="space-y-4">
@@ -95,14 +104,15 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
      </Button>
     </div>
     {loaded?<fieldset disabled={busy} tabIndex={0} className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
-     <legend className="px-[var(--lms-space-2)] text-[13px] font-semibold leading-5">Learners ({selected.length} selected)</legend>
+     <legend className="px-[var(--lms-space-2)] text-[13px] font-semibold leading-5">Students (required) · {selected.length} selected</legend>
      {options.map(option=><label key={option.membershipId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[13px] leading-5">
       <Checkbox className="size-4" checked={selected.includes(option.membershipId)}
        onChange={event=>setSelected(previous=>event.target.checked?
-        [...previous,option.membershipId]:previous.filter(id=>id!==option.membershipId))}/>
+        (previous.length>=500?previous:[...previous,option.membershipId]):previous.filter(id=>id!==option.membershipId))}/>
       <span className="min-w-0 break-words">{option.displayName??option.email??"Learner"}</span>
      </label>)}
-     {!options.length?<p className="text-sm text-muted-foreground leading-[22px]">No eligible learners available.</p>:null}
+     {!options.length?<p className="text-sm text-muted-foreground leading-[22px]">No eligible learners available. Search by name or email.</p>:null}
+     {selected.length>=500?<p role="status" className="text-sm text-muted-foreground">Maximum 500 students can be selected.</p>:null}
     </fieldset>:searching?<LoadingState label="Loading eligible learners…"/>:error?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
      <Input value={roleLabel} onChange={event=>setRoleLabel(event.target.value)} maxLength={120}/>

@@ -7,6 +7,7 @@ import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-mod
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
+import {Button} from "@/components/ui/button";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProjectArchiveControl } from "./project-archive-control";
@@ -34,6 +35,7 @@ import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
 import {CollegeProjectStudentRosterDialog} from "./college-project-student-roster-dialog";
 import {ProjectResourceList} from "./project-resource-list";
 import { ProjectRosterTable } from "./project-roster-table";
+import {CollegeAdminWorkspaceTeamOverview} from "./college-admin-workspace-team-overview";
 import { ProjectTeamRosterReconcile } from "./project-team-roster-reconcile";
 import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
 import { ProjectTaskPlanEditor } from "./project-task-plan-editor";
@@ -875,32 +877,18 @@ export function ProjectWorkspace({
       {show("team") ? <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
-              Project team
-            </h2>
-            <p className="mt-1 text-sm text-body">
-              See who is assigned, what role they play, and how the project is staffed.
-              {" "}{workspace.members.length} {workspace.members.length === 1 ? "member" : "members"}
-            </p>
+            <h2 className="m-0 text-lg font-semibold text-foreground">Team</h2>
+            <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
-          {mode === "ADMIN" && !readOnly ? (
-            <>
-              <Link href={(backHref.startsWith("/college/") ? "/college/projects" : "/admin/projects") +
-                "/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
-                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
-                Reassign mentor
-              </Link>
-              <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
-            </>
-          ) : null}
-          {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
-            <>
-              <CollegeProjectStudentRosterDialog projectId={workspace.project.id}
-                expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
-              <AddProjectMemberControl projectId={workspace.project.id}/>
-            </>
-          ) : null}
+          {mode==="ADMIN"&&!readOnly
+            ?<CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
+            :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
+          {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId
+            ?<CollegeProjectStudentRosterDialog projectId={workspace.project.id}
+              expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
+            :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Manage students…</Button>:null}
         </div>
+        {mode==="ADMIN"?<CollegeAdminWorkspaceTeamOverview members={workspace.members} tasks={workspace.tasks}/>:null}
         {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
           <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
             No primary Mentor is recorded in the current Project roster.
@@ -927,6 +915,9 @@ export function ProjectWorkspace({
               <ProjectTeamRosterReconcile projectId={workspace.project.id} /> : null}
           </div>
         ) : null}
+        {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId?<div className="flex justify-end">
+          <AddProjectMemberControl projectId={workspace.project.id}/>
+        </div>:null}
         {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
           const assigned=workspace.tasks.filter(task=>task.assigneeMembershipId===member.membershipId);
           const last=assigned.reduce<Date|null>((mostRecent,task)=>
