@@ -113,3 +113,23 @@ export const db10GeneralNotices = pgTable(
       sql`${t.idempotencyKey} ~ '^[0-9a-f]{64}$'`),
   ],
 );
+
+/** Source-compatible SMS attempt audit. Never store message body or full phone. */
+export const db10SmsDeliveryLogs = pgTable("general_sms_delivery_logs", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  noticeId: uuid("notice_id").references(() => db10GeneralNotices.id, { onDelete: "restrict" }),
+  collegeId: uuid("college_id").references(() => colleges.id, { onDelete: "restrict" }),
+  legacySmsLogId: integer("legacy_sms_log_id"),
+  purpose: varchar("purpose", { length: 64 }).notNull(),
+  recipientSuffix: varchar("recipient_suffix", { length: 4 }),
+  status: varchar("status", { length: 16 }).notNull(),
+  providerMessageId: varchar("provider_message_id", { length: 64 }),
+  errorSummary: varchar("error_summary", { length: 500 }),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+}, (t) => [
+  index("db10_sms_delivery_logs_college_status_time_idx").on(t.collegeId, t.status, t.createdAt),
+  index("db10_sms_delivery_logs_notice_idx").on(t.noticeId),
+  check("db10_sms_delivery_logs_status_ck", sql`${t.status} in ('SENT','FAILED')`),
+  check("db10_sms_delivery_logs_suffix_ck", sql`${t.recipientSuffix} is null or ${t.recipientSuffix} ~ '^[0-9]{4}$'`),
+  check("db10_sms_delivery_logs_purpose_ck", sql`length(trim(${t.purpose})) between 1 and 64`),
+]);
