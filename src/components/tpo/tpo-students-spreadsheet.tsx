@@ -185,7 +185,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"},
   ]},
  ];
- return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" tabIndex={0}
+ return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" aria-keyshortcuts="Control+A Control+C Meta+A Meta+C" tabIndex={0}
   onKeyDown={event=>{
    const target=event.target;
    if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
@@ -196,6 +196,10 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
     setDownloadError("");
     setClipboardNotice("");
+    if(!navigator.clipboard?.writeText){
+      setDownloadError("Clipboard access is unavailable. Use Export selected CSV instead.");
+      return;
+    }
     void navigator.clipboard.writeText(tpoStudentClipboardTsv(chosen))
       .then(()=>setClipboardNotice(chosen.length===1?"Copied":
         "Copied "+chosen.length+" rows. Paste into Excel or Sheets."))
