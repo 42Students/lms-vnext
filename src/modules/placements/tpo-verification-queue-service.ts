@@ -81,7 +81,7 @@ export async function getTpoVerificationQueue(ctx:RequestContext,query?:TpoVerif
     ...(searchPattern?[or(ilike(users.displayName,searchPattern),ilike(learnerProfiles.rollNumber,searchPattern))]:[]),
     ...(academicMembers?[inArray(profileVerifications.learnerMembershipId,academicMembers)]:[]),
    ]:[]),
-   ...(memberIds?[inArray(profileVerifications.learnerMembershipId,[...memberIds])]:[]))))
+   ...(memberIds?[inArray(profileVerifications.learnerMembershipId,[...memberIds])]:[])))
   .orderBy(query?.tab==="WAITING"?asc(profileVerifications.submittedAt):desc(profileVerifications.submittedAt),desc(profileVerifications.id))
   .limit(query?query.pageSize+1:100).offset(query?(query.page-1)*query.pageSize:0);
  const selected=query?records.slice(0,query.pageSize):records;
