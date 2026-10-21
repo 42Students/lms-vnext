@@ -30,16 +30,20 @@ export async function listCollegeActivity(context: RequestContext, raw: unknown)
   const query = collegeActivityQuerySchema.parse(raw);
   const collegeId=await requireCollegeActivity(context);
   const { pageSize, loaded, view, category, range: _range, ...filter } = query;
+  // Legacy categories group action keys and subject types across modules;
+  // a coarse module filter silently hides many matching audit entries.
   const categories = {
-    ACADEMIC_SETUP: "ACADEMICS",
-    PEOPLE_ACCESS: "IDENTITY",
-    TEACHING: "COURSES",
-    PROJECTS: "PROJECTS",
+    ACADEMIC_SETUP: "setup",
+    PEOPLE_ACCESS: "people",
+    TEACHING: "teaching",
+    PROJECTS: "projects",
   } as const;
-  const activityModule = category ? categories[category] : filter.module;
+  const legacyCategory=category?categories[category]:undefined;
+  const importantOnly=(view ?? "IMPORTANT")==="IMPORTANT"&&
+    !filter.importance&&!legacyCategory;
   const first = await listActivityEvents(context, {
-    ...filter, collegeId, module: activityModule,
-    importantOnly: (view ?? "IMPORTANT") === "IMPORTANT" && !filter.importance,
+    ...filter, collegeId, legacyCategory,
+    importantOnly,
     limit: Number(pageSize ?? "50"),
   });
   // Append bounded older pages to the same chronological feed, preserving
@@ -49,8 +53,8 @@ export async function listCollegeActivity(context: RequestContext, raw: unknown)
   let remainingCount = first.remainingCount;
   for (let batch=1; batch<(loaded ?? 1) && nextCursor; batch++) {
     const page = await listActivityEvents(context, {
-      ...filter, collegeId, module: activityModule,
-      importantOnly: (view ?? "IMPORTANT") === "IMPORTANT" && !filter.importance,
+      ...filter, collegeId, legacyCategory,
+      importantOnly,
       beforeOccurredAt:nextCursor.beforeOccurredAt,beforeId:nextCursor.beforeId,
       limit:Number(pageSize ?? "50"),
     });
