@@ -696,9 +696,10 @@ export function RecruiterLeadsWorkspace({
     <section className="min-w-0 space-y-4" aria-label="Recruiter leads">
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.recruiterLeads}
-        description="Every company contact you find, and what you will do next."
+        description="Manage company relationships, follow-ups, and placement drives."
         actions={
           <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center">
+            <RecruiterLeadCsvImport onImported={()=>void load()} />
             <Button variant="primary" ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase!=="ready"}
               onClick={()=>{setAdding(true);setForm(EMPTY);setSaveError("");setDuplicate(null);setReviewingCreate(false);}}>
               <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
@@ -709,7 +710,6 @@ export function RecruiterLeadsWorkspace({
                 <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
                 <Link href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</Link>
                 <Link href="/tpo/follow-ups" className={buttonStyle}>Follow-ups Due</Link>
-                <RecruiterLeadCsvImport onImported={()=>void load()} />
               </nav>
             </Dropdown>
           </div>
@@ -735,31 +735,22 @@ export function RecruiterLeadsWorkspace({
         </div>
       ) : (
         <>
-          <section aria-label="Needs doing" className="space-y-2 border-b border-border py-4">
-            <Button variant="ghost" type="button" aria-expanded={needsExpanded}
-              className="w-full"
-              onClick={()=>setNeedsExpanded(open=>!open)}>
-              Needs doing <span className="text-xs font-normal">{needsExpanded?"Hide":"Show"}</span>
-            </Button>
-            {needsExpanded?<div className="flex flex-wrap gap-2">
+          <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
+            <div className="flex min-w-0 flex-wrap gap-2">
               {([
                 ["OVERDUE","Follow-ups due",rows.filter(row=>row.chips?.includes("OVERDUE")).length],
                 ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
                 ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
-              ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
-                <FilterChip key={key} type="button" aria-pressed={attention===key}
-                  onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>{label} ({count})</FilterChip>)}
-              {needCounts.unassigned>0?<FilterChip type="button" aria-pressed={need==="UNASSIGNED"}
-                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>
-                Unassigned ({needCounts.unassigned})</FilterChip>:null}
-            </div>:null}
-            {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
-             needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
-            <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              href="/tpo/settings/recruiters">
-              {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
-            </Link>
-            {!needsExpanded?<p className="text-xs text-muted-foreground leading-[20px]">Show needs doing to review outreach priorities.</p>:null}
+              ] as const).map(([key,label,count])=>
+                <FilterChip key={key} type="button" data-testid={"needs-"+key.toLowerCase().replaceAll("_","-")}
+                  aria-pressed={attention===key} onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>
+                  {label} · <strong>{count}</strong>
+                </FilterChip>)}
+              <FilterChip type="button" data-testid="needs-unassigned" aria-pressed={need==="UNASSIGNED"}
+                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>Unassigned · <strong>{needCounts.unassigned}</strong></FilterChip>
+            </div>
+            <Link className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9"
+              href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</Link>
           </section>
           <div className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
             <label className="min-w-48 flex-1 text-sm">
@@ -823,7 +814,7 @@ export function RecruiterLeadsWorkspace({
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={inviteFilter}
                   onChange={e=>updateFilter("invite",e.target.value)}>
                   {["ALL","NOT_INVITED","SENT","OPENED","BOUNCED","JOINED"].map(item=>
-                   <option key={item} value={item}>{item==="ALL"?"All invites":item.replaceAll("_"," ")}</option>)}
+                   <option key={item} value={item}>{item==="ALL"?"All invites":inviteLabel(item)}</option>)}
                 </Select>
               </label>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
@@ -850,6 +841,15 @@ export function RecruiterLeadsWorkspace({
                   <option value="ONE_TWO">1–2 drives</option>
                   <option value="THREE_FIVE">3–5 drives</option>
                   <option value="SIX_PLUS">6 or more drives</option>
+                </Select>
+              </label>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students placed
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={placedFilter}
+                  onChange={e=>setPlacedFilter(e.target.value)}>
+                  <option value="ALL">Any number</option>
+                  <option value="NONE">No confirmed placements</option>
+                  <option value="ONE_TWO">1–2 students</option>
+                  <option value="THREE_PLUS">3 or more students</option>
                 </Select>
               </label>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation
@@ -902,7 +902,7 @@ export function RecruiterLeadsWorkspace({
               <Button variant="secondary" type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
                   "reach","nextFollowup","lastActivity","added","drives"] as const)updateFilter(key,"ALL");
-                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");
+                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");setPlacedFilter("ALL");
               }}>Clear filters</Button>
             </div>:null}
           </div>
