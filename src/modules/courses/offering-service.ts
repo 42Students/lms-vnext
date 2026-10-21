@@ -4,7 +4,9 @@ import {
   eq,
   inArray,
   isNull,
+  sql,
 } from "drizzle-orm";
+import {z} from "zod";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -354,6 +356,15 @@ export async function createCourseOffering(
         throw new CoursesServiceError("OFFERING_COHORT_PERIOD_MISMATCH");
       }
 
+      const [ordering] = input.displayOrder===0 ? await tx.select({
+        max:sql<number>`coalesce(max(${courseOfferings.displayOrder}),-1)::int`,
+      }).from(courseOfferings).where(and(
+        eq(courseOfferings.cohortId,input.cohortId),
+        eq(courseOfferings.academicPeriodId,input.academicPeriodId),
+        eq(courseOfferings.status,"ACTIVE"),
+      )) : [{max:-1}];
+      const appendOrder=input.displayOrder===0?Number(ordering?.max??-1)+1:input.displayOrder;
+      if(appendOrder>10000)throw new CoursesServiceError("OFFERING_CONFLICT");
       const [created] = await tx
         .insert(courseOfferings)
         .values({
@@ -363,7 +374,7 @@ export async function createCourseOffering(
             input.academicPeriodId,
           type: input.type,
           credits: input.credits ?? null,
-          displayOrder: input.displayOrder,
+          displayOrder: appendOrder,
         })
         .returning();
 
@@ -634,4 +645,73 @@ export function offeringDraftFromSemesterCourseMapping(input:{
  displayOrder:CreateCourseOfferingInput["displayOrder"];
 }):CreateCourseOfferingInput{
  return createCourseOfferingInputSchema.parse(input);
+}
+
+
+/** Legacy semester-course bulk append. Semester IDs are NOT interchangeable
+ * with a cohort and academic period UUID; the caller must supply both.
+ * Each row receives its own transaction and authorization check. Existing
+ * assignments are reported as skipped, never overwritten or physically
+ * removed. A failed row does not undo prior successfully assigned courses.
+ */
+export const semesterCourseBulkAddSchema=z.strictObject({
+ courseIds:z.array(z.uuid()).min(1).max(100)
+  .refine(ids=>new Set(ids).size===ids.length,"Duplicate course IDs"),
+ cohortId:z.uuid(),academicPeriodId:z.uuid(),
+ type:createCourseOfferingInputSchema.shape.type,
+ credits:createCourseOfferingInputSchema.shape.credits,
+});
+export async function addCoursesToSemester(
+ context:RequestContext,raw:unknown,
+){
+ const input=semesterCourseBulkAddSchema.parse(raw);
+ const existing=await listCourseOfferings(context,input.cohortId,input.academicPeriodId,true);
+ const already=new Set(existing.filter(row=>row.status==="ACTIVE").map(row=>row.courseId));
+ const added:string[]=[],skipped:string[]=[],failed:Array<{courseId:string;reason:string}>=[];
+ for(const id of input.courseIds){
+  if(already.has(id)){skipped.push(id);continue;}
+  try{
+   const created=await createCourseOffering(context,{
+    courseId:id,cohortId:input.cohortId,academicPeriodId:input.academicPeriodId,
+    type:input.type,credits:input.credits??null,displayOrder:0,
+   });
+   added.push(created.id);already.add(id);
+  }catch(error){
+   if(error instanceof CoursesServiceError&&error.code==="OFFERING_CONFLICT"){
+    skipped.push(id);already.add(id);continue;
+   }
+   // Do not expose tenant-specific database identifiers/rejection details.
+   failed.push({courseId:id,reason:error instanceof CoursesServiceError?error.code:"NOT_ASSIGNED"});
+  }
+ }
+ return {requested:input.courseIds.length,added,skipped,failed,
+  message:"Assigned "+added.length+" of "+input.courseIds.length+" courses to the selected semester mapping"};
+}
+
+/** Preview exactly which active course offerings would be soft-unlinked.
+ * Historical teaching deliveries and grades remain intact; a delivery may
+ * block one archival, with the failure explicitly reported to the caller. */
+export const semesterCourseBulkRemoveSchema=z.strictObject({
+ cohortId:z.uuid(),academicPeriodId:z.uuid(),
+ confirm:z.literal(true),limit:z.number().int().min(1).max(100).default(100),
+});
+export async function removeAllCoursesFromSemester(
+ context:RequestContext,raw:unknown,
+){
+ const input=semesterCourseBulkRemoveSchema.parse(raw);
+ const rows=await listCourseOfferings(context,input.cohortId,input.academicPeriodId);
+ const archived:string[]=[],failed:Array<{offeringId:string;reason:string}>=[];
+ const slice=rows.slice(0,input.limit);
+ for(const row of slice){
+  try{
+   await archiveCourseOffering(context,row.id);
+   archived.push(row.id);
+  }catch(error){
+   failed.push({offeringId:row.id,reason:error instanceof CoursesServiceError?
+    error.code:"ARCHIVE_FAILED"});
+  }
+ }
+ return {matched:rows.length,processed:slice.length,archived,failed,
+  hasMore:rows.length>slice.length,
+  semantics:"SOFT_ARCHIVE_NOT_PHYSICAL_DELETE" as const};
 }
