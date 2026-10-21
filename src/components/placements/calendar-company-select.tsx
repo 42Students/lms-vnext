@@ -33,8 +33,7 @@ export function CalendarCompanySelect({href,companies,selected}:{
 export function CalendarDateSelect({href,value}:{href:string;value:string}){
  const router=useRouter();const [pending,startTransition]=useTransition();
  return <Input type="date" name="date" defaultValue={value} disabled={pending}
-  required aria-label="Calendar date"
-  className="w-full min-w-0"
+  required aria-label="Calendar date" className="w-full"
   onChange={event=>{
    const date=event.target.value;
    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date+"T12:00:00Z")))return;
