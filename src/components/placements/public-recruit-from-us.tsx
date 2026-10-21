@@ -13,6 +13,9 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
  const [code,setCode]=useState(""),[sent,setSent]=useState(""),[done,setDone]=useState(false);
  const [error,setError]=useState(""),[busy,setBusy]=useState(false),[unavailable,setUnavailable]=useState(false);
  const [fieldErrors,setFieldErrors]=useState({email:"",name:"",code:""});
+ const clearFieldError=(field:"email"|"name"|"code")=>{
+  setFieldErrors(previous=>({...previous,[field]:""}));setError("");
+ };
  const savingRef=useRef(false);
  function fieldError(key:"email"|"name"|"code",message:string){
   setFieldErrors(previous=>({...previous,[key]:message}));
@@ -52,12 +55,19 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
     }
     const safeMessage=typeof data.message==="string" && data.message.length<=250
       ?data.message:null;
-    if(data.error==="EMAIL_REQUIRED"||data.error==="COMPANY_EMAIL_REQUIRED"){
+    if(["EMAIL_REQUIRED","COMPANY_EMAIL_REQUIRED","EMAIL_INVALID",
+        "INVALID_EMAIL","PERSONAL_EMAIL_NOT_ALLOWED"].includes(data.error??"")){
      fieldError("email",safeMessage??"Enter your work email");return;
     }
+    if(data.error==="NAME_REQUIRED"){fieldError("name",safeMessage??"Enter your name");return;}
+    if(data.error==="CODE_REQUIRED"){fieldError("code",safeMessage??"Enter the code");return;}
     if(data.error==="WRONG_CODE"||data.error==="CODE_EXPIRED"||
-       data.error==="CODE_LOCKED"||data.error==="COULD_NOT_SEND_ENQUIRY"){
+       data.error==="CODE_LOCKED"||data.error==="INVALID_CODE_OR_EXPIRED"||
+       data.error==="INVALID_CODE"||data.error==="COULD_NOT_SEND_ENQUIRY"){
      fieldError("code",safeMessage??"The code was not accepted. Check it and try again.");return;
+    }
+    if(data.error==="TOO_MANY_TRIES"){
+     throw new Error("Too many attempts. Please try again later.");
     }
     throw new Error(safeMessage??(kind==="send-code"?
       PUBLIC_RECRUIT_COPY.errorSend:PUBLIC_RECRUIT_COPY.errorSubmit));
@@ -78,16 +88,16 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
      {PUBLIC_RECRUIT_COPY.unavailable}
    </p>:<form className="mt-4 max-w-2xl space-y-4" onSubmit={e=>{
     e.preventDefault();void submit(sent?"recruit":"send-code");
-   }}>
+   }} noValidate>
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.workEmail}
      <Input className={control+" mt-1"} required type="email" maxLength={150} autoComplete="email"
-      disabled={Boolean(sent)} value={email} onChange={e=>{setEmail(e.target.value);fieldError("email","");}}/>
+      disabled={Boolean(sent)} value={email} onChange={e=>{setEmail(e.target.value);clearFieldError("email");}}/>
      <span className="block mt-1 text-xs font-normal">Your company email. We send a code to it.</span>
      {fieldErrors.email?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.email}</span>:null}
     </label>
     <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{PUBLIC_RECRUIT_COPY.name}
      <Input className={control+" mt-1"} required maxLength={120} autoComplete="name"
-      value={name} onChange={e=>{setName(e.target.value);fieldError("name","");}}/>
+      value={name} onChange={e=>{setName(e.target.value);clearFieldError("name");}}/>
      {fieldErrors.name?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.name}</span>:null}
     </label>
     {sent ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
@@ -107,9 +117,9 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
     {sent?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Code sent to {sent}
       <Input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
        required maxLength={6} autoComplete="one-time-code" value={code}
-       onChange={e=>{setCode(e.target.value);fieldError("code","");}}/>
+       onChange={e=>{setCode(e.target.value);clearFieldError("code");}}/>
       {fieldErrors.code?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.code}</span>:null}
-      <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code}</span>
+      <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code} Enter the six-digit code received by email; it may autofill on supported devices.</span>
      </label>:null}
     {error?<p role="alert" className="text-sm text-body">{error}</p>:null}
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
@@ -118,6 +128,7 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
       </Button>
       {sent?<Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full sm:w-auto sm:min-h-9"
         onClick={()=>void submit("send-code")}>Send a new code</Button>:null}
+      {sent?<p className="text-xs text-muted-foreground">Requesting a new code invalidates the previous code. You can still use the verified work email, name and optional company details.</p>:null}
     </div>
    </form>}
  </section>;
