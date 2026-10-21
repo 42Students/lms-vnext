@@ -15,13 +15,14 @@ import { listElectiveOfferings } from "@/modules/electives/service";
 import { createCourseTeachingAssignment, endCourseTeachingAssignment,
   listCourseTeachingAssignments } from "@/modules/courses/teaching-assignment-service";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 const uuid = z.string().uuid();
@@ -65,7 +66,7 @@ export default async function ElectiveRoster({
   const { slotId, offeringId } = await params;
   const feedback = await searchParams;
   const { context, slot, offering } = await scoped(slotId, offeringId);
-  const [detail, options, assignments, faculty] = await Promise.all([
+  const read = await Promise.all([
     getCollegeGroupDetail(context, offering.groupId),
     listElectiveOfferings(context, slotId),
     listCourseTeachingAssignments(context, offering.backedDeliveryId),
@@ -78,7 +79,17 @@ export default async function ElectiveRoster({
       .where(and(eq(collegeMemberships.collegeId, slot.collegeId),
         eq(collegeMemberships.status, "ACTIVE")))
       .orderBy(users.displayName).limit(500),
-  ]);
+  ]).then(value=>({ok:true as const,value})).catch(error=>{
+    if(error instanceof AuthorizationError)throw error;
+    return {ok:false as const,value:null};
+  });
+  if(!read.ok)return <div className="mx-auto w-full max-w-[1000px] space-y-4">
+    <PageHeader title="Offering roster" actions={<Link href="/college/electives" className="font-semibold text-link underline">Back to Electives</Link>}/>
+    <ErrorState title="Couldn't load the offering roster"
+      description="The roster or teaching assignments are temporarily unavailable. No student or faculty changes were made."
+      action={<Link href={href(slotId,offeringId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading roster</Link>}/>
+  </div>;
+  const [detail, options, assignments, faculty] = read.value;
   const archived = slot.status !== "ACTIVE" || offering.status !== "ACTIVE";
   const targets = options.filter(item => item.offeringId !== offering.id);
   const back = href(slotId, offeringId);
@@ -180,7 +191,22 @@ export default async function ElectiveRoster({
       redirect(back + "?error=Archived%20offerings%20are%20read-only");
     let error = "";
     try {
-      if (form.get("action") === "ASSIGN") {
+      if (form.get("action") === "PLAN") {
+        if (form.get("confirm") !== "yes") throw new Error("Confirm the faculty changes");
+        const primaryId = String(form.get("primaryMembershipId") ?? "").trim();
+        const coId = String(form.get("coTeacherMembershipId") ?? "").trim();
+        if (!primaryId && !coId) throw new Error("Choose at least one faculty member");
+        if (primaryId && coId && primaryId === coId)
+          throw new Error("Primary and co-teacher must be distinct");
+        if (primaryId) await createCourseTeachingAssignment(context, {
+          deliveryId: offering.backedDeliveryId,
+          membershipId: uuid.parse(primaryId),role:"PRIMARY",
+        });
+        if (coId) await createCourseTeachingAssignment(context, {
+          deliveryId: offering.backedDeliveryId,
+          membershipId: uuid.parse(coId),role:"CO_TEACHER",
+        });
+      } else if (form.get("action") === "ASSIGN") {
         const membershipId = uuid.parse(String(form.get("membershipId") ?? ""));
         const role = String(form.get("role") ?? "");
         if (role !== "PRIMARY" && role !== "CO_TEACHER") throw new Error("Invalid teaching role");
@@ -191,14 +217,14 @@ export default async function ElectiveRoster({
         await endCourseTeachingAssignment(context, uuid.parse(String(form.get("assignmentId") ?? "")));
       } else throw new Error("Unsupported teaching action");
     } catch (cause) {
-      error = "Could not update the faculty assignment. Refresh the roster and try again.";
+      error = "Could not update all faculty assignments. Refresh the roster to check which changes saved before trying again.";
     }
     redirect(back + (error ? "?error=" + encodeURIComponent(error) : "?updated=faculty"));
   }
-  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+  return <div className="mx-auto min-w-0 w-full max-w-[1000px] space-y-[var(--lms-space-4)] overflow-x-clip rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface px-3 py-4 sm:px-5">
     <PageHeader 
       title={"Offering roster · " + slot.name}
-      description="Student state, source, joining date and confirmed movement between offerings."
+      description="Student, roll number, department, state, how they joined and since when, with confirmed movement between offerings."
       actions={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Back to Electives</Link>} />
     <div className="flex min-w-0 flex-wrap items-center gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm leading-5">
@@ -207,12 +233,12 @@ export default async function ElectiveRoster({
       <span>Waitlisted: {countFor("WAITLISTED")}</span>
       <span className="inline-flex items-center gap-2">Status: <StatusBadge tone={offering.status==="ACTIVE"?"success":"neutral"}>{offering.status}</StatusBadge></span>
     </div>
-    {feedback.updated && <Alert tone="success">
+    {feedback.updated && <Alert tone="success" role="status">
       {feedback.updated === "WAITLISTED" ? "Moved (WAITLISTED)." :
         feedback.updated === "ACTIVE" ? "Moved (ENROLLED)." : "Roster updated."}
     </Alert>}
-    {feedback.error && <Alert tone="error">{feedback.error}</Alert>}
-    {archived && <Alert tone="warning">Archived offerings are read-only.</Alert>}
+    {feedback.error && <Alert tone="error" role="alert">{feedback.error}</Alert>}
+    {archived && <Alert tone="warning" role="status">Archived offerings are read-only. The roster remains visible for reference.</Alert>}
     <section className="min-w-0 space-y-[var(--lms-space-3)]" aria-label="Elective offering roster">
       <form method="get" className="flex min-w-0 flex-wrap items-end gap-3">
         <label className="min-w-0 flex-1 text-sm font-semibold">Search students
@@ -251,7 +277,7 @@ export default async function ElectiveRoster({
           { key: "department", header: "Dept", cell: member => member.department ?? "—" },
           { key: "state", header: "State", mobilePriority: "secondary",
             cell: member => <StatusBadge tone={member.state==="ACTIVE"?"success":member.state==="WAITLISTED"?"warning":"neutral"}>{member.state + (member.waitlistPosition ? " #" + member.waitlistPosition : "")}</StatusBadge> },
-          { key: "source", header: "Source", mobilePriority: "secondary",
+          { key: "source", header: "How", mobilePriority: "secondary",
             cell: member => member.source },
           { key: "since", header: "Since", mobilePriority: "secondary",
             cell: member => member.joinedAt ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(member.joinedAt) : "—" },
@@ -277,7 +303,7 @@ export default async function ElectiveRoster({
                   <Input type="hidden" name="action" value="REMOVE" />
                   <Input type="hidden" name="membershipId" value={member.membershipId} />
                   <label className="inline-flex min-h-11 items-center gap-2">
-                    <Checkbox name="confirm" value="yes" required /> Confirm removal
+                    <Checkbox name="confirm" value="yes" required aria-label={"Confirm removal of "+(member.displayName??"this student")} /> Confirm removal
                   </label>
                   <Button type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Remove</Button>
                 </form>
@@ -298,6 +324,26 @@ export default async function ElectiveRoster({
           <Button type="submit" variant="danger" className="min-h-11 md:min-h-9">Remove faculty</Button>
         </form>}
       </div>)}
+      {!archived && <form action={changeFaculty} className="grid min-w-0 items-end gap-[var(--lms-space-3)] rounded border border-border p-3 md:grid-cols-2">
+        <Input type="hidden" name="action" value="PLAN"/>
+        <label className="grid min-w-0 gap-2 text-sm font-semibold">Primary faculty
+          <Select name="primaryMembershipId" className="min-w-0 w-full" defaultValue="">
+            <option value="">Keep current primary</option>
+            {faculty.map(item=><option key={item.id} value={item.id}>{item.name??item.id}</option>)}
+          </Select>
+        </label>
+        <label className="grid min-w-0 gap-2 text-sm font-semibold">Co-teacher
+          <Select name="coTeacherMembershipId" className="min-w-0 w-full" defaultValue="">
+            <option value="">No additional co-teacher</option>
+            {faculty.map(item=><option key={item.id} value={item.id}>{item.name??item.id}</option>)}
+          </Select>
+        </label>
+        <label className="inline-flex min-h-11 items-center gap-2 text-sm">
+          <Checkbox name="confirm" value="yes" required /> Confirm faculty selection
+        </label>
+        <Button type="submit" disabled={faculty.length===0} className="min-h-11 w-full md:min-h-9">Save faculty selection</Button>
+        <p className="col-span-full text-xs text-muted-foreground">Existing faculty remain assigned. End an existing primary before choosing another. The two assignments are checked separately; refresh if one fails.</p>
+      </form>}
       {!archived && <form action={changeFaculty} className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
         <Input type="hidden" name="action" value="ASSIGN" />
         <label className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty
