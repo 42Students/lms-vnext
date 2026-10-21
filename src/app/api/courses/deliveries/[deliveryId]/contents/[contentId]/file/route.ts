@@ -6,7 +6,8 @@ import {listLessonResourceMaterials,resolveLegacyResourceMaterialId} from "@/mod
 import {getPrivateR2Config} from "@/modules/storage/r2-config";
 import {headObject,presignUrl} from "@/modules/storage/s3-client";
 import {apiErrorResponse} from "@/lib/api-error";
-import {getLearnerCourseFileReference} from "@/modules/courses/learner-course-file-reference-service";
+import {getLearnerCourseFileReference,validCourseResourceStorageKey} from "@/modules/courses/learner-course-file-reference-service";
+import {loadCourseSectionDeliveryScope} from "@/modules/courses/scope";
 
 export const runtime="nodejs";
 type RouteContext={params:Promise<{deliveryId:string;contentId:string}>};
@@ -50,6 +51,9 @@ export async function GET(request:Request,{params}:RouteContext){
      {status:404,headers:{"Cache-Control":"private, no-store"}});
    const [material]=await getDb().select({
     key:lessonContentMaterials.storageKey,name:lessonContentMaterials.originalName,
+    generation:lessonContentMaterials.objectGeneration,
+    verifiedSize:lessonContentMaterials.verifiedSizeBytes,
+    attested:lessonContentMaterials.scanAttestedAt,
    }).from(lessonContentMaterials).where(and(
     eq(lessonContentMaterials.lessonContentId,contentId),
     eq(lessonContentMaterials.id,selectedMaterialId),
@@ -57,7 +61,9 @@ export async function GET(request:Request,{params}:RouteContext){
     eq(lessonContentMaterials.uploadStatus,"READY"),
     eq(lessonContentMaterials.scanStatus,"CLEAN"),
    )).limit(1);
-   key=material?.key??null;
+   const scope=await loadCourseSectionDeliveryScope(deliveryId,true);
+   key=material?.generation&&material.attested&&material.verifiedSize&&
+     validCourseResourceStorageKey(material.key,scope.collegeId)?material.key:null;
    displayName=material?.name??selected.title;
   }else{
    key=await getLearnerCourseFileReference(context,deliveryId,contentId);
