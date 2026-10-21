@@ -71,4 +71,4 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ModuleAccess.js`
 - [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js`
 - [x] U032 (Cross-cutting area) `cross/04: Notifications: in-app, email, SMS, push; every trigger, template, recipient rule, unsubscribe`
-- [ ] U033 (Cross-cutting area) `cross/24: Third-party integrations: SMS (Exotel), email (ZeptoMail), storage (R2), calendars, video, payments`
+- [x] U033 (Cross-cutting area) `cross/24: Third-party integrations: SMS (Exotel), email (ZeptoMail), storage (R2), calendars, video, payments`
