@@ -9,7 +9,7 @@ import calendarStyles from "./legacy-calendar-theme.module.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import {CalendarCompanySelect} from "./calendar-company-select";
+import {CalendarCompanySelect,CalendarDateSelect,CalendarEventKindSelect} from "./calendar-company-select";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
@@ -995,12 +995,9 @@ export async function PlacementCalendarWorkspace({
 
           <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Date
-            <Input
-              type="date"
-              name="date"
-              defaultValue={state.anchor}
-              required
-              className="w-full"
+            <CalendarDateSelect
+              href={calendarHref(basePath,audience,state,{})}
+              value={state.anchor}
             />
           </label>
 
@@ -1031,20 +1028,11 @@ export async function PlacementCalendarWorkspace({
           {isTpo ? (
             <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
               Event type
-              <Select
-                name="kind"
-                defaultValue={state.kind ?? ""}
-                className="w-full"
-              >
-                {EVENT_FILTERS.map((filter) => (
-                  <option
-                    key={filter.value}
-                    value={filter.value}
-                  >
-                    {filter.label}
-                  </option>
-                ))}
-              </Select>
+              <CalendarEventKindSelect
+                href={calendarHref(basePath,audience,state,{})}
+                selected={state.kind??""}
+                options={EVENT_FILTERS}
+              />
             </label>
           ) : (
             <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || state.jobId || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
