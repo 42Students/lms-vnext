@@ -459,13 +459,13 @@ export async function CollegeRoleDirectoryWorkspace({
 
       <nav aria-label={title + " pagination"} className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
         <p className="text-sm text-muted-foreground">
-          Page {result.filter.page} of {result.totalPages} · Showing {collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first}–{collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last} of {result.total} memberships
+          Page {result.filter.page.toLocaleString("en-IN")} of {result.totalPages.toLocaleString("en-IN")} · Showing {collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).first.toLocaleString("en-IN")}–{collegeRoleDirectoryPageRange(result.filter.page,result.pageSize,result.total).last.toLocaleString("en-IN")} of {result.total.toLocaleString("en-IN")} memberships
         </p>
         <div className="flex gap-2">
           {result.filter.page > 1 ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page - 1 })}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
             >
               Previous
             </Link>
@@ -473,7 +473,7 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.filter.page < result.totalPages ? (
             <Link
               href={collegeRoleDirectoryHref(kind, { ...result.filter, page: result.filter.page + 1 })}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9"
+              className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-[8px] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[14px] font-semibold leading-[42px] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 md:min-w-9 md:rounded-[var(--lms-control-radius)] md:leading-5"
             >
               Next
             </Link>
