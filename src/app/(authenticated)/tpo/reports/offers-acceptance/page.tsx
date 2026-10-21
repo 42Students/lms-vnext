@@ -112,36 +112,6 @@ export default async function TpoOffersAcceptanceReportPage({
       </p>
 
       <ReportTable
-        title="Offer funnel by drive"
-        headings={[
-          "Drive",
-          "Company",
-          "Released",
-          "Accepted",
-          "Declined",
-          "Withdrawn",
-          "Outstanding",
-          "Expired outstanding",
-        ]}
-        rows={byDrive.map((row) => [
-          row.label,
-          row.companyName,
-          row.released,
-          row.accepted,
-          row.declined,
-          row.withdrawn,
-          row.outstanding,
-          row.expiredOutstanding,
-        ])}
-        emptyDescription="No persisted offers match the selected reporting scope."
-      />
-
-      <Disclosure title="Company offers and underlying records" className="border-b border-border py-3">
-        <div className="min-w-0 space-y-4 pt-3">
-      <ReportBarChart title="Accepted offers by company" units="offers"
-       rows={byCompany.map(row=>({label:row.label,value:row.accepted}))}/>
-
-      <ReportTable
         title="Offer funnel by company"
         headings={[
           "Company",
@@ -166,6 +136,36 @@ export default async function TpoOffersAcceptanceReportPage({
           acceptanceRate(row.accepted,row.declined,row.expiredOutstanding),
         ])}
         emptyDescription="No companies have recorded offers for these filters."
+      />
+
+      <Disclosure title="Drive offers and underlying records" className="border-b border-border py-3">
+        <div className="min-w-0 space-y-4 pt-3">
+      <ReportBarChart title="Accepted offers by company" units="offers"
+       rows={byCompany.map(row=>({label:row.label,value:row.accepted}))}/>
+
+      <ReportTable
+        title="Offer funnel by drive"
+        headings={[
+          "Drive",
+          "Company",
+          "Released",
+          "Accepted",
+          "Declined",
+          "Withdrawn",
+          "Outstanding",
+          "Expired outstanding",
+        ]}
+        rows={byDrive.map((row) => [
+          row.label,
+          row.companyName,
+          row.released,
+          row.accepted,
+          row.declined,
+          row.withdrawn,
+          row.outstanding,
+          row.expiredOutstanding,
+        ])}
+        emptyDescription="No persisted offers match the selected reporting scope."
       />
       <p className="text-xs text-muted-foreground">Acceptance rate = accepted / (accepted + declined + expired outstanding), shown to one decimal place. Waiting for the student is the currently outstanding status; expired outstanding is presented separately and is not counted twice.</p>
           <TpoReportRecordLinks kind="OFFERS" drives={byDrive} companies={byCompany} />

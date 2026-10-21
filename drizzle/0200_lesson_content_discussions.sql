@@ -5,6 +5,12 @@
 CREATE TABLE IF NOT EXISTS lesson_content_discussions (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
   legacy_discussion_id integer,
+  -- Numeric legacy provenance only; never use these IDs as current auth keys.
+  legacy_class_id integer,
+  legacy_course_id integer,
+  legacy_content_id integer,
+  legacy_parent_discussion_id integer,
+  legacy_sequence integer,
   -- Both scope and actor belong to one college; trigger below enforces this.
   college_id uuid NOT NULL REFERENCES colleges(id) ON DELETE RESTRICT,
   lesson_content_id uuid NOT NULL REFERENCES lesson_contents(id) ON DELETE RESTRICT,
