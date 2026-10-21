@@ -74,3 +74,33 @@ export const placementRecruiterDriveRequests = pgTable(
     check("placement_recruiter_drive_requests_draft_ck", sql`jsonb_typeof(${t.draft}) = 'object'`),
   ],
 );
+
+/** Group only the caller-authorized college rows; submissionId is a cross-
+ * college correlation nonce, NOT permission to read another college's copy. */
+export function groupOwnRecruiterDriveRequests<T extends {
+ id:string;collegeId:string;recruiterUserId:string;submissionId:string;
+ createdAt:Date;status:string;draft:Record<string,unknown>;
+}>(items:readonly T[],collegeId:string,recruiterUserId:string){
+ const groups=new Map<string,{
+  submissionId:string;collegeId:string;createdAt:Date;
+  roleTitle:string;requests:T[];
+ }>();
+ for(const item of items){
+  if(item.collegeId!==collegeId||item.recruiterUserId!==recruiterUserId)
+   throw new Error("Drive request crosses current recruiter college");
+  const existing=groups.get(item.submissionId);
+  const rawTitle=item.draft.title??item.draft.roleTitle;
+  const title=typeof rawTitle==="string" ?rawTitle.trim().slice(0,200):"Drive request";
+  if(existing){
+   existing.requests.push(item);
+   if(item.createdAt>existing.createdAt)existing.createdAt=item.createdAt;
+  }else groups.set(item.submissionId,{
+   submissionId:item.submissionId,collegeId:item.collegeId,
+   createdAt:item.createdAt,roleTitle:title||"Drive request",requests:[item],
+  });
+ }
+ return [...groups.values()].map(group=>({
+  ...group,
+  requests:group.requests.sort((a,b)=>b.createdAt.getTime()-a.createdAt.getTime()||a.id.localeCompare(b.id)),
+ })).sort((a,b)=>b.createdAt.getTime()-a.createdAt.getTime()||a.submissionId.localeCompare(b.submissionId));
+}

@@ -10,6 +10,7 @@ import {can} from "@/modules/permissions/policy";
 import {recruiterGrantEffectiveAt} from "./recruiter-grant-expiry-policy";
 import {hrDriveDraftSchema} from "./hr-drive-draft-model";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
+import {groupOwnRecruiterDriveRequests} from "@/db/schema/placement-drive-requests";
 import {tpoComparableDriveSnapshot} from "./tpo-drive-request-diff-model";
 import {recruiterDriveRequestInputSchema,recruiterRequestUpdateSchema,canRecruiterResubmit} from "./recruiter-drive-request-model";
 import {z} from "zod";
@@ -219,4 +220,11 @@ export async function updateOwnRecruiterDriveRequest(context:RequestContext,raw:
    input.action==="RESUBMIT"?input.draft:undefined);
   return updated;
  });
+}
+
+/** Legacy list groups copies by plan while keeping every row inside the
+ * recruiter's persisted grant for the explicitly selected college. */
+export async function listOwnRecruiterDriveRequestGroups(context:RequestContext,collegeId:string){
+ const requests=await listOwnRecruiterDriveRequests(context,collegeId);
+ return groupOwnRecruiterDriveRequests(requests,collegeId,context.user.id);
 }

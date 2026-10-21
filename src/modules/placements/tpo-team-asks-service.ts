@@ -1,6 +1,6 @@
 import {hasPlacementTeamMembership} from "./placement-team-access-model";
 import "server-only";
-import {inArray,and,desc,eq} from "drizzle-orm";
+import {inArray,and,desc,eq,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,inAppNotifications,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import {placementTpoInternalThreads,placementTpoInternalMessages,placementTpoTeamAsks} from "@/db/schema/tpo-internal";
@@ -206,4 +206,107 @@ export async function changeTpoTeamAsk(context:RequestContext,raw:unknown){
   });
   return {id:ask.id,status:nextStatus};
  });
+}
+
+/** Cross-thread task inbox. Read authorization is the intersection of
+ * persisted college membership and current thread participation, not a
+ * caller-supplied role, thread list or page of visible messages. */
+async function scopedTeamAskQuery(context:RequestContext,raw:{
+ view:"mine"|"mentions"|"all";limit?:number;askId?:string;
+}){
+ const {member,college}=await requireScope(context);
+ if(!await hasAskTable())return [];
+ const limit=Math.min(Math.max(raw.limit??100,1),200);
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"placements.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  const participant=sql`(
+   ${placementTpoInternalThreads.startedByMembershipId} = ${member.id}
+   or ${placementTpoInternalThreads.invitedMembershipId} = ${member.id}
+   or exists (
+    select 1 from placement_tpo_internal_thread_participants participant
+    where participant.thread_id = ${placementTpoInternalThreads.id}
+     and participant.college_id = ${college.id}::uuid
+     and participant.membership_id = ${member.id}::uuid
+     and participant.left_at is null
+   )
+  )`;
+  const audience=raw.view==="all"?undefined:raw.view==="mine"
+    ?eq(placementTpoTeamAsks.assigneeMembershipId,member.id)
+    :or(eq(placementTpoTeamAsks.assigneeMembershipId,member.id),
+      eq(placementTpoTeamAsks.askerMembershipId,member.id));
+  return tx.select({
+   id:placementTpoTeamAsks.id,
+   threadId:placementTpoTeamAsks.threadId,
+   title:placementTpoTeamAsks.title,
+   askerMembershipId:placementTpoTeamAsks.askerMembershipId,
+   assigneeMembershipId:placementTpoTeamAsks.assigneeMembershipId,
+   status:placementTpoTeamAsks.status,
+   dueAt:placementTpoTeamAsks.dueAt,
+   createdAt:placementTpoTeamAsks.createdAt,
+   updatedAt:placementTpoTeamAsks.updatedAt,
+   doneNote:placementTpoTeamAsks.doneNote,
+  }).from(placementTpoTeamAsks)
+   .innerJoin(placementTpoInternalThreads,and(
+     eq(placementTpoInternalThreads.id,placementTpoTeamAsks.threadId),
+     eq(placementTpoInternalThreads.collegeId,placementTpoTeamAsks.collegeId),
+   ))
+   .where(and(
+     eq(placementTpoTeamAsks.collegeId,college.id),
+     participant,audience,
+     raw.askId?eq(placementTpoTeamAsks.id,raw.askId):undefined,
+   ))
+   .orderBy(desc(placementTpoTeamAsks.createdAt),desc(placementTpoTeamAsks.id))
+   .limit(raw.askId?1:limit);
+ });
+}
+export async function listOwnTpoTeamAsks(context:RequestContext,limit=100){
+ const items=await scopedTeamAskQuery(context,{view:"mine",limit});
+ return {items:items.map(item=>({
+  ...item,href:"/tpo/team/"+item.threadId+"?ask="+item.id,
+ })),hasMore:items.length===Math.min(Math.max(limit,1),200)};
+}
+export async function listTpoTeamMentions(context:RequestContext,limit=100){
+ const items=await scopedTeamAskQuery(context,{view:"mentions",limit});
+ return {items:items.map(item=>({
+  ...item,href:"/tpo/team/"+item.threadId+"?ask="+item.id,
+ }))};
+}
+export async function getTpoTeamAskSummary(context:RequestContext){
+ const items=await scopedTeamAskQuery(context,{view:"mine",limit:200});
+ const now=Date.now();
+ return {open:items.filter(x=>x.status==="OPEN").length,
+  overdue:items.filter(x=>x.status==="OPEN"&&x.dueAt!==null&&x.dueAt.getTime()<now).length,
+  done:items.filter(x=>x.status==="DONE").length,
+  cancelled:items.filter(x=>x.status==="CANCELLED").length,
+  limited:items.length===200};
+}
+export async function lookupTpoTeamAsk(context:RequestContext,askId:string){
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f-]{23}$/i.test(askId))
+  throw new Error("TEAM_ASK_NOT_FOUND");
+ const [item]=await scopedTeamAskQuery(context,{view:"all",askId});
+ if(!item)throw new Error("TEAM_ASK_NOT_FOUND");
+ return {...item,href:"/tpo/team/"+item.threadId+"?ask="+item.id};
+}
+/** Legacy askDone/askCancel accept a globally scoped askId. Resolve the
+ * private thread first, then delegate the actual locked mutation to the same
+ * version-checked writer. Repeated same transition remains idempotent. */
+export async function changeTpoTeamAskById(context:RequestContext,raw:{
+ askId:string;action:"DONE"|"CANCEL";note?:string;
+}){
+ const item=await lookupTpoTeamAsk(context,raw.askId);
+ const member=context.membership;
+ if(!member||!tpoTeamAskCanTransition(raw.action,member.id,
+   item.askerMembershipId,item.assigneeMembershipId))
+  throw new AuthorizationError("placements.manage");
+ const target=raw.action==="DONE"?"DONE":"CANCELLED";
+ if(item.status===target)return {id:item.id,status:target,replayed:true,
+  href:item.href};
+ if(item.status!=="OPEN")throw new Error("TEAM_ASK_STALE");
+ const updated=await changeTpoTeamAsk(context,{
+  askId:item.id,threadId:item.threadId,action:raw.action,
+  expectedStatus:"OPEN",...(raw.note?{note:raw.note}:{}),
+ });
+ return {...updated,replayed:false,href:item.href};
 }
