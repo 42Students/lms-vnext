@@ -10,13 +10,14 @@ export function RecruiterConversationLiveRefresh(){
  const version=useRef<string|null>(null);
  const checking=useRef(false);
  const [stale,setStale]=useState(false);
+ const [newMessages,setNewMessages]=useState(false);
  const refresh=useRef<()=>void>(()=>{});
  useEffect(()=>{
   let active=true;
   const update=async()=>{
    if(checking.current || document.visibilityState!=="visible" || !navigator.onLine)return;
    const current=document.activeElement;
-   if(current instanceof HTMLElement&&current.closest("input,textarea,select,[contenteditable=true]"))return;
+   const editing=current instanceof HTMLElement && Boolean(current.closest("input,textarea,select,[contenteditable=true]"));
    if(window.getSelection()?.toString().trim())return;
    if(document.querySelector('dialog[open], [role="dialog"][aria-modal="false"], [role="dialog"][aria-modal="true"], [role="alertdialog"], [aria-haspopup][aria-expanded="true"], details[open]'))return;
    checking.current=true;
@@ -33,7 +34,8 @@ export function RecruiterConversationLiveRefresh(){
     setStale(false);
     const next=data.version;
     if(version.current!==null && version.current!==next){
-     router.refresh();
+     if(editing)setNewMessages(true);
+     else {setNewMessages(false);router.refresh();}
     }
     version.current=next;
    }catch{if(active)setStale(true);}
@@ -46,8 +48,11 @@ export function RecruiterConversationLiveRefresh(){
   return ()=>{active=false;window.clearInterval(interval);
     window.removeEventListener("focus",refresh.current);};
  },[router]);
- return stale?<div role="status" className="flex flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2 text-sm text-body">
-   This refresh failed. Showing the last successful inbox.
-   <Button type="button" size="sm" variant="secondary" onClick={()=>refresh.current()}>Retry</Button>
- </div>:null;
+ return stale || newMessages ? <div role="status" className="flex flex-wrap items-center gap-2 border-b border-[var(--lms-canvas-border)] py-2 text-sm text-body">
+   {stale ? "This refresh failed. Showing the last successful inbox." : "New messages available. Your draft is unchanged."}
+   <Button type="button" size="sm" variant="secondary" onClick={()=>{
+     if(newMessages){setNewMessages(false);router.refresh();}
+     else refresh.current();
+   }}>{stale ? "Retry" : "Load new messages"}</Button>
+ </div> : null;
 }

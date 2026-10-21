@@ -21,7 +21,9 @@ import {getDriveChangeRequests} from "@/modules/placements/tpo-drive-change-requ
 type Props={params:Promise<{threadId:string}>;searchParams:Promise<{page?:string|string[]}>};
 const idSchema=z.string().uuid();
 const pageSchema=z.coerce.number().int().min(1).max(10000);
-const dateTime=(value:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
+// Always display IST (the product time zone), including across UTC-midnight
+// and year boundaries. Read receipts are explicit, never a GET side-effect.
+const dateTime=(value:Date)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",year:"numeric",day:"numeric",month:"short",hour:"numeric",minute:"2-digit",hour12:true}).format(value);
 export default async function RecruiterConversationDetail({params,searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)redirect("/dashboard");
