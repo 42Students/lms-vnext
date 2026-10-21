@@ -2,6 +2,7 @@
 import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 export function FacultyContactsLiveSearch({baseHref,initialSearch,pageSize}:{
  baseHref:string;initialSearch:string;pageSize:number;
@@ -31,9 +32,9 @@ export function FacultyContactsLiveSearch({baseHref,initialSearch,pageSize}:{
    placeholder="Search contacts..." value={value}
    onChange={event=>setValue(event.target.value)}
    className="min-h-11 w-full min-w-0 pl-9 pr-10 md:min-h-9"/>
-  {value?<button type="button" aria-label="Clear search" title="Clear search"
+  {value?<Button variant="secondary" type="button" aria-label="Clear search" title="Clear search"
    onClick={()=>{setValue("");router.replace(href,{scroll:false});}}
-   className="absolute right-1 inline-flex size-9 items-center justify-center rounded-[var(--lms-control-radius)] text-muted-foreground hover:bg-[var(--lms-neutral-100)] hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
-   >×</button>:null}
+   className="absolute right-1"
+   >×</Button>:null}
  </div>;
 }
