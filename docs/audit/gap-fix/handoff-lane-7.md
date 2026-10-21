@@ -780,3 +780,14 @@ Unifying login across roles is intentional; affirmative OTP Terms consent requir
 - G2-18-029-008 | `src/components/admin/super-admin-semester-create-control.tsx` | After create select its program for visible new row; preserve toast
 
 Academic semester create/list visual layout and server fetch are shared Academic/Admin UI areas. Restore clone grid and safe retry with UI owner; semester number/program validation must remain scoped. **7/7 handed off, not fixed**.
+
+## Browser reporting and marketing route integrations — lane-7 owned edits (2026-10-21)
+
+- G2-2-034-002/-025/-026 | `src/app/(authenticated)/layout.tsx + persistent root client boundary` | Call installClientErrorReporting once from persistent client root; error/rejection/resource handlers are exported but not yet mounted.
+- G2-2-034-003/-037/-059 | `src/lib/api-fetch.ts + auth/video/upload client surfaces` | Call reportClientEvent with category and sanitized error only; do not pass URL/body, and keep bounded opt-in console capture.
+- G2-2-034-027 | `src/app/(authenticated)/layout.tsx` | Decide whether console.error capture is enabled; defaults disabled to preserve developer diagnostics and avoid PII reports.
+- G2-20-004-029/-008-029 | `src/app/enterprises/page.tsx + src/app/universities/page.tsx` | Pass trusted MarketingLayout path/pageTitle/pageDescription so per-route WebPage/BreadcrumbList is emitted.
+- G2-20-005-028 | `src/app/home/page.tsx + other marketing route metadata exports` | Adopt marketingPageMetadata for canonical, OG, Twitter and robots. Shared Organization/WebSite JSON-LD already emitted; no missing OG asset invented.
+- G2-20-004-039 | `src/app/request-demo/page.tsx` | Replace subject-only mailto with exported MARKETING_DEMO_MAILTO, or use approved lead form after validation.
+
+Owned modules are partially implemented; dependent installation and route page updates are **not** claimed done. Keep vNext no-AI direction in marketing schema and avoid sending browser PII or credential details through telemetry.

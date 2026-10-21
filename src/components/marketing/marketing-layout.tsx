@@ -1,7 +1,44 @@
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import publicStyles from "@/components/public/public-screen.module.css";
+
+const MARKETING_SITE = "https://42lms.com";
+const MARKETING_CONTACT = "hello@42lms.com";
+const MARKETING_DESCRIPTION = "Connected learning, projects and placements for universities and enterprises.";
+const sharedMarketingGraph = {
+ "@context": "https://schema.org",
+ "@graph": [
+  { "@type": "Organization", "@id": MARKETING_SITE + "/#organization", name: "42 LMS",
+   url: MARKETING_SITE + "/", logo: MARKETING_SITE + "/assets/images/legacy-42lms-logo.svg",
+   description: MARKETING_DESCRIPTION,
+   contactPoint: { "@type": "ContactPoint", contactType: "sales", email: MARKETING_CONTACT } },
+  { "@type": "WebSite", "@id": MARKETING_SITE + "/#website",
+   url: MARKETING_SITE + "/", name: "42 LMS", publisher: { "@id": MARKETING_SITE + "/#organization" },
+   description: MARKETING_DESCRIPTION, inLanguage: "en" },
+ ],
+};
+function ldJson(graph: unknown): string {
+ return JSON.stringify(graph).replace(/</g, "\\u003c");
+}
+/** Route owners can apply this with their real route paths via Next's metadata export. */
+export function marketingPageMetadata(path: string, title: string, description: string): Metadata {
+ const pathname = path.startsWith("/") && !path.startsWith("//") && !path.includes("..") && !path.includes("?")
+  ? path : "/";
+ const canonical = MARKETING_SITE + (pathname === "/" ? "/" : pathname);
+ return {
+  title, description,
+  alternates: { canonical },
+  robots: { index: true, follow: true },
+  openGraph: { type: "website", siteName: "42 LMS", locale: "en_IN", title, description, url: canonical },
+  twitter: { card: "summary", title, description },
+ };
+}
+/** Prefilled demo request fields; request-demo route can import it without duplicating copy. */
+export const MARKETING_DEMO_MAILTO = "mailto:" + MARKETING_CONTACT +
+ "?subject=" + encodeURIComponent("42 LMS demo request") +
+ "&body=" + encodeURIComponent("Name:\nOrganization:\nRole:\nPhone:\nWhat would you like to solve:\n");
 
 const primaryNav=[
  {label:"Platform",href:"/platform"},
@@ -9,8 +46,32 @@ const primaryNav=[
  {label:"Enterprises",href:"/enterprises"},
  {label:"Request a demo",href:"/request-demo"},
 ] as const;
-export function MarketingLayout({children}:{children:ReactNode}){
+export function MarketingLayout({children,path,pageTitle,pageDescription}:{
+ children:ReactNode;path?:string;pageTitle?:string;pageDescription?:string;
+}){
+ const normalizedPath = path && path.startsWith("/") && !path.startsWith("//") && !path.includes("..") && !path.includes("?")
+  ? path : null;
+ const pageJson = normalizedPath && pageTitle ? ldJson({
+  "@context": "https://schema.org",
+  "@graph": [
+   { "@type": "WebPage", "@id": MARKETING_SITE + normalizedPath + "#webpage",
+    url: MARKETING_SITE + normalizedPath, name: pageTitle,
+    description: pageDescription || MARKETING_DESCRIPTION,
+    isPartOf: { "@id": MARKETING_SITE + "/#website" },
+    about: { "@id": MARKETING_SITE + "/#organization" }, inLanguage: "en" },
+   { "@type": "BreadcrumbList", "@id": MARKETING_SITE + normalizedPath + "#breadcrumb",
+    itemListElement: [
+     { "@type": "ListItem", position: 1, name: "Home", item: MARKETING_SITE + "/" },
+     { "@type": "ListItem", position: 2, name: pageTitle, item: MARKETING_SITE + normalizedPath },
+    ] },
+  ],
+ }) : null;
  return <div className="min-h-dvh bg-background text-foreground">
+  <script type="application/ld+json" dangerouslySetInnerHTML={{__html:ldJson(sharedMarketingGraph)}} />
+  {pageJson?<script type="application/ld+json" dangerouslySetInnerHTML={{__html:pageJson}} />:null}
+  <a href="#main-content" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:inline-flex focus:min-h-11 focus:items-center focus:rounded-[var(--lms-control-radius)] focus:border focus:border-primary focus:bg-surface focus:px-4 focus:font-semibold focus:text-primary-text focus:outline-2 focus:outline-offset-[3px]">
+   Skip to main content
+  </a>
   <header className="border-b border-border bg-surface">
    <nav aria-label="Public navigation" className="mx-auto flex max-w-6xl flex-col items-start gap-3 px-4 py-3 md:flex-row md:items-center md:justify-between md:gap-4 md:px-6">
     <Link href="/home" className={publicStyles.brand} aria-label="42LMS home">{/* eslint-disable-next-line @next/next/no-img-element */}<img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={publicStyles.legacyLogo} /></Link>
@@ -21,7 +82,7 @@ export function MarketingLayout({children}:{children:ReactNode}){
     </div>
    </nav>
   </header>
-  <main className="mx-auto min-w-0 max-w-6xl space-y-10 px-4 py-8 md:space-y-14 md:px-6 md:py-14">{children}</main>
+  <main id="main-content" tabIndex={-1} className="mx-auto min-w-0 max-w-6xl space-y-10 px-4 py-8 md:space-y-14 md:px-6 md:py-14">{children}</main>
   <footer className="border-t border-border bg-surface">
    <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-4 px-6 py-8 text-sm text-muted-foreground">
     <span>42 LMS · Talent and workforce development</span>
