@@ -47,8 +47,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/announcements.js`
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/students.js`
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/viewSubmissionsModal.jsx`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/attendance.js`
-- [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobApplicationStatusValidator.java`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/attendance.js`
+- [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobApplicationStatusValidator.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ZeptoMailServiceImpl.java`
 - [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/company/DnsMailDomainResolver.java`
 - [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/lessons/LessonSearchController.java`
