@@ -43,12 +43,12 @@ export default async function AfterCollegeReportPage({searchParams}:{searchParam
    actions={<><Link href="/tpo/reports" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">← All reports</Link>{data.available?<a href={"/api/placements/tpo/reports/after-college?"+query.toString()} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 md:w-auto">Download CSV</a>:null}</>}/>
   {!data.available?<Alert tone="warning">After-college outcomes storage is unavailable. This page does not infer destinations.</Alert>:<>
    <form method="get" className="grid min-w-0 gap-3 border-t border-border pt-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:items-end">
-    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
      <Select name="batchId" defaultValue={batchId??""} className="min-h-11 w-full md:min-h-9">
       <option value="">All current batches</option>
       {batches.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
      </Select></label>
-    <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] md:w-[220px] md:basis-auto text-[var(--lms-neutral-400)] font-semibold leading-4">Branch
+    <label className="grid w-full min-w-0 basis-full gap-2 text-[13px] md:w-[220px] md:basis-auto text-[var(--lms-neutral-400)] font-semibold leading-4">Branch
      <Select name="branchId" defaultValue={branchId??""} className="min-h-11 w-full md:min-h-9">
       <option value="">All branches</option>
       {[...branches].sort((a,b)=>a[1].localeCompare(b[1])).map(([id,label])=><option key={id} value={id}>{label}</option>)}
