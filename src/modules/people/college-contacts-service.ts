@@ -12,6 +12,7 @@ import {collegeContactsQuerySchema,contactDateWindowValid,contactAcademicFilters
 
 export type CollegeContactRow={
  membershipId:string;name:string;email:string;phone:string;roles:("FACULTY"|"LEARNER")[];
+ avatarInitial:string;avatarTint:number;
  status:"ACTIVE"|"SUSPENDED"|"ENDED";joinedAt:Date;
 };
 export async function listCollegeContacts(context:RequestContext,raw:unknown){
@@ -93,7 +94,9 @@ export async function listCollegeContacts(context:RequestContext,raw:unknown){
   const items:CollegeContactRow[]=rows.map(row=>{
    const memberRoles=roleMap.get(row.membershipId)??[];
    const contact=visibleContactDetails({email:row.email,phone:row.phone,isLearner:memberRoles.includes("LEARNER")});
-   return {membershipId:row.membershipId,name:row.name?.trim()||"Unnamed person",
+   const name=row.name?.trim()||"—";
+   const avatar=collegeContactAvatar(name);
+   return {membershipId:row.membershipId,name,avatarInitial:avatar.initial,avatarTint:avatar.tint,
     email:contact.email,phone:contact.phone,roles:memberRoles,
     status:row.status,joinedAt:row.joinedAt};
   });
@@ -208,4 +211,74 @@ export async function listCollegeStaffContacts(context:RequestContext,raw:unknow
   });
   return {items};
  });
+}
+
+/** Stable initials/tint support for the old ContactsGrid avatar treatment.
+ * The returned index selects an existing design token; it is not a photo URL,
+ * hash of an email, or a materialized personal secret.
+ */
+export function collegeContactAvatar(name:string):{initial:string;tint:number}{
+ const safe=name.trim();
+ const initial=safe && safe!=="—"?Array.from(safe)[0].toLocaleUpperCase("en"):"?";
+ let hash=2166136261;
+ for(const symbol of safe.toLocaleLowerCase("en")){
+  hash=Math.imul(hash^symbol.charCodeAt(0),16777619)>>>0;
+ }
+ return {initial,tint:hash%6};
+}
+
+/** Legacy UI DTO bridge. Modern contact visibility stays authoritative:
+ * neither an empty photo URL nor a masked mobile is a claim of a public
+ * profile-photo/phone read grant. Split-name fields are presentation-only.
+ */
+export function toLegacyCollegeContactDto(row:CollegeContactRow){
+ const words=row.name==="—"?[]:row.name.trim().split(/\s+/);
+ return {
+  id:row.membershipId, membershipId:row.membershipId,
+  firstName:words[0]??"—", lastName:words.slice(1).join(" "),
+  userType:row.roles.includes("FACULTY")?"FACULTY":"STUDENT",
+  email:row.email==="Not provided"?"—":row.email,
+  contactMobile:row.phone==="Not provided"?"—":row.phone,
+  // The canonical account has one phone field, not a verified alternate.
+  contactPhone:null,
+  profileImageUrl:null,
+  avatarInitial:row.avatarInitial,avatarTint:row.avatarTint,
+  roles:[...row.roles], status:row.status,
+ };
+}
+
+/** Scoped, zero-based adapter for the old readonly /users/contacts callers.
+ * All academic filters are reauthorized inside listCollegeContacts; a
+ * combined-role identity is returned once with an explicit roles array.
+ * Pagination remains bounded even if a legacy caller omits its old pageSize.
+ */
+export async function listLegacyCollegeContacts(context:RequestContext,raw:unknown){
+ const input=z.strictObject({
+  userType:z.string().trim().max(20).default("ALL"),
+  collegeId:z.string().uuid().optional(),
+  programId:z.string().uuid().optional(),
+  departmentId:z.string().uuid().optional(),
+  pageNumber:z.coerce.number().int().min(0).max(9999).default(0),
+  pageSize:z.union([z.literal(10),z.literal(20),z.literal(25),z.literal(50)]).default(10),
+  query:z.string().trim().max(100).default(""),
+ }).parse(raw);
+ const currentCollege=context.membership?.collegeId;
+ if(!currentCollege || (input.collegeId&&input.collegeId!==currentCollege))
+  throw new AuthorizationError("people.manage");
+ const role=input.userType.toLocaleLowerCase("en");
+ const tab=role==="faculty"?"FACULTY" as const:
+   role==="learner"||role==="student"?"STUDENT" as const:
+   role==="all"?"ALL" as const:null;
+ if(!tab)throw new RangeError("INVALID_CONTACT_USER_TYPE");
+ const result=await listCollegeContacts(context,{
+  tab,programId:input.programId,facultyDepartmentId:input.departmentId,
+  page:input.pageNumber+1,pageSize:input.pageSize,q:input.query,
+ });
+ return {
+  contactDTOList:result.items.map(toLegacyCollegeContactDto),
+  size:result.total,pageNumber:input.pageNumber,pageSize:input.pageSize,
+  totalPages:Math.ceil(result.total/input.pageSize),
+  // Kept alongside the old DTO for clients migrated to the canonical model.
+  rolesAreDeduplicated:true,
+ };
 }
