@@ -24,7 +24,7 @@ export async function POST(request:Request,{params}:RouteContext){
     const task=scope.access==="LEARNER"
       ? await createLearnerOwnTask(context,path,body)
       : await createMentorProjectTask(context,path,body);
-    return NextResponse.json({task},{status:201});
+    return NextResponse.json({task,message:"Project tasks updated"},{status:201});
   }catch(error){
     if(error instanceof MentorProjectCommandBodyError)
       return NextResponse.json({error:error.code,message:mentorProjectBodyFailureMessage(error.status)},

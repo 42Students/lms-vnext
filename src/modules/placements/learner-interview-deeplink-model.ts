@@ -9,6 +9,19 @@ const interviewLinkParams = z.object({
   { message: "Both interview identifiers are required together" },
 );
 
+/** Old schedule cards used numeric application IDs and synthetic iv-/test- round
+ * IDs. They cannot be mapped to a vNext round UUID without a scoped legacy-ID
+ * lookup. Open the learner's own list instead of turning an old bookmark into
+ * a 404; never infer ownership or select a round from the numeric identifier. */
+const legacyInterviewLinkParams = z.object({
+  applicationId: z.string().regex(/^(?:[0-9]+|iv-[0-9]+)$/),
+  roundId: z.string().regex(/^iv-[0-9]+$/),
+}).strict();
+const legacyTestLinkParams = z.object({
+  applicationId: z.string().regex(/^[0-9]+$/),
+  roundId: z.string().regex(/^test-[0-9]+$/),
+}).strict().refine(value => value.roundId === "test-" + value.applicationId);
+
 type OwnInterview = {
   applicationId: string;
   roundId: string;
@@ -24,7 +37,13 @@ export function resolveOwnInterviewDeepLink(
   rawQuery: unknown,
 ): { valid: true; key: string | null } | { valid: false } {
   const parsed = interviewLinkParams.safeParse(rawQuery);
-  if (!parsed.success) return { valid: false };
+  if (!parsed.success) {
+    if (legacyInterviewLinkParams.safeParse(rawQuery).success ||
+        legacyTestLinkParams.safeParse(rawQuery).success) {
+      return { valid: true, key: null };
+    }
+    return { valid: false };
+  }
   const { applicationId, roundId } = parsed.data;
   if (!applicationId || !roundId) return { valid: true, key: null };
   const own = ownRounds.some(row =>

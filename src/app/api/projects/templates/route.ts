@@ -39,13 +39,19 @@ export async function POST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (body === null) {
+      return NextResponse.json(
+        { error: "INVALID_TEMPLATE", message: "Template payload is required" },
+        { status: 400 },
+      );
+    }
     const result = await createProjectTemplate(
       context,
       body,
     );
 
-    return NextResponse.json(result, {
+    return NextResponse.json({ ...result, message: "Project template created" }, {
       status: 201,
     });
   } catch (error) {
