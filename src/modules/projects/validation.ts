@@ -345,8 +345,6 @@ export const createProjectInstanceInputSchema = z
   .strict().superRefine((v,ctx)=>{
     if(v.initialStatus==="ACTIVE"&&!v.primaryMentorMembershipId)
       ctx.addIssue({code:"custom",path:["primaryMentorMembershipId"],message:"A mentor is required before a workspace can be Active"});
-    if(v.learnerMembershipIds.length && !v.sectionId)
-      ctx.addIssue({code:"custom",path:["sectionId"],message:"Choose a class for the selected students"});
     if(new Set(v.learnerMembershipIds).size!==v.learnerMembershipIds.length)
       ctx.addIssue({code:"custom",path:["learnerMembershipIds"],message:"Duplicate student"});
   });

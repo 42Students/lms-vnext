@@ -43,7 +43,7 @@ export function ProjectArchiveControl({
       setOpen(false);
       showToast({
         tone: "success",
-        title: "Project archived",
+        title: "Workspace archived",
         description:
           "The workspace remains available for review.",
       });

@@ -11,9 +11,9 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace.tsx.part1of3.md` (edit src/components/projects/project-workspace.tsx; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace.tsx.part2of3.md` (edit src/components/projects/project-workspace.tsx; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace.tsx.part3of3.md` (edit src/components/projects/project-workspace.tsx; 7 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace.tsx.part1of3.md` (edit src/components/projects/project-workspace.tsx; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace.tsx.part2of3.md` (edit src/components/projects/project-workspace.tsx; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace.tsx.part3of3.md` (edit src/components/projects/project-workspace.tsx; 7 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-create-control.tsx.part1of2.md` (edit src/components/projects/project-create-control.tsx; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-create-control.tsx.part2of2.md` (edit src/components/projects/project-create-control.tsx; 17 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u015-college-admin-workspace-summary.md.part1of2.md` (new; 20 findings; best P1)
