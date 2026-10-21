@@ -5,11 +5,13 @@ import { InlineNotice } from "@/components/ui/inline-notice";
 import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useToast} from "@/components/ui/toast";
 import {CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
  campaignId:string;ready:boolean;recipients:number;status:string;
 }){
  const router=useRouter();
+ const {showToast}=useToast();
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  const sendingRef=useRef(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
@@ -29,9 +31,17 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
       "The campaign could not be sent. Refresh before retrying.");
      if (![data.sent,data.failed,data.skipped].every(value=>typeof value==="number" && Number.isSafeInteger(value) && value>=0))
        throw new Error("The campaign response could not be verified. Refresh for receipts.");
+     const summary=data.sent+" accepted by provider · "+data.failed+" failed · "+data.skipped+" skipped.";
      setOutcome({sent:data.sent!,failed:data.failed!,skipped:data.skipped!});
+     showToast({tone:data.failed?"info":"success",title:"Campaign send recorded",
+       description:summary+" Provider acceptance does not prove delivery."});
      router.refresh();
-    }catch(e){setError(e instanceof Error?e.message:"The campaign could not be sent.");}
+    }catch(e){
+     const message=e instanceof Error?e.message:"The campaign could not be sent.";
+     setError(message);
+     showToast({tone:"error",title:"Couldn't send",
+       description:message+" Check campaign receipts before trying again."});
+    }
     finally{sendingRef.current=false;setBusy(false);setConfirmOpen(false);}
 
  }
@@ -39,7 +49,8 @@ export function TpoCampaignSendControl({campaignId,ready,recipients,status}:{
   This campaign is {status.toLowerCase()}. Provider acceptance does not prove inbox delivery.
  </p>;
  return <section className="min-w-0 space-y-3 border-t border-border pt-4" aria-label="Campaign send">
-  <h2 className="font-semibold">Send this campaign</h2>
+  <h2 className="font-semibold">Step 2 of 2 · Send this campaign</h2>
+  <p className="text-sm text-body">Legacy Send an email is now a verified draft-and-confirm workflow. Review the saved subject and recipient selection before final confirmation.</p>
   {!ready?<Alert tone="warning">
    Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.
    {" "}{CAMPAIGN_DELIVERY_UNAVAILABLE}
