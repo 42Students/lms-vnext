@@ -2,24 +2,26 @@
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
-import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 /** Never carry a recruiter draft across two different employer-college threads. */
-export function RecruiterConversationReplyForm({threadId,quoteId,quoteLabel}:{
- threadId:string;quoteId?:string|null;quoteLabel?:string|null;
+export function RecruiterConversationReplyForm({threadId,quoteId,quoteLabel,historyAvailable=true}:{
+ threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable?:boolean;
 }){
  return <RecruiterConversationReplyFormState key={threadId+":"+(quoteId??"")} threadId={threadId}
-   quoteId={quoteId} quoteLabel={quoteLabel}/>;
+   quoteId={quoteId} quoteLabel={quoteLabel} historyAvailable={historyAvailable}/>;
 }
-function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel}:{
- threadId:string;quoteId?:string|null;quoteLabel?:string|null;
+function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel,historyAvailable}:{
+ threadId:string;quoteId?:string|null;quoteLabel?:string|null;historyAvailable:boolean;
 }){
  const router=useRouter();
  const {run:runGuarded}=useGuardedAction({timeoutMs:15000});
  const formRef=useRef<HTMLFormElement>(null);
+ const inputRef=useRef<HTMLTextAreaElement>(null);
+ const navigating=useRef(false);
  const submitPendingRef=useRef(false);
  const [body,setBody]=useState("");
  const [selectedQuote,setSelectedQuote]=useState(quoteId??null);
@@ -29,11 +31,13 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel}:{
  useEffect(()=>{
   if(!body.trim()&&!sending)return;
   const warn=(event:BeforeUnloadEvent)=>{
+    if(navigating.current)return;
     event.preventDefault();
     event.returnValue="";
   };
   window.addEventListener("beforeunload",warn);
   const intercept=(event:MouseEvent)=>{
+   if(navigating.current)return;
    const target=event.target;
    if(!(target instanceof Element))return;
    const anchor=target.closest("a[href]");
@@ -50,7 +54,7 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel}:{
 
  async function submit(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(sending||submitPendingRef.current)return;
+  if(sending||submitPendingRef.current||!historyAvailable)return;
   const message=body.trim();
   if(message.length===0){
    setNotice("Write a message first");
@@ -69,7 +73,7 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel}:{
   try{
    const form=new FormData();
    form.set("body",message);
-    if(selectedQuote)form.set("quoteId",selectedQuote);
+    if(selectedQuote)form.set("quoteId",selectedQuote); // legacy change-request quote retained
    const response=await runGuarded(()=>fetch("/api/placements/recruiter/conversations/"+threadId+"/reply",{
     method:"POST",body:form,credentials:"same-origin",redirect:"error",
     headers:{Accept:"application/json"},
@@ -105,24 +109,31 @@ function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel}:{
     <Button type="button" size="sm" variant="secondary" disabled={sending} onClick={()=>setSelectedQuote(null)}>Remove quote</Button>
   </div>:null}
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
-   <Textarea value={body} onChange={event=>setBody(event.target.value)}
+   <Textarea ref={inputRef} value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
-    rows={4} disabled={sending} aria-invalid={body.trim().length>4000}
-    className="min-h-32 w-full"
-    placeholder="Write a message to the placement cell"/>
+    rows={3} maxLength={4000} disabled={sending||!historyAvailable}
+    aria-invalid={body.trim().length>4000}
+    className="min-h-28 w-full"
+    placeholder="Write to placement cell"/>
   </label>
   <p className="text-xs text-muted-foreground leading-5">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
+  {!historyAvailable?<InlineNotice tone="warning"
+    message="Conversation history could not be loaded. Reload this thread before sending a reply."/>:null}
   {notice?<InlineNotice tone={notice.startsWith("Message was not sent")||notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
   <div className="flex min-w-0 flex-col items-stretch gap-2 min-[768px]:flex-row min-[768px]:items-center">
-  <Button type="submit" disabled={sending} loading={sending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
+  <Button type="submit" disabled={sending||!historyAvailable||!body.trim()||body.trim().length>4000}
+    loading={sending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
    {sending?"Sending…":"Send reply"}
   </Button>
-  <ConfirmActionDialog open={leaveHref!==null} title="Discard this unsent message?"
-   consequence="Your draft reply will be lost." confirmLabel="Discard"
-   onCancel={()=>setPendingLeave(null)} onConfirm={()=>{
-    const href=leaveHref;setPendingLeave(null);setBody("");
+  <ConfirmDialog open={leaveHref!==null} onOpenChange={next=>{
+     if(!next){setPendingLeave(null);inputRef.current?.focus();}
+    }} title="Discard this unsent message?"
+   description="Your draft reply will be lost."
+   cancelLabel="Keep writing" confirmLabel="Discard message" confirmVariant="danger"
+   onConfirm={()=>{
+    const href=leaveHref;navigating.current=true;setPendingLeave(null);setBody("");
     if(href)router.push(href);
    }}/>
   </div>
