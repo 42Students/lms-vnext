@@ -14,6 +14,9 @@ export type TpoDriveNextStepInput = {
   publishAllowed: boolean;
   closeAllowed: boolean;
   shortlistCount: number | null;
+  applicantCount?: number;
+  recordedOutside?: boolean;
+  deadlinePassed?: boolean;
   pendingSelections?: number;
   pendingRequests: number;
   nonApplicantCount?: number;
@@ -21,6 +24,8 @@ export type TpoDriveNextStepInput = {
   deadlineMissing?: boolean;
   stagedRounds: Array<{ id: string; name: string; pendingCount: number }>;
 };
+export const TPO_DRIVE_REQUEST_DECLINED_SUCCESS = "Request declined. It is now cancelled.";
+
 export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
   primary: TpoDriveAction;
   more: TpoDriveAction[];
@@ -43,6 +48,16 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       href: root + "/edit",
     });
   } else if (input.status === "PUBLISHED") {
+    if (input.recordedOutside && input.applicantCount === 0) actions.push({
+      label: "Add students who took part",
+      description: "Record the students who took part in this outside drive.",
+      href: root + "/applicants-pipeline",
+    });
+    if (!input.recordedOutside && input.deadlinePassed && (input.applicantCount ?? 0) > 0) actions.push({
+      label: "Share " + input.applicantCount + " applicants with company",
+      description: "Review the applicants and choose what the company can see.",
+      href: root + "/share-preview",
+    });
     if(input.deadlineMissing) actions.push({
       label:"Set deadline",description:"This drive has no application deadline. Set one so students know when applications close.",
       href:"#drive-deadline-actions",
@@ -65,7 +80,7 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       description: "Recorded employer selections still need verification before official offers are issued.",
       href: root + "/selections",
     });
-    if (input.shortlistCount !== null && input.shortlistCount > 0) actions.push({
+    if (!input.deadlinePassed && input.shortlistCount !== null && input.shortlistCount > 0) actions.push({
       label: "Share with company",
       description: input.shortlistCount + " shortlisted application(s) are available for review.",
       href: root + "/share-preview",

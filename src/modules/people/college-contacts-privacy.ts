@@ -9,9 +9,14 @@ export function maskedEmail(value:string|null):string {
  if(at<1||at===value.length-1)return "Not available";
  return value.slice(0,1)+"•••@"+value.slice(at+1).toLowerCase();
 }
-export function visibleContactDetails(input:{email:string|null;phone:string|null;isLearner:boolean}){
+export function visibleContactDetails(input:{
+ email:string|null;phone:string|null;isLearner:boolean;
+ /** Only a separately authorized need-to-know workflow may opt in. */
+ contactDisclosureAuthorized?:boolean;
+}){
  // Learner contact information is masked in generic all-contacts results.
  // Sending, exporting or revealing it needs a separate need-to-know workflow.
- return {email:input.isLearner?maskedEmail(input.email):input.email?.trim()||"Not provided",
-         phone:maskedPhone(input.phone)};
+ const disclose=input.contactDisclosureAuthorized===true;
+ return {email:input.isLearner&&!disclose?maskedEmail(input.email):input.email?.trim()||"Not provided",
+         phone:disclose?input.phone?.trim()||"Not provided":maskedPhone(input.phone)};
 }

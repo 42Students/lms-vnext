@@ -25,7 +25,7 @@ function requireCollegeActivity(context: RequestContext) {
 export async function listCollegeActivity(context: RequestContext, raw: unknown) {
   const query = collegeActivityQuerySchema.parse(raw);
   requireCollegeActivity(context);
-  const { pageSize, view, category, ...filter } = query;
+  const { pageSize, view, category, range: _range, ...filter } = query;
   const categories = {
     ACADEMIC_SETUP: "ACADEMICS",
     PEOPLE_ACCESS: "IDENTITY",

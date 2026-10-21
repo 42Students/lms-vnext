@@ -11,7 +11,7 @@ import { AuthorizationError } from "@/modules/permissions/policy";
 import { sanitizeActivityMetadata } from "@/modules/activity/metadata-sanitizer";
 import { CollegeActivityRefresh } from "@/components/activity/college-activity-refresh";
 import { EmptyState } from "@/components/ui/empty-state";
-import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref } from "@/modules/activity/college-activity-model";
+import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref, invalidCollegeActivityCategory } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
 import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "@/modules/activity/taxonomy";
 import {collegeActivityActor,collegeActivityItem,collegeActivityAction} from "@/modules/activity/college-activity-presentation";
@@ -30,13 +30,12 @@ export default async function CollegeActivityPage({
 }: { searchParams: Promise<RawSearch> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="min-w-0 space-y-3"><PageHeader title="Activity Log"/><ErrorState title="College activity access unavailable" description="Admin not assigned to a college. Ask a Super Admin to assign a college before you can view the audit trail."/></div>;
-  const parsed = collegeActivityQuerySchema.safeParse(
-    activitySearchParams(await searchParams),
-  );
+  const raw = await searchParams;
+  const parsed = collegeActivityQuerySchema.safeParse(activitySearchParams(raw));
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
-      description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
+      description={invalidCollegeActivityCategory(raw.category) ?? "The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."}
       action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data).catch((error:unknown)=>{
