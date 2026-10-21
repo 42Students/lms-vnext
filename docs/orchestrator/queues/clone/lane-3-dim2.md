@@ -451,33 +451,33 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [ ] `src/components/hr/recruiter-profile-access.tsx`
 - [x] `src/components/marketing/marketing-layout.tsx`
 - [x] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/placements/college-drive-pipeline-overview.tsx`
+- [x] `src/components/placements/college-drive-pipeline-overview.tsx`
 - [ ] `src/components/placements/college-hiring-funnel.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/college-report-navigation.tsx`
+- [x] `src/components/placements/college-report-navigation.tsx`
 - [ ] `src/components/placements/drive-day-roster.tsx`
-- [ ] `src/components/placements/hr-recruiter-drives-grid.tsx`
-- [ ] `src/components/placements/learner-career-calendar.module.css`
+- [x] `src/components/placements/hr-recruiter-drives-grid.tsx`
+- [x] `src/components/placements/learner-career-calendar.module.css`
 - [ ] `src/components/placements/learner-career-calendar.tsx`
 - [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
 - [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/learner-placement-alerts.tsx`
+- [x] `src/components/placements/learner-placement-alerts.tsx`
 - [ ] `src/components/placements/learner-placement-job-detail.tsx`
 - [ ] `src/components/placements/learner-placement-jobs.tsx`
 - [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-metrics.module.css`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
-- [ ] `src/components/placements/learner-placement-registration.tsx`
+- [x] `src/components/placements/learner-placement-metrics.module.css`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-registration.tsx`
 - [ ] `src/components/placements/learner-placements-dashboard.tsx`
 - [ ] `src/components/placements/learner-recent-placement-activity.tsx`
-- [ ] `src/components/placements/learner-schedule-reschedule.tsx`
-- [ ] `src/components/placements/legacy-calendar-theme.module.css`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/learner-schedule-reschedule.tsx`
+- [x] `src/components/placements/legacy-calendar-theme.module.css`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
 - [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
 - [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
 - [ ] `src/components/placements/placement-operations-overview.tsx`
 - [ ] `src/components/placements/placement-report-ui.tsx`
 - [ ] `src/components/placements/public-join-preview-retry.tsx`

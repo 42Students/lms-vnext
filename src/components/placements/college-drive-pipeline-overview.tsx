@@ -15,7 +15,7 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <nav className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]" aria-label="Drive quick actions">
 
-   <Link href={base+"/interviews"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 font-semibold text-primary-text hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] md:min-h-9">Schedule</Link>
+   <Link href={base+"/interviews"} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 font-semibold text-primary-text hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Schedule</Link>
    <Link href={base+"/shortlisted"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Shortlisted</Link>
 
   </nav>
@@ -33,7 +33,7 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
    <h2 className="font-semibold">Needs attention ({flags.length})</h2>
    {!flags.length?<p className="mt-2 text-sm text-muted-foreground leading-[22px]">No recorded attention flags for this drive.</p>:
     <ul className="mt-3 space-y-2">{flags.map(flag=><li key={flag.category}>
-      <Link href={flag.href} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
+      <Link href={flag.href} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
        {flag.category==="STALE_APPLIED"?"Applications with no action in a week":
         flag.category==="INTERVIEW_UNSCHEDULED"?"Marked Interview, nothing scheduled":"Closing soon, low conversion"}
       </Link>
