@@ -148,7 +148,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           taskType={task.taskType} estimatePoints={task.estimatePoints}
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
-    {!readOnly?<label className="mt-2 block text-sm font-semibold">Pull into sprint
+    {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4">Pull into sprint
      <Select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       <option value="">Choose sprint</option>

@@ -223,7 +223,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       {task.carriedFromSprintId&&!task.sprintId?<p className="text-xs font-semibold text-warning-text">Carried over</p>:null}
       {task.assigneeMembershipId===null?<p className="text-xs font-semibold text-warning-text">Needs assigning</p>:null}
       {task.blockerReason?<p className="whitespace-pre-wrap text-xs text-warning-text">Blocked: {task.blockerReason}</p>:null}
-      {canMove?<label className="block text-xs font-semibold">Move task
+      {canMove?<label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">Move task
        <Select data-slot="select" value={task.status} disabled={busy} onChange={e=>void move(task.id,e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2">
         {editable.map(x=><option key={x} value={x}>{x.replaceAll("_"," ")}</option>)}
