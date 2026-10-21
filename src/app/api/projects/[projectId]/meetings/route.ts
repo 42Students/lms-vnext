@@ -16,18 +16,42 @@ type RouteContext = {
 };
 
 export async function GET(
-  _request: Request,
+  request: Request,
   { params }: RouteContext,
 ) {
   try {
     const context = await getCurrentRequestContext();
     const { projectId } = await params;
-    const meetings = await listProjectMeetings(
-      context,
-      projectId,
-    );
-
-    return NextResponse.json({ meetings });
+    const search=new URL(request.url).searchParams;
+    const keys=[...search.keys()];
+    if(keys.some(key=>!["q","state","archive","page","pageSize"].includes(key)||
+      search.getAll(key).length!==1))
+      return NextResponse.json({error:"INVALID_MEETING_FILTER"},{status:400});
+    const pageText=search.get("page"),sizeText=search.get("pageSize");
+    const page=pageText&&/^[1-9]\\d{0,4}$/.test(pageText)?Number(pageText):null;
+    const pageSize=sizeText&&/^[1-9]\\d{0,2}$/.test(sizeText)?Number(sizeText):null;
+    if((pageText!==null&&page===null)||(sizeText!==null&&pageSize===null)||
+      (pageSize!==null&&pageSize>99))
+      return NextResponse.json({error:"INVALID_MEETING_PAGE"},{status:400});
+    const state=search.get("state")??"ALL";
+    const archive=search.get("archive")??"ACTIVE";
+    if(!["ALL","DRAFT","REQUESTED","SCHEDULED","RESCHEDULED","COMPLETED","CANCELLED"].includes(state)||
+      !["ACTIVE","INACTIVE","ALL"].includes(archive))
+      return NextResponse.json({error:"INVALID_MEETING_FILTER"},{status:400});
+    const options={
+      q:search.get("q")??undefined,
+      state:state as "ALL"|"DRAFT"|"REQUESTED"|"SCHEDULED"|"RESCHEDULED"|"COMPLETED"|"CANCELLED",
+      archive:archive as "ACTIVE"|"INACTIVE"|"ALL",
+      ...(page!==null||pageSize!==null?{page:page??1,pageSize:(pageSize??25)+1}:{}),
+    };
+    const meetings=await listProjectMeetings(context,projectId,options);
+    if(page!==null||pageSize!==null){
+      const size=pageSize??25;
+      return NextResponse.json({meetings:meetings.slice(0,size),
+        page:page??1,pageSize:size,hasMore:meetings.length>size},
+        {headers:{"Cache-Control":"private, no-store"}});
+    }
+    return NextResponse.json({meetings},{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
