@@ -4,8 +4,8 @@ You own 67 work packets moved from slower lanes. Same rules as every wave-1 lane
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_company-share_access-service.ts.md` (edit src/modules/placements/company-share/access-service.ts; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-bulk-students-undo-service.ts.md` (edit src/modules/placements/tpo-bulk-students-undo-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_company-share_access-service.ts.md` (edit src/modules/placements/company-share/access-service.ts; 1 findings; best P3)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-bulk-students-undo-service.ts.md` (edit src/modules/placements/tpo-bulk-students-undo-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-messaging-service.ts.md` (edit src/modules/placements/tpo-messaging-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-configuration-model.ts.md` (edit src/modules/placements/tpo-configuration-model.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_recruiter_drives_jobId_rounds_route.ts.md` (edit src/app/api/placements/recruiter/drives/[jobId]/rounds/route.ts; 2 findings; best P2)
