@@ -51,7 +51,7 @@ export function LearnerJobsBrowse({
   const [mobileOpen,setMobileOpen]=useState(false);
   const lastCommittedQuery=useRef(urlSearch);
 
-  const updateQuery=useCallback((changes:Record<string,string|null>)=>{
+  const updateQuery=useCallback((changes:Record<string,string|null>,options?:{replace?:boolean})=>{
     // Legacy ?tab=saved deep links keep their tab when a facet or page
     // changes. Canonicalize only in the link we are about to navigate to.
     const prior=new URLSearchParams(params.toString());
@@ -60,7 +60,9 @@ export function LearnerJobsBrowse({
       if(!prior.has("saved"))prior.set("saved","1");
     }
     const query=learnerDriveQueryWithChanges(prior.toString(),changes);
-    router.push(query?pathname+"?"+query:pathname,{scroll:false});
+    const href=query?pathname+"?"+query:pathname;
+    if(options?.replace)router.replace(href,{scroll:false});
+    else router.push(href,{scroll:false});
   },[pathname,params,router]);
 
   useEffect(()=>{
@@ -84,7 +86,7 @@ export function LearnerJobsBrowse({
     if(text===urlSearch)return;
     const handle=window.setTimeout(()=>{
       lastCommittedQuery.current=text;
-      updateQuery({q:text||null});
+      updateQuery({q:text||null},{replace:true});
     },350);
     return ()=>window.clearTimeout(handle);
   },[search,urlSearch,updateQuery]);
@@ -144,6 +146,9 @@ export function LearnerJobsBrowse({
               placeholder="Search by title, company, location…"
               className={selectClass}
             />
+            <span className="mt-1 block text-xs font-normal text-muted-foreground" role="status">
+              {search.length}/100 characters · Search is limited to 100 characters.
+            </span>
           </label>
         </div>
         <Button variant="ghost" type="button" aria-expanded={mobileOpen} aria-controls="learner-drive-filters"
