@@ -22,6 +22,26 @@ export function facultyReceiptIdsUnchanged<T extends {id:string}>(
  return true;
 }
 
+/** The contact section is editable as self-reported data; it never changes
+ * the verified login email/phone. Identity receipt replacement requires a
+ * separate, membership-scoped upload workflow, not a section PATCH.
+ */
+export const facultySelfProtectedSections = ["identitySummary", "profileImageDocumentId"] as const;
+export type FacultySelfProtectedSection = typeof facultySelfProtectedSections[number];
+
+/** Safe card metadata for the legacy Identity Documents position. Do not send
+ * storage keys or signed URLs to the public profile. */
+export function facultyIdentityEvidenceStatus(document: FacultyProfileDocument) {
+  return {
+    aadhaarMasked: document.identitySummary.aadhaarLast4
+      ? "•••• " + document.identitySummary.aadhaarLast4 : "Not provided",
+    aadhaarEvidence: document.identitySummary.aadhaarDocumentId ? "On file" : "Not uploaded",
+    panEvidence: document.identitySummary.panDocumentId ? "On file" : "Not uploaded",
+    profilePhoto: document.profileImageDocumentId ? "On file" : "Not uploaded",
+    replacementAllowedInSectionPatch: false as const,
+  };
+}
+
 /** Writable, non-identity sections. Private contact and document receipts stay blocked. */
 export const facultySelfEditableSection = z.enum([
   "about", "personalDetails", "contact", "address", "socialProfiles",
