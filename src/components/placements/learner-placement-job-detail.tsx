@@ -162,8 +162,8 @@ export function LearnerPlacementJobDetail({
           <ul className="mt-3 space-y-2 text-sm">
             {applied.map(row=><li key={row.application!.id} className="break-words">
               <span className="font-semibold">{row.roleOption.title}</span>
-              <span className="block text-xs">Receipt: {row.application!.id}</span>
-              <span className="block text-xs">Recorded: {new Intl.DateTimeFormat("en-IN",{
+              <span className="block text-xs">Reference: APP-{row.application!.id}</span>
+              <span className="block text-xs">Submitted: {new Intl.DateTimeFormat("en-IN",{
                 timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
               }).format(new Date(row.application!.submittedAt))}</span>
             </li>)}
@@ -237,7 +237,7 @@ export function LearnerPlacementJobDetail({
         </aside>
       ) : null}
 
-      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5"
+      <section className="min-w-0 rounded-[12px] border border-border bg-surface p-4 sm:p-5"
         aria-label="Registration and evidence requirements">
         <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Requirements &amp; preferences</h2>
         <p className="mt-2 text-sm text-body leading-[22px]">

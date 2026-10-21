@@ -97,8 +97,9 @@ export default async function TrackerIssuesPage({
       <PageHeader
         eyebrow="42 Tracker"
         title="Issues"
-        description={page.items.length + (page.nextCursor?"+":"") + " " + (page.items.length===1&&!page.nextCursor?"issue":"issues") +
-          ". Search what has already been reported before adding another."}
+        description={"Showing " + page.items.length + (page.nextCursor ? "+" : "") + " " +
+          (page.items.length === 1 && !page.nextCursor ? "issue" : "issues") +
+          " in this view. Search what has already been reported before adding another."}
         actions={<Link href="/tracker"
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
           Report issue

@@ -8,8 +8,8 @@ const appointment=z.object({
   {error:"Please select interview type"}).optional(),
  roundDescription:z.string().trim().min(10,"Please add at least a short description (min 10 characters)")
   .max(500).optional(),
- mode:z.enum(["ON_CAMPUS","VIRTUAL"]),venue:z.string().trim().max(400).nullable(),
- meetingUrl:z.url().max(2000).nullable(),interviewer:z.string().trim().max(200).nullable(),
+ mode:z.enum(["ON_CAMPUS","VIRTUAL"]),venue:z.string().trim().max(500).nullable(),
+ meetingUrl:z.url().max(500).nullable(),interviewer:z.string().trim().max(255).nullable(),
 }).strict().superRefine((x,c)=>{
  if(x.mode==="ON_CAMPUS"&&(!x.venue||x.venue.length<2))
   c.addIssue({code:"custom",path:["venue"],message:"Enter the interview location."});
