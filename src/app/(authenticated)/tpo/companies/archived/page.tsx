@@ -8,7 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { listArchivedTpoCompanyRelationships } from "@/modules/placements/tpo-company-lifecycle-service";
 
 const directoryLinkClasses =
-  "lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
+  "lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
 
 export default async function ArchivedCompanyRelationshipsPage() {
   const context = await getCurrentRequestContext();
@@ -41,7 +41,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
               <li key={row.companyId} className="flex min-w-0 flex-col items-start gap-2 py-4 text-sm sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                 <span className="min-w-0 max-w-full break-words font-semibold leading-6 text-foreground">{row.name}</span>
                 <Link href={"/tpo/companies/" + encodeURIComponent(row.companyId) + "/manage"}
-                  className="lms-inline-link inline-flex min-h-11 max-w-full shrink-0 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                  className="lms-inline-link inline-flex min-h-11 max-w-full shrink-0 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                   Review / restore →
                 </Link>
               </li>
