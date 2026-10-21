@@ -26,7 +26,7 @@ export default function CollegeReadinessError({
 
           <Link
             href="/admin/colleges"
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] sm:w-auto border border-border bg-surface px-4 text-sm font-[650] text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] sm:w-auto border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-body hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
             Colleges
           </Link>
