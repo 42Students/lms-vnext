@@ -3,9 +3,10 @@ import "server-only";
 import {randomUUID} from "node:crypto";
 import {z} from "zod";
 import {normalizeAssignmentMethods} from "./assignment-submission-methods";
+import {attestFacultyAssignmentResources, replaceFacultyAssignmentResources,facultyResourcesChanged} from "./faculty-assignment-resource-service";
 import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {assignmentSubmissions,courseAssignments,courseSectionDeliveries,
+import {assignmentSubmissions,courseAssignments,courseAssignmentResources,courseSectionDeliveries,
  collegeMemberships,membershipRoles,courseTeachingAssignments,users} from "@/db/schema";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -38,6 +39,8 @@ export async function commandFacultyAssignment(
     if(lesson.offeringId!==delivery.offeringId)
       throw new CoursesServiceError("ASSIGNMENT_DELIVERY_MISMATCH");
   }
+  const normalizedResources=("resources" in input&&input.resources!==undefined)
+    ?await attestFacultyAssignmentResources(context,delivery.collegeId,input.resources):undefined;
   try{
     return await getDb().transaction(async tx=>{
       const [liveDelivery]=await tx.select({id:courseSectionDeliveries.id,endedAt:courseSectionDeliveries.endedAt})
@@ -86,6 +89,10 @@ export async function commandFacultyAssignment(
           throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
         if(current.status==="ARCHIVED")
           throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
+        const storedResources=input.action==="EDIT"&&normalizedResources!==undefined
+          ?await tx.select().from(courseAssignmentResources).where(
+            eq(courseAssignmentResources.assignmentId,current.id))
+            .orderBy(courseAssignmentResources.position):[];
         const [submission]=await tx.select({id:assignmentSubmissions.id}).from(assignmentSubmissions)
           .where(eq(assignmentSubmissions.assignmentId,current.id)).limit(1);
         if(input.action==="EDIT"){
@@ -94,6 +101,9 @@ export async function commandFacultyAssignment(
           changedFields=assignmentFieldsChanged(current,input);
           if(input.allowedMethods!==undefined&&facultyAssignmentMethodsChanged(current.allowedSubmissionMethods,input.allowedMethods))
             changedFields.push("allowedMethods");
+          if(normalizedResources!==undefined&&
+             facultyResourcesChanged(storedResources,normalizedResources))
+            changedFields.push("resources");
           if(!changedFields.length)throw new CoursesServiceError("INVALID_ASSIGNMENT_TRANSITION");
           if(facultyAssignmentEditLockedBySubmissions(changedFields,Boolean(submission)))
             throw new CoursesServiceError("ASSIGNMENT_HAS_SUBMISSIONS");
@@ -123,6 +133,11 @@ export async function commandFacultyAssignment(
         )).returning();
         if(!updated)throw new CoursesServiceError("FACULTY_ASSIGNMENT_STALE_VERSION");
         result=updated;
+      }
+      if(normalizedResources!==undefined&&(input.action==="CREATE"||
+        (input.action==="EDIT"&&changedFields.includes("resources")))){
+        await replaceFacultyAssignmentResources(tx,result.id,context.user.id,
+          normalizedResources);
       }
       await recordActivityEventInTransaction(tx,context,{
         eventType:eventType as typeof ACTIVITY_EVENT_TYPES[keyof typeof ACTIVITY_EVENT_TYPES],

@@ -117,3 +117,6 @@ export { projectMeetingAuditHistoryStaged, projectResourceAuditHistoryStaged } f
 export { db10Skills, db10SkillSynonyms, db10SkillUsage } from "./db10-skills-catalog.draft";
 
 export { db10AuditFindingFiles } from "./db10-audit-findings.draft";
+
+// DB06 grade audit is recorded atomically by the assignment writers.
+export {assignmentGradeEventsStaged} from "./db06-history-staged";

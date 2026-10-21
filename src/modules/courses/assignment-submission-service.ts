@@ -8,6 +8,7 @@ import {
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {appendAssignmentGradeAudit} from "./assignment-grade-audit-service";
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
 import {allowedAssignmentSubmissionPart, allowedAssignmentMixedParts} from "./assignment-method-policy";
 import { assignmentSubmissionLinks } from "@/db/schema/assignment-submission-links";
@@ -908,6 +909,8 @@ export async function gradeAssignmentSubmission(
     if (!updated) {
       throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
     }
+    await appendAssignmentGradeAudit(tx,context,current.collegeId,current,updated,
+      hideOnly?"HIDE_GRADE":current.gradingStatus==="NOT_GRADED"?"GRADE":"REGRADE");
     // Keep grade history and the persisted update atomic. Never place
     // scores, student names or private feedback into the shared activity feed.
     await recordActivityEventInTransaction(tx, context, {
@@ -999,6 +1002,7 @@ export async function publishAssignmentGrade(
     if (!updated) {
       throw new CoursesServiceError("ASSIGNMENT_SUBMISSION_CONFLICT");
     }
+    await appendAssignmentGradeAudit(tx,context,current.collegeId,current,updated,"PUBLISH_GRADE");
     const gradeEvent = await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.COURSES_ASSIGNMENT_GRADE_PUBLISHED,
       collegeId: current.collegeId,
