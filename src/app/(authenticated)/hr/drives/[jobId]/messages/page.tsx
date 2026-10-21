@@ -25,7 +25,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Messages"
    description={result.workspace.job.title+" · "+result.workspace.college.name+". Private recruiter and placement cell discussion."}
-   actions={<Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to drive overview</Link>}/>
+   actions={<Link href={"/recruiter/drives/"+jobId+"?tab=overview"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to drive overview</Link>}/>
   <section aria-label="Drive conversation" className="min-w-0 space-y-3 border-b border-border pb-4">
    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Drive conversation</h2>
    <p className="max-w-2xl text-sm text-body leading-[22px]">Open or resume the conversation tied to this authorized employer drive.</p>
@@ -33,7 +33,7 @@ export default async function DriveConversationsPage({params}:{params:Promise<{j
     <ol className="divide-y divide-border border-y border-border">
      {result.threads.map(thread=><li key={thread.id} className="flex min-h-11 min-w-0 items-center py-3">
       <Link href={"/hr/conversations/"+thread.id}
-       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Continue discussion</Link>
+       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Continue discussion</Link>
      </li>)}
     </ol>
     <details className="min-w-0">

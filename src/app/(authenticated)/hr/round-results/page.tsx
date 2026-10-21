@@ -22,14 +22,14 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    roundId:raw.roundId||undefined,outcome:raw.outcome||undefined});
  if(!query.success) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Round Results" />
    <ErrorState title="Invalid round filters" description="Choose a valid hiring drive, round and outcome filter."
-    action={<Link href="/hr/round-results" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/></div>;
+    action={<Link href="/hr/round-results" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/></div>;
  if(!query.data.jobId) {
    const jobs=(await listOwnRecruiterPlacementJobs(context)).filter(item=>item.job.archivedAt===null);
    return <div className="min-w-0 max-w-full space-y-4 md:space-y-6"><PageHeader title="Round Results"
      description="Choose one of your employer's authorized published or closed hiring drives. Private college applications are never listed." />
     {jobs.length?<section className="min-w-0 divide-y divide-border border-t border-border">{jobs.map(item=>
      <Link key={item.job.id} href={recruiterResultTableHref({jobId:item.job.id})}
-       className="block min-h-11 min-w-0 px-2 py-4 hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+       className="block min-h-11 min-w-0 px-2 py-4 hover:bg-[var(--lms-table-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
        <span className="block break-words font-semibold text-foreground">{item.job.title}</span>
        <span className="mt-1 block break-words text-sm text-body">{item.collegeName} · {item.job.status}</span>
      </Link>)}</section>:<EmptyState title="No hiring drives" description="There are no authorized drives available for round review." action={<Link href="/hr/drives" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Drives</Link>}/>}
@@ -57,8 +57,8 @@ export default async function HrRoundResultsPage({searchParams}:{searchParams:Pr
    <PageHeader title="Round Results"
     description={workspace.company.name+" · "+workspace.college.name+" · "+workspace.job.title} />
    <nav aria-label="Round review navigation" className="flex min-w-0 flex-col gap-x-5 gap-y-1 border-b border-border pb-3 text-sm min-[768px]:flex-row min-[768px]:items-center">
-     <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center font-medium text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Choose another drive</Link>
-     <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open hiring rounds & staging</Link>
+     <Link href="/hr/round-results" className="inline-flex min-h-11 md:min-h-9 items-center font-medium text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Choose another drive</Link>
+     <Link href={"/hr/placements/jobs/"+workspace.job.id+"?tab=rounds"} className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open hiring rounds & staging</Link>
    </nav>
    {rounds.length===0?<EmptyState title="No rounds yet" description="The placement cell has not configured any non-cancelled rounds for this drive."/>:<>
     <section className="border-b border-border pb-4 md:pb-5">

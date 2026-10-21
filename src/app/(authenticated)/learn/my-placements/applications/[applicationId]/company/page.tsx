@@ -26,7 +26,7 @@ export default async function LearnerApplicationCompanyPage({
 
       <nav aria-label="Application navigation" className="flex min-w-0 flex-wrap items-center gap-2">
         <Link href={"/learn/my-placements/applications?applicationId=" + encodeURIComponent(company.applicationId)}
-            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Back to application</Link>
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Back to application</Link>
       </nav>
       <PageHeader title={company.companyName} description="Read-only company profile from your own placement application." />
       <div className="flex flex-wrap items-center gap-2"><StatusBadge tone={company.companyStatus === "ACTIVE" ? "success" : "neutral"}>
@@ -77,7 +77,7 @@ export default async function LearnerApplicationCompanyPage({
           </div>
         </dl>
         <details className="mt-4 border-t border-border pt-2">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Employer access privacy details</summary>
+          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Employer access privacy details</summary>
           <Banner tone="info" className="mt-3">
           What the company sees here is limited to the verified public employer profile
           associated with your own application. This is not a live employer-access audit.
