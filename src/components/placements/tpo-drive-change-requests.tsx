@@ -1,4 +1,5 @@
 "use client";
+import Link from "next/link";
 import {useRef,useState} from "react";
 import {Input} from "@/components/ui/input";
 import {driveChangeCommandSchema} from "@/modules/placements/tpo-drive-change-request-model";
@@ -12,6 +13,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Disclosure} from "@/components/ui/disclosure";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {useToast} from "@/components/ui/toast";
 type Party="TPO"|"COMPANY";
 type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:string;legacyField?:string|null;
  proposedValue:string;reason:string;status:string;createdByUserId:string;createdByName?:string|null;
@@ -21,13 +23,22 @@ type Item={id:string;proposerParty:string;targetParty:string;mode:string;field:s
 function actionsFor(item:Item):readonly ("ACCEPT"|"ANSWER"|"DECLINE")[] {
  return item.mode==="ASK"?["ANSWER","DECLINE"]:["ACCEPT","DECLINE"];
 }
+/** Old LMS operators enter college-local dates, not browser-local timestamps. */
+function istDateTimeToUtc(value:string):string {
+ if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value))return value;
+ const date=new Date(value+":00+05:30");
+ return Number.isFinite(date.getTime())?date.toISOString():value;
+}
 const fields=[["ROLE_TITLE","Role title"],["DESCRIPTION","Description"],["LOCATION","Location"],
  ["JOB_TYPE","Job type"],["WORK_MODE","Mode"],["DEADLINE","Application deadline"],
  ["CTC","CTC"],["STIPEND","Stipend"],["MIN_CGPA","Minimum CGPA"],
  ["BRANCHES","Branches"],["OTHER","Other"],["ROUNDS","Interview rounds"],
  ["PAY","Pay / package"],["ELIGIBILITY","Eligibility"]] as const;
 export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:string;party:Party;userId:string;requests:Item[]}){
- const router=useRouter();const [mode,setMode]=useState<"SUGGEST"|"ASK">("SUGGEST");
+ const router=useRouter();
+ const {showToast}=useToast();
+ const [fieldError,setFieldError]=useState("");
+ const [mode,setMode]=useState<"SUGGEST"|"ASK">("SUGGEST");
  const [field,setField]=useState<(typeof fields)[number][0]>("DEADLINE");
  const [value,setValue]=useState("");const [reason,setReason]=useState("");
  const [notes,setNotes]=useState<Record<string,string>>({});
@@ -38,8 +49,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   if(inFlightRef.current||busy)return;
   const validation=driveChangeCommandSchema.safeParse(body);
   if(!validation.success){
-    setError(validation.error.issues[0]?.message??"Check the field and value.");return;
+    const message=validation.error.issues[0]?.message??"Check the field and value.";
+    setFieldError(body.action==="CREATE"?message:"");
+    setError(message);
+    return;
   }
+  setFieldError("");
   inFlightRef.current=true;
   setBusy(true);setError("");setSuccess("");
   try{
@@ -64,8 +79,13 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      receipt.status!==statuses[String(body.action)]||
      (body.action!=="CREATE"&&body.action!=="COMMENT"&&receipt.id!==body.requestId))
      throw Error("Could not verify saved change request.");
-   const publicStatus=receipt.status==="COMMENTED"?"updated":(receipt.status as string).toLowerCase();
-   setSuccess("Change request "+publicStatus+".");
+   const status=String(body.action);
+   const message=status==="CREATE"?"Sent. The drive stays in review while they answer.":
+     status==="ACCEPT"?"Accepted. The placement team must separately apply the agreed change.":
+     status==="ANSWER"?"Answered":status==="DECLINE"?"Declined":
+     status==="WITHDRAW"?"Withdrawn":"Reply added to this change request.";
+   setSuccess(message);
+   showToast({tone:"success",title:message});
    setConfirmation(null);
    if(body.action==="CREATE"){setValue("");setReason("");}
    if(typeof body.requestId==="string")setNotes(previous=>({...previous,[body.requestId as string]:""}));
@@ -104,22 +124,29 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
           ["Full time","Internship","Internship + full time","Contract"]).map(option=>
          <option key={option} value={option}>{option}</option>)}
       </Select>:
-      <Textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
+      <Textarea value={value} onChange={e=>{setValue(e.target.value);setFieldError("");}} minLength={2}
+       maxLength={field==="ROLE_TITLE"||field==="LOCATION"?255:2000}
+       rows={field==="DESCRIPTION"?5:3}
        className="min-h-11 min-[768px]:min-h-9"/>}
     </label>:null}
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
     {field==="OTHER"?"Say what should change":"Why is this needed? (optional)"}
-    <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={field==="OTHER"?3:undefined}
+    <Textarea value={reason} onChange={e=>{setReason(e.target.value);setFieldError("");}}
+     minLength={field==="OTHER"?3:undefined}
      maxLength={1000} rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
+   {fieldError?<p role="alert" className="text-xs text-error">{fieldError}</p>:null}
    <Button type="button" disabled={busy||(field==="OTHER"?reason.trim().length<3:value.trim().length<2)}
     onClick={()=>void send({action:"CREATE",field,mode:field==="OTHER"?"ASK":mode,
      proposedValue:field==="OTHER"?"":field==="DEADLINE"&&mode==="SUGGEST"&&value
-      ?new Date(value+":00+05:30").toISOString():value.trim(),reason:reason.trim()})}
+      ?istDateTimeToUtc(value):value.trim(),reason:reason.trim()})}
     variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9">
     {busy?"Saving…":"Send to "+(party==="TPO"?"company":"placement cell")}</Button>
   </Disclosure>
   <section className="space-y-3">
-   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Change requests · {requests.length}</h2>
+   <div className="flex flex-wrap items-center justify-between gap-2">
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Change requests · {requests.length}</h2>
+    <Button type="button" variant="secondary" disabled={busy} onClick={()=>router.refresh()}>Retry / refresh requests</Button>
+   </div>
    {!requests.length?<EmptyState title="No change requests for this drive."/>:requests.map(item=>
     <article key={item.id} className="space-y-3 border-b border-border py-5">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
@@ -138,6 +165,12 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
      {item.resolvedAt?<p className="text-xs text-body">
       Resolved {new Date(item.resolvedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST
      </p>:null}
+     <Link href={party==="TPO"
+       ?"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion?requestId="+encodeURIComponent(item.id)
+       :"/recruiter/messages"}
+       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2">
+       Discuss in drive conversation
+     </Link>
      <Disclosure title={"Discussion ("+item.messages.length+")"} defaultOpen={item.status==="OPEN"&&item.targetParty===party} className="min-w-0 border-t border-border pt-2" contentClassName="min-w-0 space-y-2 pt-3">
       {item.messages.length===0?<p className="text-sm text-body leading-[22px]">No discussion yet.</p>:null}
       {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm leading-[22px]">
@@ -162,7 +195,10 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
         actionsFor(item).map(action=>
          <Button key={action} type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
           disabled={busy||(action!=="ACCEPT"&&(notes[item.id]??"").trim().length<1)}
-          onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()}):
+          onClick={()=>action==="ANSWER"?void send({action,requestId:item.id,
+            expectedUpdatedAt:item.updatedAt,
+            note:(item.legacyField??item.field)==="DEADLINE"
+              ?istDateTimeToUtc(notes[item.id]??""):(notes[item.id]??"").trim()}):
            setConfirmation({action,requestId:item.id,expectedUpdatedAt:item.updatedAt,note:(notes[item.id]??"").trim()})}
           variant={action==="DECLINE"?"danger":"secondary"}>
           {action==="ACCEPT"?"Accept":action==="ANSWER"?"Answer":"Decline"}</Button>):null}
