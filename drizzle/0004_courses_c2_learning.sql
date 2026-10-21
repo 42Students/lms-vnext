@@ -1,3 +1,9 @@
+-- Imported lessons map old course/class IDs to verified UUID learning paths.
+-- Legacy active=0, enabled=0, or deleted=1 is not learner-visible. Search and
+-- normal course views must use the same archival and deletion filter.
+-- Preserve zero-based sibling sequence order with stable UUID tie-breaking;
+-- historical version numbers need an explicit CAS crosswalk. This greenfield
+-- migration itself performs no historical data import.
 CREATE TYPE "public"."learning_path_status" AS ENUM('DRAFT', 'PUBLISHED', 'ARCHIVED');--> statement-breakpoint
 CREATE TYPE "public"."course_lesson_status" AS ENUM('ACTIVE', 'ARCHIVED');--> statement-breakpoint
 CREATE TYPE "public"."lesson_content_type" AS ENUM('RESOURCE', 'VIDEO', 'YOUTUBE', 'LIVE_CLASS');--> statement-breakpoint

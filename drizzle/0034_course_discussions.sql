@@ -1,3 +1,9 @@
+-- Old classroom messages were keyed by class/course/term IDs.
+-- Resolve exactly one same-college section delivery per historical class,
+-- course and academic period. Do not infer a UUID from a numeric class ID.
+-- Preserve sender membership roles, 64-bit source IDs, pin state and
+-- microsecond timestamps. Feed cursor uses (created_at,id), descending
+-- query reversed for display, so equal-time messages cannot disappear.
 CREATE TABLE "course_discussion_messages" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"delivery_id" uuid NOT NULL,

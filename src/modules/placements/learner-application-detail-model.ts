@@ -82,3 +82,17 @@ export function learnerCompanyPreview(input: {
     hasCompanyDescription: false as const,
   };
 }
+
+/** Legacy application details showed the employer's named round and its
+ * recorded due date when known. Do not invent a deadline for undated rounds. */
+export function learnerApplicationRoundDueCopy(
+ input:{roundName:string|null;dueAt:Date|string|null},
+):{roundName:string|null;dueDate:string|null}{
+ const name=input.roundName?.trim()||null;
+ if(input.dueAt===null)return {roundName:name,dueDate:null};
+ const date=input.dueAt instanceof Date?input.dueAt:new Date(input.dueAt);
+ if(!Number.isFinite(date.getTime()))return {roundName:name,dueDate:null};
+ return {roundName:name,dueDate:new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+ }).format(date)};
+}

@@ -411,3 +411,16 @@ export async function requirePlacementJobSeasonActive(
     );
   }
 }
+
+/** Current is a display alias for the active, tenant-authorized placement
+ * season. No active season must be shown as a real empty state, never an
+ * invented default ID used for registration or eligibility. */
+export function currentPlacementSeasonCopy(season:{
+ id:string;name:string;status:string;
+}|null){
+ return season&&season.status==="ACTIVE"
+  ?{label:"Current season: "+season.name,currentSeasonId:season.id,
+     empty:false as const}
+  :{label:"No current placement season",currentSeasonId:null,
+     empty:true as const};
+}

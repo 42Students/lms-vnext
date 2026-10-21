@@ -1,3 +1,8 @@
+-- Source eligibility override ID, job/learner IDs and actor require
+-- verified same-college UUID crosswalks. Preserve reason, original created
+-- time and revoked time as distinct chronology, after timezone conversion.
+-- Multiple old records for one job/learner retain history; only the most
+-- recent nonrevoked record may remain active. No automatic old data import.
 CREATE TABLE "placement_candidate_academic_evidence" (
 	"membership_id" uuid PRIMARY KEY NOT NULL,
 	"cgpa_hundredths" integer,
