@@ -91,12 +91,12 @@ export default async function TpoUnplacedReportPage({
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
         <Select name="batchId" defaultValue={batchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
          <option value="">All current batches</option>
          {batches.batches.map(b=><option key={b.id} value={b.id}>{b.name}</option>)}
         </Select></label>
-       <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Branch
+       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Branch
         <Select name="branchId" defaultValue={branchId??""} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]">
          <option value="">All branches</option>{branches.map(([id,label])=><option key={id} value={id}>{label}</option>)}
         </Select></label>

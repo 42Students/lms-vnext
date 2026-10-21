@@ -207,13 +207,13 @@ export default async function TpoReportsPage({
         className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] lg:items-end" aria-label="Filter reports">
         {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
         {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
-        <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Find a report
           <Input type="search" name="q" maxLength={80} defaultValue={parsedSearch.data}
             placeholder="Report name or purpose"
             className="min-h-11 md:min-h-9 w-full"/>
         </label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Report category
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Report category
           <Select name="group" defaultValue={parsedGroup.data}
             className="min-h-11 md:min-h-9">
             {TPO_REPORT_GALLERY_GROUPS.map(group=><option key={group} value={group}>
@@ -259,7 +259,7 @@ export default async function TpoReportsPage({
                 <Link
                   key={card.path}
                   href={reportHref(card.path, workspace)}
-                  className="block border-b border-border py-5 transition hover:border-primary hover:bg-primary-subtle"
+                  className="block border-b border-border py-4 transition hover:border-primary hover:bg-primary-subtle"
                 >
                   <h3 className="font-semibold text-link">
                     {card.title}
@@ -285,7 +285,7 @@ export default async function TpoReportsPage({
       <Disclosure title="Placement journey and methodology" className="border-t border-border py-3">
         <div className="min-w-0 space-y-4 pt-3">
       <ReportScopeNote note={workspace.registrationScopeNote} />
-      <nav aria-label="Placement journey" className="space-y-2 border-t border-border pt-5">
+      <nav aria-label="Placement journey" className="space-y-2 border-t border-border pt-6">
        <h2 className="font-semibold">Placement journey</h2>
        <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
        <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
