@@ -10,7 +10,7 @@ export type LearnerGroupListItem={
  status:string;memberState:string|null;capacity:number|null;activeCount:number;
  joinOpen:boolean;
 };
-export async function listLearnerGroups(context:RequestContext,now=new Date()){
+export async function listLearnerGroups(context:RequestContext,now=new Date(),kind?:string){
  if(!hasMembershipRole(context,"LEARNER")||!context.membership)
   throw new AuthorizationError("academics.read");
  const member=context.membership;
@@ -23,8 +23,11 @@ export async function listLearnerGroups(context:RequestContext,now=new Date()){
  }).from(lmsGroups).leftJoin(lmsGroupMembers,and(
   eq(lmsGroupMembers.groupId,lmsGroups.id),
   eq(lmsGroupMembers.membershipId,member.id),
- )).where(and(eq(lmsGroups.collegeId,member.collegeId),
-  eq(lmsGroups.ownerScope,"COLLEGE"),isNull(lmsGroups.deletedAt),
+ )).where(and(
+  or(and(eq(lmsGroups.collegeId,member.collegeId),eq(lmsGroups.ownerScope,"COLLEGE")),
+     and(eq(lmsGroups.ownerScope,"PLATFORM"),isNull(lmsGroups.collegeId))),
+  kind?eq(lmsGroups.kind,kind):undefined,
+  isNull(lmsGroups.deletedAt),
   or(sql`${lmsGroupMembers.state} in ('ACTIVE','WAITLISTED','REQUESTED')`,
    and(eq(lmsGroups.status,"ACTIVE"),lte(lmsGroups.selfJoinOpenFrom,now),
     or(isNull(lmsGroups.selfJoinOpenUntil),gt(lmsGroups.selfJoinOpenUntil,now)))),
