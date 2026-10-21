@@ -10,9 +10,9 @@ import {
 export const runtime="nodejs";
 export async function GET() {
   try {
-    return NextResponse.json({registration:await getOwnLearnerRegistration(
-      await getCurrentRequestContext(),
-    )},{headers:{"Cache-Control":"private, no-store"}});
+    const registration=await getOwnLearnerRegistration(await getCurrentRequestContext());
+    return NextResponse.json({registration,data:registration,status:"OK"},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {return registrationError(error);}
 }
 export async function POST(request:Request) {
@@ -31,9 +31,18 @@ export async function POST(request:Request) {
         acceptedConsent:consent==="true"||consent==="on"||consent==="1"};
     }else{
       payload=await request.json();
+      // Historical JSON bodies used consent, not acceptedConsent. Do not
+      // infer consent when the field is omitted or rewrite its version.
+      if(payload && typeof payload==="object" && !Array.isArray(payload)){
+        const value=payload as Record<string,unknown>;
+        if("consent" in value && !("acceptedConsent" in value)){
+          const {consent,...rest}=value;
+          payload={...rest,acceptedConsent:consent};
+        }
+      }
     }
     const result=await registerOwnPlacementChoice(context,payload);
-    return NextResponse.json({ok:true,choice:result.choice,version:result.version},
+    return NextResponse.json({ok:true,status:"OK",choice:result.choice,version:result.version, data:{choice:result.choice,version:result.version}},
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {return registrationError(error);}
 }

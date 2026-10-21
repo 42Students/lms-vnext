@@ -49,11 +49,12 @@ export function CollegeLegacyDriveSettings({
     }catch(error){setFeedback(error instanceof Error?error.message:"Could not reopen drive");}
     finally{setBusy(false);}
   }
-  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
+  if(status==="DRAFT")return null;
+  return <section className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-4)]">
     <h2 className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Drive status</h2>
     <StatusBadge tone={status==="PUBLISHED"?"success":status==="DRAFT"?"warning":"neutral"}>{status}</StatusBadge>
     {action?<div className="space-y-3">
-      {confirmation==="CLOSE"?<div className="space-y-3" role="group" aria-label={action.confirmation}>
+      {confirmation==="CLOSE"?<div className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3" role="dialog" aria-modal="false" aria-label={action.confirmation}>
         <p>{action.confirmation}</p>
         <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Button type="button" disabled={busy} onClick={closeDrive}
@@ -67,14 +68,15 @@ export function CollegeLegacyDriveSettings({
       </Button>}
     </div>:null}
     {reopen?<div className="space-y-3">
-      {confirmation==="REOPEN"?<div role="group" aria-label={reopen.confirmation} className="space-y-3">
-        <p>{reopen.confirmation}</p>
+      {confirmation==="REOPEN"?<div role="dialog" aria-modal="false" aria-label="Confirm open drive" className="space-y-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+        <p>Are you sure you want to open this drive?</p>
+        <p className="text-xs text-muted-foreground">{reopen.confirmation}</p>
         <Button type="button" disabled={busy} onClick={()=>void reopenDrive()}
           className="min-h-11 w-full sm:w-auto md:min-h-9">
-          {busy?"Reopening…":"Yes, reopen"}
+          {busy?"Opening…":"Yes"}
         </Button>
         <Button type="button" disabled={busy} onClick={()=>setConfirmation(null)}
-          variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>
+          variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">No</Button>
       </div>:<Button type="button" disabled={busy} onClick={()=>setConfirmation("REOPEN")}
         variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9">{reopen.label}</Button>}
     </div>:null}
