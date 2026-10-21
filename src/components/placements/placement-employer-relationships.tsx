@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Dialog } from "@/components/ui/dialog";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
 
@@ -46,6 +48,37 @@ type Draft = {
   ownerMembershipId: string;
 };
 
+type CompanyHistory = {
+  company: {
+    name: string;
+    contactName: string | null;
+    contactEmail: string | null;
+    contactPhone: string | null;
+    internalNotes: string | null;
+  };
+  items: {
+    id: string;
+    title: string;
+    status: string;
+    publishedAt: string | null;
+    applicants: number;
+    hired: number;
+  }[];
+  totals: { drives: number; applicants: number; hired: number };
+  truncated: boolean;
+};
+
+function historyDate(value: string | null): string {
+  if (!value) return "Not published";
+  const date = new Date(value);
+  return Number.isNaN(date.getTime())
+    ? "Date unavailable"
+    : new Intl.DateTimeFormat("en-IN", {
+        dateStyle: "medium",
+        timeZone: "Asia/Kolkata",
+      }).format(date);
+}
+
 export function PlacementEmployerRelationships({
   relationships,
   owners,
@@ -60,6 +93,11 @@ export function PlacementEmployerRelationships({
   const [restoreConfirmId,setRestoreConfirmId]=useState<string|null>(null);
   const [archiveConfirmId, setArchiveConfirmId] =
     useState<string | null>(null);
+  const [historyForId, setHistoryForId] = useState<string | null>(null);
+  const [historyData, setHistoryData] = useState<CompanyHistory | null>(null);
+  const [historyLoading, setHistoryLoading] = useState(false);
+  const [historyError, setHistoryError] = useState<string | null>(null);
+  const historyRequest = useRef(0);
   const [drafts, setDrafts] = useState<
     Record<string, Draft>
   >(
@@ -171,6 +209,42 @@ export function PlacementEmployerRelationships({
     }finally{setPendingId(null);}
   }
 
+  function closeHistory() {
+    historyRequest.current += 1;
+    setHistoryForId(null);
+    setHistoryData(null);
+    setHistoryError(null);
+    setHistoryLoading(false);
+  }
+
+  async function openHistory(relationshipId: string) {
+    const requestId = ++historyRequest.current;
+    setHistoryForId(relationshipId);
+    setHistoryData(null);
+    setHistoryError(null);
+    setHistoryLoading(true);
+    try {
+      const result = await apiFetch<CompanyHistory>(
+        "/api/placements/companies/" +
+          encodeURIComponent(relationshipId) +
+          "/history",
+      );
+      if (historyRequest.current === requestId) setHistoryData(result);
+    } catch (error) {
+      if (historyRequest.current === requestId) {
+        setHistoryError(
+          error instanceof Error ? error.message : friendlyApiError({}),
+        );
+      }
+    } finally {
+      if (historyRequest.current === requestId) setHistoryLoading(false);
+    }
+  }
+
+  const activeHistoryName = relationships.find(
+    (item) => item.relationshipId === historyForId,
+  )?.name ?? "Company";
+
   return (
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
@@ -249,6 +323,14 @@ export function PlacementEmployerRelationships({
                     : "Not recorded"}
                 </div>
                 <div role="cell" className="min-w-0 space-y-3">
+                <Button
+                  size="sm"
+                  variant="secondary"
+                  className="min-h-11 w-full sm:w-auto md:min-h-9"
+                  onClick={() => void openHistory(item.relationshipId)}
+                >
+                  History
+                </Button>
                 <div className="grid min-w-0 gap-3">
                   <label>
                     <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">
@@ -363,6 +445,107 @@ export function PlacementEmployerRelationships({
           </div>
         </div>
       )}
+      <Dialog
+        open={Boolean(historyForId)}
+        onOpenChange={(next) => { if (!next) closeHistory(); }}
+        title={activeHistoryName + " · Drive history"}
+        description="Drives and outcomes recorded for this college only."
+        className="max-w-[720px]"
+      >
+        {historyLoading ? (
+          <div role="status" aria-live="polite" className="space-y-3">
+            <p className="text-sm text-body">Loading company history…</p>
+            {[0, 1, 2].map((row) => (
+              <div key={row} aria-hidden="true" className="h-10 animate-pulse rounded-[var(--lms-control-radius)] bg-[var(--lms-neutral-50)]" />
+            ))}
+          </div>
+        ) : historyError ? (
+          <div role="alert" className="space-y-3 text-sm text-error">
+            <p>Could not load company history. {historyError}</p>
+            <Button
+              size="sm"
+              variant="secondary"
+              onClick={() => { if (historyForId) void openHistory(historyForId); }}
+            >
+              Retry
+            </Button>
+          </div>
+        ) : historyData ? (
+          <div className="min-w-0 space-y-5">
+            <div className="grid gap-3 sm:grid-cols-3">
+              {([
+                ["Drives run", historyData.totals.drives],
+                ["Total applications", historyData.totals.applicants],
+                ["Total hired", historyData.totals.hired],
+              ] as const).map(([label, count]) => (
+                <div key={label} className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-3">
+                  <p className="text-xs text-body">{label}</p>
+                  <p className="mt-1 text-xl font-semibold tabular-nums text-foreground">{count}</p>
+                </div>
+              ))}
+            </div>
+            {historyData.truncated ? (
+              <p role="status" className="text-sm text-body">
+                Showing the first 100 drives; totals above cover only those drives.
+              </p>
+            ) : null}
+            <p className="text-xs text-body">
+              Hired means an accepted offer with a recorded joined outcome.
+              Unrecorded or pending outcomes are not guessed.
+            </p>
+            <div className="overflow-x-auto rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)]">
+              <table className="w-full min-w-[580px] text-left text-sm">
+                <thead className="border-b border-[var(--lms-canvas-border)] text-xs text-body">
+                  <tr>
+                    <th scope="col" className="p-3 font-semibold">Drive</th>
+                    <th scope="col" className="p-3 font-semibold">Status</th>
+                    <th scope="col" className="p-3 font-semibold">Published</th>
+                    <th scope="col" className="p-3 text-right font-semibold">Applications</th>
+                    <th scope="col" className="p-3 text-right font-semibold">Hired</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[var(--lms-canvas-border)]">
+                  {historyData.items.map((job) => (
+                    <tr key={job.id}>
+                      <td className="p-3">
+                        <Link
+                          href={`/college/placements/jobs/${encodeURIComponent(job.id)}/overview`}
+                          className="font-semibold text-link underline underline-offset-2 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                        >
+                          {job.title}
+                        </Link>
+                      </td>
+                      <td className="p-3 text-body">{job.status}</td>
+                      <td className="p-3 text-body">{historyDate(job.publishedAt)}</td>
+                      <td className="p-3 text-right tabular-nums">{job.applicants}</td>
+                      <td className="p-3 text-right tabular-nums">{job.hired}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+              {historyData.items.length === 0 ? (
+                <p className="px-3 py-6 text-center text-sm text-muted-foreground">
+                  No drives recorded for this company.
+                </p>
+              ) : null}
+            </div>
+            <div className="space-y-2 border-t border-[var(--lms-canvas-border)] pt-4 text-sm">
+              <h3 className="font-semibold text-foreground">College contact and internal notes</h3>
+              <p className="text-body">
+                {historyData.company.contactName || "No contact recorded"}
+                {historyData.company.contactEmail ? " · " + historyData.company.contactEmail : ""}
+                {historyData.company.contactPhone ? " · " + historyData.company.contactPhone : ""}
+              </p>
+              <p className="whitespace-pre-wrap break-words text-body">
+                {historyData.company.internalNotes || "No internal notes recorded."}
+              </p>
+              <p className="text-xs text-muted-foreground">
+                These details are private to this college, not shown to students.
+              </p>
+            </div>
+          </div>
+        ) : null}
+      </Dialog>
       <ConfirmDialog open={Boolean(archiveConfirmId)}
         onOpenChange={next=>{if(!next&&!pendingId)setArchiveConfirmId(null);}}
         title="Archive this company?"
