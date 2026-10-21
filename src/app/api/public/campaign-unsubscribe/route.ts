@@ -44,6 +44,12 @@ export async function POST(request:Request){
    throw e;
   }
  }
+ // Legacy SHA256 links may have no current HMAC payload. Resolve only
+ // against the purpose-specific migrated digest, never from an email query.
+ if(!rawToken.includes(".")&&rawToken.length<=200){
+  await unsubscribeTpoCampaignRecipient(rawToken);
+  return successResponse(request,"placement-cell");
+ }
  const claim=verifyUnsubscribeToken(rawToken,process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
  if(!claim)return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
  const db=getDb();

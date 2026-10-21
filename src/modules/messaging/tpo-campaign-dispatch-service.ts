@@ -37,6 +37,28 @@ function configuration(){
    throw new TpoCampaignDispatchError("NOT_READY");
  return {provider,key,origin:url.origin};
 }
+/** Import-only translation. Historical campaigns are never replayed to send again. */
+export function translateLegacyCampaignRecipientStatus(status:string):{
+  status:"SENT"|"FAILED"|"SKIPPED_NO_EMAIL"|"SKIPPED_UNSUBSCRIBED";
+  reason:string|null;
+} {
+ switch(status.toUpperCase()){
+  case "SENT":return {status:"SENT",reason:null};
+  case "NO_EMAIL":return {status:"SKIPPED_NO_EMAIL",reason:"invalid-recipient"};
+  case "UNSUBSCRIBED":return {status:"SKIPPED_UNSUBSCRIBED",reason:"unsubscribed"};
+  case "NOT_CONFIGURED":return {status:"FAILED",reason:"provider-not-configured"};
+  case "NOT_FOUND":return {status:"SKIPPED_UNSUBSCRIBED",reason:"lead-not-found"};
+  default:return {status:"FAILED",reason:"legacy-send-failed"};
+ }
+}
+export async function tpoCampaignDispatchPreflight():Promise<{
+ ready:boolean;message:string;maximumRecipients:500;
+}>{
+ const ready=await tpoCampaignDispatchReady();
+ return {ready,maximumRecipients:500,
+  message:ready?"Email campaign delivery is configured.":
+  "Email campaigns are unavailable. Verify ZeptoMail settings, the approved template, public HTTPS URL and campaign migrations before sending."};
+}
 export async function tpoCampaignDispatchReady(){
  try{
   configuration();
@@ -220,7 +242,8 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
     suppressed?"SUPPRESSED" as const:"QUEUED" as const;
    return {id:randomUUID(),batchId:id,recipientKey:row.recipientKey,
     channel:"EMAIL",templateKey:draft.template_key,purpose,status,
-    reason:suppressed?(row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":"unsubscribed"):null};
+    reason:suppressed?(row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":
+      row.status==="SKIPPED_UNSUBSCRIBED"?"unsubscribed":"already-unsubscribed"):null};
   });
   if(receipts.length)await tx.insert(messagingDeliveryReceipts).values(receipts);
   const count=(status:"SENT"|"FAILED"|"SUPPRESSED"|"QUEUED")=>
