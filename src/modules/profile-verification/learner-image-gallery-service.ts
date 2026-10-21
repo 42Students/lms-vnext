@@ -118,14 +118,16 @@ export async function appendLearnerGalleryImage(
       .for("update").limit(1);
     if (!member || member.status !== "ACTIVE")
       throw new LearnerGalleryError("GALLERY_FORBIDDEN");
-    const [receipt] = await tx.select({ id: profilePrivateDocumentReceipts.id })
+    const [receipt] = await tx.select({ id: profilePrivateDocumentReceipts.id,
+      retentionUntil: profilePrivateDocumentReceipts.retentionUntil })
       .from(profilePrivateDocumentReceipts)
       .where(and(eq(profilePrivateDocumentReceipts.id, candidate.id),
         eq(profilePrivateDocumentReceipts.owningMembershipId, access.membershipId),
         eq(profilePrivateDocumentReceipts.purpose, "PROFILE_IMAGE"),
         eq(profilePrivateDocumentReceipts.scanStatus, "CLEAN"),
         isNull(profilePrivateDocumentReceipts.revokedAt))).for("share").limit(1);
-    if (!receipt) throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
+    if (!receipt || (receipt.retentionUntil && receipt.retentionUntil <= new Date()))
+      throw new LearnerGalleryError("GALLERY_RECEIPT_INVALID");
     const existing = await tx.select().from(learnerProfileImages)
       .where(eq(learnerProfileImages.learnerMembershipId, access.membershipId))
       .orderBy(asc(learnerProfileImages.displayOrder), asc(learnerProfileImages.id));

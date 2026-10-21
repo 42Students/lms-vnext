@@ -32,6 +32,10 @@ CREATE TABLE learner_profile_images (
 );
 --> statement-breakpoint
 CREATE INDEX learner_profile_images_active_order_idx
+  ON learner_profile_images(learner_membership_id,display_order)
+  WHERE is_active = true;
+--> statement-breakpoint
+CREATE INDEX learner_profile_images_stable_order_idx
   ON learner_profile_images(learner_membership_id,display_order,id)
   WHERE is_active = true;
 --> statement-breakpoint
