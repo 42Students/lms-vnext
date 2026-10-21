@@ -44,6 +44,7 @@ type ProgressContent = Awaited<
 >;
 
 type ProgressRow = {
+  attempt?: number;
   lastPositionSeconds: number;
   durationSeconds?: number;
   completedAt: Date | null;
@@ -51,6 +52,7 @@ type ProgressRow = {
 
 export type LearnerProgressView = {
   contentId: string;
+  attempt:number;
   status:
     | "NOT_STARTED"
     | "IN_PROGRESS"
@@ -93,6 +95,7 @@ export function buildLearnerProgressView(
 
   return {
     contentId: content.id,
+    attempt:progress?.attempt??1,
     status: completedAt
       ? "COMPLETED"
       : lastPositionSeconds > 0 &&
