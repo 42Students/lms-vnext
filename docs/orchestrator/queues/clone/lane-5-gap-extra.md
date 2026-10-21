@@ -6,7 +6,7 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
-- [ ] L12-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Semester.java`
+- [x] L12-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Semester.java`
 - [ ] L12-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/RecruiterPlanDriveController.java`
 - [ ] L13-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ApplicationScreening.java`
 - [ ] L13-U031 (Cross-cutting area) `cross/13: Dashboards and reports: every metric, formula, date range, drill-down`
