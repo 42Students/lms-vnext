@@ -12,6 +12,30 @@ import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope
 import { listProjectActivity } from "@/modules/projects/activity-service";
 import { ProjectActivityFilteredList } from "@/components/projects/project-activity-filtered-list";
 import { ErrorState } from "@/components/ui/error-state";
+import {ProjectAdminNav} from "./project-admin-nav";
+import {ProjectsServiceError} from "@/modules/projects/errors";
+
+function workspaceRecoveryPanel({
+ projectId,section,basePath,title,description,
+}:{
+ projectId:string;section:string;basePath:string;
+ title:string;description:string;
+}){
+ const retry=basePath+"/"+encodeURIComponent(projectId)+"/"+encodeURIComponent(section);
+ return <section className="min-w-0 space-y-4" role="alert">
+  <ProjectAdminNav basePath={basePath} active="workspaces"/>
+  <ErrorState title={title} description={description}
+    action={<div className="flex flex-wrap gap-3">
+      <Link href={retry} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Retry workspace
+      </Link>
+      <Link href={basePath} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Back to workspaces
+      </Link>
+    </div>}/>
+ </section>;
+}
+
 
 function isProjectWorkspaceSection(
   value: string,
@@ -42,26 +66,45 @@ export async function AdminProjectSectionPage({
 
   const context = await getCurrentRequestContext();
   if (!getProjectAdminCollegeId(context)) {
-    return <ErrorState title="Admin not assigned to a college"
-      description="You must be assigned to a college to view project workspaces. Choose a college in the header to continue."
-      action={<Link href={basePath} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-        Back to workspaces
-      </Link>} />;
+    return <section className="min-w-0 space-y-4">
+      <ProjectAdminNav basePath={basePath} active="workspaces"/>
+      <ErrorState title="Admin not assigned to a college"
+        description="You must be assigned to a college to view project workspaces. Select a college in the header to continue."
+        action={<Link href={basePath} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+          Back to workspaces
+        </Link>}/>
+    </section>;
   }
   // A soft-deleted workspace may be inspected and recovered from Summary only.
   // Every other section and all ordinary manage mutations remain inaccessible.
-  await requireProjectManageAccess(
-    context,
-    projectId,
-    { includeDeleted: section === "summary" },
-  );
+  try{
+    await requireProjectManageAccess(
+      context,projectId,
+      {includeDeleted:section==="summary"},
+    );
+  }catch(error){
+    const missing=error instanceof ProjectsServiceError&&
+      ["PROJECT_NOT_FOUND","PROJECT_ACCESS_DENIED","PROJECT_INVALID_STATE"].includes(error.code);
+    return workspaceRecoveryPanel({
+      projectId,section,basePath,
+      title:missing?"Workspace not found":"Workspace could not be loaded",
+      description:missing?
+        "This workspace does not exist in the selected college, or you cannot access it.":
+        "Workspace access could not be verified. Refresh the page and retry.",
+    });
+  }
   let workspace: Awaited<ReturnType<typeof getProjectWorkspaceView>>;
   try {
     workspace = await getProjectWorkspaceView(context, projectId);
   } catch (error) {
     // A summary/snapshot outage must not take away the entire Audit workspace.
     // The project management permission and tenant scope were checked above.
-    if (section !== "audit") throw error;
+    if(section!=="audit"){
+      return workspaceRecoveryPanel({
+        projectId,section,basePath,title:"Workspace could not be loaded",
+        description:"Project workspace details are unavailable. Your navigation and selected college have been preserved. Retry loading the workspace.",
+      });
+    }
     let events: Awaited<ReturnType<typeof listProjectActivity>> = [];
     let activityUnavailable = false;
     try {
