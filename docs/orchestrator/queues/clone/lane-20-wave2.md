@@ -66,7 +66,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_teacher_allAssignments_page.tsx.md` (edit src/app/(authenticated)/teacher/allAssignments/page.tsx; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_teacher_allAssignments_error.tsx.md` (edit src/app/(authenticated)/teacher/allAssignments/error.tsx; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_authenticated_teacher_courses_page.tsx.md` (edit src/app/(authenticated)/teacher/courses/page.tsx; 3 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_projects_college-projects-query-model.ts.md` (edit src/modules/projects/college-projects-query-model.ts; 3 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_projects_college-projects-query-model.ts.md` (edit src/modules/projects/college-projects-query-model.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_components_projects_project-template-view.tsx.md` (edit src/components/projects/project-template-view.tsx; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_college-interview-action-service.ts.md` (edit src/modules/placements/college-interview-action-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_projects_college-project-roster-service.ts.md` (edit src/modules/projects/college-project-roster-service.ts; 3 findings; best P2)
