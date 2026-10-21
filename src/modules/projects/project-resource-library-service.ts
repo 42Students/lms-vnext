@@ -69,14 +69,16 @@ export async function saveProjectResourceLibrary(context:RequestContext,projectI
     // Temporarily relocate all existing rows above the current sequence range
     // before assigning contiguous indices, avoiding uniqueness collisions.
     const max=Math.max(-1,...current.map(row=>row.sequence));
-    if(max+current.length+input.rows.length+1>2147483647)
+    const reserveFrom=Math.max(max,input.rows.length)+1;
+    if(reserveFrom+current.length+input.rows.length+1>2147483647)
       throw new ProjectsServiceError("PROJECT_RESOURCE_SEQUENCE_CONFLICT");
     for(let index=0;index<current.length;index++){
-      await tx.update(projectResources).set({sequence:max+1+index})
+      await tx.update(projectResources).set({sequence:reserveFrom+index})
         .where(and(eq(projectResources.projectId,project.id),
           eq(projectResources.id,current[index]!.id)));
     }
     let newCount=0,editedCount=0,archivedCount=0;
+    const savedIds:string[]=[];
     const now=new Date(Math.max(Date.now(),...current.map(row=>row.updatedAt.getTime()+1)));
     for(const {row,index,before} of normalized){
       const fields={
@@ -84,20 +86,29 @@ export async function saveProjectResourceLibrary(context:RequestContext,projectI
         required:row.required,pinned:row.pinned,accessNotes:row.accessNotes,
         visibility:row.visibility,resourceType:normalizedResourceKind(row.legacyKind),
         legacyResourceKind:row.legacyKind,status:row.status,
-        sequence:index,updatedAt:now,
+        sequence:reserveFrom+current.length+index,updatedAt:now,
       };
       if(before){
-        await tx.update(projectResources).set(fields)
+        await tx.update(projectResources).set({...fields,
+          sequence:reserveFrom+current.findIndex(source=>source.id===before.id)})
           .where(and(eq(projectResources.id,before.id),eq(projectResources.projectId,project.id)));
+        savedIds.push(before.id);
         editedCount++;
         if(before.status!=="ARCHIVED"&&row.status==="ARCHIVED")archivedCount++;
       }else{
-        await tx.insert(projectResources).values({
+        const [created]=await tx.insert(projectResources).values({
           ...fields,projectId:project.id,legacyResourceKey:row.key,
           templateKey:null,
-        });
+        }).returning({id:projectResources.id});
+        if(!created)throw new ProjectsServiceError("PROJECT_RESOURCE_NOT_FOUND");
+        savedIds.push(created.id);
         newCount++;
       }
+    }
+    for(let index=0;index<savedIds.length;index++){
+      await tx.update(projectResources).set({sequence:index})
+        .where(and(eq(projectResources.id,savedIds[index]!),
+          eq(projectResources.projectId,project.id)));
     }
     const updated=await tx.select().from(projectResources)
       .where(eq(projectResources.projectId,project.id))

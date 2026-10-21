@@ -36,9 +36,6 @@ import {CollegeProjectStudentRosterDialog} from "./college-project-student-roste
 import {ProjectResourceList} from "./project-resource-list";
 import {ProjectResourceLibraryEditor} from "./project-resource-library-editor";
 import {projectResourceLibraryToken} from "@/modules/projects/project-resource-library-token";
-import {ProjectResourceLibraryEditor} from "./project-resource-library-editor";
-import {projectResourceLibraryToken} from "@/modules/projects/project-resource-library-token";
-import {legacyResourceKind,makeResourceKey} from "@/modules/projects/project-resource-library-model";
 import { ProjectRosterTable } from "./project-roster-table";
 import {CollegeAdminWorkspaceTeamOverview} from "./college-admin-workspace-team-overview";
 import { ProjectTeamRosterReconcile } from "./project-team-roster-reconcile";
@@ -1811,20 +1808,6 @@ export function ProjectWorkspace({
 
       <div className={activeSection ? "grid min-w-0 gap-6" : "grid min-w-0 gap-6 xl:grid-cols-2"}>
         {show("resources") ? <section className="space-y-3">
-          {mode==="ADMIN"&&!readOnly?<ProjectResourceLibraryEditor
-            projectId={workspace.project.id}
-            token={projectResourceLibraryToken(workspace.resources)}
-            resources={workspace.resources.map(row=>({
-              id:row.id,
-              key:row.legacyResourceKey??row.templateKey??makeResourceKey(row.title),
-              title:row.title,
-              legacyKind:legacyResourceKind(row.legacyResourceKind,row.resourceType),
-              url:row.url,description:row.description,accessNotes:row.accessNotes,
-              pinned:row.pinned,required:row.required,
-              visibility:row.visibility==="MENTOR_ONLY"?"MENTOR_ONLY":"TEAM",
-              status:row.status==="DRAFT"?"DRAFT":row.status==="ARCHIVED"?"ARCHIVED":"ACTIVE",
-            }))}/>
-          :null}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="m-0 text-lg font-semibold text-foreground">
