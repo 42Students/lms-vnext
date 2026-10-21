@@ -671,6 +671,7 @@ export function FacultyCourseWorkspace({
                       <FacultyLessonAuthoring
                         lessonId={lesson.id}
                         deliveryId={course.deliveryId}
+                        enableAssignmentResources
                         nextContentSequence={
                           nextSequence
                         }

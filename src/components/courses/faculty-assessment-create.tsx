@@ -85,6 +85,7 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{ki
       key={course.deliveryId+":"+lesson.lessonId+":"+kind}
       lessonId={lesson.lessonId} deliveryId={course.deliveryId}
       initialMode={kind} availableModes={[kind]}
+      enableAssignmentResources={kind==="ASSIGNMENT"}
       nextContentSequence={lesson.nextSequence}
       nextAssignmentSequence={lesson.nextSequence}
       nextQuizSequence={lesson.nextSequence}

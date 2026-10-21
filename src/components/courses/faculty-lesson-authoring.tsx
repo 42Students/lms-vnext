@@ -14,6 +14,10 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch} from "@/lib/api-fetch";
 import { Input } from "@/components/ui/input";
 import { FacultyAssignmentMethodPicker } from "./faculty-assignment-method-picker";
+import {FacultyAssignmentResourceDraftFields} from "./faculty-assignment-resource-draft-fields";
+import {
+ facultyAssignmentResourcesSchema,type FacultyAssignmentResourceInput,
+} from "@/modules/courses/faculty-assignment-authoring-model";
 import { LessonResourceMaterialsControl } from "./lesson-resource-materials-control";
 import type { AssignmentMethod } from "@/modules/courses/assignment-submission-methods";
 import { Select } from "@/components/ui/select";
@@ -80,6 +84,7 @@ export function FacultyLessonAuthoring({
   initialMode = null,
   availableModes,
   onSaved,
+  enableAssignmentResources = false,
 }: {
   lessonId: string;
   deliveryId: string | null;
@@ -90,6 +95,7 @@ export function FacultyLessonAuthoring({
   initialMode?: Mode | null;
   availableModes?: readonly Mode[];
   onSaved?: () => void;
+  enableAssignmentResources?: boolean;
 }) {
   const router = useRouter();
   const [mode, setMode] =
@@ -110,6 +116,9 @@ export function FacultyLessonAuthoring({
     useState<AssignmentMethod[]>(["WRITTEN_RESPONSE"]);
   const [maxAttempts, setMaxAttempts] =
     useState("1");
+  const [assignmentResources,setAssignmentResources]=
+    useState<FacultyAssignmentResourceInput[]>([]);
+  const [resourceUploading,setResourceUploading]=useState(false);
   const [questions, setQuestions] =
     useState<QuizQuestionDraft[]>([
       initialQuestion(),
@@ -137,6 +146,7 @@ export function FacultyLessonAuthoring({
     setDueAt("");
     setMaxPoints("");
     setAllowedAssignmentMethods(["WRITTEN_RESPONSE"]);
+    setAssignmentResources([]);
     setMaxAttempts("1");
     setQuestions([initialQuestion()]);
   }
@@ -144,6 +154,7 @@ export function FacultyLessonAuthoring({
   const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||startsAt||
     endsAt||dueAt||durationSeconds!==""||contentPoints!=="1"||maxPoints!==""||maxAttempts!=="1"||
     allowedAssignmentMethods.length!==1||allowedAssignmentMethods[0]!=="WRITTEN_RESPONSE"||
+    assignmentResources.length>0||
     questions.some(question=>question.prompt.trim()||question.options.some(option=>option.text.trim())));
 
   useEffect(()=>{
@@ -167,7 +178,7 @@ export function FacultyLessonAuthoring({
     endpoint: string,
     body: unknown,
   ) {
-    return apiFetch<{content?:{id:string}}>(endpoint, {
+    return apiFetch<{content?:{id:string};assignment?:{id:string}}>(endpoint, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -260,7 +271,7 @@ export function FacultyLessonAuthoring({
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    if (!mode) return;
+    if (!mode || resourceUploading) return;
 
     setError(null);
     setSuccess(null);
@@ -407,22 +418,25 @@ export function FacultyLessonAuthoring({
           throw new Error("Select at least one allowed submission method.");
         }
 
-        await post(
-          "/api/courses/assignments",
-          {
-            lessonId,
-            deliveryId,
-            title: cleanTitle,
-            description:
-              notes.trim() || null,
-            dueAt:
-              authoringDueInstant(dueAt),
-            maxPoints: points,
-            allowedMethods: allowedAssignmentMethods,
-            sequence:
-              nextAssignmentSequence,
-          },
-        );
+        const payload={
+          lessonId,title:cleanTitle,description:notes.trim()||null,
+          dueAt:authoringDueInstant(dueAt),maxPoints:points,
+          allowedMethods:allowedAssignmentMethods,sequence:nextAssignmentSequence,
+        };
+        if(enableAssignmentResources&&deliveryId){
+          const checked=facultyAssignmentResourcesSchema.safeParse(assignmentResources);
+          if(!checked.success)throw new Error(
+            checked.error.issues[0]?.message??"Check the assignment resources.");
+          const receipt=await post(
+            "/api/courses/faculty/assignments/"+
+              encodeURIComponent(deliveryId)+"/command",{
+              ...payload,action:"CREATE",confirmed:true,resources:checked.data,
+              });
+          if(!receipt.assignment?.id)throw new Error(
+            "The assignment save receipt is missing. Refresh before retrying.");
+        }else{
+          await post("/api/courses/assignments",{...payload,deliveryId});
+        }
       }
 
       if (mode === "QUIZ") {
@@ -871,6 +885,12 @@ export function FacultyLessonAuthoring({
                 />
               </div>
             ) : null}
+
+            {mode==="ASSIGNMENT"&&enableAssignmentResources&&deliveryId?
+              <FacultyAssignmentResourceDraftFields deliveryId={deliveryId}
+                resources={assignmentResources} onChange={setAssignmentResources}
+                disabled={submitting} onPendingChange={setResourceUploading}/>
+              :null}
 
             {mode === "ASSIGNMENT" ||
             mode === "QUIZ" ? (
