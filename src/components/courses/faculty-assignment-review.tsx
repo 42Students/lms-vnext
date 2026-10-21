@@ -23,7 +23,7 @@ import { FacultySubmissionFileReview } from "./faculty-submission-file-review";
 import {AssignmentSubmissionLinks} from "./assignment-submission-links";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
-import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
+import { facultySubmissionReviewApiHref,facultySubmissionStudentPosition, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, facultySubmissionReviewEmptyLabel, facultyReviewRequestCurrent, facultySubmissionReviewFailure, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -590,6 +590,7 @@ export function FacultyAssignmentReview({
   const [pagination,setPagination] = useState<FacultySubmissionReviewResponse|null>(null);
   const loadSequence = useRef(0);
   const [selectedSubmissionId,setSelectedSubmissionId]=useState<string|null>(null);
+  const studentPosition=facultySubmissionStudentPosition(submissions??[],selectedSubmissionId);
   const [mutationBusy,setMutationBusy]=useState(false);
   const mutationInFlight=useRef(false);
   const onBusyChange=(busy:boolean)=>{mutationInFlight.current=busy;setMutationBusy(busy);};
@@ -764,15 +765,17 @@ export function FacultyAssignmentReview({
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
-            <span aria-hidden="true">‹</span> Previous student
+            <span className="sr-only">Previous student in selected submission page</span>
+            <span aria-hidden="true">Previous</span>
           </Button>
           <span className="col-span-2 text-center text-xs text-muted-foreground md:col-span-1">
-            {Math.max(1,submissions.findIndex(item=>item.id===selectedSubmissionId)+1)} / {submissions.length}
+            {studentPosition.display} / {studentPosition.count}
           </span>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
             disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
-            Next student <span aria-hidden="true">›</span>
+            <span className="sr-only">Next student in selected submission page</span>
+            <span aria-hidden="true">Next</span>
           </Button>
         </nav>
       ):null}
