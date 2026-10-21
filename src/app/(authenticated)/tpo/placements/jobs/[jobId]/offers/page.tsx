@@ -48,8 +48,8 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
 
   <PageHeader eyebrow="TPO · Offers" title={data.job.title+" · Offer register"} description="Persisted offer versions and recorded joining outcomes; screening results are not employer selection."
    actions={<>
-    <Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">← Back to drive</Link>
-    <a href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Export filtered CSV</a>
+    <Link href={root} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-[var(--lms-link-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">← Back to drive</Link>
+    <a href={csvHref} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:w-auto md:min-h-9">Export filtered CSV</a>
    </>}/>
   <Banner tone="info">Students see an offer only when you release it. The respond-by time is at least 48 hours and never ends on a Sunday or holiday.</Banner>
   <Tabs ariaLabel="Offer status" renderPanel={false} value={data.status}
@@ -65,7 +65,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
    {searchQuery||parsed.data.joining!=="ALL"||parsed.data.kind!=="ALL"||parsed.data.expiry!=="ALL"||parsed.data.minCtcLpa!==undefined||parsed.data.maxCtcLpa!==undefined?<Link href={root+"/offers?status="+data.status} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline sm:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>:null}
    </div>
    <details className="group min-w-0 border-t border-border pt-3">
-    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
       Filters <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
     </summary>
     <div className="grid min-w-0 gap-3 pt-3 sm:grid-cols-2 xl:grid-cols-3">
@@ -115,7 +115,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     </div>
     <div className="mt-3 flex min-w-0 flex-wrap gap-2"><Link className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 sm:w-auto text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={root+"/offers/"+encodeURIComponent(row.id)}>Offer evidence →</Link></div>
     <details className="group mt-3 min-w-0 border-t border-border pt-2">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">
         More offer details <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
       </summary>
       <div className="min-w-0 space-y-3 pb-2">
