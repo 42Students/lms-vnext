@@ -116,8 +116,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   if (created) return (
     <section className="space-y-4 border-b border-border py-5" aria-live="polite">
       <StatusBadge tone="success">Issue reported</StatusBadge>
-      <h2 className="text-xl font-semibold">{created}</h2>
-      <p className="text-sm text-body">The issue is saved. You can continue testing immediately.</p>
+      <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{created}</h2>
+      <p className="text-sm text-body leading-[22px]">The issue is saved. You can continue testing immediately.</p>
       {linkIssueError?<InlineNotice tone="error" message={linkIssueError}/>:null}
       {knownErrorId&&linkIssueError?<Button type="button"
         variant="secondary"
@@ -138,7 +138,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {restored?<Banner tone="info" action={<Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>}>
         Unsaved report restored.
       </Banner>:null}
-      {dirty?<p className="text-xs text-muted-foreground">Unsaved changes are kept on this device until your report is submitted.</p>:null}
+      {dirty?<p className="text-xs text-muted-foreground leading-[20px]">Unsaved changes are kept on this device until your report is submitted.</p>:null}
       <div className="grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
         <label className={label}>Reporter
           <Select className={field} name="reporterName" required value={draft.reporterName} onChange={event=>patch("reporterName",event.target.value)}>
@@ -219,7 +219,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       {canSearchSimilar ? <>
       <details aria-label="Similar issues" className="min-w-0 border-y border-border py-4" open={Boolean(similarQuery.trim())}>
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Similar issues</summary>
-        <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
+        <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">
           <Input aria-label="Find similar issues by keyword" type="search" value={similarQuery}
             onChange={event=>{setSimilarQuery(event.target.value);setSimilarSearched(false);setSimilarError("");}}
@@ -237,7 +237,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             {similarResults.map(issue=><li key={issue.publicId} className="py-3">
               <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{issue.publicId}</Link>
               <span className="ml-2 inline-flex align-middle"><StatusBadge tone="neutral">{issue.status}</StatusBadge></span>
-              <p className="mt-1 break-words text-xs text-body">{issue.description.slice(0,160)}</p>
+              <p className="mt-1 break-words text-xs text-body leading-[20px]">{issue.description.slice(0,160)}</p>
             </li>)}
           </ul>:<p>No existing reports match this phrase. You can submit a new issue.</p>}
         </div>:null}
@@ -245,7 +245,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       </> : null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground">Ctrl/⌘ + Enter to submit</p>
+        <p className="text-xs text-muted-foreground leading-[20px]">Ctrl/⌘ + Enter to submit</p>
         <Button disabled={pending} loading={pending} type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
           {pending ? "Reporting…" : "Report issue"}
         </Button>
