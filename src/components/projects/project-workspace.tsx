@@ -7,6 +7,7 @@ import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-mod
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
+import {Button} from "@/components/ui/button";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProjectArchiveControl } from "./project-archive-control";
@@ -878,17 +879,13 @@ export function ProjectWorkspace({
             <h2 className="m-0 text-lg font-semibold text-foreground">Team</h2>
             <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
-          {mode === "ADMIN" && !readOnly ? (
-            <>
-              <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
-            </>
-          ) : null}
-          {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
-            <>
-              <CollegeProjectStudentRosterDialog projectId={workspace.project.id}
-                expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
-            </>
-          ) : null}
+          {mode==="ADMIN"&&!readOnly
+            ?<CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
+            :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
+          {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId
+            ?<CollegeProjectStudentRosterDialog projectId={workspace.project.id}
+              expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
+            :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Manage students…</Button>:null}
         </div>
         {mode==="ADMIN"?<CollegeAdminWorkspaceTeamOverview members={workspace.members} tasks={workspace.tasks}/>:null}
         {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
