@@ -70,3 +70,5 @@
 - G2-9-017-044 | College Lecture Halls same-query read cache | If room list fails on an RSC refresh, retain only last verified same-college same-query rows with a stale indicator and Retry. Current primary-list failure shows safe scoped error rather than inventing cached rooms; department errors already degrade without hiding existing halls.
 
 - G2-16-003-001/043 and G2-3-021-044 | Public anonymous tracker privacy/access owner | Define signed limited-duration reporter access for unauthenticated report viewers before expanding beyond authenticated persisted reporterUserId scope; cannot treat publicId as an authorization token. Current reporter view intentionally excludes engineering notes and actor IDs, and provides only owner-scoped attachment metadata, not raw files.
+
+- G2-16-003-010/023 | Tracker manager status authorization | Extend caller permissions for authorized tracker managers only after adding scoped backend policy; status-only change uses existing versioned Super Admin PATCH, while reporter view never mounts this mutation panel. Avoid defaulting to canManage from untrusted client input.

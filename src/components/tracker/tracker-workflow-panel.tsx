@@ -2,7 +2,8 @@
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { useRouter } from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -32,7 +33,7 @@ export type TrackerWorkflowIssue = {
   retestStatus: string;
 };
 
-export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue }) {
+export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: TrackerWorkflowIssue; canManage?: boolean }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
@@ -46,6 +47,30 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
   const [regressionTestStatus, setRegressionTestStatus] = useState(issue.regressionTestStatus);
   const [productionVerified, setProductionVerified] = useState(issue.productionVerified);
   const [retestNote, setRetestNote] = useState("");
+  useEffect(() => { setStatus(issue.status); setResolution(issue.resolution ?? ""); }, [issue.status, issue.resolution, issue.version]);
+  function changeStatus(nextStatus: string) {
+    if (pending || !canManage || nextStatus === status) return;
+    setStatus(nextStatus);
+    startTransition(async () => {
+      try {
+        const response = await apiFetch<{issue:{status:string;resolution:string|null}}>(
+          "/api/tracker/issues/" + encodeURIComponent(issue.publicId) + "/workflow", {
+            method: "PATCH", headers: {"content-type":"application/json"},
+            body: JSON.stringify({expectedVersion:issue.version,status:nextStatus}),
+          });
+        setStatus(response.issue.status);
+        setResolution(response.issue.resolution ?? "");
+        showToast({tone:"success",title:issue.publicId+" moved to "+response.issue.status});
+        router.refresh();
+      } catch (reason) {
+        setStatus(issue.status);
+        showToast({tone:"error",title:reason instanceof FriendlyFetchError && reason.status===409 ?
+          "Issue changed elsewhere" : "Could not update issue status.",
+          description:reason instanceof Error ? reason.message : friendlyApiError({})});
+        if (reason instanceof FriendlyFetchError && reason.status===409) router.refresh();
+      }
+    });
+  }
 
   function save() {
     if(pending)return;
@@ -54,7 +79,7 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
         await apiFetch(`/api/tracker/issues/${encodeURIComponent(issue.publicId)}/workflow`,{
           method:"PATCH",headers:{"content-type":"application/json"},
           body:JSON.stringify({
-            expectedVersion:issue.version,status,resolution,
+            expectedVersion:issue.version,resolution,
             affectedLayer:affectedLayer||null,rootCause,fixNotes,
             frontendCommitSha,backendCommitSha,regressionTestStatus,productionVerified,
           }),
@@ -62,7 +87,7 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
         showToast({tone:"success",title:"Engineering details saved"});
         router.refresh();
       }catch(reason){
-        showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Tracker update failed",
+        showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Engineering details could not be saved.",
           description:reason instanceof Error?reason.message:friendlyApiError({})});
       }
     });
@@ -79,12 +104,13 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
         showToast({tone:"success",title:result==="PASS"?"Retest passed — issue closed":"Retest failed — issue reopened"});
         router.refresh();
       }catch(reason){
-        showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Retest could not be recorded",
+        showToast({tone:"error",title:reason instanceof FriendlyFetchError&&reason.status===409?"Issue changed elsewhere":"Retest result could not be saved.",
           description:reason instanceof Error?reason.message:friendlyApiError({})});
       }
     });
   }
 
+  if (!canManage) return <section className="space-y-2 border-b border-border pb-4"><h2 className="font-semibold">Issue status</h2><StatusBadge>{issue.status}</StatusBadge><p className="text-xs text-muted-foreground">Status is read-only for this viewer.</p></section>;
   return (
     <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
       <div>
@@ -94,9 +120,10 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Status
-          <Select className="w-full min-w-0" value={status} onChange={(e) => setStatus(e.target.value)}>
+          <Select className="w-full min-w-0" disabled={pending} value={status} onChange={(e) => changeStatus(e.target.value)}>
             {BUG_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
+          {pending ? <span role="status" className="text-xs text-muted-foreground">Updating status…</span> : null}
         </label>
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Resolution
@@ -132,12 +159,16 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
         <div className="min-w-0 text-sm font-semibold text-body">
           <label htmlFor="tracker-workflow-frontend-sha">Frontend commit SHA</label>
           <Input id="tracker-workflow-frontend-sha" className="mt-[6px] min-w-0 w-full" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
+          {frontendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim()) ?
+            <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
           {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
             target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
         </div>
         <div className="min-w-0 text-sm font-semibold text-body">
           <label htmlFor="tracker-workflow-backend-sha">Backend commit SHA</label>
           <Input id="tracker-workflow-backend-sha" className="mt-[6px] min-w-0 w-full" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
+          {backendCommitSha.trim().length >= 7 && !/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim()) ?
+            <p role="status" className="mt-1 text-xs font-normal text-muted-foreground">Enter 7–40 hexadecimal SHA characters to enable the commit link.</p> : null}
           {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
             target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
         </div>
