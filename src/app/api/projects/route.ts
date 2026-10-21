@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import {z} from "zod";
+import {normalizeLegacyProjectCreationStatus} from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -47,8 +48,8 @@ export async function POST(request: Request) {
       primaryMentorMembershipId:z.string().uuid().optional(),
       studentMembershipIds:z.array(z.string().uuid()).max(500).optional(),
       learnerMembershipIds:z.array(z.string().uuid()).max(500).optional(),
-      status:z.enum(["PLANNED","ACTIVE"]).optional(),
-      initialStatus:z.enum(["PLANNED","ACTIVE"]).optional(),
+      status:z.enum(["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","ARCHIVED"]).optional(),
+      initialStatus:z.enum(["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","ARCHIVED"]).optional(),
       slug:z.string().optional(),
     }).passthrough().safeParse(raw);
     if(!legacy.success)return NextResponse.json({error:"INVALID_PROJECT_CREATE",
@@ -58,6 +59,15 @@ export async function POST(request: Request) {
       message:"Choose an assigned project template before creating this workspace.",
       nextAction:"ASSIGN_PROJECT_TEMPLATE",
     },{status:422,headers:{"Cache-Control":"no-store"}});
+    const legacyStatus=normalizeLegacyProjectCreationStatus(
+      legacy.data.initialStatus??legacy.data.status??"PLANNED",{
+        ...(typeof legacy.data.phase==="string"?{phase:legacy.data.phase}:{}),
+        ...(typeof legacy.data.blocker==="string"?{blocker:legacy.data.blocker}:{}),
+      });
+    if(!legacyStatus)return NextResponse.json({
+      error:"PROJECT_INVALID_STATE",
+      message:"Archived workspaces cannot be created. Create a planned workspace and archive it separately.",
+    },{status:422});
     const generatedSlug=legacy.data.title.toLowerCase().normalize("NFKD")
       .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,80);
     const canonical={
@@ -66,12 +76,12 @@ export async function POST(request: Request) {
       sectionId:legacy.data.sectionId??legacy.data.classId,
       primaryMentorMembershipId:legacy.data.primaryMentorMembershipId??legacy.data.mentorMembershipId,
       learnerMembershipIds:legacy.data.learnerMembershipIds??legacy.data.studentMembershipIds??[],
-      initialStatus:legacy.data.initialStatus??legacy.data.status??"PLANNED",
+      initialStatus:legacyStatus.initialStatus,
       ...(typeof legacy.data.summary==="string"?{summary:legacy.data.summary}:{}),
-      ...(typeof legacy.data.phase==="string"?{phase:legacy.data.phase}:{}),
+      ...(legacyStatus.phase?{phase:legacyStatus.phase}:{}),
       ...(typeof legacy.data.progressPercent==="number"?{progressPercent:legacy.data.progressPercent}:{}),
       ...(typeof legacy.data.dueLabel==="string"?{dueLabel:legacy.data.dueLabel}:{}),
-      ...(typeof legacy.data.blocker==="string"?{blocker:legacy.data.blocker}:{}),
+      ...(legacyStatus.blocker?{blocker:legacyStatus.blocker}:{}),
       ...(typeof legacy.data.nextAction==="string"?{nextAction:legacy.data.nextAction}:{}),
     };
     const project = await createProjectInstance(context,canonical);
