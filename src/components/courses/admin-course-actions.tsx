@@ -83,12 +83,13 @@ function useCourseMutation() {
 }
 
 export function CourseActions({
-  course,duplicateHref,activeOfferingCount=0,linkedLessonCount=0,allowMetadata=false,
+  course,duplicateHref,activeOfferingCount=0,linkedLessonCount=0,allowMetadata=false,allowCode=true,
 }: {
   duplicateHref?:string;
   activeOfferingCount?:number;
   linkedLessonCount?:number;
   allowMetadata?:boolean;
+  allowCode?:boolean;
   course: {
     id: string;
     updatedAt: string;
@@ -212,7 +213,7 @@ export function CourseActions({
                 pending ||
                 !name.trim() ||
                 (allowMetadata?(!shortTitle.trim()||
-                  Boolean(cardColor&&!/^#[0-9A-Fa-f]{6}$/.test(cardColor))):!code.trim())
+                  Boolean(cardColor&&!/^#[0-9A-Fa-f]{6}$/.test(cardColor))):false)|| (allowCode&&!code.trim())
               }
               onClick={() =>
                 run(
@@ -292,7 +293,7 @@ export function CourseActions({
                 <span role="alert" className="text-xs text-error">Use a colour like #0a7c88</span>:null}
             </label>
           </div>:null}
-          {!allowMetadata?<label>
+          {allowCode?<label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
               Code
             </span>
