@@ -27,6 +27,12 @@ export type ProjectAdminCollectionQuery = {
   pageSize?: number;
 };
 
+/** Historic Ready is a readiness rollup; Blocked derives from risk,
+ * not a lifecycle status. Do not mislabel persisted COMPLETED or ARCHIVED.
+ */
+export const LEGACY_WORKSPACE_FILTER_LABELS=[
+ "Active","In progress","Ready","Blocked","Archived",
+] as const;
 const PROJECT_STATUSES = [
   "PLANNED",
   "ACTIVE",
@@ -99,6 +105,11 @@ export function ProjectAdminFilters({
           ))}
         </Select>
       </label>
+      {legacyWorkspaces?<p className="text-xs text-muted-foreground">
+        In progress and Ready are workflow states, not database status filters.
+        <Link href="/admin/projects/at-risk" className="ml-1 font-semibold text-primary-text underline">
+          View blocked workspaces</Link>
+      </p>:null}
       {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
