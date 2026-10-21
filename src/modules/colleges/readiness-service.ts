@@ -116,6 +116,9 @@ export async function getSuperAdminCollegeReadiness(
       organizationId: colleges.organizationId,
       name: colleges.name,
       code: colleges.code,
+      legacyUniqueId: colleges.legacyUniqueId,
+      logoObjectPath: colleges.logoObjectPath,
+      legacyLogoUrl: colleges.legacyLogoUrl,
       status: colleges.status,
     })
     .from(colleges)
@@ -389,6 +392,7 @@ export async function getSuperAdminCollegeReadiness(
               tenantDomains.isPrimary,
               true,
             ),
+            isNull(tenantDomains.deletedAt),
           ),
         ),
     ),
@@ -428,6 +432,52 @@ export async function getSuperAdminCollegeReadiness(
     ),
   ]);
 
+  // Legacy onboarding reports active domain totals separately from the
+  // general ten-check go-live gate; archived/tombstoned hosts never count.
+  const [domainTotal,domainVerified,domainPrimary]=await Promise.all([
+    safeCount(db.select({total:count()}).from(tenantDomains).where(and(
+      eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt)))),
+    safeCount(db.select({total:count()}).from(tenantDomains).where(and(
+      eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt),
+      eq(tenantDomains.isVerified,true)))),
+    safeCount(db.select({total:count()}).from(tenantDomains).where(and(
+      eq(tenantDomains.collegeId,college.id),isNull(tenantDomains.deletedAt),
+      eq(tenantDomains.isPrimary,true)))),
+  ]);
+  const legacyBlockers:string[]=[];
+  const legacyWarnings:string[]=[];
+  const legacyActions:string[]=[];
+  if(domainTotal!==null&&domainVerified!==null&&domainPrimary!==null){
+    if(domainTotal===0){
+      legacyBlockers.push("NO_DOMAIN");
+      legacyActions.push("Add at least one domain under Superadmin → Tenant Domains.");
+    }
+    if(domainTotal>0&&domainPrimary===0){
+      legacyBlockers.push("NO_PRIMARY_DOMAIN");
+      legacyActions.push("Mark exactly one domain as Primary for this college.");
+    }
+    if(domainPrimary>1){
+      legacyBlockers.push("MULTIPLE_PRIMARY_DOMAINS");
+      legacyActions.push("Ensure only one domain is Primary (others must be non-primary).");
+    }
+    // vNext's primary_verified database constraint and tenant resolver always
+    // demand a verified primary, even when imported historic hosts exist.
+    if(domainTotal>0&&verifiedPrimaryDomains===0){
+      legacyBlockers.push("NO_VERIFIED_PRIMARY_DOMAIN");
+      legacyActions.push("Verify the Primary domain (TXT verification) before real logins.");
+      if(domainVerified===0)legacyWarnings.push("NO_VERIFIED_DOMAIN");
+      else if(domainPrimary>0)legacyWarnings.push("PRIMARY_DOMAIN_NOT_VERIFIED");
+    }
+  }
+  if(!college.logoObjectPath&&!college.legacyLogoUrl){
+    legacyWarnings.push("MISSING_LOGO");
+    legacyActions.push("Add a logo (college logo or branding logo).");
+  }
+  if([activeDepartments,facultyMemberships,enrolledLearners].some(value=>value===0)){
+    legacyWarnings.push("EMPTY_COLLEGE_NO_ACADEMIC_DATA");
+    legacyActions.push("Add departments, faculty, and students — this college is missing at least one.");
+  }
+
   const facts: CollegeReadinessFacts = {
     collegeStatus: college.status,
     adminMemberships,
@@ -459,6 +509,21 @@ export async function getSuperAdminCollegeReadiness(
     college:{...college,status:currentCollege.status},
     evaluation:
       evaluateCollegeReadiness(facts),
+    legacyDomainReadiness:{
+      readyForDomainLogin:domainTotal===null||domainPrimary===null||
+        verifiedPrimaryDomains===null?null:legacyBlockers.length===0,
+      blockers:legacyBlockers,
+      warnings:legacyWarnings,
+      recommendedActions:legacyActions,
+      meta:{
+        collegeId:college.id,
+        collegeName:college.name,
+        organizationId:college.organizationId,
+        uniqueId:college.legacyUniqueId??college.code,
+        domainTotal,domainVerified,domainPrimary,
+        requireVerifiedDomains:true,
+      },
+    },
     supplemental: {
       activeLectureHalls,
       attendancePolicyRecord:
