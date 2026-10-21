@@ -1,12 +1,12 @@
 import { z } from "zod";
 
 const uuid = z.string().uuid();
-const name = z.string().trim().min(1, "Class name is required").max(255);
+const name = z.string().trim().min(1, "Enter the class or section name").max(255);
 const code = z.string().trim().min(1).max(64)
   .regex(/^[A-Za-z0-9][A-Za-z0-9._-]*$/, "Invalid class code");
 const capacity = z.number().int().min(1).max(200).nullable();
 const minSize = z.number().int().min(0).max(200).nullable().optional();
-const creationCapacity=z.number().int().min(1).max(200,"Capacity must be between 1 and 200.");
+const creationCapacity=z.number().int("Maximum must be a whole number from 1 to 200").min(1,"Maximum must be a whole number from 1 to 200").max(200,"Maximum must be a whole number from 1 to 200");
 const description = z.string().trim().max(2000).nullable().optional();
 
 export const collegeSectionIdSchema = uuid;
