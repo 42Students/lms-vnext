@@ -355,18 +355,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [x] `src/app/globals.css`
 - [x] `src/app/home/page.tsx`
 - [x] `src/app/login-shell.module.css`
-- [ ] `src/app/quiz/page.tsx`
-- [ ] `src/app/request-demo/page.tsx`
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/learner-class-schedule.module.css`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/legacy-class-month-grid.module.css`
-- [ ] `src/components/activity/activity-center.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
+- [x] `src/app/quiz/page.tsx`
+- [x] `src/app/request-demo/page.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/learner-class-schedule.module.css`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/legacy-class-month-grid.module.css`
+- [x] `src/components/activity/activity-center.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/admin/academic-module-scope-inventory.tsx`
 - [ ] `src/components/admin/academic-setup-steps.tsx`
 - [ ] `src/components/admin/admin-dashboard-actions.tsx`
 - [ ] `src/components/admin/admin-program-directory.tsx`
