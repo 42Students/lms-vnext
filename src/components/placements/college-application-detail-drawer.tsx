@@ -207,6 +207,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
     body:JSON.stringify({confirmed:true}),
    });
    setRescreenResult(result);setSuccess("Application re-screened");
+   await reload();
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to re-screen this application.");}
   finally{setRescreening(false);}
  }
@@ -326,7 +327,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
             />
           </label>
           <Button variant="secondary" type="button"
-            disabled={savingLetter||!letterDirty} onClick={()=>void attachLetter(o.id)}
+            disabled={savingLetter||
+             (letterInput[o.id]??o.offerLetterUrl??"").trim()===(o.offerLetterUrl??"")} onClick={()=>void attachLetter(o.id)}
            >
            {savingLetter?"Saving…":o.offerLetterUrl?"Update link":"Attach offer letter link"}</Button>
          </div>:null}
@@ -398,7 +400,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       <section className="border-b border-border py-4">
        <h3 className="font-semibold">Interview scheduling</h3>
-       <p className="mt-1 text-sm text-body">Schedule or edit an interview, record completed/no-show feedback, notify the learner and download a calendar invitation.</p>
+       <p className="mt-1 text-sm text-body">Schedule or edit an interview, record completed/no-show feedback and download calendar invitations. Candidate notifications are confirmed only when the delivery receipt is available.</p>
        <div className="mt-3 flex flex-wrap gap-3">
         <Button type="button" variant="secondary" onClick={()=>void openCandidateInterviews()}>
          Manage candidate interviews
@@ -490,7 +492,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   <Dialog open={interviewOpen} onOpenChange={next=>{if(!next){
     setInterviewOpen(false);void reload();
    }}} title={"Candidate interviews · "+(detail?.application.name??"Applicant")}
-   description="Interview actions are recorded against the college drive and notify the candidate."
+   description="Interview actions are audited against the college drive. A completed write is not evidence of a delivered notification."
    className="max-w-[78rem]">
    <div className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -520,12 +522,12 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
    </div>
   </Dialog>
   <Dialog open={resumePreviewOpen} onOpenChange={setResumePreviewOpen}
-   title="Resume Preview"
+   title={"Resume Preview · "+(detail?.application.name??"Applicant")}
    description="The verified private document loads through the authorized document endpoint."
    className="max-w-[70rem]">
    {privateResumeUrl ? (
     <div className="min-w-0 space-y-3">
-     <iframe title="Verified resume document" src={privateResumeUrl}
+     <iframe title={"Verified resume document for "+(detail?.application.name??"applicant")} src={privateResumeUrl}
       sandbox="allow-downloads" referrerPolicy="no-referrer" loading="lazy"
       className="h-[58vh] w-full rounded-[var(--lms-control-radius)] border border-border bg-white" />
      <p className="text-xs text-muted-foreground">
