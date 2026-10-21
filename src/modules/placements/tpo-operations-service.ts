@@ -77,6 +77,8 @@ export async function getPlacementTpoOperations(
     )
     .limit(1);
 
+  // Funnel stages mean "ever reached" here. Correlated EXISTS preserves those
+  // historical semantics without multiplying joined history rows at scale.
   const analytics = analyticsSeason
     ? await Promise.all([
         db
@@ -109,9 +111,13 @@ export async function getPlacementTpoOperations(
         db
           .select({
             applications:
-              sql<number>`count(distinct ${placementApplications.id})::int`,
+              sql<number>`count(*)::int`,
             shortlisted:
-              sql<number>`count(distinct ${placementApplications.id}) filter (where ${placementApplicationScreeningHistory.toStatus} = 'SHORTLISTED')::int`,
+              sql<number>`count(*) filter (where exists (
+                select 1 from ${placementApplicationScreeningHistory}
+                where ${placementApplicationScreeningHistory.applicationId} = ${placementApplications.id}
+                  and ${placementApplicationScreeningHistory.toStatus} = 'SHORTLISTED'
+              ))::int`,
           })
           .from(placementApplications)
           .innerJoin(
@@ -119,13 +125,6 @@ export async function getPlacementTpoOperations(
             eq(
               placementJobs.id,
               placementApplications.jobId,
-            ),
-          )
-          .leftJoin(
-            placementApplicationScreeningHistory,
-            eq(
-              placementApplicationScreeningHistory.applicationId,
-              placementApplications.id,
             ),
           )
           .where(
@@ -148,9 +147,17 @@ export async function getPlacementTpoOperations(
             offered:
               sql<number>`count(distinct ${placementOffers.applicationId})::int`,
             accepted:
-              sql<number>`count(distinct ${placementOffers.applicationId}) filter (where ${placementOfferStatusHistory.toStatus} = 'ACCEPTED')::int`,
+              sql<number>`count(distinct ${placementOffers.applicationId}) filter (where exists (
+                select 1 from ${placementOfferStatusHistory}
+                where ${placementOfferStatusHistory.offerId} = ${placementOffers.id}
+                  and ${placementOfferStatusHistory.toStatus} = 'ACCEPTED'
+              ))::int`,
             joined:
-              sql<number>`count(distinct ${placementOffers.applicationId}) filter (where ${placementJoiningHistory.toStatus} = 'JOINED')::int`,
+              sql<number>`count(distinct ${placementOffers.applicationId}) filter (where exists (
+                select 1 from ${placementJoiningHistory}
+                where ${placementJoiningHistory.offerId} = ${placementOffers.id}
+                  and ${placementJoiningHistory.toStatus} = 'JOINED'
+              ))::int`,
           })
           .from(placementOffers)
           .innerJoin(
@@ -165,20 +172,6 @@ export async function getPlacementTpoOperations(
             eq(
               placementJobs.id,
               placementApplications.jobId,
-            ),
-          )
-          .leftJoin(
-            placementOfferStatusHistory,
-            eq(
-              placementOfferStatusHistory.offerId,
-              placementOffers.id,
-            ),
-          )
-          .leftJoin(
-            placementJoiningHistory,
-            eq(
-              placementJoiningHistory.offerId,
-              placementOffers.id,
             ),
           )
           .where(
