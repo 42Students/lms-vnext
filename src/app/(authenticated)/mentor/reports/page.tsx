@@ -44,7 +44,7 @@ export default async function MentorReportsPage({searchParams}:{
     <PageHeader title="Assigned project reports"
       description="Persisted project states and actionable attention across your current assigned workspaces."
       actions={<Link data-unskin="" href="/mentor/projects"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Projects list
       </Link>}/>
     {!data.enabled?<section role="status" className="border-b border-border pb-4 text-sm text-body">
@@ -105,7 +105,7 @@ export default async function MentorReportsPage({searchParams}:{
             </label>
             </div>
           </Disclosure>
-          {(data.query.status!=="ALL"||data.query.attention!=="ALL"||data.query.taskCoverage!=="ALL"||data.query.assignment!=="ALL"||data.query.order!=="UPDATED"||Boolean(data.query.search))?<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>:null}
+          {(data.query.status!=="ALL"||data.query.attention!=="ALL"||data.query.taskCoverage!=="ALL"||data.query.assignment!=="ALL"||data.query.order!=="UPDATED"||Boolean(data.query.search))?<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>:null}
         </form>
       </FilterBar>
       <div className="flex flex-wrap items-center gap-3 text-sm">
@@ -116,7 +116,7 @@ export default async function MentorReportsPage({searchParams}:{
             assignment:data.query.assignment,order:data.query.order,
             search:data.query.search,
           }).toString()} download
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Export filtered project report CSV (max 100)
         </Link>
         {data.exportOmitted>0?<span role="status">
@@ -127,7 +127,7 @@ export default async function MentorReportsPage({searchParams}:{
       {data.items.length===0?<EmptyState title="No assigned projects match"
         description={data.projectCount===0?
           "No current Mentor assignments are registered for this membership.":
-          "Clear filters to see the other currently assigned project records."} action={<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>}/>:
+          "Clear filters to see the other currently assigned project records."} action={<Link href="/mentor/reports" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>}/>:
         <ol aria-label="mentor reports entries" className="min-w-0 divide-y divide-border border-y border-border">{data.items.map(project=>
           <li key={project.id} className="min-w-0 py-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
