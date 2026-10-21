@@ -140,11 +140,14 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   finally{inFlight.current=false;setSaving(false);}
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
- return <section aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
+ return <section ref={sectionRef} aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
   <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit Tenant Settings</h2>
   <p className="max-w-prose text-sm leading-[22px] text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
   {!ready?<Alert tone="warning">The tenant-settings migration is pending. This form is read-only.</Alert>:null}
+  {dirty?<Alert tone="warning" role="status">
+   You have unsaved changes. Switching the college or scope, navigating to another page, or reloading may discard the draft. Save settings or confirm leaving without saving.
+  </Alert>:null}
   {groups.map((group,index)=><Disclosure key={group} title={<span className="flex min-w-0 flex-wrap items-center gap-2">
     <span className="text-sm font-semibold">{group}</span>
     {changed.some(item=>item.group===group)?<span className="text-xs font-normal text-muted-foreground">{changed.filter(item=>item.group===group).length} changed</span>:null}
@@ -155,15 +158,23 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
     {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="warning">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
+     {spec.dangerous||spec.key.startsWith("otp.")?<StatusBadge tone="warning">Stored · runtime activation unverified</StatusBadge>:null}
+     <p className="m-0 text-xs font-normal leading-5 text-body">{runtimeHint(spec)}</p>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
+      aria-invalid={Boolean(invalidKeys.get(spec.key))}
+      aria-describedby={invalidKeys.has(spec.key)?"tenant-invalid-"+spec.key:undefined}
       onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
       className="min-h-11 md:min-h-9 w-full"/>:
       <Input type={spec.type==="int"||spec.type==="decimal"?"number":"text"}
        min={"min" in spec?spec.min:undefined} max={"max" in spec?spec.max:undefined}
        step={spec.type==="int"?1:spec.type==="decimal"?"any":undefined}
        value={draft[spec.key]??""} maxLength={4096}
+       aria-invalid={Boolean(invalidKeys.get(spec.key))}
+       aria-describedby={invalidKeys.has(spec.key)?"tenant-invalid-"+spec.key:undefined}
        onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
        className="min-h-11 md:min-h-9 w-full"/>}
+     {invalidKeys.has(spec.key)?<span id={"tenant-invalid-"+spec.key} role="alert"
+      className="text-xs font-semibold text-error">{invalidKeys.get(spec.key)}</span>:null}
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">
        Range {spec.min}–{"max" in spec?spec.max:undefined}</span>:null}
     </label>)}
@@ -171,15 +182,32 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
    </fieldset>
   </Disclosure>)}
   <Disclosure title="Other stored keys" className="border-t border-border" contentClassName="pt-3">
+   <div onInput={()=>setOtherDirty(true)}>
+   {otherDirty?<p role="status" className="mb-3 text-xs text-warning-text">
+    An unlisted-key add draft may still be unsaved. Scope navigation remains guarded until this editor is reloaded.
+   </p>:null}
    <OtherTenantSettings scopeType={scopeType} collegeId={collegeId} ready={ready} entries={entries} showHeading={false}/>
+   </div>
   </Disclosure>
   <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-   <Button variant="primary" type="button" loading={saving} disabled={!ready||saving||changed.length===0} className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={()=>void save()}>
-    {saving?"Saving…":"Save "+changed.length+" changed setting"+(changed.length===1?"":"s")}
+   <Button variant="primary" type="button" loading={saving} disabled={!ready||saving} className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={()=>void save()}>
+    {saving?"Saving…":changed.length?"Save "+changed.length+" changed setting"+(changed.length===1?"":"s"):"Save settings"}
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
   </div>
-  {error?<Alert tone="error">{error}</Alert>:null}
+  {error?<Alert tone="error" role="alert">{error}</Alert>:null}
+  <ConfirmDialog open={leaveHref!==null}
+   onOpenChange={open=>{if(!open)setLeaveHref(null);}}
+   title="Discard unsaved tenant settings?"
+   description="You have unsaved tenant settings or an unfinished add draft. Leave without saving? This does not apply the pending values."
+   confirmLabel="Leave without saving" confirmVariant="danger"
+   onConfirm={()=>{
+    if(!leaveHref)return;
+    bypassUnload.current=true;
+    const destination=leaveHref;
+    setLeaveHref(null);
+    router.push(destination);
+   }}/>
   <ConfirmDialog open={impactConfirm} onOpenChange={setImpactConfirm}
    title="Review high-impact tenant setting changes"
    description="Host, authentication and messaging overrides can lock users out if deployed incorrectly. Review every changed key and activate only through the approved deployment process."
