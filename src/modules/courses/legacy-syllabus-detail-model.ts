@@ -15,6 +15,7 @@ export function legacySyllabusKind(value:string):LegacySyllabusKind{
 
 export type SyllabusProgressItem={
  id:string;
+ title:string;
  kind:"CONTENT"|"ASSIGNMENT"|"QUIZ";
  progress:{status:string};
 };
