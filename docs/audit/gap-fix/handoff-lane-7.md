@@ -968,3 +968,5 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 - G2-13-001-028/-050 | `src/modules/placements/recruiter-company-reports-service.ts + employer grants policy` | Confirm creator-owned vs college-approved recruiter relationship portfolio and stage funnel semantics before narrowing tenant grants; not safe to filter createdByUserId blindly.
 
 - G2-3-017-018/-019/-020 | `src/modules/people/profile-validation.ts + normalized education DB schema` | Align server-level pursuing-year/percentage normalization with the picker; decide optional maxGrade and CGPA >10 legacy warnings without weakening placement eligibility checks.
+
+- G2-13-006-071/-073 | `src/modules/announcements/service.ts + src/app/(authenticated)/learn/my-placements/announcements/page.tsx` | Persist per-member unread/read receipt and trusted jobId fields, supply them to expanded learner notice projection; route must recheck target job authorization.

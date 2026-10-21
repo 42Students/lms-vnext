@@ -172,3 +172,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_settings_public-page_page.tsx.md` | Clarified cohort-level threshold and per-stat k-anonymity separately in public settings. Publication guard/model retained; no CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_learner-education-picker-model.ts.md` | Learner education UI now permits current/future end year while currently pursuing, warns on past date, and accepts trailing % for validation; optional grades still stricter for job screening and server-side schema needs corresponding parity. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u006-college-admin-project-templates.md.md` | Legacy ?search= URL now redirects to canonical ?q=; keeps clear filter. Exact load error title restored and authorization errors no longer shown as generic transient outage. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-placement-announcement-model.ts.md` | Notice projection accepts optional validated explicit jobId, author, unread, showUntil provenance and scoped internal drive link, without inferring from free text. DB per-membership read receipt and UI link integration remain required; no CI.

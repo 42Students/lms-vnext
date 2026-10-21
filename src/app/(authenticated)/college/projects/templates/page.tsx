@@ -1,4 +1,6 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
@@ -24,20 +26,23 @@ export default async function CollegeProjectTemplatesPage({
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId) return <ProjectAdminMissingCollege/>;
 
+  const params = await searchParams;
+  const legacySearch = Array.isArray(params.search)?params.search[0]:params.search;
+  if (!params.q && legacySearch) redirect("/college/projects/templates?q="+encodeURIComponent(legacySearch.trim().slice(0,120)));
+
   const templateRead = await listAssignedProjectTemplates(context, collegeId)
     .then(value=>({ok:true as const,value}))
-    .catch(()=>({ok:false as const}));
+    .catch((error:unknown)=>{ if(error instanceof AuthorizationError)throw error;return {ok:false as const}; });
   if(!templateRead.ok) return <div className="min-w-0 space-y-6">
     <PageHeader title="Templates"
       description="Published project templates assigned to this college."/>
-    <ErrorState title="Project templates unavailable"
+    <ErrorState title="Templates could not be loaded"
       description="The assigned template catalogue could not be loaded. Your filters were not changed."
       action={<Link href="/college/projects/templates"
         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading templates</Link>}/>
   </div>;
   const templates = templateRead.value;
 
-  const params = await searchParams;
   const rawSearch = params.q;
   const q = (Array.isArray(rawSearch) ? rawSearch[0] : rawSearch ?? "").trim().slice(0, 120);
   const visible = templates.filter((template) =>
