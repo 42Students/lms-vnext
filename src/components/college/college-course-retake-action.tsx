@@ -28,12 +28,17 @@ export function CollegeCourseRetakeAction({learners,offeringId,deliveryId,course
         body:JSON.stringify({learnerMembershipId,offeringId,deliveryId}),
       });
       const result=await response.json().catch(()=>({})) as {
-        error?:string;message?:string;attempt?:number;alreadyFresh?:boolean;
+        error?:string;message?:string;attempt?:number;previousAttempt?:number;contentItemsReset?:number;alreadyFresh?:boolean;
       };
       if(!response.ok)throw new Error(result.message??result.error??"Could not start the next attempt.");
-      setSuccess(result.message??(result.alreadyFresh?
-        "This learner has no recorded progress for that course — they are already starting fresh.":
-        "Attempt "+result.attempt+" started. The previous attempt is kept as history."));
+      setSuccess(result.alreadyFresh
+        ?"This learner has no recorded progress for that course — they are already starting fresh."
+        :result.attempt!==undefined
+          ?"Attempt "+result.attempt+" started. "+
+            (result.previousAttempt!==undefined?"Previous attempt "+result.previousAttempt:"The previous attempt")+
+            " is kept as history."+
+            (result.contentItemsReset!==undefined?" "+result.contentItemsReset+" content items reset.":"")
+          :result.message??"Next attempt started. The previous attempt is kept as history.");
       router.refresh();
     }catch(cause){
       setError(cause instanceof Error?cause.message:"Could not start the next attempt.");

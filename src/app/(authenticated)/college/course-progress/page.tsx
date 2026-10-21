@@ -7,6 +7,7 @@ import { CollegeLearnerProgressReport } from "@/components/courses/college-learn
 import { getCollegeLearnerProgressReport } from "@/modules/courses/college-learner-progress-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { collegeProgressQuerySchema } from "@/modules/courses/college-learning-directory-model";
 import { listCollegeCourseProgress } from "@/modules/courses/college-learning-directory-service";
 import { collegeProgressCsvHref } from "@/modules/courses/college-progress-export-model";
@@ -18,7 +19,7 @@ const first = (value: string | string[] | undefined) =>
 
 export default async function CollegeCourseProgressPage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
+  if(!context.membership)return <CollegeCourseMissingScope area="Course Progress"/>;
   const params = await searchParams;
   const parsed = collegeProgressQuerySchema.safeParse(
     Object.fromEntries(Object.entries({
@@ -53,7 +54,7 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
   );
   if (!parsed.success) return (
     <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
-      <PageHeader title="Progress" />
+      <PageHeader title="Course Progress" />
       <ErrorState title="Invalid course progress filters"
         description="The search, offering status or page is invalid. No activity was loaded."
         action={<Link href="/college/course-progress" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
@@ -64,7 +65,9 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
     deliveryId:first(params.deliveryId)||undefined,
   });
   return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
-    <PageHeader title="Progress" actions={
+    <PageHeader title="Course Progress"
+      description="See measured completion for a class and course, then focus on the students furthest behind."
+      actions={
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Link href="/college/courses" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Course offerings
@@ -74,8 +77,19 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
           Export recorded course activity CSV
         </Link>
       </div>} />
+    <Alert tone="info" role="status">
+      Measured work only: videos watched to the end, assignments submitted and quizzes attempted.
+      Manually checked resources are not counted as completed course work.
+    </Alert>
     <CollegeProgressCapture>
-      <CollegeLearnerProgressReport data={report}/>
+      <CollegeLearnerProgressReport data={report} showHeading={false}/>
+      {report.report && !report.report.noMeasurableWork?<CollegeCourseRetakeAction
+        learners={report.report.rows.map(row=>({membershipId:row.membershipId,
+          name:row.name,rollNumber:row.rollNumber}))}
+        offeringId={report.report.chosen.offeringId}
+        deliveryId={report.report.chosen.deliveryId}
+        courseName={report.choices.find(choice=>choice.offeringId===report.report?.chosen.offeringId)?.courseName??"selected course"}
+      />:null}
       <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
     </CollegeProgressCapture>
   </div>;
