@@ -721,24 +721,14 @@ export function LearnerClassSchedule({
               <span className="mr-1 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                 Courses
               </span>
-              <Button
-                size="sm"
-                variant={
-                  selectedDeliveryIds.length ===
-                  courses.length
-                    ? "primary"
-                    : "secondary"
-                }
-                onClick={() =>
-                  setSelectedDeliveryIds(
-                    courses.map(
-                      (course) =>
-                        course.deliveryId,
-                    ),
-                  )
-                }
-              >
+              <Button type="button" size="sm" variant={
+                selectedDeliveryIds.length === courses.length ? "primary" : "secondary"}
+                onClick={() => setSelectedDeliveryIds(courses.map(course => course.deliveryId))}>
                 All courses
+              </Button>
+              <Button type="button" size="sm" variant="secondary"
+                onClick={() => setSelectedDeliveryIds([])} disabled={!selectedDeliveryIds.length}>
+                Clear courses
               </Button>
               {courses.map((course) => (
                 <FilterChip
@@ -756,7 +746,7 @@ export function LearnerClassSchedule({
         {visibleEvents.length === 0 && view !== "month" && !waitingForMonth ? (
           <div className="mt-5">
             <EmptyState
-              title={view==="week"?"No scheduled classes this week.":"No scheduled classes in this view"}
+              title={"No scheduled classes this " + view + "."}
               description="Try another date, view, section, Course filter or session search. General Section events remain visible unless a search excludes them."
             />
           </div>
@@ -778,9 +768,23 @@ export function LearnerClassSchedule({
                     const selected=chosenDay===day;
                     return <Button key={day} variant="ghost" type="button"
                       data-outside={!inside}
+                      aria-current={day === istCalendarDay(calendarToday) ? "date" : undefined}
+                      aria-disabled={!inside}
                       aria-label={day+", "+dayItems.length+" classes"}
                       aria-pressed={selected}
-                      onClick={()=>{setChosenDay(day);if(dayItems.length>3)setOverflowDay(day);}}
+                      onClick={() => {
+                        if (!inside) return;
+                        setChosenDay(day);
+                        if (!window.matchMedia("(max-width: 767px)").matches) {
+                          const next = learnerScheduleDateFromDay(day);
+                          setAnchor(next);setView("day");navigateCalendarWindow(next,"day");
+                        } else {
+                          document.getElementById("learner-selected-day-agenda")?.scrollIntoView({
+                            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "instant" : "smooth",
+                            block: "nearest",
+                          });
+                        }
+                      }}
                       className={styles.monthDay+" !block !w-full !min-h-16 md:!min-h-24 !justify-start"}>
                       <span className="block text-xs font-semibold">{Number(day.slice(8))}</span>
                       {dayItems.length ? <span aria-hidden="true" className="mt-1 flex flex-wrap gap-0.5">
@@ -798,7 +802,7 @@ export function LearnerClassSchedule({
                     </Button>;
                   })}
                 </CalendarGrid>
-                <section className={styles.selectedAgenda} aria-label="Selected day agenda">
+                <section id="learner-selected-day-agenda" className={styles.selectedAgenda} aria-label="Selected day agenda">
                   <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <h3 className="text-sm font-semibold text-foreground">
                       {chosenDay} · {agenda.length} {agenda.length===1?"class":"classes"}
