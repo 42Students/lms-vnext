@@ -17,24 +17,28 @@ export function MentorSprintDetailsEdit({
   projectId,sprintId,title:originalTitle,
   description:originalDescription,updatedAt,goal:originalGoal,definitionOfDone:originalDone,
   startDate:originalStart,endDate:originalEnd,dueDate:originalDue,status,estimationUnit,
+  dueLabel:originalDueLabel=null,sprintKey=null,releaseTitle=null,
 }:{
   projectId:string;sprintId:string;title:string;
   description:string|null;updatedAt:string;
   goal:string|null;definitionOfDone:string|null;startDate:string|null;endDate:string|null;
   dueDate:string|null;status:string;estimationUnit?:string|null;
+  dueLabel?:string|null;sprintKey?:string|null;releaseTitle?:string|null;
 }) {
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [title,setTitle]=useState(originalTitle);
+  const [dueLabel,setDueLabel]=useState(originalDueLabel??"");
   const [description,setDescription]=useState(originalDescription??"");
   const [goal,setGoal]=useState(originalGoal??""),[done,setDone]=useState(originalDone??"");
   const [start,setStart]=useState(originalStart??""),[end,setEnd]=useState(originalEnd??""),
     [due,setDue]=useState(originalDue??"");
   const [pending,setPending]=useState(false);
   const [error,setError]=useState<string|null>(null);
-  const changed=title.trim()!==originalTitle ||
+  const changed=title.trim()!==originalTitle||
+    (dueLabel.trim()||null)!==(originalDueLabel??null)||
     (description.trim()||null)!==(originalDescription??null)||
     (goal.trim()||null)!==(originalGoal??null)||(done.trim()||null)!==(originalDone??null)||
     (start||null)!==originalStart||(end||null)!==originalEnd||(due||null)!==originalDue;
@@ -42,14 +46,14 @@ export function MentorSprintDetailsEdit({
     setOpen(false);
     setConfirmOpen(false);
     setError(null);
-    setTitle(originalTitle);
+    setTitle(originalTitle);setDueLabel(originalDueLabel??"");
     setDescription(originalDescription??"");
     setGoal(originalGoal??"");setDone(originalDone??"");
     setStart(originalStart??"");setEnd(originalEnd??"");setDue(originalDue??"");
   }
   const guard=useProjectEditorDiscardGuard(open||confirmOpen,changed,pending,discardDraft);
   function begin() {
-    setTitle(originalTitle);
+    setTitle(originalTitle);setDueLabel(originalDueLabel??"");
     setDescription(originalDescription??"");
     setGoal(originalGoal??"");setDone(originalDone??"");
     setStart(originalStart??"");setEnd(originalEnd??"");setDue(originalDue??"");
@@ -58,11 +62,14 @@ export function MentorSprintDetailsEdit({
   }
   function review(event:FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if(!title.trim()||title.trim().length>200||description.trim().length>4000||goal.length>4000||done.length>4000||
-      (start&&end&&end<start)||!changed) {
-      setError("Enter changed sprint details within the field limits.");
-      return;
+    if(!changed){showToast({tone:"info",title:"No changes to save"});return;}
+    if(!title.trim()){setError("Item 1: Title required");return;}
+    if(title.trim().length>200){setError("Item 1: Title must be 200 characters or fewer");return;}
+    if(dueLabel.trim().length>160){setError("Due label must be 160 characters or fewer");return;}
+    if(description.trim().length>4000||goal.length>4000||done.length>4000){
+      setError("Sprint description and goal must be 4000 characters or fewer");return;
     }
+    if(start&&end&&end<start){setError("End date must follow start date");return;}
     setError(null);
     setOpen(false);
     setConfirmOpen(true);
@@ -76,19 +83,20 @@ export function MentorSprintDetailsEdit({
         "/sprints/"+encodeURIComponent(sprintId),
         "PATCH",
         {
-          title:title.trim(),description:description.trim()||null,
+          title:title.trim(),dueLabel:dueLabel.trim()||null,
+          description:description.trim()||null,
           goal:goal.trim()||null,definitionOfDone:done.trim()||null,
           startDate:start||null,endDate:end||null,dueDate:due||null,
           expectedUpdatedAt:updatedAt,
         },
       );
       setConfirmOpen(false);
-      showToast({tone:"success",title:"Sprint details updated"});
+      showToast({tone:"success",title:"Sprints updated"});
       router.refresh();
     } catch(caught) {
       const message=caught instanceof FriendlyFetchError?caught.message:friendlyApiError({});
       setError(message);
-      showToast({tone:"error",title:"Sprint update failed",description:message});
+      showToast({tone:"error",title:"Failed to update sprints",description:message});
     } finally {
       setPending(false);
     }
@@ -103,6 +111,21 @@ export function MentorSprintDetailsEdit({
           <Input required maxLength={200} value={title}
             onChange={event=>setTitle(event.target.value)} />
         </label>
+        <div className="grid gap-3 md:grid-cols-2">
+          <label className="grid gap-1 text-[13px] font-semibold text-body">
+            Sprint key
+            <Input value={sprintKey??""} disabled aria-label="Stable sprint key"/>
+          </label>
+          <label className="grid gap-1 text-[13px] font-semibold text-body">
+            Linked release
+            <Input value={releaseTitle??"Release"} disabled/>
+          </label>
+        </div>
+        <label className="grid gap-1 text-[13px] font-semibold text-body">
+          Due label
+          <Input value={dueLabel} maxLength={160} placeholder="e.g. Week 2"
+            onChange={event=>setDueLabel(event.target.value)}/>
+        </label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Sprint description (optional)
           <Textarea maxLength={4000} value={description}
@@ -110,7 +133,7 @@ export function MentorSprintDetailsEdit({
         </label>
         {estimationUnit?<p className="m-0 text-xs text-muted-foreground">Project estimation unit: {estimationUnit==="HOURS"?"Hours":estimationUnit==="POINTS"?"Points":estimationUnit}</p>:null}
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal
-          <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
+          <Textarea maxLength={4000} placeholder="One sentence: what this sprint is trying to achieve." value={goal} onChange={e=>setGoal(e.target.value)}/></label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
         

@@ -1255,6 +1255,9 @@ export function ProjectWorkspace({
                                 startDate={sprint.startDate}
                                 endDate={sprint.endDate}
                                 dueDate={sprint.dueDate}
+                                dueLabel={sprint.dueLabel}
+                                sprintKey={sprint.legacySprintKey??sprint.templateKey}
+                                releaseTitle={release.title}
                                 status={sprint.status}
                               />
                             ) : null}
