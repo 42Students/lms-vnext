@@ -130,7 +130,7 @@ export default async function MentorBoardReviewPage({
           <div className="grid gap-3 md:grid-cols-2">
             {data.sprintSummaries.slice(0,6).map(sprint=>
               <article key={sprint.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-                <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{sprint.title}</h3>
+                <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{sprint.title}</h3>
                 <p className="mt-2 text-sm text-body leading-[22px]">{sprint.matchingTasks} matching of
                   {" "}{sprint.registeredTasks} registered tasks</p>
                 <p className="mt-1 text-sm text-body leading-[22px]">
