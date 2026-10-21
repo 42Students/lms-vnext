@@ -393,3 +393,45 @@ Existing resource history is filtered over generic activity events and has no co
 - G2-18-019-047 | `src/db/schema/identity-auth-attempts.ts` | Maintain field-by-field disposition in schema ledger, protect raw OTP and phone, never expose hashed MAC via API
 
 Security non-regression requirements: do not reintroduce raw OTP, phone numbers in challenge rows, GET-query verification, static production bypass codes, or replay. The vNext user+membership UUID challenge with MAC, attempt caps and consumption remains the canonical contract. Auth and DB owners must verify provider, membership, error and retention details. **16/16 handed off, not fixed**.
+
+## Important job dates calendar DTO — lane-7 handoff (2026-10-21)
+
+- G2-18-021-003 | `src/modules/placements/placement-calendar-service.ts` | Include all configured important date events with type and label, not just deadline+scheduled rounds
+- G2-18-021-004 | `src/modules/placements/placement-calendar-service.ts` | Project informational dates even when no corresponding round exists, de-dupe when scheduled event matches
+- G2-18-021-006 | `src/modules/placements/placement-calendar-model.ts` | Add optional raw importantDateType and label to model; color/classify by type first
+- G2-18-021-007 | `src/modules/placements/placement-calendar-model.ts` | Crosswalk all seven fields; preserve label/type separately from generated display title
+- G2-18-021-009 | `src/db/schema/placements.ts` | Store type/dateType in legacyPostingDetails metadata or normalized date rows
+- G2-18-021-011 | `src/modules/placements/placement-calendar-service.ts` | Support stable per-item IDs including index/typed key so multiple dates do not collapse
+- G2-18-021-012 | `src/components/placements/placement-job-create-form.tsx` | Add type input/preservation to authoring + roundtrip; do not invent type from text
+- G2-18-021-017 | `src/modules/placements/placement-calendar-service.ts` | Distinguish no dates from unsupported source; add explicit metadata projection rather than empty-success
+- G2-18-021-021 | `src/modules/placements/learner-career-calendar-model.ts` | Merge targeted-visible un-applied job dates AND past applied-job dates in learner calendar
+- G2-18-021-025 | `src/modules/placements/learner-career-calendar-model.ts` | Verify public-targeted jobs with future dates included despite no application; preserve applied after deadline
+- G2-18-021-027 | `src/modules/placements/placement-calendar-model.ts` | Preserve and prioritize raw type over label heuristics at all consumers
+- G2-18-021-038 | `src/modules/placements/learner-career-calendar-model.ts` | Union visible and applied job rows once and project each important date only once
+- G2-18-021-039 | `src/modules/placements/learner-career-calendar-model.ts` | Define UTC storage→IST day mapping; test +05:30 boundary and naive date strings
+- G2-18-021-044 | `src/db/schema/placements.ts` | Schema add optional `type`, `dateType` and preserve during write and read; include existing legacy payloads
+- G2-18-021-046 | `src/modules/placements/placement-calendar-model.ts` | Write explicit typed job-date projection contract + fixture for primary/fallback classification agreement
+- G2-18-021-015 | `src/modules/placements/placement-calendar-service.ts` | Map original range errors and inclusive day bounds to vNext query warnings
+
+Placement calendar and recruitment job JSON are owned by Placements/schema lanes. Preserve raw `type`/`dateType` in migrations rather than inferring from label. Do not merge targeted-visible and applied events without tenant-scope guard. **16/16 handed off, not fixed**.
+
+## TPO recruiter leads — lane-7 handoff (2026-10-21)
+
+- G2-11-020-010 | `src/components/tpo/recruiter-leads-workspace.tsx + recruiter grant-read service` | Count only active nonexpired access grants from access service; match link /tpo/settings?tab=recruiters.
+- G2-11-020-012 | `src/components/tpo/recruiter-leads-workspace.tsx` | Derive exact LEAD/INVITED/JOINED statuses and status label/badge.
+- G2-11-020-025 | `src/components/tpo/recruiter-leads-workspace.tsx` | Match exact status buckets, keep unsubscribed as separate opt-in extra filter.
+- G2-11-020-028 | `src/components/tpo/recruiter-leads-workspace.tsx` | Restore the four allowed drop outcomes and locked hints, with confirmation.
+- G2-11-020-037 | `src/components/tpo/recruiter-leads-workspace.tsx` | Support optional time selection; preserve selected wall time and timezone.
+- G2-11-020-046 | `src/components/tpo/recruiter-leads-workspace.tsx + invite API` | Provide email invite/resend flow and consent-safe fallback, retain one-time link optional.
+- G2-11-020-050 | `src/modules/placements/recruiter-lead-service.ts` | Scope owner editor choices to authorized staff from team membership, not lead-only values.
+- G2-11-020-052 | `src/components/tpo/recruiter-leads-workspace.tsx` | Preserve stage policy plus all legacy permitted manual actions, lock others.
+- G2-11-020-054 | `src/modules/placements/recruiter-invite-service.ts` | Add mail-template availability check and approved send action, maintain opt-out.
+- G2-11-020-059 | `src/components/tpo/recruiter-leads-workspace.tsx + messaging templates` | Cross-check campaign and invitation delivery templates/recipients; restore send paths when mail on.
+- G2-11-020-064 | `src/components/tpo/recruiter-leads-workspace.tsx` | Protect unsaved draft on browser tab close and route navigation.
+- G2-11-020-038 | `src/components/tpo/recruiter-leads-workspace.tsx` | Provide field-level exact error next to contact fields.
+- G2-11-020-039 | `src/components/tpo/recruiter-leads-workspace.tsx` | Match punctuation and explain intentional min2 if kept.
+- G2-11-020-040 | `src/components/tpo/recruiter-leads-workspace.tsx` | Restore dialog copy and Open existing record action.
+- G2-11-020-041 | `src/components/tpo/recruiter-leads-workspace.tsx` | Distinguish with-followup success wording.
+- G2-11-020-043 | `src/components/tpo/recruiter-leads-workspace.tsx` | Match literal feedback or document persistent replacement.
+
+TPO recruiter lead UI and messaging/notification flows are shared TPO ownership. Resuming invite emails without verified template, opt-out and rate-limit rules is unsafe. Retain vNext consent and grant scopes pending implementation. **16/16 handed off, not fixed**.

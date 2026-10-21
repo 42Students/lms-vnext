@@ -43,3 +43,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-7_u007-college-admin-workspace-audit.md.md` | 17/17 findings read and recorded with exact target file/ID in cross-lane handoff. 0 code edits: shared Projects resource activity UI/service and DB-staged resource audit tables outside lane-7 area. No lossless resource before/after snapshot assumed. **Handoff, not fixed**, no execution or CI.
 
 - `NEW_docs_audit_gap2_lane-13_l18-u019-faculty-verification.md.md` | 16/16 findings read and recorded with exact target file/ID in cross-lane handoff. 0 code edits: shared Auth OTP challenge service, secure identity-attempt schema and provider integration outside lane-7 area. Explicitly rejected restoring plaintext OTP, insecure verification via GET or production bypass secrets. **Handoff, not fixed**, no execution or CI.
+
+- `NEW_docs_audit_gap2_lane-14_l18-u021-job-important-date-event-dto.md.md` | 16/16 audit findings assigned to specific Placements calendar/model/schema target files. 0 edits to out-of-area modules; generic importantDates and learner visible+applied union require controlled data model work. **Handoff, not fixed**. No TypeScript run or CI.
+
+- `NEW_docs_audit_gap2_lane-6_l11-u020-tpo-recruiters.md.md` | 16/16 audit findings assigned to specific TPO recruiter leads/UI/messaging target files. 0 edits to out-of-area modules; invite delivery and drag/drop stage policy require coordinated TPO service changes. **Handoff, not fixed**. No TypeScript run or CI.
