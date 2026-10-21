@@ -37,11 +37,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   // Validate the platform actor and selected tenant before reading private rounds.
   requireSuperAdminSelectedCollege(context,"placements.manage");
   const {jobId}=await params;
-  const rawFilters=await searchParams;
-  // Conflict-only is an advisory for the loaded page; never substitute it
-  // for the database's tenant-scoped appointment paging/count query.
-  const conflictsOnly=rawFilters.conflictsOnly==="1";
-  const query=driveInterviewsParams(rawFilters);
+  const query=driveInterviewsParams(await searchParams);
   if(!query) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Interviews" description="Schedule candidate interviews and review interview rounds."/>
     <ErrorState title="Invalid interview filters"
@@ -73,48 +69,6 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
   const resetHref=root+"/schedule";
   const candidateRows=appointments?.interviews??[];
   const candidateCount=appointments?.appointmentTotal??0;
-  // These conflicts are deliberately limited to this drive's authorized
-  // appointment page. Venue/learner/panel overlaps are not asserted as a
-  // system-wide conflict scan over unrequested candidates or other drives.
-  const conflictIds=new Set<string>();
-  for(let i=0;i<candidateRows.length;i++){
-    const left=candidateRows[i]!;
-    const leftFrom=Date.parse(left.scheduledAt);
-    const leftTo=leftFrom+left.durationMinutes*60_000;
-    if(left.status!=="SCHEDULED"||!Number.isFinite(leftFrom))continue;
-    for(let j=i+1;j<candidateRows.length;j++){
-      const right=candidateRows[j]!;
-      const rightFrom=Date.parse(right.scheduledAt);
-      const rightTo=rightFrom+right.durationMinutes*60_000;
-      if(right.status!=="SCHEDULED"||!Number.isFinite(rightFrom)||
-         leftFrom>=rightTo||rightFrom>=leftTo)continue;
-      const sameApplicant=Boolean(left.applicationId&&
-        left.applicationId===right.applicationId);
-      const sameVenue=Boolean(left.venue&&right.venue&&
-        left.venue.trim().toLowerCase()===right.venue.trim().toLowerCase());
-      const samePanel=Boolean(left.interviewer&&right.interviewer&&
-        left.interviewer.trim().toLowerCase()===right.interviewer.trim().toLowerCase());
-      if(sameApplicant||sameVenue||samePanel){
-        conflictIds.add(left.id);conflictIds.add(right.id);
-      }
-    }
-  }
-  const visibleCandidateRows=conflictsOnly
-    ?candidateRows.filter(item=>conflictIds.has(item.id)):candidateRows;
-  const addConflictParam=(href:string)=>conflictsOnly
-    ?href+(href.includes("?")?"&":"?")+"conflictsOnly=1":href;
-  const conflictHref=conflictsOnly
-    ?refreshHref:refreshHref+(refreshHref.includes("?")?"&":"?")+"conflictsOnly=1";
-  const csvCell=(value:string|number|null|undefined)=>"\\""+
-    String(value??"").replaceAll("\\"","\\"\\"")+"\\"";
-  const appointmentCsv=[
-    ["Appointment ID","Application ID","Round ID","Start (UTC)","Duration (minutes)",
-      "Mode","Venue","Panel","Status"].map(csvCell).join(","),
-    ...visibleCandidateRows.map(item=>
-      [item.id,item.applicationId,item.roundId,item.scheduledAt,item.durationMinutes,
-       item.mode,item.venue,item.interviewer,item.status].map(csvCell).join(",")),
-  ].join("\\r\\n")+"\\r\\n";
-  const exportHref="data:text/csv;charset=utf-8,"+encodeURIComponent("\\uFEFF"+appointmentCsv);
   const nowMs=Date.now();
   const istDay=(date:Date)=>new Intl.DateTimeFormat("en-CA",{
     timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"
@@ -196,7 +150,6 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     </p>
     <form method="get" aria-label="Filter interviews"
       className="grid min-w-0 grid-cols-1 items-end gap-3 rounded-[var(--lms-radius-card)] border border-border bg-surface-subtle p-4 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-      {conflictsOnly?<input type="hidden" name="conflictsOnly" value="1"/>:null}
       <input type="hidden" name="appointmentPage" value="1"/>
       <input type="hidden" name="page" value="1"/>
       <label className="grid min-w-0 gap-2 text-sm font-semibold text-muted-foreground">
@@ -260,15 +213,6 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
         Refresh interviews
       </Link>
-      <Link href={conflictHref}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9"
-        aria-current={conflictsOnly?"page":undefined}>
-        {conflictsOnly?"Show all appointments":"Conflicts on this page ("+conflictIds.size+")"}
-      </Link>
-      {appointments?<a download={"drive-interviews-"+jobId.slice(0,8)+"-page-"+appointments.appointmentPage+".csv"}
-        href={exportHref} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
-        Export {conflictsOnly?"matching ":""}page CSV
-      </a>:null}
     </div>
     <section aria-label="Candidate interviews" className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Candidate interviews</h2>
@@ -279,19 +223,15 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
         {appointments.candidateTotal>appointments.candidates.length?<Banner tone="warning">
           Showing {appointments.candidates.length} of {appointments.candidateTotal} shortlisted candidates in the scheduling selector. Deep-link from the application detail to include an individual learner.
         </Banner>:null}
-        {conflictsOnly?<Banner tone="info" role="status">
-          Showing {visibleCandidateRows.length} appointments with a time/resource overlap among the
-          {candidateRows.length} rows loaded on this page. Other pages and drives have not been checked.
-        </Banner>:null}
         <p role="status" className="text-sm text-body">{appointments.appointmentTotal} matching candidate appointments · page {appointments.appointmentPage} of {appointments.appointmentPages}
           · {appointments.appointmentPageSize} per page</p>
         <CollegeInterviewAppointments jobId={jobId}
           rounds={appointments.rounds} candidates={appointments.candidates}
-          appointments={visibleCandidateRows} preferredApplicationId={query.applicationId}/>
+          appointments={appointments.interviews} preferredApplicationId={query.applicationId}/>
         <nav aria-label="Candidate interview appointment pages" className="flex flex-wrap items-center gap-4 border-t border-border pt-3 text-sm">
-          {appointments.appointmentPage>1?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1}))}
+          {appointments.appointmentPage>1?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage-1})}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous appointments</Link>:null}
-          {appointments.appointmentPage<appointments.appointmentPages?<Link href={addConflictParam(adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1}))}
+          {appointments.appointmentPage<appointments.appointmentPages?<Link href={adminInterviewsHref(jobId,{...query,appointmentPage:appointments.appointmentPage+1})}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next appointments</Link>:null}
         </nav>
       </> :
