@@ -83,76 +83,76 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/college/student-class-move-action.tsx`
 - [x] `src/components/college/use-college-confirmation.tsx`
 - [x] `src/components/colleges/college-contact-profile-form.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-learning-structure-actions.tsx`
-- [ ] `src/components/courses/assignment-submission-control.tsx`
-- [ ] `src/components/courses/college-archived-lesson-restore.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-content-preview.tsx`
-- [ ] `src/components/courses/college-lesson-reorder-actions.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
-- [ ] `src/components/courses/faculty-assessment-editor.tsx`
-- [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
-- [ ] `src/components/courses/faculty-assignment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-content-editor.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-item-actions.tsx`
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-live-class-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/faculty-report-download.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/learner-roadmap-item-dialog.tsx`
-- [ ] `src/components/courses/resource-progress-control.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/groups/college-study-member-actions.tsx`
-- [ ] `src/components/hr/hr-company-reports-grid.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/hr-job-applicants-grid.tsx`
-- [ ] `src/components/hr/hr-job-offers-grid.tsx`
-- [ ] `src/components/hr/hr-job-selection-grid.tsx`
-- [ ] `src/components/hr/hr-proposal-history-grid.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/hr-round-editor-grid.tsx`
-- [ ] `src/components/hr/hr-round-results-grid.tsx`
-- [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
-- [ ] `src/components/hr/recruiter-applicant-review-drawer.tsx`
-- [ ] `src/components/hr/recruiter-conversation-reply-form.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/hr/recruiter-profile-access.tsx`
-- [ ] `src/components/hr/recruiter-profile-details-editor.tsx`
-- [ ] `src/components/hr/recruiter-request-cancel-button.tsx`
-- [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/people/faculty-profile-text-section.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-drive-deadline-action.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/college-interview-status-actions.tsx`
-- [ ] `src/components/placements/hr-recruiter-drives-grid.tsx`
-- [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-support-cancel.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-learning-structure-actions.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/components/courses/college-archived-lesson-restore.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/college-content-preview.tsx`
+- [x] `src/components/courses/college-lesson-reorder-actions.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/courses/faculty-assessment-editor.tsx`
+- [x] `src/components/courses/faculty-assessment-lifecycle.tsx`
+- [x] `src/components/courses/faculty-assignment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-material-links.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-content-editor.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-item-actions.tsx`
+- [x] `src/components/courses/faculty-lesson-authoring.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-live-class-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/faculty-report-download.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-course-workspace.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
+- [x] `src/components/courses/resource-progress-control.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/groups/college-study-member-actions.tsx`
+- [x] `src/components/hr/hr-company-reports-grid.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/hr/hr-job-applicants-grid.tsx`
+- [x] `src/components/hr/hr-job-offers-grid.tsx`
+- [x] `src/components/hr/hr-job-selection-grid.tsx`
+- [x] `src/components/hr/hr-proposal-history-grid.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/hr/hr-round-editor-grid.tsx`
+- [x] `src/components/hr/hr-round-results-grid.tsx`
+- [x] `src/components/hr/hr-unsent-drive-alert.tsx`
+- [x] `src/components/hr/recruiter-applicant-review-drawer.tsx`
+- [x] `src/components/hr/recruiter-conversation-reply-form.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/hr/recruiter-profile-access.tsx`
+- [x] `src/components/hr/recruiter-profile-details-editor.tsx`
+- [x] `src/components/hr/recruiter-request-cancel-button.tsx`
+- [x] `src/components/hr/recruiter-round-inline-editor.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/people/faculty-profile-text-section.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/college-drive-deadline-action.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/college-interview-status-actions.tsx`
+- [x] `src/components/placements/hr-recruiter-drives-grid.tsx`
+- [x] `src/components/placements/learner-application-detail-withdraw.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-support-cancel.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-workspace.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
 - [ ] `src/components/placements/placement-offer-controls.tsx`
 - [ ] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
 - [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
