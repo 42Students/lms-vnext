@@ -164,3 +164,35 @@ Source checked: actual canonical learner response is `POST /api/placements/offer
 - G2-17-23-085 | `src/db/schema/placements.ts` | Maintain legacy id/type crosswalk in DB08 migration for records, reports and external links; do not cast numeric IDs to UUID
 - G2-17-23-086 | `src/db/schema/placements.ts` | Map SELECTED/PENDING_VERIFICATION/RELEASED and REVOKED separately to vNext issuance/withdrawal; validate archival cases before importing
 - G2-17-23-088 | `src/db/schema/placements.ts` | Ensure report timeline can relate offer, application, actor, status, cascade and notification from both models
+
+## Packets U014 AdminCourseBulkController, parts 1–2 (Courses ownership)
+
+Source checked: `src/modules/courses/super-admin-course-bulk-visibility.ts` updates nested lesson visibility, *not course flags*; the UI is `src/components/courses/super-admin-course-bulk-visibility.tsx` and resets selection outside the page. Do not call this functional parity until an actual course-status bulk contract is implemented. Both current files are outside lane-7's wave-1 write ownership; all findings handed off, not fixed.
+
+- G2-2-014-006 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Preserve cross-page selected IDs scoped to current college.
+- G2-2-014-007 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Report per COURSE updated/failed and reasons, not only content-level changes.
+- G2-2-014-008 | `src/components/courses/admin-course-overview.tsx` | Make visible chip reflect course learner visibility, not lesson content count alone.
+- G2-2-014-009 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Implement status/visibility bulk flags or document intentionally different feature.
+- G2-2-014-011 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Retain selected IDs across filter/page within same scope, clear on acting-college change.
+- G2-2-014-012 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Provide three independent nullable status controls and combination validation.
+- G2-2-014-019 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Continue to process authorized selected courses and return per-item failure instead of aborting whole batch.
+- G2-2-014-023 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Implement actual course status updates atomically per course; not a lesson visibility substitute.
+- G2-2-014-024 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Restore partial per-course active/enabled/allow-display update semantics.
+- G2-2-014-025 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Isolate unauthorized/invalid course and process remaining permitted IDs.
+- G2-2-014-026 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Add summary COURSE_BULK_STATUS_UPDATE event with original requested/updated/failed counts.
+- G2-2-014-028 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Provide college-admin bulk status functionality with central course permission.
+- G2-2-014-030 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Do not treat lesson-content hide as course hide; preserve course-level visibility and learner queries.
+- G2-2-014-032 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Preserve per-course partial completion semantics and response classification.
+- G2-2-014-043 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Do not apply 500-lesson content cap to course-status operation.
+- G2-2-014-044 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Implement true flag CAS/integer version for courses while preserving unrelated fields.
+- G2-2-014-046 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Wire proper course write service with per-item scope and audit.
+- G2-2-014-047 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Persist actual course status and mapping, not merely lesson content flags.
+- G2-2-014-048 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Use partial update query, preserve metadata and optimistic version.
+- G2-2-014-049 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | High-priority functional non-equivalence: name/API suggests course status but operation differs.
+- G2-2-014-050 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Restore selection across paginated catalog while isolating acting-college scopes.
+- G2-2-014-016 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Use configured N in both validation and message.
+- G2-2-014-017 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Validate partial flag updates; retain legacy error.
+- G2-2-014-018 | `src/modules/courses/super-admin-course-bulk-visibility.ts` | Support safe versioned legacy body mapping.
+- G2-2-014-020 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Include per-course requested/updated counts in summary.
+- G2-2-014-021 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Show sanitized per-course failure details and partial-success warning.
+- G2-2-014-015 | `src/app/api/admin/courses/bulk-status/route.ts` | Surface exact empty selection message.
