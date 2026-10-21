@@ -21,7 +21,7 @@ export default async function AdministratorHistoryPage({params,searchParams}:{
  if(page===null)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
   <PageHeader title="Administrator activity history" actions={<PageBackLink href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins"} label="College admins"/>}/>
   <ErrorState title="Invalid history page" description="Choose a valid page without repeated or unrelated filters."
-   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear history filters</Link>}/>
+   action={<Link href={"/admin/colleges/"+encodeURIComponent(collegeId)+"/admins/"+encodeURIComponent(userId)+"/history"} className="inline-flex min-h-11 items-center font-[650] text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear history filters</Link>}/>
  </div>;
  const data=await listCollegeAdminHistory(context,collegeId,userId,page);
  const base="/admin/colleges/"+encodeURIComponent(collegeId)+"/admins";
