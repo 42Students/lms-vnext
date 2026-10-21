@@ -68,7 +68,7 @@ export function FacultyAssessmentOverview({
 
   if (items.length === 0) {
     return (
-      <div className="space-y-5">
+      <div className="min-w-0 space-y-5">
         <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
         <EmptyState
           title={kind === "QUIZ" ? "No quizzes yet" : "No assignments yet"}
@@ -79,7 +79,7 @@ export function FacultyAssessmentOverview({
   }
 
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
       <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
       <div aria-label={kind === "QUIZ" ? "Quiz totals" : "Assignment totals"} className="flex flex-wrap items-center gap-2">
         <Badge  tone="neutral">
