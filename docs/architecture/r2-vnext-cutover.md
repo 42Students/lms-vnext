@@ -18,6 +18,18 @@ Legacy public URLs remain historical data and must not silently be reused as sig
 
 `src/modules/storage/s3-client.ts` signs `GET`, `PUT`, `HEAD` and `DELETE` with the R2 `auto` region, AWS4-HMAC-SHA256, `UNSIGNED-PAYLOAD`, RFC-3986 encoded object paths and path-style `/<bucket>/<key>` addressing. The configuration object is lightweight and constructed per operation rather than retaining long-lived singleton credentials. Do **not** cache secrets without a documented rotation strategy; measure overhead before changing this boundary.
 
+
+## Dev readiness visibility (no secret exposure)
+
+A selected, authenticated Super Admin can request `GET /api/admin/storage/readiness`.
+It returns `{storage:"private-r2",configured,status,message}` and HTTP 200 if
+required private R2 configuration is present and safe, or HTTP 503 with the
+sanitized `PRIVATE_R2_SETUP_MESSAGE` if unavailable. The endpoint does not
+probe live R2 connectivity, echo environment values, or change the global
+`/ready` status: optional file features are checked at the time they are used.
+Do not mistake configured=true for a successful PUT/HEAD/GET interoperability
+check. Run the non-CI operator checklist below before enabling file features.
+
 ## Operator interoperability verification (non-CI)
 
 In a nonproduction private bucket only, verify a signed PUT followed by HEAD and a signed GET of matching content and MIME, then DELETE and confirm HEAD returns 404. Include keys containing spaces, non-ASCII and nested prefixes; exercise expected 403, 404 and provider-unavailable errors, expiration, clock skew, metadata handling, empty configuration and secret rotation. Confirm an unsigned request and old public URL cannot read the private object. Check redaction of errors, and that unrelated public/academic endpoints work while R2 is unconfigured. This is an **operator validation checklist**, not a claim that live interoperability was tested.
