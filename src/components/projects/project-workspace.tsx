@@ -33,6 +33,7 @@ import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
 import {CollegeProjectStudentRosterDialog} from "./college-project-student-roster-dialog";
 import {ProjectResourceList} from "./project-resource-list";
 import { ProjectRosterTable } from "./project-roster-table";
+import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
@@ -1055,6 +1056,20 @@ export function ProjectWorkspace({
                   ) : null}
                 </div>
               </div>
+              {mode === "ADMIN" && !readOnly && release.status !== "SHIPPED" &&
+                (sprintsByRelease.get(release.id)??[]).length > 0 ? (
+                <div className="mt-3">
+                  <ProjectSprintPlanEditor projectId={workspace.project.id}
+                    releaseId={release.id}
+                    sprints={(sprintsByRelease.get(release.id)??[]).map(sprint=>({
+                      id:sprint.id,title:sprint.title,description:sprint.description,
+                      goal:sprint.goal,definitionOfDone:sprint.definitionOfDone,
+                      startDate:sprint.startDate,endDate:sprint.endDate,dueDate:sprint.dueDate,
+                      updatedAt:sprint.updatedAt.toISOString(),status:sprint.status,
+                      sequence:sprint.sequence,
+                    }))} />
+                </div>
+              ) : null}
 
               <div className="mt-4 space-y-3">
                 {(sprintsByRelease.get(release.id) ??
