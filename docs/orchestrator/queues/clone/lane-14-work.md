@@ -15,8 +15,8 @@ Packets:
 
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db05-lesson-discussions.staged.ts.md` (edit src/db/schema/db05-lesson-discussions.staged.ts; 9 findings; best P0)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part1of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part2of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part3of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part2of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part3of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part4of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part5of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part6of6.md` (edit src/db/schema/courses.ts; 15 findings; best P1)

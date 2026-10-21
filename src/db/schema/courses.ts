@@ -58,6 +58,10 @@ export const courses = pgTable(
     enabled: boolean("enabled").notNull().default(true),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     legacyMetadata: jsonb("legacy_metadata").$type<Record<string, unknown>>(),
+    // Separate old overview heading, image and ordered bullet list.
+    introductionHeading: text("introduction_heading"),
+    imageUrl: text("image_url"),
+    orderedTakeaways: jsonb("ordered_takeaways").$type<string[]>(),
     legacyAllowedForDisplay: integer("legacy_allowed_for_display"),
     version: bigint("version", { mode: "number" }).notNull().default(0),
     status: courseStatusEnum("status")
@@ -269,6 +273,10 @@ export const courseTeachingAssignments = pgTable(
     startDate: date("start_date", { mode: "string" }),
     endDate: date("end_date", { mode: "string" }),
     version: bigint("version", { mode: "number" }).notNull().default(0),
+    // Historical denormalized year/semester are provenance, not auth scope.
+    legacyAcademicYear: varchar("legacy_academic_year", { length: 16 }),
+    legacySemesterNumber: integer("legacy_semester_number"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -418,6 +426,13 @@ export const lessonContents = pgTable(
         .notNull(),
     title: text("title").notNull(),
     notes: text("notes"),
+    // Historical JSON/HTML/material arrays remain intact for importer review.
+    // Runtime normalized URL/storage/notes fields retain priority.
+    legacyContentData: jsonb("legacy_content_data").$type<Record<string, unknown>>(),
+    legacyContentType: varchar("legacy_content_type", { length: 80 }),
+    // Legacy faculty attribution is separate from the authenticated creator.
+    legacyFacultyMembershipId: uuid("legacy_faculty_membership_id")
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
     externalUrl: text("external_url"),
     storageKey: text("storage_key"),
     durationSeconds: integer("duration_seconds"),
@@ -433,7 +448,14 @@ export const lessonContents = pgTable(
     status: lessonContentStatusEnum("status")
       .notNull()
       .default("DRAFT"),
+    // DRAFT remains unexposed regardless of these legacy visibility snapshots.
     visibleToStudents: boolean("visible_to_students").notNull().default(true),
+    legacyActive: boolean("legacy_active"),
+    deletedWithLesson: boolean("deleted_with_lesson").notNull().default(false),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    // Legacy India wall-clock LocalDateTime; never reinterpret as UTC.
+    deadlineLocal: timestamp("deadline_local", { withTimezone: false }),
+    version: bigint("version", { mode: "number" }).notNull().default(0),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -544,14 +566,18 @@ export const learnerContentProgress = pgTable(
   },
   (table) => [
     uniqueIndex(
-      "learner_content_progress_membership_content_uq",
+      "learner_content_progress_membership_content_attempt_uq",
     ).on(
       table.membershipId,
       table.lessonContentId,
+      table.attempt,
     ),
     index(
       "learner_content_progress_membership_idx",
     ).on(table.membershipId),
+    // Readers must request latest attempt explicitly before 0203 registration.
+    index("learner_content_progress_latest_attempt_idx")
+      .on(table.membershipId, table.lessonContentId, sql`${table.attempt} DESC`),
     index(
       "learner_content_progress_content_idx",
     ).on(table.lessonContentId),
