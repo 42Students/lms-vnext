@@ -89,6 +89,10 @@ export function parseFacultyBulkCsv(source: string): FacultyBulkRow[] {
         issues.push("Record "+rowNumber+": First Name and Last Name are required.");
       if(errorFields.has("facultyType"))
         issues.push("Record "+rowNumber+": Faculty Type must be LECTURER or MENTOR.");
+      if(errorFields.has("departmentName"))
+        issues.push("Record "+rowNumber+": Department name must be 160 characters or fewer.");
+      if(errorFields.size===0)
+        issues.push("Record "+rowNumber+": Invalid faculty field values.");
       continue;
     }
     const duplicateMobile=mobileRows.get(phoneE164);

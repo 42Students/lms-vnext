@@ -3,7 +3,7 @@ import {createHash, randomUUID} from "node:crypto";
 
 import { and, desc, eq, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import {activityEvents, cohorts, collegeMemberships, departments, learnerProfiles, programs, sections, users } from "@/db/schema";
+import {activityEvents, cohorts, collegeMemberships, departments, learnerImportBatchMembers, learnerImportBatches, learnerProfiles, programs, sections, users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { resolveActingCollege } from "@/modules/permissions/acting-college";
@@ -152,6 +152,13 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
   // The run ID is the durable import-batch identity used by history and
   // manual recovery. Individual membership IDs are recorded in the receipt.
   const runId = randomUUID();
+  // DB02 (0167): durable, college-scoped batch provenance. The ledger must
+  // exist BEFORE the first identity is provisioned so every successful
+  // membership can be linked immediately. It is an audit source, NOT an
+  // automatic deletion/undo instruction.
+  await getDb().insert(learnerImportBatches).values({
+    id:runId,collegeId:member.collegeId,createdByUserId:context.user.id,
+  });
   const results: StudentCsvResult[] = [];
   for (const entry of checked) {
     if (entry.errors.length || !entry.data) {
@@ -173,6 +180,18 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     } catch {
       results.push({ row: entry.row, status: "FAILED",
         detail: "Identity or college membership onboarding failed; check manually before retrying" });
+      continue;
+    }
+    try {
+      const registered=await getDb().insert(learnerImportBatchMembers).values({
+        batchId:runId,collegeId:member.collegeId,membershipId,
+      }).onConflictDoNothing()
+        .returning({membershipId:learnerImportBatchMembers.membershipId});
+      if(registered.length!==1)throw new Error("MEMBERSHIP_BATCH_ALREADY_LINKED");
+    }catch{
+      results.push({row:entry.row,status:"PARTIAL",
+        detail:"Membership created but batch lineage could not be recorded. Review this membership and its college before retrying.",
+        membershipId});
       continue;
     }
     try {
@@ -231,6 +250,8 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
     actorRole:isSuperAdmin(context)?"SUPER_ADMIN":"COLLEGE_ADMIN",
     selectedCollegeId:member.collegeId,sourceFingerprint, receipts,
     recoveryPolicy:"MANUAL_RECONCILIATION_REQUIRED_FOR_PARTIAL",
+    batchLineageTable:"learner_import_batch_members",
+    undoPolicy:"DISABLED_UNTIL_REFERENTIAL_DEPENDENCY_REVIEW",
     reversible:false},
   });
   return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,
