@@ -83,23 +83,23 @@ export function TpoStudentsBulkDebar({learners}:{learners:readonly Learner[]}){
   <h2 className="font-semibold">Debar or lift selected students</h2>
   <p className="text-sm">Uses the same students selected in the roster. Each student is checked and updated separately. Existing applications are not deleted.</p>
   <p role="status" className="min-w-0 break-words text-sm text-body">{picked.length} selected from the filtered roster (maximum {MAX} per batch).</p>
-  <label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Action
+  <label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Action
    <Select value={action} disabled={pending} onChange={e=>setAction(e.target.value as "DEBAR"|"LIFT")} className="min-h-11 w-full min-w-0 md:min-h-9">
     <option value="DEBAR">Debar</option><option value="LIFT">Lift</option>
    </Select>
   </label>
-  <label className="grid min-w-0 gap-1 text-sm">Reason (required)
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (required)
    <Textarea value={reason} onChange={e=>setReason(e.target.value)} maxLength={500} disabled={pending} className="min-h-20 w-full min-w-0"/>
   </label>
   {action==="DEBAR"?<>
-   <label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Until
+   <label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Until
     <Select value={duration} disabled={pending} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")} className="min-h-11 w-full min-w-0 md:min-h-9">
      <option value="DATE">A specific date (IST)</option><option value="DRIVES">A number of drives</option><option value="MANUAL">Lifted by placement team</option>
     </Select>
    </label>
-   {duration==="DATE"?<label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Last date
+   {duration==="DATE"?<label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last date
     <Input type="date" disabled={pending} value={untilDate} onChange={e=>setUntilDate(e.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9"/>
-   </label>:duration==="DRIVES"?<label className="grid w-full min-w-0 gap-1 text-sm md:max-w-xs">Number of drives
+   </label>:duration==="DRIVES"?<label className="grid w-full min-w-0 gap-[6px] md:max-w-xs text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Number of drives
     <Input type="number" min={1} max={10000} disabled={pending} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>:null}
   </>:null}

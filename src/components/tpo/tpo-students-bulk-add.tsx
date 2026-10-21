@@ -187,7 +187,7 @@ export function TpoStudentsBulkAdd({
         <EmptyState title="No open drives are available." description="Create or publish a drive before adding learners."/>
       ) : (
         <>
-          <label className="grid min-w-0 gap-1 text-sm">Search open drives
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search open drives
             <Input className="min-h-11 w-full min-w-0 md:min-h-9" type="search" value={driveSearch} onChange={event=>{
               const nextSearch=event.target.value;
               setDriveSearch(nextSearch);
@@ -202,9 +202,9 @@ export function TpoStudentsBulkAdd({
           </label>
           {visibleDrives.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No open drives match your search.</p>:null}
           <div className="grid min-w-0 gap-3 md:grid-cols-2">
-            <label className="min-w-0 text-sm font-semibold text-foreground">
+            <label className="min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Published drive
-              <Select className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" 
+              <Select className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" 
                 value={driveId} disabled={busy}
                 onChange={(event) => void loadRoles(event.target.value)}>
                 <option value="">Choose a drive</option>
@@ -215,9 +215,9 @@ export function TpoStudentsBulkAdd({
                 ))}
               </Select>
             </label>
-            <label className="min-w-0 text-sm font-semibold text-foreground">
+            <label className="min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Active role
-              <Select className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" 
+              <Select className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" 
                 value={roleOptionId} disabled={busy || roles.length === 0}
                 onChange={(event) => setRoleOptionId(event.target.value)}>
                 {roles.length === 0 ? <option value="">Select a drive first</option> : null}
@@ -249,7 +249,7 @@ export function TpoStudentsBulkAdd({
               onChange={event=>{setIncludeIneligible(event.target.checked);setError("");}}/>
             Add students who are not eligible anyway, with a recorded inclusion reason
           </label>
-          {includeIneligible?<label className="grid min-w-0 gap-1 text-sm">Required reason for inclusion
+          {includeIneligible?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Required reason for inclusion
             <Textarea className="w-full min-w-0" value={overrideReason} disabled={busy} maxLength={500}
              onChange={event=>setOverrideReason(event.target.value)}
              />

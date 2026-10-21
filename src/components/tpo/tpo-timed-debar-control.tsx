@@ -46,18 +46,18 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
   <p className="text-sm text-body leading-[22px]">A debarment blocks new placement applications until it expires or is lifted. Existing applications stay recorded.</p>
   {active.length>0?<p role="status" className="text-sm font-semibold leading-[22px]">Debarred · {active.length} active restriction(s)</p>:null}
   <Disclosure title="Create debarment" defaultOpen={active.length===0} className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
-   <label className="grid min-w-0 gap-1 text-sm">Reason for Debar
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for Debar
     <Textarea className="w-full min-w-0" value={reason} rows={2} maxLength={500} disabled={pending||active.length>0} onChange={e=>{setReason(e.target.value);setError("");}}
      /></label>
-   <label className="grid min-w-0 gap-1 text-sm">How long
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">How long
     <Select className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} value={duration} onChange={e=>setDuration(e.target.value as "DATE"|"DRIVES"|"MANUAL")}
      >
      <option value="DATE">Until a date</option><option value="DRIVES">For N drives</option><option value="MANUAL">Until lifted</option>
     </Select></label>
-   {duration==="DATE"?<label className="grid min-w-0 gap-1 text-sm">Until date (IST)
+   {duration==="DATE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Until date (IST)
     <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="date" value={untilDate} onChange={e=>setUntilDate(e.target.value)}
      /></label>:null}
-   {duration==="DRIVES"?<label className="grid min-w-0 gap-1 text-sm">Number of drives
+   {duration==="DRIVES"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Number of drives
     <Input className="min-h-11 w-full min-w-0 md:min-h-9" disabled={pending||active.length>0} type="number" min={1} max={10000} value={untilDrives} onChange={e=>setUntilDrives(e.target.value)}
      /></label>:null}
    <Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
@@ -75,7 +75,7 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
      ?"For "+row.untilDrives+" drives ("+row.drivesCounted+" counted)":"Until lifted"}</p>
     {row.liftedAt?<p className="text-sm leading-[22px]">Lifted · {row.liftedReason??"No reason recorded"}</p>:null}
     {row.active?<div className="min-w-0 space-y-2">
-     <label className="grid min-w-0 gap-1 text-sm">Reason for lifting
+     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for lifting
       <Textarea className="w-full min-w-0" value={liftReason} maxLength={500} disabled={pending} onChange={e=>{setLiftReason(e.target.value);setError("");}}
        /></label>
      <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!liftReason.trim()}
