@@ -291,14 +291,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/placements/tpo-request-bulk-decision.tsx`
 - [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
 - [x] `src/components/placements/tpo-round-reorder.tsx`
-- [ ] `src/components/placements/tpo-settings-nav.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/profile/learner-skill-catalog-input.tsx`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/learner-board-interactive.tsx`
-- [ ] `src/components/projects/learner-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/learner-board-task-index.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/placements/tpo-settings-nav.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/profile/learner-skill-catalog-input.tsx`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/projects/learner-board-interactive.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
 - [ ] `src/components/projects/learner-project-goals.tsx`
 - [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx`
 - [ ] `src/components/projects/mentor-lane-board.tsx`
