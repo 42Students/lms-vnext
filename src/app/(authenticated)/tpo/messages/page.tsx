@@ -270,7 +270,7 @@ export default async function TpoMessagesPage({
           method="get"
           className="mt-3 grid min-w-0 items-end gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-5"
          aria-label="Filter messages">
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Status
             <Select
               name="status"
@@ -294,7 +294,7 @@ export default async function TpoMessagesPage({
             </Select>
           </label>
 
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             From (IST)
             <DateInput mode="date"
               name="from"
@@ -303,7 +303,7 @@ export default async function TpoMessagesPage({
             />
           </label>
 
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             To (IST)
             <DateInput mode="date"
               name="to"
@@ -312,7 +312,7 @@ export default async function TpoMessagesPage({
             />
           </label>
 
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search
             {isRecruiterInbox?<TpoInboxSearch
               value={query.q} placeholder="Recruiter, subject or message"/>:
@@ -321,7 +321,7 @@ export default async function TpoMessagesPage({
                 className="min-h-11 md:min-h-9"/>}
           </label>
 
-          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select
               name="pageSize"
@@ -337,7 +337,7 @@ export default async function TpoMessagesPage({
           <div className="flex flex-col gap-3 min-[768px]:col-span-2 min-[768px]:flex-row min-[992px]:col-span-5">
             <Button
               type="submit"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] bg-primary px-5 text-sm font-[650] text-on-primary hover:bg-primary-hover min-[768px]:min-h-9 min-[768px]:w-auto"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius,9px)] bg-primary px-6 text-sm font-[650] text-on-primary hover:bg-primary-hover min-[768px]:min-h-9 min-[768px]:w-auto"
             >
               Apply filters
             </Button>

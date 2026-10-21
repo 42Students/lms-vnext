@@ -80,7 +80,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
         ) : (
           <div className="grid gap-4">
             {liveRows.map((round) => (
-              <article key={round.id} className="border-b border-border py-5">
+              <article key={round.id} className="border-b border-border py-4">
                 <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
                   <div>
                     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{round.companyName} · {round.name}</h2>
@@ -137,7 +137,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           {rounds.map((round) => (
             <article
               key={round.roundId}
-              className="border-b border-border py-5"
+              className="border-b border-border py-4"
             >
               <div className="flex min-w-0 flex-col gap-4 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div>
