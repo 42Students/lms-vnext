@@ -48,6 +48,6 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_api_admin_settings_overrides_route.ts.md` (edit src/app/api/admin/settings/overrides/route.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_recruiter_profile_route.ts.md` (edit src/app/api/placements/recruiter/profile/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_profile_loading.tsx.md` (edit src/app/(authenticated)/tpo/profile/loading.tsx; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_NEW_docs_audit_gap2_lane-6_skill.md.md` (new; 4 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_NEW_docs_audit_gap2_lane-6_skill.md.md` (new; 4 findings; best P0)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_template-version-comparison-service.ts.md` (edit src/modules/projects/template-version-comparison-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_app_api_notifications_route.ts.md` (edit src/app/api/notifications/route.ts; 3 findings; best P1)
