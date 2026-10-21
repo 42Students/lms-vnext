@@ -1,10 +1,11 @@
 import "server-only";
 
-import { and, asc, eq, inArray, ne } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull, lte, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementApplications,
   collegeMemberships,
+  placementLearnerGeneralRequests,
   placementJobs,
   placementJoiningHistory,
   placementJoiningOutcomes,
@@ -114,6 +115,14 @@ export async function recordTpoOfferLifecycle(
           !canRecordTpoActualJoiningDate(input.joiningDate!, now)) {
         throw new PlacementsServiceError("PLACEMENT_JOINING_NOT_READY");
       }
+      // Imported employer acceptance is provisional until the learner's
+      // 48-hour dispute window has closed and the scheduled cascade succeeded.
+      if (input.action === "RECORD_JOINED" &&
+          offer.acceptanceChannel === "EXTERNAL_IMPORT" &&
+          (!offer.cascadeId || (offer.acceptedDisputableUntil &&
+            offer.acceptedDisputableUntil > now))) {
+        throw new PlacementsServiceError("PLACEMENT_JOINING_NOT_READY");
+      }
       if(input.action==="RECORD_ACCEPTED"){
         const membershipId=membershipByOffer.get(offer.id)!;
         // Accepting through a TPO evidence record must not bypass the
@@ -139,7 +148,6 @@ export async function recordTpoOfferLifecycle(
         throw new PlacementsServiceError("PLACEMENT_OFFER_EXPIRED");
       }
       let nextStatus: (typeof placementOffers.$inferSelect)["status"] = offer.status;
-      let cascade: Awaited<ReturnType<typeof cascadeTpoRecordedAcceptance>> | null = null;
       if (input.action === "EXTEND") {
         const newExpiry = new Date(input.expiresAt!);
         if (newExpiry <= now ||
@@ -180,6 +188,14 @@ export async function recordTpoOfferLifecycle(
           input.action === "RECORD_DECLINED" ? "DECLINED" : "WITHDRAWN";
         const [updated] = await tx.update(placementOffers).set({
           status: nextStatus,
+          // TPO records the employer's report, never impersonates learner
+          // consent. Accepted externally is not final or placed until a
+          // dispute-aware system sweep matures it after 48 hours.
+          ...(nextStatus === "ACCEPTED" ? {
+            acceptanceChannel: "EXTERNAL_IMPORT",
+            acceptedDisputableUntil: new Date(now.getTime() + 48 * 60 * 60 * 1000),
+            cascadeId: null,
+          } : {}),
           ...(nextStatus === "WITHDRAWN" ? {
             withdrawnByUserId: context.user.id,
             withdrawnAt: now,
@@ -193,23 +209,17 @@ export async function recordTpoOfferLifecycle(
           eq(placementOffers.status, offer.status),
         )).returning();
         if (!updated) throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
-        if (nextStatus === "ACCEPTED") {
-          cascade=await cascadeTpoRecordedAcceptance(tx,{
-            actorUserId:context.user.id,
-            membershipId:membershipByOffer.get(offer.id)!,
-            collegeId,
-            offer:{id:offer.id,applicationId:offer.applicationId,
-              kind:offer.kind,annualCtcInr:offer.annualCtcInr},
-            now,
-          });
-        }
+        // EXTERNAL_IMPORT acceptance deliberately does not cascade here.
+        // finalizeMaturedExternalTpoAcceptances performs the cascade after
+        // the learner's dispute window, under a separate system authority.
         await tx.insert(placementOfferStatusHistory).values({
           offerId: offer.id,
           fromStatus: offer.status,
           toStatus: nextStatus,
           actorUserId: context.user.id,
-          reason: cascade ? "cascade:"+cascade.cascadeId : input.reason,
-          ...(cascade ? {cascadeId:cascade.cascadeId} : {}),
+          reason: nextStatus === "ACCEPTED"
+            ? input.reason + " (external acceptance; 48h dispute window)"
+            : input.reason,
         });
         if (nextStatus === "ACCEPTED") {
           await tx.insert(placementJoiningOutcomes)
@@ -233,9 +243,9 @@ export async function recordTpoOfferLifecycle(
           previousStatus: offer.status,
           nextStatus,
           reason: input.reason,
-          cascadeId:cascade?.cascadeId??null,
-          cascadedOfferCount:cascade?.cascadedOfferCount??0,
-          withdrawnApplicationCount:cascade?.withdrawnApplicationCount??0,
+          cascadeId:null,
+          cascadedOfferCount:0,
+          withdrawnApplicationCount:0,
         },
         groupKey: "placement-job:" + jobId + ":offers",
       });
@@ -250,10 +260,112 @@ export async function recordTpoOfferLifecycle(
           ? "Joining confirmed for "+job.title
           : input.action==="EXTEND"
             ? "Offer deadline extended for "+job.title
-            : "Employer offer decision updated for "+job.title,
+            : input.action === "RECORD_ACCEPTED"
+              ? "Employer reported your acceptance for " + job.title +
+                ". If this is incorrect, dispute within 48 hours."
+              : "Employer offer decision updated for "+job.title,
       });
       items.push({ offerId: offer.id, action: input.action, status: nextStatus });
     }
     return { updated: items.length, items };
   });
+}
+
+
+/**
+ * Invoked only by an authenticated system scheduler (every 30 minutes).
+ * This is not a user-facing mutation and must never be exposed by an
+ * unprotected route. Mature offers are scanned in bounded batches; each
+ * tenant/learner is locked and rechecked inside its own transaction.
+ * Failed rows remain eligible for a later idempotent retry.
+ */
+export async function finalizeMaturedExternalTpoAcceptances(
+  now: Date = new Date(),
+  batchSize = 40,
+) {
+  const db = getDb();
+  const due = await db.select({
+    offerId: placementOffers.id,
+    membershipId: placementApplications.membershipId,
+    collegeId: placementJobs.collegeId,
+  }).from(placementOffers)
+    .innerJoin(placementApplications,
+      eq(placementApplications.id, placementOffers.applicationId))
+    .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
+    .where(and(
+      eq(placementOffers.status, "ACCEPTED"),
+      eq(placementOffers.acceptanceChannel, "EXTERNAL_IMPORT"),
+      lte(placementOffers.acceptedDisputableUntil, now),
+      isNull(placementOffers.cascadeId),
+      isNull(placementJobs.archivedAt),
+    ))
+    .orderBy(asc(placementOffers.acceptedDisputableUntil), asc(placementOffers.id))
+    .limit(Math.max(1, Math.min(100, Math.trunc(batchSize) || 40)));
+
+  let finalized = 0;
+  let disputed = 0;
+  let skipped = 0;
+  let failed = 0;
+  for (const item of due) {
+    try {
+      const outcome = await db.transaction(async (tx) => {
+        // Keep the same membership-before-offer lock order as TPO and learner
+        // decisions; a dispute review cannot race the last eligibility check.
+        const [member] = await tx.select({id: collegeMemberships.id})
+          .from(collegeMemberships)
+          .where(and(eq(collegeMemberships.id, item.membershipId),
+            eq(collegeMemberships.collegeId, item.collegeId)))
+          .for("update").limit(1);
+        if (!member) return "SKIPPED" as const;
+
+        const [offer] = await tx.select().from(placementOffers)
+          .where(eq(placementOffers.id, item.offerId))
+          .for("update").limit(1);
+        if (!offer || offer.status !== "ACCEPTED" ||
+            offer.acceptanceChannel !== "EXTERNAL_IMPORT" ||
+            offer.cascadeId || !offer.acceptedDisputableUntil ||
+            offer.acceptedDisputableUntil > now) return "SKIPPED" as const;
+
+        // A dispute submitted in-window stays a barrier even after the 48h
+        // timestamp until the placement cell resolves it explicitly.
+        const [pendingDispute] = await tx.select({id: placementLearnerGeneralRequests.id})
+          .from(placementLearnerGeneralRequests)
+          .where(and(
+            eq(placementLearnerGeneralRequests.collegeId, item.collegeId),
+            eq(placementLearnerGeneralRequests.membershipId, item.membershipId),
+            eq(placementLearnerGeneralRequests.kind, "OFFER_ACCEPTANCE_DISPUTE"),
+            eq(placementLearnerGeneralRequests.targetKey, offer.id),
+            inArray(placementLearnerGeneralRequests.status, ["PENDING", "APPROVED"]),
+          )).limit(1);
+        if (pendingDispute) return "DISPUTED" as const;
+
+        const actorUserId = offer.respondedByUserId ?? offer.issuedByUserId;
+        const cascade = await cascadeTpoRecordedAcceptance(tx, {
+          actorUserId, membershipId: item.membershipId, collegeId: item.collegeId,
+          offer: {
+            id: offer.id, applicationId: offer.applicationId,
+            kind: offer.kind, annualCtcInr: offer.annualCtcInr,
+          },
+          now,
+        });
+        const [saved] = await tx.update(placementOffers).set({
+          cascadeId: cascade.cascadeId, updatedAt: now,
+        }).where(and(eq(placementOffers.id, offer.id),
+          eq(placementOffers.status, "ACCEPTED"),
+          eq(placementOffers.acceptanceChannel, "EXTERNAL_IMPORT"),
+          isNull(placementOffers.cascadeId)))
+          .returning({id: placementOffers.id});
+        if (!saved) throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+        return "FINALIZED" as const;
+      });
+      if (outcome === "FINALIZED") finalized += 1;
+      else if (outcome === "DISPUTED") disputed += 1;
+      else skipped += 1;
+    } catch {
+      // The offer remains unfinalized; do not mark it consumed or abort the
+      // rest of the batch. The next authorized sweep may retry.
+      failed += 1;
+    }
+  }
+  return {examined: due.length, finalized, disputed, skipped, failed};
 }
