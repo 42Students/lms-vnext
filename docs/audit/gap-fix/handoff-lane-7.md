@@ -435,3 +435,85 @@ Placement calendar and recruitment job JSON are owned by Placements/schema lanes
 - G2-11-020-043 | `src/components/tpo/recruiter-leads-workspace.tsx` | Match literal feedback or document persistent replacement.
 
 TPO recruiter lead UI and messaging/notification flows are shared TPO ownership. Resuming invite emails without verified template, opt-out and rate-limit rules is unsafe. Retain vNext consent and grant scopes pending implementation. **16/16 handed off, not fixed**.
+
+## Learner placement schedule — lane-7 handoff (2026-10-21)
+
+- G2-13-023-007 | `src/modules/placements/request-service.ts` | Create field-level schedule DTO parity: jobId, slot starts/ends/room, whatToBring, confirmedAt, nullable placeholders.
+- G2-13-023-008 | `src/app/(authenticated)/learn/my-placements/schedule/page.tsx` | Use booked candidate-slot venue before round default and normalize literal null/empty.
+- G2-13-023-009 | `src/modules/placements/request-service.ts` | Select actual booked candidate slot start/end and show it as first precedence.
+- G2-13-023-010 | `src/modules/placements/request-service.ts` | Restrict confirmed booking list to active applications and published rounds; put planned rounds in distinct section.
+- G2-13-023-013 | `src/components/placements/learner-schedule-reschedule.tsx` | Retain free-form preferredTimes or document stricter proposal shape and migrate existing requests.
+- G2-13-023-014 | `src/modules/placements/validation.ts + learner-schedule-reschedule UI` | Align UI/server reason cap (900 vs 2000); decide whether preferredTimes text remains supported.
+- G2-13-023-026 | `src/modules/placements/request-service.ts` | Map legacy reschedule_request fields/status to new request schema, retain pending-approval side effect.
+- G2-13-023-027 | `src/modules/placements/learner-round-confirmation-service.ts` | Document eligibility change: past bookings and unscheduled rounds no longer confirmable.
+- G2-13-023-031 | `src/modules/placements/request-service.ts` | Require specific booked slot where legacy does, align duplicate messaging with separate same/different payload semantics.
+- G2-13-023-032 | `src/modules/placements/request-service.ts` | Add legacy completed/withdrawn/cancelled drive visibility exclusion mapping to new status model.
+- G2-13-023-049 | `src/modules/placements/request-service.ts + migration` | Write migration field/status map for legacy requests and booking confirmations.
+- G2-13-023-050 | `src/modules/placements/learner-round-confirmation-service.ts + migration` | Migrate old booking slot identity, confirmation timestamp, room/time and version to candidate-slot records.
+- G2-13-023-017 | `src/modules/placements/request-service.ts` | Restore descriptive permission error at UX boundary.
+- G2-13-023-018 | `src/modules/placements/request-service.ts` | Map distinct no-booking and duplicate-pending errors to exact actionable legacy copy.
+- G2-13-023-019 | `src/modules/placements/learner-round-confirmation-service.ts` | Return privacy-safe not-found/expired-booking error with clear retry guidance.
+- G2-13-023-022 | `src/components/placements/learner-round-confirm-attendance.tsx` | Check legacy toast and confirmation label live, map response success.
+
+Learner Placement schedule and booking storage/permission checks belong to Placements. A booked slot should not be quietly conflated with a planned round, nor a past booking with a future confirmation. Preserve stronger vNext scoped confirmation and pending-approval rules pending owner crosswalk. **16/16 handed off, not fixed**.
+
+## Project template DTO and lifecycle — lane-7 handoff (2026-10-21)
+
+- G2-8-017-010 | `src/modules/projects/template-service.ts + DTO adapter` | Write field-by-field DTO adapter for courseLabel, phase, creation scope, lifecycle and published timestamp, or explicitly deprecate each.
+- G2-8-017-011 | `src/modules/projects/validation.ts + blueprint mapping` | Map delivery, meetings and activity into versioned blueprint or document intentional non-migration with a verified replacement.
+- G2-8-017-022 | `src/modules/projects/validation.ts` | Add editable metadata equivalents or deprecation decisions with UI controls and migration mapping.
+- G2-8-017-023 | `src/modules/projects/validation.ts` | Support legacy section-only writes without title and equivalent CAS; keep newer optimistic guard.
+- G2-8-017-037 | `src/modules/projects/template-service.ts` | Check archive with active college assignments; surface guard and workflow to revoke before archive.
+- G2-8-017-044 | `src/db/schema/projects.ts + template lifecycle migration` | Define explicit state/status migration table; avoid silently losing workflow status.
+- G2-8-017-050 | `src/app/(authenticated)/admin/projects/templates/page.tsx` | Export ALL filtered records server-side, or explicitly label current-page export; match column order and filename.
+- G2-8-017-067 | `src/db/schema/projects.ts + identifier mapping` | Provide stable ID mapping/redirect support for legacy numeric bookmarks and relationships.
+- G2-8-017-071 | `src/modules/projects/template-service.ts` | Backfill/read courseLabel from blueprint overview; preserve editing and search semantics.
+- G2-8-017-072 | `src/db/schema/projects.ts` | Introduce separate workflowStatus if legacy status is used independently of lifecycleStatus.
+- G2-8-017-074 | `src/db/schema/projects.ts` | Preserve separate lifecycle and workflow statuses in migration.
+- G2-8-017-080 | `src/modules/projects/validation.ts + migration` | Define JSON transforms including delivery, meetings, activity before data migration.
+- G2-8-017-083 | `src/db/schema/projects.ts + migration` | Retain action type and whole-template snapshots for forensic rollback fidelity.
+- G2-8-017-026 | `src/modules/projects/validation.ts` | Map null payload and Zod field issues to exact legacy client-readable messages and HTTP statuses.
+- G2-8-017-027 | `src/app/(authenticated)/admin/projects/templates/page.tsx` | Preserve legacy API error reason in retriable alert while keeping new friendly title.
+- G2-8-017-029 | `src/app/(authenticated)/admin/projects/templates/page.tsx` | Match error copy and surface underlying cause without leaking unsafe details.
+
+Project templates already retain some legacy course label, phase and status provenance in current schema, but normalized blueprint/version semantics are not a proven migration of all seven legacy sections. Projects/schema owner must decide fields, CAS and full filtered export. **16/16 handed off, not fixed**.
+
+## Recruiter college overview/controller — lane-7 wave-1 handoff (2026-10-21)
+
+- G2-15-025-002 | `src/app/(authenticated)/hr/home/page.tsx + scoped college overview` | Restore privacy-banded college overview as a separate authorized read view.
+- G2-15-025-008 | `src/modules/placements/recruiter-drive-request-service.ts` | Build recruiter request response projection for every listed field including salary and eligibility details.
+- G2-15-025-009 | `src/modules/placements/recruiter-company-overview-model.ts` | Separate college demographics aggregate from drive summary and preserve asOf timestamp.
+- G2-15-025-013 | `src/modules/placements/recruiter-drive-request-model.ts` | Provide explicit field-by-field DTO map and unambiguous defaults for imported legacy drafts.
+- G2-15-025-024 | `src/modules/placements/recruiter-company-overview-model.ts` | Add scoped non-identifying demographic query returning legacy fields.
+- G2-15-025-025 | `src/modules/placements/recruiter-drive-request-service.ts` | Plan migration from Job lifecycle REQUEST/SENT_BACK into new request row preserving ID backlinks.
+- G2-15-025-026 | `src/modules/placements/recruiter-drive-request-service.ts` | Map legacy job id to new request id and approvedJobId without loss of edit history.
+- G2-15-025-050 | `src/modules/placements/recruiter-company-overview-model.ts` | Implement exact nearest5 rounding including ties and small-group withholding.
+- G2-15-025-051 | `src/modules/placements/recruiter-drive-request-service.ts` | Cross-check no-auto-publish behavior and approval policy; preserve TPO ownership.
+- G2-15-025-052 | `src/modules/placements/recruiter-company-overview-model.ts` | Restore read-only aggregation and query-time privacy gate separate from drive pipeline.
+- G2-15-025-053 | `src/db/schema/placement-drive-requests.ts` | Migrate old requests to typed request rows with lifecycle and legacy Job ID mapping.
+- G2-15-025-017 | `src/modules/placements/recruiter-drive-request-service.ts` | Show specific missing employer identity message separate from revoked grant.
+- G2-15-025-019 | `src/app/api/placements/recruiter/drives/requests/route.ts` | Map exact legacy human-readable validation errors for UI while preserving structured codes.
+- G2-15-025-021 | `src/modules/placements/recruiter-drive-request-model.ts` | Implement exact five status labels for request + published job composite, avoid status collisions.
+- G2-15-025-020 | `src/app/api/placements/recruiter/drives/requests/route.ts` | Ensure recruiter UI success wording distinguishes create/resubmit/replayed POST.
+
+Existing recruiter grants are scoped to a company/college and do not authorize arbitrary identifiable learner data. Legacy college aggregate requires dedicated privacy-banded query, suppression, and TPO-reviewed field mapping. **15/15 handed off, not fixed**.
+
+## Public company-share page — lane-7 owned page edit and backend handoff (2026-10-21)
+
+- G2-1-029-011 | `src/modules/placements/company-share/public-service.ts + audited ZIP export route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-028 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-038 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-067 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-011 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-024 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-027 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-036 | `src/modules/placements/company-share/public-service.ts + audited ZIP export route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-025-003 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-033 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-034 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-035 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-025-007 | `src/modules/placements/company-share/public-service.ts` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-029 | `src/app/company-share/[token]/page.tsx` | Page now keeps the exact accessible invalid-code text and presents CSV directly; true legacy toast is intentionally not fabricated on a server-only page.
+- G2-20-031-022 | `src/app/company-share/[token]/page.tsx` | Page now keeps the exact accessible invalid-code text and presents CSV directly; true legacy toast is intentionally not fabricated on a server-only page.
+
+Page ownership change: surfaced code resend unavailability and included direct CSV action with explicit unavailable ZIP note. Existing protected code gate, 10/hour lockout and CSV audit stay intact. Actual resend and ZIP remain **unfixed** and must be implemented by Placements/company-share owner, with strict authorization. Do not create email send or download links to nonexistent routes. No tests/CI.
