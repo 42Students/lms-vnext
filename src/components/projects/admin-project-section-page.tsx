@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {ProjectsServiceError} from "@/modules/projects/errors";
-import Link from "next/link";
 import {
   PROJECT_WORKSPACE_SECTIONS,
   ProjectWorkspace,
