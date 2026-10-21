@@ -367,30 +367,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [x] `src/components/activity/notification-list.tsx`
 - [x] `src/components/activity/notification-toolbar.tsx`
 - [x] `src/components/admin/academic-module-scope-inventory.tsx`
-- [ ] `src/components/admin/academic-setup-steps.tsx`
-- [ ] `src/components/admin/admin-dashboard-actions.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/college-closing-quizzes-card.tsx`
-- [ ] `src/components/admin/college-dashboard-section-failure.tsx`
-- [ ] `src/components/admin/college-setup-checklist.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
-- [ ] `src/components/admin/department-directory.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-interview-operations.tsx`
-- [ ] `src/components/admin/super-admin-placement-detail-view.tsx`
-- [ ] `src/components/admin/super-admin-student-bulk-access.tsx`
-- [ ] `src/components/admin/super-admin-student-import-history.tsx`
-- [ ] `src/components/admin/super-admin-today-board.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/admin/academic-setup-steps.tsx`
+- [x] `src/components/admin/admin-dashboard-actions.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/college-closing-quizzes-card.tsx`
+- [x] `src/components/admin/college-dashboard-section-failure.tsx`
+- [x] `src/components/admin/college-setup-checklist.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-interview-operations.tsx`
+- [x] `src/components/admin/super-admin-placement-detail-view.tsx`
+- [x] `src/components/admin/super-admin-student-bulk-access.tsx`
+- [x] `src/components/admin/super-admin-student-import-history.tsx`
+- [x] `src/components/admin/super-admin-today-board.tsx`
+- [x] `src/components/admin/tenant-settings-editor.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
 - [ ] `src/components/attendance/learner-attendance-workspace.tsx`
 - [ ] `src/components/auth/login-form.tsx`
 - [ ] `src/components/college/college-admin-profile-editor.tsx`

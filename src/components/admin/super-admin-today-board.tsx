@@ -13,7 +13,7 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
   </p>
   <div className="grid min-w-0 gap-3 border-y border-border min-[768px]:grid-cols-2 xl:grid-cols-3">
    {SUPER_ADMIN_TODAY_LABELS.map((label,index)=><Link key={label} href={hrefs[index]}
-    className="min-w-0 border-l-2 border-border py-3 pl-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
+    className="min-w-0 border-l-2 border-border py-3 pl-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]">
     <p className="text-xs font-semibold text-muted-foreground leading-5">{label}</p>
     <p className="mt-2 break-words text-2xl font-semibold tabular-nums text-foreground">{counts[index]??"—"}</p>
     {counts[index]===null?<p className="mt-1 text-xs text-body leading-5">Not yet measurable from registered evidence</p>:null}
