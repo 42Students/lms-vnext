@@ -10,7 +10,8 @@ export async function GET(request:Request){
   const q=new URL(request.url).searchParams;
   const scope=q.get("scope");
   if(scope!=="GLOBAL"&&scope!=="COLLEGE")
-   return NextResponse.json({error:"INVALID_SCOPE"},{status:400});
+   return NextResponse.json({error:"INVALID_SCOPE",message:scope==="ORG"||scope==="ORGANIZATION"
+    ?"Organization overrides are not writable in the registered GLOBAL/COLLEGE settings schema. Select a college or global scope.":"Select a global or college scope."},{status:400});
   return NextResponse.json(await listAdminTenantSettings(await getCurrentRequestContext(),scope,q.get("collegeId")??undefined),
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
@@ -18,12 +19,16 @@ export async function GET(request:Request){
 export async function PATCH(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
-  const body=await request.json();
+  const body:unknown=await request.json();
+  if(!body||typeof body!=="object"||Array.isArray(body)||
+     !("changes" in body)||!Array.isArray(body.changes)||body.changes.length===0)
+   return NextResponse.json({error:"EMPTY_BODY",message:"Select at least one setting to save.",
+    fieldErrors:{changes:"Add at least one setting change."}},{status:400});
   const result=await saveAdminTenantSettings(await getCurrentRequestContext(),body);
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof TenantSettingEditorError)return NextResponse.json({error:error.code},{
-   status:error.code==="SETTINGS_STORAGE_PENDING"?503:error.code==="SETTING_SCOPE_DENIED"?403:409,
+   status:error.code==="SETTINGS_STORAGE_PENDING"?503:error.code==="SETTING_SCOPE_DENIED"?403:error.code==="EMPTY_BODY"?400:409,
    headers:{"Cache-Control":"private, no-store"}});
   return apiErrorResponse(error);
  }

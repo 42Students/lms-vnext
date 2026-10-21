@@ -159,10 +159,10 @@ export default async function LearnerCoursesPage() {
     <div className="min-w-0 max-w-full space-y-[16px]">
       <PageHeader title="Courses" />
       {directoryError?<Alert tone="error" role="alert">
-       {directoryError} <Link href="/learn/courses" className="font-semibold underline">Try again</Link>
-      </Alert>:null}
-      <LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters}
-       semestersLoadError={semesterResult.error} />
+       {directoryError} <Link href="/learn/courses" className="inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Try again</Link>
+      </Alert>:<LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters}
+       semestersLoadError={semesterResult.error} />}
+      {/* A failed authorized directory request is not a confirmed empty list. */}
     </div>
   );
 }

@@ -39,7 +39,11 @@ function educationSnapshotSummary(snapshot:unknown){
  });
 }
 function academicValues(rows:ReturnType<typeof educationSnapshotSummary>){
- return rows.map(({marksheetRecorded:unused,...fields})=>fields);
+ return rows.map(row=>({
+  qualification:row.qualification,program:row.program,specialization:row.specialization,
+  institution:row.institution,year:row.year,grading:row.grading,
+  grade:row.grade,maximum:row.maximum,
+ }));
 }
 
 /** Read only the persisted, current learner membership's two verification rows.

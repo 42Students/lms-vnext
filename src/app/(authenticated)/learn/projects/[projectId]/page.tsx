@@ -43,7 +43,7 @@ export default async function LearnerProjectPage({
   if (!projectInstanceIdSchema.safeParse(projectId).success) {
     // Old LMS project links used integer IDs. Imported projects retain the
     // original integer, but only a live member of this college can resolve it.
-    if (!/^[1-9]\\d{0,9}$/.test(projectId) || Number(projectId)>2147483647 ||
+    if (!/^[1-9]\d{0,9}$/.test(projectId) || Number(projectId)>2147483647 ||
         !context.membership || context.membership.status!=="ACTIVE") notFound();
     const [legacy]=await getDb().select({id:projectInstances.id})
       .from(projectInstances)

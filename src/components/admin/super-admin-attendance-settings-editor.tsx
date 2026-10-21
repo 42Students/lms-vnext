@@ -89,7 +89,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void reloadField("correctionWindowHours")}>Reload</Button>
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>setHours(String(DEFAULT_ATTENDANCE_POLICY.correctionWindowHours))}>Use default value</Button>
     </div>
-    <span id="late-marking-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">How long after a class ends attendance can be marked or corrected. (hours)</span>
+    <span id="late-marking-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">How long after a class ends attendance can be marked or corrected (hours). The legacy tenant editor allowed up to 8,760 hours; this college allows up to {maxCorrectionHours} hours under its effective attendance policy. A higher value cannot be saved here.</span>
    </div>
    <div className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4"><label htmlFor="attendance-policy-threshold">Minimum attendance</label>
     <Input id="attendance-policy-threshold" type="number" min={1} max={100} step={1} value={threshold}
@@ -106,7 +106,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
    </div>
   </div>
   <p className="hidden text-sm text-body print:block leading-[22px]">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
-  <p className="text-xs text-muted-foreground print:hidden">Each Save updates only its own setting. Use default value selects 24 hours or 75%, but does not remove a college override or invent global/organization inheritance.</p>
+  <p className="text-xs text-muted-foreground print:hidden">Source: {source==="COLLEGE"?"Custom college override":source==="DEFAULT"?"Effective default (no college override)":"Unavailable; reload to verify"} · Each Save changes only its own setting. Use default value selects 24 hours or 75%, but does not remove the college override. Platform/organization inheritance is not inferred.</p>
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance setting for this college?"
    description="Only the chosen setting changes. The other value stays at its latest saved value." confirmVariant="primary" confirmLabel="Save setting"
