@@ -13,6 +13,7 @@ import { RecruiterResultControls } from "@/components/placements/recruiter-resul
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { HrJobSelectionGrid } from "@/components/hr/hr-job-selection-grid";
+import { HrSelectionProposalComposer } from "@/components/hr/hr-selection-proposal-composer";
 import { Input } from "@/components/ui/input";
 import { HrJobOffersGrid } from "@/components/hr/hr-job-offers-grid";
 import { HrJobApplicantsGrid } from "@/components/hr/hr-job-applicants-grid";
@@ -735,6 +736,13 @@ export default async function HrPlacementJobPage({
             {selectionReadyIds.size ? <div className="flex flex-wrap gap-2">{applicants.rows.filter(applicant=>selectionReadyIds.has(applicant.id)).map(applicant=>
               <Badge key={applicant.id} tone="success">{applicant.name || "Candidate"}</Badge>)}</div> : null}
           </section>
+          {!driveOverview.readOnly ? <HrSelectionProposalComposer
+            jobTitle={workspace.job.title}
+            candidates={applicants.rows.filter(applicant => selectionReadyIds.has(applicant.id))
+              .map(applicant => ({ applicationId: applicant.id, name: applicant.name || "Candidate" }))}
+            minAnnualCtcInr={workspace.job.minimumAnnualCtcInr}
+            maxAnnualCtcInr={workspace.job.maximumAnnualCtcInr}
+          /> : null}
           <Tabs renderPanel={false} ariaLabel="Offer status" value={filters.offerState}
             items={HR_OFFER_STATES.map(status=>({value:status,
               label:status==="ALL"?"All statuses":status==="PENDING_VERIFICATION"?"Verified, awaiting release":
