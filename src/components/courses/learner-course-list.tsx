@@ -313,14 +313,14 @@ export function LearnerCourseList({
           </Disclosure>
           <Disclosure title="All Courses" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
-              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{periodRows.slice(0,100).map((row,i)=>
+              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{periodRows.slice(0,100).map((row,i)=>
               <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for more courses.</p>:null}
             {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
           </Disclosure>
           {creditSummary.recordedCount>0?<Disclosure title="Credits Breakdown" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
-              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+              className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               {periodRows.map((row,i)=><li key={row.course.deliveryId+"-"+i}>
                 {row.course.courseName} · {row.course.credits===null?"Credits unavailable":row.course.credits+" cr"}
               </li>)}
