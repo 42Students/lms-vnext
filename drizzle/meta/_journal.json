@@ -1429,6 +1429,13 @@
       "when": 1792353551266,
       "tag": "0203_lane15_preuser_onboarding_challenges",
       "breakpoints": true
+    },
+    {
+      "idx": 204,
+      "version": "7",
+      "when": 1792353611266,
+      "tag": "0204_lane15_faculty_avatar_cleanup",
+      "breakpoints": true
     }
   ]
 }

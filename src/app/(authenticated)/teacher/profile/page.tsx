@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { notFound, redirect } from "next/navigation";
 import {FacultyProfileRefresh} from "@/components/people/faculty-profile-refresh";
 import { FacultyProfileEditor } from "@/components/people/faculty-profile-editor";
+import {FacultyAvatarUpload} from "@/components/people/faculty-avatar-upload";
 import { facultyProfileDocumentStorageReady } from "@/modules/people/faculty-profile-readiness";
 import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-profile-self.staged";
 import { PageHeader } from "@/components/ui/page-header";
@@ -65,7 +66,8 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
           {initials || "F"}
         </div>
         <div className="min-w-0 space-y-1">
-          <h2 className="break-words text-xl font-semibold text-[var(--lms-heading)]">{person.user.displayName||"—"}</h2>
+          <FacultyAvatarUpload initialVersion={selfDocument?.version??0}/>
+          <h2 className="break-words text-xl font-semibold text-[var(--lms-heading)]">{person.user.displayName}</h2>
           <p className="break-all text-sm text-body">{person.user.email || "No email recorded"}</p>
           <p className="text-sm text-muted-foreground">{profile?.academicTitle || "Faculty"} · {profile?.employmentType || "Faculty type not specified"} · College-managed identity</p>
           {document?.about.description?<p className="max-w-2xl whitespace-pre-wrap text-sm text-body">{document.about.description}</p>:null}
