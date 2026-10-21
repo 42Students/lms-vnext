@@ -70,6 +70,15 @@ const DEFAULTS: Record<OptionalModuleKey, boolean> = {
   electives: true,
 };
 
+/** A DEFAULT-level result differs from an explicitly persisted disabled rule.
+ * Projects/Electives preserve their enabled defaults. Placements stays
+ * opt-in until the owner approves a different rollout policy. */
+export const OPTIONAL_MODULE_DEFAULT_POLICY = {
+  projects: "ENABLED_UNLESS_OVERRIDDEN",
+  placements: "OPT_IN_UNTIL_APPROVED",
+  electives: "ENABLED_UNLESS_OVERRIDDEN",
+} as const satisfies Record<OptionalModuleKey,string>;
+
 /** Expose the actual resolver defaults for read-only explanations. */
 export function getOptionalModuleSourceDefault(
   module: OptionalModuleKey,
@@ -77,14 +86,16 @@ export function getOptionalModuleSourceDefault(
   return DEFAULTS[module];
 }
 
-/** Academic placement policies are now resolved through the same learner
- * hierarchy as Projects and Electives, including locked ancestors.
- * Keep the public trace helper for callers that render ignored levels. */
+/** Placements enablement follows the legacy college-or-broader policy.
+ * Per-learner placement eligibility is separately managed by the TPO.
+ * Projects and Electives retain the vNext membership-level overrides. */
 export function isModuleScopeIgnored(
-  _module: OptionalModuleKey,
-  _scopeType: ModuleAccessScopeType,
+  module: OptionalModuleKey,
+  scopeType: ModuleAccessScopeType,
 ): boolean {
-  return false;
+  return module==="placements"&&
+    (scopeType==="MEMBERSHIP"||scopeType==="SECTION"||
+     scopeType==="COHORT"||scopeType==="PROGRAM"||scopeType==="DEPARTMENT");
 }
 
 function pairKey(
@@ -111,6 +122,7 @@ export function resolveModuleAccessFromRules(
   ): ModuleAccessResolution => {
     for (let index = chain.length - 1; index >= 0; index -= 1) {
       const scope = chain[index];
+      if(isModuleScopeIgnored(module,scope.scopeType))continue;
       const rule = byPair.get(
         pairKey(scope.scopeType, scope.scopeId, module),
       );
@@ -125,6 +137,7 @@ export function resolveModuleAccessFromRules(
     }
 
     for (const scope of chain) {
+      if(isModuleScopeIgnored(module,scope.scopeType))continue;
       const rule = byPair.get(
         pairKey(scope.scopeType, scope.scopeId, module),
       );
