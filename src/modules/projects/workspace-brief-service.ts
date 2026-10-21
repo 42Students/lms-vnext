@@ -5,7 +5,7 @@ import {projectInstances} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireProjectLifecycleMutationAccess} from "./access";
 import {ProjectsServiceError} from "./errors";
-import {updateWorkspaceBriefSchema,publishedWorkspaceBriefError} from "./workspace-brief-model";
+import {updateWorkspaceBriefSchema,publishedWorkspaceBriefError,translateLegacyWorkspaceOverview} from "./workspace-brief-model";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {notifyActiveProjectMembers} from "./project-notification-service";
@@ -49,11 +49,20 @@ export async function updateProjectWorkspaceBrief(context:RequestContext,project
   const prior=project.authoredBrief;
   const original=prior&&typeof prior==="object"&&!Array.isArray(prior)
     ?prior as Record<string,unknown>:{};
-  // Preserve any historical 'definitionOfDone' key as unedited data, but
-  // the native completionConditions is authoritative once explicitly edited.
+  // Historical overviewFactsRef may exist only on the imported source row,
+  // or as non-native keys inside authoredBrief. Translate only trusted DB
+  // snapshots; the strict request schema prevents clients from changing them.
+  const legacy=translateLegacyWorkspaceOverview(project.legacyOverview);
+  const existing=translateLegacyWorkspaceOverview(original);
+  const historicalDefinition=original.definitionOfDone ??
+    (project.legacyOverview&&typeof project.legacyOverview==="object"?
+      (project.legacyOverview as Record<string,unknown>).definitionOfDone:undefined);
   const mergedBrief={
+    ...legacy.opaqueFacts,...existing.opaqueFacts,
     ...original,...input.brief,
-    definitionOfDone:input.brief.completionConditions,
+    // A historical completion alias is import evidence, not an editor field.
+    // The explicit native completionConditions now drives current display.
+    definitionOfDone:historicalDefinition??input.brief.completionConditions,
   };
   const [updated]=await tx.update(projectInstances).set({
     authoredBrief:mergedBrief,

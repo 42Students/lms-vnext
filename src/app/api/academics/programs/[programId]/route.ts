@@ -1,8 +1,8 @@
 import { NextResponse } from "next/server";
-import { eq } from "drizzle-orm";
+import { and, asc, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { programs, departments } from "@/db/schema";
+import { programs, departments, programTerms, programTermCourses, courses } from "@/db/schema";
 import { requirePermission } from "@/modules/permissions/policy";
 import { loadProgramScope } from "@/modules/academics/scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -52,9 +52,55 @@ export async function GET(_request: Request, { params }: RouteContext) {
     }).from(programs).innerJoin(departments,eq(departments.id,programs.departmentId))
       .where(eq(programs.id,programId.data)).limit(1);
     if (!program) return NextResponse.json({ error: "PROGRAM_NOT_FOUND" }, { status: 404 });
+    // Resolve nested curriculum only within the authorized college's program.
+    const terms=await getDb().select({
+      id:programTerms.id,name:programTerms.name,termNumber:programTerms.termNumber,
+      startDate:programTerms.startDate,endDate:programTerms.endDate,
+      legacyStartDate:programTerms.legacyStartDate,legacyEndDate:programTerms.legacyEndDate,
+      sourceCourseIds:programTerms.legacyCourseIds,
+      status:programTerms.legacyStructureStatus,isActive:programTerms.isActive,
+      createdAt:programTerms.createdAt,
+    }).from(programTerms).where(eq(programTerms.programId,program.id))
+      .orderBy(asc(programTerms.termNumber),asc(programTerms.id));
+    const links=terms.length?await getDb().select({
+      termId:programTermCourses.programTermId,id:courses.id,
+      name:courses.name,code:courses.code,metaData:courses.legacyMetadata,
+      enabled:courses.enabled,status:courses.status,
+      deletedAt:courses.deletedAt,legacyCourseId:courses.legacyCourseId,
+      mandatory:programTermCourses.legacyIsMandatory,type:programTermCourses.type,
+      credits:programTermCourses.credits,createdAt:programTermCourses.createdAt,
+    }).from(programTermCourses)
+      .innerJoin(courses,eq(courses.id,programTermCourses.courseId))
+      .innerJoin(departments,eq(departments.id,courses.departmentId))
+      .where(and(inArray(programTermCourses.programTermId,terms.map(term=>term.id)),
+        eq(departments.collegeId,scope.collegeId)))
+      .orderBy(asc(programTermCourses.displayOrder),asc(programTermCourses.id)):[];
+    const dateArray=(date:Date)=>[
+      date.getUTCFullYear(),date.getUTCMonth()+1,date.getUTCDate(),
+    ];
+    const structure=terms.map(term=>{
+      const linked=links.filter(row=>row.termId===term.id);
+      return {
+        id:term.id,name:term.name,term_number:term.termNumber,
+        start_date:term.startDate??term.legacyStartDate,
+        end_date:term.endDate??term.legacyEndDate,
+        status:term.status??(term.isActive?"ACTIVE":"INACTIVE"),
+        course_ids:linked.map(course=>course.id),
+        source_course_ids:term.sourceCourseIds??[],
+        courses:linked.map(course=>({
+          id:course.id,name:course.name,code:course.code,
+          meta_data:course.metaData,enabled:course.enabled,
+          status:course.status,deleted:course.deletedAt!==null,
+          legacy_course_id:course.legacyCourseId,
+          mandatory:course.mandatory,type:course.type,credits:course.credits,
+          created_at:dateArray(course.createdAt),
+        })),
+        created_at:dateArray(term.createdAt),
+      };
+    });
     return NextResponse.json({
-      status:"OK",message:"OK",program,
-      data:{...program, durationYears:program.durationTerms%2===0?
+      status:"OK",message:"OK",program:{...program,program_structure:structure},
+      data:{...program,program_structure:structure,durationYears:program.durationTerms%2===0?
         program.durationTerms/2:null,
         // Old model used numeric program IDs; UUID is authoritative.
         id:program.id,departmentId:program.departmentId},
