@@ -117,6 +117,7 @@ export function TpoDraftDriveStepOneForm({
             <option value="INTERNSHIP">Internship</option>
             <option value="CONTRACT">Contract</option>
           </Select>
+          <p className="mt-1 text-xs font-normal text-muted-foreground">Employment type is not the college job-type catalogue. Custom or hidden historical types cannot be selected here yet; edit the drive after creation when its supported classification becomes available.</p>
         </label>
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Work mode
