@@ -193,26 +193,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx`
 - [x] `src/app/(authenticated)/learn/allQuizzes/error.tsx`
 - [x] `src/app/(authenticated)/learn/attendance/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/error.tsx`
-- [ ] `src/app/(authenticated)/learn/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/error.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/error.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/error.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/error.tsx`
+- [x] `src/app/(authenticated)/learn/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/interviews/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/error.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/placement/error.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/preparation/error.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/rules/error.tsx`
