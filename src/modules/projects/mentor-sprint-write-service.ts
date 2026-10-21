@@ -47,6 +47,26 @@ export async function createMentorProjectSprint(
       if(!release || release.status==="SHIPPED") {
         throw new ProjectsServiceError("PROJECT_RELEASE_INVALID_STATE");
       }
+      const existingKeys=await tx.select({
+        templateKey:projectSprints.templateKey,legacySprintKey:projectSprints.legacySprintKey,
+      }).from(projectSprints).where(eq(projectSprints.projectId,scope.project.id));
+      const usedKeys=new Set(existingKeys.flatMap(row=>
+        [row.templateKey,row.legacySprintKey].filter((key):key is string=>Boolean(key))
+          .map(key=>key.toLowerCase())));
+      const requestedKey=input.key?.trim()??"";
+      if(requestedKey&&usedKeys.has(requestedKey.toLowerCase()))
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      const slug=input.title.toLowerCase().normalize("NFKD")
+        .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,64);
+      const baseKey=slug||"sprint";
+      let resolvedKey=requestedKey||baseKey;
+      if(!requestedKey){
+        let suffix=2;
+        while(usedKeys.has(resolvedKey.toLowerCase())){
+          const tail="-"+suffix++;
+          resolvedKey=baseKey.slice(0,120-tail.length)+tail;
+        }
+      }
       const [last]=await tx.select({sequence:projectSprints.sequence})
         .from(projectSprints)
         .where(eq(projectSprints.releaseId,release.id))
@@ -56,6 +76,7 @@ export async function createMentorProjectSprint(
         projectId:scope.project.id,
         releaseId:release.id,
         templateKey:"mentor-"+randomUUID().replaceAll("-",""),
+        legacySprintKey:resolvedKey,dueLabel:input.dueLabel?.trim()||null,
         title:input.title,
         description:input.description,goal:input.goal,definitionOfDone:input.definitionOfDone,
         startDate:input.startDate,endDate:input.endDate,dueDate:input.dueDate,

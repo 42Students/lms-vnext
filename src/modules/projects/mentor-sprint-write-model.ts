@@ -7,6 +7,8 @@ export const mentorSprintCreateParamsSchema = z.object({
 export const mentorSprintCreateSchema = z.object({
   releaseId:z.string().uuid(),
   title:z.string().trim().min(1).max(200),
+  key:z.string().trim().max(120).optional(),
+  dueLabel:z.string().trim().max(160).nullable().optional(),
   description:z.string().trim().max(4000).nullable(),
   goal:z.string().trim().max(4000).nullable(),definitionOfDone:z.string().trim().max(4000).nullable(),
   startDate:z.iso.date().nullable(),endDate:z.iso.date().nullable(),dueDate:z.iso.date().nullable(),
