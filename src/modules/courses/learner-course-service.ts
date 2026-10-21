@@ -587,6 +587,12 @@ export async function getLearnerCourseWorkspace(
           lessonContents.status,
           "PUBLISHED",
         ),
+        // A lesson can be published while particular materials are hidden.
+        // Legacy active/enabled and deletion remain independent of publish.
+        eq(lessonContents.visibleToStudents,true),
+        isNull(lessonContents.deletedAt),
+        eq(lessonContents.deletedWithLesson,false),
+        or(isNull(lessonContents.legacyActive),eq(lessonContents.legacyActive,true)),
         or(
           isNull(lessonContents.deliveryId),
           eq(
