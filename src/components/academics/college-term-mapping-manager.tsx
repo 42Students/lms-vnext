@@ -202,7 +202,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     <p className="text-xs text-muted-foreground">Drag a course to reorder, or use the Move up and Move down buttons for keyboard access.</p>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-        <Select required value={programId} onChange={event => {
+        <Select required disabled={pending} value={programId} onChange={event => {
           requestScopeChange("program", event.target.value);
         }} className="min-h-11 w-full md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose program</option>
@@ -212,7 +212,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         {fieldErrors.program ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.program}</span> : null}
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
-        <Select required value={termId} onChange={event => {
+        <Select required disabled={pending} value={termId} onChange={event => {
           requestScopeChange("term", event.target.value);
         }} className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
           <option value="">Choose semester</option>
@@ -284,16 +284,21 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             </div>},
           {key:"code",header:TERM_MAPPING_COPY.columns.courseCode,mobilePriority:"secondary",cell:row=>row.courseCode},
           {key:"credits",header:TERM_MAPPING_COPY.columns.credits,mobilePriority:"secondary",cell:row=>row.credits??"—"},
+          {key:"type",header:TERM_MAPPING_COPY.columns.type,mobilePriority:"secondary",
+            cell:row=>row.type==="CORE"?TERM_MAPPING_COPY.core:row.type==="ELECTIVE"?TERM_MAPPING_COPY.elective:row.type},
           {key:"order",header:"Order",mobilePriority:"secondary",cell:row=>
             orderedPeers(row).findIndex(peer=>peer.id===row.id)+1},
           {key:"actions",header:TERM_MAPPING_COPY.columns.actions,mobilePriority:"action",cell:row=>
             (<div className="flex min-w-0 flex-wrap gap-2">
                 <Button className="min-h-11 md:min-h-9" variant="secondary" type="button" disabled={pending || !editableTerm}
                   
-                  onClick={()=>setEditing({
-                    id:row.id,credits:row.credits===null?"3":String(row.credits),
-                    position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
-                  })}>Edit</Button>
+                  onClick={()=>{
+                    setError(null); setFieldErrors({});
+                    setEditing({
+                      id:row.id,credits:row.credits===null?"3":String(row.credits),
+                      position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
+                    });
+                  }}>Edit</Button>
                 <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row)[0]?.id===row.id}
                   
                   aria-label={"Move "+row.courseName+" up"}
