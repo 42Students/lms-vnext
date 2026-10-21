@@ -15,7 +15,7 @@ function Field({ label, value, onChange, type = "text", hint }: {
   label: string; value: string; onChange: (value: string) => void;
   type?: string; hint?: string;
 }) {
-  return <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
+  return <label className="grid min-w-0 gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">
     {label}
     <Input className={fieldStyle} type={type} value={value} maxLength={500}
       onChange={event => onChange(event.target.value)} />
@@ -90,7 +90,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="Name" value={profile.displayName} onChange={v => top("displayName", v)} />
             <Field label="Role / Title" value={profile.roleTitle} onChange={v => top("roleTitle", v)} />
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">About
+            <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">About
               <Textarea rows={3} maxLength={1000} className={fieldStyle}
                 value={profile.about} onChange={e => top("about", e.target.value)} />
             </label>
@@ -101,7 +101,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           </div>
         </section>
 
-        <section id="contacts" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5">
+        <section id="contacts" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-6">
           <h2 className="font-semibold text-foreground">Contacts</h2>
           <div className="min-w-0 space-y-1">
             <p className="text-xs text-muted-foreground">Primary login contacts remain read-only for account security.</p>
@@ -117,7 +117,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           </div>
         </section>
 
-        <section id="social" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5">
+        <section id="social" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-6">
           <h2 className="font-semibold text-foreground">Social Profiles</h2>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             <Field label="LinkedIn" type="url" value={profile.social.linkedIn}
@@ -131,7 +131,7 @@ export function CollegeAdminProfileEditor({ initial, email, phone, college }: {
           </div>
         </section>
 
-        <section id="address" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-5">
+        <section id="address" className="min-w-0 scroll-mt-24 space-y-4 border-t border-border pt-6">
           <h2 className="font-semibold text-foreground">Address</h2>
           <div className="grid min-w-0 gap-4 md:grid-cols-2">
             {([

@@ -130,7 +130,7 @@ export function MembershipChooser({
         {sorted.map((membership) => (
           <section
             key={membership.id}
-            className={"flex flex-col justify-between gap-5 rounded-[var(--lms-canvas-radius,12px)] border bg-surface p-5 "+
+            className={"flex flex-col justify-between gap-4 rounded-[var(--lms-canvas-radius,12px)] border bg-surface p-6 "+
               (membership.id===selectedId?"border-primary":"border-border")}
           >
             <div>
