@@ -14,4 +14,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_lecture-halls_hallId_route.ts.md` (edit src/app/api/lecture-halls/[hallId]/route.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-join_error-copy.ts.md` (edit src/modules/placements/public-join/error-copy.ts; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-3/src_app_api_courses_quizzes_quizId_my-attempts_route.ts.md` (edit src/app/api/courses/quizzes/[quizId]/my-attempts/route.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-academic-import-workspace.tsx.md` (edit src/components/tpo/tpo-academic-import-workspace.tsx; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-academic-import-workspace.tsx.md` (edit src/components/tpo/tpo-academic-import-workspace.tsx; 4 findings; best P1)

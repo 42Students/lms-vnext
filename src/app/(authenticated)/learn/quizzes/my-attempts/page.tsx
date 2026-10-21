@@ -15,7 +15,7 @@ export default async function OwnQuizHistoryPage(){
      <p className="text-xs text-muted-foreground">Attempt {item.attemptNumber} · {item.submittedAt?"Submitted":"In progress"}</p>
     </div>
     <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9"
-     href={"/learn/courses/"+encodeURIComponent(item.deliveryId)+"/quizzes/"+encodeURIComponent(item.quizId)}>
+     href={"/quiz?"+new URLSearchParams({quizId:item.quizId,deliveryId:item.deliveryId}).toString()}>
       Open quiz
     </Link>
    </li>)}
