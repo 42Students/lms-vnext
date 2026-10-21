@@ -12,6 +12,25 @@ import { isExotelAcceptedResponse } from "@/modules/messaging/provider-acceptanc
  * Exotel transactional SMS, matching the legacy LMS integration.
  * Indian DLT rules require the registered entity, sender and template IDs;
  * a missing value fails closed instead of sending an unregistered message.
+ *
+ * OTP OUTAGE RECOVERY MIGRATION (G2-2-005):
+ * The legacy Java TemporarySmsOutageRecovery interceptor was a development
+ * testing-only bean with a hard expiry of 2026-09-28T00:00:00Z. It used the
+ * APP_TEMPORARY_SMS_OUTAGE_ENABLED flag (true unless literally "false") and
+ * turned SMS provider exceptions into false results. That flag, both Java
+ * sendOtp overloads, and the global bean interceptor are deliberately retired:
+ * no vNext caller may use an expired fallback to issue a login challenge.
+ *
+ * The only supported outbound OTP adapter is this DLT-registered Exotel
+ * implementation, with explicit config validation. Provider false, HTTP 503,
+ * timeouts, malformed JSON, and transport errors all return false. The caller
+ * translates false to OTP_DELIVERY_FAILED and must not authenticate that SMS
+ * code when provider acceptance was not recorded. Unexpected code errors
+ * cannot be treated as delivery success. Structured logs use safe event names
+ * and exception classes, never SMS values or legacy fallback warnings.
+ *
+ * Do not reinstate the 9999 test-code mechanism or assume a legacy test number
+ * is an approved Exotel test recipient. No deployed provider policy is inferred.
  */
 
 const OTP_SUFFIX =
