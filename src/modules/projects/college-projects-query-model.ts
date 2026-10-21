@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-const statuses = ["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"] as const;
+// Preserve historic phase and blocker status selectors while keeping current
+// persisted PLANNED/COMPLETED bookmarks valid.
+const statuses = ["PLANNED","ACTIVE","IN_PROGRESS","READY","BLOCKED","COMPLETED","ARCHIVED"] as const;
 // URL page values must be base-10 integers. z.coerce.number() also accepts
 // scientific notation, hexadecimal and surrounding whitespace from hostile URLs.
 const positivePageNumber = (max: number, defaultValue: number) =>
