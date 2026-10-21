@@ -997,3 +997,12 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-12-017-021/-062 | `src/modules/projects/task-comment-service.ts + comment schema` | Confirm eligible active non-assignee learner versus observer read-only permissions and persist immutable author/task snapshots on comment rows; activity metadata snapshot added.
 - G2-5-019-014 | `src/modules/people/college-student-detail-service.ts` | Add active term/semester mapping and historical class/cohort projection once academic period ownership verified.
+
+- G2-11-024-009/-051 | `src/modules/placements/tpo-communication-settings-service.ts + schema` | Migrate approval-required, AFTER_REVIEW applicant visibility and trusted domains as audited editable fields, not just duration.
+- G2-10-025-055/-095 / G2-14-016-035 | `src/app/(authenticated)/hr/profile/page.tsx` | Pass verified selectedCollegeId into recruiter profile service and document contact/login mapping; enforce current grant capability matrix.
+
+- G2-7-032-037 | `src/components/projects/project-readiness-override-form.tsx + toast system` | Integrate legacy timed toast without suppressing inline retry status.
+- G2-18-031-077 | `src/modules/auth/runtime.ts + session store + identity persistence` | Verify Exotel test allowlists, contact collision, revocation timing, and no cross-college session grant using DB integration; no runtime testing permitted in lane.
+
+- G2-3-011-033/-048 | `src/modules/placements/tpo-draft-drive-model.ts + job types API + draft form` | Support five built-ins, active custom types, and hidden historical selected labels with authoritative college grant; current draft employment enum only three types.
+- G2-13-025-005/-021/-025/-036 | `src/modules/placements/recruiter-self-grants-service.ts + public pending-invite service/shell` | Independently verify pending invite belongs to logged-in recruiter contact/user without requiring an existing ACTIVE grant, expose only four safe identity fields and route outside grant-only shell.
