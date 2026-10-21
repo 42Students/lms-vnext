@@ -34,6 +34,28 @@ async function requestWrite(method: "POST" | "PATCH", url: string, input: unknow
   });
 }
 
+function focusClassField(form: HTMLFormElement | null, field: string) {
+  const name = field === "name" ? "className" : field;
+  form?.querySelector<HTMLElement>(`[name="${name}"]`)?.focus();
+}
+function classFieldMessage(field: string, fallback: string) {
+  if (field === "name") return /255|max|length/i.test(fallback)
+    ? "Maximum 255 characters" : "Enter the class or section name";
+  if (field === "capacity") return "Maximum must be a whole number from 1 to 200";
+  if (field === "minSize" && /maximum|less|exceed/i.test(fallback))
+    return "Maximum cannot be less than minimum";
+  return fallback;
+}
+function validateClassNumbers(name: string, capacity: string, minSize: string) {
+  if (!name.trim() || name.trim().length > 255)
+    return { field: "name", message: name.trim() ? "Maximum 255 characters" : "Enter the class or section name" };
+  if (!/^[0-9]+$/.test(capacity) || Number(capacity) < 1 || Number(capacity) > 200)
+    return { field: "capacity", message: "Maximum must be a whole number from 1 to 200" };
+  if (minSize !== "" && (!/^[0-9]+$/.test(minSize) || Number(minSize) > Number(capacity)))
+    return { field: "minSize", message: "Maximum cannot be less than minimum" };
+  return null;
+}
+
 function capacityInput(value: string): number | null {
   return value.trim() === "" ? null : Number(value);
 }
@@ -67,25 +89,30 @@ export function CollegeClassCreate({ cohorts, periods,
     if(pending)return;
     setNotice("");setFieldErrors({});
     if (!programId) {
-      setFieldErrors({programId:"Select program"});setNotice("Select program");
+      setFieldErrors({programId:"Select a program"});setNotice("Select a program");
       formRef.current?.querySelector<HTMLSelectElement>('[name="programId"]')?.focus();return;
     }
     if (!cohortId) {
-      setFieldErrors({cohortId:"Select batch"});setNotice("Select batch");
+      setFieldErrors({cohortId:"Select a batch"});setNotice("Select a batch");
       formRef.current?.querySelector<HTMLSelectElement>('[name="cohortId"]')?.focus();return;
+    }
+    const invalid = validateClassNumbers(name, capacity, minSize);
+    if (invalid) {
+      setFieldErrors({[invalid.field]: invalid.message}); setNotice(invalid.message);
+      focusClassField(formRef.current, invalid.field); return;
     }
     const result = createCollegeSectionSchema.safeParse({
       cohortId, academicPeriodId, name, code:derivedCode, capacity: Number(capacity),
       minSize: minSize === "" ? null : Number(minSize), description: description.trim() || null,
     });
     if (!result.success) {
-      const fields=Object.fromEntries(result.error.issues.map(issue=>[String(issue.path[0]),issue.message]));
+      const fields=Object.fromEntries(result.error.issues.map(issue=>[
+        String(issue.path[0]), classFieldMessage(String(issue.path[0]),issue.message),
+      ]));
       setFieldErrors(fields);
-      setNotice(result.error.issues[0]?.message ?? "Enter valid class details.");
-      const name=String(result.error.issues[0]?.path[0]??"");
-      formRef.current?.querySelector<HTMLInputElement>(
-        '[name="'+(name==="name"?"className":name)+'"]'
-      )?.focus();
+      const first=String(result.error.issues[0]?.path[0]??"");
+      setNotice(fields[first] ?? "Enter valid class details.");
+      focusClassField(formRef.current,first);
       return;
     }
     startTransition(async () => {
@@ -94,17 +121,27 @@ export function CollegeClassCreate({ cohorts, periods,
         setName(""); setCode(""); setDescription("");
         formRef.current?.querySelector<HTMLInputElement>('[name="className"]')?.focus();
         const className=result.data.name;
-        setNotice("Class created successfully. Next, register or move students into this section.");
-        showToast({tone:"success",title:"Class created successfully",
-         description:"Next, register or move students into this section."});
+        setNotice(`Created class “${className}”. Next, register or move students into this section.`);
+        showToast({tone:"success",title:`Created class “${className}”.`,
+          description:"Next, register or move students into this section."});
         router.refresh();
       } catch (error) {
         const message = academicSetupErrorMessage(error, "Class creation failed.");
         setNotice(message);
-        if (/capacity|maximum|minimum/i.test(message)) setFieldErrors({ capacity: message });
-        else if (/batch|cohort/i.test(message)) setFieldErrors({ cohortId: message });
-        else if (/period/i.test(message)) setFieldErrors({ academicPeriodId: message });
-        else if (/name|section/i.test(message)) setFieldErrors({ name: message });
+        if(error instanceof FriendlyFetchError && Object.keys(error.fieldErrors).length){
+          const fields=Object.fromEntries(Object.entries(error.fieldErrors).map(([key,value])=>[
+            key,classFieldMessage(key,value),
+          ]));
+          setFieldErrors(fields);
+          focusClassField(formRef.current,Object.keys(fields)[0]!);
+        } else {
+          const field = /capacity|maximum|minimum/i.test(message) ? "capacity" :
+            /batch|cohort/i.test(message) ? "cohortId" :
+            /period/i.test(message) ? "academicPeriodId" :
+            /name|section/i.test(message) ? "name" : null;
+          if(field){setFieldErrors({[field]:message});focusClassField(formRef.current,field);}
+        }
+        showToast({tone:"error",title:"Failed to create class.",description:message});
       }
     });
   }
@@ -119,7 +156,7 @@ export function CollegeClassCreate({ cohorts, periods,
             <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
-      : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+      : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)]">
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Input type="search" aria-label="Search programs" placeholder="Search programs" value={programSearch} onChange={event=>setProgramSearch(event.target.value)} className="min-h-9 w-full" />
           <Select required name="programId" aria-invalid={Boolean(fieldErrors.programId)} value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
@@ -150,8 +187,8 @@ export function CollegeClassCreate({ cohorts, periods,
           </Select>
           {fieldErrors.academicPeriodId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.academicPeriodId}</span> : null}
         </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section Name
-          <Input required name="className" placeholder="e.g. CSE-A or Section 1" maxLength={255} value={name}
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class Name
+          <Input required name="className" placeholder="e.g., CSE-A or Section 1" maxLength={255} value={name}
            aria-invalid={Boolean(fieldErrors.name)} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
           {fieldErrors.name ? <span role="alert" className="text-xs text-red-700">{fieldErrors.name}</span> : null}
@@ -160,7 +197,7 @@ export function CollegeClassCreate({ cohorts, periods,
           <Input name="code" maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (required, 1–200)
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum students (1–200)
           <Input required name="capacity" aria-invalid={Boolean(fieldErrors.capacity)} type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
@@ -196,9 +233,12 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   const {showToast}=useToast();
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
+  const editFormRef=useRef<HTMLFormElement>(null);
+  const [editFieldErrors,setEditFieldErrors]=useState<Record<string,string>>({});
   const [discardConfirm, setDiscardConfirm] = useState(false);
   const [deleteConfirm,setDeleteConfirm]=useState(false);
   const [scheduleOpen,setScheduleOpen]=useState(false);
+  const [scheduleDiscardConfirm,setScheduleDiscardConfirm]=useState(false);
   const [scheduleLoading,setScheduleLoading]=useState(false);
   const [scheduleError,setScheduleError]=useState("");
   const [scheduleItems,setScheduleItems]=useState<Array<{
@@ -238,6 +278,13 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
     }finally{setScheduleLoading(false);}
   }
   function openSchedule(){setScheduleOpen(true);void loadSchedule();}
+  function closeSchedule(){
+    if(scheduleLoading||pending)return;
+    if(scheduleTitle.trim()||scheduleStart||scheduleEnd||scheduleLocation.trim()){
+      setScheduleDiscardConfirm(true);return;
+    }
+    setScheduleOpen(false);
+  }
   async function createSchedule(event:FormEvent<HTMLFormElement>){
     event.preventDefault();
     if(pending||scheduleLoading)return;
@@ -284,7 +331,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   }
   function cancel() {
     if (changed && !discardConfirm) { setDiscardConfirm(true); return; }
-    setDiscardConfirm(false); setEditing(false); setNotice("");
+    setDiscardConfirm(false); setEditing(false); setNotice("");setEditFieldErrors({});
     setName(row.name); setCode(row.code); setCapacity(row.capacity === null ? "" : String(row.capacity));
     setMinSize(row.minSize === null ? "" : String(row.minSize));
     setCohortId(row.cohortId); setAcademicPeriodId(row.academicPeriodId);
@@ -293,12 +340,20 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   function save(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(pending)return;
-    setNotice("");
-    if (!capacity.trim()) { setNotice("Maximum must be a whole number from 1 to 200"); return; }
+    setNotice("");setEditFieldErrors({});
+    const invalid=validateClassNumbers(name,capacity,minSize);
+    if(invalid){
+      setEditFieldErrors({[invalid.field]:invalid.message});setNotice(invalid.message);
+      focusClassField(editFormRef.current,invalid.field);return;
+    }
     const parsed = updateCollegeSectionSchema.safeParse({ ...draft, confirm: true });
     if (!parsed.success) {
-      setNotice(parsed.error.issues[0]?.message ?? "Invalid class changes.");
-      return;
+      const fields=Object.fromEntries(parsed.error.issues.map(issue=>[
+        String(issue.path[0]),classFieldMessage(String(issue.path[0]),issue.message),
+      ]));
+      const first=String(parsed.error.issues[0]?.path[0]??"");
+      setEditFieldErrors(fields);setNotice(fields[first]??"Invalid class changes.");
+      focusClassField(editFormRef.current,first);return;
     }
 
     startTransition(async () => {
@@ -311,6 +366,12 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
       } catch (error) {
         const message=academicSetupErrorMessage(error, "Failed to update class.");
         setNotice(message);
+        if(error instanceof FriendlyFetchError && Object.keys(error.fieldErrors).length){
+          const fields=Object.fromEntries(Object.entries(error.fieldErrors).map(([field,value])=>[
+            field,classFieldMessage(field,value),
+          ]));
+          setEditFieldErrors(fields);focusClassField(editFormRef.current,Object.keys(fields)[0]!);
+        }
         showToast({tone:"error",title:"Failed to update class.",description:message});
       }
     });
@@ -319,7 +380,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   return <div className="min-w-0 space-y-2">
     <div className="flex flex-wrap items-center gap-2">
     <Button variant="secondary" type="button" disabled={pending || row.status !== "ACTIVE"}
-      onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
+      onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); setEditFieldErrors({}); }}
       className="min-h-11 w-full sm:w-auto md:min-h-9" aria-label={"Edit class "+row.name}>
       Edit
     </Button>
@@ -333,7 +394,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
     </div>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
       title={'Edit class “'+row.name+'”'} className="max-w-[550px]" dismissible={false}>
-      <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+      <form ref={editFormRef} noValidate onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2">
           Reassigning a batch, program or academic period requires no dependent students, schedules,
@@ -365,21 +426,26 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
           </Select>
         </label> : null}
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section Name
-          <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
-            className="min-h-11 w-full md:min-h-9" />
+          <Input required name="className" maxLength={255} placeholder="e.g., CSE-A or Section 1"
+             aria-invalid={Boolean(editFieldErrors.name)} value={name} onChange={e => setName(e.target.value)}
+             className="min-h-11 w-full md:min-h-9" />
+           {editFieldErrors.name?<span role="alert" className="text-xs text-error">{editFieldErrors.name}</span>:null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code
           <Input required maxLength={64} value={code} onChange={e => setCode(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum students (1–200)
-          <Input required type="number" min={1} max={200} step={1} value={capacity}
-            onChange={e => setCapacity(e.target.value)}
-            className="min-h-11 w-full md:min-h-9" />
+          <Input required name="capacity" aria-invalid={Boolean(editFieldErrors.capacity)} type="number"
+             min={1} max={200} step={1} value={capacity} onChange={e => setCapacity(e.target.value)}
+             className="min-h-11 w-full md:min-h-9" />
+           {editFieldErrors.capacity?<span role="alert" className="text-xs text-error">{editFieldErrors.capacity}</span>:null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum students (0–200)
-          <Input type="number" min={0} max={200} step={1} value={minSize}
-            onChange={e => setMinSize(e.target.value)} className="min-h-11 w-full md:min-h-9" />
+          <Input name="minSize" aria-invalid={Boolean(editFieldErrors.minSize)} type="number"
+             min={0} max={200} step={1} value={minSize}
+             onChange={e => setMinSize(e.target.value)} className="min-h-11 w-full md:min-h-9" />
+           {editFieldErrors.minSize?<span role="alert" className="text-xs text-error">{editFieldErrors.minSize}</span>:null}
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description
           <Textarea placeholder="Optional description" rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
@@ -399,7 +465,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
         </div>
       </form>
     </Dialog> : null}
-    <Dialog open={scheduleOpen} onOpenChange={setScheduleOpen}
+    <Dialog open={scheduleOpen} onOpenChange={next=>{if(next)setScheduleOpen(true);else closeSchedule();}}
       title={'Schedule class “'+row.name+'”'} className="max-w-[620px]">
       <div className="space-y-4">
         <p className="text-sm text-body">Times are in India Standard Time (IST).
@@ -432,12 +498,16 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
               onChange={event=>setScheduleLocation(event.target.value)} className="mt-1"/>
           </label>
           <div className="flex flex-wrap justify-end gap-2 sm:col-span-2">
-            <Button variant="secondary" type="button" onClick={()=>setScheduleOpen(false)}>Close</Button>
+            <Button variant="secondary" type="button" disabled={scheduleLoading} onClick={closeSchedule}>Close</Button>
             <Button type="submit" disabled={scheduleLoading||pending}>Add session</Button>
           </div>
         </form>
       </div>
     </Dialog>
+    <ConfirmDialog open={scheduleDiscardConfirm} onOpenChange={setScheduleDiscardConfirm}
+      title="Discard unsaved schedule?" description="Your unsaved session details will be lost."
+      confirmLabel="Discard changes" pending={scheduleLoading}
+      onConfirm={()=>{setScheduleDiscardConfirm(false);setScheduleOpen(false);}}/>
     <ConfirmDialog open={deleteConfirm} onOpenChange={setDeleteConfirm}
       title={'Delete class “'+row.name+'”?'}
       description="Only a class with no learners, faculty assignments, schedules or course deliveries can be deleted. This action cannot be undone."
