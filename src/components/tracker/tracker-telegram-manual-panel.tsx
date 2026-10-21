@@ -5,7 +5,7 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-import {Dialog} from "@/components/ui/dialog";
+import {Drawer} from "@/components/ui/drawer";
 
 type SummaryItem={signatureHash:string;occurrenceCount:string;muted:boolean;
   fixStatus:string;regressedAt:Date|null;firstSeenAt:Date};
@@ -17,6 +17,7 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   const [pending,setPending]=useState(false);
   const [notice,setNotice]=useState("");
   const [error,setError]=useState(false);
+  const [delivery,setDelivery]=useState<"ACCEPTED"|"UNCONFIGURED"|"RATE_LIMITED"|"FAILED"|"DENIED"|null>(null);
   const confirmAfterClose=useRef<number|null>(null);
   useEffect(()=>()=>{if(confirmAfterClose.current!==null)window.clearTimeout(confirmAfterClose.current);},[]);
   function requestDigestConfirmation(){
@@ -29,22 +30,28 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   }
   async function send(kind:"TEST"|"DIGEST"){
     if(pending)return;
-    setPending(true);setNotice("");setError(false);
+    setPending(true);setNotice("");setError(false);setDelivery(null);
     try{
-      const result=await apiFetch<{message:string}>("/api/tracker/logs/manual-alert",{
+      const result=await apiFetch<{message:string;accepted?:boolean;delivered?:boolean|null}>("/api/tracker/logs/manual-alert",{
         method:"POST",headers:{"content-type":"application/json"},
         body:JSON.stringify({kind}),
       });
-      setNotice(result.message||"Alert sent to Telegram.");setOpen(false);setConfirm(null);
+      setNotice(result.accepted===true?
+        "Telegram accepted the alert request. Delivery is not confirmed.":
+        result.message||"Telegram acceptance was not confirmed.");
+      setDelivery(result.accepted===true?"ACCEPTED":"FAILED");
+      setError(result.accepted!==true);setOpen(false);setConfirm(null);
     }catch(caught){
       setError(true);
       if(caught instanceof FriendlyFetchError){
+        setDelivery(caught.status===403?"DENIED":caught.status===429?"RATE_LIMITED":
+          !configured?"UNCONFIGURED":"FAILED");
         setNotice(caught.status===403?"Not authorized.":
           caught.status===429?"A manual alert was sent recently. Try again in 10 minutes.":
           !configured?"Telegram alerts are not configured.":
           caught.status===503?"Telegram could not confirm delivery. Try again later.":
           caught.message||"Could not send the alert. Try again later.");
-      }else setNotice("Could not send the alert. Try again later.");
+      }else{setDelivery("FAILED");setNotice("Could not send the alert. Try again later.");}
     }finally{setPending(false);}
   }
   const regressions=items.filter(item=>item.regressedAt).length;
@@ -66,8 +73,13 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
       </Button>
     </div>
     {!configured?<InlineNotice tone="info" message="Telegram alerts are not configured. Manual sends are unavailable."/>:null}
-    {notice&&confirm===null?<InlineNotice tone={error?"error":"success"} message={notice}/>:null}
-    <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} title="Daily digest"
+    {notice&&confirm===null?<div role="status" className="space-y-1">
+      <InlineNotice tone={error?"error":"success"} message={notice}/>
+      {delivery==="ACCEPTED"?<p className="text-xs text-body">Provider accepted · recipient delivery unknown</p>:null}
+      {delivery==="RATE_LIMITED"?<p className="text-xs text-body">Wait before sending another test or digest.</p>:null}
+      {delivery==="UNCONFIGURED"?<p className="text-xs text-body">Configure Telegram before retrying.</p>:null}
+    </div>:null}
+    <Drawer open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} title="Log digest"
       description="This preview covers the latest visible Known Errors only. The sent digest uses up to 100 signatures."
       footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
        <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>setOpen(false)}>Close</Button>
@@ -83,7 +95,7 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
         <div className="min-w-0 border-b border-border py-2"><dt className="text-xs text-muted-foreground">Deploy</dt><dd className="break-all">{deploy??"Not recorded"}</dd></div>
       </dl>
 
-    </Dialog>
+    </Drawer>
     <ConfirmDialog open={confirm!==null} onOpenChange={value=>{if(!value&&!pending){setConfirm(null);setError(false);}}}
       title={confirm==="TEST"?"Send a Telegram test alert?":"Send the daily digest to Telegram now?"}
       description="This sends one message to the configured administrator chat. Manual sends are rate-limited."
