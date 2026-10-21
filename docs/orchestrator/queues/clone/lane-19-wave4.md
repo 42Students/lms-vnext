@@ -37,7 +37,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_bug-tracker_audit-activity-display-model.ts.md` (edit src/modules/bug-tracker/audit-activity-display-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_modules_skills_catalog-service.ts.md` (edit src/modules/skills/catalog-service.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_mentor-project-work-model.ts.md` (edit src/modules/projects/mentor-project-work-model.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_components_courses_learner-quiz-attempt.tsx.md` (edit src/components/courses/learner-quiz-attempt.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_components_courses_learner-quiz-attempt.tsx.md` (edit src/components/courses/learner-quiz-attempt.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_modules_placements_placement-offer-expiry-sweep-service.ts.md` (edit src/modules/placements/placement-offer-expiry-sweep-service.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_components_admin_tenant-directory-csv-control.tsx.md` (edit src/components/admin/tenant-directory-csv-control.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-11_recruiter-drives-index.md.md` (new; 1 findings; best P2)

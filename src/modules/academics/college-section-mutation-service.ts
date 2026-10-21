@@ -268,36 +268,6 @@ export async function updateCollegeSection(context: RequestContext,
   } catch (error) { return mapError(error); }
 }
 
-/** Legacy guarded delete: no historic enrollment, teaching, schedule or delivery may remain. */
-export async function deleteCollegeSection(context: RequestContext, sectionIdInput: unknown) {
-  const sectionId = collegeSectionIdSchema.parse(sectionIdInput);
-  const member = await ownCollege(context);
-  try {
-    return await getDb().transaction(async tx => {
-      const [row] = await tx.select({ id:sections.id, name:sections.name })
-        .from(sections)
-        .innerJoin(academicPeriods, and(
-          eq(academicPeriods.id,sections.academicPeriodId),
-          eq(academicPeriods.collegeId,member.collegeId),
-        ))
-        .where(eq(sections.id,sectionId)).for("update").limit(1);
-      if (!row) throw new CollegeSectionError("CLASS_NOT_FOUND");
-      if (await hasDependencies(tx,sectionId)) {
-        throw new CollegeSectionError("CLASS_HAS_DEPENDENCIES",
-          "This class has students or scheduled teaching records. Move or clear them before deleting.");
-      }
-      await tx.delete(sections).where(eq(sections.id,sectionId));
-      await recordActivityEventInTransaction(tx,context,{
-        eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_UPDATED,
-        organizationId:member.organizationId,collegeId:member.collegeId,
-        subjectType:"section",subjectId:row.id,subjectLabel:row.name,
-        summary:"Class deleted",metadata:{operation:"DELETE",className:row.name},
-      });
-      return { id:row.id,name:row.name };
-    });
-  } catch (error) { return mapError(error); }
-}
-
 /** Select menus are server-scoped. These are not permission grants for writes. */
 export async function listCollegeSectionOptions(context: RequestContext) {
   const member = await ownCollege(context);

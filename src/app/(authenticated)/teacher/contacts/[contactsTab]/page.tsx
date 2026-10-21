@@ -88,7 +88,7 @@ export default async function FacultyContactsPage({
           value:key,label:tab.label,href:`/teacher/contacts/${key}`,
         }))} />
 
-      <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+      <section aria-label="Contact directory results" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="flex min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-end">
           <div className="min-w-0">
             <h2 className="m-0 text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
