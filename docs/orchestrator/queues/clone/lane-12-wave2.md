@@ -19,7 +19,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_recruiter-lead-detail-workspace.tsx.part2of2.md` (edit src/components/tpo/recruiter-lead-detail-workspace.tsx; 8 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_super-admin-placement-applications-service.ts.md` (edit src/modules/admin-ui/super-admin-placement-applications-service.ts; 34 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_recruiter-invite-landing.tsx.md` (edit src/components/tpo/recruiter-invite-landing.tsx; 33 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_super-admin-scoped-people-service.ts.md` (edit src/modules/admin-ui/super-admin-scoped-people-service.ts; 32 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_super-admin-scoped-people-service.ts.md` (edit src/modules/admin-ui/super-admin-scoped-people-service.ts; 32 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_request-demo_page.tsx.md` (edit src/app/request-demo/page.tsx; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_activity_learner-notifications-inbox.tsx.md` (edit src/components/activity/learner-notifications-inbox.tsx; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_activity_service.ts.md` (edit src/modules/activity/service.ts; 27 findings; best P2)
