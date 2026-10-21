@@ -60,12 +60,11 @@ export function ResourceProgressControl({
       }
 
       setComplete(true);
+      setConfirmOpen(false);
       router.refresh();
       });
     } catch {
       setError("Could not mark this as complete. Please try again.");
-    } finally {
-      setConfirmOpen(false);
     }
   }
 
@@ -83,7 +82,9 @@ export function ResourceProgressControl({
       <ConfirmDialog open={confirmOpen} onOpenChange={next=>{if(!saving)setConfirmOpen(next);}}
         title={contentType === "LIVE_CLASS" ? "Attended this session?" : "Finished with these materials?"}
         description="Mark this learning item as complete?"
-        confirmLabel="Mark as complete" confirmVariant="primary" pending={saving} onConfirm={markComplete} />
+        confirmLabel="Mark as complete" confirmVariant="primary" pending={saving} onConfirm={markComplete}>
+        {error?<Alert tone="error">{error}</Alert>:null}
+      </ConfirmDialog>
       {error ? <Alert tone="error">{error}</Alert> : null}
     </div>
   );
