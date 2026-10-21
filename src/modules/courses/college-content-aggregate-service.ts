@@ -65,6 +65,18 @@ export async function listCollegeContentAggregate(
   });
 
   const db = getDb();
+  // Legacy selectors are dependent; do not populate lesson options from the
+  // current page only, which omits lessons on subsequent server pages.
+  const lessonOptions=query.courseCode?await db.selectDistinct({
+    id:courseLessons.id,name:courseLessons.name,courseCode:courses.code,
+  }).from(courseLessons)
+    .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+    .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
+    .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+    .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+      eq(departments.collegeId,collegeId)))
+    .where(eq(courses.code,query.courseCode))
+    .orderBy(asc(courseLessons.name),asc(courseLessons.id)).limit(2000):[];
   const sectionOptions=await db.select({
     deliveryId:courseSectionDeliveries.id,offeringId:courseOfferings.id,
     sectionName:sections.name,sectionCode:sections.code,
@@ -135,6 +147,7 @@ export async function listCollegeContentAggregate(
       kind !== "LIVE_CLASS" && query.offeringStatus && query.offeringStatus !== "ALL"
         ? eq(courseOfferings.status,query.offeringStatus) : undefined,
       query.courseCode ? eq(courses.code, query.courseCode) : undefined,
+      query.lessonId ? eq(courseLessons.id,query.lessonId) : undefined,
       kind !== "LIVE_CLASS" && query.programCode ? eq(programs.code,query.programCode) : undefined,
       kind !== "LIVE_CLASS" && query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       kind !== "LIVE_CLASS" && query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
@@ -207,7 +220,7 @@ export async function listCollegeContentAggregate(
     };
   });
   return {
-    kind, query, sectionOptions, materialCountsReady:materialsReady, view:live?.view??"ALL", from:live?.from, to:live?.to, items:annotated, total,
+    kind, query, lessonOptions, sectionOptions, materialCountsReady:materialsReady, view:live?.view??"ALL", from:live?.from, to:live?.to, items:annotated, total,
     pageSize,
     totalPages: collegeContentPageCount(total,pageSize),
   };
