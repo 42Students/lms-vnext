@@ -52,7 +52,7 @@ export default async function CollegeCompaniesPage({
         <Input name="q" type="search" form="college-company-filters" maxLength={100} defaultValue={query.q} className="min-h-11 w-full min-w-0 md:min-h-9" />
       </label>}
       action={<Button variant="primary" type="submit" form="college-company-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
-      <form id="college-company-filters" method="get" className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
+      <form id="college-company-filters" method="get" className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4" aria-label="Filter companies">
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
           <Select name="status" defaultValue={query.status}>
             <option value="ACTIVE">Active companies</option><option value="ARCHIVED">Archived companies</option>
