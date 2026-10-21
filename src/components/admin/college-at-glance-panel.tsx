@@ -23,10 +23,10 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
   requestSequence.current+=1;
   currentCounts.current=initial;
   setCounts(initial);
-  setError(initial?"":COLLEGE_GLANCE_LOAD_ERROR);
+  setError("");
  },[collegeId,initial]);
  const [refreshing,setRefreshing]=useState(false);
- const [error,setError]=useState(initial? "":COLLEGE_GLANCE_LOAD_ERROR);
+ const [error,setError]=useState("");
  const refresh=useCallback(async()=>{
   const seq=++requestSequence.current;
   setRefreshing(true);
@@ -61,7 +61,7 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
   {!counts&&refreshing?<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
    {ITEMS.map(item=><Skeleton key={item.key} variant="kpi" label={item.label+" loading"}/>)}
   </div>:null}
-  <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+  {counts?<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
    {ITEMS.map(item=><StatTile className={collegeStyles.tile} key={item.key} href={item.href} label={item.label}
     value={displayedGlanceNumber(counts?.[item.key]??null)}
     detail="Recorded in the selected college">
@@ -74,7 +74,7 @@ export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initi
        "M4 7h16v14H4zM9 7V5a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2M4 13a22 22 0 0 0 16 0"}/>
      </svg>
     </StatTile>)}
-  </div>
+  </div>:null}
   {error&&counts?<p role="status" className="text-xs text-muted-foreground">Showing the last successful college summary.</p>:null}
  </section>;
 }
