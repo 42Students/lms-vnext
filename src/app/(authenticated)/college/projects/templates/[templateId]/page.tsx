@@ -1,4 +1,5 @@
 import Link from "next/link";
+import {redirect} from "next/navigation";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ProjectAdminNav} from "@/components/projects/project-admin-nav";
@@ -72,6 +73,10 @@ export default async function CollegeProjectTemplateDetailPage({
      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>}/>}
  </div>;
  const detail=detailResult.value;
+ // Successful legacy numeric bookmarks canonicalize only after an authorized
+ // college assignment check, never by revealing an unassigned global ID.
+ if(templateId!==detail.template.id)
+  redirect("/college/projects/templates/"+encodeURIComponent(detail.template.id));
  const ready=detail.template.status==="PUBLISHED"&&
   publishableProjectTemplateBlueprintSchema.safeParse(detail.version.blueprint).success;
  const publication=detail.template.currentVersion===detail.template.publishedVersion&&

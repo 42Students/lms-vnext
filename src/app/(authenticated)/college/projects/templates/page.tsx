@@ -1,111 +1,158 @@
 import Link from "next/link";
-import { redirect } from "next/navigation";
-import { AuthorizationError } from "@/modules/permissions/policy";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import {redirect} from "next/navigation";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {getCurrentRequestContext} from "@/auth/request-context";
+import {PageHeader} from "@/components/ui/page-header";
+import {ProjectAdminNav} from "@/components/projects/project-admin-nav";
 import {ProjectAdminMissingCollege} from "@/components/projects/project-admin-missing-college";
-import { getCurrentRequestContext } from "@/auth/request-context";
-import { PageHeader } from "@/components/ui/page-header";
-import { ListToolbar } from "@/components/ui/list-toolbar";
-import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
-import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
-import { StatusBadge } from "@/components/ui/status-badge";
-import { EmptyState } from "@/components/ui/empty-state";
-import { ErrorState } from "@/components/ui/error-state";
-import { listAssignedProjectTemplates } from "@/modules/projects/template-service";
-import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
-import { ProjectTemplateCatalogueExport } from "@/components/projects/project-template-catalogue-export";
-import { projectTemplateSectionCounts } from "@/modules/projects/project-template-catalogue-model";
+import {StatusBadge} from "@/components/ui/status-badge";
+import {EmptyState} from "@/components/ui/empty-state";
+import {ErrorState} from "@/components/ui/error-state";
+import {listAssignedProjectTemplates} from "@/modules/projects/template-service";
+import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
+import {ProjectTemplateCatalogueSearch} from "@/components/projects/project-template-catalogue-search";
+import {ProjectTemplateCatalogueExport} from "@/components/projects/project-template-catalogue-export";
+import {projectTemplateSectionCounts} from "@/modules/projects/project-template-catalogue-model";
+
+const basePath="/college/projects/templates";
+const pageSize=10;
+const one=(value:string|string[]|undefined)=>
+ Array.isArray(value)?value[0]:value;
+function pageHref(query:string,page:number,from:string|null){
+ const params=new URLSearchParams();
+ if(query)params.set("q",query);
+ if(from)params.set("from",from);
+ if(page>1)params.set("page",String(page));
+ return basePath+(params.size?"?"+params.toString():"");
+}
 
 export default async function CollegeProjectTemplatesPage({
-  searchParams,
-}: {
-  searchParams: Promise<Record<string, string | string[] | undefined>>;
-}) {
-  const context = await getCurrentRequestContext();
-  const collegeId = getProjectAdminCollegeId(context);
-  if (!collegeId) return <ProjectAdminMissingCollege/>;
-
-  const params = await searchParams;
-  const legacySearch = Array.isArray(params.search)?params.search[0]:params.search;
-  if (!params.q && legacySearch) redirect("/college/projects/templates?q="+encodeURIComponent(legacySearch.trim().slice(0,120)));
-
-  const templateRead = await listAssignedProjectTemplates(context, collegeId)
-    .then(value=>({ok:true as const,value}))
-    .catch((error:unknown)=>{ if(error instanceof AuthorizationError)throw error;return {ok:false as const}; });
-  if(!templateRead.ok) return <div className="min-w-0 space-y-6">
-    <PageHeader title="Templates"
-      description="Published project templates assigned to this college."/>
-    <ErrorState title="Templates could not be loaded"
-      description="The assigned template catalogue could not be loaded. Your filters were not changed."
-      action={<Link href="/college/projects/templates"
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading templates</Link>}/>
-  </div>;
-  const templates = templateRead.value;
-
-  const rawSearch = params.q;
-  const q = (Array.isArray(rawSearch) ? rawSearch[0] : rawSearch ?? "").trim().slice(0, 120);
-  const visible = templates.filter((template) =>
-    (template.title + " " + template.slug + " " + template.version)
-      .toLowerCase().includes(q.toLowerCase()),
-  );
-  const rows = visible.map((template) => ({
-    templateId: template.templateId,
-    title: template.title,
-    version: template.version,
-    sections: projectTemplateSectionCounts(template.blueprint),
-  }));
-
-  const columns:DataTableColumn<(typeof visible)[number]>[]=[
-    {key:"template",header:"Template",mobilePriority:"primary",cell:template=><div>
-      <p className="font-semibold">{template.title}</p>
-      {template.summary?<p className="mt-1 max-w-lg text-xs text-muted-foreground leading-5">{template.summary}</p>:null}
-    </div>},
-    {key:"version",header:"Version",cell:template=><StatusBadge tone="neutral">Version {template.version}</StatusBadge>},
-    {key:"sections",header:"Sections",cell:template=>{
-      const counts=projectTemplateSectionCounts(template.blueprint);
-      return `${counts.overview} overview · ${counts.releases} releases · ${counts.sprints} sprints · ${counts.tasks} tasks · ${counts.resources} resources`;
-    }},
-    {key:"action",header:"Action",mobilePriority:"action",cell:template=>
-      <Link href={"/college/projects/templates/"+template.templateId}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View template</Link>},
-  ];
-  return (
-    <div className="min-w-0 space-y-6">
-      <ProjectAdminNav
-        basePath="/college/projects"
-        active="templates"
-      />
-      <PageHeader
-        title="Templates"
-        description="Published project templates assigned to this college."
-      />
-      <form action="/college/projects/templates" method="get" role="search" aria-label="Project template search"
-        className="flex min-w-0 flex-wrap items-end max-[767px]:flex-col max-[767px]:items-stretch gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-        <label className="w-full min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">
-          Search templates
-          <Input type="search" name="q" maxLength={120} defaultValue={q}
-            placeholder="Search by template or version"
-            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" />
-        </label>
-        <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
-          Search
-        </Button>
-        {q ? <Link href="/college/projects/templates" className="py-2 text-sm text-link underline min-h-11 md:min-h-9 inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-          Clear search
-        </Link> : null}
-
-      </form>
-      <ListToolbar label="Assigned project templates" viewCount={visible.length}
-        exportAction={<ProjectTemplateCatalogueExport rows={rows} />} />
-      <DataTable caption="Assigned project templates" columns={columns} rows={visible}
-        getRowKey={template=>template.assignmentId}
-        empty={<EmptyState
-          title={templates.length===0?"No assigned project templates":"No matching project templates"}
-          description={templates.length===0?"No project templates are currently assigned to this college.":"No project templates match this search."}
-          action={q?<Link href="/college/projects/templates"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>:undefined}
-        />} />
+ searchParams,
+}:{
+ searchParams:Promise<Record<string,string|string[]|undefined>>;
+}){
+ const context=await getCurrentRequestContext();
+ const collegeId=getProjectAdminCollegeId(context);
+ if(!collegeId)return <ProjectAdminMissingCollege variant="templates"/>;
+ const params=await searchParams;
+ const legacySearch=one(params.search);
+ if(!one(params.q)&&legacySearch){
+  const canonical=legacySearch.trim().slice(0,120);
+  redirect(pageHref(canonical,1,null));
+ }
+ const q=(one(params.q)??"").trim().slice(0,120);
+ const from=one(params.from);
+ const preservedFrom=from&&/^(workspaces|create|at-risk)$/.test(from)?from:null;
+ const read=await listAssignedProjectTemplates(context,collegeId,q)
+  .then(value=>({ok:true as const,value}))
+  .catch((error:unknown)=>{
+   if(error instanceof AuthorizationError)throw error;
+   return {ok:false as const};
+  });
+ if(!read.ok)return <div className="min-w-0 space-y-4">
+  <ProjectAdminNav basePath="/college/projects" active="templates"/>
+  <PageHeader title="Project templates"
+   description="Pick a template to start a new project workspace."/>
+  <ErrorState title="Templates could not be loaded"
+   description="The assigned template catalogue could not be loaded. Your search was not changed."
+   action={<Link href={pageHref(q,1,preservedFrom)}
+    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+    Retry loading templates
+   </Link>}/>
+ </div>;
+ const templates=read.value;
+ const rawPage=one(params.page)??"1";
+ const requestedPage=/^[1-9]\d{0,5}$/.test(rawPage)?Number(rawPage):1;
+ const totalPages=Math.max(1,Math.ceil(templates.length/pageSize));
+ const page=Math.min(Math.max(1,requestedPage),totalPages);
+ const start=(page-1)*pageSize;
+ const visible=templates.slice(start,start+pageSize);
+ const rows=templates.map(template=>({
+  templateId:template.templateId,
+  title:template.title,
+  summary:template.summary,
+  version:template.version,
+  sections:projectTemplateSectionCounts(template.blueprint),
+ }));
+ return <div className="min-w-0 space-y-5">
+  <ProjectAdminNav basePath="/college/projects" active="templates"/>
+  <PageHeader title="Project templates"
+   description="Pick a template to start a new project workspace."/>
+  <p role="status" className="border-l-[3px] border-info-border bg-info-subtle px-3 py-2 text-sm text-body">
+   Published project templates are assigned to this college by a Super Admin.
+   Pick a template to create a workspace for your learners.
+  </p>
+  <section aria-label="Templates" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
+    <h2 className="text-lg font-semibold text-foreground">Templates</h2>
+    <div className="flex min-w-0 w-full flex-wrap items-center gap-2 sm:w-auto">
+     <ProjectTemplateCatalogueSearch initialQuery={q}/>
+     <ProjectTemplateCatalogueExport rows={rows}/>
     </div>
-  );
+   </div>
+   {visible.length? <div className="max-w-full overflow-x-auto">
+    <table className="w-full min-w-[670px] border-collapse text-left text-sm">
+     <caption className="sr-only">Published project templates assigned to this college</caption>
+     <thead className="border-b border-border text-xs font-semibold text-body">
+      <tr>
+       <th className="px-3 py-3" scope="col">Template</th>
+       <th className="px-3 py-3" scope="col">Version</th>
+       <th className="px-3 py-3" scope="col">Sections</th>
+       <th className="px-3 py-3" scope="col">Action</th>
+      </tr>
+     </thead>
+     <tbody>{visible.map(template=>{
+      const counts=projectTemplateSectionCounts(template.blueprint);
+      return <tr key={template.assignmentId}
+        className="border-b border-border last:border-b-0">
+       <td className="max-w-[380px] px-3 py-3 align-top">
+        <p className="break-words font-semibold text-foreground">{template.title}</p>
+        <p className="mt-1 whitespace-pre-wrap break-words text-xs text-muted-foreground">
+         {template.summary?.trim()||"—"}
+        </p>
+       </td>
+       <td className="px-3 py-3 align-top tabular-nums">
+        {Number.isFinite(template.version)?String(template.version):"—"}
+       </td>
+       <td className="px-3 py-3 align-top">
+        <div className="flex min-w-[260px] flex-wrap gap-1.5">
+         <StatusBadge tone="neutral">Overview {counts.overview}</StatusBadge>
+         <StatusBadge tone="neutral">Sprints {counts.sprints}</StatusBadge>
+         <StatusBadge tone="neutral">Tasks {counts.tasks}</StatusBadge>
+         <StatusBadge tone="neutral">Resources {counts.resources}</StatusBadge>
+        </div>
+       </td>
+       <td className="px-3 py-3 align-top">
+        <Link href={basePath+"/"+encodeURIComponent(template.templateId)}
+         className="inline-flex min-h-11 items-center whitespace-nowrap font-semibold text-link underline md:min-h-9">
+         View &amp; use
+        </Link>
+       </td>
+      </tr>;
+     })}</tbody>
+    </table>
+   </div>:<EmptyState
+    title={q?"No templates match this search":"No templates are available to this college yet"}
+    description={q?"No templates match this search. Try another title or slug.":
+     "No templates are available to this college yet. Ask a Super Admin to publish and assign one."}
+    action={q?<Link href={basePath}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+     Clear search
+    </Link>:undefined}/>}
+   <nav aria-label="Template catalogue pages"
+    className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-sm text-body">
+    <p role="status">Showing {templates.length?start+1:0}–{Math.min(start+pageSize,templates.length)}
+     {" of "}{templates.length} templates</p>
+    {totalPages>1?<div className="flex flex-wrap items-center gap-3">
+     {page>1?<Link href={pageHref(q,page-1,preservedFrom)}
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      Previous</Link>:<span aria-disabled="true" className="opacity-50">Previous</span>}
+     <span className="tabular-nums">Page {page} of {totalPages}</span>
+     {page<totalPages?<Link href={pageHref(q,page+1,preservedFrom)}
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      Next</Link>:<span aria-disabled="true" className="opacity-50">Next</span>}
+    </div>:null}
+   </nav>
+  </section>
+ </div>;
 }
