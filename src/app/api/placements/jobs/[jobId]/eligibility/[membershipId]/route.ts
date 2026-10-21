@@ -3,6 +3,9 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {isSuperAdmin} from "@/modules/identity/context";
+import {resolveActingCollege} from "@/modules/permissions/acting-college";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {getPlacementJob} from "@/modules/placements/job-service";
 import {requireTpoBatchActor} from "@/modules/placements/tpo-batch-workspace-read-service";
 import {z} from "zod";
 import {
@@ -29,8 +32,17 @@ export async function GET(
     // A direct eligibility read exposes student academic evidence and
     // effective overrides. Recheck the current TPO/College Admin membership
     // before accepting a job ID from a stale browser session.
-    if(!isSuperAdmin(context))await requireTpoBatchActor(context);
     const { jobId, membershipId } = await params;
+    if(isSuperAdmin(context)){
+      // A globally privileged role is not a license to read student evidence
+      // outside its explicitly selected and still-active acting college.
+      const acting=await resolveActingCollege(context,"placements.manage");
+      const job=await getPlacementJob(context,jobId);
+      if(job.collegeId!==acting.collegeId)
+        throw new AuthorizationError("placements.manage");
+    }else{
+      await requireTpoBatchActor(context);
+    }
     const eligibility =
       await evaluatePlacementEligibility(
         context,

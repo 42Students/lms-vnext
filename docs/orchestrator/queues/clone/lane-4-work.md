@@ -63,7 +63,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_public-page_read-service.ts.md` (edit src/modules/placements/public-page/read-service.ts; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_recruiter-placement-portfolio.tsx.md` (edit src/components/placements/recruiter-placement-portfolio.tsx; 10 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-general-requests.tsx.md` (edit src/components/placements/learner-general-requests.tsx; 10 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_eligibility_membershipId_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/eligibility/[membershipId]/route.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_eligibility_membershipId_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/eligibility/[membershipId]/route.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/route.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_change-requests_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/change-requests/route.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_status_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/status/route.ts; 1 findings; best P1)
