@@ -81,7 +81,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_academics_schedule-events_route.ts.md` (edit src/app/api/academics/schedule-events/route.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_learner-course-card-search-model.ts.md` (edit src/modules/courses/learner-course-card-search-model.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_tpo-configuration.ts.md` (edit src/db/schema/tpo-configuration.ts; 3 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_app-shell.tsx.md` (edit src/components/shell/app-shell.tsx; 3 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_app-shell.tsx.md` (edit src/components/shell/app-shell.tsx; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_placements_tpo-team-asks-service.ts.md` (edit src/modules/placements/tpo-team-asks-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_bug-tracker_tracker-cloud-logs.ts.md` (edit src/modules/bug-tracker/tracker-cloud-logs.ts; 3 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_colleges_admin-directory-query-model.ts.md` (edit src/modules/colleges/admin-directory-query-model.ts; 3 findings; best P2)
