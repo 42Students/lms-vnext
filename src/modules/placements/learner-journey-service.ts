@@ -285,7 +285,11 @@ export async function getLearnerPlacementJourney(
         row.application.submittedAt,
       withdrawnAt:
         row.application.withdrawnAt,
-      job: row.job,
+      // The source public Job DTO marked assessmentUrl @JsonIgnore.
+      // Keep protected test links out of general learner journey payloads;
+      // a candidate obtains an authorized link through their round detail.
+      job: {...row.job,legacyPostingDetails:row.job.legacyPostingDetails
+        ? {...row.job.legacyPostingDetails,assessmentUrl:null}:null},
       company: row.company,
       screening: {
         status: terminal
