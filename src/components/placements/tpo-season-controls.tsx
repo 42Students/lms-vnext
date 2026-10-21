@@ -101,7 +101,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
          </Button>
         </div>
       ))}
-      {error ? <InlineNotice tone="error" message={error}/> : null}
+      {error && !reviewOpen ? <InlineNotice tone="error" message={error}/> : null}
       <ConfirmDialog open={reviewOpen} onOpenChange={setReviewOpen}
         title={edit ? "Confirm active season change?" : "Create and activate placement season?"}
         description={edit

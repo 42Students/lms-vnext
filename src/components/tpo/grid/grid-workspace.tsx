@@ -260,13 +260,16 @@ export function GridWorkspace<Row>({
    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={clearNarrowing}>Clear search and filters</Button>
   </div>:null}
   {selection&&selectedPage.length?<div role="region" aria-label="Act on these"
-    className="flex min-w-0 flex-col items-stretch gap-2 border-y border-border bg-primary-subtle py-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
+    className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border bg-primary-subtle py-3 text-sm sm:flex-row sm:flex-wrap sm:items-center">
     <strong>{selectedPage.length} selected</strong>
     {act?.(rows,selectedPage,clearPageSelection)}
     <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>void copyRows()}>Copy selected</Button>
     <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={clearPageSelection}>Clear page selection</Button>
    </div>:null}
-  {notice?<InlineNotice tone="info" message={notice}/>:null}
+  {notice?<InlineNotice
+   tone={notice.startsWith("Could not")||notice.startsWith("Clipboard access is blocked")||
+    notice.startsWith("There are no rows")||notice.startsWith("Paste at most")?"error":"info"}
+   message={notice}/>:null}
   {typeof children==="function"?children(activeKeys):children}
  </section>;
 }
