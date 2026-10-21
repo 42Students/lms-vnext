@@ -243,7 +243,7 @@ export async function getBugTrackerIssueForAdmin(
       and(eq(db10BugReportAttachments.createdAt,at),lt(db10BugReportAttachments.id,id)),
     )!);
   }
-  const [activityRows, attachmentRows] = await Promise.all([
+  const [activityResult,attachmentResult] = await Promise.allSettled([
     getDb()
       .select({
         id: db10BugReportActivities.id,
@@ -274,11 +274,15 @@ export async function getBugTrackerIssueForAdmin(
       .limit(51),
   ]);
 
+  const activityRows=activityResult.status==="fulfilled"?activityResult.value:[];
+  const attachmentRows=attachmentResult.status==="fulfilled"?attachmentResult.value:[];
   const activities=activityRows.slice(0,50);
   const attachments=attachmentRows.slice(0,50);
   const lastAttachment=attachments.at(-1);
   const last=activities.at(-1);
   return { report:row.report,activities,attachments,
+    activityUnavailable:activityResult.status==="rejected",
+    attachmentsUnavailable:attachmentResult.status==="rejected",
     nextAttachmentCursor:attachmentRows.length>50 && lastAttachment ? {
       attachmentBeforeCreatedAt:lastAttachment.createdAt.toISOString(),attachmentBeforeId:lastAttachment.id,
     }:null,
