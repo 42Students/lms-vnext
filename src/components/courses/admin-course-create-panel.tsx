@@ -107,13 +107,14 @@ export function AdminCourseCreatePanel({
   const [courseName, setCourseName] = useState(copy?.name??"");
   const [courseCode, setCourseCode] = useState(copy?.code??"");
   const duplicated=courses.find(course=>course.id===duplicateCourseId);
-  const [shortTitle,setShortTitle]=useState(duplicated?.shortTitle??copy?.name?.slice(0,120)??"");
-  const [officialCode,setOfficialCode]=useState(duplicated?.officialCode??"");
+  const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,64));
+  const [officialCode,setOfficialCode]=useState((duplicated?.officialCode??"").slice(0,40));
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
   const superAdmin=courseBasePath.startsWith("/admin/");
 
   const [courseDescription, setCourseDescription] = useState(copy?.description??"");
+  const [createErrors, setCreateErrors] = useState<Partial<Record<"department"|"name"|"shortTitle"|"code",string>>>({});
 
   const [offeringCourseId, setOfferingCourseId] = useState("");
   const [offeringCohortId, setOfferingCohortId] = useState("");
@@ -189,6 +190,24 @@ export function AdminCourseCreatePanel({
 
   function createCourse(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const issues: Partial<Record<"department"|"name"|"shortTitle"|"code",string>> = {};
+    if (!courseDepartmentId) issues.department = "Select a department";
+    if (!courseName.trim()) issues.name = "Enter a course name";
+    else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
+    if (superAdmin && !shortTitle.trim()) issues.shortTitle = "Enter short display name";
+    else if (superAdmin && shortTitle.trim().length > 64)
+      issues.shortTitle = "Maximum 64 characters";
+    if (superAdmin && officialCode.trim().length > 40)
+      issues.code = "Maximum 40 characters";
+    if (!superAdmin && !courseCode.trim()) issues.code = "Enter course code";
+    setCreateErrors(issues);
+    if (Object.keys(issues).length > 0) {
+      const field = issues.department ? "course-department"
+        : issues.name ? "course-name"
+        : issues.shortTitle ? "course-short-title" : "course-code";
+      document.getElementById(field)?.focus();
+      return;
+    }
     run(
       () => postJson("/api/courses", {
         departmentId: courseDepartmentId,
@@ -200,9 +219,9 @@ export function AdminCourseCreatePanel({
         takeaways:superAdmin?takeaways.trim()||null:undefined,
         description: courseDescription.trim() || null,
       }),
-      COLLEGE_COURSES_COPY.createdMessage(courseName.trim()),
+      `Created course “${courseName.trim()}”.`,
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");if(copy)router.replace(courseBasePath); },
+        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setCreateErrors({});if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -279,16 +298,16 @@ export function AdminCourseCreatePanel({
         nextSetupStep==="FACULTY"?"Section Delivery created. Assign Faculty to that Section.":
         "Teaching assignment saved. The Course setup flow is complete."}
       </p>
-      <form id="setup-course" onSubmit={createCourse} className="scroll-mt-24 border-b border-border pb-4">
+      <form id="setup-course" noValidate onSubmit={createCourse} className="scroll-mt-24 border-b border-border pb-4">
         <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body leading-[22px]">
           No departments in this college yet. Create a department before adding a course.{" "}
           <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
         </p>:null}
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
-          <strong>Duplicating “{copy.name}”</strong>
+          <strong>Duplicating “{copy.name}” — review the copy before creating it.</strong>
           <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" onClick={()=>router.replace(courseBasePath)}>Cancel copy</Button>
-          <p className="w-full text-xs text-muted-foreground leading-[20px]">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
+          <p className="w-full text-xs text-muted-foreground leading-[20px]">Catalog name, code, department, description and available display metadata are copied. Images, course content, offerings and assignments are not copied. Review the code before saving.</p>
         </div>:null}
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div className="md:col-span-2">
@@ -297,19 +316,23 @@ export function AdminCourseCreatePanel({
               <option value="">Select Department</option>
               {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
+            {createErrors.department ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.department}</p> : null}
           </div>
           <div>
             <FieldLabel htmlFor="course-name">{COLLEGE_COURSES_COPY.nameLabel}</FieldLabel>
-            <Input id="course-name" value={courseName} onChange={(event) => setCourseName(event.target.value)} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
+            <Input id="course-name" value={courseName} onChange={(event) => { setCourseName(event.target.value);setCreateErrors(previous=>({...previous,name:undefined})); }} placeholder={COLLEGE_COURSES_COPY.namePlaceholder} maxLength={255} required />
+            {createErrors.name ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.name}</p> : null}
           </div>
           {superAdmin?<div className="grid gap-3 md:col-span-2 md:grid-cols-2">
             <div>
               <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
-              <Input id="course-short-title" value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120} required />
+              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={64} placeholder="e.g. DSA" required />
+              {createErrors.shortTitle ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.shortTitle}</p> : null}
             </div>
             <div>
               <FieldLabel htmlFor="course-official-code">Official course code (optional)</FieldLabel>
-              <Input id="course-official-code" value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
+              <Input id="course-official-code" value={officialCode} onChange={event=>{setOfficialCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} maxLength={40}/>
+              {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
             </div>
             <div className="md:col-span-2">
               <FieldLabel htmlFor="course-takeaways">Course takeaways (optional)</FieldLabel>
@@ -323,7 +346,8 @@ export function AdminCourseCreatePanel({
             </div>
           </div>:<div>
             <FieldLabel htmlFor="course-code">Code</FieldLabel>
-            <Input id="course-code" value={courseCode} onChange={(event) => setCourseCode(event.target.value)} placeholder="CS201" maxLength={64} required />
+            <Input id="course-code" value={courseCode} onChange={(event) => {setCourseCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} placeholder="CS201" maxLength={64} required />
+            {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
           </div>}
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-description">Description</FieldLabel>
@@ -331,7 +355,7 @@ export function AdminCourseCreatePanel({
           </div>
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending || !courseDepartmentId || !courseName.trim() || (superAdmin?!shortTitle.trim():!courseCode.trim())}>Create Course</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending}>Create Course</Button>
         </div>
       </form>
 
