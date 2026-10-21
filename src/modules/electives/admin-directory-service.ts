@@ -1,11 +1,89 @@
 import "server-only";
 import { and, asc, count, countDistinct, eq, ilike, inArray, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { departments, electiveSlots, electiveOfferings, lmsGroupMembers, collegeMemberships, programs } from "@/db/schema";
+import { departments, electiveSlots, electiveOfferings, lmsGroupMembers, collegeMemberships, programs,
+  lmsGroups, courseSectionDeliveries, sections, courseTeachingAssignments, users } from "@/db/schema";
+import { z } from "zod";
+import { listElectiveOfferings } from "./service";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { adminElectiveQuerySchema, summarizeAdminElectives } from "./admin-directory-model";
+
+/** A selected elective slot's entire read-only panel: offering capacity,
+ * active enrolled roster and faculty (teaching assignment names) are resolved
+ * through authoritative college-owned deliveries. Archived offerings remain
+ * visible for audits, but don't contribute to the active seat counter.
+ */
+export async function getSuperAdminElectiveSlotDetail(context:RequestContext,rawSlotId:unknown){
+  if(!isSuperAdmin(context))throw new AuthorizationError("academics.read");
+  const collegeId=context.adminScope?.collegeId;
+  if(!collegeId)throw new AuthorizationError("academics.read");
+  requirePermission(context,"academics.read",{
+    collegeId,organizationId:context.adminScope?.organizationId,
+  });
+  const slotId=z.uuid().parse(rawSlotId);
+  const db=getDb();
+  const [slot]=await db.select({
+    id:electiveSlots.id,name:electiveSlots.name,description:electiveSlots.description,
+    programId:electiveSlots.programId,programName:programs.name,
+    semesterNumber:electiveSlots.semesterNumber,academicYear:electiveSlots.academicYear,
+    minPick:electiveSlots.minPick,maxPick:electiveSlots.maxPick,
+    credits:electiveSlots.credits,status:electiveSlots.status,
+  }).from(electiveSlots)
+    .innerJoin(programs,eq(programs.id,electiveSlots.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,collegeId)))
+    .where(and(eq(electiveSlots.id,slotId),
+      eq(electiveSlots.collegeId,collegeId),isNull(electiveSlots.deletedAt)))
+    .limit(1);
+  if(!slot)return null;
+  const offerings=await listElectiveOfferings(context,slotId);
+  const deliveryIds=offerings.map(item=>item.backedDeliveryId).filter(Boolean);
+  const [faculty,sectionLabels]=await Promise.all([
+    deliveryIds.length?db.select({
+      deliveryId:courseTeachingAssignments.deliveryId,
+      displayName:users.displayName,
+    }).from(courseTeachingAssignments)
+      .innerJoin(collegeMemberships,and(
+        eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+        eq(collegeMemberships.collegeId,collegeId)))
+      .innerJoin(users,eq(users.id,collegeMemberships.userId))
+      .where(and(inArray(courseTeachingAssignments.deliveryId,deliveryIds),
+        isNull(courseTeachingAssignments.endedAt),
+        eq(collegeMemberships.status,"ACTIVE"))):[],
+    deliveryIds.length?db.select({
+      deliveryId:courseSectionDeliveries.id,sectionName:sections.name,
+      legacyClassId:sections.legacyClassId,
+    }).from(courseSectionDeliveries)
+      .innerJoin(sections,eq(sections.id,courseSectionDeliveries.sectionId))
+      .where(inArray(courseSectionDeliveries.id,deliveryIds)):[],
+  ]);
+  const facultyByDelivery=new Map<string,string[]>();
+  for(const row of faculty){
+    const list=facultyByDelivery.get(row.deliveryId)??[];
+    if(row.displayName&&!list.includes(row.displayName))list.push(row.displayName);
+    facultyByDelivery.set(row.deliveryId,list);
+  }
+  const sectionByDelivery=new Map(sectionLabels.map(row=>[row.deliveryId,row]));
+  const enriched=offerings.map(row=>({
+    ...row,facultyNames:facultyByDelivery.get(row.backedDeliveryId)??[],
+    facultyCount:facultyByDelivery.get(row.backedDeliveryId)?.length??0,
+    sectionName:sectionByDelivery.get(row.backedDeliveryId)?.sectionName??null,
+    legacyClassId:sectionByDelivery.get(row.backedDeliveryId)?.legacyClassId??null,
+  }));
+  return {
+    slot,offerings:enriched,
+    roster:{
+      activeSeatEnrollments:enriched.reduce((n,row)=>n+(row.status==="ACTIVE"?row.activeMembers:0),0),
+      // A learner selected for two courses counts twice as a seat but once
+      // in a slot student headcount. The list directory uses countDistinct.
+      activeOfferings:enriched.filter(row=>row.status==="ACTIVE").length,
+      waitlistedRequests:enriched.reduce((n,row)=>n+(row.status==="ACTIVE"?row.waitlistedCount:0),0),
+      countSemantics:"ACTIVE_MEMBERSHIP_DISTINCT_FOR_STUDENTS; SUM_PER_OFFERING_FOR_SEATS",
+    },
+  };
+}
 
 /** Read-only scoped elective slots; no College Admin membership fallback. */
 export async function listSuperAdminElectives(context: RequestContext, raw: unknown) {
@@ -19,6 +97,8 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
     collegeId,
   });
   const pattern = query.q ? "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%" : null;
+  // Legacy includeArchived=true maps to status=ALL; an explicit archived
+  // status is a historical-only listing. pageSize defaults to 20, not 200.
   const where=and(
     eq(electiveSlots.collegeId,collegeId),
     isNull(electiveSlots.deletedAt),
@@ -87,5 +167,9 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
       offerings:offerings.get(row.id)??0,students:students.get(row.id)??0}))),
     total:matchCount?.total??0,
     totalPages:Math.max(1,Math.ceil((matchCount?.total??0)/query.pageSize)),
+    pageSize:query.pageSize,page:query.page,
+    // Counts in summarizeAdminElectives are page-local. total/totalPages are
+    // full SQL-filtered directory counts; avoid presenting page total as global.
+    countsScope:"PAGE" as const,
     truncated:false };
 }
