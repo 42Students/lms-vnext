@@ -52,7 +52,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/profile/JobPreferencesDTO.java`
 - [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/MobileAuthEmailFallbackSendRequest.java`
 - [x] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/RecruiterEmailLoginStartRequest.java`
-- [ ] U014 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthHandoffToken.java`
+- [x] U014 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthHandoffToken.java`
 - [ ] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthToken.java`
 - [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/EmailVerificationToken.java`
 - [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertSignatureAccount.java`
