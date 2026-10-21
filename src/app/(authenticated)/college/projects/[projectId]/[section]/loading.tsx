@@ -7,6 +7,6 @@ export default function Loading() {
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Projects" />
     <GracefulPageLoading label="Loading workspace team and project details…" shape="directory" />
-    <div aria-hidden="true" className="space-y-3"><Skeleton label="Loading team members" variant="row" count={3}/></div>
+    <div aria-hidden="true" className="space-y-3"><Skeleton label="Loading team members" variant="row" count={6}/></div>
   </div>;
 }

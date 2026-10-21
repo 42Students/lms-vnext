@@ -586,7 +586,7 @@ export function ProjectWorkspace({
       {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
       {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
-      {mode === "ADMIN" && !sectionBaseHref ? (
+      {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
           { label: workspace.project.title },

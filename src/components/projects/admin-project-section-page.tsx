@@ -43,12 +43,12 @@ export async function AdminProjectSectionPage({
   }
 
   const context = await getCurrentRequestContext();
-  if (!getProjectAdminCollegeId(context)) {
-    return <ErrorState title="Admin not assigned to a college"
-      description="You must be assigned to a college to view project workspaces. Choose a college in the header to continue."
-      action={<Link href={basePath} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
-        Back to workspaces
-      </Link>} />;
+  if((section==="delivery"||section==="team")&&!isSuperAdmin(context)&&!context.membership?.collegeId){
+    return <section className="space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4" role="alert">
+      <h2 className="font-semibold">Admin not assigned to a college</h2>
+      <p>You must be assigned to a college to view project workspaces.</p>
+      <Link href={basePath} className="text-link underline">Projects</Link>
+    </section>;
   }
   // Read failures never disclose a foreign-college workspace; only in-scope
   // misses and unexpected load errors get the legacy recoverable inline state.
@@ -59,13 +59,13 @@ export async function AdminProjectSectionPage({
     });
     workspace=await getProjectWorkspaceView(context,projectId);
   } catch(error) {
-    if(section!=="delivery"||error instanceof ProjectsServiceError&&
+    if(!["delivery","team"].includes(section)||error instanceof ProjectsServiceError&&
       error.code!=="PROJECT_NOT_FOUND")throw error;
     const missing=error instanceof ProjectsServiceError&&error.code==="PROJECT_NOT_FOUND";
     return <section role="alert" className="space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
       <h2 className="font-semibold">{missing?"Workspace not found":"Workspace could not be loaded"}</h2>
-      {!missing?<p>Could not load workspace delivery. No changes were made.</p>:null}
-      <Link href={basePath+"/"+encodeURIComponent(projectId)+"/delivery"}
+      {!missing?<p>Could not load workspace {section==="team"?"team":"delivery"}. No changes were made.</p>:null}
+      <Link href={basePath+"/"+encodeURIComponent(projectId)+"/"+encodeURIComponent(section)}
         className="inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link>
     </section>;
   }
