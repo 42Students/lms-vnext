@@ -359,3 +359,53 @@
 - G2-5-013-049 — placement service/authorized page owner: Report terminal rejection using screening stage and withdrawal separately
 - G2-5-013-060 — placement service/authorized page owner: Map visibility vs application channel to avoid off-platform leaks
 - G2-5-013-068 — placement service/authorized page owner: Map signed file/document link to normalized offer attachment feature
+
+## Wave 2 placements part 5: scoped follow-up for non-schema findings
+- G2-5-013-084 — src/modules/placements/company-service.ts and company verification UI: Document migration field mapping, indexes and uniqueness constraints
+- G2-5-015-010 — src/modules/placements/application-service.ts and authorized application history routes: Map nullable system actors safely; avoid inventing human authors.
+- G2-5-015-023 — src/modules/placements/application-service.ts and authorized application history routes: Exclude deleted legacy history during migration; specify append-only policy.
+- G2-5-015-040 — src/modules/placements/application-service.ts and authorized application history routes: Profile and add `(application_id,to_status,created_at)` index for filtered reports.
+- G2-5-015-045 — src/modules/placements/round-service.ts and candidate round UI: Define migration mappings and excluded deleted events.
+- G2-6-021-038 — src/modules/placements/application-service.ts and authorized application history routes: Create central mapping inventory for all legacy entities and avoid assuming one uniform vNext deleted column.
+- G2-6-019-034 — src/modules/placements/placement presentation and API: Preserve legacy values with explicit mapping of no preference and remote.
+- G2-8-012-007 — src/modules/placements/company-service.ts and company verification UI: Document field-to-field read model and maintain company display from canonical source
+- G2-8-012-052 — src/modules/placements/application-service.ts and authorized application history routes: Document IDs/fields/filters and import compatibility (migration explicitly not required)
+- G2-8-019-010 — src/modules/placements/application-service.ts and authorized application history routes: Import original transition time instead of migration write time.
+- G2-8-019-012 — src/modules/placements/application-service.ts and authorized application history routes: Align max length and retention of rejection reason.
+- G2-8-019-015 — src/modules/placements/application-service.ts and authorized application history routes: Decide immutable audit strategy; exclude imported deleted records.
+- G2-8-019-016 — src/modules/placements/application-service.ts and authorized application history routes: Map invalid event producer input to controlled no-op or validation error.
+- G2-8-019-017 — src/modules/placements/application-service.ts and authorized application history routes: Guard against unchanged duplicate transition writes in producers.
+- G2-8-019-033 — src/modules/placements/application-service.ts and authorized application history routes: Define safe max and exact validation wording.
+- G2-8-019-052 — src/modules/placements/application-service.ts and authorized application history routes: Choose durable audit retention on application deletion and preserve FK.
+- G2-8-019-055 — src/modules/placements/application-service.ts and authorized application history routes: Retain original time on imported row.
+- G2-8-019-057 — src/modules/placements/application-service.ts and authorized application history routes: Define safe maximum and field mapping.
+- G2-8-019-058 — src/modules/placements/application-service.ts and authorized application history routes: Document audit immutability; filter historic deleted during import.
+- G2-8-015-001 — src/modules/placements/round-service.ts and candidate round UI: Document route/ID map, old round IDs not directly reusable
+- G2-8-015-007 — src/modules/placements/round-service.ts and candidate round UI: Legacy-to-new link resolver if migration ever used
+- G2-8-015-015 — src/modules/placements/round-service.ts and candidate round UI: Map testLink→testUrl in read/write and imports
+- G2-8-015-017 — src/modules/placements/round-service.ts and candidate round UI: Convert timezone and keep due-after-round invariant
+- G2-8-015-022 — src/modules/placements/round-service.ts and candidate round UI: Derive timezone from college and show visible field if needed
+- G2-8-015-039 — src/modules/placements/round-service.ts and candidate round UI: Map exact max length/trim validation strings
+- G2-8-015-044 — src/modules/placements/round-service.ts and candidate round UI: Provide mapping for field names and historical time interpretation
+- G2-15-026-008 — src/modules/placements/company-service.ts and company verification UI: Display old job title/company/logo and recorded-outside flag via split entities
+- G2-8-022-052 — src/modules/placements/round-service.ts and candidate round UI: Use descending startDate and stable tie order; benchmark query under 1000 archived seasons.
+- G2-9-004-086 — src/modules/placements/company-service.ts and company verification UI: Restore domain alias list and verification label mapping.
+- G2-9-015-102 — src/modules/placements/application-service.ts and authorized application history routes: Retain fallback parsing for legacy civil-date migration.
+- G2-9-016-098 — src/modules/placements/application-service.ts and authorized application history routes: Define postedDate->publishedAt mapping and all/active counts.
+- G2-9-016-101 — src/modules/placements/application-service.ts and authorized application history routes: Maintain dates synchronization and timezone conversion.
+- G2-9-013-101 — src/modules/placements/application-service.ts and authorized application history routes: Map deleted versus archived in reports, list filters and exports.
+- G2-13-025-009 — src/modules/placements/placement presentation and API: Return explicit success only after committed decline.
+- G2-13-025-014 — src/modules/placements/placement presentation and API: Do not require recruiter-entered reason.
+- G2-13-025-031 — src/modules/placements/placement presentation and API: Implement loading skeleton, 401, transient retry and stale resolution state.
+- G2-13-025-034 — src/modules/placements/placement presentation and API: Audit decline without inventing outbound email/bell.
+- G2-13-025-037 — src/modules/placements/placement presentation and API: Use buttons with explicit 'Accept/Decline invitation to [college]' labels.
+- G2-17-023-060 — src/modules/placements/application-service.ts and authorized application history routes: Confirm Asia/Kolkata conversions and transition compare-and-set semantics.
+- G2-18-013-056 — src/modules/placements/placement presentation and API: Verify legacy orphan job visibility vs new non-null college FK.
+
+## Wave 2 placements part 6: scoped follow-up for non-schema findings
+- G2-9-033-101 — src/modules/placements/company-service.ts and company verification UI: Align lengths and field names across API and constraints.
+- G2-9-034-027 — src/modules/placements/company-service.ts and company verification UI: Check verification propagates across all domains and recruiter drive company matching
+- G2-15-019-024 — src/modules/placements/company-service.ts and company verification UI: Ensure accessible required and duplicate-name messages at form boundary
+- G2-20-011-012 — src/modules/placements/application-service.ts and authorized application history routes: Define standardized max length at service boundary and UI helper
+- G2-3-013-027 — src/modules/placements/application-service.ts and authorized application history routes: Legacy rejectionReason truncates to 500 preserving whitespace except blank filter; vNext free text reason is nullable and has no max at column level. Match 500 for equivalent public reason.
+- G2-3-013-038 — src/modules/placements/application-service.ts and authorized application history routes: Legacy indexes application_id and changed_at separately, vNext compound application_id/created_at index and cascade partial index. Confirm query plans, preserve stable asc ordering.
