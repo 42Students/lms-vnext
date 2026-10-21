@@ -33,7 +33,7 @@ export function FacultyCourseHomeSignals({
     : `/teacher/courses/${deliveryId}/blueprint#learning-path`;
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       {missing.length ? (
         <Alert tone="warning" aria-label="Incomplete faculty course signals">
           <p className="font-semibold">Some faculty course signals are incomplete ({missing.join(", ")}).</p>
@@ -44,7 +44,7 @@ export function FacultyCourseHomeSignals({
           </Link>
         </Alert>
       ) : null}
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
@@ -140,7 +140,7 @@ export function FacultyCourseHomeSignals({
 
       {riskReady && signals.atRiskTotal > 0 ? (
         <section
-          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5"
+          className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6"
           aria-label="Needs attention"
         >
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -190,7 +190,7 @@ export function FacultyCourseHomeSignals({
         {riskReady ? "No major learner risk signals" : "Learner risk signals are unavailable until attendance and submission data can be refreshed."}
       </Alert>}
 
-      {assignmentsReady ? <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-5">
+      {assignmentsReady ? <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
         <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
           Performance
         </h2>
@@ -252,7 +252,7 @@ export function FacultyCourseHomeSignals({
             );
           })}
         </div>
-      </section> : <section aria-label="Performance" className="border-b border-border pb-5">
+      </section> : <section aria-label="Performance" className="border-b border-border pb-4">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Performance</h2>
         <p className="mt-2 text-sm text-body">Performance metrics are unavailable until assignment signals can be refreshed.</p>
       </section>}

@@ -68,7 +68,7 @@ export function FacultyAssessmentOverview({
 
   if (items.length === 0) {
     return (
-      <div className="min-w-0 space-y-5">
+      <div className="min-w-0 space-y-6">
         <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
         <EmptyState
           title={kind === "QUIZ" ? "No quizzes yet" : "No assignments yet"}
@@ -79,7 +79,7 @@ export function FacultyAssessmentOverview({
   }
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <FacultyAssessmentCreate kind={kind} lessons={overview.lessonChoices} />
       <div aria-label={kind === "QUIZ" ? "Quiz totals" : "Assignment totals"} className="flex flex-wrap items-center gap-2">
         <Badge  tone="neutral">
@@ -164,7 +164,7 @@ export function FacultyAssessmentOverview({
           {rows.map((item) => (
             <article
               key={`${item.deliveryId}:${item.id}`}
-              className="min-w-0 py-5 first:pt-2 last:pb-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary-text)]"
+              className="min-w-0 py-4 first:pt-2 last:pb-2 focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-[var(--lms-primary-text)]"
             >
               <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-start lg:justify-between lg:gap-6">
                 <div className="min-w-0">

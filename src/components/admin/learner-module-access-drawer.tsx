@@ -53,7 +53,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  function close(){seq.current++;setDetail(null);setMessage("");}
  return <section aria-label="Why a learner sees a module" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold text-[var(--lms-heading)]">Why can&apos;t a student see a module?</h2>
-  <label className="mt-[var(--lms-space-3)] grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+  <label className="mt-[var(--lms-space-3)] grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
    Why can&apos;t a student see a module? Search…
    <Input type="search" maxLength={100} value={search} onChange={event=>change(event.target.value)}
     placeholder="Name or roll number" autoComplete="off"

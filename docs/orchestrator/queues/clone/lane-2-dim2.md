@@ -320,78 +320,78 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/components/academics/college-hall-cancellation-action.tsx`
 - [x] `src/components/academics/college-promotion-confirmation.tsx`
 - [x] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/academics/learner-class-schedule.module.css`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/legacy-class-month-grid.module.css`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/activity/activity-center.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
-- [ ] `src/components/admin/academic-setup-steps.tsx`
-- [ ] `src/components/admin/admin-dashboard-actions.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/college-branding-form.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/college-setup-checklist.tsx`
-- [ ] `src/components/admin/department-directory.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/legacy-college-stat.module.css`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-interview-operations.tsx`
-- [ ] `src/components/admin/super-admin-placement-detail-view.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/auth/login-form.tsx`
-- [ ] `src/components/auth/membership-chooser.tsx`
-- [ ] `src/components/college/college-admin-profile-editor.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/courses/admin-assessment-read-directory.tsx`
-- [ ] `src/components/courses/admin-course-actions.tsx`
-- [ ] `src/components/courses/admin-course-create-panel.tsx`
-- [ ] `src/components/courses/admin-course-overview.tsx`
-- [ ] `src/components/courses/admin-offering-learning-overview.tsx`
-- [ ] `src/components/courses/assignment-multipart-parts-editor.tsx`
-- [ ] `src/components/courses/college-assessment-aggregate.tsx`
-- [ ] `src/components/courses/college-content-aggregate.tsx`
-- [ ] `src/components/courses/college-learner-progress-report.module.css`
-- [ ] `src/components/courses/college-learner-progress-report.tsx`
-- [ ] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/courses/college-live-classes-directory.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-method-picker.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-content-order-editor.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.module.css`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-quiz-learner-preview.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/faculty-report-csv-download.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/learner-class-schedule.module.css`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/legacy-class-month-grid.module.css`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/activity/activity-center.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/admin/academic-module-scope-inventory.tsx`
+- [x] `src/components/admin/academic-setup-steps.tsx`
+- [x] `src/components/admin/admin-dashboard-actions.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/college-branding-form.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/college-setup-checklist.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/legacy-college-stat.module.css`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-interview-operations.tsx`
+- [x] `src/components/admin/super-admin-placement-detail-view.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/auth/login-form.tsx`
+- [x] `src/components/auth/membership-chooser.tsx`
+- [x] `src/components/college/college-admin-profile-editor.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-role-directory-workspace.tsx`
+- [x] `src/components/college/college-student-csv-import.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/admin-course-actions.tsx`
+- [x] `src/components/courses/admin-course-create-panel.tsx`
+- [x] `src/components/courses/admin-course-overview.tsx`
+- [x] `src/components/courses/admin-offering-learning-overview.tsx`
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx`
+- [x] `src/components/courses/college-assessment-aggregate.tsx`
+- [x] `src/components/courses/college-content-aggregate.tsx`
+- [x] `src/components/courses/college-learner-progress-report.module.css`
+- [x] `src/components/courses/college-learner-progress-report.tsx`
+- [x] `src/components/courses/college-learning-directory.tsx`
+- [x] `src/components/courses/college-live-classes-directory.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-method-picker.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-content-order-editor.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.module.css`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-course-tab-navigation.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/courses/faculty-lesson-authoring.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-quiz-learner-preview.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/faculty-report-csv-download.tsx`
 - [ ] `src/components/courses/faculty-report-legacy-charts.module.css`
 - [ ] `src/components/courses/faculty-submission-file-review.tsx`
 - [ ] `src/components/courses/faculty-video-preview.tsx`

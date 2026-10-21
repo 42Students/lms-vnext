@@ -82,7 +82,7 @@ export function CollegeLiveClassesDirectory({data,showHeader=true}:{data:Data;sh
   </form>
   <section aria-label="Persisted live classes" className="border-y border-border">
     <p className="border-b border-border p-4 text-sm text-muted-foreground">{data.total} matching live classes</p>
-    {data.items.length===0?<p className="p-5 text-sm text-body">No saved sessions match these filters.</p>:
+    {data.items.length===0?<p className="p-6 text-sm text-body">No saved sessions match these filters.</p>:
       <div className="divide-y divide-border">{data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 px-1 py-4 md:px-4">
         <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
           <h2 className="min-w-0 break-words font-semibold text-foreground">{item.title}</h2>
