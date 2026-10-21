@@ -8,7 +8,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 
 - [x] L12-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/templates/[templateId]/resources.js`
 - [x] L13-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ProgramStructureController.java`
-- [ ] L14-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerRequestController.java`
+- [x] L14-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerRequestController.java`
 - [ ] L15-U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertSignature.java`
 - [ ] L15-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/sprints.js`
 - [ ] L17-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminBugTrackerController.java`
