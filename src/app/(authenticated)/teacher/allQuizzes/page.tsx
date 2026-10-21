@@ -2,6 +2,8 @@ import { assignmentFilesRuntimeEnabled } from "@/modules/courses/assignment-file
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyAssessmentOverview } from "@/components/courses/faculty-assessment-overview";
+import { FacultyAssessmentCreate } from "@/components/courses/faculty-assessment-create";
+import { Badge } from "@/components/ui/badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyAssessmentOverview } from "@/modules/courses/faculty-assessment-service";
 
@@ -14,10 +16,18 @@ export default async function FacultyAllQuizzesPage({searchParams}:{
   const overview = await getFacultyAssessmentOverview(context);
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader title="My Quizzes" actions={<Link href="/teacher/results"
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
+      <PageHeader title="My Quizzes"
+        actions={<FacultyAssessmentCreate kind="QUIZ" lessons={overview.lessonChoices} toolbar />} />
+      <div aria-label="Quiz totals" className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge tone="neutral">{overview.quizzes.length} {overview.quizzes.length===1?"Quiz":"Quizzes"}</Badge>
+          <Badge tone="neutral">{new Set(overview.quizzes.map(quiz=>quiz.courseCode)).size} {new Set(overview.quizzes.map(quiz=>quiz.courseCode)).size===1?"Course":"Courses"}</Badge>
+        </div>
+        <Link href="/teacher/results"
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] md:min-h-9">
           Assessment results overview →
-        </Link>} />
+        </Link>
+      </div>
       <FacultyAssessmentOverview filesEnabled={assignmentFilesRuntimeEnabled()} overview={overview} kind="QUIZ" initialQuizId={initialQuizId} />
     </div>
   );
