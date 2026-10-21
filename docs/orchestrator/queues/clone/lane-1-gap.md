@@ -53,14 +53,14 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/MobileAuthEmailFallbackSendRequest.java`
 - [x] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/RecruiterEmailLoginStartRequest.java`
 - [x] U014 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthHandoffToken.java`
-- [ ] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthToken.java`
-- [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/EmailVerificationToken.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertSignatureAccount.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LoginUser.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/MobileLoginAttempt.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java`
-- [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/User.java`
-- [ ] U022 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/UserSession.java`
+- [x] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthToken.java`
+- [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/EmailVerificationToken.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertSignatureAccount.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LoginUser.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/MobileLoginAttempt.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/RefreshTokenBlocklist.java`
+- [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/User.java`
+- [x] U022 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/UserSession.java`
 - [ ] U023 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/EmailVerificationTokenRepository.java`
 - [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/auth/handoff.js`
 - [ ] U025 (FE page) `docs/legacy-source/frontend/src/pages/campaign-unsubscribe/[token].js`
