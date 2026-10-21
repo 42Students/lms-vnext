@@ -10,7 +10,7 @@ export default function LearnerProjectDetailError({
 }) {
   return (
     <section role="alert" className="min-w-0 space-y-4">
-      <PageHeader title={"We couldn't load this project's activity"} />
+      <PageHeader title={"We couldn't load this project"} />
       <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
         Please check your connection, then try again. Your project activity has not been changed.
       </p>

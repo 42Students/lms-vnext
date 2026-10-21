@@ -55,3 +55,16 @@ export function renderLessonsCsv(rows:readonly {
   String(r.contentCount),String(r.publishedContentCount),String(r.publishedAndVisibleFlagCount)]),
  truncated,LESSONS_EXPORT_CAP);
 }
+
+// Versioned export above retains additional LMS vNext fields. This explicit
+// preset defines the original six-column CSV and prevents positional drift.
+export const LEGACY_LESSON_EXPORT_COLUMNS=[
+ "id","lessonName","courseId","sequence","active","enabled",
+] as const;
+export const LESSON_EXPORT_CONTRACT_VERSION="2" as const;
+export function legacyLessonCsvRow(input:{
+ id:string;lessonName:string;courseId:string;sequence:number;active:boolean;enabled:boolean;
+}):readonly string[]{
+ return [input.id,input.lessonName,input.courseId,String(input.sequence),
+  String(input.active),String(input.enabled)];
+}

@@ -5,12 +5,25 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   LectureHallError,
   updateLectureHall,
+  getLectureHallDetail,
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "../error-response";
 
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ hallId: string }> };
+/** Scoped by-ID read; old integer hall ID must first be mapped to UUID. */
+export async function GET(_request:Request,{params}:RouteContext){
+ try{
+  const ctx=await getCurrentRequestContext();
+  const hall=await getLectureHallDetail(ctx,(await params).hallId);
+  return NextResponse.json({hall},{headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){
+  if(error instanceof LectureHallError)return lectureHallErrorResponse(error);
+  return apiErrorResponse(error);
+ }
+}
+
 
 /** Edit a hall, or archive / restore it with {"status": "ARCHIVED" | "ACTIVE"}. */
 export async function PATCH(request: Request, { params }: RouteContext) {

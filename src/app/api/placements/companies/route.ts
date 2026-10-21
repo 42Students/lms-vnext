@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import {z} from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -12,14 +13,14 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
-    const collegeId = new URL(request.url).searchParams.get(
-      "collegeId",
-    );
+    const collegeId = new URL(request.url).searchParams.get("collegeId");
+    if(!z.string().uuid().safeParse(collegeId).success)
+      return NextResponse.json({error:"INVALID_COLLEGE_ID",message:"Select a valid college."},{status:400});
     const companies = await listPlacementCompanies(
       context,
       collegeId ?? "",
     );
-    return NextResponse.json({ companies });
+    return NextResponse.json({ companies, message:"Companies fetched" },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -40,7 +41,7 @@ export async function POST(request: Request) {
       context,
       body,
     );
-    return NextResponse.json(result, { status: 201 });
+    return NextResponse.json({...result,message:"Company created"}, { status: 201 });
   } catch (error) {
     return apiErrorResponse(error);
   }

@@ -31,6 +31,14 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
  * because their historical foreign keys remain intact, unlike physical DELETE.
  */
 
+/** Tenant-scoped hall ID lookup, never a guessed client college override. */
+export async function getLectureHallDetail(ctx:RequestContext,rawId:unknown){
+ const hallId=z.string().uuid().parse(rawId);
+ const [hall]=await getDb().select().from(lectureHalls).where(eq(lectureHalls.id,hallId)).limit(1);
+ if(!hall)throw new LectureHallError("HALL_NOT_FOUND");
+ requirePermission(ctx,"academics.read",{collegeId:hall.collegeId});
+ return hall;
+}
 export const ROOM_TYPES = [
   "CLASSROOM",
   "LECTURE_HALL",
