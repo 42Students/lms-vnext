@@ -218,7 +218,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
             <p className="text-sm leading-6 text-body">
               These are source templates, not evidence that an SMS was sent,
               accepted by a provider or delivered. Provider attempt statuses remain unavailable here.
-              <Link href="/admin/audit#sms-delivery-attempts"
+              <Link href="/admin/sms-log"
                 className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
                 SMS delivery attempts
               </Link>

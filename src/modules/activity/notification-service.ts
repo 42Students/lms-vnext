@@ -1146,6 +1146,7 @@ export async function listOwnNotificationPage(
     eventType?: string;
     importance?: string;
     notificationType?: string;
+    query?: string;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -1164,6 +1165,12 @@ export async function listOwnNotificationPage(
     if (options.unreadSince) {
       conditions.push(gte(inAppNotifications.createdAt, z.date().parse(options.unreadSince)));
     }
+  }
+  if(options.query){
+    const query=z.string().trim().max(100).parse(options.query);
+    const pattern="%"+query.replace(/[\\%_]/g,"\\  appendNotificationContextFilters(conditions, options);")+"%";
+    conditions.push(or(ilike(inAppNotifications.title,pattern),
+      ilike(inAppNotifications.body,pattern))!);
   }
   appendNotificationContextFilters(conditions, options);
   appendNotificationCategoryFilters(conditions, options);

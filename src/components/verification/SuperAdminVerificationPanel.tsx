@@ -3,6 +3,7 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
 import {useToast} from "@/components/ui/toast";
 import {useRef,useState} from "react";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
@@ -27,6 +28,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const [sequenceIndex,setSequenceIndex]=useState(0);
  const [selectedKeys,setSelectedKeys]=useState<string[]>([]);
  const [bulkAction,setBulkAction]=useState<"VERIFY"|"SEND_BACK"|null>(null);
+ const [sort,setSort]=useState<"OLDEST"|"NEWEST"|"NAME">("OLDEST");
  const [reason,setReason]=useState("");
  const [acknowledged,setAcknowledged]=useState(false);
  const [bulkBusy,setBulkBusy]=useState(false);
@@ -40,10 +42,17 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
   if(sequenceIndex+1<sequence.length){setSequenceIndex(i=>i+1);setSelected(sequence[sequenceIndex+1]);}
   else{setSequence([]);setSequenceIndex(0);setSelected(null);}
  };
- const stopSequence=()=>{setSequence([]);setSequenceIndex(0);setSelected(null);};
+ const stopSequence=(notify=true)=>{
+  if(notify&&sequence.length>0&&sequenceIndex+1<sequence.length){
+   showToast({tone:"info",title:"Stopped at "+(sequenceIndex+1)+" of "+sequence.length+" verification requests."});
+  }
+  setSequence([]);setSequenceIndex(0);setSelected(null);
+ };
  const chosen=candidates.filter(row=>selectedKeys.includes(verificationSelectionKey(row)));
- const skipped=bulkAction==="VERIFY"?chosen.filter(row=>row.missingMarksheet):[];
- const applicable=bulkAction==="VERIFY"?chosen.filter(row=>!row.missingMarksheet):chosen;
+ const missingEvidence=(row:VerificationQueueCard)=>
+   row.section==="EDUCATION"?row.missingMarksheet:row.missingIdentityProof===true;
+ const skipped=bulkAction==="VERIFY"?chosen.filter(missingEvidence):[];
+ const applicable=bulkAction==="VERIFY"?chosen.filter(row=>!missingEvidence(row)):chosen;
  async function submitBulk(){
   if(!bulkAction||bulkBusy||inFlightRef.current||applicable.length===0||bulkAction==="VERIFY"&&!acknowledged||
     bulkAction==="SEND_BACK"&&reason.trim().length<3)return;
@@ -55,7 +64,12 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
     headers:{"Content-Type":"application/json"},body:JSON.stringify({collegeId,...payload})});
    if(!response.ok)throw Error(response.status===503?"Verification storage unavailable.":"Bulk review was not accepted.");
    const result=await response.json() as {summary:{succeeded:number;failed:number;attempted:number}};
-   setBulkMessage(result.summary.succeeded+" verified or sent back; "+result.summary.failed+" not applied. Refresh for current row states.");
+   const subject=bulkAction==="VERIFY"?"verified":"sent back";
+   setBulkMessage(result.summary.succeeded+" "+subject+"; "+
+     result.summary.failed+" not applied. "+skipped.length+
+     " without supporting proof were excluded. Verified students are notified through the authorized workflow.");
+   showToast({tone:result.summary.failed?"info":"success",title:
+     result.summary.succeeded+" "+subject+"; "+result.summary.failed+" not applied."});
    setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);router.refresh();
   }catch(error){setBulkFailed(true);setBulkMessage(error instanceof Error?error.message:"Could not finish bulk review.");}
   finally{inFlightRef.current=false;setBulkBusy(false);}
@@ -64,7 +78,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
  const base=`/admin/colleges/${encodeURIComponent(collegeId)}/verification`;
  const navigate=(changes:Record<string,string>)=>{
   if(bulkBusy||inFlightRef.current)return;
-  stopSequence();setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);
+  stopSequence(false);setSelectedKeys([]);setBulkAction(null);setAcknowledged(false);
   const params=new URLSearchParams(query);
   for(const [k,v] of Object.entries(changes)){if(v)params.set(k,v);else params.delete(k);}
   router.push(base+"?"+params.toString());
@@ -79,7 +93,26 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
    <p className="self-center text-xs text-muted-foreground">Review up to 20 waiting requests on this page. Each decision keeps its own audit history.</p>
   </div>:null}
   <VerificationFilterPanel key={JSON.stringify(query)} query={query} onApply={filters=>navigate({...filters,page:"1"})}/>
+  <div className="flex flex-wrap items-center justify-between gap-3">
+   <p className="text-sm text-muted-foreground">Select only eligible requests on this page. Bulk actions are limited to 20 per operation.</p>
+   <label className="text-sm font-semibold">Sort requests
+    <Select value={sort} onChange={e=>setSort(e.target.value as typeof sort)} className="ml-2 min-h-11 md:min-h-9">
+     <option value="OLDEST">Oldest first</option><option value="NEWEST">Newest first</option>
+     <option value="NAME">Student name</option>
+    </Select>
+   </label>
+  </div>
   <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts}
+   denseTable sort={sort} preserveServerOrder={false}
+   selectedKeys={new Set(selectedKeys)}
+   selectionDisabled={bulkBusy}
+   onSelectionChange={(row,checked)=>{
+    const key=verificationSelectionKey(row);
+    setSelectedKeys(current=>checked?
+      current.includes(key)||current.length>=20?current:[...current,key]:
+      current.filter(value=>value!==key));
+    setBulkAction(null);
+   }}
    initialTab={activeTab} initialKind={initialKind}
    onTabChange={tab=>navigate({tab,page:"1"})}
    onKindChange={kind=>navigate({kind:kind==="ALL"?"":kind,page:"1"})}
@@ -102,7 +135,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
        <Checkbox disabled={bulkBusy||(!selectedKeys.includes(verificationSelectionKey(row))&&selectedKeys.length>=20)}
         checked={selectedKeys.includes(verificationSelectionKey(row))}
         onChange={e=>{const key=verificationSelectionKey(row);setSelectedKeys(current=>e.target.checked?[...current,key]:current.filter(k=>k!==key));setBulkAction(null);}}/>
-       {row.learnerName} · {row.section} {row.missingMarksheet?"(missing document)":""}
+       {row.learnerName} · {row.section} {missingEvidence(row)?"(missing document)":""}
       </label>
     </li>)}
    </ul>
