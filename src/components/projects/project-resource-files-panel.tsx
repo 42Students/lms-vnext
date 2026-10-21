@@ -193,7 +193,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
         className="block min-h-11 w-full min-w-0 max-w-full text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>
       <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("project-resource")}</p>
       <Disclosure title="File details (optional)" defaultOpen={Boolean(uploadTitle||uploadDescription||linkedResourceId)} contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3">
-      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2">
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
           <Input className="mt-[6px] block w-full"
             maxLength={200} value={uploadTitle} onChange={event=>setUploadTitle(event.target.value)}
@@ -218,13 +218,13 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
         <MetricBar role="progressbar" label="Project file upload progress"
           value={progress} maximum={100} unit="percent" className={barStyles.track+" mt-2 w-full"} />
       </div>}
-      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+      <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Button variant="primary" type="submit" loading={busy} disabled={busy||!selected}
-          className="min-h-11 w-full md:min-h-9 sm:w-auto">
+          className="min-h-11 w-full md:min-h-9 md:w-auto">
           {busy?"Uploading…":"Upload file"}
         </Button>
         {uploadPhase==="PUT"&&<Button variant="secondary" type="button" disabled={!xhrRef.current} onClick={()=>xhrRef.current?.abort()}
-          className="min-h-11 w-full md:min-h-9 sm:w-auto">Cancel</Button>}
+          className="min-h-11 w-full md:min-h-9 md:w-auto">Cancel</Button>}
       </div>
     </form>}
     {files.length===0?<EmptyState title="No resources yet"
@@ -232,7 +232,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       {files.map(file=>{
         const descriptor=fileStatusDescriptor(file.status);
         return <li key={file.id} className="min-w-0 py-4">
-          <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+          <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
             <div className="min-w-0 flex-1">
               <p className="break-words font-semibold text-foreground [overflow-wrap:anywhere]">{file.title}</p>
               <p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground leading-[20px]">
@@ -251,19 +251,19 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 {descriptor.label}
               </p>
             </div>
-            <div className="flex w-full min-w-0 flex-col gap-2 sm:w-auto sm:flex-row sm:flex-wrap">
+            <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-row md:flex-wrap">
               {projectFileUsable(file)&&<Button variant="secondary" type="button" disabled={busy} onClick={()=>void download(file)}
-                className="min-h-11 w-full md:min-h-9 sm:w-auto">Open file</Button>}
+                className="min-h-11 w-full md:min-h-9 md:w-auto">Open file</Button>}
               {canManage&&file.status==="UPLOADING"&&<Button variant="secondary" type="button" disabled={busy}
-                  onClick={()=>void retryComplete(file)} className="min-h-11 w-full md:min-h-9 sm:w-auto">Retry</Button>}
+                  onClick={()=>void retryComplete(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Retry</Button>}
             </div>
           </div>
           {canManage?<Disclosure title="Manage file" className="mt-2" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
-            <Button variant="secondary" disabled={busy} onClick={()=>beginEdit(file)} className="min-h-11 w-full md:min-h-9 sm:w-auto">Edit resource</Button>
-            <Button variant="link" disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 sm:w-auto">Delete</Button>
+            <Button variant="secondary" disabled={busy} onClick={()=>beginEdit(file)} className="min-h-11 w-full md:min-h-9 md:w-auto">Edit resource</Button>
+            <Button variant="link" disabled={busy} onClick={()=>{setFeedback(null);setDeleteTarget(file);}} className="min-h-11 w-full !text-[var(--lms-error)] md:min-h-9 md:w-auto">Delete</Button>
           </Disclosure>:null}
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
-            className="mt-3 grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 sm:grid-cols-2">
+            className="mt-3 grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 md:grid-cols-2">
             <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
               <Input required maxLength={200} value={editTitle} disabled={busy}
                 onChange={event=>setEditTitle(event.target.value)}
@@ -274,11 +274,11 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
                 onChange={event=>setEditDescription(event.target.value)}
                 className="mt-1 block w-full"/>
             </label>
-            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:col-span-2">
+            <div className="flex min-w-0 flex-col gap-2 md:flex-row md:col-span-2">
               <Button variant="primary" type="submit" loading={busy} disabled={busy||!editTitle.trim()}
-                className="min-h-11 w-full md:min-h-9 sm:w-auto">Update resource</Button>
+                className="min-h-11 w-full md:min-h-9 md:w-auto">Update resource</Button>
               <Button variant="secondary" type="button" disabled={busy} onClick={discardGuard.requestClose}
-                className="min-h-11 w-full md:min-h-9 sm:w-auto">Cancel</Button>
+                className="min-h-11 w-full md:min-h-9 md:w-auto">Cancel</Button>
             </div>
           </form>}
         </li>;
