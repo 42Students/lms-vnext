@@ -61,3 +61,13 @@ The packets below were MOVED to other lanes (whole files). Do NOT work on them: 
 - src_app_home_page.tsx.md
 - NEW_docs_audit_gap2_lane-10_superadmin-verification.md.md
 - src_modules_messaging_runtime-safety.ts.md
+- W3_src_modules_courses_teaching-assignment-batch-service.ts.md
+- W3_src_modules_messaging_providers.ts.md
+- W3_src_modules_messaging_receipt-history-service.ts.md
+- W3_src_components_courses_learner-quiz-attempt.tsx.md
+- W3_src_modules_courses_super-admin-content-directory-service.ts.md
+- W3_src_modules_courses_college-course-catalogue-service.ts.md
+- W3_src_modules_courses_faculty-course-navigation.ts.md
+- W3_src_app_api_courses_courseId_route.ts.md
+- W3_src_modules_notifications_zeptomail-email.ts.md
+- W3_src_app_api_notifications_route.ts.md

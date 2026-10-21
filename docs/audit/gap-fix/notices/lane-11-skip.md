@@ -51,3 +51,13 @@ The packets below were MOVED to other lanes (whole files). Do NOT work on them: 
 - src_app_api_lecture-halls_route.ts.md
 - src_modules_profile-verification_service.ts.md
 - src_components_shell_shell-model.ts.md
+- W3_src_components_admin_scoped-membership-lifecycle-actions.tsx.md
+- W3_src_modules_colleges_service.ts.md
+- W3_src_app_api_colleges_route.ts.md
+- W3_src_components_admin_super-admin-faculty-bulk-import.tsx.md
+- W3_src_components_admin_tenant-directory-csv-control.tsx.md
+- W3_src_app_authenticated_admin_tenants_page.tsx.md
+- W3_src_app_api_admin_settings_overrides_route.ts.md
+- W3_src_app_authenticated_admin_projects_page.tsx.md
+- W3_src_app_authenticated_admin_module-access_page.tsx.md
+- W3_src_app_authenticated_admin_placements_jobs_jobId_schedule_page.tsx.md
