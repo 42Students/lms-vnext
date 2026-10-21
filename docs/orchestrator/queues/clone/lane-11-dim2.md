@@ -153,26 +153,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/app/(authenticated)/tracker/issues/page.tsx`
 - [x] `src/app/company-share/[token]/page.tsx`
 - [x] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/academics-overview.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
-- [ ] `src/components/academics/college-hall-booking-action.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/admin/admin-dashboard-actions.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
-- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
+- [x] `src/components/academics/academics-overview.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/components/academics/college-hall-booking-action.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/admin/admin-dashboard-actions.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-account-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/announcements/announcement-admin-workspace.tsx`
+- [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
 - [ ] `src/components/attendance/admin-attendance-workspace.tsx`
 - [ ] `src/components/attendance/faculty-attendance-schedule-editor.tsx`
 - [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
@@ -310,8 +310,8 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 36 files (36 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: icon size 16/18/20 per context, stroke width and colour inherit, alignment with text baseline, avatar size/radius/initials colours, image aspect and fallback, no undeclared icon package imports.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/branding/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
 - [ ] `src/app/page.tsx`
 - [ ] `src/components/admin/college-branding-form.tsx`
 - [ ] `src/components/admin/college-branding-preview.tsx`
