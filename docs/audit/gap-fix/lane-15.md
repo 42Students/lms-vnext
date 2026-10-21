@@ -317,3 +317,6 @@
 
 - work2 #41 `learner-career-rounds-workspace.tsx` | G2-17-005-014/025: added legacy ahead/past/month alias mapping and initial upcoming default for interview schedule, URL Back/Forward adaptation. Combined standalone interviews, vendor tests and rounds must be supplied by authorized parent loader; not invented from per-kind prop.
 - work2 #42 `super-admin-content-authoring-service.ts` | G2-9-025-063: replaced fixed first-500 lesson limit with bounded searchable 50-per-page result, acting-college scope retained. Per-section delivery choices and content creation API must be wired to authorized delivery rather than blanket null; handoff.
+
+- work2 #43 `api/admin/faculty-assignment/batch/route.ts` | G2-14-027-016/020: kept 401 session error vs 403 CSRF integrity and added exact single-association success message while preserving atomic batch and counted plural success.
+- work2 #44 `tracker-cloud-logs.ts` | G2-12-024-006: explicit safe log detail projection of redacted/whitelisted identifier, time, event, message, path, request ID, component. Raw provider JSON omitted intentionally to prevent authentication/PII leakage.
