@@ -1121,6 +1121,13 @@
       "when": 1792350911266,
       "tag": "0159_lane15_tenant_domain_diagnostics",
       "breakpoints": true
+    },
+    {
+      "idx": 160,
+      "version": "7",
+      "when": 1792350971266,
+      "tag": "0160_lane15_course_discussion_snapshot",
+      "breakpoints": true
     }
   ]
 }
