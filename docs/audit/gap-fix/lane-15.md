@@ -341,3 +341,6 @@
 
 - work2 #57 `college-live-classes-directory.tsx` | G2-18-007-018: guarded Join rendering for validated HTTPS no-credentials meeting URL, Invalid link/No link when authorized data explicitly provides value, no guessing when aggregate intentionally omits links. Authorized source handoff required to populate meetingUrl.
 - work2 #58 `college-drive-bulk-actions.tsx` | G2-9-015-068/051/052: separated close from archival, documented scheduled-round and issued-offer consequences; exact single Job opened/closed success, verb-specific bulk result and failed selection retained for retry.
+
+- work2 #59 `mentor-release-editor.tsx` | G2-17-017-005/015: optional authoritative readiness totals (sprints, completed/committed points), Ship disabled until at least one/all linked sprints completed, versioned POST ship with confirmation and success/error states; parent rollup input remains integration handoff.
+- work2 #60 `faculty-profile-repeatable.tsx` | G2-1-003-040: exact 'Remove this entry?' confirmation title and delayed-save explanation moved into ConfirmDialog description; unsaved draft deletion only after confirmation.

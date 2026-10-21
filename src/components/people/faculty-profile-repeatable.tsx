@@ -7,6 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, type FormEvent } from "react";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
 import {facultyProfileActiveSearch,facultyProfileCanReorderVisible,facultyProfileSearchAfterInsertion,facultyProfileSearchSummary} from "@/modules/people/faculty-profile-search-controls";
 import {useFacultyProfileUnsavedWarning} from "./faculty-unsaved-warning";
@@ -43,6 +44,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
   useFacultyProfileUnsavedWarning(changed);
   const [search,setSearch]=useState("");
   const { askConfirm, dialog } = useConfirmFlow();
+  const [removeTarget,setRemoveTarget]=useState<string|null>(null);
   const [collapsedIds,setCollapsedIds]=useState<string[]>([]);
   const visibleRows=rows.map((row,index)=>({row,index})).filter(({row})=>
     facultyProfileRecordMatches(row,fields.map(field=>field.name),facultyProfileActiveSearch(search,rows.length)));
@@ -126,10 +128,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             }} className="mt-[var(--lms-space-3)] mr-[var(--lms-space-2)] min-h-11 w-full sm:w-auto min-[768px]:min-h-9">
               Duplicate draft
             </Button>
-            <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={async () => {
-              if (!(await askConfirm("Remove record "+(index+1)+" from "+title+"? It remains saved until you submit the section."))) return;
-              setRows(current => removeFacultyProfileDraftRow(current,row.id)); setChanged(true);
-            }} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto min-[768px]:min-h-9">
+            <Button variant="secondary" type="button" disabled={pending || facultyProfileRecordHasManagedDocument(row)} onClick={() => setRemoveTarget(row.id)} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto min-[768px]:min-h-9">
               Remove draft record
             </Button>
             {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground leading-5">This entry has a managed document. Contact your College to remove it.</p> : null}
@@ -157,6 +156,14 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         Draft changes, including removals, remain unsaved until you choose Save.
       </p> : null}
     {dialog}
+    <ConfirmDialog open={removeTarget!==null} onOpenChange={next=>{if(!next)setRemoveTarget(null);}}
+      title="Remove this entry?" description="It remains saved until you submit the section."
+      confirmLabel="Remove entry" pending={pending}
+      onConfirm={()=>{
+        if(!removeTarget)return;
+        setRows(current=>removeFacultyProfileDraftRow(current,removeTarget));
+        setChanged(true);setRemoveTarget(null);
+      }}/>
  </form>
   );
 }
