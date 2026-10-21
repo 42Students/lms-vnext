@@ -63,7 +63,8 @@ export function ProjectMeetingPlanEditor({ projectId, meetingsToken, meetings, s
     return JSON.stringify(row) !== JSON.stringify(original);
   });
   const dirty = changed.length > 0;
-  const valid = draft.every(row => {
+  // A historic untouched draft must not prevent saving a different, valid draft.
+  const valid = changed.every(row => {
     const start = Date.parse(row.startsAt + ":00+05:30");
     const end = Date.parse(row.endsAt + ":00+05:30");
     return row.title.trim().length > 0 && row.title.trim().length <= 200 &&
