@@ -63,3 +63,39 @@ The target files are the existing shared Projects module (`src/components/projec
 - G2-7-017-037 | `src/components/projects/college-project-mentor-dialog.tsx`: Exact success/failure wording and retry.
 - G2-7-017-038 | `src/components/projects/college-project-student-roster-dialog.tsx`: Exact success/failure wording for append vs replace.
 - G2-7-017-039 | `src/components/projects/project-workspace.tsx`: Check roster reconciliation success/failure/zero-change feedback.
+
+## Packets U006 Assignment Content Write, parts 1–2 (Courses/Assignments shared ownership)
+
+The old controller maps to existing course-assignment creation, validation, storage and mutation files owned by the Courses/Faculty module, not lane-7-owned paths. The vNext draft/publish split, 10000 vs 1000 points and legacy R2 workflow must not be silently overwritten by this lane.
+
+- G2-2-006-004 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-005 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-014 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-015 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-016 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-017 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-018 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-020 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-024 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-027 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-031 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-033 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-035 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-036 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-039 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-044 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-045 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-052 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-055 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-056 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-057 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-058 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-059 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-062 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-021 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-022 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-023 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-025 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-026 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-028 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
+- G2-2-006-029 | `src/components/courses/college-assignment-create.tsx` | See packet for exact fix
