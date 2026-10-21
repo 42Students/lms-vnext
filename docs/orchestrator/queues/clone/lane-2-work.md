@@ -37,7 +37,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_super-admin-drive-pipeline-service.ts.md` (edit src/modules/placements/super-admin-drive-pipeline-service.ts; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-drive-applications-model.ts.md` (edit src/modules/placements/college-drive-applications-model.ts; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-recruiter-grant-write-service.ts.md` (edit src/modules/placements/tpo-recruiter-grant-write-service.ts; 7 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-placement-rules-service.ts.md` (edit src/modules/placements/learner-placement-rules-service.ts; 7 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-placement-rules-service.ts.md` (edit src/modules/placements/learner-placement-rules-service.ts; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-enquiry_recruit-service.ts.md` (edit src/modules/placements/public-enquiry/recruit-service.ts; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_placement-job-create-workspace.tsx.md` (edit src/components/placements/placement-job-create-workspace.tsx; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-placement-alerts-service.ts.md` (edit src/modules/placements/learner-placement-alerts-service.ts; 7 findings; best P1)

@@ -8,6 +8,8 @@ import {
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {placementBatchLifecycles} from "@/db/schema/placement-batches";
+import {effectiveTpoBatchRuleFields} from "./tpo-batch-rules-model";
 import {
   learnerProgramEnrollments,
   sectionEnrollments,
@@ -244,6 +246,13 @@ export async function listLearnerPlacementJobs(
     upliftPct: placementCollegeRules.upliftPct,
   }).from(placementCollegeRules)
     .where(eq(placementCollegeRules.collegeId, membership.collegeId)).limit(1);
+  // Apply the same validated batch rules as the own Rules page.
+  const [activeBatch]=await getDb().select({rulesOverride:placementBatchLifecycles.rulesOverride})
+    .from(placementBatchLifecycles).where(and(
+      eq(placementBatchLifecycles.collegeId,membership.collegeId),
+      eq(placementBatchLifecycles.cohortId,enrollments[0]!.cohortId),
+    )).limit(1);
+  const effectiveRules=rules?effectiveTpoBatchRuleFields(rules,activeBatch?.rulesOverride):null;
   const heldOffers = await loadPlacementHeldOfferFacts(
     membership.collegeId, membership.id,
   );
@@ -291,8 +300,8 @@ export async function listLearnerPlacementJobs(
       );
 
       const heldOfferEligible = canAddPlacementHeldOffer({
-        maxHeldOffers: rules?.maxHeldOffers ?? 1,
-        upliftPct: rules?.upliftPct ?? 40,
+        maxHeldOffers: effectiveRules?.maxHeldOffers ?? 1,
+        upliftPct: effectiveRules?.upliftPct ?? 40,
         nextAnnualCtcInr: row.roleOption.minimumAnnualCtcInr ??
           row.job.minimumAnnualCtcInr,
         isDream: row.job.isDream,

@@ -18,3 +18,13 @@ export type TpoBatchRuleFields={
  minResponseHours:number;
 };
 export type TpoBatchRuleOverrides=z.infer<typeof tpoBatchRuleOverridesSchema>;
+
+/** Batch JSON is untrusted at read time. Missing keys inherit college
+ * defaults; malformed or unsupported JSON must never expand eligibility. */
+export function effectiveTpoBatchRuleFields<T extends {
+ countsAsPlacedAt:string;maxHeldOffers:number;upliftPct:number;minResponseHours:number;
+}>(college:T,raw:unknown):T{
+ if(raw===null||raw===undefined)return college;
+ const parsed=tpoBatchRuleOverridesSchema.safeParse(raw);
+ return parsed.success?{...college,...parsed.data}:college;
+}
