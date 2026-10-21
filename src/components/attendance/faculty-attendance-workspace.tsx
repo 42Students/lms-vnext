@@ -189,6 +189,7 @@ export function FacultyAttendanceWorkspace({
   const [confirmingRosterReload, setConfirmingRosterReload] = useState(false);
   const [discardOpen,setDiscardOpen]=useState(false);
   const nextAfterDiscard=useRef<(()=>void)|null>(null);
+  const nextAfterScheduleDiscard=useRef<(()=>void)|null>(null);
   const submitLock = useRef(false);
   const scheduleLock=useRef(false);
   const [error, setError] =
@@ -255,6 +256,7 @@ export function FacultyAttendanceWorkspace({
       return;
     }
     if (scheduleDirty) {
+      nextAfterScheduleDiscard.current = () => setScheduleOpen(false);
       setConfirmScheduleDiscardOpen(true);
       return;
     }
@@ -322,6 +324,35 @@ export function FacultyAttendanceWorkspace({
     window.addEventListener("beforeunload",warn);
     return ()=>window.removeEventListener("beforeunload",warn);
   },[unsavedMarks,scheduleOpen,scheduleDirty]);
+  useEffect(() => {
+    if (!unsavedMarks && !(scheduleOpen && scheduleDirty)) return;
+    const guardNavigation = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey ||
+          event.ctrlKey || event.shiftKey || event.altKey) return;
+      const target = event.target;
+      const anchor = target instanceof Element ? target.closest("a[href]") : null;
+      if (!(anchor instanceof HTMLAnchorElement) || anchor.hasAttribute("download") ||
+          (anchor.target && anchor.target !== "_self")) return;
+      const url = new URL(anchor.href);
+      if (url.origin !== window.location.origin || url.href === window.location.href) return;
+      event.preventDefault();
+      event.stopPropagation();
+      const navigate = () => router.push(url.pathname + url.search + url.hash);
+      const afterMarks = () => {
+        if (scheduleOpen && scheduleDirty) {
+          nextAfterScheduleDiscard.current = navigate;
+          setConfirmScheduleDiscardOpen(true);
+        } else navigate();
+      };
+      if (unsavedMarks) {
+        nextAfterDiscard.current = afterMarks;
+        setDiscardOpen(true);
+      } else afterMarks();
+    };
+    document.addEventListener("click", guardNavigation, true);
+    return () => document.removeEventListener("click", guardNavigation, true);
+  }, [unsavedMarks, scheduleOpen, scheduleDirty, router]);
+
   function confirmDiscardMarks(next:()=>void){
     if(!unsavedMarks){next();return;}
     nextAfterDiscard.current=next;setDiscardOpen(true);
@@ -631,9 +662,10 @@ export function FacultyAttendanceWorkspace({
                     className="w-full"
                     type="month"
                     value={month}
-                    onChange={(event) =>
-                      setMonth(event.target.value)
-                    }
+                    onChange={(event) => {
+                      const next = event.target.value;
+                      if (/^\d{4}-(0[1-9]|1[0-2])$/.test(next)) setMonth(next);
+                    }}
                   />
                 </label>
                 <Button
@@ -652,7 +684,7 @@ export function FacultyAttendanceWorkspace({
             </div>
           </section>
 
-          <section aria-label="Monthly class health" className="border-b border-border pb-4">
+          <section aria-label="Monthly class health" className="learn-attendance-summary learn-attendance-summary--faculty border-b border-border pb-4">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-body">Monthly class health</h2>
@@ -678,39 +710,7 @@ export function FacultyAttendanceWorkspace({
              {monthSummary.upcomingSessions > 0 ? <p className="mt-2 text-xs text-muted-foreground">
                {monthSummary.upcomingSessions} upcoming sessions, excluded from attendance for held classes.
              </p> : null}
-            <section aria-label="Attendance threshold guidance" className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
-              <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
-                College attendance guidance: {attendanceRisk.threshold}%
-              </h3>
-              <p className="mt-2 text-sm text-body">
-                {attendanceRisk.below.length} below guidance · {attendanceRisk.meets} meeting guidance ·
-                {" "}{attendanceRisk.unknown.length} without recorded attendance
-              </p>
-              <p className="mt-1 text-xs text-muted-foreground">
-                This monthly preview is not an official debarment or institutional eligibility decision.
-              </p>
-              {attendanceRisk.below.length > 0 ? (
-                <ul className="mt-3 grid gap-2 md:grid-cols-2">
-                  {attendanceRisk.below.map((membershipId) => {
-                    const learner = workspace.roster.find((row) => row.membershipId === membershipId);
-                    const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
-                    return (
-                      <li key={membershipId} className="min-w-0 border-b border-border py-[var(--lms-space-2)]">
-                        <Button
-                          type="button"
-                          onClick={() => setSelectedLearnerId(membershipId)}
-                          variant="link"
-                          aria-label={`Inspect monthly attendance for ${learner ? learnerName(learner) : membershipId}`}
-                          className="text-left text-primary-text hover:underline"
-                        >
-                          {learner ? learnerName(learner) : "Learner"} · {summary?.percentage ?? "—"}%
-                        </Button>
-                      </li>
-                    );
-                  })}
-                </ul>
-              ) : null}
-            </section>
+            
           </section>
 
           {allLearners.length === 0 || monthSessions.length === 0 ? (
@@ -720,8 +720,7 @@ export function FacultyAttendanceWorkspace({
               <Button disabled type="button" variant="secondary" aria-label="Download Report unavailable with no attendance data">Download Report</Button>
             </div>
           ) : (
-            <section className="min-w-0">
-              
+            <section className="learn-attendance-grid-card min-w-0">
               <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
                 <div><h2 className="text-base font-semibold text-foreground">Monthly Attendance</h2>
                   <p className="mt-1 text-xs text-muted-foreground">See each student’s attendance day by day for this month.</p>
@@ -770,28 +769,26 @@ export function FacultyAttendanceWorkspace({
                 </div>
               </div>
               <p className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" aria-label="Attendance legend">
-                <StatusBadge tone="success">P</StatusBadge> Present
-                <StatusBadge tone="error">A</StatusBadge> Absent
-                <StatusBadge tone="warning">—</StatusBadge> Not marked yet
-                <StatusBadge tone="neutral">✖</StatusBadge> No class
+                <StatusBadge tone="success">P = Present</StatusBadge>
+                <StatusBadge tone="error">A = Absent</StatusBadge>
+                <StatusBadge tone="warning">— = Not marked yet</StatusBadge>
+                <StatusBadge tone="neutral">✖ = No class</StatusBadge>
               </p>
               <Table scrollLabel="Faculty attendance monthly grid" className="min-w-[48rem]">
                 <caption className="sr-only">Attendance by student and day for {monthLabel}</caption>
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr><th scope="col" aria-label="Student name" className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-2" />
-                    {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className="min-w-16 px-2 py-2 text-center"
-                      aria-label={day.dayKey}>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"})
+                    {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} aria-label={day.dayKey}>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"})
                       .format(new Date(day.dayKey+"T12:00:00+05:30")).slice(0,1)}</th>)}
                   </tr>
                   <tr><th scope="col" className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-2">Student Name</th>
-                    {calendarDays.map(day=><th scope="col" key={day.dayKey} className="min-w-16 px-2 py-2 text-center"
-                      title={day.sessions.map(session=>sessionTime(session)).join(" · ")}>{Number(day.dayKey.slice(-2))}
+                    {calendarDays.map(day=><th scope="col" key={day.dayKey} className={"min-w-16 px-2 py-2 text-center " + (new Date(day.dayKey + "T12:00:00+05:30").getUTCDay() === 0 ? "text-error" : "")} title={day.sessions.map(session=>sessionTime(session)).join(" · ")}>{Number(day.dayKey.slice(-2))}
                       {day.sessions.length>1?<span className="ml-1 text-[10px] font-normal text-muted-foreground">×{day.sessions.length}</span>:null}</th>)}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {allLearners.map((learner) => (
-                    <tr key={learner.membershipId}>
+                    <tr key={learner.membershipId} className="[content-visibility:auto] [contain-intrinsic-size:auto_64px]">
                       <th scope="row" className="sticky left-0 z-10 bg-surface px-3 py-3 text-left">
                         <Button
                           type="button"
@@ -876,6 +873,39 @@ export function FacultyAttendanceWorkspace({
               </p>
             </section>
           )}
+          <section aria-label="Attendance threshold guidance" className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
+              <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
+                College attendance guidance: {attendanceRisk.threshold}%
+              </h3>
+              <p className="mt-2 text-sm text-body">
+                {attendanceRisk.below.length} below guidance · {attendanceRisk.meets} meeting guidance ·
+                {" "}{attendanceRisk.unknown.length} without recorded attendance
+              </p>
+              <p className="mt-1 text-xs text-muted-foreground">
+                This monthly preview is not an official debarment or institutional eligibility decision.
+              </p>
+              {attendanceRisk.below.length > 0 ? (
+                <ul className="mt-3 grid gap-2 md:grid-cols-2">
+                  {attendanceRisk.below.map((membershipId) => {
+                    const learner = workspace.roster.find((row) => row.membershipId === membershipId);
+                    const summary = monthSummary.learners.find((row) => row.membershipId === membershipId);
+                    return (
+                      <li key={membershipId} className="min-w-0 border-b border-border py-[var(--lms-space-2)]">
+                        <Button
+                          type="button"
+                          onClick={() => setSelectedLearnerId(membershipId)}
+                          variant="link"
+                          aria-label={`Inspect monthly attendance for ${learner ? learnerName(learner) : membershipId}`}
+                          className="text-left text-primary-text hover:underline"
+                        >
+                          {learner ? learnerName(learner) : "Learner"} · {summary?.percentage ?? "—"}%
+                        </Button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : null}
+            </section>
         </>
       ) : (
         <>
@@ -886,8 +916,8 @@ export function FacultyAttendanceWorkspace({
               <Button type="button" variant="secondary" onClick={openScheduleDrawer}>Schedule Class</Button>
             </div>
           ) : (
-            <section className="border-b border-border pb-4">
-              <div className="grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(16rem,24rem)_1fr]">
+            <section className="take-attendance-panel border-b border-border pb-4">
+              <div className="take-attendance-panel__header grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
                   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Date
@@ -957,12 +987,12 @@ export function FacultyAttendanceWorkspace({
                   </div>
                 ) : null}
               </div>
-              {selectedSession ? <div role="group" aria-label="Attendance summary" className="mt-4 grid grid-cols-3 gap-3 border-y border-border py-3 text-center">
+              {selectedSession ? <div role="group" aria-label="Attendance summary" className="take-attendance-panel__summary mt-4 grid grid-cols-3 gap-3 border-y border-border py-3 text-center">
                 <p className="text-xs text-muted-foreground">Students <strong className="block text-lg tabular-nums text-foreground">{workspace.roster.length}</strong></p>
                 <p className="text-xs text-muted-foreground">Present <strong className="block text-lg tabular-nums text-foreground">{Math.max(0, workspace.roster.length - absent.size)}</strong></p>
                 <p className="text-xs text-muted-foreground">Absent <strong className="block text-lg tabular-nums text-foreground">{absent.size}</strong></p>
               </div> : null}
-              <div className="mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
+              <div className="take-attendance-panel__tools mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
                 <div className="flex min-w-0 items-center gap-2 md:max-w-sm md:flex-1">
                   <span aria-hidden="true" className="text-muted-foreground">⌕</span>
                   <Input className="min-w-0 w-full" aria-label="Find a student by name"
@@ -1018,10 +1048,17 @@ export function FacultyAttendanceWorkspace({
                       </td></tr>
                     ) : visibleRoster.map(learner => {
                       const isAbsent = absent.has(learner.membershipId);
-                      return <tr key={learner.membershipId}>
+                      return <tr key={learner.membershipId} className="[content-visibility:auto] [contain-intrinsic-size:auto_72px]">
                         <th scope="row" className="w-1/2 px-3 py-3 text-left align-middle">
-                          <span className="block text-sm font-semibold text-foreground">{learnerName(learner)}</span>
-                          {learner.rollNumber ? <span className="mt-1 block text-xs font-normal text-muted-foreground">Roll {learner.rollNumber}</span> : null}
+                          <div className="flex min-w-0 items-center gap-2">
+                            <span aria-hidden="true" className="grid size-8 shrink-0 place-items-center rounded-full border border-border bg-[var(--lms-neutral-100)] text-[10px] font-semibold text-foreground">
+                              {learnerName(learner).split(/\s+/u).filter(Boolean).slice(0,2).map(part=>Array.from(part)[0] ?? "").join("").toLocaleUpperCase("en-IN")}
+                            </span>
+                            <div className="min-w-0">
+                              <span className="block break-words text-sm font-semibold text-foreground">{learnerName(learner)}</span>
+                              {learner.rollNumber ? <span className="mt-1 block text-xs font-normal text-muted-foreground">Roll {learner.rollNumber}</span> : null}
+                            </div>
+                          </div>
                         </th>
                         <td className="w-1/2 px-3 py-3 align-middle">
                           <div className="grid grid-cols-2 gap-2 [&>button]:w-full" role="group" aria-label={"Attendance for "+learnerName(learner)}>
@@ -1094,7 +1131,7 @@ export function FacultyAttendanceWorkspace({
                   {attendanceConfirmation ?? "No recorded marks have changed. Choose a changed mark to correct attendance."}
                 </p>
               ) : null}
-              <div className="sticky bottom-0 z-20 mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-border bg-surface px-0 py-[var(--lms-space-3)] md:static md:flex-row md:items-center md:justify-between">
+              <div className="take-attendance-panel__submit sticky bottom-0 z-20 mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] border-t border-border bg-surface px-0 py-[var(--lms-space-3)] md:static md:flex-row md:items-center md:justify-between">
                 <span className="text-sm font-semibold text-body">
                   {absent.size} absent ·{" "}
                   {Math.max(
@@ -1279,6 +1316,7 @@ export function FacultyAttendanceWorkspace({
       >
         <form
           id="faculty-schedule-class-form"
+          autoComplete="off"
           onSubmit={createSession}
           className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2"
         >
@@ -1356,15 +1394,18 @@ export function FacultyAttendanceWorkspace({
           nextAfterDiscard.current=null;setDiscardOpen(false);next?.();
         }}/>
       <ConfirmDialog open={confirmScheduleDiscardOpen}
-        onOpenChange={setConfirmScheduleDiscardOpen}
+        onOpenChange={open => { if (!open) nextAfterScheduleDiscard.current = null; setConfirmScheduleDiscardOpen(open); }}
         title="Discard class schedule changes?"
         confirmLabel="Discard changes" cancelLabel="Keep editing"
         confirmVariant="danger"
         onConfirm={() => {
+          const next = nextAfterScheduleDiscard.current;
+          nextAfterScheduleDiscard.current = null;
           setConfirmScheduleDiscardOpen(false);
           setScheduleOpen(false);
           setScheduleTitle("");setStartsAt("");setEndsAt("");setLocation("");
           setScheduleError(null);
+          next?.();
         }}/>
       <ConfirmDialog open={confirmScheduleOpen} onOpenChange={setConfirmScheduleOpen}
         title={"Confirm attendance session from "+startsAt.replace("T"," ")+" to "+endsAt.replace("T"," ")+" IST?"}
