@@ -60,6 +60,27 @@ export async function GET(request: Request) {
       return NextResponse.json({status:"OK",message:"Colleges retrieved",data:names,names},
         {headers:{"Cache-Control":"private, no-store"}});
     }
+    if(mode==="stats"){
+      const data={total:items.length,
+        states:new Set(items.map(row=>row.state).filter(Boolean)).size,
+        cities:new Set(items.map(row=>row.city).filter(Boolean)).size};
+      return NextResponse.json({status:"OK",message:"Stats retrieved",data},
+        {headers:{"Cache-Control":"private, no-store"}});
+    }
+    if(mode==="refresh"){
+      // Fresh persisted read above already bypasses process-local caches.
+      return NextResponse.json({status:"OK",message:"Directory refreshed",
+        data:items.map(project).slice(0,parsedLimit??50)},
+        {headers:{"Cache-Control":"private, no-store"}});
+    }
+    if(mode==="select"){
+      const id=params.get("collegeId")??params.get("id");
+      const selected=items.find(row=>row.id===id);
+      if(!selected)return NextResponse.json({error:"COLLEGE_NOT_FOUND"},{status:404});
+      return NextResponse.json({status:"OK",message:"College selected for preview",
+        data:project(selected),scopeChangePerformed:false},
+        {headers:{"Cache-Control":"private, no-store"}});
+    }
     if(mode==="states"||mode==="categories"){
       const data=[...new Set(items.map(row=>row.state?.trim()).filter((v):v is string=>Boolean(v)))].sort();
       return NextResponse.json({status:"OK",message:mode==="states"?"States retrieved":"Categories retrieved",data},
