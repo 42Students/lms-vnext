@@ -65,8 +65,8 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
     });
     setCursor(page.nextCursor);
     setHasMore(page.hasMore);
-  }catch{setLoadError("We couldn't load more activity. Try again.");}
-  finally{lock.current=false;setBusy(false);}
+  }catch{if(requestGeneration===generation.current)setLoadError("We couldn't load more activity. Try again.");}
+  finally{lock.current=false;if(requestGeneration===generation.current)setBusy(false);}
  }
  const [search,setSearch]=useState("");
  const [resourceAction,setResourceAction]=useState("ALL");
