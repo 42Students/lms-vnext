@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useState, useTransition, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
+import { useToast } from "@/components/ui/toast";
 import {Dialog} from "@/components/ui/dialog";
 import { Dropdown } from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
@@ -40,6 +41,7 @@ async function mutate(method: "POST" | "PATCH" | "DELETE", url: string, body: un
 export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOption[] }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const { showToast } = useToast();
   const [programId, setProgramId] = useState(programs[0]?.id ?? "");
   const [termNumber, setTermNumber] = useState("1");
   const [name, setName] = useState("");
@@ -61,7 +63,9 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
       try {
         await mutate("POST", "/api/academics/semesters", parsed.data);
         setName("");
+        setProgramId(parsed.data.programId);
         setNotice(SEMESTER_COPY.createdMessage(parsed.data.name));
+        showToast({ tone: "success", title: SEMESTER_COPY.createdMessage(parsed.data.name) });
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, SEMESTER_COPY.createFailed));
@@ -113,6 +117,8 @@ export function CollegeSemesterCreateForm({ programs }: { programs: ProgramOptio
 
 export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   const router = useRouter();
+  const { showToast } = useToast();
+  const [deleteError, setDeleteError] = useState("");
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -136,7 +142,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
     if(pending)return;
     setNotice("");
     const parsed = updateCollegeSemesterSchema.safeParse({
-      name, totalCredits: null, isActive,
+      name, totalCredits: row.totalCredits, isActive,
       expectedUpdatedAt:row.updatedAt.toISOString(),confirm:true,
     });
     if (!parsed.success) {
@@ -148,7 +154,10 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
       try {
         await mutate("PATCH", url, parsed.data);
         setEditing(false);
-        setNotice(SEMESTER_COPY.updatedMessage);
+        const message = name === row.name && isActive !== row.isActive
+          ? "Status updated successfully." : SEMESTER_COPY.updatedMessage;
+        setNotice(message);
+        showToast({ tone: "success", title: message });
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, SEMESTER_COPY.updateFailed));
@@ -159,14 +168,19 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   function remove() {
     if(pending)return;
     setNotice("");
+    setDeleteError("");
     startTransition(async () => {
       try {
         await mutate("DELETE", url, { confirm: true });
         setConfirming(false);
         setNotice(SEMESTER_COPY.deletedMessage);
+        showToast({ tone: "success", title: SEMESTER_COPY.deletedMessage });
         router.refresh();
       } catch (error) {
-        setNotice(academicSetupErrorMessage(error, SEMESTER_COPY.deleteFailed));
+        setConfirming(false);
+        const message = academicSetupErrorMessage(error, SEMESTER_COPY.deleteFailed);
+        setDeleteError(message);
+        showToast({ tone: "error", title: message });
       }
     });
   }
@@ -224,6 +238,13 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         title="Discard semester changes?"
         description="Unsaved semester name and status changes will be lost."
         confirmLabel="Discard changes" confirmVariant="danger" pending={pending} onConfirm={discardEditor}/>
+      {deleteError ? <div role="alert" className="flex flex-wrap items-center justify-between gap-2 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
+        <p><strong>{SEMESTER_COPY.deleteFailed}</strong>: {deleteError}</p>
+        <div className="flex gap-2">
+          <Button type="button" variant="secondary" disabled={pending} onClick={() => { setDeleteError(""); setConfirming(true); }}>Retry delete</Button>
+          <Button type="button" variant="ghost" onClick={() => setDeleteError("")}>Dismiss</Button>
+        </div>
+      </div> : null}
       {notice ? <p role="status" className="text-xs text-body leading-5">{notice}</p> : null}
     </div>
   );
