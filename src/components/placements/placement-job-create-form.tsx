@@ -99,6 +99,7 @@ function nullableInteger(
 export function PlacementJobCreateForm({
   userId,
   collegeId,
+  jobTypes,
   activeSeason,
   companies,
   academicOptions,
@@ -107,6 +108,7 @@ export function PlacementJobCreateForm({
 }: {
   userId: string;
   collegeId: string;
+  jobTypes?: readonly {label:string}[];
   activeSeason: PlacementSeasonChoice | null;
   companies: readonly PlacementCompanyChoice[];
   academicOptions: PlacementAcademicTargetingChoice;
@@ -496,10 +498,12 @@ export function PlacementJobCreateForm({
               city:String(data.get("preferredCity")??"").trim(),
             },
           },
-          employmentType: String(
-            data.get("employmentType") ??
-              "FULL_TIME",
-          ),
+          jobTypeLabel: String(data.get("jobTypeLabel") ?? "Full-time"),
+          employmentType: (() => {
+            const label=String(data.get("jobTypeLabel") ?? "Full-time");
+            return label==="Internship"?"INTERNSHIP":
+              label==="Contract"||label==="Apprenticeship"?"CONTRACT":"FULL_TIME";
+          })(),
           workMode: String(
             data.get("workMode") ??
               "ONSITE",
@@ -942,20 +946,13 @@ export function PlacementJobCreateForm({
             </span>
             <Select
               className={inputClass}
-              name="employmentType"
-              defaultValue="FULL_TIME"
+              name="jobTypeLabel"
+              defaultValue={(jobTypes?.[0]?.label??"Full-time")}
             >
-              <option value="FULL_TIME">
-                Full time
-              </option>
-              <option value="INTERNSHIP">
-                Internship
-              </option>
-              <option value="CONTRACT">
-                Contract
-              </option>
+              {(jobTypes?.length ? jobTypes : [{label:"Full-time"},{label:"Internship"},{label:"Internship + full-time"},{label:"Contract"},{label:"Apprenticeship"}]).map(type=>
+                <option key={type.label} value={type.label}>{type.label}</option>)}
             </Select>
-            <span className="mt-1 block text-xs text-muted-foreground">Custom college job types and placed-counting rules are managed in placement settings, not this employment-type list. Skills the employer requires are not configured on this form yet.</span>
+            <span className="mt-1 block text-xs text-muted-foreground">Job types are managed in Settings &gt; Job types. A switched-off type remains on existing drives but cannot be selected for new drives.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
