@@ -174,7 +174,7 @@ export default async function CollegeOverviewPage() {
                 <div className="space-y-2 py-3">
                   <ul className="divide-y divide-border text-sm text-body">
                     {card.rows.slice(0,4).map((row,index)=><li key={index} className="break-words py-2">{row}</li>)}
-                    {card.count>Math.min(card.rows.length,4)?<li className="py-2 text-xs text-muted-foreground">
+                    {card.count!==null&&card.count>Math.min(card.rows.length,4)?<li className="py-2 text-xs text-muted-foreground">
                       and {card.count-Math.min(card.rows.length,4)} more
                     </li>:null}
                   </ul>

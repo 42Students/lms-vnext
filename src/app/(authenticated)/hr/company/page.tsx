@@ -102,7 +102,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
 
   const jobs = await listOwnRecruiterPlacementJobs(context,result.grant.collegeId);
   const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
-  const attributedDriveCounts=tab==="team" ? await recruiterTeamAttributedDriveCounts(context,result.grant.collegeId,result.company.relationshipId,jobs) : {};
+  const attributedDriveCounts:Record<string,number>=tab==="team" ? await recruiterTeamAttributedDriveCounts(context,result.grant.collegeId,result.company.relationshipId,jobs) : {};
   // Public logo URL/industry are not present in the normalized relationship read.
   // Resolve only the already-authorized company identity; never expose the private object path.
   const [profile]=tab==="company" ? await getDb().select({
