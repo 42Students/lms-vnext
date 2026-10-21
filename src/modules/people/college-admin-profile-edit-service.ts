@@ -58,6 +58,33 @@ const emptyProfile: Omit<CollegeOwnProfileInput, "displayName"> = {
   contacts: { alternateEmail: "", alternatePhone: "", contactPerson: "" },
 };
 
+/** A legacy profile had independent personal, contacts, address and social
+ * readers. Preserve good sections even when one saved JSON subsection is bad.
+ * Never silently save defaults over malformed historical bytes. */
+export function readCollegeProfileSections(raw:unknown){
+ const sections=collegeOwnProfileSchema.omit({displayName:true}).shape;
+ const source=raw && typeof raw==="object" && !Array.isArray(raw)
+  ? raw as Record<string,unknown> : {};
+ const defaults=emptyProfile as Record<string,unknown>;
+ const normalized:Record<string,unknown>={};
+ const unavailableSections:string[]=[],missingSections:string[]=[];
+ for(const name of Object.keys(sections) as (keyof typeof sections)[]){
+  if(!Object.prototype.hasOwnProperty.call(source,name)){
+   missingSections.push(name);
+   normalized[name]=defaults[name];continue;
+  }
+  const result=sections[name].safeParse(source[name]);
+  if(result.success)normalized[name]=result.data;
+  else {unavailableSections.push(name);normalized[name]=defaults[name];}
+ }
+ const parsed=collegeOwnProfileSchema.omit({displayName:true}).parse(normalized);
+ return {document:parsed,unavailableSections,missingSections,
+  partialLoad:unavailableSections.length>0,
+  recoveryMessage:unavailableSections.length
+   ? "Some profile sections could not be loaded: "+unavailableSections.join(", ")+". Retry sections or request assistance before editing."
+   : null};
+}
+
 function ownMembership(context: RequestContext) {
   const membership = context.membership;
   if (!membership || membership.status !== "ACTIVE" ||
@@ -82,19 +109,13 @@ export async function loadCollegeOwnProfile(context: RequestContext) {
   ]);
   if (!person[0]) throw new Error("PROFILE_NOT_FOUND");
   const saved = record[0]?.document?.collegeAdmin;
-  const parsed = collegeOwnProfileSchema.omit({ displayName: true }).safeParse(
-    saved && typeof saved==="object" && !Array.isArray(saved)
-    ? {...emptyProfile,...saved} : emptyProfile);
-  if (!parsed.success) {
-    // Preserve the record for section-by-section remediation instead of
-    // silently replacing malformed legacy data with empty fields.
-    const sections=[...new Set(parsed.error.issues.map(item=>
-      String(item.path[0]??"profile")))];
-    throw new Error("COLLEGE_PROFILE_SECTIONS_INVALID:"+sections.join(","));
-  }
+  const read=readCollegeProfileSections(saved);
   return {
-    displayName: person[0].displayName ?? "", ...parsed.data,
-    profileDocumentVersion: record[0]?.version ?? 0,
+    displayName:person[0].displayName??"",...read.document,
+    profileDocumentVersion:record[0]?.version??0,
+    sectionLoad:{unavailableSections:read.unavailableSections,
+     missingSections:read.missingSections,partialLoad:read.partialLoad,
+     recoveryMessage:read.recoveryMessage},
   };
 }
 
@@ -117,6 +138,13 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
     await tx.update(users).set({ displayName, updatedAt: new Date() })
       .where(eq(users.id, account.id));
     const previous=existing?.profileDocument?.collegeAdmin;
+    const previousRead=readCollegeProfileSections(previous);
+    if(previousRead.partialLoad){
+      // This is a whole-document writer: do not let a stale form overwrite
+      // an invalid untouched legacy section with the UI default.
+      throw new Error("COLLEGE_PROFILE_SECTIONS_INVALID:"+
+        previousRead.unavailableSections.join(","));
+    }
     const prior=previous && typeof previous==="object" && !Array.isArray(previous)
       ? previous as Record<string,unknown>:{};
     const priorAddress=prior.address && typeof prior.address==="object" &&
