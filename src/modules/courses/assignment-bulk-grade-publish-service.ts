@@ -5,10 +5,10 @@ import {z} from "zod";
 import {getDb} from "@/db/client";
 import {assignmentSubmissions} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
-import {requirePermission} from "@/modules/permissions/policy";
+
 import {recordActivityEvent} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {loadCourseAssignmentScope} from "./assignment-scope";
+import {requireWholeAssignmentBulkPermission} from "./assignment-scope";
 import {loadCourseSectionDeliveryScope} from "./scope";
 import {publishAssignmentGrade} from "./assignment-submission-service";
 import {courseAssignmentIdSchema} from "./assignment-validation";
@@ -32,10 +32,7 @@ export async function publishAssignmentGradeBatch(
 ){
   const assignmentId=courseAssignmentIdSchema.parse(rawAssignmentId);
   const input=bulkPublishInput.parse(rawInput);
-  const scope=await loadCourseAssignmentScope(assignmentId);
-  requirePermission(context,"courses.manage",{
-    collegeId:scope.collegeId,organizationId:scope.organizationId,
-  });
+  const scope=await requireWholeAssignmentBulkPermission(context,assignmentId);
   if(scope.status!=="PUBLISHED")throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   if(input.deliveryId){
     const section=await loadCourseSectionDeliveryScope(input.deliveryId);

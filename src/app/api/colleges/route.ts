@@ -5,6 +5,7 @@ import {
   createCollege,
   listColleges,
   listAuthorizedCollegeSearchOptions,
+  listAuthorizedOrganizationCollegePicker,
 } from "@/modules/colleges/service";
 import { apiErrorResponse } from "@/lib/api-error";
 
@@ -40,6 +41,15 @@ export async function GET(request: Request) {
     const parsedLimit=rawLimit===null?null:Number(rawLimit);
     if(parsedLimit!==null&&(!Number.isSafeInteger(parsedLimit)||parsedLimit<1||parsedLimit>50))
       return NextResponse.json({error:"INVALID_LIMIT",message:"Limit must be between 1 and 50."},{status:400});
+    if(mode==="organization-search"){
+      const data=await listAuthorizedOrganizationCollegePicker(context,{
+        organizationId,q,limit:parsedLimit??15,
+      });
+      return NextResponse.json({
+        status:"OK",message:"Colleges retrieved",data,colleges:data,
+        scopeChangePerformed:false,
+      },{headers:{"Cache-Control":"private, no-store"}});
+    }
     const started=Date.now();
     const items=await listColleges(context,organizationId);
     if(mode==="list")return NextResponse.json({colleges:items},{headers:{"Cache-Control":"private, no-store"}});

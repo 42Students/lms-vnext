@@ -805,3 +805,73 @@ export async function listAuthorizedCollegeSearchOptions(
   logoObjectPath:row.logoObjectPath,
  }));
 }
+
+
+/** Organization-only read-only college directory for active members, distinct
+ * from switching admin scope. The persisted caller membership, not a query
+ * parameter, selects the tenant; no contacts or private college fields leak. */
+export async function listAuthorizedOrganizationCollegePicker(
+  context:RequestContext,
+  options:{organizationId?:string|null;q?:string;limit?:number}={},
+){
+ if(isSuperAdmin(context)){
+  return (await listAuthorizedCollegeSearchOptions(context,options)).map(row=>({
+   id:row.id,organizationId:row.organizationId,name:row.name,
+   code:row.code,uniqueId:row.uniqueId,
+  }));
+ }
+ const member=context.membership;
+ if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
+  throw new AuthorizationError("college.read");
+ if(options.organizationId&&options.organizationId!==member.organizationId)
+  throw new AuthorizationError("college.read");
+ requirePermission(context,"college.read",{
+  organizationId:member.organizationId,collegeId:member.collegeId,
+ });
+ const q=(options.q??"").trim();
+ if(q.length>200)throw new RangeError("College search must be 200 characters or fewer");
+ const limit=Math.max(1,Math.min(50,options.limit??(q?15:10)));
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"college.read",{
+   organizationId:member.organizationId,collegeId:member.collegeId,
+  });
+  const rows=await tx.select({
+   id:colleges.id,organizationId:colleges.organizationId,
+   name:colleges.name,code:colleges.code,
+   city:colleges.city,state:colleges.state,
+  }).from(colleges)
+   .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+   .where(and(eq(colleges.organizationId,member.organizationId),
+    eq(colleges.status,"ACTIVE"),eq(organizations.status,"ACTIVE")))
+   .orderBy(asc(colleges.id)).limit(2001);
+  if(rows.length>2000)throw new RangeError("Organization college directory too large");
+  const query=collegeSearchNormalized(q);
+  const alias=collegeSearchSynonyms[query]??query;
+  const ranked=rows.map(row=>({
+   row,score:query?Math.max(
+    collegeSearchScore([row.name,row.code,row.city??"",row.state??""],query),
+    alias!==query?collegeSearchScore([row.name,row.code,row.city??"",row.state??""],alias):0,
+   ):0,
+  })).filter(item=>!query||item.score>0);
+  const popularity=new Map<string,number>();
+  for(let start=0;start<ranked.length;start+=500){
+   const ids=ranked.slice(start,start+500).map(item=>item.row.id);
+   if(!ids.length)continue;
+   const counts=await tx.select({
+    collegeId:collegeMemberships.collegeId,
+    total:sql<number>`count(*)::int`,
+   }).from(collegeMemberships).where(and(
+    inArray(collegeMemberships.collegeId,ids),
+    eq(collegeMemberships.status,"ACTIVE"),
+   )).groupBy(collegeMemberships.collegeId);
+   for(const item of counts)popularity.set(item.collegeId,Number(item.total));
+  }
+  ranked.sort((a,b)=>b.score-a.score||
+   (popularity.get(b.row.id)??0)-(popularity.get(a.row.id)??0)||
+   a.row.name.localeCompare(b.row.name)||a.row.id.localeCompare(b.row.id));
+  return ranked.slice(0,limit).map(({row})=>({
+   id:row.id,organizationId:row.organizationId,
+   name:row.name,code:row.code,uniqueId:row.code,
+  }));
+ });
+}
