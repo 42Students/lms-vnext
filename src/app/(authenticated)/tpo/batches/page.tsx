@@ -156,7 +156,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
         { key: "undecided", label: "Not decided", count: summary.undecided, color: "bg-muted-foreground" },
         { key: "review", label: "Needs review", count: summary.needsReview, color: "bg-warning" },
       ] as const;
-      return <div className="space-y-2">
+      return <div className="min-w-0 space-y-2">
         <p className="text-xs text-muted-foreground leading-5">{summary.assessed} {summary.assessed===1?"student":"students"} in batch</p>
         <dl className="grid grid-cols-2 gap-2 text-xs">
          <div><dt className="text-muted-foreground">Invited</dt><dd className="font-semibold">{b.invitedAt?"Yes":"Not yet"}</dd></div>
