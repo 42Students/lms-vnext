@@ -36,6 +36,8 @@ export const db10Skills = pgTable(
   "skills",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Stable source INTEGER, resolved separately from the canonical UUID. */
+    legacySkillId: integer("legacy_skill_id"),
     /** Lowercase/normalized search identity; displayName preserves presentation. */
     name: varchar("name", { length: 200 }).notNull(),
     displayName: varchar("display_name", { length: 200 }).notNull(),
@@ -49,6 +51,8 @@ export const db10Skills = pgTable(
   },
   (t) => [
     uniqueIndex("db10_skills_name_uq").on(sql`lower(${t.name})`),
+    uniqueIndex("db10_skills_legacy_id_uq")
+      .on(t.legacySkillId).where(sql`${t.legacySkillId} is not null`),
     index("db10_skills_active_category_name_idx")
       .on(t.isActive, t.category, t.displayName),
     index("db10_skills_popularity_idx")
@@ -64,6 +68,8 @@ export const db10SkillSynonyms = pgTable(
   "skill_synonyms",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacySynonymId: integer("legacy_synonym_id"),
+    legacySkillId: integer("legacy_skill_id"),
     skillId: uuid("skill_id")
       .notNull()
       .references(() => db10Skills.id, { onDelete: "restrict" }),
@@ -71,6 +77,8 @@ export const db10SkillSynonyms = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    uniqueIndex("db10_skill_synonyms_legacy_id_uq")
+      .on(t.legacySynonymId).where(sql`${t.legacySynonymId} is not null`),
     // Legacy SkillRepository.findBySynonym uses DISTINCT and can return multiple
     // skills per term. This MUST NOT be globally unique.
     index("db10_skill_synonyms_search_idx").on(sql`lower(${t.synonym})`),
