@@ -9,6 +9,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { collegeAssessmentListQuerySchema } from "@/modules/courses/college-assessment-aggregate-model";
 import { listCollegeAssessmentAggregate } from "@/modules/courses/college-assessment-aggregate-service";
 
+export const metadata={title:"Quizzes · 42LMS"};
 type SearchParams = Record<string, string | string[] | undefined>;
 function one(value: string | string[] | undefined) {
   return Array.isArray(value) ? value[0] : value;
