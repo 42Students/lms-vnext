@@ -76,7 +76,7 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
    return {...row,roles,
     displayName:normalized||"—",
     firstName:words[0]??"—",lastName:words.slice(1).join(" "),
-    avatarInitial:words[0]?Array.from(words[0])[0].toLocaleUpperCase("en"):"?",
+    avatarInitial:words[0]?(Array.from(words[0])[0]??"?").toLocaleUpperCase("en"):"?",
     // Profile pictures need a scoped read grant, not legacy website URLs.
     profileImageUrl:null,
     email:staff&&selected?.collegeId ? row.email : null,

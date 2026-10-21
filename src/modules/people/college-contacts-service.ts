@@ -219,7 +219,7 @@ export async function listCollegeStaffContacts(context:RequestContext,raw:unknow
  */
 export function collegeContactAvatar(name:string):{initial:string;tint:number}{
  const safe=name.trim();
- const initial=safe && safe!=="—"?Array.from(safe)[0].toLocaleUpperCase("en"):"?";
+ const initial=safe && safe!=="—"?(Array.from(safe)[0]??"?").toLocaleUpperCase("en"):"?";
  let hash=2166136261;
  for(const symbol of safe.toLocaleLowerCase("en")){
   hash=Math.imul(hash^symbol.charCodeAt(0),16777619)>>>0;

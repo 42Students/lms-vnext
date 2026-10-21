@@ -45,7 +45,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-6_cross-06-files-uploads-media-storage.md.md` (new; 17 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_admin-user-directory-service.ts.md` (edit src/modules/people/admin-user-directory-service.ts; 16 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-8_attend.md.md` (new; 16 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-notice-delivery-service.ts.md` (edit src/modules/announcements/tpo-notice-delivery-service.ts; 12 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-notice-delivery-service.ts.md` (edit src/modules/announcements/tpo-notice-delivery-service.ts; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_app_api_auth_memberships_route.ts.md` (edit src/app/api/auth/memberships/route.ts; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-6_resource-upload-controller.md.md` (new; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-placement-read-service.ts.md` (edit src/modules/announcements/tpo-placement-read-service.ts; 9 findings; best P2)
