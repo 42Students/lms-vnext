@@ -271,7 +271,7 @@ export function RecruiterLeadsWorkspace({
   const [driveFilter,setDriveFilter]=useState(initialFilters.drives??"ALL");
   const [placedFilter,setPlacedFilter]=useState(initialFilters.placed??"ALL");
   const sourceOptions=useMemo(()=>{
-    const known=new Map<string,string>(SOURCE_CHOICES.map(([key,label])=>[key,label]));
+    const known=new Map<string,string>(SOURCE_CHOICES.map(([key,label])=>[key,label] as const));
     for(const row of rows)if(row.source&&!known.has(row.source))known.set(row.source,sourceLabel(row.source));
     return [...known.entries()];
   },[rows]);
