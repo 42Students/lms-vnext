@@ -80,6 +80,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [noteModalOpen,setNoteModalOpen]=useState(false);
  const [confirmNoteDiscard,setConfirmNoteDiscard]=useState(false);
  const [historyError,setHistoryError]=useState<Record<string,string>>({});
+ const [historyLoading,setHistoryLoading]=useState<string|null>(null);
  const errorRef=useRef<HTMLParagraphElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  const letterDirty=Object.entries(letterInput).some(([id,url])=>
@@ -217,10 +218,30 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   /^\/api\/(college|admin|tpo)\/verification\//.test(detail.resume.url??"")
    ? detail.resume.url : null;
  const sections=[
-  {label:"Pipeline history",rows:detail?.stageHistory??[]},
-  {label:"Screening history",rows:detail?.screeningHistory??[]},
-  {label:"Application history",rows:detail?.history??[]},
+  {label:"Pipeline history",rows:detail?.stageHistory??[],
+   available:Array.isArray(detail?.stageHistory),hasMore:detail?.stageHistoryHasMore},
+  {label:"Screening history",rows:detail?.screeningHistory??[],
+   available:Array.isArray(detail?.screeningHistory),hasMore:detail?.screeningHistoryHasMore},
+  {label:"Application history",rows:detail?.history??[],
+   available:Array.isArray(detail?.history),hasMore:detail?.historyTruncated},
  ];
+ async function retryHistory(label:string){
+  if(historyLoading)return;
+  const requestId=++detailReadRef.current;
+  setHistoryLoading(label);setHistoryError(current=>({...current,[label]:""}));
+  try{
+   const result=await apiFetch<CollegeApplicationDetail>(endpoint,{cache:"no-store"});
+   const field=label==="Pipeline history"?"stageHistory":
+    label==="Screening history"?"screeningHistory":"history";
+   if(!result?.application||!Array.isArray(result[field]))
+    throw Error("Status history unavailable. Please try again.");
+   if(requestId===detailReadRef.current)setDetail(result);
+  }catch(reason){
+   if(requestId===detailReadRef.current)setHistoryError(current=>({...current,
+    [label]:reason instanceof Error?reason.message:"Status history unavailable. Please try again."
+   }));
+  }finally{if(requestId===detailReadRef.current)setHistoryLoading(null);}
+ }
  return <>
   <Dialog open={!interviewOpen} onOpenChange={open=>{if(!open)requestClose();}}
    title="Application Details" description="Application details and status history"
@@ -447,13 +468,28 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        </div>:null}
       </section>
       <h3 className="mt-4 text-base font-semibold text-heading">History</h3>
-      {sections.map(section=><Disclosure key={section.label} title={section.label} className="border-b border-border py-2" contentClassName="pb-3">
-        {section.rows.length?<ol className="mt-3 divide-y divide-border text-sm">{section.rows.map((event,index)=>
-          <li key={index} className="min-w-0 break-words py-3">
-           {event.from??"New"} → {event.to} · {when(event.when)}
-           {event.reason?<p className="mt-1 text-xs text-body">{event.reason}</p>:null}
-          </li>)}</ol>:<p className="mt-2 text-sm text-body">No recorded events.</p>}
-      </Disclosure>)}
+      {sections.map(section=><Disclosure key={section.label} title={section.label}
+        className="border-b border-border py-2" contentClassName="pb-3">
+        {historyError[section.label]||!section.available?
+         <div className="mt-3 space-y-2" role="alert">
+          <p className="text-sm text-error">Status history unavailable: {historyError[section.label]||"No authorized history data was returned."}</p>
+          <Button variant="secondary" type="button" disabled={Boolean(historyLoading)}
+           onClick={()=>void retryHistory(section.label)}>Retry {section.label.toLowerCase()}</Button>
+         </div>:<>
+          {section.rows.length?<ol className="mt-3 divide-y divide-border text-sm">{section.rows.map((event,index)=>
+            <li key={index} className="min-w-0 break-words py-3">
+             {event.from??"New"} → {event.to} · {when(event.when)}
+             {event.reason?<p className="mt-1 whitespace-pre-wrap text-xs text-body">{event.reason}</p>:null}
+            </li>)}</ol>:<p className="mt-2 text-sm text-body">No recorded events.</p>}
+          {section.hasMore?<p className="mt-2 text-xs text-muted-foreground">
+            More than 100 events are recorded; older events are available through the full audit history.
+          </p>:null}
+          <Button variant="secondary" type="button" className="mt-2" disabled={Boolean(historyLoading)}
+            onClick={()=>void retryHistory(section.label)}>
+            {historyLoading===section.label?"Refreshing…":"Refresh "+section.label.toLowerCase()}
+          </Button>
+         </>}
+       </Disclosure>)}
     </div>:null}
   </Dialog>
   <Dialog open={noteModalOpen} onOpenChange={next=>{if(!next)requestNoteClose();}}
