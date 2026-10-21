@@ -23,7 +23,7 @@ export function LearnerRoadmapItemDialog({
     <div className={highlighted ? "rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-focus-ring)]" : ""}>
       <Button type="button" variant="secondary" onClick={() => setOpen(true)}
         aria-haspopup="dialog" aria-expanded={open}
-        className="min-h-14 w-full min-w-0 flex-col items-stretch gap-2 px-4 py-3 text-left sm:flex-row sm:items-center sm:justify-between focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="min-h-14 w-full min-w-0 flex-col items-stretch gap-2 px-4 py-3 text-left sm:flex-row sm:items-center sm:justify-between focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         <span className="min-w-0 break-words [overflow-wrap:anywhere]">
           <span className="block text-xs font-semibold uppercase text-muted-foreground">
             {caption ?? kind} · {progress.replaceAll("_", " ").toLowerCase()}
