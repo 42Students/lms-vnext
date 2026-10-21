@@ -24,13 +24,19 @@ export class CourseProgressRetakeError extends Error{
 type Tx=Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
 
 async function readRetakeScope(tx:Tx,ctx:RequestContext,offeringId:string,membershipId:string){
- if(!isSuperAdmin(ctx)||ctx.user.platformStatus!=="ACTIVE"||!ctx.adminScope?.collegeId)
+ // College Admin may start a retake only in their active college.
+ // Super Admin must explicitly act in one selected college.
+ const superAdmin=isSuperAdmin(ctx);
+ const collegeId=superAdmin?ctx.adminScope?.collegeId:
+  ctx.membership?.status==="ACTIVE"&&ctx.membership.roles.includes("COLLEGE_ADMIN")
+   ?ctx.membership.collegeId:null;
+ if(ctx.user.platformStatus!=="ACTIVE"||!collegeId)
   throw new AuthorizationError("courses.manage");
- const collegeId=ctx.adminScope.collegeId;
  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
  if(!college||college.status!=="ACTIVE"||
-    (ctx.adminScope.organizationId&&college.organizationId!==ctx.adminScope.organizationId))
+    (superAdmin&&ctx.adminScope?.organizationId&&
+     college.organizationId!==ctx.adminScope.organizationId))
   throw new AuthorizationError("courses.manage");
  requirePermission(ctx,"courses.manage",{collegeId,organizationId:college.organizationId});
  await assertPersistedPlatformPermission(tx,ctx,"courses.manage",{

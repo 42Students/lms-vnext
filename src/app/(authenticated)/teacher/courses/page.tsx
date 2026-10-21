@@ -28,9 +28,9 @@ export default async function TeacherCoursesPage({searchParams}: {
   const listResult=await getFacultyCourseList(context,query).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
   if(!listResult.ok)return <div className="min-w-0 space-y-4">
    <PageHeader title="My Courses"/>
-   <ErrorState title="Could not load teaching courses"
+   <ErrorState title="Failed to load courses. Please try again."
     description="Your authorized course list could not be loaded. No empty roster has been assumed."
-    action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry courses</Link>}/>
+    action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Try again</Link>}/>
   </div>;
   const list=listResult.value;
   const [summaries,display,diagnosticResult]=await Promise.all([

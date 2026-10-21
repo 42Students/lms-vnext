@@ -34,7 +34,8 @@ export async function GET(
           "",
       );
 
-    return NextResponse.json({ progress }, {headers:{"Cache-Control":"private, no-store"}});
+    return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -55,7 +56,11 @@ export async function PUT(
     const context =
       await getCurrentRequestContext();
     const { contentId } = await params;
-    const body = await request.json();
+    const body = await request.json().catch(() => null);
+    if (body === null || typeof body !== "object" || Array.isArray(body)) {
+      return NextResponse.json({error:"INVALID_PROGRESS_REQUEST",
+        message:"Progress request cannot be null"}, {status:400});
+    }
     const progress =
       await saveLearnerContentProgress(
         context,
@@ -63,7 +68,8 @@ export async function PUT(
         body,
       );
 
-    return NextResponse.json({ progress }, {headers:{"Cache-Control":"private, no-store"}});
+    return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -72,6 +78,12 @@ export async function PUT(
 /** Legacy administrative retake command. A content ID is a scope fence,
  * not permission to overwrite a single previous attempt. The batch creates
  * fresh attempts for that exact Course Offering, preserving historic scores. */
+const batchInput=z.strictObject({
+ action:z.literal("READ_BATCH"),
+ deliveryId:z.uuid(),
+ contentIds:z.array(z.uuid()).min(1).max(1000),
+});
+
 const retakeInput=z.strictObject({
  action:z.literal("RETAKE_COURSE"),
  membershipId:z.uuid().optional(),
@@ -95,7 +107,41 @@ export async function POST(request:Request,{params}:RouteContext){
   const {contentId}=await params;
   if(!z.uuid().safeParse(contentId).success)
    return NextResponse.json({error:"INVALID_CONTENT_ID",message:"Content ID must be a valid UUID"},{status:400});
-  const input=retakeInput.parse(await request.json());
+  const raw:unknown=await request.json().catch(()=>null);
+  if(raw===null || typeof raw!=="object" || Array.isArray(raw))
+   return NextResponse.json({error:"INVALID_REQUEST",message:"Progress request cannot be null"},{status:400});
+  const action=(raw as Record<string,unknown>).action;
+  if(action==="READ_BATCH"){
+   const rawIds=(raw as Record<string,unknown>).contentIds;
+   if(Array.isArray(rawIds)&&rawIds.length>1000)
+    return NextResponse.json({error:"RETAKE_TOO_MANY_ITEMS",
+      message:"Too many lessonContentIds in one request. Split the request into batches of 1000 or fewer."},{status:400});
+   const batch=batchInput.safeParse(raw);
+   if(!batch.success)
+    return NextResponse.json({error:"INVALID_REQUEST",
+      message:batch.error.issues[0]?.message??"Check the requested lesson content IDs",
+      issues:batch.error.issues},{status:400});
+   if(!batch.data.contentIds.includes(contentId))
+    return NextResponse.json({error:"INVALID_CONTENT_ID",
+      message:"The content ID in the URL must be included in contentIds"},{status:400});
+   const progress=[];
+   for(const id of new Set(batch.data.contentIds)){
+    // Every item is independently checked against this learner's delivery.
+    progress.push(await getLearnerContentProgress(context,id,batch.data.deliveryId));
+   }
+   return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
+      {headers:{"Cache-Control":"private, no-store"}});
+  }
+  const parsed=retakeInput.safeParse(raw);
+  if(!parsed.success){
+   const issue=parsed.error.issues[0];
+   return NextResponse.json({error:"INVALID_REQUEST",
+     message:issue?.message??"Invalid retake request",
+     fieldErrors:Object.fromEntries(parsed.error.issues.filter(item=>item.path.length>0)
+      .map(item=>[item.path.join("."),item.message])),
+     issues:parsed.error.issues},{status:400});
+  }
+  const input=parsed.data;
   const content=await loadLessonContentScope(contentId,true);
   const offeringId=input.offeringId??input.courseId!;
   if(content.offeringId!==offeringId)
@@ -105,7 +151,10 @@ export async function POST(request:Request,{params}:RouteContext){
    offeringId,expectedAttempt:input.expectedAttempt,confirmed:true,
   });
   return NextResponse.json({...result,status:"OK",
-   historyPreserved:true,partial:false},
+   message:result.alreadyFresh
+    ?"This learner has no recorded progress for that course — they are already starting fresh."
+    :"Attempt "+result.attempt+" started. The previous attempt is kept as history.",
+   data:result,historyPreserved:true,partial:false},
    {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof CourseProgressRetakeError)

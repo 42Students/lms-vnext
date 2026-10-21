@@ -4,7 +4,7 @@ import {Banner} from "@/components/ui/banner";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseWorkspace } from "@/components/courses/faculty-course-workspace";
-import { getFacultyCourseWorkspace } from "@/modules/courses/faculty-course-service";
+import { getFacultyCourseWorkspace, resolveFacultyCourseDeliveryForLink } from "@/modules/courses/faculty-course-service";
 import { getFacultyCourseHomeSignals } from "@/modules/courses/faculty-course-home-service";
 import { loadCourseDisplayContentIfReady } from "@/modules/courses/course-display-service";
 import { facultyCourseTabHref } from "@/modules/courses/faculty-course-navigation";
@@ -22,8 +22,25 @@ export default async function FacultyCourseTabPage({
   const filter=(["ALL","LECTURES","RESOURCES","ASSESSMENTS","LIVE"].includes(normalizedFilter)?
     normalizedFilter:"ALL") as "ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
   const context = await getCurrentRequestContext();
-  // A malformed or foreign delivery must not be redirected before the
-  // active Faculty membership and teaching assignment are verified.
+  // Resolve legacy slug/class deep links against persisted, authorized Faculty
+  // assignments only. A class hint is never accepted as an authorization grant.
+  const legacyClass=typeof query.cls==="string"?query.cls:null;
+  if(!z.string().uuid().safeParse(deliveryId).success || legacyClass){
+    const canonical=await resolveFacultyCourseDeliveryForLink(context,deliveryId,legacyClass);
+    if(!canonical)notFound();
+    if(canonical!==deliveryId){
+      const tab=courseTab.length===1&&/^[A-Za-z0-9_-]+$/.test(courseTab[0]??"")
+        ?courseTab[0]!:"home";
+      const params=new URLSearchParams();
+      for(const [key,raw] of Object.entries(query)){
+        if(!["cls","ref","lesson","content","filter","month"].includes(key))continue;
+        const value=Array.isArray(raw)?raw[0]:raw;
+        if(value&&value.length<=128)params.set(key,value);
+      }
+      redirect("/teacher/courses/"+encodeURIComponent(canonical)+"/"+encodeURIComponent(tab)+
+        (params.size?"?"+params.toString():""));
+    }
+  }
   const workspace = await getFacultyCourseWorkspace(context, deliveryId);
   const requestedLesson=typeof query.lesson==="string"?query.lesson:null;
   const requestedContent=typeof query.content==="string"?query.content:null;
