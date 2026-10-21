@@ -223,28 +223,28 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/courses/college-content-aggregate.tsx`
 - [x] `src/components/courses/college-content-authoring-control.tsx`
 - [x] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/courses/college-live-classes-directory.tsx`
-- [ ] `src/components/courses/college-quiz-actions.tsx`
-- [ ] `src/components/courses/college-quiz-attempts.tsx`
-- [ ] `src/components/courses/college-quiz-create.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-contacts-table.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/courses/super-admin-content-actions.tsx`
-- [ ] `src/components/courses/super-admin-content-directory-page.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
-- [ ] `src/components/placements/applicant-notes-panel.tsx`
+- [x] `src/components/courses/college-live-classes-directory.tsx`
+- [x] `src/components/courses/college-quiz-actions.tsx`
+- [x] `src/components/courses/college-quiz-attempts.tsx`
+- [x] `src/components/courses/college-quiz-create.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-contacts-table.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/super-admin-content-actions.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/placements/applicant-notes-panel.tsx`
 - [ ] `src/components/placements/college-application-detail-drawer.tsx`
 - [ ] `src/components/placements/college-application-pipeline-controls.tsx`
 - [ ] `src/components/placements/college-drive-attention-cards.tsx`
