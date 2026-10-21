@@ -49,7 +49,7 @@ export default async function CollegeDriveShortlistedPage({
       <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
       {query.q ? <Link href={collegeShortlistedHref(jobId,{q:"",page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}
     </form>
-    <p role="status" className="text-sm">{data.total} shortlisted</p>
+    <p role="status" className="text-sm leading-[1.6]">{data.total} shortlisted</p>
     <a className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={
       "/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
       (driveApplicationsHref(jobId,query,true).split("/export")[1]??"")

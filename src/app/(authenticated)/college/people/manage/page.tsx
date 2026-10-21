@@ -62,7 +62,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory} />
       <ErrorState title="Invalid directory filters"
         description="Check the search, role, status or page. No people were loaded."
-        action={<Link href="/college/people/manage" className="font-semibold text-link min-h-11 inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+        action={<Link href="/college/people/manage" className="md:min-h-9 font-semibold text-link min-h-11 inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
     </div>;
   }
   const people = await listCollegePeopleWithRuntime(context, {
