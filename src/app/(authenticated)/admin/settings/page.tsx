@@ -61,6 +61,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
     </div>;
   const {selectedCollegeName,sections:allSections}=platform.value;
   const sections=filterPlatformInventory(allSections,parsed);
+  const organizationOnly=Boolean(context.adminScope?.organizationId&&!context.adminScope?.collegeId);
   const editorScope=context.adminScope?.collegeId?"COLLEGE":"GLOBAL";
   const editorResult=editorScope==="COLLEGE"&&context.adminScope?.collegeId
    ?await listAdminTenantSettings(context,"COLLEGE",context.adminScope.collegeId)
@@ -114,13 +115,30 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         </p>
       </section>
 
+      <section aria-label="Tenant setting scope modes" className="border-b border-border pb-4">
+        <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Setting scope</h2>
+        <p className="mt-2 text-sm leading-6 text-body">
+          Global settings · Organization (no applicable setting overrides) · College settings
+        </p>
+        {organizationOnly ? <Banner tone="warning" role="status" className="mt-3">
+          No setting applies at organization level. Clear the Super Admin safety scope
+          to edit global overrides, or select one college for college-level settings.
+        </Banner> : null}
+      </section>
       {editorData?<TenantSettingsEditor key={editorScope+":"+(context.adminScope?.collegeId??"GLOBAL")} scopeType={editorScope}
        collegeId={context.adminScope?.collegeId??undefined}
        ready={editorData.ready} entries={editorData.entries}/>:(
        <Banner tone="warning">
         {editorResult&&!editorResult.ok
-          ?"Tenant settings editor is temporarily unavailable. Existing settings were not changed."
+          ?"Settings could not be loaded or saved safely. Existing settings were not changed."
+          :organizationOnly
+          ?"No setting applies at organization level."
           :"Clear the Super Admin safety scope to access global setting overrides, or select an individual college to edit its scoped settings."}
+        {editorResult&&!editorResult.ok ? <Link
+          href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")}
+          className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Retry
+        </Link> : null}
        </Banner>)}
       {attendanceResult&&!attendanceResult.ok?
         <Banner tone="warning">
@@ -197,6 +215,14 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
 
           {section.smsTemplates ? (
             <>
+            <p className="text-sm leading-6 text-body">
+              These are source templates, not evidence that an SMS was sent,
+              accepted by a provider or delivered. Provider attempt statuses remain unavailable here.
+              <Link href="/admin/audit#sms-delivery-attempts"
+                className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+                SMS delivery attempts
+              </Link>
+            </p>
             <DataTable<NonNullable<typeof section.smsTemplates>[number]>
               caption="SMS source templates"
               rows={section.smsTemplates}
