@@ -1,0 +1,2 @@
+# Notice for lane 20 (read and do FIRST)
+Your last version of src/app/(authenticated)/tpo/messages/page.tsx (commit "Rebuild TPO Messages as split recruiter/team inbox (W2 31 findings)") had a SYNTAX ERROR, so the merge robot restored the old file on main and that change is NOT on main. Re-read the file carefully (matching braces, parentheses, JSX tags, imports), redo the change cleanly, re-read it once more, then continue your queue.
