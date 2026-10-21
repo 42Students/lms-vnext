@@ -45,7 +45,7 @@ export function CollegeLegacyDriveSettings({
       });
       const body=await result.json().catch(()=>null);
       if(!result.ok)throw Error(body?.error??"Could not reopen drive");
-      setFeedback("Job opened successfully");setConfirmation(null);router.refresh();
+      setFeedback("Drive opened");setConfirmation(null);router.refresh();
     }catch(error){setFeedback(error instanceof Error?error.message:"Could not reopen drive");}
     finally{setBusy(false);}
   }
