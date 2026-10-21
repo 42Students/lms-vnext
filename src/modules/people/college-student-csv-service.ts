@@ -1,5 +1,5 @@
 import "server-only";
-import {randomUUID} from "node:crypto";
+import {createHash, randomUUID} from "node:crypto";
 
 import { and, desc, eq, inArray, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -142,6 +142,14 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
 
   // No cross-system ACID transaction exists between identity provisioning and
   // PostgreSQL enrollments; report each completed stage truthfully.
+  // This digest binds a manual recovery receipt to the exact upload AND the
+  // selected academic options; do not persist the CSV or any raw contact here.
+  // A digest is not a durable row-level idempotency key or undo ledger.
+  const sourceFingerprint = createHash("sha256").update(JSON.stringify({
+    csv: request.csv, programId: request.programId ?? null,
+    cohortId: request.cohortId ?? null, sectionId: request.sectionId ?? null,
+  })).digest("hex");
+  const runId = randomUUID();
   const results: StudentCsvResult[] = [];
   for (const entry of checked) {
     if (entry.errors.length || !entry.data) {
@@ -194,7 +202,14 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
         membershipId });
     }
   }
-  const runId=randomUUID();
+  // Preserve only stage/status and minted UUIDs for operator triage. Never
+  // infer a safe rollback from this immutable audit receipt: external identity
+  // creation and downstream enrollments cannot be reversed atomically.
+  const receipts = results.map(result => ({
+    row: result.row, status: result.status,
+    membershipId: result.membershipId ?? null,
+    enrollmentId: result.enrollmentId ?? null,
+  }));
   await getDb().insert(activityEvents).values({
    organizationId:member.organizationId,collegeId:member.collegeId,
    actorUserId: context.user.id,
@@ -208,9 +223,13 @@ export async function runCollegeStudentCsv(context: RequestContext, raw: unknown
    summary:"College Student CSV import completed",
    metadata:{count:results.length,created:results.filter(x=>x.status==="IMPORTED").length,
     partial:results.filter(x=>x.status==="PARTIAL").length,
-    failed:results.filter(x=>["INVALID","FAILED"].includes(x.status)).length},
+    failed:results.filter(x=>["INVALID","FAILED"].includes(x.status)).length,
+    sourceFingerprint, receipts,
+    recoveryPolicy:"MANUAL_RECONCILIATION_REQUIRED_FOR_PARTIAL",
+    reversible:false},
   });
-  return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,runId };
+  return { preview: false, structuralErrors: [], results, valid: valid.length, invalid,runId,
+    reversible:false, recoveryRequired:results.some(item=>item.status==="PARTIAL") };
 }
 
 /** SA-academics-people-95: history reads use the same selected active college as imports. */
