@@ -223,3 +223,10 @@
 
 ## Packet 53 — OTP account identity/preuser isolation
 - `src_db_schema_identity-auth-attempts.ts.md` | G2-20-018-023/036: retained existing real user FK, HMAC-only OTP fingerprints, five-minute expiry and bounded attempts; documented proposed isolated pre-registration proof intent rather than legacy learnerId=0 bypass or fake users. Deliberately retire old plaintext code/roll-number data, do not import raw OTPs. | Public pre-registration challenge workflow requires auth owner review, HMAC keyed nonce, rate cap and verified binding before user provisioning; no auto-migration of secrets. No SQL changes/activation.
+
+
+## Packet 54 — placement registration season/cohort/consent
+- `src_db_schema_placement-registration.ts.md` | G2-15-023-008/051: documented legacy seasonId≠current academic cohortId, numeric learner→same-college membership, verified cohort enrollment, old consent source/time and stale consent quarantine. Existing typed source SELF/TPO/BACKFILL and conditional consent CHECK prevent inferring new legal consent. | No historical season→cohort mapping in greenfield; services must not auto-consent or silently move old registration into a new academic batch. Current vNext model intentionally batch-first; no data migration.
+
+## Packet 55 — course upload ownership and multi-file producer
+- `src_db_schema_course-upload-receipts-staged.ts.md` | G2-12-021-007/027: reviewed per-file receipt sequence, attestation, object scope and unique guards; documented old numeric owner_user_id/type→verified college membership/role mapping. Existing relation can represent multiple ordered files, but the live producer only uses index zero. | Staged schema intentionally NOT exported or registered due existing live assignment_submission_files overlap and incomplete scanner/storage authorization cutover. Implement multi-file selection/consumption at service/UI with per-file CLEAN attestation. No SQL migration, no project code executed.
