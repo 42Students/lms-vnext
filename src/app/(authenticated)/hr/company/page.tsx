@@ -186,7 +186,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}
           </p>
           {teamPageResult.rows.length>0 && hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)?
-            <p role="status" className="mt-3 text-sm text-muted-foreground">
+            <p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
               {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)}
             </p>:null}
           {teamPageResult.rows.length===0 ? <EmptyState title="No matching teammates" description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}
