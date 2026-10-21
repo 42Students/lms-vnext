@@ -30,7 +30,7 @@ export default async function FacultyContactDetailPage({
     <PageHeader eyebrow="Faculty · Contacts" title={name}
       description="Active college directory contact · Read-only"
       actions={<Link href={back}
-        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-[var(--lms-control-height)]">
+        className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-[var(--lms-control-height)]">
         Back to Contacts
       </Link>} />
     <div className="grid min-w-0 gap-4 md:grid-cols-2">
