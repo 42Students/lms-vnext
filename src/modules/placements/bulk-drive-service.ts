@@ -8,7 +8,7 @@ import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   activityEvents, collegeMemberships, membershipRoles, placementApplications, placementCompanies, placementCompanyRelationships,
-  placementApplicationScreenings, placementApplicationStatusHistory,
+  placementApplicationScreenings,
   placementDriveDayCoordinatorAssignments, placementJobRoleOptions,
   placementJobs, placementSeasons, placementDebarments, placementEligibilityOverrides, inAppNotifications, users,
 } from "@/db/schema";
