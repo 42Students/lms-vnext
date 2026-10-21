@@ -308,3 +308,6 @@
 
 - work2 #35 `api/projects/[projectId]/route.ts` | G2-2-020-023: preserved CAS project summary PATCH and explicit 400 USE_VERSIONED_SECTION_ENDPOINTS for unsupported legacy nested releases/sprints/tasks/resources/sectionTokens instead of silently discarding updates. Authenticated section API adapter handoff.
 - work2 #36 `tpo-outcome-label-settings-service.ts` | G2-2-030-035/026: added fixed-only, ACTIVE-account catalog reader for recruiter/no-college sessions; dynamic custom labels remain strict college/TPO auth. Endpoint owner must use safe fallback without swallowing database outage.
+
+- work2 #37 `learner-course-discussion.tsx` | 11 findings G2-2-033-029..033, G2-12-009-027..030, G2-19-031-051, G2-2-037-020: checked POST acknowledgment before draft reset, retained 409 draft; exact 2-second post/delete/pin error toasts, delete confirmation stays open on failure, history refresh warning exact two-line copy and Retry. Confirmed server POST refetch then scroll/focus; stale refresh keeps last messages.
+- work2 #38 `admin/people/page.tsx` | G2-8-002-019 restored exact no-college heading and detail while retaining global browsing link.
