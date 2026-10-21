@@ -5,6 +5,22 @@ export const messagingHistoryQuerySchema = z.object({
   purpose: z.string().trim().max(160).optional(),
 }).strict();
 
+/** No carrier handset-delivery inference may be made from provider acceptance. */
+export const MESSAGING_SENT_STATUS_NOTE =
+  "SENT means the operator accepted the message. Handset delivery is not reported by the provider.";
+
+/** Human-readable validation for malformed page/purpose filters. Keep strict
+ * Zod validation and scoped history queries rather than silently dropping them.
+ */
+export function messagingHistoryQueryError(input:unknown):string|null {
+ const parsed=messagingHistoryQuerySchema.safeParse(input);
+ if(parsed.success)return null;
+ const fields=parsed.error.issues.map(issue=>issue.path[0]);
+ if(fields.includes("page"))return "Enter a valid history page between 1 and 10000.";
+ if(fields.includes("purpose"))return "Search purpose must be 160 characters or less.";
+ return "Invalid history filters. Clear them and try again.";
+}
+
 export type MessagingHistoryRow = {
   id: string;
   purpose: string;
