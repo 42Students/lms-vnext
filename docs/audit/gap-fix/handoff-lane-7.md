@@ -196,3 +196,22 @@ Source checked: `src/modules/courses/super-admin-course-bulk-visibility.ts` upda
 - G2-2-014-020 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Include per-course requested/updated counts in summary.
 - G2-2-014-021 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Show sanitized per-course failure details and partial-success warning.
 - G2-2-014-015 | `src/app/api/admin/courses/bulk-status/route.ts` | Surface exact empty selection message.
+
+## Super Admin independent audit findings — lane-7 wave-1 packets (2026-10-21)
+
+- G2-2-001-005 | `src/app/api/tracker/audit-findings/sync/route.ts`, `src/modules/bug-tracker/independent-finding-importer.ts` | Implement credential-verified privileged POST sync and outcome; UI button only after job actually exists; do not fake success.
+- G2-2-001-013 | `src/db/schema/db10-audit-findings.draft.ts` + migration + tracker detail | Add persisted roles, environment, reported agent/session, related IDs, source commit; show true provenance on detail.
+- G2-2-001-024 | `src/modules/bug-tracker/independent-audit-findings-service.ts` + tracker detail | Existing duplicate suggestions are first-page findings only; implement same-area 0.6-word overlap query, five suggestions with verified external IDs.
+- G2-2-001-025 | `src/modules/bug-tracker/independent-finding-transition-model.ts` | Owner decision: keep stricter staged release/CAS vs legacy direct fixed→verified; if changed, update transition-specific errors and all clients.
+- G2-2-001-038 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Persist typed old/new for assignee/severity/commits in event columns; present note summaries are not a lossless structured ledger.
+- G2-2-001-040 | `src/app/api/tracker/audit-findings/[publicId]/route.ts` | Verify no-store on all error/exception responses and audited impersonation actor label, without relaxing platform scope.
+- G2-2-001-048 | `src/db/schema/db10-audit-findings.draft.ts` + migration/importer | Persist per-file result REJECTED/TAMPERED/DELETED and checkedAt; UI currently has no reliable values to render.
+- G2-2-001-061 | `src/modules/bug-tracker/independent-finding-importer.ts` | Bounded 10s connect/20s read GitHub request, refuse truncated trees and record failure details; no importer exists today.
+- G2-2-001-066 | `src/db/schema/db10-audit-findings.draft.ts` + migration/importer | Add importer/agent/file changed/deleted event kinds with actorKind and source path.
+- G2-2-001-067 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Append-only per-file ledger, sync constraints/indexes.
+- G2-2-001-068 | `src/db/schema/db10-audit-findings.draft.ts` + migration/importer | Reported severity, roles, environment, source commit, session and related IDs with historical backfill.
+- G2-2-001-069 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Event type, from/to, commit payload, actorKind, sourceFile for human/importer events.
+- G2-2-001-070 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Last commit, attempted/success timestamps, last error, file diagnostic results with transactionally consistent history.
+- G2-2-001-030 | `src/components/tracker/independent-finding-sync-action.tsx` | Synced / Sync didn't run / Sync failed toast variants only after approved guarded sync endpoint.
+
+Intentional divergences requiring owner signoff: G2-2-001-001/-041 no separate password door (platform RBAC is mandatory), G2-2-001-043 direct fixed→verified not permitted without recorded production release, G2-2-001-044 duplicate chains disallowed to preserve canonical target integrity. No migration, sync execution or deployment has been made by this lane.

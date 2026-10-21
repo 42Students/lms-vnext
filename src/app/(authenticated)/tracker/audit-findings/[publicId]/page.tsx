@@ -34,7 +34,7 @@ export default async function IndependentFindingDetailPage({params}:{params:Prom
   {details.slice(0,1).map(([label,value])=><section key={label} className="min-w-0 border-b border-border pb-4">
    <h2 className="font-semibold text-[var(--lms-heading)]">{label}</h2><p className="mt-2 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-[22px] text-body">{value??"Not recorded"}</p>
   </section>)}
-  <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity}
+  <IndependentFindingActions externalId={finding.externalId} version={finding.version} status={finding.status} severity={finding.severity} currentAssignee={finding.assignee}
    candidates={candidates.items.filter(item=>item.id!==finding.id).map(item=>({id:item.id,externalId:item.externalId,title:item.title}))}/>
   <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More finding details</summary>

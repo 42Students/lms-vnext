@@ -28,10 +28,12 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
   ilike(db10AuditFindings.externalId,pattern),
   ilike(db10AuditFindings.sourcePath,pattern),
   ilike(sql<string>`${db10AuditFindings.paths}::text`,pattern),
+  ilike(sql<string>`${db10AuditFindings.pages}::text`,pattern),
+  ilike(sql<string>`${db10AuditFindings.endpoints}::text`,pattern),
  ):undefined;
  if(searchPredicate)predicates.push(searchPredicate);
- const areaPredicate=query.area?ilike(db10AuditFindings.area,
-  "%"+query.area.replace(/[\\%_]/g,"\\$&")+"%"):undefined;
+ const areas=query.area.split(",").map(value=>value.trim()).filter(Boolean);
+ const areaPredicate=areas.length?inArray(db10AuditFindings.area,areas):undefined;
  if(areaPredicate)predicates.push(areaPredicate);
  if(query.statuses.length)predicates.push(inArray(db10AuditFindings.status,query.statuses));
  if(query.severities.length)predicates.push(inArray(db10AuditFindings.severity,query.severities));
@@ -50,7 +52,7 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
  const [total,items,facets]=await Promise.all([
   db.select({n:count()}).from(db10AuditFindings).where(where),
   db.select().from(db10AuditFindings).where(where)
-   .orderBy(desc(db10AuditFindings.foundAt),desc(db10AuditFindings.importedAt),asc(db10AuditFindings.id))
+   .orderBy(sql<number>`case ${db10AuditFindings.severity} when 'CRITICAL' then 0 when 'HIGH' then 1 when 'MEDIUM' then 2 when 'LOW' then 3 else 4 end`,desc(db10AuditFindings.foundAt),asc(db10AuditFindings.id))
    .limit(INDEPENDENT_AUDIT_PAGE_SIZE).offset((query.page-1)*INDEPENDENT_AUDIT_PAGE_SIZE),
   db.select({status:db10AuditFindings.status,severity:db10AuditFindings.severity,n:count()})
    .from(db10AuditFindings).where(facetsWhere)
@@ -93,19 +95,29 @@ export async function mutateIndependentAuditFinding(context:RequestContext,exter
    patch.status=input.status;note=input.note??null;
    if(row.status==="DUPLICATE"&&input.status!=="DUPLICATE")patch.duplicateOf=null;
   }
-  if(input.action==="SEVERITY")patch.severity=input.severity;
-  if(input.action==="ASSIGNEE")patch.assignee=input.assignee;
+  if(input.action==="SEVERITY"){
+   if(row.severity===input.severity)return {ok:false as const,reason:"SEVERITY_UNCHANGED"};
+   patch.severity=input.severity;
+   note=`Severity: ${row.severity} → ${input.severity}`;
+  }
+  if(input.action==="ASSIGNEE"){
+   if(row.assignee===input.assignee)return {ok:false as const,reason:"ASSIGNEE_UNCHANGED"};
+   patch.assignee=input.assignee;
+   note=`Assigned to: ${row.assignee??"Nobody"} → ${input.assignee??"Nobody"}`;
+  }
   if(input.action==="DUPLICATE"){
-   if(row.id===input.duplicateOf)return {ok:false as const,reason:"INVALID_DUPLICATE"};
+   if(row.externalId===input.duplicateOf)return {ok:false as const,reason:"INVALID_DUPLICATE"};
    const [target]=await tx.select({id:db10AuditFindings.id,status:db10AuditFindings.status})
-    .from(db10AuditFindings).where(eq(db10AuditFindings.id,input.duplicateOf)).limit(1);
+    .from(db10AuditFindings).where(eq(db10AuditFindings.externalId,input.duplicateOf)).limit(1);
    if(!target||target.status==="DUPLICATE")return {ok:false as const,reason:"INVALID_DUPLICATE"};
    patch.duplicateOf=target.id;patch.status="DUPLICATE";
+   note=`Duplicate of ${input.duplicateOf}`;
   }
   if(input.action==="FIX_COMMIT"){
    if(row.fixCommits.some(x=>x.repo===input.repo&&x.sha.toLowerCase()===input.sha.toLowerCase()))
      return {ok:false as const,reason:"DUPLICATE_COMMIT"};
-   patch.fixCommits=[...row.fixCommits,{repo:input.repo,sha:input.sha.toLowerCase()}];
+   patch.fixCommits=[...row.fixCommits,{repo:input.repo,sha:input.sha}];
+   note=`Commit added: ${input.repo}@${input.sha}`;
   }
   if(input.action==="COMMENT")note=input.note;
   const [saved]=await tx.update(db10AuditFindings).set(patch)
@@ -145,7 +157,7 @@ export async function readIndependentFindingSyncState(context:RequestContext){
  if(!row)return null;
  // The importer's refusal details are already persisted. Expose a bounded
  // diagnostic view to the authorized Super Admin, never a fabricated sync.
- const refusedFiles=row.refusedFiles.slice(0,50).map(file=>({
+ const refusedFiles=row.refusedFiles.slice(0,200).map(file=>({
   path:String(file.path??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,240),
   reason:String(file.reason??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,400),
  }));

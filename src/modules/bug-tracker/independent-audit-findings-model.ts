@@ -2,7 +2,7 @@ import {z} from "zod";
 export const FINDING_STATUSES=["NEW","CONFIRMED","IN_PROGRESS","FIXED_DEV","RELEASED_PROD","VERIFIED","DUPLICATE","WONT_FIX","NEEDS_INFO","CANT_REPRODUCE"] as const;
 export const FINDING_SEVERITIES=["CRITICAL","HIGH","MEDIUM","LOW"] as const;
 export const FINDING_KINDS=["BUG","SECURITY","DATA","UX","COPY","PERFORMANCE","ACCESSIBILITY"] as const;
-const values=<T extends string>(x:string|string[]|undefined):T[]=>x===undefined?[]:(Array.isArray(x)?x:[x]) as T[];
+const values=<T extends string>(x:string|string[]|undefined):T[]=>x===undefined?[]:(Array.isArray(x)?x:[x]).flatMap(value=>value.split(",")).map(value=>value.trim()).filter(Boolean) as T[];
 const filter=z.strictObject({
  q:z.string().trim().max(120).default(""),
  view:z.enum(["OPEN","RELEASE","ALL"]).default("OPEN"),
