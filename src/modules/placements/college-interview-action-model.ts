@@ -21,7 +21,8 @@ const appointment=z.object({
 export const collegeInterviewActionSchema=z.discriminatedUnion("action",[
  z.object({action:z.literal("SCHEDULE"),confirmed:z.literal(true),appointment}).strict(),
  z.object({action:z.literal("EDIT"),confirmed:z.literal(true),interviewId:id,expectedVersion:z.number().int().positive(),
-  appointment,reason:z.string().trim().min(3).max(500)}).strict(),
+  appointment,reason:z.string().trim().min(3).max(500),
+  notes:z.string().trim().max(1000).optional()}).strict(),
  z.object({action:z.enum(["CANCEL","COMPLETED","NO_SHOW"]),confirmed:z.literal(true),
   interviewId:id,expectedVersion:z.number().int().positive(),reason:z.string().trim().min(3).max(500)}).strict(),
 ]);
