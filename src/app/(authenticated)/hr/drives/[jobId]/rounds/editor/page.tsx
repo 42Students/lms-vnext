@@ -33,7 +33,7 @@ export default async function HrRoundsEditorPage({params}:{
    description="Add rounds or change/remove only recruiter-created, unused pending rounds. Every accepted change is audited."
    actions={<nav aria-label="Drive round links" className="flex flex-wrap items-center gap-2 text-sm">
     <PageBackLink href={"/recruiter/drives/"+jobId+"?tab=rounds"} label="Back to drive rounds"/>
-    <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to Drives</Link>
+    <Link href="/hr/drives" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Back to Drives</Link>
    </nav>} />
   <section id="add-round" className="min-w-0 border-b border-border pb-4">
    <details open={rounds.length===0} className="min-w-0">
@@ -105,7 +105,7 @@ export default async function HrRoundsEditorPage({params}:{
      </details>:<p className="text-sm text-muted-foreground">Managed by placement cell, contains interview slots/results, or is no longer pending; editing is disabled.</p>}
     {round.editable?<Link
       href={"/recruiter/drives/"+jobId+"/rounds/editor/remove/"+round.id}
-      className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:hidden md:min-h-9">
+      className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:hidden md:min-h-9">
       Review round removal
     </Link>:null}
    </article>)}
