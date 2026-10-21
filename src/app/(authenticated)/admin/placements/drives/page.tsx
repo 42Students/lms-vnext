@@ -11,6 +11,9 @@ import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Pagination } from "@/components/ui/pagination";
 import { SuperAdminBulkDriveActions } from "@/components/placements/super-admin-bulk-drive-actions";
+import { SuperAdminDriveArchive } from "@/components/placements/super-admin-drive-archive";
+import { SuperAdminDriveDuplicate } from "@/components/placements/super-admin-drive-duplicate";
+import { SuperAdminDriveDeadline } from "@/components/placements/super-admin-drive-deadline";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -44,7 +47,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    title={loaded.denied?"Drive access denied":"Drives unavailable"}
    description={loaded.denied
     ?"Your account cannot manage drives in this college."
-    :"This college's drives could not be loaded. Your filters were preserved."}
+    :"Failed to load jobs. Please try again. Your selected college and filters are preserved; no unverified or stale drive rows are displayed."}
    action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
     className="inline-flex items-center min-h-11 md:min-h-9 font-[650] text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">
     {loaded.denied?"Back to dashboard":"Retry loading drives"}
@@ -66,18 +69,39 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    <span className={row.job.applicationDeadline<today?"line-through text-muted-foreground":""}>
     {adminDriveIstDate(row.job.applicationDeadline)}</span>:"—"},
   {key:"posted",header:"Posted",mobilePriority:"secondary",cell:row=>adminDriveIstDate(row.job.publishedAt)},
-  {key:"applicants",header:"Applicants",mobilePriority:"secondary",
-   cell:row=><span className="tabular-nums">{row.metrics.submittedApplications}</span>},
+  {key:"applicants",header:"Submitted",mobilePriority:"secondary",
+   cell:row=><span title="Submitted applications only; this is not a count of all applicant statuses."
+     className="tabular-nums">{row.metrics.submittedApplications}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
-   cell:row=><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.job.id)}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
-    Open drive →</Link>},
+   cell:row=>{
+    const base="/admin/placements/jobs/"+encodeURIComponent(row.job.id);
+    const linkClass="inline-flex min-h-9 items-center font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]";
+    return <div className="flex min-w-0 flex-col items-start gap-2">
+      <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+        <Link href={base} className={linkClass}>Open drive</Link>
+        <Link href={base+"/applications"} className={linkClass}>View applications</Link>
+        <Link href={base+"/settings"} className={linkClass}>Edit / status</Link>
+      </div>
+      <details className="min-w-0 w-full border-t border-border pt-2 text-sm">
+        <summary className="inline-flex min-h-9 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          More actions · duplicate, deadline, delete
+        </summary>
+        <div className="min-w-0 space-y-3 pt-3">
+          <SuperAdminDriveDuplicate jobId={row.job.id} title={row.job.title}/>
+          {row.job.status==="PUBLISHED"?<SuperAdminDriveDeadline
+            jobId={row.job.id} deadline={row.job.applicationDeadline?.toISOString()??null}/>:null}
+          <SuperAdminDriveArchive jobId={row.job.id} title={row.job.title}/>
+        </div>
+      </details>
+    </div>;
+   }},
  ];
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Drives"
    description="Review and open every persisted non-archived drive in the selected college."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
     <PageBackLink href="/admin/placements" label="Placement overview" />
+    <Link href="/admin/placements/retention" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retention report</Link>
     <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Create drive →</Link>
