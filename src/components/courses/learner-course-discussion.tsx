@@ -253,7 +253,8 @@ export function LearnerCourseDiscussion({
     if(!loadedOnce.current||!changeCursor.current)return;
     if(++refreshPollCount.current%4===0){await load(true);return;}
     try{
-      const params=new URLSearchParams(changeCursor.current);
+      const params=new URLSearchParams({since:changeCursor.current.since});
+      if(changeCursor.current.afterId)params.set("afterId",changeCursor.current.afterId);
       const response=await fetch(
         "/api/courses/deliveries/"+encodeURIComponent(deliveryId)+
           "/discussions/changes?"+params,{cache:"no-store"});
@@ -629,7 +630,8 @@ export function LearnerCourseDiscussion({
                     {row.grouped?<span aria-hidden="true" className="w-8 shrink-0"/>:
                       <span aria-hidden="true" title={row.item.senderRole}
                         className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
-                        style={avatarTint(row.item.senderMembershipId,row.item.senderName)}>
+                        style={{backgroundColor:avatarTint(row.item.senderMembershipId,row.item.senderName).bg,
+                          color:avatarTint(row.item.senderMembershipId,row.item.senderName).fg}}>
                         {initials(row.item.senderName)}
                       </span>}
                     <div className="min-w-0 flex-1">
