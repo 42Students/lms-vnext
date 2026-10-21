@@ -104,3 +104,50 @@ export const FACULTY_YOUTUBE_DELETE_FEEDBACK = {
  failure:"Failed to delete",
  durationMs:2000,
 } as const;
+
+/** Exact legacy YoutubeDrawer affordances, separate from the learner player.
+ * Source: legacy frontend syllabus/youtube.js and YoutubeDrawer.jsx. */
+export const FACULTY_YOUTUBE_DRAWER_CONTRACT={
+ drawerWidthPx:600,
+ createTitle:"New Youtube Video",
+ editTitle:"Update Youtube Video",
+ cancelButton:"Cancel",
+ submitButton:"Submit",
+ titleLabel:"Youtube Video Title",
+ titlePlaceholder:"Enter Youtube Video Title",
+ pointsLabel:"Points",
+ pointsPlaceholder:"Enter Points",
+ urlLabel:"Youtube Video Link",
+ requiredTitle:"Enter Content Title",
+ requiredUrl:"Enter youtube link",
+ invalidUrl:"Paste a YouTube video link (watch, youtu.be or Shorts)",
+ deleteTitle:"Delete the YouTube video",
+ deleteDescription:"Are you sure you want to delete this YouTube video?",
+ confirmButton:"Yes",
+ cancelDeleteButton:"No",
+ refreshOnDrawerClose:true,
+} as const;
+
+export type FacultyContentAction="EDIT"|"DELETE";
+export function facultyYoutubeActions(actorRoles:readonly string[]):readonly FacultyContentAction[]{
+ return actorRoles.includes("FACULTY")?["EDIT","DELETE"]:[];
+}
+export function facultyYoutubeEditDefaults(content:{
+ contentTitle?:string|null;points?:number|null;
+ contentDataDTO?:{link?:string|null;html_content?:string|null;
+  file_dto?:{cloud_storage_object?:string|null}|null}|null;
+}):{contentTitle:string;points:string;youtubeLink:string}{
+ const data=content.contentDataDTO;
+ return {
+  contentTitle:content.contentTitle??"",
+  points:content.points==null?"":String(content.points),
+  youtubeLink:data?.link||data?.html_content||data?.file_dto?.cloud_storage_object||"",
+ };
+}
+/** Use only after the matching content ID has been confirmed removed by the
+ * scoped authoring mutation; do not refetch on API failure or optimistic click. */
+export function facultyYoutubeDeleteReceiptMatches(id:string,raw:unknown):boolean{
+ if(typeof raw!=="object"||raw===null)return false;
+ const data=raw as Record<string,unknown>;
+ return data.deleted===true&&(data.id===id||data.contentId===id);
+}
