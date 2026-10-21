@@ -78,7 +78,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           title="No active college access"
           description="Your recruiter account has no active college access. Contact the placement cell that invited you."/>:
           <section className="space-y-3 border-b border-border pb-6">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Choose a college</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Choose a college</h2>
             <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
               key:grant.collegeId,label:grant.collegeName,
               href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId),
@@ -121,7 +121,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <div className="flex min-w-0 flex-col items-start gap-3 min-[768px]:flex-row min-[768px]:justify-between">
             <div className="min-w-0">
               <div className="min-w-0">
-                <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{result.company.name}</h2>
+                <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{result.company.name}</h2>
               </div>
               <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
@@ -142,7 +142,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           <p className="mt-3 text-sm text-body">Industry not set</p>
           <p className="mt-2 max-w-prose text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
           <section aria-label="Hiring footprint" className="mt-5 border-t border-border pt-5">
-            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">Hiring footprint with this college</h3>
+            <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
             {overview.recent.length ? <div className="mt-4 space-y-2">
               <h4 className="text-sm font-semibold text-foreground">Recent hiring drives</h4>
@@ -164,7 +164,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       ) : (
         <section className="border-b border-border pb-6">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Recruiter team</h2>
+            <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Recruiter team</h2>
             <Link href={"/api/placements/recruiter/team/export?collegeId="+encodeURIComponent(result.grant.collegeId)+"&q="+encodeURIComponent(teamQuery.data)}
               className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
               Export authorized team CSV
