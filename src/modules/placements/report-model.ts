@@ -289,9 +289,9 @@ export function summarizePlacementHistoricalFunnel(
   input: PlacementReportFacts,
 ): PlacementReportHistoricalFunnel {
   const knownJobs = new Set(input.jobs.map((job) => job.id));
-  const applications = new Map(input.applications
+  const applications = new Map<string, PlacementReportApplication>(input.applications
     .filter((application) => knownJobs.has(application.jobId))
-    .map((application) => [application.id, application]));
+    .map((application) => [application.id, application] as const));
   if (input.stageHistory === undefined) {
     return {
       evidence: "UNAVAILABLE", applied: applications.size,
