@@ -54,12 +54,17 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
    setReceiptRows(eligible);
    setOutcomes(result.outcomes);
    setPreview(false);setAck(false);
-   setSelected([]);
+   // Retain only failed, still-visible sections for a scoped retry. Successful
+   // sections must not be resubmitted on the next review.
+   const failedKeys=result.outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK")
+    .map(item=>item.learnerMembershipId+":"+item.section);
+   setSelected(eligible.filter(row=>failedKeys.includes(verificationSelectionKey(row)))
+    .map(verificationSelectionKey));
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not review selected students.");}
   finally{setBusy(false);}
  }
- if(!waiting.length)return null;
+ if(!waiting.length&&!outcomes.length)return <p role="status" className="text-sm text-muted-foreground leading-[22px]">Nothing waiting for verification on this page.</p>;
  return <section aria-label="Bulk student profile verification" className="min-w-0 space-y-3 border-b border-border py-4">
   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Verify profiles / Send back for correction</h2>
   <p className="text-sm text-muted-foreground leading-[22px]">Select up to 20 submitted Education or Identity sections from this current {scope==="roster"?"student roster":"verification queue"} page. Every decision is rechecked, audited, and sent to the student.</p>
@@ -115,6 +120,7 @@ export function TpoRosterVerificationBulk({rows,scope="roster"}:{rows:readonly V
   {outcomes.length>0?<div role="status" className="space-y-2 border-t border-border py-3">
    <h3 className="font-semibold">Bulk review results</h3>
    <p>{outcomes.filter(item=>item.result==="VERIFIED"||item.result==="SENT_BACK").length} saved; {outcomes.filter(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK").length} need review.</p>
+   {outcomes.some(item=>item.result!=="VERIFIED"&&item.result!=="SENT_BACK")?<p className="text-sm text-muted-foreground">Failed sections remain selected if still waiting. Refresh to retry with their latest versions. Sections no longer waiting cannot be retried.</p>:null}
    <ul className="space-y-1 text-sm">{described.map(item=><li key={item.key}>{item.label} · {item.section}: {item.message}</li>)}</ul>
   </div>:null}
   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
