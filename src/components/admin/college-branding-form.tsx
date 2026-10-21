@@ -146,7 +146,7 @@ export function CollegeBrandingForm({
         className="order-first min-w-0 space-y-[var(--lms-space-4)] print:hidden"
       >
         {!canEdit ? <Alert tone="info">You can view this branding but not change it.</Alert> : null}
-        <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Colours</h2>
+        <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Colours</h2>
         <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
           {(["primaryColor", "secondaryColor"] as const).map((key) => (
             <label key={key} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -178,7 +178,7 @@ export function CollegeBrandingForm({
             </label>
           ))}
         </div>
-        <p className="m-0 text-xs text-muted-foreground leading-5">
+        <p className="m-0 text-xs text-muted-foreground leading-[20px]">
           Leave blank to use the standard LMS colours. Text on your colour is
           chosen automatically so it always stays readable.
         </p>
@@ -226,7 +226,7 @@ export function CollegeBrandingForm({
         style={previewStyle}
         className="order-last min-w-0 h-fit space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] min-[992px]:border-t-0 min-[992px]:border-l min-[992px]:pl-[var(--lms-space-4)] min-[992px]:pt-0"
       >
-        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-5">
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground leading-[20px]">
           Sign-in preview
         </p>
         <Card as="div" className="min-w-0">
@@ -239,7 +239,7 @@ export function CollegeBrandingForm({
               className="h-10 w-auto max-w-[180px] object-contain"
             />
           ) : (
-            <p className="m-0 text-xs font-medium text-muted-foreground leading-5">
+            <p className="m-0 text-xs font-medium text-muted-foreground leading-[20px]">
               42Students
             </p>
           )}
@@ -256,7 +256,7 @@ export function CollegeBrandingForm({
           <div className="mt-3 flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary md:min-h-9 text-sm font-semibold text-on-primary">
             Send code
           </div>
-          <p className="mb-0 mt-3 text-xs text-link leading-5">Resend code</p>
+          <p className="mb-0 mt-3 text-xs text-link leading-[20px]">Resend code</p>
         </Card>
       </aside>
     </div>

@@ -154,8 +154,8 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   }
   return <section className="min-w-0 space-y-4 border-b border-border pb-5" aria-label="Live logs">
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <div><h2 className="text-lg font-semibold">Live Google Cloud Logging</h2>
-        <p className="mt-1 text-sm text-body">Redacted error entries (ERROR and above) from the configured deployment namespace.</p>
+      <div><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Live Google Cloud Logging</h2>
+        <p className="mt-1 text-sm text-body leading-[22px]">Redacted error entries (ERROR and above) from the configured deployment namespace.</p>
       </div>
       <span role="status" className="text-xs text-muted-foreground">
         {configured===false?"Not configured":configured===true?"Live source enabled":"Checking live source"}
@@ -198,7 +198,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         className="min-w-0 py-3 text-sm">
         <Disclosure summaryClassName="min-w-0 break-words [overflow-wrap:anywhere]" title={new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" · "+item.event+" · "+item.path}>
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
-          <p className="mt-2 text-xs text-muted-foreground">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
+          <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
              >Copy for Claude</Button>
@@ -241,7 +241,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
        <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>void downloadRange("markdown")} loading={exporting} disabled={exporting}>Download report</Button>
        <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>void copy(trackerLogMarkdown(items))}>Copy report</Button>
      </div>}>
-      <p className="mt-1 text-sm text-body">Copy a redacted report or download the selected time range.</p>
+      <p className="mt-1 text-sm text-body leading-[22px]">Copy a redacted report or download the selected time range.</p>
       <Textarea className="w-full min-w-0" readOnly aria-label="Redacted tracker log report" value={trackerLogMarkdown(items)} rows={8}
        />
 
