@@ -139,7 +139,7 @@ export default async function TrackerIssueDetailPage({
       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-foreground md:min-h-9">Activity</summary>
         {detail.activities.length === 0 ? (
-          <p className="border-y border-border py-5 text-sm text-muted-foreground">No workflow history yet.</p>
+          <p className="border-y border-border py-4 text-sm text-muted-foreground">No workflow history yet.</p>
         ) : (
           <ol className="divide-y divide-border border-y border-border">
             {detail.activities.map((activity) => (
@@ -171,7 +171,7 @@ export default async function TrackerIssueDetailPage({
       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <summary className="flex min-h-11 cursor-pointer items-center text-base font-semibold text-foreground md:min-h-9">Screenshots</summary>
         {detail.attachments.length === 0 ? (
-          <p className="border-y border-border py-5 text-sm text-muted-foreground">No screenshot metadata.</p>
+          <p className="border-y border-border py-4 text-sm text-muted-foreground">No screenshot metadata.</p>
         ) : (
           <div className="divide-y divide-border border-y border-border">
             {detail.attachments.map((attachment) => (
