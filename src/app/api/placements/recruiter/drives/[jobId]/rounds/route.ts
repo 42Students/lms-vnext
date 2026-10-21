@@ -2,7 +2,7 @@ import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSameOriginRequest} from "@/auth/origin";
-import {editHrJobRound} from "@/modules/placements/hr-round-editor-service";
+import {editHrJobRound,hrRoundEditorUnavailableMessage} from "@/modules/placements/hr-round-editor-service";
 import {hrRoundFormSchema} from "@/modules/placements/hr-round-editor-model";
 import {PlacementsServiceError} from "@/modules/placements/errors";
 export const runtime="nodejs";
@@ -37,8 +37,11 @@ export async function POST(request:Request,{params}:{params:Promise<{jobId:strin
      ?"This round changed or has already been used for results or interviews. Refresh the rounds before trying again."
      :"This round cannot be changed. Check the round name and the 12-round limit.",
    },{status:409});
+   // The legacy controller distinguishes a drive that is over from an
+   // editable current one. Do not disclose job/college details without a grant.
    return NextResponse.json({error:"NOT_FOUND",
-    message:"This drive is unavailable or your recruiter access has ended."},{status:404});
+    message:hrRoundEditorUnavailableMessage(error.code),
+    nextAction:"Choose an active drive from Drives."},{status:404});
   }
   if(error instanceof z.ZodError)return NextResponse.json({error:"INVALID_ROUND"},{status:400});
   throw error;
