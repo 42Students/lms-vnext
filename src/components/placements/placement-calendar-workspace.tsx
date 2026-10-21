@@ -1094,8 +1094,7 @@ export async function PlacementCalendarWorkspace({
           <Link href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}
           className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Show everything</Link>
         ) : null}
-      </section>
-
+        <div className="mt-4 border-t border-border pt-3">
       {isTpo?<nav aria-label="Filter calendar by event type" className="flex min-w-0 flex-wrap gap-2">
  <FilterChipLink href={calendarHref(basePath,audience,state,{kind:undefined,kinds:[]})}
    selected={!state.kind&&!state.kinds.length}>
@@ -1121,6 +1120,10 @@ export async function PlacementCalendarWorkspace({
         {eventTypeCounts.get("INTERVIEW_SLOT")} interview slot events are included in All events.
        </p>:null}
       </nav>:null}
+        </div>
+      </section>
+
+
 
       <details aria-label="Next scheduled calendar event" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
         <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
