@@ -26,7 +26,7 @@ export default async function CollegeFacultyDetailPage({ params, searchParams }:
   // Old faculty identifiers are integers. Resolve them only inside the
   // authenticated college and only for a real faculty membership. Personal
   // teacher profiles remain /teacher/profile and always derive self identity.
-  if(/^\\d+$/.test(membershipId)){
+  if(/^[0-9]+$/.test(membershipId)){
     const owner=context.membership;
     if(!owner||!hasMembershipRole(context,"COLLEGE_ADMIN"))
       throw new AuthorizationError("people.manage");
