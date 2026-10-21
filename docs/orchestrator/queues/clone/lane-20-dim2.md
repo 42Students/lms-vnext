@@ -200,9 +200,9 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
 - [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
 - [x] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/ui/toast.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/components/ui/toast.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
 
 
 ## Dimension sweep: lane chat-20 owns "Wording: titles, labels, buttons, messages (part 2 of 3)" across the whole codebase
@@ -210,14 +210,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 200 files (1472 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: every visible string vs old LMS wording catalogue in docs/audit/legacy-copy-A.md and legacy-copy-B.md; casing, punctuation, ellipsis, plural rules, date/number formats, success and error messages.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/account/security/page.tsx`
-- [ ] `src/app/(authenticated)/admin/batches/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/page.tsx`
-- [ ] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
+- [x] `src/app/(authenticated)/account/security/page.tsx`
+- [x] `src/app/(authenticated)/admin/batches/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/subdomain/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/hr/page.tsx`
+- [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/audit/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/admin/projects/templates/[templateId]/error.tsx`
 - [ ] `src/app/(authenticated)/authenticated-print.css`
