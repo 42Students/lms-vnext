@@ -979,3 +979,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-11-006-021 | `src/modules/placements/tpo-audit-service.ts + TpoAuditPage` | Implement scoped About/What happened/Who/When facet option count queries and checklist chips, not only links.
 - G2-12-024-021 | `src/modules/log-alerts/admin-service.ts` | Add hour-scoped query over full recorded incidents to avoid latest100 cutoff for manual digests, retaining bounded tenant and rate guards.
+
+- G2-12-026-007/-039 | `src/modules/projects/activity-service.ts` | Add exact eventType and page/size API aliases to bounded project activity service if legacy clients need them; category/IST date filtering now wired.
+- G2-12-020-017/-055 | `src/modules/placements/public-join/domain-model.ts + company-curation-domain-model.ts` | Replace partial manual suffixes with maintained reviewed PSL normalization across all company gates (new packages forbidden without owner approval).

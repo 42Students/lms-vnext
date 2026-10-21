@@ -184,3 +184,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_audit_page.tsx.md` | Added guidance to existing category/actor/date filter surfaces; legacy dynamic four-checklist option counts remain unimplemented without scoped faceting service. No CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_log-alerts_manual-ops.ts.md` | DIGEST now accepts clamped 1..336 requested hours, uses that window for new-signature counts and labels capped latest100 sampling honestly. Full hour-window DB query remains pending; no CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-6_l12-u026-project-workspace-controller.md.md` | Project activity route now passes category/sourceTab and IST date bounds to existing authorized cursor service; eventType exact and offset-page aliases still require model integration; saved 400/404 behavior remains typed. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-trusted-domain-validation.ts.md` | TPO trusted-domain input now handles email, @domain and HTTPS website host while blocking credential/search/hash URLs; full PSL and shared superadmin normalization still requires approved registry. No CI.
