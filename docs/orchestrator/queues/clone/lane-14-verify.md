@@ -41,14 +41,14 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-14.md: surface | regre
 - [x] `src/app/(authenticated)/tpo/team/page.tsx`
 - [x] `src/app/(authenticated)/tpo/verification/page.tsx`
 - [x] `src/components/placements/learner-placement-preferences.tsx`
-- [ ] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-role-options.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/super-admin-drive-duplicate.tsx`
-- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
-- [ ] `src/components/placements/tpo-drive-deadline-form.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/placement-draft-edit-form.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-role-options.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/super-admin-drive-duplicate.tsx`
+- [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [x] `src/components/placements/tpo-drive-deadline-form.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
 - [ ] `src/components/placements/tpo-round-calendar-control.tsx`
 - [ ] `src/components/placements/tpo-season-controls.tsx`
 - [ ] `src/components/tpo/grid/grid-workspace.tsx`
