@@ -3,8 +3,8 @@ import { and, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { cohorts, programs, departments, sections, learnerProgramEnrollments,
   courseOfferings, cohortProgressionEvents, cohortProgressionState } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { collegeBatchRetireIdSchema, collegeBatchRetireSchema } from "./college-batch-retire-model";
@@ -16,11 +16,9 @@ export class CollegeBatchRetireError extends Error {
 }
 export async function retireCollegeBatch(context:RequestContext,rawId:unknown,raw:unknown) {
   const id=collegeBatchRetireIdSchema.parse(rawId),input=collegeBatchRetireSchema.parse(raw);
-  const member=context.membership;
-  if(!member||member.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN")||
-    !can(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
-    throw new AuthorizationError("academics.manage");
-  requirePermission(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
+  // Both active College Admin and acting-college Super Admin use persisted,
+  // tenant-scoped academic permissions, never an unscoped platform bypass.
+  const member=await resolveActingCollege(context,"academics.manage");
   return getDb().transaction(async tx=>{
     const [batch]=await tx.select({id:cohorts.id,name:cohorts.name,status:cohorts.status})
       .from(cohorts).innerJoin(programs,eq(programs.id,cohorts.programId))
@@ -49,7 +47,7 @@ export async function retireCollegeBatch(context:RequestContext,rawId:unknown,ra
       eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_BATCH_UPDATED,
       collegeId:member.collegeId,organizationId:member.organizationId,
       subjectType:"cohort",subjectId:id,subjectLabel:batch.name,
-      summary:"College Admin removed unused planned batch",
+      summary:"Unused planned batch archived",
       metadata:{fromStatus:"PLANNED",toStatus:"ARCHIVED"},
     });
     return updated;

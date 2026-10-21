@@ -351,18 +351,15 @@ export async function removeCollegeTermMapping(
 
 /** Atomically add several courses to one semester, preserving display order.
  * A failed eligibility or duplicate check rolls back all selected courses.
- * This intentionally differs from old partial-success duplicate skipping:
- * return a clear conflict rather than silently omitting selected courses.
- * The UI/route must surface the all-or-nothing contract before confirmation.
+ * Validate all IDs before mutation, then skip duplicates idempotently.
+ * No preexisting mapping type or credit is changed by a repeated selection.
  */
 export async function addCollegeTermMappings(context: RequestContext, raw: unknown) {
   const inputs = z.array(collegeTermCourseAddSchema).min(1).max(100).parse(raw);
   const targetTerm = inputs[0]!.programTermId;
   if (inputs.some(input => input.programTermId !== targetTerm))
     throw new CollegeTermMappingError("TERM_BULK_MIXED_SEMESTERS");
-  const courseIds = inputs.map(input => input.courseId);
-  if (new Set(courseIds).size !== courseIds.length)
-    throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
+  const courseIds = [...new Set(inputs.map(input => input.courseId))];
   const member = await ownCollege(context);
   try {
     return await getDb().transaction(async tx => {
@@ -379,27 +376,27 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
       const existing = await tx.select({ courseId: programTermCourses.courseId,
         displayOrder: programTermCourses.displayOrder }).from(programTermCourses)
         .where(eq(programTermCourses.programTermId, term.id)).for("update");
-      // The old backend silently skipped duplicates; vNext deliberately
-      // keeps the batch all-or-nothing so callers can retry a clean selection
-      // without assuming that every requested course was inserted.
-      if (existing.some(row => courseIds.includes(row.courseId)))
-        throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
+      // Keep the current mapping metadata and skip already mapped IDs.
+      // The term lock serializes competing bulk edits, so this is idempotent.
+      const mappedIds=new Set(existing.map(row=>row.courseId));
       let next = nextTermCourseOrder(existing.map(row => row.displayOrder));
       const inserted = [];
       for (const input of inputs) {
+        if(mappedIds.has(input.courseId))continue;
         const [row] = await tx.insert(programTermCourses).values({
           programTermId: term.id, courseId: input.courseId, type: input.type,
           credits: input.credits, displayOrder: next++,
         }).returning();
         if (!row) throw new CollegeTermMappingError("TERM_COURSE_INSERT_FAILED");
         inserted.push(row);
+        mappedIds.add(input.courseId);
       }
-      await recordActivityEventInTransaction(tx, context, {
+      if(inserted.length)await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
         collegeId: member.collegeId, organizationId: member.organizationId,
         subjectType: "program_term", subjectId: term.id,
         summary: "Courses mapped to semester",
-        metadata: { action: "SEMESTER_COURSE_ADD", courseIds, count: inserted.length, atomic: true },
+        metadata: { action: "SEMESTER_COURSE_ADD", courseIds:inserted.map(row=>row.courseId), count:inserted.length, skipped:inputs.length-inserted.length, atomic:true },
       });
       return inserted;
     });

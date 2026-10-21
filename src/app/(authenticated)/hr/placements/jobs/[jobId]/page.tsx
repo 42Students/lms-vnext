@@ -87,7 +87,7 @@ export default async function HrPlacementJobPage({
   params: Promise<{ jobId: string }>;
   searchParams: Promise<{ tab?: string; stage?: string; applicant?: string; page?: string;
     offerPage?:string; offerState?:string;
-    roundId?:string; outcome?:string; review?:string; returnTo?:string; applicantSearch?:string }>;
+    roundId?:string; outcome?:string; review?:string; returnTo?:string; applicantSearch?:string; requestId?:string }>;
 }) {
   const context =
     await getCurrentRequestContext();
@@ -146,6 +146,8 @@ export default async function HrPlacementJobPage({
   const requestsTab=query.tab==="requests";
   const discussionTab=query.tab==="discussion";
   const requestData=(requestsTab||discussionTab)?await getDriveChangeRequests(context,workspace.job.id):null;
+  const quoteRequest=discussionTab&&requestData?.party==="COMPANY"&&typeof query.requestId==="string"
+    ?requestData.requests.find(row=>row.id===query.requestId)??null:null;
   const driveConversation=discussionTab?await getRecruiterDriveConversations(context,workspace.job.id):null;
   const selectedThread=driveConversation?.threads[0]??null;
   const threadMessages=selectedThread?
@@ -500,10 +502,12 @@ export default async function HrPlacementJobPage({
                 {message.senderType==="RECRUITER"?"You":message.senderDisplayName?"Placement cell · "+message.senderDisplayName:"Placement cell"} ·
                 {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",hour:"numeric",minute:"2-digit"}).format(message.createdAt)} IST
               </p>
+              {message.changeRequestId?<p className="mt-1 text-xs font-semibold text-primary-text">Regarding change request {message.changeRequestId}</p>:null}
               <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body">{message.body}</p>
             </li>)}
           </ol></ScrollCue>
-          <RecruiterConversationReplyForm threadId={selectedThread!.id}/>
+          <RecruiterConversationReplyForm threadId={selectedThread!.id}
+             quoteId={quoteRequest?.id} quoteLabel={quoteRequest?.field}/>
           <Link href={"/hr/conversations/"+selectedThread!.id}
             className="inline-flex min-h-9 max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Browse full conversation history</Link>
         </div>:<form method="post" action="/api/placements/recruiter/conversations/open" className="space-y-3">
@@ -516,6 +520,16 @@ export default async function HrPlacementJobPage({
       {requestsTab&&requestData?.party==="COMPANY" ? <section className="space-y-4 border-b border-border pb-4 md:pb-6">
         <h2 className="text-lg font-semibold text-foreground">Requests</h2>
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
+        {requestData.requests.length>0?<details className="min-w-0 border-b border-border pb-3">
+          <summary className="min-h-11 cursor-pointer text-sm font-semibold text-primary-text">Quote a request in Discussion</summary>
+          <div className="mt-2 flex flex-wrap gap-3">
+            {requestData.requests.map(request=><Link key={request.id}
+              href={"/recruiter/drives/"+encodeURIComponent(workspace.job.id)+"?tab=discussion&requestId="+encodeURIComponent(request.id)+returnQuery}
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+              Discuss {request.field.toLowerCase()} request
+            </Link>)}
+          </div>
+        </details>:null}
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
           userId={context.user.id} requests={requestData.requests}/> :
          <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body leading-[1.6]">{requestData.pendingMessage}</p>}

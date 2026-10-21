@@ -12,10 +12,14 @@ export async function POST(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const input = await request.json();
-    const row = input && Array.isArray(input.mappings)
+    const bulk = input && Array.isArray(input.mappings);
+    const row = bulk
       ? await addCollegeTermMappings(context, input.mappings)
       : await addCollegeTermMapping(context, input);
-    return NextResponse.json({ mapping: row }, { status: 201 });
+    const inserted = bulk ? (row as unknown[]).length : 1;
+    return NextResponse.json({ mapping: row,
+      ...(bulk ? { skippedCount: input.mappings.length - inserted } : {}) },
+      { status: bulk && inserted === 0 ? 200 : 201 });
   } catch (error) {
     if (error instanceof CollegeTermMappingError)
       return NextResponse.json({ error: error.code }, { status: error.code.endsWith("NOT_FOUND") ? 404 : 409 });

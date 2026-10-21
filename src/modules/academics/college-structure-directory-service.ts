@@ -174,6 +174,9 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
   const countById = new Map(counts.map(item => [item.sectionId, item.enrolled]));
   const items = baseRows.map(item => ({
     ...item,
+    // Owned academic periods keep orphan imported sections visible.
+    programName: item.programName ?? "Name unavailable (ID "+(item.linkedProgramId??"unknown")+")",
+    cohortName: item.cohortName ?? "Name unavailable (ID "+(item.cohortId??"unknown")+")",
     activeLearners: enrollmentCountsAvailable ? countById.get(item.id) ?? 0 : null,
   }));
   const total = totals[0]?.total ?? 0;
