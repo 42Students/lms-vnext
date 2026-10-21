@@ -13,7 +13,7 @@ const sectionDepartment=alias(departments,"admin_faculty_section_department");
  * explicit semester code/name. Do not invent it from the year or cohort. */
 function legacySemester(periodName:string,periodCode:string){
  const match=[periodCode,periodName].map(value=>
-  /(?:^|[\s_/-])(?:SEMESTER|SEM|S)[\s_:-]*([1-9][0-9]?)(?:$|[\s_/-])/i.exec(value)?.[1])
+  /(?:^|[\s_-])(?:SEMESTER|SEM|S)[\s_:-]*([1-9][0-9]?)(?:$|[\s_-])/i.exec(value)?.[1])
   .find(Boolean);
  return match?"Sem "+Number(match):"—";
 }
