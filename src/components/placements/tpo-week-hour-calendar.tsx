@@ -151,7 +151,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
  return <section aria-label="TPO weekly time calendar" className="space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-3">
    <h2 className="font-semibold">Week · 7 AM to 9 PM IST</h2>
-   <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] sm:w-64">Find an event
+   <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-body-text)] sm:w-64 text-[var(--lms-neutral-400)]">Find an event
     <Input type="search" value={filter} onChange={e=>setFilter(e.target.value)} maxLength={100}
      placeholder="Company or event"/>
    </label>
@@ -228,10 +228,10 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
    <div className="space-y-3">
     {slot&&blocked.has(slot.slice(0,10))?<Alert tone="warning">This day is blocked for placement scheduling. Choose another date if possible.</Alert>:null}
     {!blockedDatesAvailable?<Alert tone="warning">Blocked-date settings could not be loaded. Scheduling is not confirmed conflict-free.</Alert>:null}
-    <label className="grid gap-1 text-sm">Date and time (IST)
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date and time (IST)
      <Input type="datetime-local" value={slot} onChange={e=>setSlot(e.target.value)}
       className=""/></label>
-    <label className="grid gap-1 text-sm">Search recruiter lead
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search recruiter lead
      <Input value={leadQuery} onChange={e=>{setLeadQuery(e.target.value);setLeadId("");}}
       className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3" maxLength={120}/>
      <Select value={leadId} disabled={loadingLeads} required onChange={e=>setLeadId(e.target.value)}
@@ -239,7 +239,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
       <option value="">{loadingLeads?"Loading recruiters…":"Choose recruiter"}</option>
       {matches.map(lead=><option key={lead.id} value={lead.id}>{lead.name}{lead.companyName?" · "+lead.companyName:""}</option>)}
      </Select></label>
-    <label className="grid gap-1 text-sm">Note (optional)
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note (optional)
      <Textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
       className=""/></label>
     {message?<InlineNotice tone="error" message={message}/>:null}

@@ -102,7 +102,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
   if (choices.length === 0) return <EmptyState title="No pending or scheduled rounds exist in published drives." description="Create a round in its job workspace first." action={<a href="/tpo/calendar" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-[var(--lms-control-height)]">Calendar</a>}/>;
   return <section className="min-w-0 space-y-4 border-b border-[var(--lms-canvas-border)] pb-4">
     <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive round
-      <Select className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"
+      <Select className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
         value={id} onChange={(event) => choose(event.target.value)}>
         <option value="">Select a round</option>
         {choices.map((item) => <option key={item.id} value={item.id}>
@@ -115,11 +115,11 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
       <p className="text-xs text-muted-foreground leading-[20px]">On-campus rounds need a recorded duration for venue collision checking.</p>
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date/time (IST)
-        <Input type="datetime-local" className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"
+        <Input type="datetime-local" className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
       </label>
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
-        <Select className="mt-2 min-h-11 w-full min-w-0 md:min-h-9"
+        <Select className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
           value={mode} onChange={(event) => setMode(event.target.value as "ON_CAMPUS" | "VIRTUAL")}>
           <option value="ON_CAMPUS">On campus</option>
           <option value="VIRTUAL">Virtual</option>

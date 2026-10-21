@@ -79,7 +79,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <h2 className="font-semibold">Recruiter-proposed interview slots</h2>
    {recruiterProposals.map(p=><div key={p.id} className="grid min-w-0 gap-3 border-b border-border py-3 sm:grid-cols-2">
     <p className="text-sm">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
-    <label className="grid gap-1 text-[13px] font-semibold">Venue or meeting link
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Venue or meeting link
      <Input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
       className="min-h-11 w-full min-w-0 md:min-h-9"/>
     </label>
@@ -97,15 +97,15 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <h2 className="font-semibold text-foreground">Generate interview day</h2>
    <p className="mt-1 text-sm text-body">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-    <label className="grid gap-1 text-[13px] font-semibold">Start time (IST)<Input type="datetime-local" required value={date} onChange={e=>setDate(e.target.value)}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start time (IST)<Input type="datetime-local" required value={date} onChange={e=>setDate(e.target.value)}
       className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
-    <label className="grid gap-1 text-[13px] font-semibold">Room names (comma-separated)<Input value={rooms} onChange={e=>setRooms(e.target.value)}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Room names (comma-separated)<Input value={rooms} onChange={e=>setRooms(e.target.value)}
       className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
-    <label className="grid gap-1 text-[13px] font-semibold">Minutes per slot<Input type="number" min={5} max={240} value={minutes} onChange={e=>setMinutes(Number(e.target.value))}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minutes per slot<Input type="number" min={5} max={240} value={minutes} onChange={e=>setMinutes(Number(e.target.value))}
       className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
-    <label className="grid gap-1 text-[13px] font-semibold">Gap (minutes)<Input type="number" min={0} max={120} value={gap} onChange={e=>setGap(Number(e.target.value))}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gap (minutes)<Input type="number" min={0} max={120} value={gap} onChange={e=>setGap(Number(e.target.value))}
       className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
-    <label className="grid gap-1 text-[13px] font-semibold">Slots per room<Input type="number" min={1} max={100} value={count} onChange={e=>setCount(Number(e.target.value))}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Slots per room<Input type="number" min={1} max={100} value={count} onChange={e=>setCount(Number(e.target.value))}
       className="min-h-11 md:min-h-9 "/></label>
    </div>
    <div className="mt-4 flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:gap-3">
@@ -123,11 +123,11 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Assign rooms by roll range <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
    <p className="mt-1 text-sm text-body">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-    <label className="grid gap-1 text-[13px] font-semibold">From roll<Input value={fromRoll} onChange={e=>setFromRoll(e.target.value)}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From roll<Input value={fromRoll} onChange={e=>setFromRoll(e.target.value)}
      className="min-h-11 md:min-h-9 "/></label>
-    <label className="grid gap-1 text-[13px] font-semibold">To roll<Input value={toRoll} onChange={e=>setToRoll(e.target.value)}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To roll<Input value={toRoll} onChange={e=>setToRoll(e.target.value)}
      className="min-h-11 md:min-h-9 "/></label>
-    <label className="grid gap-1 text-[13px] font-semibold">New room<Input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New room<Input value={bulkRoom} onChange={e=>setBulkRoom(e.target.value)}
      className="min-h-11 md:min-h-9 "/></label>
    </div>
    {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<InlineNotice tone="error" message="The ending roll must be after the starting roll."/>:null}
@@ -170,7 +170,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      <details className="group min-w-0 border-t border-border pt-2">
       <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Change room <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
       <div className="flex min-w-0 flex-col gap-2 pt-2 sm:flex-row sm:items-end">
-      <label className="min-w-0 flex-1 text-sm">Change room
+      <label className="min-w-0 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Change room
        <Input value={roomChange[slot.id]??slot.room} onChange={e=>setRoomChange(p=>({...p,[slot.id]:e.target.value}))}
         className="mt-1 min-h-11 w-full min-w-0 md:min-h-9"/></label>
       <Button variant="secondary" type="button" disabled={busy||(roomChange[slot.id]??slot.room)===slot.room}
