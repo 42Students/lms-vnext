@@ -464,21 +464,21 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/components/placements/tpo-bulk-drive-reminder.tsx`
 - [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
 - [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
-- [ ] `src/components/placements/tpo-company-feedback-form.tsx`
-- [ ] `src/components/placements/tpo-company-interaction-form.tsx`
-- [ ] `src/components/placements/tpo-company-lifecycle-editor.tsx`
-- [ ] `src/components/placements/tpo-company-person-editor.tsx`
-- [ ] `src/components/placements/tpo-delete-draft-action.tsx`
+- [x] `src/components/placements/tpo-company-feedback-form.tsx`
+- [x] `src/components/placements/tpo-company-interaction-form.tsx`
+- [x] `src/components/placements/tpo-company-lifecycle-editor.tsx`
+- [x] `src/components/placements/tpo-company-person-editor.tsx`
+- [x] `src/components/placements/tpo-delete-draft-action.tsx`
 - [ ] `src/components/placements/tpo-drive-change-requests.tsx`
 - [ ] `src/components/placements/tpo-drive-clone-action.tsx`
-- [ ] `src/components/placements/tpo-drive-close-preview-form.tsx`
+- [x] `src/components/placements/tpo-drive-close-preview-form.tsx`
 - [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
+- [x] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
 - [ ] `src/components/placements/tpo-drive-saved-views.tsx`
 - [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
 - [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
 - [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-interview-reschedule-form.tsx`
+- [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
 - [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
 - [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
 - [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
