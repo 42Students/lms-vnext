@@ -32,6 +32,7 @@ import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
 import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
 import {CollegeProjectStudentRosterDialog} from "./college-project-student-roster-dialog";
 import {ProjectResourceList} from "./project-resource-list";
+import { ProjectRosterTable } from "./project-roster-table";
 import {MentorDeliveryLockControl} from "./mentor-delivery-lock-control";
 import { MentorSprintCreate, MentorSprintTransition } from "./mentor-sprint-write";
 import {MentorReleaseEditor} from "./mentor-release-editor";
@@ -64,10 +65,7 @@ import {
   RequestProjectMeetingControl,
   ScheduleProjectMeetingControl,
 } from "./project-meeting-controls";
-import {
-  AddProjectMemberControl,
-  ProjectMemberActions,
-} from "./project-team-controls";
+import { AddProjectMemberControl } from "./project-team-controls";
 import type {
   getProjectWorkspaceView,
 } from "@/modules/projects/workspace-view-service";
@@ -499,7 +497,7 @@ export function ProjectWorkspace({
       {mode === "ADMIN" && show("summary") ? <WorkspaceHealthSnapshot workspace={workspace} /> : null}
       {show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
-        project={workspace.project}/>:null}
+        project={workspace.project} taskProgress={readiness.execution.tasks}/>:null}
       {show("summary") || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
@@ -822,12 +820,12 @@ export function ProjectWorkspace({
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              {mode==="ADMIN"?"Project people":"Project team"}
+              Project team
             </h2>
-            {mode!=="ADMIN"?<p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body">
               See who is assigned, what role they play, and how the project is staffed.
               {" "}{workspace.members.length} member(s)
-            </p>:null}
+            </p>
           </div>
           {mode === "ADMIN" && !readOnly ? (
             <>
@@ -868,6 +866,20 @@ export function ProjectWorkspace({
             mentors can review Project work but cannot edit team membership.
           </p>
         ) : null}
+        {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
+          const assigned=workspace.tasks.filter(task=>task.assigneeMembershipId===member.membershipId);
+          const last=assigned.reduce<Date|null>((mostRecent,task)=>
+            !mostRecent || task.updatedAt>mostRecent ? task.updatedAt : mostRecent,null);
+          return {
+            id:member.id,membershipId:member.membershipId,displayName:member.displayName,
+            role:member.role,roleLabel:member.roleLabel,isPrimary:member.isPrimary,
+            tasksAssigned:assigned.length,tasksDone:assigned.filter(task=>task.status==="DONE").length,
+            tasksInReview:assigned.filter(task=>task.status==="IN_REVIEW").length,
+            tasksInProgress:assigned.filter(task=>task.status==="IN_PROGRESS").length,
+            lastTaskUpdate:last?formatDateTime(last):null,
+            canEdit:!readOnly&&(!workspace.project.teamGroupId||member.role!=="LEARNER"),
+          };
+        })}/>:null}
         <div className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2 xl:grid-cols-3">
           {mode==="MENTOR"?workspace.mentorRoster.map(member=>{
             const active=member.endedAt===null && member.memberStatus==="ACTIVE" &&
@@ -893,7 +905,7 @@ export function ProjectWorkspace({
               </div>:null}
             </article>;
           }):null}
-          {mode!=="MENTOR"?workspace.members.map((member) => (
+          {mode==="LEARNER"?workspace.members.map((member) => (
             <article
               key={member.id}
               className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4"
@@ -922,17 +934,6 @@ export function ProjectWorkspace({
                     : label(member.role)}
                 </StatusBadge>
               </div>
-              {mode === "ADMIN" && !readOnly && (!workspace.project.teamGroupId || member.role !== "LEARNER") ? (
-                <ProjectMemberActions
-                  projectId={workspace.project.id}
-                  member={{
-                    id: member.id,
-                    role: member.role,
-                    isPrimary: member.isPrimary,
-                    displayName: member.displayName,
-                  }}
-                />
-              ) : null}
             </article>
           )):null}
         </div>
@@ -996,7 +997,8 @@ export function ProjectWorkspace({
               </p>
             </div>
             <DataTable columns={backlogColumns} rows={backlogTasks}
-              getRowKey={task => task.id} caption="Unassigned project tasks" />
+              getRowKey={task => task.id} caption="Unassigned project tasks"
+              empty={<EmptyState title="No backlog tasks" description="All tasks are assigned to a sprint." />} />
           </section>
         ) : null}
         <div className="space-y-4">

@@ -6,6 +6,10 @@ import {
   inArray,
   isNull,
   or,
+  gte,
+  lte,
+  ilike,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -405,6 +409,10 @@ async function resolveApplicationRoleOption(
   );
 }
 
+/** Live self-apply never uses the migration-only source normalizer.
+ * An unknown or blank historical channel can be mapped in the importer,
+ * but interactive external declarations still require confirmation.
+ */
 function resolveApplicationChannel(
   applicationMode: string,
   input: ReturnType<
@@ -1008,9 +1016,42 @@ export async function listOwnPlacementApplications(
     .orderBy(desc(placementApplications.submittedAt));
 }
 
+/** Calendar data is drawn from the learner's own persisted applications,
+ * including those whose drive has since closed or passed its deadline.
+ * It must not depend on the live published-drive discovery feed.
+ */
+export async function listOwnPlacementApplicationCalendarEvents(context:RequestContext){
+ const records=await listOwnPlacementApplications(context);
+ return records.flatMap(row=>{
+  const base={
+   jobId:row.job.id,applicationId:row.application.id,
+   title:row.job.title,company:row.company.name,
+   status:row.application.status,
+  };
+  const events:Array<typeof base&{type:"APPLIED"|"DEADLINE";at:string}>=[{
+   ...base,type:"APPLIED",
+   at:row.application.submittedAt.toISOString(),
+  }];
+  if(row.job.applicationDeadline){
+   events.push({
+    ...base,type:"DEADLINE",
+    at:row.job.applicationDeadline.toISOString(),
+   });
+  }
+  return events;
+ });
+}
+
+export type PlacementApplicationListOptions={
+ page?:number;pageSize?:number;
+ status?:"SUBMITTED"|"WITHDRAWN";
+ channel?:"INTERNAL"|"EXTERNAL";
+ appliedAfter?:Date;appliedBefore?:Date;search?:string;
+};
 export async function listPlacementJobApplications(
   context: RequestContext,
   jobIdInput: string,
+  options?:PlacementApplicationListOptions,
 ) {
   const jobId = placementJobIdSchema.parse(jobIdInput);
   const job = await loadJob(jobId);
@@ -1018,8 +1059,15 @@ export async function listPlacementJobApplications(
     context,
     job.collegeId,
   );
-
-  return getDb()
+  const search=options?.search?.trim().slice(0,120);
+  const where=and(eq(placementApplications.jobId,job.id),
+   options?.status?eq(placementApplications.status,options.status):undefined,
+   options?.channel?eq(placementApplications.channel,options.channel):undefined,
+   options?.appliedAfter?gte(placementApplications.submittedAt,options.appliedAfter):undefined,
+   options?.appliedBefore?lte(placementApplications.submittedAt,options.appliedBefore):undefined,
+   search?ilike(users.displayName,"%"+search+"%"):undefined,
+  );
+  const query=getDb()
     .select({
       application: placementApplications,
       roleOption: placementJobRoleOptions,
@@ -1050,10 +1098,45 @@ export async function listPlacementJobApplications(
       users,
       eq(users.id, collegeMemberships.userId),
     )
-    .where(
-      eq(placementApplications.jobId, job.id),
-    )
-    .orderBy(desc(placementApplications.submittedAt));
+    .where(where);
+  if(!options)return query.orderBy(desc(placementApplications.submittedAt));
+  const page=Number.isSafeInteger(options.page)&&options.page!>0?
+   Math.min(10000,options.page!):1;
+  const pageSize=Number.isSafeInteger(options.pageSize)&&options.pageSize!>0?
+   Math.min(100,options.pageSize!):20;
+  return query.orderBy(desc(placementApplications.submittedAt),
+   desc(placementApplications.id)).limit(pageSize).offset((page-1)*pageSize);
+}
+/** A bounded admin projection; count and data share the exact same predicates.
+ * The calling API must separately validate user-supplied filter strings/dates.
+ */
+export async function listPlacementJobApplicationsPage(
+ context:RequestContext,jobIdInput:string,options:PlacementApplicationListOptions={},
+){
+ const jobId=placementJobIdSchema.parse(jobIdInput);
+ const job=await loadJob(jobId);
+ await requirePlacementManageScope(context,job.collegeId);
+ const page=Number.isSafeInteger(options.page)&&options.page!>0?
+  Math.min(10000,options.page!):1;
+ const pageSize=Number.isSafeInteger(options.pageSize)&&options.pageSize!>0?
+  Math.min(100,options.pageSize!):20;
+ const search=options.search?.trim().slice(0,120);
+ const where=and(eq(placementApplications.jobId,job.id),
+  options.status?eq(placementApplications.status,options.status):undefined,
+  options.channel?eq(placementApplications.channel,options.channel):undefined,
+  options.appliedAfter?gte(placementApplications.submittedAt,options.appliedAfter):undefined,
+  options.appliedBefore?lte(placementApplications.submittedAt,options.appliedBefore):undefined,
+  search?ilike(users.displayName,"%"+search+"%"):undefined,
+ );
+ const [items,[total]]=await Promise.all([
+  listPlacementJobApplications(context,jobId,{...options,page,pageSize}),
+  getDb().select({count:sql<number>`count(*)::int`}).from(placementApplications)
+   .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(where),
+ ]);
+ const totalCount=Number(total?.count??0);
+ return {items,page,pageSize,totalCount,hasMore:page*pageSize<totalCount};
 }
 
 export async function getPlacementApplication(

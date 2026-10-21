@@ -243,6 +243,15 @@ export function AdminAttendanceWorkspace({
     );
   }
 
+  function dailyMarkedRatio(learner: Learner, sessions: Session[]) {
+    const counted=sessions.filter(session=>session.attendanceStatus==="MARKED");
+    const absent=counted.filter(session=>{
+      const record=recordMap.get(session.id+":"+learner.membershipId);
+      return record && record.status!=="PRESENT";
+    }).length;
+    return {counted:counted.length,attended:counted.length-absent};
+  }
+
   async function correct(
     status:
       | "PRESENT"
@@ -275,7 +284,7 @@ export function AdminAttendanceWorkspace({
           }),
         },
       );
-      setNotice("Attendance corrected for "+learnerName(target.learner)+" — "+target.session.title+".");
+      setNotice(status==="PRESENT"?"Marked present":"Marked absent");
       setTarget(null);
       router.refresh();
     } catch (cause) {
@@ -293,19 +302,17 @@ export function AdminAttendanceWorkspace({
     if (!data.grid) return;
     // One column per IST calendar day, so the file remains usable in the
     // legacy monthly grid. Multiple sessions on a date are slash-delimited.
-    const header = ["Learner","Roll",...sessionDays.map(row=>row.day),"Attendance %"];
+    const header = ["Student",...sessionDays.map(row=>String(Number(row.day.slice(-2))))];
     const rows = data.grid.roster.map(learner=>[
-      learnerName(learner),learner.rollNumber??"",
+      learnerName(learner),
       ...sessionDays.map(({sessions})=>{
-        if(sessions.length===0)return "✖";
-        return sessions.map(session=>{
-          const state=codeFor(session,recordMap.get(session.id+":"+learner.membershipId));
-          if(state.code==="P")return "P";
-          if(["A","E","M","L"].includes(state.code))return "A";
-          return "N";
-        }).join("/");
+        if(sessions.length===0)return "";
+        const ratio=dailyMarkedRatio(learner,sessions);
+        if(sessions.length>1)return ratio.counted
+          ?ratio.attended+"/"+ratio.counted:"N";
+        const state=codeFor(sessions[0]!,recordMap.get(sessions[0]!.id+":"+learner.membershipId));
+        return state.code==="P"?"P":(["A","E","M","L"].includes(state.code)?"A":"N");
       }),
-      learnerPercent(learner)??"",
     ]);
     const csv = [header, ...rows]
       .map((row) => row.map(attendanceCsvCell).join(","))
@@ -487,9 +494,7 @@ export function AdminAttendanceWorkspace({
                       title={sessions.length?String(sessions.length) + " session(s)":"No class scheduled"}>
                       <span className="block">{day.slice(8)}</span><span className="block text-xs font-normal">{weekday}</span>
                       {sessions.length > 1 ? (
-                        <span className="block text-[11px] normal-case">
-                          {sessions.length} sessions
-                        </span>
+                        <span className="sr-only">{sessions.length} sessions</span>
                       ) : null}
                     </th>
                   ))}
@@ -530,6 +535,7 @@ export function AdminAttendanceWorkspace({
                           const record = recordMap.get(first.id + ":" + learner.membershipId);
                           const state = codeFor(first, record);
                           const multiple = sessions.length > 1;
+                          const ratio=multiple?dailyMarkedRatio(learner,sessions):null;
                           return (
                             <td key={day} className="px-3 py-3 text-center">
                               <Button
@@ -537,7 +543,9 @@ export function AdminAttendanceWorkspace({
                                 variant="ghost"
                                 disabled={sessions.every(session=>new Date(session.startsAt).getTime()>loadedAt)}
                                 aria-label={multiple
-                                  ? String(sessions.length) + " sessions on " + day + " for " + learnerName(learner)
+                                  ? (ratio?.counted
+                                    ? ratio.attended + " of " + ratio.counted + " marked sessions attended"
+                                    : "Attendance not marked") + " — " + learnerName(learner) + " — " + day
                                   : state.label + " — " + learnerName(learner) + " — " + formatDateTime(first.startsAt)}
                                 onClick={() => {
                                   if (multiple) setChooser({ learner, sessions });
@@ -547,7 +555,9 @@ export function AdminAttendanceWorkspace({
                                 className="min-h-11 border-transparent bg-transparent px-1 text-body disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
                               >
                                 <StatusBadge tone={multiple ? "neutral" : state.tone}>
-                                  {multiple ? String(sessions.length) + " sessions" : state.code}
+                                  {multiple ? (ratio?.counted
+                                    ? ratio.attended+"/"+ratio.counted
+                                    : "N") : state.code}
                                 </StatusBadge>
                               </Button>
                             </td>

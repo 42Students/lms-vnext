@@ -7,6 +7,7 @@ import { Alert } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useCollegeConfirmation} from "@/components/college/use-college-confirmation";
 
 import {useRef,useState,useTransition,type FormEvent} from "react";
@@ -29,9 +30,25 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   const router=useRouter();
   const requestId=useRef(0);
   const saving=useRef(false);
-  function close(){if(pending||saving.current)return;requestId.current+=1;setOpen(false);}
+  const initialProfile=useRef<string|null>(null);
+  function leave(){
+    requestId.current+=1;
+    setOpen(false);
+    setDiscardOpen(false);
+    initialProfile.current=null;
+  }
+  function close(){
+    if(pending||saving.current||discardOpen)return;
+    if(person&&initialProfile.current!==null&&
+      JSON.stringify(person)!==initialProfile.current){
+      setDiscardOpen(true);
+      return;
+    }
+    leave();
+  }
   const {ask,confirmation}=useCollegeConfirmation();
   const [open,setOpen]=useState(false);
+  const [discardOpen,setDiscardOpen]=useState(false);
   const [loading,setLoading]=useState(false);
   const [pending,start]=useTransition();
   const [person,setPerson]=useState<Person|null>(null);
@@ -41,11 +58,14 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
   const field="min-h-11 w-full min-w-0 md:min-h-9";
   async function load(){
     const request=++requestId.current;
-    setLoading(true);setError("");setSuccess("");setPerson(null);setOpen(true);
+    setLoading(true);setError("");setSuccess("");setPerson(null);initialProfile.current=null;setDiscardOpen(false);setOpen(true);
     try{
       const result=await apiFetch<{person:Person}>(base+"?kind="+kind,{cache:"no-store"});
       if(!result.person)throw Error("Profile details unavailable");
-      if(request===requestId.current)setPerson(result.person as Person);
+      if(request===requestId.current){
+        initialProfile.current=JSON.stringify(result.person);
+        setPerson(result.person as Person);
+      }
     }catch(reason){if(request===requestId.current)setError(reason instanceof Error?reason.message:friendlyApiError({}));}
     finally{if(request===requestId.current)setLoading(false);}
   }
@@ -74,24 +94,29 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             }),
           })});
         setSuccess(kind==="FACULTY"?"Faculty updated successfully!":"Student updated successfully!");
-        router.refresh();requestId.current+=1;setOpen(false);
+        router.refresh();leave();
       }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
       finally{saving.current=false;}
     });
   }
   return <div className="inline-block">{confirmation}
+    <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+      title={kind==="LEARNER"?"Discard student edits?":"Discard faculty edits?"}
+      description="Unsaved changes to this profile will be lost."
+      confirmLabel="Discard edits" cancelLabel="Keep editing"
+      onConfirm={leave}/>
     <Button variant="secondary" type="button" onClick={()=>void load()}
       className="min-h-11 md:min-h-9">
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </Button>
     {success&&<Alert tone="success" className="mt-2">{success}</Alert>}
-    <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending}>
+    <Dialog open={open} onOpenChange={next=>{if(!next)close();}} title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} dismissible={!pending&&!discardOpen} className="max-w-[600px]">
         
         {loading&&<Skeleton variant="form" count={4} label="Loading profile"/>}
         {error&&<Alert tone="error" className="my-2">{error}</Alert>}
         {person&&<form onSubmit={submit} className="grid min-w-0 gap-3 md:grid-cols-2">
           <p className="md:col-span-2 text-xs text-muted-foreground">
-            Canonical identity name, login phone and login email are managed separately to protect access to other memberships.
+            Canonical identity name, login phone and login email are managed separately to protect access to other memberships. Academic program and class moves use permission-checked enrollment actions; editing this profile never impersonates or deletes the person.
           </p>
           <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
             <Input disabled={pending} value={person.name} readOnly className={field+" opacity-70"}/>
@@ -165,7 +190,7 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             <Button variant="secondary" type="button" disabled={pending} onClick={close}
               className="min-h-11 md:min-h-9">Cancel</Button>
             <Button variant="primary" type="submit" disabled={pending} loading={pending} className="min-h-11 md:min-h-9">
-              {pending?"Saving…":"Save changes"}
+              {pending?"Saving…":"Save Changes"}
             </Button>
           </div>
         </form>}

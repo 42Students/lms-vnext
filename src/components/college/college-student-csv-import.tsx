@@ -10,7 +10,8 @@ import { FileUpload } from "@/components/ui/file-upload";
 
 import {DataTable} from "@/components/ui/data-table";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
+import {CollegeStudentImportHistory} from "@/components/college/college-student-import-history";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
@@ -35,12 +36,15 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
   const [cohortId,setCohortId] = useState("");
   const [sectionId,setSectionId] = useState("");
   const [report, setReport] = useState<Report | null>(null);
+  const fileRevision=useRef(0);
+  const [readingFile,setReadingFile]=useState(false);
+  const [summary,setSummary]=useState<{tone:"info"|"success"|"warning";message:string}|null>(null);
   const {pending,run:guardRun}=useGuardedAction({busyLabel:"Importing..."});
   const [confirm, setConfirm] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   async function submit(action: "PREVIEW" | "IMPORT") {
-    setError(null);
+    setError(null);setSummary(null);
     const payload=await apiFetch<{report:Report}>("/api/people/student-import",{
       method:"POST",headers:{"content-type":"application/json"},
       body:JSON.stringify({action,csv,programId,cohortId,sectionId:sectionId||undefined,
@@ -48,6 +52,21 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
     });
     if(!payload?.report)throw Error("Unable to validate student CSV. Please try again.");
     setReport(payload.report as Report);
+    if(action==="PREVIEW"){
+      if(payload.report.invalid===0 && !payload.report.structuralErrors.length){
+        setSummary({tone:"success",message:"Validation passed for "+payload.report.valid+" learner(s)."});
+      }else{
+        setSummary({tone:"warning",message:"Validation found "+payload.report.invalid+" invalid learner(s). Review the row report."});
+      }
+    }else{
+      const imported=payload.report.results.filter(row=>row.status==="IMPORTED").length;
+      const partial=payload.report.results.filter(row=>row.status==="PARTIAL").length;
+      const failed=payload.report.results.filter(row=>row.status==="FAILED"||row.status==="INVALID").length;
+      setSummary({tone:failed||partial?"warning":"success",
+        message:failed||partial
+          ?"Created "+imported+" learner(s); "+(failed+partial)+" failed or need enrollment recovery."
+          :"Created "+imported+" learner(s)."});
+    }
     if (action === "IMPORT") {
       setConfirm(false);
       router.refresh();
@@ -59,12 +78,16 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
 
   return <div className="min-w-0 max-w-4xl space-y-6">
     <section className="border-t border-border pt-4">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Upload or paste CSV</h2>
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Upload or paste CSV</h2>
+        <CollegeStudentImportHistory/>
+      </div>
       <p className="mt-2 text-sm text-body leading-[22px]">
         Maximum 500 learner rows and 1 MB. Use the exact header order below.
         Choose a program and batch from the selectors; you do not need to copy their IDs into legacy CSV rows.
         Indian 10-digit mobile numbers are normalized to +91 for the legacy template.
         The dry run checks format, college ownership, duplicate rows and existing account conflicts. All rows must validate before import.
+        Successful rows create independent identities and memberships; no automatic batch undo is available. Use Bulk import history for recorded batch results and manual recovery.
       </p>
       <p className="mt-2 break-all font-mono text-xs text-muted-foreground leading-[20px]">{TEMPLATE}</p>
       <a download="student-import-template.csv"
@@ -101,26 +124,42 @@ export function CollegeStudentCsvImport({ choices }: {choices:Choices}) {
         </label>
       </div>
       <FileUpload className="mt-4 print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose local CSV file" maxBytes={1_000_000} accept=".csv,text/csv"
-          disabled={pending} onFiles={async files => {
-            const file = files?.[0];
-            if (!file) return;
-            if (file.size > 1000000) { setError("File exceeds 1 MB"); return; }
-            setCsv(await file.text()); setReport(null); setConfirm(false); setError(null);
+          disabled={pending||readingFile} onFiles={async files => {
+            const revision=++fileRevision.current;
+            const file=files?.[0];
+            if(!file)return;
+            setReadingFile(true);setError(null);setReport(null);setConfirm(false);setSummary(null);
+            try{
+              if(file.size>1_000_000)throw Error("File exceeds 1 MB");
+              const text=await file.text();
+              if(revision!==fileRevision.current)return;
+              setCsv(text);
+              const count=Math.max(0,text.split(/\\r?\\n/).filter(row=>row.trim()).length-1);
+              setSummary({tone:"info",message:"Parsed "+count+" row(s). Select program & class, then Validate or Create."});
+            }catch(error){
+              if(revision===fileRevision.current)
+                setError(error instanceof Error?error.message:"Could not read CSV file");
+            }finally{
+              if(revision===fileRevision.current)setReadingFile(false);
+            }
           }} />
       <label className="mt-4 grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] print:hidden text-[13px]">
         CSV contents
         <Textarea value={csv} onChange={event => {
-          setCsv(event.target.value); setReport(null); setConfirm(false);
+          fileRevision.current+=1;setReadingFile(false);
+          setCsv(event.target.value); setReport(null); setConfirm(false);setSummary(null);
         }} rows={8} spellCheck={false}
           className="w-full font-mono text-xs md:text-sm" />
       </label>
-      <Button variant="primary" type="button" loading={pending} disabled={pending || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
+      <Button variant="primary" type="button" loading={pending} disabled={pending || readingFile || !csv.trim() || !programId || !cohortId} onClick={() => guardRun(async () => {
         try { await submit("PREVIEW"); } catch (reason) {
           setError(reason instanceof Error ? reason.message : "Validation failed");
         }
       })} className="mt-4 min-h-11 w-full md:min-h-9 md:w-auto print:hidden">
         {pending ? "Validating..." : "Preview validation"}
       </Button>
+      {readingFile?<p role="status" className="mt-3 text-sm text-muted-foreground">Reading selected CSV…</p>:null}
+      {summary?<Alert tone={summary.tone} className="mt-3">{summary.message}</Alert>:null}
       {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
     </section>
 

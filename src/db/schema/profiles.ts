@@ -17,7 +17,13 @@ export const learnerProfiles = pgTable("learner_profiles", {
     .primaryKey()
     .references(() => collegeMemberships.id, { onDelete: "restrict" }),
   rollNumber: varchar("roll_number", { length: 128 }),
+  /** Legacy student uniqueId is distinct from roll and auth identityUid. */
+  legacyUniqueId: varchar("legacy_unique_id", { length: 128 }),
   registrationNumber: varchar("registration_number", { length: 128 }),
+  /** Private storage key, never an expired signed URL or a client-supplied path. */
+  resumeObjectPath: varchar("resume_object_path", { length: 1024 }),
+  /** Independent compare-and-swap revision for learner document updates. */
+  profileDocumentVersion: integer("profile_document_version").notNull().default(0),
   profileDocument: jsonb("profile_document")
     .$type<Record<string, unknown>>()
     .notNull()
@@ -28,7 +34,9 @@ export const learnerProfiles = pgTable("learner_profiles", {
   updatedAt: timestamp("updated_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (t) => [
+  check("learner_profiles_document_version_ck", sql`${t.profileDocumentVersion} >= 0`),
+]);
 
 export const facultyProfiles = pgTable(
   "faculty_profiles",
@@ -40,8 +48,12 @@ export const facultyProfiles = pgTable(
       () => departments.id,
       { onDelete: "restrict" },
     ),
+    /** Staff code is not a login credential or a membership role. */
+    legacyFacultyCode: varchar("legacy_faculty_code", { length: 128 }),
     employmentType: varchar("employment_type", { length: 128 }),
     academicTitle: varchar("academic_title", { length: 128 }),
+    /** Faculty photo key is owned and signed at access time by storage service. */
+    avatarObjectPath: varchar("avatar_object_path", { length: 1024 }),
     profileDocument: jsonb("profile_document")
       .$type<Record<string, unknown>>()
       .notNull()

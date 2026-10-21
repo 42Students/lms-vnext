@@ -32,6 +32,7 @@ import { learnerJobApplyBlockers } from "./learner-job-apply-blockers-model";
 import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
+import {placementJobIdSchema} from "./validation";
 import {
   evaluatePlacementEligibility,
   isPlacementJobTargetCohort,
@@ -53,9 +54,14 @@ export async function listLearnerPlacementJobs(
   context: RequestContext,
   now: Date = new Date(),
   jobId?: string,
+  requestedJobIds?:readonly string[],
 ) {
   const membership = requireLearner(context);
   await requireLearnerPlacementAccess(context);
+  // An explicitly empty selection must never turn into an unrestricted feed.
+  if(requestedJobIds&&requestedJobIds.length===0)return [];
+  if(requestedJobIds&&requestedJobIds.length>100)
+   throw new Error("Choose no more than 100 placement jobs.");
   // P-S1-04: a finished placement batch may browse historical drives,
   // but its learner must not be shown an actionable self-apply control.
   const participation = await getOwnPlacementParticipationAccess(context);
@@ -137,6 +143,7 @@ export async function listLearnerPlacementJobs(
         ),
         eq(placementJobs.status, "PUBLISHED"),
         jobId ? eq(placementJobs.id, jobId) : undefined,
+        requestedJobIds ? inArray(placementJobs.id,[...new Set(requestedJobIds)]) : undefined,
         isNull(placementJobs.archivedAt),
         eq(
           placementCompanyRelationships.status,
@@ -290,4 +297,42 @@ export async function listLearnerPlacementJobs(
       };
     }),
   );
+}
+
+/** Read-only bulk decisions, never a route for resolving arbitrary job IDs.
+ * Invalid, archived, non-targeted or cross-college IDs are intentionally
+ * omitted. The existing per-job write transaction remains authoritative.
+ */
+export async function listLearnerPlacementBulkDecisions(
+ context:RequestContext,requestedJobIds:readonly string[],
+ now:Date=new Date(),
+){
+ // Bound expensive per-job eligibility evaluation and preserve request order.
+ if(requestedJobIds.length>100)
+  throw new Error("Choose no more than 100 placement jobs.");
+ const ids=[...new Set(requestedJobIds.filter(id=>
+  placementJobIdSchema.safeParse(id).success))];
+ if(ids.length===0)return [];
+ const found=await listLearnerPlacementJobs(context,now,undefined,ids);
+ const byJob=new Map<string,typeof found>();
+ for(const item of found){
+  const group=byJob.get(item.job.id)??[];
+  group.push(item);
+  byJob.set(item.job.id,group);
+ }
+ return ids.flatMap(id=>{
+  const items=byJob.get(id);
+  if(!items?.length)return [];
+  return [{
+   jobId:id,
+   canApply:items.some(item=>item.canApply),
+   roles:items.map(item=>({
+    roleOptionId:item.roleOption.id,
+    canApply:item.canApply,
+    blockers:item.applicationBlockers,
+    eligibilityStatus:item.eligibility.status,
+    deadlinePassed:item.deadlinePassed,
+   })),
+  }];
+ });
 }

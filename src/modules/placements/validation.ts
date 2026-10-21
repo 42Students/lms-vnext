@@ -29,15 +29,24 @@ export const placementCompanyDomainSchema = z
       .refine((value) => value.includes("."), "Enter a complete domain"),
   );
 
+const corporateWebsiteSchema=z.string().trim().max(500).url().refine(
+ value=>{try{const url=new URL(value);return url.protocol==="https:"&&
+  !url.username&&!url.password;}catch{return false;}},
+ "Company website must be a valid https link",
+);
 export const createPlacementCompanyInputSchema = z
   .object({
     collegeId: z.string().uuid(),
-    name: z.string().trim().min(2).max(200),
-    websiteUrl: httpUrlSchema.optional(),
+    name: z.string().trim().min(2,"Company name must be between 2 and 150 characters").max(150,"Company name must be between 2 and 150 characters"),
+    websiteUrl: corporateWebsiteSchema.optional(),
     primaryDomain: placementCompanyDomainSchema.optional(),
     isTrusted: z.boolean().optional().default(false),
   })
-  .strict();
+  .strict()
+  .refine(value=>Boolean(value.primaryDomain||value.websiteUrl),{
+    path:["primaryDomain"],
+    message:"Add the company's website or a company email domain",
+  });
 
 export const updatePlacementCompanyRelationshipInputSchema = z
   .object({
@@ -316,6 +325,9 @@ export const createPlacementJobInputSchema =
   placementJobFieldsSchema.superRefine((value, ctx) => {
     const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
     if(assessmentDeadline){
+      if(Date.parse(assessmentDeadline)<=Date.now())
+        ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
+          message:"Assessment deadline cannot be in the past"});
       if(!value.applicationDeadline||Date.parse(assessmentDeadline)<=value.applicationDeadline.getTime())
         ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
           message:"Assessment deadline must be after application deadline"});
@@ -631,8 +643,8 @@ export const placementEligibilityPolicyInputSchema = z
 
 export const placementEligibilityOverrideInputSchema = z
   .object({
-    decision: z.enum(["INCLUDE", "EXCLUDE"]),
-    reason: z.string().trim().min(1).max(1000),
+    decision: z.enum(["INCLUDE", "EXCLUDE"],{error:"Choose include or exclude."}),
+    reason: z.string().trim().min(3,"A reason is required.").max(1000),
     // Omitted for existing single-record callers; TPO bulk sends the
     // previewed active override ID (or null) to prevent stale overwrites.
     expectedOverrideId: z.string().uuid().nullable().optional(),
@@ -657,6 +669,27 @@ export const placementApplicationChannels = [
   "INTERNAL",
   "EXTERNAL",
 ] as const;
+
+/** Compatibility only: historical Java JobApplicationSourceValidator maps
+ * every unrecognized/empty value to EXTERNAL. Never use on the live apply API:
+ * the interactive request intentionally remains a strict enum and requires
+ * external confirmation separately.
+ */
+export function normalizeHistoricalPlacementApplicationSource(
+ source:unknown,
+):"INTERNAL"|"EXTERNAL" {
+ if(typeof source!=="string")return "EXTERNAL";
+ const normalized=source.trim().toLocaleUpperCase("en-US");
+ return normalized==="INTERNAL"?"INTERNAL":"EXTERNAL";
+}
+/** Legacy validation predicate deliberately differs from normalization:
+ * blanks and unsupported values are not valid canonical source values.
+ */
+export function isHistoricalPlacementApplicationSource(source:unknown):boolean{
+ return typeof source==="string"&&
+  placementApplicationChannels.some(value=>
+   value===source.trim().toLocaleUpperCase("en-US"));
+}
 
 export const createPlacementApplicationInputSchema =
   z

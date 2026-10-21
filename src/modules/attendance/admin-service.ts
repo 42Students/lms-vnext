@@ -57,6 +57,7 @@ const correctionSchema = z.strictObject({
     "MEDICAL",
     "LATE",
   ]),
+  note: z.string().trim().max(500,{error:"Keep the correction note under 500 characters"}).optional(),
 });
 
 export async function requireAttendanceCollege(
@@ -505,9 +506,11 @@ export async function correctAdminAttendance(
       }
 
       const now = new Date();
-      // COL-attendance-01: the window is a FACULTY rule. College Admin
-      // corrections deliberately remain available for older sessions and
-      // for pre-session corrections (legacy AdminAttendanceController).
+      // College Admin can correct old attendance after the Faculty window,
+      // but not a future class that has not started. The legacy service
+      // rejects pre-start marking; no owner exception has been approved.
+      if(event.startsAt.getTime()>now.getTime())
+        throw new CoursesServiceError("ATTENDANCE_NOT_STARTED");
       // Lock and recheck active same-college membership at mutation time.
       const [activeMember] = await tx
         .select({ id: collegeMemberships.id })
@@ -524,7 +527,7 @@ export async function correctAdminAttendance(
       }
 
       const [priorRecord]=await tx.select({
-        id:attendanceRecords.id,status:attendanceRecords.status,
+        id:attendanceRecords.id,status:attendanceRecords.status,note:attendanceRecords.note,
       }).from(attendanceRecords).where(and(
         eq(attendanceRecords.scheduleEventId,scheduleEventId),
         eq(attendanceRecords.membershipId,input.membershipId),
@@ -580,6 +583,7 @@ export async function correctAdminAttendance(
                 context.user.id,
               markedAt: now,
               updatedAt: now,
+              ...(input.note !== undefined ? {note:input.note || null} : {}),
             })
             .where(
               eq(
@@ -599,6 +603,7 @@ export async function correctAdminAttendance(
                 context.user.id,
               markedAt: now,
               updatedAt: now,
+              note:input.note || null,
             });
         }
       }
@@ -626,6 +631,7 @@ export async function correctAdminAttendance(
           deliveryId:delivery.deliveryId,
           learnerMembershipId:input.membershipId,
           from:priorStatus,to:input.status,
+          correctionNote:input.note ?? priorRecord?.note ?? null,
         },
         occurredAt:now,
       }).returning({id:activityEvents.id});

@@ -161,7 +161,7 @@ async function placementMutation(
   const payload = (await response
     .json()
     .catch(() => null)) as
-    | { error?: string }
+    | { error?: string; application?: OwnApplicationReceipt }
     | null;
 
   if (!response.ok) {
@@ -268,7 +268,7 @@ function JobActions({
               },
       );
       setConfirmation(null);
-      const stored=(submitted as {application?:OwnApplicationReceipt}|null)?.application;
+      const stored=submitted?.application;
       if(stored?.id&&stored?.status==="SUBMITTED"){
        setConfirmedReceipt(stored);
       }

@@ -42,12 +42,68 @@ import {
 } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { ActivityServiceError } from "./errors";
+import { sanitizeActivityMetadata } from "./metadata-sanitizer";
 import { safeNotificationActionHref } from "./notification-action";
+import { ACTIVITY_IMPORTANCE, ACTIVITY_MODULES } from "./taxonomy";
 
 type NotificationWriter = Pick<
   ReturnType<typeof getDb>,
   "select" | "insert"
 >;
+
+/**
+ * A scheduled authored notice must not appear in any recipient's inbox until
+ * a trusted release worker commits delivery. A recall must not be visible.
+ * This only guards event-backed receipts; campaign scheduling and recall
+ * persistence require the separate authored-notice schema.
+ */
+const releasedNotificationEvent = sql<boolean>`
+  coalesce(${activityEvents.metadata} ->> 'deliveryStatus', 'SENT') = 'SENT'
+  and ${activityEvents.metadata} ->> 'deletedAt' is null
+`;
+
+/**
+ * Old LMS accepts a local "yyyy-MM-dd HH:mm:ss" time; the vNext product
+ * contract uses IST for that form. Also accept offset-aware ISO timestamps.
+ * Invalid or rolled-over calendar dates fail closed instead of sending now.
+ */
+export function parseStaffNotificationSchedule(raw: string | null | undefined): Date | null {
+  if (raw == null || raw.trim() === "") return null;
+  const value = raw.trim();
+  const legacy = /^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/.exec(value);
+  if (legacy) {
+    const [, yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw, secondRaw] = legacy;
+    const [year, month, day, hour, minute, second] = [
+      yearRaw, monthRaw, dayRaw, hourRaw, minuteRaw, secondRaw,
+    ].map(Number);
+    const localAsUtc = new Date(Date.UTC(year, month - 1, day, hour, minute, second));
+    if (localAsUtc.getUTCFullYear() !== year ||
+        localAsUtc.getUTCMonth() + 1 !== month ||
+        localAsUtc.getUTCDate() !== day ||
+        localAsUtc.getUTCHours() !== hour ||
+        localAsUtc.getUTCMinutes() !== minute ||
+        localAsUtc.getUTCSeconds() !== second) {
+      throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+    }
+    return new Date(localAsUtc.getTime() - 330 * 60_000);
+  }
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/.test(value)) {
+    throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+  }
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    throw new Error("scheduledAt must be yyyy-MM-dd HH:mm:ss");
+  }
+  return date;
+}
+
+function validStaffNotificationSchedule(value: string): boolean {
+  try {
+    return parseStaffNotificationSchedule(value) !== null;
+  } catch {
+    return false;
+  }
+}
 
 const deliverySchema = z
   .object({
@@ -84,18 +140,24 @@ const deliverySchema = z
  * authored-notice store are available.
  */
 export const staffNotificationDraftSchema = z.object({
-  title: z.string().trim().min(1).max(200),
-  htmlContent: z.string().trim().min(1).max(50_000),
+  title: z.string().trim().min(1, "Title is required")
+    .max(200, "Title cannot exceed 200 characters"),
+  htmlContent: z.string().trim().min(1, "HTML content is required")
+    .max(50_000, "HTML content cannot exceed 50000 characters"),
   classId: z.string().uuid().optional(),
   courseId: z.string().uuid().optional(),
+  courseSlug: z.string().trim().min(1).max(64).optional(),
   assessmentUrl: z.string().trim().url()
     .refine((value) => {
       const protocol = new URL(value).protocol;
       return protocol === "http:" || protocol === "https:";
     }, "Assessment URL must use http or https")
     .optional(),
+  scheduledAt: z.string().trim().min(1).max(40)
+    .refine(validStaffNotificationSchedule, "scheduledAt must be yyyy-MM-dd HH:mm:ss")
+    .nullish(),
 }).strict().refine(
-  (input) => Boolean(input.classId) !== Boolean(input.courseId),
+  (input) => Boolean(input.classId || input.courseId || input.courseSlug),
   { message: "classId or courseId required", path: ["classId"] },
 );
 
@@ -118,6 +180,9 @@ export async function requireStaffNotificationAudience(
   rawDraft: unknown,
 ): Promise<{ draft: z.output<typeof staffNotificationDraftSchema>; audience: StaffNotificationAudience }> {
   const draft = staffNotificationDraftSchema.parse(rawDraft);
+  // Verify the schedule even for draft-only validation. A release worker is
+  // still required; these helpers never dispatch a future notice immediately.
+  if (draft.scheduledAt) parseStaffNotificationSchedule(draft.scheduledAt);
   if (context.user.platformStatus !== "ACTIVE" ||
       (!isSuperAdmin(context) &&
        !hasMembershipRole(context, "COLLEGE_ADMIN") &&
@@ -126,6 +191,19 @@ export async function requireStaffNotificationAudience(
   }
 
   const db = getDb();
+  // Resolve the optional legacy course slug before checking persisted scope.
+  // The slug takes precedence over any submitted course ID.
+  let resolvedCourseId = draft.courseId ?? null;
+  if (draft.courseSlug) {
+    const [bySlug] = await db.select({ id: courses.id }).from(courses)
+      .where(and(
+        eq(courses.slug, draft.courseSlug),
+        eq(courses.status, "ACTIVE"),
+        isNull(courses.deletedAt),
+      )).limit(1);
+    if (!bySlug) throw new Error("Course not found for slug");
+    resolvedCourseId = bySlug.id;
+  }
   const [scope] = draft.classId
     ? await db.select({
         collegeId: colleges.id,
@@ -145,16 +223,36 @@ export async function requireStaffNotificationAudience(
         .innerJoin(departments, eq(departments.id, courses.departmentId))
         .innerJoin(colleges, eq(colleges.id, departments.collegeId))
         .where(and(
-          eq(courses.id, draft.courseId!),
+          eq(courses.id, resolvedCourseId!),
           eq(courses.status, "ACTIVE"),
+          isNull(courses.deletedAt),
           eq(colleges.status, "ACTIVE"),
         )).limit(1);
 
   if (!scope) throw new ActivityServiceError("ACTIVITY_SCOPE_NOT_FOUND");
+  if (draft.classId && resolvedCourseId) {
+    // A legacy notice can carry class AND course; reject cross-class/college
+    // retargeting unless a currently active delivery links these exact IDs.
+    const [currentDelivery] = await db.select({ id: courseSectionDeliveries.id })
+      .from(courseSectionDeliveries)
+      .innerJoin(courseOfferings,
+        eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+      .innerJoin(courses,
+        eq(courses.id, courseOfferings.courseId))
+      .where(and(
+        eq(courseSectionDeliveries.sectionId, draft.classId),
+        eq(courseOfferings.courseId, resolvedCourseId),
+        eq(courseOfferings.status, "ACTIVE"),
+        eq(courses.status, "ACTIVE"),
+        isNull(courses.deletedAt),
+        isNull(courseSectionDeliveries.endedAt),
+      )).limit(1);
+    if (!currentDelivery) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
   const audience: StaffNotificationAudience = {
     ...scope,
     classId: draft.classId ?? null,
-    courseId: draft.courseId ?? null,
+    courseId: resolvedCourseId,
   };
   if (isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN")) {
     requirePermission(context, "courses.manage", scope);
@@ -183,7 +281,7 @@ export async function requireStaffNotificationAudience(
         .innerJoin(courseOfferings,
           eq(courseOfferings.id, courseSectionDeliveries.offeringId))
         .where(and(
-          eq(courseOfferings.courseId, draft.courseId!),
+          eq(courseOfferings.courseId, resolvedCourseId!),
           eq(courseTeachingAssignments.membershipId, context.membership.id),
           isNull(courseTeachingAssignments.endedAt),
           isNull(courseSectionDeliveries.endedAt),
@@ -205,13 +303,13 @@ export async function resolveStaffNotificationRecipients(
 ) {
   const { draft, audience } = await requireStaffNotificationAudience(context, rawDraft);
   const db = getDb();
-  const courseSection = draft.courseId
+  const courseSection = audience.courseId && !draft.classId
     ? await db.select({ sectionId: courseSectionDeliveries.sectionId })
         .from(courseSectionDeliveries)
         .innerJoin(courseOfferings,
           eq(courseOfferings.id, courseSectionDeliveries.offeringId))
         .where(and(
-          eq(courseOfferings.courseId, draft.courseId),
+          eq(courseOfferings.courseId, audience.courseId!),
           eq(courseOfferings.status, "ACTIVE"),
           isNull(courseSectionDeliveries.endedAt),
         ))
@@ -240,15 +338,15 @@ export async function resolveStaffNotificationRecipients(
 }
 
 /**
- * Mandatory preflight for edit/recall: inspect the original persisted scope
- * before checking the requested destination; author ownership applies to
- * faculty while authorized admins may manage their own scoped notices.
- * Caller must still perform its edit/delete and commit atomically.
+ * Validate an authored notice's ORIGINAL persisted audience before a staff
+ * mutation. Faculty may touch only notices they created while still assigned
+ * to that original class/course; administrators must pass central scope checks.
+ * This is a preflight, not a replacement for checking again inside the write
+ * transaction once the authored-notice table is available.
  */
-export async function requireStaffNotificationRetarget(
+export async function requireStaffNotificationMutation(
   context: RequestContext,
   eventIdInput: unknown,
-  nextDraft: unknown,
 ): Promise<StaffNotificationAudience> {
   const eventId = z.string().uuid().parse(eventIdInput);
   const [existing] = await getDb().select({
@@ -259,28 +357,55 @@ export async function requireStaffNotificationRetarget(
     metadata: activityEvents.metadata,
   }).from(activityEvents).where(eq(activityEvents.id, eventId)).limit(1);
   if (!existing || existing.subjectType !== "NOTIFICATION" ||
-      !existing.collegeId || !existing.organizationId) {
+      !existing.collegeId || !existing.organizationId ||
+      existing.metadata.deletedAt != null) {
     throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
   const isAdmin = isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN");
   if (!isAdmin && existing.actorUserId !== context.user.id) {
     throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
   }
+  const audience: StaffNotificationAudience = {
+    organizationId: existing.organizationId,
+    collegeId: existing.collegeId,
+    classId: typeof existing.metadata.classId === "string"
+      ? existing.metadata.classId : null,
+    courseId: typeof existing.metadata.courseId === "string"
+      ? existing.metadata.courseId : null,
+  };
   if (isAdmin) {
     requirePermission(context, "courses.manage", {
       collegeId: existing.collegeId,
       organizationId: existing.organizationId,
     });
   } else {
+    // Treat missing/invalid legacy audience metadata as a denial, not as
+    // permission to fall back to an arbitrary current faculty membership.
     const previous = staffNotificationDraftSchema.safeParse({
       title: "Existing notification",
       htmlContent: "Existing notification",
-      classId: existing.metadata.classId,
-      courseId: existing.metadata.courseId,
+      classId: audience.classId ?? undefined,
+      courseId: audience.courseId ?? undefined,
     });
-    if (!previous.success) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    if (!previous.success) {
+      throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    }
     await requireStaffNotificationAudience(context, previous.data);
   }
+  return audience;
+}
+
+/**
+ * Editing a notice to a different audience requires BOTH the original-scope
+ * mutation preflight and a second authorization for the requested audience.
+ * The API/campaign mutation must repeat the checks atomically before writing.
+ */
+export async function requireStaffNotificationRetarget(
+  context: RequestContext,
+  eventIdInput: unknown,
+  nextDraft: unknown,
+): Promise<StaffNotificationAudience> {
+  await requireStaffNotificationMutation(context, eventIdInput);
   const { audience } = await requireStaffNotificationAudience(context, nextDraft);
   return audience;
 }
@@ -373,6 +498,35 @@ function appendNotificationContextFilters(
   if (options.courseId) {
     const courseId = z.string().uuid().parse(options.courseId);
     conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'courseId'`, courseId));
+  }
+}
+
+/**
+ * Optional legacy category tabs are always ADDITIONAL filters on a personal
+ * recipient query; callers cannot turn a category into a cross-user feed.
+ * Category strings are bounded and known module/importance values validated.
+ */
+function appendNotificationCategoryFilters(
+  conditions: ReturnType<typeof eq>[],
+  options: {
+    module?: string;
+    eventType?: string;
+    importance?: string;
+    notificationType?: string;
+  },
+) {
+  if (options.module) {
+    conditions.push(eq(activityEvents.module, z.enum(ACTIVITY_MODULES).parse(options.module)));
+  }
+  if (options.importance) {
+    conditions.push(eq(activityEvents.importance, z.enum(ACTIVITY_IMPORTANCE).parse(options.importance)));
+  }
+  if (options.eventType) {
+    conditions.push(eq(activityEvents.eventType, z.string().trim().min(1).max(120).parse(options.eventType)));
+  }
+  if (options.notificationType) {
+    const notificationType = z.string().trim().min(1).max(120).parse(options.notificationType);
+    conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'notificationType'`, notificationType));
   }
 }
 
@@ -539,7 +693,8 @@ export async function listScopedAdminNotificationPage(
     organizationId: z.string().uuid().optional(),
     collegeId: z.string().uuid().optional(),
     pageNo: z.number().int().min(0).default(0),
-    pageSize: z.number().int().min(1).max(200).default(50),
+    // Legacy clamps the requested size to [1, 200] instead of failing.
+    pageSize: z.number().int().transform((size) => Math.min(200, Math.max(1, size))).default(50),
   }).strict().parse(rawOptions);
 
   const collegeId = options.collegeId ?? context.adminScope?.collegeId ?? null;
@@ -581,7 +736,10 @@ export async function listScopedAdminNotificationPage(
       .limit(options.pageSize).offset(options.pageNo * options.pageSize),
   ]);
   return {
-    items,
+    items: items.map((item) => ({
+      ...item,
+      metadata: sanitizeActivityMetadata(item.metadata),
+    })),
     pagination: {
       pageNo: options.pageNo,
       pageSize: options.pageSize,
@@ -599,6 +757,10 @@ export async function listOwnNotifications(
     collegeId?: string;
     classId?: string;
     courseId?: string;
+    module?: string;
+    eventType?: string;
+    importance?: string;
+    notificationType?: string;
   } = {},
 ) {
   const limit = z
@@ -610,6 +772,7 @@ export async function listOwnNotifications(
     .parse(options.limit);
   const conditions = [
     eq(inAppNotifications.userId, context.user.id),
+    releasedNotificationEvent,
   ];
   if (options.collegeId) {
     conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
@@ -620,9 +783,13 @@ export async function listOwnNotifications(
         inAppNotifications.readAt,
       ),
     );
+    if (options.unreadSince) {
+      conditions.push(gte(inAppNotifications.createdAt, z.date().parse(options.unreadSince)));
+    }
   }
 
   appendNotificationContextFilters(conditions, options);
+  appendNotificationCategoryFilters(conditions, options);
 
   const rows = await getDb()
     .select({
@@ -677,11 +844,14 @@ export async function countOwnUnreadNotifications(
           eq(inAppNotifications.userId, context.user.id),
           isNull(inAppNotifications.readAt),
           eq(activityEvents.collegeId, collegeId),
+          releasedNotificationEvent,
         ))
     : await db.select({ total: count() }).from(inAppNotifications)
+        .innerJoin(activityEvents, eq(activityEvents.id, inAppNotifications.eventId))
         .where(and(
           eq(inAppNotifications.userId, context.user.id),
           isNull(inAppNotifications.readAt),
+          releasedNotificationEvent,
         ));
   return row?.total ?? 0;
 }
@@ -694,6 +864,9 @@ export async function markOwnNotificationRead(
     .string()
     .uuid()
     .parse(notificationIdInput);
+  // Keep acknowledgements consistent with the live inbox visibility policy.
+  const releasedEventIds = getDb().select({ id: activityEvents.id })
+    .from(activityEvents).where(releasedNotificationEvent);
 
   const [current] = await getDb()
     .select()
@@ -708,6 +881,7 @@ export async function markOwnNotificationRead(
           inAppNotifications.userId,
           context.user.id,
         ),
+        inArray(inAppNotifications.eventId, releasedEventIds),
       ),
     )
     .limit(1);
@@ -734,6 +908,7 @@ export async function markOwnNotificationRead(
           inAppNotifications.userId,
           context.user.id,
         ),
+        inArray(inAppNotifications.eventId, releasedEventIds),
         isNull(
           inAppNotifications.readAt,
         ),
@@ -754,6 +929,7 @@ export async function markOwnNotificationRead(
       and(
         eq(inAppNotifications.id, notificationId),
         eq(inAppNotifications.userId, context.user.id),
+        inArray(inAppNotifications.eventId, releasedEventIds),
       ),
     )
     .limit(1);
@@ -784,8 +960,12 @@ export async function markAllOwnNotificationsRead(
       ...(ownCollege ? [
         inArray(inAppNotifications.eventId,
           getDb().select({ id: activityEvents.id }).from(activityEvents)
-            .where(eq(activityEvents.collegeId, ownCollege))),
-      ] : []),
+            .where(and(eq(activityEvents.collegeId, ownCollege), releasedNotificationEvent))),
+      ] : [
+        inArray(inAppNotifications.eventId,
+          getDb().select({ id: activityEvents.id }).from(activityEvents)
+            .where(releasedNotificationEvent)),
+      ]),
     ))
     .returning({ id: inAppNotifications.id });
 
@@ -808,6 +988,10 @@ export async function listOwnNotificationPage(
     collegeId?: string;
     classId?: string;
     courseId?: string;
+    module?: string;
+    eventType?: string;
+    importance?: string;
+    notificationType?: string;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -815,13 +999,19 @@ export async function listOwnNotificationPage(
   if (Boolean(options.beforeCreatedAt) !== Boolean(options.beforeId)) {
     throw new Error("NOTIFICATION_CURSOR_INVALID");
   }
-  const conditions = [eq(inAppNotifications.userId, context.user.id)];
+  const conditions = [
+    eq(inAppNotifications.userId, context.user.id),
+    releasedNotificationEvent,
+  ];
   if (options.collegeId) conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
   if (options.unreadOnly) {
     conditions.push(isNull(inAppNotifications.readAt));
-    if(options.unreadSince)conditions.push(gte(inAppNotifications.createdAt,options.unreadSince));
+    if (options.unreadSince) {
+      conditions.push(gte(inAppNotifications.createdAt, z.date().parse(options.unreadSince)));
+    }
   }
   appendNotificationContextFilters(conditions, options);
+  appendNotificationCategoryFilters(conditions, options);
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);
     const id = z.string().uuid().parse(options.beforeId);

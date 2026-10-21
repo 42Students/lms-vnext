@@ -94,3 +94,57 @@ export const messagingDeliveryReceipts = pgTable(
     ),
   ],
 );
+
+/**
+ * Provider-attempt audit shared by OTP, attendance and TPO sends.
+ * This is NOT proof of handset delivery. No raw phone number is stored.
+ */
+export const messagingSmsDeliveryAttempts = pgTable(
+  "messaging_sms_delivery_attempts",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    organizationId: uuid("organization_id").references(
+      () => organizations.id, { onDelete: "restrict" },
+    ),
+    collegeId: uuid("college_id").references(
+      () => colleges.id, { onDelete: "restrict" },
+    ),
+    userId: uuid("user_id").references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    recipientKey: varchar("recipient_key", { length: 64 }),
+    /** At most four numeric digits for authorized support searches. */
+    recipientSuffix: varchar("recipient_suffix", { length: 4 }),
+    purpose: varchar("purpose", { length: 160 }).notNull(),
+    templateKey: varchar("template_key", { length: 160 }),
+    providerMessageId: varchar("provider_message_id", { length: 64 }),
+    /** API accepted != delivered to a handset. */
+    outcome: varchar("outcome", { length: 24 }).notNull(),
+    /** Code only; never persist provider response with phone/token/secret. */
+    errorCode: varchar("error_code", { length: 64 }),
+    attemptedAt: timestamp("attempted_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (t) => [
+    index("messaging_sms_attempts_time_idx").on(t.attemptedAt),
+    index("messaging_sms_attempts_suffix_purpose_idx").on(
+      t.recipientSuffix, t.purpose, t.attemptedAt,
+    ),
+    index("messaging_sms_attempts_college_time_idx").on(
+      t.collegeId, t.attemptedAt,
+    ),
+    check(
+      "messaging_sms_attempts_outcome_ck",
+      sql`${t.outcome} in ('PROVIDER_ACCEPTED','FAILED','SUPPRESSED')`,
+    ),
+    check(
+      "messaging_sms_attempts_suffix_ck",
+      sql`${t.recipientSuffix} is null or ${t.recipientSuffix} ~ '^[0-9]{1,4}$'`,
+    ),
+    check(
+      "messaging_sms_attempts_recipient_key_ck",
+      sql`${t.recipientKey} is null or ${t.recipientKey} ~ '^[a-f0-9]{64}$'`,
+    ),
+  ],
+);
