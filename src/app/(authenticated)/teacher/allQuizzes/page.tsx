@@ -17,7 +17,7 @@ export default async function FacultyAllQuizzesPage({searchParams}:{
   return (
     <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="My Quizzes"
-        actions={<FacultyAssessmentCreate kind="QUIZ" lessons={overview.lessonChoices} toolbar />} />
+        actions={<FacultyAssessmentCreate kind="QUIZ" lessons={overview.lessonChoices} />} />
       <div aria-label="Quiz totals" className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
         <div className="flex flex-wrap items-center gap-2">
           <Badge tone="neutral">{overview.quizzes.length} {overview.quizzes.length===1?"Quiz":"Quizzes"}</Badge>
