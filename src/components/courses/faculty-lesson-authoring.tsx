@@ -840,7 +840,7 @@ export function FacultyLessonAuthoring({
               </label>
             ) : null}
 
-            <details key={mode} defaultOpen={mode === "RESOURCE" || Boolean(notes)}
+            <details key={mode} open={mode === "RESOURCE" || Boolean(notes)}
               className="mt-4 min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
               <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
                 {mode === "ASSIGNMENT" || mode === "QUIZ" ? "Description (optional)" : "Notes (optional)"}

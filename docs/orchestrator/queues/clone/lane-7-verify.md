@@ -59,4 +59,4 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-7.md: surface | regres
 - [x] `src/app/(authenticated)/college-admin/not-found.tsx`
 - [x] `src/app/(authenticated)/layout.tsx`
 - [x] `src/app/(authenticated)/teacher/not-found.tsx`
-- [ ] `src/app/(authenticated)/admin/loading.tsx`
+- [x] `src/app/(authenticated)/admin/loading.tsx`
