@@ -19,6 +19,7 @@ export function CollegeSectionLifecycleAction({ row }: {
   const [pending, startTransition] = useTransition();
   const [error, setError] = useState("");
   const [confirming, setConfirming] = useState(false);
+  const [deleting, setDeleting] = useState(false);
   const [confirmingDelete,setConfirmingDelete] = useState(false);
   const action = row.status === "ACTIVE" ? "ARCHIVE" : "RESTORE";
 
@@ -66,7 +67,31 @@ export function CollegeSectionLifecycleAction({ row }: {
     });
   }
 
-  return <div className="min-w-0">
+  function deleteClass() {
+    if (inFlight.current || pending) return;
+    inFlight.current = true;
+    setError("");
+    startTransition(async () => {
+      try {
+        await apiFetch("/api/college/classes/" + encodeURIComponent(row.id), {
+          method: "DELETE",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ expectedUpdatedAt: row.updatedAt, confirm: true }),
+        });
+        setDeleting(false);
+        showToast({tone: "success", title: 'Deleted class “' + row.name + '”.'});
+        router.refresh();
+      } catch (reason) {
+        const message = academicSetupErrorMessage(reason, "Failed to delete class.");
+        setError(message);
+        showToast({tone: "error", title: "Failed to delete class.", description: message});
+      } finally {
+        inFlight.current = false;
+      }
+    });
+  }
+
+  return <div className="flex min-w-0 flex-wrap items-center gap-2">
     <Button variant="secondary" type="button" disabled={pending}
       className="min-h-11 w-full sm:w-auto md:min-h-9"
       aria-label={(action === "ARCHIVE" ? "Archive" : "Restore")+" class "+row.name}
@@ -91,6 +116,19 @@ export function CollegeSectionLifecycleAction({ row }: {
       confirmLabel={action === "ARCHIVE" ? "Archive class" : "Restore class"}
       confirmVariant={action === "ARCHIVE" ? "danger" : "primary"}
       pending={pending} onConfirm={change}>
+      {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
+    </ConfirmDialog>
+    {row.status === "ACTIVE" ? <Button variant="secondary" type="button" disabled={pending}
+      aria-label={"Delete class “" + row.name + "”"}
+      title="Delete is only available when no learners, schedules, faculty or course deliveries refer to this class."
+      onClick={() => { setError(""); setDeleting(true); }}>
+      Delete
+    </Button> : null}
+    <ConfirmDialog open={deleting} onOpenChange={setDeleting}
+      title={'Delete class “' + row.name + '”?'}
+      description="Delete this class only if it has no enrolled students, teaching assignments, scheduled sessions or course deliveries. This action cannot be undone."
+      confirmVariant="danger" confirmLabel={error ? "Retry delete" : "Delete class"}
+      pending={pending} onConfirm={deleteClass}>
       {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
     </ConfirmDialog>
   </div>;
