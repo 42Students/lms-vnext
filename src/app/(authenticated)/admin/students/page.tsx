@@ -83,7 +83,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     </details>
   </section>:null}
   <AdminScopedReadPage headingMode="section" peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
-  exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
+  exportPath="/api/admin/students/export" exportFilename="students.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
   renderBulkActions={rows=><details className="min-w-0 border-b border-border pb-3">
