@@ -49,11 +49,11 @@ export default async function TpoSeasonPipelinePage({
       <PageHeader eyebrow="TPO · Reports" title="Season pipeline"
         description="Recorded application, screening, offer and joining evidence for one placement season."
         actions={<div className="flex w-full min-w-0 flex-col-reverse items-stretch gap-[var(--lms-space-2)] min-[768px]:w-auto min-[768px]:flex-row min-[768px]:items-center">
-          <Link href="/tpo/reports" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
+          <Link href="/tpo/reports" className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
             ← All reports
           </Link>
           {report.season ? <a href={"/api/placements/reports/season-pipeline?" + csvQuery.toString()}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
             Export funnel CSV
           </a> : null}
         </div>} />
