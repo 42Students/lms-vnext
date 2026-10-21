@@ -6,4 +6,4 @@ P0 packets (V0) come first: do them RIGHT AFTER your current packet, before anyt
 - [ ] `docs/audit/gap-fix-work/verify/packets/lane-15/V1_lane15_1.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify/packets/lane-15/V1_lane15_2.md` (25 rows)
 - [ ] `docs/audit/gap-fix-work/verify/packets/lane-15/V1_lane15_3.md` (25 rows)
-- [ ] `docs/audit/gap-fix-work/verify/packets/lane-15/V1_lane15_4.md` (17 rows)
+- [x] `docs/audit/gap-fix-work/verify/packets/lane-15/V1_lane15_4.md` (17 rows)
