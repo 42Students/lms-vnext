@@ -991,3 +991,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-8-029-009/-048 | `src/db/schema/projects.ts + template history importer` | Preserve legacy actionType, changedAt and full snapshot JSON/lifecycle independently of mutable current template header; source service cannot infer missing history.
 - G2-2-019-070 | `src/modules/announcements/service.ts` | Supply persisted cancelledAt/CANCELLED status to visibility model and recipient gating, update admin filters as needed.
+
+- G2-19-020-027 / G2-4-021-001 | `src/modules/bug-tracker/readiness.ts + deployment` | Verify DB10 migration and acceptance before enabling tracker flag; not confirmed.
+- G2-17-030-012/-035 | `src/components/placements/placement-operations-overview.tsx + deadline API` | Add per-drive More actions and authorized Super Admin acting-college deadline endpoint.

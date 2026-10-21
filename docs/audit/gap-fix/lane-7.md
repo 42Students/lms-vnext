@@ -196,3 +196,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_template-version-history-service.ts.md` | Added legacy success envelope message; historical actionType and full entity snapshots are not represented by current version rows, require schema import/crosswalk before lossless parity. No CI.
 - `docs/audit/gap-fix-work/packets/lane-13/src_modules_announcements_visibility-model.ts.md` | Announcement visibility now recognizes explicit CANCELLED status or cancelledAt and suppresses it before scheduled/live, preserving existing statuses. Producer storage fields need wiring. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-12/src_modules_bug-tracker_readiness.ts.md` | Runtime requires verified DB10 readiness; migration/acceptance could not be established from source and cannot be run here. No fabricated ready flag; handoff, not fixed.
+- `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_super-admin-drive-deadline.tsx.md` | Restored IST dated deadline success and exact failure wording; per-card actions and selected-college authorization need owner integration. No CI.
