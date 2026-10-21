@@ -436,12 +436,13 @@ export const projectResourceReorderSchema=z.strictObject({
   orderIds:z.array(z.string().uuid()).min(1).max(250).refine(
     ids=>new Set(ids).size===ids.length,{message:"Resource order contains duplicates"},
   ),
+  expectedOrderIds:z.array(z.string().uuid()).min(1).max(250).optional(),
 });
 export async function reorderProjectResources(
   context:RequestContext,projectIdInput:string,rawInput:unknown,
 ){
   const scope=await requireProjectLifecycleMutationAccess(context,projectIdInput);
-  const {orderIds}=projectResourceReorderSchema.parse(rawInput);
+  const {orderIds,expectedOrderIds}=projectResourceReorderSchema.parse(rawInput);
   return getDb().transaction(async tx=>{
     const [project]=await tx.select({status:projectInstances.status})
       .from(projectInstances).where(and(eq(projectInstances.id,scope.project.id),
@@ -450,8 +451,8 @@ export async function reorderProjectResources(
     if(!project)throw new ProjectsServiceError("PROJECT_NOT_FOUND");
     ensureMutableProject(project.status);
     await assertPersistedProjectMutationActor(tx,context,scope);
-    const all=await tx.select({id:projectResources.id,sequence:projectResources.sequence,
-      status:projectResources.status}).from(projectResources)
+    const all=await tx.select({id:projectResources.id,title:projectResources.title,
+      sequence:projectResources.sequence,status:projectResources.status}).from(projectResources)
       .where(eq(projectResources.projectId,scope.project.id))
       .orderBy(asc(projectResources.sequence)).for("update");
     const active=all.filter(item=>item.status==="ACTIVE");
@@ -461,6 +462,12 @@ export async function reorderProjectResources(
     }
     const old=active.map(row=>row.id);
     if(old.every((id,i)=>id===orderIds[i]))return {changed:false,count:active.length};
+    // A complete ID set alone cannot distinguish a concurrent reorder.
+    // Require the exact order the editor originally loaded.
+    if(!expectedOrderIds||expectedOrderIds.length!==old.length||
+       expectedOrderIds.some((id,i)=>id!==old[i])){
+      throw new ProjectsServiceError("PROJECT_RESOURCE_STALE_VERSION");
+    }
     const maxSequence=Math.max(-1,...all.map(item=>item.sequence));
     if(!Number.isSafeInteger(maxSequence)||maxSequence>2147483647-active.length-1){
       throw new ProjectsServiceError("PROJECT_RESOURCE_SEQUENCE_CONFLICT");
@@ -477,14 +484,19 @@ export async function reorderProjectResources(
         .set({sequence:active[i]!.sequence,updatedAt:new Date()})
         .where(and(eq(projectResources.id,orderIds[i]!),eq(projectResources.projectId,scope.project.id)));
     }
-    await recordActivityEventInTransaction(tx,context,{
-      eventType:ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED,
-      collegeId:scope.collegeId,organizationId:scope.organizationId,
-      subjectType:"project_instance",subjectId:scope.project.id,
-      summary:"Project resources reordered",
-      metadata:{projectId:scope.project.id,reordered:true,count:active.length},
-      groupKey:"project:"+scope.project.id+":resources",
-    });
+    for(let index=0;index<orderIds.length;index++){
+      const item=active.find(row=>row.id===orderIds[index]);
+      if(!item||item.sequence===active[index]!.sequence)continue;
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED,
+        collegeId:scope.collegeId,organizationId:scope.organizationId,
+        subjectType:"project_resource",subjectId:item.id,subjectLabel:item.title,
+        summary:"Project resource order changed",
+        metadata:{projectId:scope.project.id,resourceId:item.id,
+          previousSequence:item.sequence,nextSequence:active[index]!.sequence},
+        groupKey:"project:"+scope.project.id+":resources",
+      });
+    }
     return {changed:true,count:active.length};
   });
 }

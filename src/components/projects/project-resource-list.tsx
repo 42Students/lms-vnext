@@ -56,12 +56,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
    if(sourceChanged){setReorderError("Resources changed. Discard edits and refresh before saving.");return;}
    setReordering(true);setReorderError("");
    try{
-     // Keep edits local until Save. The server serializes the project and
-     // validates the ID set; server-side original-order CAS is a separate
-     // required feature before this can claim whole-section atomic parity.
+     // Section-level CAS binds this save to the exact original ID order.
+     // A concurrent reorder cannot silently overwrite another admin's work.
      await apiFetch("/api/projects/"+encodeURIComponent(projectId)+"/resources/reorder",{
        method:"POST",headers:{"content-type":"application/json"},
-       body:JSON.stringify({orderIds}),
+       body:JSON.stringify({orderIds,expectedOrderIds:baselineIds}),
      });
      setBaselineIds([...orderIds]);
      router.refresh();
