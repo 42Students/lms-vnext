@@ -28,7 +28,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_super-admin-hr-accounts.tsx.part2of2.md` (edit src/components/admin/super-admin-hr-accounts.tsx; 15 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_faculty_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/faculty/page.tsx; 40 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_faculty_page.tsx.part2of2.md` (edit src/app/(authenticated)/admin/faculty/page.tsx; 11 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-2_l15-u030-hiring-dashboard.md.md` (new; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-2_l15-u030-hiring-dashboard.md.md` (new; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_college-feature-rule-editor.tsx.md` (edit src/components/admin/college-feature-rule-editor.tsx; 33 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_tenant-settings-editor.tsx.md` (edit src/components/admin/tenant-settings-editor.tsx; 32 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_person-onboard-dialog.tsx.md` (edit src/components/admin/person-onboard-dialog.tsx; 31 findings; best P2)
