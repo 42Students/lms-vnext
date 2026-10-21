@@ -43,10 +43,10 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/people.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/PeopleDirectory.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/mentor/courses/index.js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/rules.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/assessments.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/learn/allQuizzes.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/course-progress.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/rules.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/my-placements/assessments.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/learn/allQuizzes.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/course-progress.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Home/Home.js`
 - [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobSlugGenerator.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobLifecycleService.java`
