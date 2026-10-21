@@ -1,7 +1,7 @@
 import { FilterBar } from "@/components/ui/filter-bar";
 import Link from "next/link";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
-import { redirect } from "next/navigation";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -31,8 +31,17 @@ export default async function CollegeBatchPromotionPage({
   searchParams,
 }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Batch Promotion"/>
+    <ErrorState title="Admin not assigned to a college"
+      description="Contact your administrator to assign a college before promoting batches."
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+  </div>;
   const incoming = await searchParams;
+  const batchPageRaw=first(incoming.batchPage)??"1";
+  const batchSizeRaw=first(incoming.batchPageSize)??"10";
+  const batchPage=/^[1-9][0-9]{0,3}$/.test(batchPageRaw)?Number(batchPageRaw):null;
+  const batchSize=["10","20","50"].includes(batchSizeRaw)?Number(batchSizeRaw):null;
   const raw = {
     programId: first(incoming.programId),
     cohortId: first(incoming.cohortId),
@@ -43,35 +52,96 @@ export default async function CollegeBatchPromotionPage({
       value !== undefined && value !== "",
     )),
   );
-  if (!parsed.success) return <div className="min-w-0 space-y-4 md:space-y-6">
+  if (!parsed.success||batchPage===null||batchSize===null) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
       action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
-  const read=await (async()=>{
-    const options=await listCollegePromotionOptions(context,parsed.data);
-    const preview=parsed.data.cohortId
-      ? await previewCollegeBatchPromotion(context,parsed.data)
-      : null;
-    const facultySetup=preview?.plan.targetTermNumber&&parsed.data.cohortId
-      ? await getPromotionFacultyReadiness(context,preview.batch.programId,
-          parsed.data.cohortId,preview.plan.targetTermNumber)
-      : null;
-    return {options,preview,facultySetup};
-  })().then(value=>({ok:true as const,value}))
-     .catch(()=>({ok:false as const}));
-  if(!read.ok)return <div className="min-w-0 space-y-4 md:space-y-6">
-    <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
-    <ErrorState title="Batch promotion preview unavailable"
-      description="Program, batch, promotion or faculty-readiness data could not be verified. No promotion has been applied."
-      action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Retry promotion preview</Link>}/>
-  </div>;
-  const {options,preview,facultySetup}=read.value;
+  const [optionsResult,previewResult]=await Promise.allSettled([
+    listCollegePromotionOptions(context,parsed.data),
+    parsed.data.cohortId?previewCollegeBatchPromotion(context,parsed.data):Promise.resolve(null),
+  ]);
+  if(optionsResult.status==="rejected"){
+    if(optionsResult.reason instanceof AuthorizationError)throw optionsResult.reason;
+    return <div className="min-w-0 space-y-4 md:space-y-6">
+      <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />}/>
+      <ErrorState title="Could not load batches"
+        description="Batch and program choices could not be verified. No promotion was applied."
+        action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    </div>;
+  }
+  if(previewResult.status==="rejected" && previewResult.reason instanceof AuthorizationError)
+    throw previewResult.reason;
+  const options=optionsResult.value;
+  const preview=previewResult.status==="fulfilled"?previewResult.value:null;
+  const previewError=previewResult.status==="rejected";
+  const facultySetup=preview?.plan.targetTermNumber&&parsed.data.cohortId
+    ?await getPromotionFacultyReadiness(context,preview.batch.programId,
+      parsed.data.cohortId,preview.plan.targetTermNumber).catch(()=>null):null;
+  const totalBatches=options.cohorts.length;
+  const totalBatchPages=Math.max(1,Math.ceil(totalBatches/batchSize!));
+  const currentBatchPage=Math.min(batchPage!,totalBatchPages);
+  const directoryRows=options.cohorts.slice(
+    (currentBatchPage-1)*batchSize!,currentBatchPage*batchSize!);
+  const currentUrl=(page:number,size=batchSize!)=>{
+    const params=new URLSearchParams();
+    if(parsed.data.programId)params.set("programId",parsed.data.programId);
+    if(parsed.data.cohortId)params.set("cohortId",parsed.data.cohortId);
+    if(parsed.data.yearStart!==undefined)params.set("yearStart",formatPromotionAcademicYear(parsed.data.yearStart));
+    params.set("batchPage",String(page));params.set("batchPageSize",String(size));
+    return "/college/batch-promotion?"+params.toString();
+  };
+  const batchPreviewHref=(row:(typeof options.cohorts)[number])=>{
+    const params=new URLSearchParams({programId:row.programId,cohortId:row.id});
+    return "/college/batch-promotion?"+params.toString();
+  };
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion"
       description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
       actions={<PageBackLink href="/college/batches" label="Batches" />} />
+    {previewError?<Alert tone="warning">
+      Could not verify this promotion. Please retry. Existing batch records remain available below.
+      <Link href="/college/batch-promotion" className="ml-2 font-semibold text-link underline">Retry</Link>
+    </Alert>:null}
+    <section aria-label="College batch directory" className="min-w-0 space-y-3">
+      <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Batch directory</h2>
+      <p className="text-xs text-muted-foreground">Graduation is recorded only after a guarded
+        final-term action is available; no completion is inferred from semester number alone.</p>
+      <DataTable caption="All college batches" rows={directoryRows} getRowKey={row=>row.id}
+        columns={[
+          {key:"batch",header:"Batch Name",mobilePriority:"primary",cell:row=>row.name},
+          {key:"program",header:"Program",cell:row=>row.programName},
+          {key:"semester",header:"Semester",cell:row=>row.currentTermNumber??"Not set"},
+          {key:"year",header:"Academic Year",cell:row=>
+            row.currentAcademicYearStart===null?"Not set":formatPromotionAcademicYear(row.currentAcademicYearStart)},
+          {key:"students",header:"Students",cell:row=>row.activeLearners},
+          {key:"status",header:"Status",cell:row=>
+            <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>},
+          {key:"action",header:"Action",mobilePriority:"action",cell:row=>row.status==="ACTIVE"?
+            <Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Preview promotion</Link>:
+            <span className="text-xs text-muted-foreground">No action available</span>},
+        ]}
+        empty={<EmptyState title="No batches" description="No batches match the selected program."/>}/>
+      <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
+        <span>Showing {totalBatches?((currentBatchPage-1)*batchSize!+1):0}–
+          {Math.min(totalBatches,currentBatchPage*batchSize!)} of {totalBatches} · Page {currentBatchPage} of {totalBatchPages}</span>
+        <div className="flex flex-wrap items-center gap-3">
+          <form method="get">
+            {parsed.data.programId?<input type="hidden" name="programId" value={parsed.data.programId}/>:null}
+            {parsed.data.cohortId?<input type="hidden" name="cohortId" value={parsed.data.cohortId}/>:null}
+            <label className="flex items-center gap-2">Rows per page
+              <Select name="batchPageSize" defaultValue={batchSize!} className="min-w-20">
+                {[10,20,50].map(size=><option key={size} value={size}>{size}</option>)}
+              </Select>
+            </label>
+            <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
+          </form>
+          {currentBatchPage>1?<Link href={currentUrl(currentBatchPage-1)} className="font-semibold text-link underline">Previous</Link>:null}
+          {currentBatchPage<totalBatchPages?<Link href={currentUrl(currentBatchPage+1)} className="font-semibold text-link underline">Next</Link>:null}
+        </div>
+      </div>
+    </section>
     <section className="min-w-0 pt-[var(--lms-space-2)]">
       <FilterBar title="Filters"><form method="get" action="/college/batch-promotion" className="grid min-w-0 items-end gap-[var(--lms-space-3)] max-[767px]:[&_label]:w-full md:grid-cols-2 min-[992px]:grid-cols-4">
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -177,7 +247,9 @@ export default async function CollegeBatchPromotionPage({
       </>
     )}
     <p className="max-w-[75ch] text-xs leading-5 text-muted-foreground">
-      Preview never writes. Confirming promotion requires an unchanged version and rechecks
+      Preview never writes. Graduation is not an enabled server operation yet;
+      final-semester rows are not marked Completed or graduated by this view.
+      Confirming promotion requires an unchanged version and rechecks
       blockers in a transaction. Graduation is available for batches in their final registered semester.
     </p>
   </div>;
