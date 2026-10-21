@@ -115,7 +115,7 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
     </div>)}
     {!rows.length&&!busy&&!error?<p role="status" className="py-3 text-sm text-muted-foreground leading-[22px]">No saved student views.</p>:null}
    </div>
-   <Dialog open={deleteTarget!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setDeleteTarget(null);}}
+   <Dialog role="alertdialog" open={deleteTarget!==null} onOpenChange={value=>{if(!value&&!busy&&!guardedPending)setDeleteTarget(null);}}
     title="Delete saved view" description={"Delete saved view "+(deleteTarget?.name??"")+"?"}
     footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
       <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={busy||guardedPending} onClick={()=>setDeleteTarget(null)}>Cancel</Button>

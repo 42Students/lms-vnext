@@ -185,7 +185,7 @@ export function TpoSpreadsheetGrid<Row>({
   {sort?<Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>setSort(null)} aria-label="Clear grid sorting">Clear grid sort</Button>:null}
   {clipboardMessage?<InlineNotice tone={clipboardMessage.startsWith("Clipboard unavailable")?"error":"success"} message={clipboardMessage}/>:null}
   {rows.length===0?<EmptyState title="No matching records."/>:<>
-   <div className="hidden md:block" tabIndex={0} aria-label="TPO grid keyboard copy"
+   <div role="region" className="hidden md:block" tabIndex={0} aria-label="TPO grid keyboard copy" aria-keyshortcuts="Control+C Meta+C"
     onKeyDown={event=>{
      if(!(event.ctrlKey||event.metaKey)||event.key.toLowerCase()!=="c"||event.defaultPrevented)return;
      if(event.target instanceof HTMLElement&&event.target.closest("input,textarea,select,[contenteditable=true]"))return;

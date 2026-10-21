@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Pagination } from "@/components/ui/pagination";
+import { Button } from "@/components/ui/button";
 
 export type ProjectAdminCollectionQuery = {
   view?:"cards"|"table";

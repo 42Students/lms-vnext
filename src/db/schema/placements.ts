@@ -978,6 +978,10 @@ export const placementCandidateAcademicEvidence = pgTable(
         and (${table.postgraduatePctBasisPoints} is null or ${table.postgraduatePctBasisPoints} between 0 and 10000)`,
     ),
     check(
+      "placement_candidate_academic_evidence_pg_qualification_ck",
+      sql`${table.postgraduatePctBasisPoints} is null or ${table.hasPostgraduateQualification} is true`,
+    ),
+    check(
       "placement_candidate_academic_evidence_gap_ck",
       sql`${table.gapYears} is null or ${table.gapYears} >= 0`,
     ),
