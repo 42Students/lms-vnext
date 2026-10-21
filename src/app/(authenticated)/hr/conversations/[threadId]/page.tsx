@@ -41,8 +41,14 @@ export default async function RecruiterConversationDetail({params,searchParams}:
      action={<Link href="/hr/home" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Return to Today</Link>}/>
    </div>;
   }
-  if(error instanceof TpoMessagingError)notFound();
-  throw error;
+  if(error instanceof TpoMessagingError&&error.code==="TPO_MESSAGE_THREAD_NOT_FOUND")notFound();
+  return <div className="min-w-0 max-w-full space-y-4">
+   <PageHeader title="Messages"/>
+   <ErrorState title="Could not load this conversation"
+    description="The conversation history could not be verified. Your messages were not assumed deleted."
+    action={<Link href={"/hr/conversations/"+encodeURIComponent(threadId)}
+     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry conversation</Link>}/>
+  </div>;
  }
  // A drive-directory outage is ancillary to a thread already authorized by
  // readRecruiterThreadMessages. Never trust cached titles or crash its reply UI.

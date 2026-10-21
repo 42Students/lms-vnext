@@ -30,7 +30,11 @@ export async function editSuperAdminTemplateMetadata(context: RequestContext, ra
     )).limit(1);
     if (!current) throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
     const now = new Date(Math.max(Date.now(), locked.template.updatedAt.getTime() + 1));
-    const [updated] = await tx.update(projectTemplates).set({ title: input.title, summary: input.summary,
+    const [updated] = await tx.update(projectTemplates).set({
+      title:input.title,summary:input.summary,
+      slug:input.slug??locked.template.slug,
+      legacyCourseLabel:input.courseLabel??locked.template.legacyCourseLabel,
+      legacyPhase:input.phase??locked.template.legacyPhase,
       currentVersion: locked.template.currentVersion + 1, updatedAt: now,
     }).where(and(eq(projectTemplates.id, id), eq(projectTemplates.status, "DRAFT"),
       eq(projectTemplates.currentVersion, input.expectedCurrentVersion),
@@ -38,7 +42,17 @@ export async function editSuperAdminTemplateMetadata(context: RequestContext, ra
     )).returning();
     if (!updated) throw new ProjectsServiceError("PROJECT_TEMPLATE_STALE_VERSION");
     const [version] = await tx.insert(projectTemplateVersions).values({ templateId: id, version: updated.currentVersion,
-      title: updated.title, summary: updated.summary, blueprint: current.blueprint, changeNote: input.changeNote,
+      title:updated.title,summary:updated.summary,
+      blueprint:{
+        ...current.blueprint,
+        overview:{
+         ...current.blueprint.overview,
+         ...(input.overview??{}),
+         ...(input.courseLabel!==undefined?{courseLabel:input.courseLabel}:{}),
+         ...(input.phase!==undefined?{phase:input.phase}:{}),
+        },
+      },
+      changeNote:input.changeNote,
       createdByUserId: context.user.id }).returning();
     await recordActivityEventInTransaction(tx, context, {
       eventType: ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_METADATA_UPDATED,

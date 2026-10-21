@@ -65,13 +65,11 @@ export async function POST(request: Request) {
       { status: 429, headers: { "Retry-After": "60" } },
     );
   }
-  let identity: { userId?: string; collegeId?: string } = {};
-  try {
-    const context = await getCurrentRequestContext();
-    identity = { userId: context.user.id, collegeId: context.membership?.collegeId };
-  } catch {
-    // Anonymous failures are valid; never trust a client-supplied account ID.
-  }
+  // Legacy telemetry requires a signed-in principal. Do not allow an
+  // anonymous root error to become an unbounded log injection vector.
+  const context=await getCurrentRequestContext().catch(()=>null);
+  if(!context)return NextResponse.json({error:"AUTHENTICATION_REQUIRED"},{status:401});
+  const identity={userId:context.user.id,collegeId:context.membership?.collegeId};
   const report = parsed.data;
   // Root error boundaries intentionally send only the category and reference.
   const safeMessage = report.message ??
@@ -82,5 +80,7 @@ export async function POST(request: Request) {
     path: safeAlertPath(report.path), requestId: report.requestId,
     errorName: safeBrowserComponent({ name: report.name }), status: 500,
   });
+  // Telemetry is fire-and-forget. 202 is success even for clients that do
+  // not await the response; never show this endpoint's errors as a UI toast.
   return NextResponse.json({ received: true }, { status: 202 });
 }

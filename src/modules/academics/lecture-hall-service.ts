@@ -245,7 +245,6 @@ export async function listLectureHalls(
       .leftJoin(departments, eq(departments.id, lectureHalls.departmentId))
       .where(and(...filters))
       .orderBy(
-        asc(sql`case ${lectureHalls.status} when 'ACTIVE' then 0 else 1 end`),
         ...(query.q && prefixSearch && containsSearch ? [
           asc(sql`case
             when lower(${lectureHalls.name}) = lower(${query.q}) then 0
@@ -253,6 +252,7 @@ export async function listLectureHalls(
             when ${lectureHalls.name} ilike ${containsSearch} then 2
             else 3 end`),
         ] : []),
+        asc(sql`case ${lectureHalls.status} when 'ACTIVE' then 0 else 1 end`),
         asc(sql`lower(${lectureHalls.name})`),
         asc(lectureHalls.id),
       )
