@@ -1,61 +1,6 @@
-# UI/UX polish VERIFICATION queue: lane chat-12 (surfaces polished by OTHER lanes)
+# Verification queue: lane chat-12
 
-50 surfaces. Each was already polished by another lane. Your job is to VERIFY and improve, strictly one surface at a time.
+P0 packets (V0) come first: do them RIGHT AFTER your current packet, before anything else, because they close the most important findings. The P1 sample packets (V1) are done after your other queues. Tick [x] as you go.
 
-1. Regressions first (a polish pass edits many files without running code): matching tags, every import present and used, no duplicate attributes, no undeclared packages, props still match their component types, no removed export that another file imports. Fix anything broken.
-2. Behaviour kept: ids, data-testid, aria labels, routes, permissions, form fields, wording (docs/audit/legacy-copy-A.md and B.md) and legacy tokens (docs/design) must be unchanged; if the polish dropped or reworded something, restore it.
-3. Then judge the surface fresh as a senior product designer: is anything still cluttered, misaligned, duplicated or noisy? One obvious primary action? Aligned left edges and gaps on the legacy scale? Calm density? Real layouts at 375 and 768? Empty, loading, error states with a clear next step? Fix what you find.
-4. Also check the route files in the same folder (loading, error, not-found, template) and the nearest parent layout.
-
-Proof: ONE entry per surface in docs/audit/ux/verify-lane-12.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-12-b with [chat-12] after every 2 surfaces.
-
-- [x] `src/app/(authenticated)/tpo/messages/notifications/page.tsx`
-- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [x] `src/app/(authenticated)/tpo/more/page.tsx`
-- [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
-- [x] `src/app/(authenticated)/tpo/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/discussion/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/drive-day/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/edit/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/extend-deadline/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/joining/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/waitlist/page.tsx`
-- [x] `src/components/placements/drive-day-roster.tsx`
-- [x] `src/components/placements/placement-calendar-workspace.tsx`
-- [x] `src/components/placements/placement-drive-workspace.tsx`
-- [x] `src/components/placements/placement-recruiter-access.tsx`
-- [x] `src/components/placements/recruiter-focused-review-shortcuts.tsx`
-- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [x] `src/components/placements/tpo-drive-clone-action.tsx`
-- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [x] `src/components/placements/tpo-mark-own-notification-read.tsx`
-- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [x] `src/components/placements/tpo-trust-toggle.tsx`
-- [x] `src/components/tpo/tpo-applications-spreadsheet.tsx`
-- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
-- [x] `src/components/tpo/tpo-notice-undo-toast.tsx`
-- [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
+- [ ] `docs/audit/gap-fix-work/verify/packets/lane-12/V0_lane12_1.md` (3 rows)
+- [ ] `docs/audit/gap-fix-work/verify/packets/lane-12/V1_lane12_1.md` (21 rows)

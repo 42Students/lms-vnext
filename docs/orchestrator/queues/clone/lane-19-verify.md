@@ -1,43 +1,7 @@
-# UI/UX polish VERIFICATION queue: lane chat-19 (surfaces polished by OTHER lanes)
+# Verification queue: lane chat-19
 
-32 surfaces. Each was already polished by another lane. Your job is to VERIFY and improve, strictly one surface at a time.
+P0 packets (V0) come first: do them RIGHT AFTER your current packet, before anything else, because they close the most important findings. The P1 sample packets (V1) are done after your other queues. Tick [x] as you go.
 
-1. Regressions first (a polish pass edits many files without running code): matching tags, every import present and used, no duplicate attributes, no undeclared packages, props still match their component types, no removed export that another file imports. Fix anything broken.
-2. Behaviour kept: ids, data-testid, aria labels, routes, permissions, form fields, wording (docs/audit/legacy-copy-A.md and B.md) and legacy tokens (docs/design) must be unchanged; if the polish dropped or reworded something, restore it.
-3. Then judge the surface fresh as a senior product designer: is anything still cluttered, misaligned, duplicated or noisy? One obvious primary action? Aligned left edges and gaps on the legacy scale? Calm density? Real layouts at 375 and 768? Empty, loading, error states with a clear next step? Fix what you find.
-4. Also check the route files in the same folder (loading, error, not-found, template) and the nearest parent layout.
-
-Proof: ONE entry per surface in docs/audit/ux/verify-lane-19.md: surface | regressions found and fixed | extra clutter/alignment fixes | files changed (write 'verified, no change' only after a real read of every component). Tick [x] here and push to chatgpt/chat-19-b with [chat-19] after every 2 surfaces.
-
-- [x] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
-- [x] `src/app/(authenticated)/college/faculty/import/page.tsx`
-- [x] `src/app/(authenticated)/college/faculty/page.tsx`
-- [x] `src/app/(authenticated)/college/groups/[groupId]/import-preview/page.tsx`
-- [x] `src/app/(authenticated)/college/groups/[groupId]/page.tsx`
-- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/page.tsx`
-- [x] `src/app/(authenticated)/college/groups/page.tsx`
-- [x] `src/app/(authenticated)/college/hiring-dashboard/page.tsx`
-- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [x] `src/app/(authenticated)/college/lessons/page.tsx`
-- [x] `src/app/(authenticated)/college/live-classes/page.tsx`
-- [x] `src/app/(authenticated)/college/page.tsx`
-- [x] `src/app/(authenticated)/college/people/manage/page.tsx`
-- [x] `src/app/(authenticated)/college/people/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/calendar/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/drives/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/interviews/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/new/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/retention/page.tsx`
-- [x] `src/app/(authenticated)/college/placements/student-lookup/page.tsx`
-- [x] `src/components/college/college-faculty-lifecycle-action.tsx`
-- [x] `src/components/college/use-college-confirmation.tsx`
-- [x] `src/components/people/faculty-profile-text-section.tsx`
+- [ ] `docs/audit/gap-fix-work/verify/packets/lane-19/V0_lane19_1.md` (2 rows)
+- [ ] `docs/audit/gap-fix-work/verify/packets/lane-19/V1_lane19_1.md` (25 rows)
+- [ ] `docs/audit/gap-fix-work/verify/packets/lane-19/V1_lane19_2.md` (6 rows)
