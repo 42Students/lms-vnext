@@ -44,5 +44,5 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-20.md: surface | regre
 - [x] `src/components/courses/learner-quiz-attempt.tsx`
 - [x] `src/components/tracker/independent-finding-actions.tsx`
 - [x] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/ui/multi-select.tsx`
-- [ ] `src/components/projects/mentor-task-status-transition.tsx`
+- [x] `src/components/ui/multi-select.tsx`
+- [x] `src/components/projects/mentor-task-status-transition.tsx`

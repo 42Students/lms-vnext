@@ -24,8 +24,8 @@ export function MentorTaskStatusTransition(props:{
   const valid=allowedMentorTaskTransition(props.status,selected);
   if(props.sprintStatus!=="ACTIVE"||!options.some(x=>x===props.status))return null;
   async function submit(){
-    const blockerReason=selected==="BLOCKED"&&!props.blockerReason?.trim()
-      ? newBlockerReason.trim() : undefined;
+    const blockerReason=selected==="BLOCKED"
+      ? (props.blockerReason?.trim() || newBlockerReason.trim()) : undefined;
     if(selected==="BLOCKED"&&!props.blockerReason?.trim()&&!blockerReason){
       setError("Add a blocker note before changing this task state.");
       return;
@@ -68,7 +68,7 @@ export function MentorTaskStatusTransition(props:{
         onClick={()=>{setError(null);setConfirm(true);}}>{mentorTaskQuickActionLabel(selected)}</Button>
     </div>
     <ConfirmDialog open={confirm} onOpenChange={setConfirm}
-      title="Change this task state?" confirmLabel="Confirm status change"
+      title="Change this task state?" confirmLabel="Confirm status change" confirmVariant="primary"
       description={"Change status from "+props.status.replaceAll("_"," ")+" to "+
         selected.replaceAll("_"," ")+". Completion still requires approved review."}
       pending={pending} onConfirm={submit}>
