@@ -33,12 +33,12 @@ export function ProjectSoftDeleteControl({ projectId, projectTitle, expectedUpda
       setOpen(false);
       showToast({
         tone: "success",
-        title: deleted ? "Deleted workspace restored" : "Workspace deleted",
+        title: deleted ? "Deleted workspace restored" : "Workspace deleted — it can be restored",
         description: deleted
           ? "The workspace is still archived. Use Restore to reopen it for work."
           : "The workspace can be recovered from Deleted workspaces.",
       });
-      router.refresh();
+      if(deleted){router.refresh();}else{router.push(deletedListHref);router.refresh();}
     } catch (caught) {
       showToast({
         tone: "error",
