@@ -56,14 +56,15 @@ export async function getCandidatePreferences(
     )
     .limit(1);
 
-  return (
-    preferences ?? {
-      membershipId: membership.id,
-      ...DEFAULT_PREFERENCES,
-      createdAt: null,
-      updatedAt: null,
-    }
-  );
+  // Missing rows are defaults for the editor, not saved user choices.
+  // Keep the state explicit even when a saved record contains empty arrays.
+  if(preferences)return {...preferences,sourceState:"SAVED" as const};
+  return {
+    membershipId:membership.id,
+    ...DEFAULT_PREFERENCES,
+    createdAt:null,updatedAt:null,
+    sourceState:"DEFAULT_NOT_SAVED" as const,
+  };
 }
 
 /** Legacy JobPreferencesDTO read, using the single existing owner for its
@@ -84,6 +85,13 @@ export async function getLegacyJobPreferencesForSelf(context: RequestContext) {
     preferredEmploymentCity: pref.preferredEmploymentCity || null,
     examSlotPreference: pref.examSlotPreference || null,
     jobNotificationsEnabled: pref.jobNotificationsEnabled,
+    // The legacy response uses null for unspecified profile preferences.
+    // Empty arrays/NO_PREFERENCE are reserved for the distinct vNext model.
+    missingProfileFields:[
+      ...(["rolePreference","specificRolePreference","workShiftPreference",
+         "preferredEmploymentCity","examSlotPreference"] as const)
+         .filter(key=>!pref[key]),
+    ],
   };
 }
 

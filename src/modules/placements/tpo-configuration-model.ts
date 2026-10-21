@@ -3,8 +3,17 @@ export const tpoConfigVersionSchema=z.iso.datetime({offset:true});
 export function hasCurrentTpoConfigVersion(current:Date|undefined,expected:string){
  return (current?.toISOString()??"none")===expected;
 }
-export const tpoJobTypeNameSchema=z.string().trim()
- .transform(value=>value.replace(/\s+/g," "))
+/** Consistent with the old TPO custom-type names: Unicode compatibility
+ * normalization and repeated whitespace collapse precede 2–40 validation.
+ * Compare canonical folded forms, not raw user input or byte counts. */
+export function canonicalTpoJobTypeName(value:string){
+ return value.normalize("NFKC").trim().replace(/\s+/gu," ");
+}
+export function tpoJobTypeCompareKey(value:string){
+ return canonicalTpoJobTypeName(value).toLocaleLowerCase("en-IN");
+}
+export const tpoJobTypeNameSchema=z.string()
+ .transform(canonicalTpoJobTypeName)
  .pipe(z.string().min(2).max(40)
   .regex(/^[\p{L}\p{N} +&\/().,\u0027-]+$/u,"2-40 letters, digits or simple punctuation"));
 export const tpoBlockedDaySchema=z.iso.date();

@@ -22,9 +22,12 @@ export function parseSuperAdminCourseProgressParams(raw:Record<string,string|str
  if(Object.values(raw).some(Array.isArray))return null;
  if(raw.page!==undefined&&(typeof raw.page!=="string"||!/^[1-9][0-9]*$/.test(raw.page)))
   return null;
+ // Changing a class invalidates a stale course and result page.
+ const cohortCode=raw.cohortCode||undefined;
+ const courseCode=cohortCode?(raw.courseCode||undefined):undefined;
  const parsed=adminLearningQuerySchema.safeParse({
-  q:raw.q,status:raw.status,page:raw.page,
-  courseCode:raw.courseCode||undefined,cohortCode:raw.cohortCode||undefined,
+  q:raw.q,status:raw.status,page:cohortCode&&courseCode?raw.page:undefined,
+  courseCode,cohortCode,
  });
  return parsed.success?parsed.data:null;
 }
@@ -36,3 +39,11 @@ export function parseSuperAdminStudentProgressParams(raw:Record<string,string|st
  const parsed=z.string().uuid().safeParse(raw.offeringId);
  return parsed.success?parsed.data:null;
 }
+
+/** Legacy numeric courseId/classId cannot be trusted as offering UUIDs.
+ * Select the class/course in the current college and use its scoped offering. */
+export const superAdminLegacyProgressDeepLink={
+ legacyParams:["courseId","classId"],
+ migrationPath:"/admin/course-progress",
+ error:"Choose a class and course in the selected college to open its offering report.",
+} as const;

@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,asc,eq} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {placementJobEligibilityPolicies,placementJobRoleOptions,placementJobs} from "@/db/schema";
@@ -37,9 +37,13 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
  // Copy active non-primary packages while the newly created draft remains unpublished.
  const [oldPolicy]=await getDb().select().from(placementJobEligibilityPolicies)
   .where(eq(placementJobEligibilityPolicies.jobId,source.id)).limit(1);
+ // A single ordered read preserves historical JSON package array order.
  const options=await getDb().select().from(placementJobRoleOptions)
   .where(and(eq(placementJobRoleOptions.jobId,source.id),
-   eq(placementJobRoleOptions.status,"ACTIVE")));
+   eq(placementJobRoleOptions.status,"ACTIVE")))
+  .orderBy(asc(placementJobRoleOptions.createdAt),asc(placementJobRoleOptions.id));
+ options.sort((a,b)=>(a.position??32767)-(b.position??32767)||
+  a.createdAt.getTime()-b.createdAt.getTime()||a.id.localeCompare(b.id));
  await getDb().transaction(async tx=>{
   await tx.update(placementJobs).set({
     isDream:source.isDream,stipendPerMonthInr:source.stipendPerMonthInr,
@@ -70,17 +74,30 @@ export async function cloneTpoDrive(context:RequestContext,rawJobId:unknown,raw:
   const primarySource=options.find(row=>row.isPrimary);
   if(primary&&primarySource){
    await tx.update(placementJobRoleOptions).set({
+    title:primarySource.title,position:primarySource.position,
+    ctcLpa:primarySource.ctcLpa,
+    stipendPerMonthInr:primarySource.stipendPerMonthInr,
+    stipendMonths:primarySource.stipendMonths,
     fixedLpa:primarySource.fixedLpa,variableLpa:primarySource.variableLpa,
     joiningBonusLpa:primarySource.joiningBonusLpa,bondMonths:primarySource.bondMonths,
     bondAmount:primarySource.bondAmount,updatedAt:new Date(),
    }).where(eq(placementJobRoleOptions.id,primary.id));
+  }else if(primary&&!primarySource){
+   // An empty legacy roleOptionsJson displayed one editable Default package.
+   // The new draft already has a canonical primary role option.
+   await tx.update(placementJobRoleOptions).set({
+    title:"Default",position:null,updatedAt:new Date(),
+   }).where(eq(placementJobRoleOptions.id,primary.id));
   }
   for(const option of options.filter(row=>!row.isPrimary)){
    await tx.insert(placementJobRoleOptions).values({
-    jobId:draft.id,title:option.title,employmentType:option.employmentType,
+    jobId:draft.id,title:option.title,position:option.position,
+    employmentType:option.employmentType,
     workMode:option.workMode,locations:option.locations,openings:option.openings,
     minimumAnnualCtcInr:option.minimumAnnualCtcInr,
     maximumAnnualCtcInr:option.maximumAnnualCtcInr,
+    ctcLpa:option.ctcLpa,stipendPerMonthInr:option.stipendPerMonthInr,
+    stipendMonths:option.stipendMonths,
     fixedLpa:option.fixedLpa,variableLpa:option.variableLpa,
     joiningBonusLpa:option.joiningBonusLpa,bondMonths:option.bondMonths,
     bondAmount:option.bondAmount,isPrimary:false,

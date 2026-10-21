@@ -10,6 +10,15 @@ import { createRecruiterApprovedDraftJob,RecruiterDraftApprovalError } from "./r
 import { tpoDriveRequestDecisionSchema }
   from "./tpo-drive-request-decision-model";
 
+/** Old REQUEST/SENT_BACK/REJECTED lived on the job. vNext keeps the
+ * recruiter conversation on the request and creates a linked, unpublished
+ * job only on approval; never pretend the draft itself is SENT_BACK. */
+export const TPO_DRIVE_REQUEST_LEGACY_CROSSWALK={
+ REQUEST:{requestStatus:"REQUEST",jobStatus:null},
+ SENT_BACK:{requestStatus:"SENT_BACK",jobStatus:null},
+ REJECTED:{requestStatus:"REJECTED",jobStatus:null},
+ APPROVED:{requestStatus:"DRAFT",jobStatus:"DRAFT"},
+} as const;
 export class TpoDriveRequestDecisionError extends Error {
   constructor(public readonly code:
     "REQUEST_NOT_FOUND" | "REQUEST_STALE" | "NO_ACTIVE_SEASON" |
@@ -77,6 +86,13 @@ export async function decideTpoRecruiterDriveRequest(
       body:input.reason,
       actionHref:"/recruiter/drives",
     }).onConflictDoNothing();
-    return {id:saved.id,status:saved.status,approvedJobId,emailSent:false};
+    return {id:saved.id,status:saved.status,approvedJobId,emailSent:false,
+      legacyLifecycle:input.action==="APPROVE_LATER"?"APPROVED":
+        input.action==="DECLINE"?"REJECTED":"SENT_BACK",
+      confirmedAction:input.action,
+      draftRequiresSeparatePublish:Boolean(approvedJobId),
+      nextHref:approvedJobId?"/tpo/placements/jobs/"+approvedJobId:
+        "/tpo/requests",
+    };
   });
 }
