@@ -122,7 +122,7 @@ export function CollegeElectiveOfferingManager({ slotId }: { slotId: string }) {
           <div className="flex min-w-0 w-full flex-col items-stretch gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
             <Link href={"/college/electives/" + encodeURIComponent(slotId) + "/offerings/" +
               encodeURIComponent(offering.offeringId) + "/roster"}
-              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
               Roster
             </Link>
             {offering.status === "ACTIVE" && <>
