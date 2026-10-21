@@ -19,7 +19,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-team-message-change-service.ts.md` (edit src/modules/placements/tpo-team-message-change-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-batch-journey-service.ts.md` (edit src/modules/placements/tpo-batch-journey-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-report-gallery-filter-model.ts.md` (edit src/modules/placements/tpo-report-gallery-filter-model.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-20_public-share-controller.md.md` (new; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-20_public-share-controller.md.md` (new; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_hr-inline-round-results-model.ts.md` (edit src/modules/placements/hr-inline-round-results-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_class-team-workspace-creator.tsx.md` (edit src/components/projects/class-team-workspace-creator.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-17_public-job-response-dto.md.md` (new; 1 findings; best P2)
