@@ -83,7 +83,8 @@ export function projectAdminSubmissionHref(
   basePath:string,
   query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number;
     sort?:"SUBMITTED_DESC"|"PENDING_DESC"|"REVISIONS_DESC"},
-  submissionStatus?:"SUBMITTED"|"UNDER_REVIEW"|"LOCKED"|"DRAFT_REVISING",
+  submissionStatus?:"SUBMITTED"|"UNDER_REVIEW"|"LOCKED"|"DRAFT_REVISING"|
+    "CHANGES_REQUESTED"|"APPROVED",
 ):string {
   const params=new URLSearchParams();
   if(query.q)params.set("q",query.q);

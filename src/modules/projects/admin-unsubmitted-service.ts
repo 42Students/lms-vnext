@@ -38,6 +38,13 @@ export async function listProjectAdminUnsubmitted(context:RequestContext,college
   db.select({value:count()}).from(projectInstances).where(where),
   db.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status,
    progressPercent:projectInstances.progressPercent,updatedAt:projectInstances.updatedAt,
+   mentorName:sql<string|null>`(select u.display_name from project_members pm
+     join college_memberships cm on cm.id=pm.membership_id
+     join users u on u.id=cm.user_id
+     where pm.project_id=${projectInstances.id} and pm.role='MENTOR'
+       and pm.ended_at is null and cm.college_id=${college.id}
+       and cm.status='ACTIVE'
+     order by pm.is_primary desc,pm.created_at asc limit 1)`,
    blocker:projectInstances.blocker}).from(projectInstances).where(where)
    .orderBy(asc(projectInstances.title),asc(projectInstances.id))
    .limit(q.pageSize).offset((q.page-1)*q.pageSize),

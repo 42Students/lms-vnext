@@ -9,8 +9,11 @@ type SubmissionRow = {
   submissionType: string;
   pendingDays: number | null;
   submittedAt: string | null;
-  revisions: number;
+  revisions: number | null;
+  submittedBy?:string|null;
   reviewedBy: string | null;
+  reviewedAt?:string|null;
+  reviewedByType?:string|null;
   sourceUrl: string | null;
   demoUrl: string | null;
 };
@@ -18,9 +21,12 @@ type SubmissionRow = {
 export function ProjectSubmissionsPageExport({ rows }: { rows: readonly SubmissionRow[] }) {
   function exportPage() {
     const headings = ["Workspace","Submission type","Review status","Pending (days)","Submitted",
-      "Revisions","Reviewed by","Source link","Demo link","Version"];
+      "Submitted by","Revisions","Reviewed by","Reviewed at","Reviewer role",
+      "Source link","Demo link","Version"];
     const data = rows.map(row => [row.workspace,row.submissionType,row.status,row.pendingDays,
-      row.submittedAt,row.revisions,row.reviewedBy,row.sourceUrl,row.demoUrl,row.version]);
+      row.submittedAt,row.submittedBy??"",row.revisions,
+      row.reviewedBy,row.reviewedAt??"",row.reviewedByType??"",
+      row.sourceUrl,row.demoUrl,row.version]);
     const csv = projectAdminCsv([headings,...data]);
     const objectUrl = URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
     const anchor = document.createElement("a");
@@ -33,4 +39,23 @@ export function ProjectSubmissionsPageExport({ rows }: { rows: readonly Submissi
     className="">
     Export CSV
   </Button>;
+}
+
+/** Separate legacy unsubmitted report; never mix a zero-row submitted result. */
+export function ProjectUnsubmittedPageExport({rows}:{
+  rows:readonly {title:string;mentorName?:string|null;status:string;
+    progressPercent:number;inactiveDays:number|null}[];
+}){
+  function exportPage(){
+    const csv=projectAdminCsv([["Workspace","Mentor","Status","Progress","Inactive"],
+      ...rows.map(row=>[row.title,row.mentorName??"",row.status,
+        row.progressPercent+"%",row.inactiveDays??""])]);
+    const url=URL.createObjectURL(new Blob([csv],{type:"text/csv;charset=utf-8"}));
+    const anchor=document.createElement("a");
+    anchor.href=url;anchor.download="project-not-submitted.csv";
+    anchor.click();
+    URL.revokeObjectURL(url);
+  }
+  return <Button type="button" variant="secondary" disabled={rows.length===0}
+    onClick={exportPage}>Export CSV</Button>;
 }
