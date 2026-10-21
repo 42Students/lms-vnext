@@ -46,7 +46,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     <PageHeader title="Students"/>
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
-     action={<Link href="/admin/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Retry student register</Link>}/>
+     action={<Link href="/admin/students" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry student register</Link>}/>
    </div>;
   }
  }
@@ -75,7 +75,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     </div>
     <p className="text-sm text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
     <details className="min-w-0">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Show CSV import form</summary>
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show CSV import form</summary>
       <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
     </details>
   </section>:null}
@@ -84,7 +84,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
   renderBulkActions={rows=><details className="min-w-0 border-b border-border pb-3">
-    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Bulk module access controls</summary>
+    <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Bulk module access controls</summary>
     <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
    </details>}
   renderRowActions={row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-start [&>div]:w-full sm:[&>div]:w-auto"><ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>{peopleFilters?<><CollegePersonEditAction membershipId={row.id} kind="LEARNER"/><StudentClassMoveAction membershipId={row.id} name={row.title}/></>:null}</div>} loader={query=>listAdminScopedPeople(context,"LEARNER",query)}/></div>;
