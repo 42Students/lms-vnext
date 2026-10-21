@@ -3,6 +3,8 @@ import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {requirePermission} from "@/modules/permissions/policy";
+import {ProjectsServiceError} from "@/modules/projects/errors";
 import {
   assignProjectTemplateToCollege,
   revokeProjectTemplateFromCollege,
@@ -135,6 +137,9 @@ export async function PUT(request:Request,{params}:RouteContext){
  try{
   const {templateId}=await params;
   const context=await getCurrentRequestContext();
+  requirePermission(context,"project-template.manage");
+  if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const body=bulkSchema.parse(await request.json());
   const result=await replaceProjectTemplateCollegeAssignments(context,templateId,body);
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
@@ -145,7 +150,11 @@ export async function PUT(request:Request,{params}:RouteContext){
 export async function GET(_request:Request,{params}:RouteContext){
  try{
   const {templateId}=await params;
-  const detail=await getProjectTemplateDetail(await getCurrentRequestContext(),templateId);
+  const context=await getCurrentRequestContext();
+  requirePermission(context,"project-template.manage");
+  if(context.adminScope?.collegeId||context.adminScope?.organizationId)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const detail=await getProjectTemplateDetail(context,templateId);
   return NextResponse.json({
     collegeIds:detail.assignments.map(item=>item.collegeId).sort(),
     templateId:detail.template.id,
