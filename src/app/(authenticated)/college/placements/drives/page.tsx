@@ -15,6 +15,11 @@ import {CollegeDriveArchiveAction} from "@/components/placements/college-drive-a
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {CollegeDrivesRefreshButton} from "@/components/placements/college-drives-refresh-button";
+import {CollegeDrivesQuickFilters} from "@/components/placements/college-drives-quick-filters";
+import {CollegeDriveCreateDialog} from "@/components/placements/college-drive-create-dialog";
+import {PlacementJobCreateWorkspace} from "@/components/placements/placement-job-create-workspace";
+import {hasMembershipRole} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
 export default async function CollegeDrivesPage({ searchParams }: {
@@ -34,7 +39,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     status:params.status ?? "ALL",
   });
   if (!query) return <div className="space-y-4">
-    <PageHeader title="Drives" />
+    <PageHeader title="Jobs" />
     <ErrorState title="Invalid drive filters" description="Search, status, season, company or page is invalid."
       action={<Link href="/college/placements/drives" className="inline-flex min-h-11 md:min-h-9 items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
   </div>;
@@ -44,36 +49,51 @@ export default async function CollegeDrivesPage({ searchParams }: {
   } catch (error) {
     if (error instanceof AuthorizationError) throw error;
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Jobs"/>
+      <PageHeader title="Jobs" actions={<CollegeDrivesRefreshButton/>}/>
+      <p role="status" className="border-l-2 border-[var(--lms-warning)] bg-[var(--lms-warning-subtle)] p-3 text-sm text-body">Couldn't refresh drives. Search and filters are preserved; no stale rows are shown from an unverified college or filter scope.</p>
       <ErrorState title="Failed to load jobs. Please try again."
         description="The drive list could not be loaded. No changes were made."
         action={<Link href={driveListHref(query)}
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Try Again</Link>}/>
     </div>;
   }
-  const formatter = new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
+  // A closed/expired deadline is distinct from an administrator closing a job.
+  // Every date is presented in the college's India-time legacy format.
+  if(data.total>0&&query.page>data.totalPages)redirect(driveListHref({...query,page:data.totalPages}));
+  const formatter = new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"});
+  const expired=(job:(typeof data.items)[number])=>Boolean(job.applicationDeadline&&job.applicationDeadline.getTime()<Date.now());
+  const jobStatus=(job:(typeof data.items)[number])=>{
+    const ended=job.status==="PUBLISHED"&&expired(job);
+    return <StatusBadge tone={job.status==="PUBLISHED"?(ended?"warning":"success"):job.status==="DRAFT"?"neutral":"warning"}>
+      {job.status==="PUBLISHED"?(ended?"Open · Expired":"Open"):
+       job.status==="DRAFT"?"Draft":job.status==="CLOSED"?"Closed":job.status==="ARCHIVED"?"Archived":job.status}
+    </StatusBadge>;
+  };
   const columns:DataTableColumn<(typeof data.items)[number]>[]=[
-    {key:"drive",header:"Drive",mobilePriority:"primary",cell:item=><div className="min-w-0">
-      <p className="break-words font-semibold">{item.title}</p>
-      <Link href={`/college/placements/jobs/${item.id}/overview`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open drive</Link>
-    </div>},
-    {key:"company",header:"Company",cell:item=>item.companyName},
-    {key:"type",header:"Type",cell:item=>
-      <StatusBadge tone="neutral">{item.type.replaceAll("_"," ")}</StatusBadge>},
-    {key:"location",header:"Location",cell:item=>item.locations.join(", ")||"Not specified"},
-    {key:"deadline",header:"Deadline",cell:item=>item.applicationDeadline?formatter.format(item.applicationDeadline):"Not specified"},
-    {key:"posted",header:"Posted",cell:item=>item.publishedAt?formatter.format(item.publishedAt):"Not posted"},
-    {key:"applicants",header:"Applicants",cell:item=>item.applicants},
-    {key:"status",header:"Status",cell:item=><StatusBadge
-      tone={item.status==="PUBLISHED"?"success":item.status==="DRAFT"?"neutral":"warning"}>
-      {item.status==="PUBLISHED"?"Active":item.status==="DRAFT"?"Draft":item.status==="CLOSED"?"Closed":item.status==="ARCHIVED"?"Archived":item.status}
-    </StatusBadge>},
-    {key:"actions",header:"Actions",mobilePriority:"action",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
-      <Link href={`/college/placements/jobs/${item.id}/applications`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View applications</Link>
-      <Link href={`/college/placements/jobs/${item.id}/settings`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit Job</Link>
+    {key:"drive",header:"Job Title",mobilePriority:"primary",className:"min-w-[240px] md:sticky md:left-0 md:z-10 md:bg-surface",cell:item=>
+     <div className="min-w-0 space-y-1">
+      <div>{jobStatus(item)}</div>
+      <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/overview?returnTo="+encodeURIComponent(driveListHref(query))}
+        className="inline-flex min-h-11 items-center break-words font-semibold text-link underline-offset-2 hover:underline md:min-h-9">
+        {item.title}
+      </Link>
+      <p className="min-w-0 break-words text-xs text-muted-foreground">{item.companyName||"—"}</p>
+     </div>},
+    {key:"type",header:"Type",className:"min-w-[100px]",cell:item=><StatusBadge tone="neutral">{item.type.replaceAll("_"," ")}</StatusBadge>},
+    {key:"location",header:"Location",className:"min-w-[120px]",cell:item=>item.locations.join(", ")||"—"},
+    {key:"deadline",header:"Deadline",className:"min-w-[130px]",cell:item=>item.applicationDeadline?
+     <span className={"inline-flex items-center gap-1 "+(expired(item)?"text-[var(--lms-warning-text)] line-through":"")}>
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.7">
+       <rect x="3.5" y="5.5" width="17" height="15" rx="2"/><path d="M7.5 3v5M16.5 3v5M3.5 10.5h17"/>
+      </svg>{formatter.format(item.applicationDeadline)}
+     </span>:"—"},
+    {key:"posted",header:"Posted",className:"min-w-[130px]",cell:item=>formatter.format(item.publishedAt??item.createdAt)},
+    {key:"applicants",header:"Applicants",className:"min-w-[90px]",cell:item=>item.applicants},
+    {key:"actions",header:"Actions",mobilePriority:"action",className:"min-w-[260px] md:sticky md:right-0 md:z-10 md:bg-surface",cell:item=><div className="flex min-w-0 flex-wrap items-center gap-2">
+      <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))} aria-label={"View Applications for "+item.title}
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View Applications</Link>
+      <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))} aria-label={"Edit "+item.title}
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit</Link>
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
       {item.status!=="ARCHIVED"?<details className="min-w-0 w-full">
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-error)] md:min-h-9">
@@ -90,27 +110,24 @@ export default async function CollegeDrivesPage({ searchParams }: {
 
   return <div className="space-y-6">
     <PageHeader title="Jobs"
-      description="College-owned placement drives. This list is independent of cross-college recruiter access."
+      description="College-owned placement jobs. Filter, review applications or edit a job without leaving the college's placements workspace."
       actions={<div className="flex flex-wrap items-center gap-3">
+        <CollegeDrivesRefreshButton/>
+        {hasMembershipRole(context,"COLLEGE_ADMIN")?<CollegeDriveCreateDialog>
+          <PlacementJobCreateWorkspace context={context}
+            collegeId={context.membership.collegeId} basePath="/college/placements"/>
+        </CollegeDriveCreateDialog>:null}
         <Link href="/college/placements/new"
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)]">
-          + Create Job
+          Full-page editor
         </Link>
         <Link href="/college/placements"
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-          Operations workspace
+          All drives / Placements
         </Link>
       </div>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:grid-cols-1">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
-        <Input type="search" name="q" defaultValue={query.q} maxLength={100}
-          />
-      </label>
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
-        <Select name="status" defaultValue={query.status}>
-          {["ALL","DRAFT","PUBLISHED","CLOSED","ARCHIVED"].map(s=><option key={s} value={s}>{s==="PUBLISHED"?"Active":s==="DRAFT"?"Draft":s==="CLOSED"?"Closed":s==="ARCHIVED"?"Archived":"All"}</option>)}
-        </Select>
-      </label>
+      <CollegeDrivesQuickFilters q={query.q} status={query.status}/>
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Season
         <Select name="seasonId" defaultValue={query.seasonId ?? ""}>
           <option value="">All seasons</option>
@@ -162,19 +179,50 @@ export default async function CollegeDrivesPage({ searchParams }: {
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">
       <p role="status" className="text-sm text-body leading-[1.6]">{data.total.toLocaleString("en-IN")} matching persisted drives</p>
-      <DataTable caption="College placement jobs" columns={columns} rows={data.items}
+      <div className="hidden md:block"><DataTable caption="College placement jobs" columns={columns} rows={data.items} mobileMode="scroll"
         getRowKey={item=>item.id}
         empty={<div className="min-w-0 space-y-2 text-sm text-body" role="status">
           <p>{data.total===0 && query.status==="ALL" && !query.q && !query.seasonId && !query.relationshipId
             ?"No drives yet":data.total===0?"No drives match these filters in this college.":"No rows on this page. Choose an earlier page."}</p>
           {data.total===0 && query.status==="ALL" && !query.q &&
             !query.seasonId && !query.relationshipId?
-            <p>Create first drive for this college when you&apos;re ready. Drive creation must be enabled in the placement operations workspace.</p>:null}
+            <p>Create the first job for this college.</p>:null}
+          {data.total===0?<Link href="/college/placements/new"
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Create Job</Link>:null}
           <Link href="/college/placements/drives" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
-        </div>} />
+        </div>} /></div>
+      <div className="grid min-w-0 gap-3 md:hidden" aria-label="College placement jobs mobile cards">
+       {data.items.map(item=><article key={item.id} className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+        <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+         <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/overview?returnTo="+encodeURIComponent(driveListHref(query))}
+          className="min-w-0 flex-1 break-words font-semibold text-link underline-offset-2 hover:underline">{item.title}</Link>
+         {jobStatus(item)}
+        </div>
+        <p className="break-words text-sm text-muted-foreground">{item.companyName||"—"}</p>
+        <dl className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+         <div><dt className="text-xs text-muted-foreground">Location</dt><dd className="break-words">{item.locations.join(", ")||"—"}</dd></div>
+         <div><dt className="text-xs text-muted-foreground">Deadline</dt><dd className={expired(item)?"line-through text-[var(--lms-warning-text)]":""}>{item.applicationDeadline?formatter.format(item.applicationDeadline):"—"}</dd></div>
+         <div><dt className="text-xs text-muted-foreground">Type</dt><dd>{item.type.replaceAll("_"," ")}</dd></div>
+         <div><dt className="text-xs text-muted-foreground">Applicants</dt><dd>{item.applicants}</dd></div>
+        </dl>
+        <div className="flex flex-wrap items-center gap-3 border-t border-[var(--lms-canvas-border)] pt-3">
+         <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/applications?returnTo="+encodeURIComponent(driveListHref(query))}
+          aria-label={"View Applications for "+item.title} className="min-h-11 text-sm font-semibold text-link underline">View Applications</Link>
+         <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
+          aria-label={"Edit "+item.title} className="min-h-11 text-sm font-semibold text-link underline">Edit</Link>
+         <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
+         {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id} title={item.title}
+          currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
+        </div>
+       </article>)}
+       {data.items.length===0?<p role="status" className="p-4 text-sm text-body">
+        {data.total===0&&query.status==="ALL"&&!query.q?"No drives yet":"No drives match these filters"}
+        {" "}<Link href="/college/placements/new" className="font-semibold text-link underline">Create Job</Link>
+       </p>:null}
+      </div>
     </section>
     <nav aria-label="Drive pages" className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
-      <span>Page {data.query.page} of {data.totalPages}</span><div className="flex flex-wrap gap-3">
+      <span>Page {data.query.page} of {data.totalPages} · {data.total===0?"0 jobs":((data.query.page-1)*data.query.pageSize+1)+"–"+Math.min(data.query.page*data.query.pageSize,data.total)+" of "+data.total+" jobs"}</span><div className="flex flex-wrap gap-3">
         {query.page>1?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page-1})}>Previous</Link>:null}
         {query.page<data.totalPages?<Link className="inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-link-text)] md:min-h-[var(--lms-control-height)] hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={driveListHref({...query,page:query.page+1})}>Next</Link>:null}
       </div>
