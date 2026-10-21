@@ -25,7 +25,7 @@ export default async function TpoRoundCalendarPage({searchParams}:{
   return <div className="min-w-0 space-y-4">
     <PageHeader title="Drive round scheduling"
       description="Schedule an existing pending drive round, reschedule an active one or cancel it. All times are IST." actions={<PageBackLink href="/tpo/calendar" label="Calendar"/>} />
-    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]">
+    <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,1fr)_auto_auto]" aria-label="Filter rounds">
      <label className="grid w-full min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:min-w-56">Find rounds
       <Input type="search" name="q" maxLength={100} defaultValue={result.q}
        placeholder="Company, drive or round name" />
