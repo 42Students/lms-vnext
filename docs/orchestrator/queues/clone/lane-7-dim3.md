@@ -4,27 +4,27 @@
 Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/error.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/page.tsx`
-- [ ] `src/app/request-demo/page.tsx`
-- [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
-- [ ] `src/components/courses/college-course-missing-scope.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/tpo-report-invalid-filters.tsx`
-- [ ] `src/components/projects/project-workspace-readiness.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
-- [ ] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [ ] `src/components/profile/learner-verification-withdraw.tsx`
-- [ ] `src/components/projects/legacy-project-goals.module.css`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/project-list.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/shell/route-progress.css`
-- [ ] `src/components/tpo/recruiter-inline-stage.tsx`
-- [ ] `src/components/tpo/tpo-conversation-bubble.module.css`
-- [ ] `src/components/ui/action-pagination.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/history/error.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/error.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/page.tsx`
+- [x] `src/app/request-demo/page.tsx`
+- [x] `src/components/attendance/faculty-attendance-workspace.tsx`
+- [x] `src/components/courses/college-course-missing-scope.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/tpo-report-invalid-filters.tsx`
+- [x] `src/components/projects/project-workspace-readiness.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
+- [x] `src/components/profile/learner-verification-withdraw.tsx`
+- [x] `src/components/projects/legacy-project-goals.module.css`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/project-list.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/shell/route-progress.css`
+- [x] `src/components/tpo/recruiter-inline-stage.tsx`
+- [x] `src/components/tpo/tpo-conversation-bubble.module.css`
+- [x] `src/components/ui/action-pagination.tsx`
 - [ ] `src/components/ui/dialog.tsx`
 - [ ] `src/components/ui/filter-bar.tsx`
 - [ ] `src/components/ui/menu.tsx`
