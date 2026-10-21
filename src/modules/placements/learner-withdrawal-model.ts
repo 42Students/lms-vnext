@@ -1,7 +1,8 @@
 import { z } from "zod";
 
-/** Explicit confirmation is required at the server boundary; reason is
- * persisted in the existing application status history, never fabricated. */
+/** Confirmed self-withdrawal needs no reason in the old LMS. A supplied
+ * reason is validated and persisted in application history, never invented.
+ * Placement-cell requests use learnerWithdrawalReasonSchema separately. */
 export const learnerWithdrawalReasonSchema = z
   .string()
   .trim()
@@ -11,7 +12,10 @@ export const learnerWithdrawalReasonSchema = z
 export const learnerApplicationWithdrawalSchema = z.object({
   action: z.literal("WITHDRAW"),
   confirmed: z.literal(true),
-  reason: learnerWithdrawalReasonSchema,
+  reason: z.preprocess(
+    value => typeof value === "string" && value.trim() === "" ? undefined : value,
+    learnerWithdrawalReasonSchema.optional(),
+  ),
 }).strict();
 
 export type LearnerApplicationWithdrawal = z.infer<
