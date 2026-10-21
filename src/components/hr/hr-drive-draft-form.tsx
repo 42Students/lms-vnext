@@ -1,6 +1,7 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { useToast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -70,6 +71,7 @@ export function HrDriveDraftForm({
   const [pendingLeave,setPendingLeave]=useState<string|null>(null);
    const [draftDecision,setDraftDecision]=useState<"RESTORE"|"CLEAR"|null>(null);
   const router=useRouter();
+  const { showToast } = useToast();
   const [savedRequestId,setSavedRequestId]=useState<string|null>(null);
   const [approvedJobId,setApprovedJobId]=useState<string|null>(null);
   const [submitting,setSubmitting] = useState(false);
@@ -84,6 +86,10 @@ export function HrDriveDraftForm({
     ["ONSITE", "On-site"], ["HYBRID", "Hybrid"], ["REMOTE", "Remote"],
     ["NO_PREFERENCE", "No preference"],
   ] as const;
+  const roundKindLabels: Record<string,string> = {
+    TALK: "Company talk", TEST: "Test", VENDOR_TEST: "Vendor test",
+    GD: "Group discussion", INTERVIEW: "Interview",
+  };
   const roundKinds = [
     "TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW",
   ] as const;
@@ -249,6 +255,9 @@ export function HrDriveDraftForm({
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
       catch{/* Successful server submit must not depend on browser storage. */ }
       setSavedRequestId((raw as {request:{id:string}}).request.id);
+       showToast({ tone: "success", title: fixRequestId
+         ? editMode === "EDIT" ? "Drive changes saved" : "Drive request resent"
+         : approvedId ? "Drive approved" : "Sent to the placement cell for review" });
     }catch(error){
       if (error instanceof FriendlyFetchError && Object.keys(error.fieldErrors).length) {
         const alias: Record<string, string> = {
@@ -294,7 +303,7 @@ export function HrDriveDraftForm({
   return (
     <div ref={formRootRef} className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <ConfirmActionDialog open={pendingLeave!==null}
-       title="Discard this drive draft?" consequence="Leave without these changes?"
+       title="Leave without these changes?" consequence="The role, eligibility and round changes on this screen will be cleared."
        confirmLabel="Discard" onCancel={()=>setPendingLeave(null)}
        onConfirm={()=>{
         const href=pendingLeave;setPendingLeave(null);
@@ -324,19 +333,19 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Role title
-            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)}
+            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)} placeholder="e.g. Software Engineer"
               value={draft.title} maxLength={200}
               onChange={(event) => { setFieldErrors(current => ({ ...current, title: "" }));
                 setDraft((current) => ({ ...current, title: event.target.value })); }} />
             {fieldErrors.title ? <span role="alert" className="text-xs text-error">{fieldErrors.title}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Job description
-            <Textarea className="min-h-28" rows={5} value={draft.description} maxLength={5000}
+            Description (optional)
+            <Textarea className="min-h-28" rows={4} value={draft.description} maxLength={5000}
               onChange={(event) => setDraft((current) => ({ ...current, description: event.target.value }))} />
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Location
+            Location (optional)
             <Input className="w-full" value={draft.location} maxLength={180}
               onChange={(event) => setDraft((current) => ({ ...current, location: event.target.value }))} />
           </label>
@@ -379,10 +388,10 @@ export function HrDriveDraftForm({
       </section>
 
       <section className="border-b border-border pb-5">
-        <h2 className="font-semibold text-foreground">Compensation and eligibility</h2>
+        <h2 className="font-semibold text-foreground">Pay</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            CTC (LPA){draft.employmentType==="INTERNSHIP"?" after the internship (optional)":""}
+            {draft.employmentType==="INTERNSHIP"?"CTC after the internship (LPA, optional)":"CTC (LPA)"}
             <Input className="w-full" data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors.ctcLpa)}
               inputMode="decimal" value={draft.ctcLpa??""}
               onChange={event=>{setFieldErrors(current=>({...current,ctcLpa:""}));
@@ -390,12 +399,12 @@ export function HrDriveDraftForm({
             {fieldErrors.ctcLpa ? <span role="alert" className="text-xs text-error">{fieldErrors.ctcLpa}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Fixed (optional, LPA)
+            Fixed (optional)
             <Input className="w-full" inputMode="decimal" value={draft.fixedLpa??""}
               onChange={event=>setDraft(current=>({...current,fixedLpa:event.target.value}))}/>
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Variable (optional, LPA)
+            Variable (optional)
             <Input className="w-full" inputMode="decimal" value={draft.variableLpa??""}
               onChange={event=>setDraft(current=>({...current,variableLpa:event.target.value}))}/>
           </label>
@@ -457,13 +466,13 @@ export function HrDriveDraftForm({
 
       <section className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <h2 className="font-semibold text-foreground">Hiring rounds</h2>
+          <h2 className="font-semibold text-foreground">Rounds</h2>
           <Button type="button" disabled={draft.rounds.length >= 12}
             variant="secondary"
             onClick={() => setDraft((current) => ({
               ...current, rounds: [...current.rounds, { kind: "INTERVIEW", name: "Interview" }],
             }))}>
-            Add round
+            <span aria-hidden="true">＋</span> Add a round
           </Button>
         </div>
         <div className="mt-3 flex flex-wrap gap-2" aria-label="Choose hiring round preset">
@@ -476,7 +485,7 @@ export function HrDriveDraftForm({
         <p className="mt-2 text-xs text-muted-foreground">Preset replaces the round list in this unsent draft only; edit each step afterward.</p>
         <div className="mt-4 min-w-0 space-y-3">
           {draft.rounds.map((round, index) => (
-            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[10rem_minmax(0,1fr)_auto]">
+            <div key={index} className="grid min-w-0 gap-3 border-b border-border py-4 last:border-b-0 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[170px_minmax(0,1fr)_auto]">
               <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
                 Kind
                 <Select className="w-full" value={round.kind}
@@ -484,12 +493,12 @@ export function HrDriveDraftForm({
                     ...current, rounds: current.rounds.map((item, i) => i === index
                       ? { ...item, kind: event.target.value as HrDriveDraft["rounds"][number]["kind"] } : item),
                   }))}>
-                  {roundKinds.map((kind) => <option key={kind} value={kind}>{kind.replaceAll("_", " ")}</option>)}
+                  {roundKinds.map((kind) => <option key={kind} value={kind}>{roundKindLabels[kind]}</option>)}
                 </Select>
               </label>
               <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
                 Round name
-                <Input className="w-full" maxLength={120} value={round.name}
+                <Input className="w-full" maxLength={100} value={round.name} placeholder={"Round " + (index + 1) + " name"}
                   onChange={(event) => setDraft((current) => ({
                     ...current, rounds: current.rounds.map((item, i) => i === index
                       ? { ...item, name: event.target.value } : item),
@@ -521,7 +530,7 @@ export function HrDriveDraftForm({
       </div>
       <aside aria-label="Drive preview and submit" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:sticky lg:top-6">
       <section className="min-w-0">
-        <h2 className="font-semibold text-foreground">What students will see · local preview</h2>
+        <h2 className="font-semibold text-foreground">What students will see</h2>
         <p className="mt-1 text-sm text-body">
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
         </p>
@@ -577,7 +586,9 @@ export function HrDriveDraftForm({
           <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
-            <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
+            <p>{draft.location || "Location not specified"} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
+             <p>Eligible branches: {draft.branches?.length ? draft.branches.join(", ") : "All branches"} ·
+               Passing year: {draft.passingYear || "Any year"}</p>
             {draft.driveMode==="OFF_CAMPUS"?
               <p className="break-all">Application website: {result.success&&result.data.externalApplicationUrl
                 ? <a href={result.data.externalApplicationUrl} rel="noopener noreferrer" target="_blank"
