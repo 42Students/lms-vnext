@@ -27,7 +27,8 @@ export async function listCollegeDriveApplications(
   context: RequestContext,
   jobIdInput: unknown,
   raw: unknown,
-  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number } = {},
+  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number;
+    sort?:"AGE_ASC"|"AGE_DESC"|"SCORE_ASC"|"SCORE_DESC"|"SUBMITTED_DESC"; } = {},
 ) {
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
   const query = driveApplicationsQuerySchema.parse(raw);
@@ -37,8 +38,9 @@ export async function listCollegeDriveApplications(
   const appliedTo=query.appliedTo?new Date(new Date(`${query.appliedTo}T00:00:00+05:30`).getTime()+86_400_000):null;
   const collegeId = await requireCollegePlacementAdmin(context);
   const db = getDb();
-  const pageSize = options.pageSize === undefined ? DRIVE_APPLICATIONS_PAGE_SIZE
-    : Math.max(1, Math.min(100, Math.floor(options.pageSize)));
+  const pageSize = options.pageSize===undefined||!Number.isFinite(options.pageSize)
+    ?DRIVE_APPLICATIONS_PAGE_SIZE
+    :Math.max(1,Math.min(100,Math.floor(options.pageSize)));
   const [drive] = await db.select({ id: placementJobs.id, title: placementJobs.title,
     companyName: placementCompanies.name, legacyJobId: placementJobs.legacyJobId,
   }).from(placementJobs)
@@ -129,9 +131,16 @@ export async function listCollegeDriveApplications(
     query.maxScore===undefined?undefined:lte(base.screeningScore,query.maxScore),
   )).as("college_scoped_applicants");
 
+  // Every order ends in a stable application UUID to prevent rows changing
+  // positions between pages when score or status age ties.
+  const order=options.sort==="AGE_ASC"?[asc(source.lastStatusUpdatedAt),asc(source.id)]:
+    options.sort==="AGE_DESC"?[desc(source.lastStatusUpdatedAt),asc(source.id)]:
+    options.sort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls first`,asc(source.id)]:
+    options.sort==="SCORE_DESC"?[sql`${source.screeningScore} desc nulls last`,asc(source.id)]:
+    [desc(source.submittedAt),asc(source.id)];
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
-    db.select().from(source).orderBy(desc(source.submittedAt), asc(source.id))
+    db.select().from(source).orderBy(...order)
       .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : pageSize)
       .offset(options.exportAll || options.bulkAll ? 0 : (query.page - 1) * pageSize),
     db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
@@ -146,7 +155,7 @@ export async function listCollegeDriveApplications(
     ageLabel:item.ageDays===0?"today":item.ageDays+"d",
     ageDotColor:item.ageDays>=14?"#ad6800":item.ageDays>=7?"#8c8c8c":"#d9d9d9",
   })), total,
-    pageSize,scoreSortAvailable:false as const,
+    pageSize,scoreSortAvailable:true as const,
     stageCounts:Object.fromEntries(stageCountRows.map(row=>[row.stage,row.total])),
     truncated: options.exportAll && total > DRIVE_APPLICATION_EXPORT_CAP,
     totalPages: Math.max(1, Math.ceil(total / pageSize)),
