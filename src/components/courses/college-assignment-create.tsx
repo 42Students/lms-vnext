@@ -12,6 +12,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {FacultyAssignmentMethodPicker} from "./faculty-assignment-method-picker";
+import {FacultyAssignmentMaterialLinks} from "./faculty-assignment-material-links";
 import {type AssignmentMethod} from "@/modules/courses/assignment-submission-methods";
 const DEFAULT_ASSIGNMENT_METHODS: AssignmentMethod[] = ["WRITTEN_RESPONSE"];
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
@@ -36,6 +37,8 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
  const [pending,setPending]=useState(false);
  const [message,setMessage]=useState("");
  const [error,setError]=useState("");
+ const [fieldErrors,setFieldErrors]=useState<{course?:string;lesson?:string;section?:string;title?:string;points?:string}>({});
+ const [createdResourceTarget,setCreatedResourceTarget]=useState<{id:string;deliveryId:string}|null>(null);
  const [confirmCreate,setConfirmCreate]=useState(false),[confirmDiscard,setConfirmDiscard]=useState(false);
  const lock=useRef(false);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
@@ -49,7 +52,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    [deliveries,chosen?.offeringId]);
  function discardDraft(){
   setOpened(false);setTitle("");setDescription("");setDueAt("");setPoints("0");
-  setDeliveryId("");setAudience("SHARED");setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);setError("");setConfirmDiscard(false);
+  setDeliveryId("");setAudience("SHARED");setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);setError("");setFieldErrors({});setConfirmDiscard(false);
  }
  function close(){
   if(pending)return;
@@ -58,6 +61,19 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    DEFAULT_ASSIGNMENT_METHODS.some(method=>!allowedMethods.includes(method)));
   if(dirty){setConfirmDiscard(true);return;}
   discardDraft();
+ }
+ function confirmDraft(){
+  const missing: {course?:string;lesson?:string;section?:string;title?:string;points?:string} = {};
+  if(!offeringId)missing.course="Select a course";
+  if(!chosen)missing.lesson="Select a lesson";
+  if(audience==="SECTION"&&!sections.some(section=>section.deliveryId===deliveryId))
+   missing.section="Select a section";
+  if(!title.trim())missing.title="Enter an assignment title";
+  else if(title.trim().length>255)missing.title="Maximum 255 characters";
+  if(!pointsValid)missing.points="Enter points";
+  setFieldErrors(missing);
+  if(Object.keys(missing).length){setError("Review the highlighted assignment fields.");return;}
+  setError("");setConfirmCreate(true);
  }
  async function create(){
   if(lock.current)return;
@@ -90,10 +106,14 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    if(!response.ok||!payload?.assignment?.id)throw new Error(
     typeof payload?.error==="string"?payload.error:"Could not create assignment.");
    setNextOverride(old=>({...old,[chosen.id]:(old[chosen.id]??chosen.nextSequence)+1}));
+   // Only a persisted section-specific assignment can use the currently
+   // authorized per-delivery material writer. Shared drafts remain separate.
+   setCreatedResourceTarget(delivery
+    ?{id:payload.assignment.id,deliveryId:delivery.deliveryId}:null);
    setConfirmCreate(false);
    if(!keepOpen)setOpened(false);
    setTitle("");setDescription("");setDueAt("");setPoints("0");
-   setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);
+   setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);setFieldErrors({});
    setMessage("Assignment created");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
@@ -113,19 +133,19 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    <div role="region" aria-label="Create assignment draft" className="grid min-w-0 gap-3 sm:grid-cols-2">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
     <Select value={offeringId} disabled={pending} onChange={e=>{
-      const next=e.target.value;setOfferingId(next);
+      const next=e.target.value;setOfferingId(next);setFieldErrors(old=>({...old,course:undefined,lesson:undefined,section:undefined}));
       setLessonId(lessons.find(lesson=>lesson.offeringId===next)?.id??"");
       setDeliveryId("");setAudience("SHARED");
     }} className="min-h-11 w-full md:min-h-9">
      {courses.map(course=><option key={course.offeringId} value={course.offeringId}>
       {course.courseCode} · {course.course}
      </option>)}
-    </Select></label>
+    </Select>{fieldErrors.course?<span role="alert" className="text-xs text-error">{fieldErrors.course}</span>:null}</label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
-    <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");setAudience("SHARED");}}
+    <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");setAudience("SHARED");setFieldErrors(old=>({...old,lesson:undefined,section:undefined}));}}
      className="min-h-11 w-full md:min-h-9">
      {availableLessons.map(lesson=><option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
-    </Select></label>
+    </Select>{fieldErrors.lesson?<span role="alert" className="text-xs text-error">{fieldErrors.lesson}</span>:null}</label>
    <fieldset className="min-w-0 space-y-2 sm:col-span-2">
     <legend className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">Audience</legend>
     <div className="flex flex-wrap gap-4 text-sm">
@@ -143,13 +163,13 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      {sections.map(section=><option key={section.deliveryId} value={section.deliveryId}>
       {section.sectionName} ({section.sectionCode})
      </option>)}
-    </Select></label>:null}
+    </Select>{fieldErrors.section?<span role="alert" className="text-xs text-error">{fieldErrors.section}</span>:null}</label>:null}
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
-    <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} onChange={e=>setTitle(e.target.value)}
+    <Input required maxLength={255} placeholder="e.g., Module 1 Project" value={title} disabled={pending} aria-invalid={Boolean(fieldErrors.title)} onChange={e=>{setTitle(e.target.value);setFieldErrors(old=>({...old,title:undefined}));}}
      className="min-h-11 w-full md:min-h-9"/></label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
-    <Input type="number" min={0} max={10000} placeholder="Enter points" value={points} disabled={pending}
-     onChange={e=>setPoints(e.target.value)}
+    <Input type="number" min={0} max={10000} placeholder="Enter points" value={points} disabled={pending} aria-invalid={Boolean(fieldErrors.points)}
+     onChange={e=>{setPoints(e.target.value);setFieldErrors(old=>({...old,points:undefined}));}}
      className="min-h-11 w-full md:min-h-9"/></label>
    <p className="text-xs text-muted-foreground sm:col-span-2" role="status">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
@@ -176,12 +196,16 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    <div className="flex min-w-0 flex-col-reverse gap-2 sm:col-span-2 sm:flex-row sm:items-center sm:justify-end">
     <Button type="button" variant="secondary" disabled={pending} onClick={close}
      className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel</Button>
-    <Button type="button" loading={pending} disabled={pending||!chosen||!title.trim()||!pointsValid} onClick={()=>{setError("");setConfirmCreate(true);}}
+    <Button type="button" loading={pending} disabled={pending} onClick={confirmDraft}
      className="min-h-11 w-full sm:w-auto md:min-h-9">
      {pending?"Creating…":"Create draft"}</Button>
    </div>
    </div>
    {error?<Alert tone="error" className="mt-3">{error}</Alert>:null}
+   {[fieldErrors.course,fieldErrors.lesson,fieldErrors.section,fieldErrors.title,fieldErrors.points].some(Boolean)
+    ?<p role="status" className="mt-1 text-xs text-error">
+      {[fieldErrors.course,fieldErrors.lesson,fieldErrors.section,fieldErrors.title,fieldErrors.points].filter(Boolean).join(" · ")}
+     </p>:null}
   </Dialog>
   <ConfirmDialog open={confirmCreate} onOpenChange={next=>{if(!pending)setConfirmCreate(next);}}
    title="Create assignment as a draft?" description="Learners cannot submit until published."
@@ -193,5 +217,13 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    confirmVariant="danger" pending={pending} onConfirm={discardDraft}/>
   {error?<Alert tone="error">{error}</Alert>:null}
   {message?<Alert tone="success">{message}</Alert>:null}
+  {createdResourceTarget?<section className="mt-4 min-w-0 space-y-2 border-t border-border pt-4" aria-label="New assignment resources">
+   <div className="flex flex-wrap items-center justify-between gap-2">
+    <p className="text-sm font-semibold">Instructor resources for the new Section assignment</p>
+    <Button type="button" size="sm" variant="secondary" onClick={()=>setCreatedResourceTarget(null)}>Done adding resources</Button>
+   </div>
+   <p className="text-xs text-muted-foreground">Add secure HTTPS links before publishing. PDF and Drive files require verified private storage and cannot be saved as unverified links.</p>
+   <FacultyAssignmentMaterialLinks key={createdResourceTarget.id} deliveryId={createdResourceTarget.deliveryId} assignmentId={createdResourceTarget.id}/>
+  </section>:null}
  </div>;
 }
