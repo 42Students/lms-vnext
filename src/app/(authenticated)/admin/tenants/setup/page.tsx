@@ -6,7 +6,6 @@ import {PageHeader} from "@/components/ui/page-header";
 import {Tabs} from "@/components/ui/tabs";
 import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
-import {Card} from "@/components/ui/card";
 import {EmptyState} from "@/components/ui/empty-state";
 import {getSuperAdminTenantLifecycleDetail,getSuperAdminTenantLifecycleDirectory} from "@/modules/colleges/admin-tenant-lifecycle-service";
 import {CollegeServiceError} from "@/modules/colleges/service";
@@ -84,15 +83,13 @@ export default async function SuperAdminTenantSetup({
   }
   if(college){
    const allowed=can(context,"college.manage",{collegeId:college.id,organizationId:college.organizationId});
-   const [r,d,m,si,b]=await Promise.allSettled([
+   const [r,m,si,b]=await Promise.allSettled([
     getSuperAdminCollegeReadiness(context,college.id),
-    getSuperAdminTenantLifecycleDetail(context,college.id),
     allowed?getManagedCollegeSubdomain(context,college.id):Promise.resolve(null),
     allowed?readAdminCollegeSignInPolicy(context,college.id):Promise.resolve(null),
     allowed?getCollegeBranding(context,college.id):Promise.resolve(null),
    ]);
    if(r.status==="fulfilled")readiness=r.value;else readinessFailed=true;
-   if(d.status==="rejected")detailFailed=true;
    if(m.status==="fulfilled")managed=m.value;else managedFailed=true;
    if(si.status==="fulfilled")signin=si.value;else signinFailed=true;
    if(b.status==="fulfilled")branding=b.value;else brandingFailed=true;
@@ -178,22 +175,50 @@ export default async function SuperAdminTenantSetup({
     <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">{college.name} · Launch setup</h2>
+   {readinessFailed?<Banner tone="error" action={retry}>
+    College readiness could not be loaded. Launch is not verified; retry this readiness check before proceeding.
+   </Banner>:
    <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
     Persisted readiness: {summary.label}. {summary.detail}
-   </Banner>
-   <div className="grid min-w-0 gap-3 md:grid-cols-3">
-    {[
-     {label:"Web address",href:"/subdomain",description:"Configure and verify the college login domain."},
-     {label:"Sign-in",href:"/signin",description:"Review login methods and account access."},
-     {label:"Look and feel",href:"/branding",description:"Set visible college branding and identity."},
-    ].map(card=><Card key={card.label} as="article" className="min-w-0 hover:border-[var(--lms-canvas-border)]">
-     <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+card.href}
-      className="block min-h-11 rounded-[var(--lms-control-radius)] font-semibold text-primary-text underline-offset-4 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-      <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{card.label}</h3>
-      <p className="mt-2 text-sm font-normal text-body">{card.description}</p>
-     </Link>
-    </Card>)}
-   </div>
+   </Banner>}
+   <section aria-label="College identity editors" className="min-w-0 space-y-4">
+    <div className="grid min-w-0 items-start gap-6 lg:grid-cols-2">
+     <div className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+      {managed?<ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>:
+       <Banner tone={managedFailed?"error":"warning"} action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"} className="font-semibold underline">Open web address settings</Link>}>
+        {managedFailed?"Couldn't load the web address. Retry the scoped editor.":"Web address controls require selected-college management permission."}
+       </Banner>}
+     </div>
+     <div className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+      {signin?<CollegeSigninMethodForm collegeId={college.id}
+       method={signin.policy.kind==="CONFIGURED"?signin.policy.method:"EMAIL_AND_PHONE"}
+       version={signin.version??0}
+       ready={signin.policy.kind!=="MIGRATION_PENDING"&&signin.policy.kind!=="INVALID_POLICY"}/>:
+       <Banner tone={signinFailed?"error":"warning"} action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/signin"} className="font-semibold underline">Open sign-in settings</Link>}>
+        {signinFailed?"Couldn't load sign-in methods. Retry the scoped editor.":"Sign-in settings require selected-college management permission."}
+       </Banner>}
+     </div>
+    </div>
+    <section aria-label="Look and feel" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+     <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Look and feel</h3>
+     {branding?<>
+      <CollegeLogoUploader collegeId={college.id} currentUrl={branding.uploadedLogoUrl} canEdit/>
+      <CollegeBrandingForm key={college.id} collegeId={college.id} collegeName={branding.collegeName}
+       canEdit uploadedLogoUrl={branding.uploadedLogoUrl} initialVersion={branding.version}
+       initial={{
+        logoUrl:branding.logoUrl,faviconUrl:branding.faviconUrl,
+        loginBackgroundUrl:branding.loginBackgroundUrl,
+        loginBackgroundUrlMobile:branding.loginBackgroundUrlMobile,
+        primaryColor:branding.primaryColor,secondaryColor:branding.secondaryColor,
+        supportEmail:branding.supportEmail,supportPhone:branding.supportPhone,
+        termsUrl:branding.termsUrl,privacyUrl:branding.privacyUrl,
+       }}/>
+     </>:<Banner tone={brandingFailed?"error":"warning"}
+      action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/branding"} className="font-semibold underline">Open branding settings</Link>}>
+      {brandingFailed?"Couldn't load branding. Retry the scoped logo and appearance editor.":"Branding controls require selected-college management permission."}
+     </Banner>}
+    </section>
+   </section>
    <section aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Launch checklist</h2>
@@ -209,7 +234,7 @@ export default async function SuperAdminTenantSetup({
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:<EmptyState title="No college selected"
+  </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<EmptyState title="No college selected"
    description="No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant."
    action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Create or select a college →</Link>}/>}
  </div>;
