@@ -912,3 +912,7 @@ Do not unconditionally enable reorder or fabricate successful migration before r
 ## Outbound mail delivery reconciliation (2026-10-21)
 
 - G2-13-011-021 / G2-14-012-050 | `src/modules/messaging/service.ts + src/modules/messaging/providers.ts + src/modules/notifications/zeptomail-email.ts` | Register provider-supported idempotency/reconciliation key and durable uncertainty status in outbound queue before any retry of an unsafe POST; use new safe `outbound.retry_deferred` diagnostic for operations, never resend blindly.
+
+- G2-16-020-019 | `src/modules/colleges/service.ts + faculty-chair association model/migration` | Implement assignment/validation as separate association with audit. Require college-scoped faculty membership before chair/vice-chair assignment.
+
+- G2-20-011-015 | `src/modules/placements/application-status-history-service.ts + parent status mutation transaction` | Decide audit integrity fail-closed vs legacy fail-open, implement consistent safe response/retry Do not swallow audit write errors without documented audit-integrity policy and transactional compensation.
