@@ -15,11 +15,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/admin/classes/error.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/history/page.tsx`
 - [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/[userId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/admins/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/branding/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/error.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/readiness/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
 - [ ] `src/app/(authenticated)/admin/colleges/page.tsx`
 - [ ] `src/app/(authenticated)/admin/companies/[companyId]/drives/page.tsx`
