@@ -105,7 +105,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    <Link href="/admin/placements/drives" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
-  <p role="status" className="text-sm text-muted-foreground">{data.total} matching drives · Page {data.page} of {data.totalPages}</p>
+  <p role="status" className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching drives · Page {data.page} of {data.totalPages}</p>
   <DataTable columns={columns} rows={data.items} getRowKey={row=>row.job.id}
     caption="All drives" empty={<EmptyState title="No drives found" description="No drives match these filters."/>}/>
   <div className="min-w-0 border-t border-border pt-[var(--lms-space-3)]"><Pagination page={data.page} pageCount={data.totalPages} hrefForPage={href} label="Drive list pages"/></div>

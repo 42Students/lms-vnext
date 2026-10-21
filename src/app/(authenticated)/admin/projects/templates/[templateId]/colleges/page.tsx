@@ -73,7 +73,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       <Button className="min-h-11 w-full self-end md:min-h-9" type="submit">Filter</Button>
     </form>
     </FilterBar>
-    <p className="text-xs text-muted-foreground">{data.total} matching active colleges · page {data.query.page} of {data.totalPages}</p>
+    <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching active colleges · page {data.query.page} of {data.totalPages}</p>
     <SuperAdminTemplateCollegeBulk templateId={id.data} published={data.template.status==="PUBLISHED"}
       colleges={data.items.map(row=>({id:row.id,name:row.name,assigned:Boolean(row.assignment),
         canAssign:can(context,"project-template.assign",{collegeId:row.id,organizationId:row.organizationId})}))}/>

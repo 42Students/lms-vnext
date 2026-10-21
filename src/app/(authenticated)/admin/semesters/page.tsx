@@ -127,7 +127,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </a>
     </div>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
-      <p role="status" className="m-0 break-words text-sm text-muted-foreground">{data.total} matching semesters</p>
+      <p role="status" className="m-0 break-words text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching semesters</p>
       <DataTable
         caption="Semesters"
         rows={data.items}
