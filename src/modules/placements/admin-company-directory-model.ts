@@ -76,7 +76,7 @@ export function projectAdminCompanies(rows: readonly AdminCompanyRow[]) {
     rows,
     // Preserve one relationship per college while also exposing unique
     // company identities for global curation views (first occurrence only).
-    companies: [...new Map(rows.map(row=>[row.companyId,row])).values()],
+    companies: [...new Map<string,AdminCompanyRow>(rows.map(row=>[row.companyId,row] as const)).values()],
     distinctCompanies: new Set(rows.map(row => row.companyId)).size,
     relationships: rows.length,
     trustedRelationships: rows.filter(row => row.trusted).length,
