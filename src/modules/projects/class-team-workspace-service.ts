@@ -88,6 +88,8 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         .for("share").limit(1);
       if (!assigned) throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_ASSIGNED");
       const blueprint=publishableProjectTemplateBlueprintSchema.parse(assigned.blueprint);
+      if(input.initialStatus==="ACTIVE"&&!input.primaryMentorMembershipId)
+        throw new ProjectsServiceError("PROJECT_MEMBER_ROLE_REQUIRED");
       if (input.primaryMentorMembershipId) {
         const [mentor]=await tx.select({id:collegeMemberships.id}).from(collegeMemberships)
           .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -100,7 +102,8 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         .from(projectMembers).innerJoin(projectInstances,eq(projectInstances.id,projectMembers.projectId))
         .where(and(eq(projectInstances.collegeId,scope.id),
           eq(projectInstances.sectionId,section.id),eq(projectInstances.templateId,input.templateId),
-          ne(projectInstances.status,"ARCHIVED"),eq(projectMembers.role,"LEARNER"),
+          ne(projectInstances.status,"ARCHIVED"),isNull(projectInstances.deletedAt),
+          eq(projectMembers.role,"LEARNER"),
           isNull(projectMembers.endedAt),inArray(projectMembers.membershipId,members.map(m=>m.membershipId)))))
         .map(row=>row.membershipId)):new Set<string>();
       const created: {projectId:string;teamGroupId:string;title:string;memberCount:number;learnerMembershipId:string}[]=[];
@@ -146,10 +149,14 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
           return {projectId:project.id,releaseId,templateKey:s.key,title:s.title,description:s.description??null,sequence:s.sequence};
         })).returning({id:projectSprints.id,key:projectSprints.templateKey});
         const sprintIds=new Map(sprints.map(s=>[s.key,s.id]));
-        await tx.insert(projectTasks).values(blueprint.tasks.map(t=>{
-          const sprintId=sprintIds.get(t.sprintKey);
-          if(!sprintId)throw new Error("Task sprint key unresolved");
-          return {projectId:project.id,sprintId,templateKey:t.key,title:t.title,description:t.description??null,acceptanceCriteria:t.acceptanceCriteria??null,priority:t.priority,sequence:t.sequence};
+        if(blueprint.tasks.length)await tx.insert(projectTasks).values(blueprint.tasks.map(t=>{
+          const sprintId=t.sprintKey?sprintIds.get(t.sprintKey):null;
+          if(t.sprintKey&&!sprintId)throw new Error("Task sprint key unresolved");
+          return {projectId:project.id,sprintId,templateKey:t.key,
+            legacyTaskKey:t.legacyKey??null,title:t.title,
+            description:t.description??null,acceptanceCriteria:t.acceptanceCriteria??null,
+            dueLabel:t.dueLabel??null,taskType:t.taskType??null,approach:t.approach??null,
+            priority:t.priority,estimatePoints:t.estimatePoints??null,sequence:t.sequence};
         }));
         if(blueprint.resources.length)await tx.insert(projectResources).values(blueprint.resources.map(r=>({
           projectId:project.id,templateKey:r.key,title:r.title,description:r.description??null,
@@ -168,7 +175,8 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
       const individualResults=input.cohortMode?
         cohortCreationResultRows(groups,created,covered):[];
       return {created,teamCount:created.length,learnerCount:members.length,
-        alreadyCovered:covered.size,requested:groups.length,individualResults};
+        alreadyCovered:covered.size,requested:groups.length,individualResults,
+        batchMode:"ATOMIC" as const,failedCount:0,committed:true as const};
       },{isolationLevel:"serializable"});
     } catch(error) {
       if(postgresConstraintName(error)==="project_instances_college_slug_uq")
