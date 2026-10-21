@@ -115,7 +115,7 @@ export default async function SuperAdminCalendarAppointmentsPage({
       <td className="max-w-[160px] break-words px-3 py-3">{item.mode==="ONLINE"?"Online":"In-person"} · {item.mode==="ONLINE"?"Meeting link":item.venue}</td>
       <td className="px-3 py-3">
        <Link href={"/admin/placements/jobs/"+encodeURIComponent(item.jobId)+"/applications?"+
-        new URLSearchParams({collegeId:result.collegeId,...item.applicationId?{applicationId:item.applicationId}:{}}).toString()}
+        new URLSearchParams({collegeId:result.collegeId,...(item.applicationId ? {applicationId:item.applicationId} : {})}).toString()}
         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
         View applications</Link>
       </td>
