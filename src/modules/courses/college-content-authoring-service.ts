@@ -1,13 +1,14 @@
 import "server-only";
 import {and,asc,eq,ne,inArray,max,isNull,or,ilike} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courseSectionDeliveries,sections,courses,departments,lessonContents} from "@/db/schema";
+import {academicPeriods,cohorts,collegeMemberships,courseLearningPaths,courseLessons,courseOfferings,courseSectionDeliveries,courseTeachingAssignments,sections,courses,departments,lessonContents,users} from "@/db/schema";
 import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
 export type CollegeExistingContentFilters={
  courseId?:string;lessonId?:string;sectionId?:string;search?:string;page?:number;
+ allKindsForReorder?:boolean;
 };
 export function collegeExistingContentFiltersFromSearch(
  params:Record<string,string|string[]|undefined>,
@@ -16,11 +17,14 @@ export function collegeExistingContentFiltersFromSearch(
  const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
  const courseId=get("existingCourse"),lessonId=get("existingLesson");
  const sectionId=get("existingSection"),search=get("existingSearch").trim();
+ const allKinds=get("existingOrderAll");
  const page=Number(get("existingPage")||"1");
- if([courseId,lessonId,sectionId].some(id=>id&&!uuid.test(id))||
+ if((allKinds!==""&&allKinds!=="true")||
+    [courseId,lessonId,sectionId].some(id=>id&&!uuid.test(id))||
     search.length>100||!Number.isSafeInteger(page)||page<1||page>10000)
   throw new Error("INVALID_EXISTING_CONTENT_FILTER");
- return {courseId,lessonId,sectionId,search,page};
+ return {courseId,lessonId,sectionId,search,page,
+  allKindsForReorder:allKinds==="true"};
 }
 
 /** College-only metadata for adding/scheduling link-based lesson content.
@@ -56,7 +60,27 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .innerJoin(sections,and(eq(sections.id,courseSectionDeliveries.sectionId),eq(sections.cohortId,courseOfferings.cohortId),eq(sections.academicPeriodId,courseOfferings.academicPeriodId)))
   .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
    eq(courses.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
-  .orderBy(asc(sections.name)).limit(2000);
+  .orderBy(asc(sections.name),asc(courseSectionDeliveries.id));
+ const faculty=await db.selectDistinct({
+  membershipId:collegeMemberships.id,offeringId:courseOfferings.id,
+  displayName:users.displayName,
+ }).from(courseTeachingAssignments)
+  .innerJoin(courseSectionDeliveries,
+    eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+  .innerJoin(courseOfferings,
+    eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
+    eq(departments.collegeId,collegeId)))
+  .innerJoin(collegeMemberships,and(
+    eq(collegeMemberships.id,courseTeachingAssignments.membershipId),
+    eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE")))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(isNull(courseTeachingAssignments.endedAt),
+    isNull(courseTeachingAssignments.deletedAt),
+    eq(courseOfferings.status,"ACTIVE")))
+  .orderBy(asc(users.displayName),asc(collegeMemberships.id));
  const page=filters.page??1;
  if(!Number.isSafeInteger(page)||page<1||page>10000)throw new Error("INVALID_EXISTING_CONTENT_PAGE");
  const search=(filters.search??"").trim();
@@ -64,7 +88,8 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  const section=filters.sectionId?deliveries.find(row=>row.deliveryId===filters.sectionId):null;
  if(filters.sectionId&&!section)throw new Error("INVALID_EXISTING_CONTENT_SECTION");
  const where=[
-  eq(lessonContents.contentType,kind),ne(lessonContents.status,"ARCHIVED"),
+  ...(filters.allKindsForReorder?[]:[eq(lessonContents.contentType,kind)]),
+  ne(lessonContents.status,"ARCHIVED"),
   ne(courseLearningPaths.status,"ARCHIVED"),eq(courseOfferings.status,"ACTIVE"),
   eq(courses.status,"ACTIVE"),
  ];
@@ -80,9 +105,10 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   where.push(or(ilike(lessonContents.title,pattern),ilike(courseLessons.name,pattern),
    ilike(courses.code,pattern))!);
  }
- const pageSize=50;
+ const pageSize=kind==="RESOURCE"?15:10;
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
+  contentType:lessonContents.contentType,
   offeringId:courseOfferings.id,lessonName:courseLessons.name,courseCode:courses.code,
   deliveryId:lessonContents.deliveryId,
   notes:lessonContents.notes,
@@ -104,9 +130,11 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
   .groupBy(lessonContents.lessonId):[];
  const nextByLesson=new Map(positions.map(row=>[row.lessonId,(row.highest??-1)+1]));
- return {deliveries,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>pageSize,existingPage:page,
+ return {deliveries,faculty,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>pageSize,existingPage:page,
+  existingPageSize:pageSize,
  existingFilters:{courseId:filters.courseId??"",lessonId:filters.lessonId??"",
-  sectionId:filters.sectionId??"",search},
+  sectionId:filters.sectionId??"",search,
+  allKindsForReorder:filters.allKindsForReorder??false},
  existing:existing.slice(0,pageSize).map(row=>({...row,
   // Published playback and meeting links remain private to their authorized flows.
   // The editor can update metadata without replacing a hidden URL.
