@@ -42,15 +42,15 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
   <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1280px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)_auto]"
    onSubmit={e=>{e.preventDefault();if(!validRange||busy)return;
     void request("/api/placements/tpo/settings/blocked-dates","POST",{startDay,endDay,reason:reason.trim()||"Blocked"});}}>
-   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">From
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From
     <Input type="date" required min={today} value={startDay} disabled={busy}
      onChange={e=>{setStartDay(e.target.value);if(endDay&&endDay<e.target.value)setEndDay(e.target.value);}}
      className="min-h-11 w-full min-[768px]:min-h-9"/></label>
-   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Until
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Until
     <Input type="date" required min={startDay||today} value={endDay} disabled={busy}
      onChange={e=>setEndDay(e.target.value)}
      className="min-h-11 w-full min-[768px]:min-h-9"/></label>
-   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm">Label (optional)
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Label (optional)
     <Input value={reason} disabled={busy} maxLength={500} onChange={e=>setReason(e.target.value)}
      placeholder="Blocked" className="min-h-11 w-full min-[768px]:min-h-9"/></label>
    
@@ -63,11 +63,11 @@ export function TpoBlockedDatesEditor({items}:{items:readonly BlockedDay[]}){
   </form>
   <Disclosure title="Filter blocked dates" className="min-w-0" contentClassName="pt-[var(--lms-space-2)]">
    <div className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2">
-    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Filter by month
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Filter by month
       <Input type="month" value={month} onChange={e=>setMonth(e.target.value)}
         className="min-h-11 min-[768px]:min-h-9 w-full"/>
     </label>
-    <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">Search reasons
+    <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search reasons
       <Input type="search" maxLength={100} value={search} onChange={e=>setSearch(e.target.value)}
         placeholder="Reason or YYYY-MM-DD"
         className="min-h-11 min-[768px]:min-h-9 w-full"/>
