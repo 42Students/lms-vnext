@@ -169,7 +169,13 @@ export async function reviewAdminProjectSubmission(
 }
 
 /** Merge normalized revisions, immutable review decisions and delivery events
- * into the single chronological story provided by the legacy workspace. */
+ * into the single chronological story provided by the legacy workspace.
+ * Approval/request-changes are represented by a durable
+ * project_submission_reviews row (which records feedback, user, membership,
+ * decision, and timestamp) rather than an extra technical delivery event.
+ * The technical table's allowed event types are LOCKED, REOPENED and
+ * ATTACHMENTS_CHANGED. Do not bypass that constraint to duplicate a review.
+ */
 export async function listAdminProjectDeliveryHistory(ctx:RequestContext,rawProjectId:string){
  const scope=await requireProjectManageAccess(ctx,id.parse(rawProjectId));
  const [versions,reviews,events]=await Promise.all([

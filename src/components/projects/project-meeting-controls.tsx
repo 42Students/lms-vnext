@@ -488,11 +488,13 @@ export function ScheduleProjectMeetingControl({
       setOpen(false);
       showToast({
         tone: "success",
-        title: meeting ? "Meetings updated" : meetingStatus==="DRAFT"?"Meeting draft saved.":"Meeting added.",
+        title:"Meetings updated",
       });
       router.refresh();
-    } catch {
-      setError("Could not schedule this meeting. Review its latest details and try again.");
+    } catch(reason) {
+      const detail=reason instanceof Error?reason.message:"Failed to update meetings";
+      setError("Failed to update meetings. "+detail+
+        " Your changes have been kept. Refresh the meeting details before retrying if another editor changed the schedule.");
     } finally {
       setPending(false);
     }

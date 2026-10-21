@@ -123,14 +123,16 @@ export async function getProjectWorkspaceView(
 
   // Legacy workspace delivery was a flat DTO. Project delivery is normalized
   // by submission version; this is a read-only compatibility projection.
-  const latest = finalDelivery.submissions.at(-1) ?? null;
-  const latestReview = latest
-    ? finalDelivery.reviews.find(review=>review.submissionId===latest.id) ?? null
-    : null;
-  const actorMembershipIds = [...new Set([
-    latest?.submittedByMembershipId,
-    latestReview?.reviewedByMembershipId,
+  const latest = [...finalDelivery.submissions]
+    .sort((a,b)=>b.version-a.version)[0]??null;
+  const latestReview=latest
+    ?finalDelivery.reviews.filter(review=>review.submissionId===latest.id)
+      .sort((a,b)=>b.reviewedAt.getTime()-a.reviewedAt.getTime())[0]??null
+    :null;
+  const actorMembershipIds=[...new Set([
+    latest?.submittedByMembershipId,latestReview?.reviewedByMembershipId,
   ].filter((id):id is string=>typeof id==="string"))];
+  const reviewerUserId=latestReview?.reviewedByUserId??null;
   const actorRows=actorMembershipIds.length
     ? await getDb().select({
       membershipId:collegeMemberships.id,displayName:users.displayName,
@@ -139,8 +141,13 @@ export async function getProjectWorkspaceView(
       .where(and(inArray(collegeMemberships.id,actorMembershipIds),
         eq(collegeMemberships.collegeId,workspace.project.collegeId)))
     : [];
+  const reviewerUser=reviewerUserId?
+    await getDb().select({displayName:users.displayName})
+      .from(users).where(eq(users.id,reviewerUserId)).limit(1):[];
   const actorName=(id:string|null|undefined)=>
-    actorRows.find(row=>row.membershipId===id)?.displayName ?? null;
+    actorRows.find(row=>row.membershipId===id)?.displayName??null;
+  const reviewerName=actorName(latestReview?.reviewedByMembershipId)??
+    reviewerUser[0]?.displayName??null;
   const latestTaskEvidence = new Map<string,(typeof taskSubmissions)[number]>();
   for(const submission of taskSubmissions){
     if(submission.submissionUrl.trim()){
@@ -154,13 +161,18 @@ export async function getProjectWorkspaceView(
     id:latest.id,
     version:latest.version,
     status:latest.status,
-    reviewStatus:latestReview?.decision??latest.legacyReviewStatus??"PENDING",
-    revisionCount:latest.legacyRevisionCount??
-      Math.max(0,finalDelivery.submissions.filter(item=>item.version<=latest.version).length-1),
+    reviewStatus:latestReview?.decision??latest.legacyReviewStatus??
+      (latest.lockedAt?"LOCKED":
+       latest.status==="APPROVED"?"APPROVED":
+       latest.status==="CHANGES_REQUESTED"?"CHANGES_REQUESTED":
+       latest.status==="SUBMITTED"?"UNDER_REVIEW":"DRAFT"),
+    // Revision count is a persisted legacy scalar. Version count is NOT a
+    // substitute: one delivery version may have multiple content revisions.
+    revisionCount:latest.legacyRevisionCount??null,
     submittedAt:latest.submittedAt,
     submittedBy:actorName(latest.submittedByMembershipId),
     reviewedAt:latestReview?.reviewedAt??null,
-    reviewedBy:actorName(latestReview?.reviewedByMembershipId),
+    reviewedBy:reviewerName,
     feedback:latestReview?.feedback??null,
     attachments:latest.attachments,
     summary:latest.summary,
