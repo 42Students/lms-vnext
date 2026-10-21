@@ -175,7 +175,13 @@ export async function POST(request: Request) {
     if (error instanceof ZodError) {
       return NextResponse.json({
         error: "INVALID_REQUEST",
-        fieldErrors: programCreateFieldErrors(error),
+        fieldErrors: new URL(request.url).searchParams.get("legacy") === "1"
+          ? (() => {
+              const fields=programCreateFieldErrors(error);
+              return {...fields,...(fields.departmentId ? {dept_id:fields.departmentId}:{}),
+                ...(fields.durationTerms ? {duration_years:fields.durationTerms}:{})};
+            })()
+          : programCreateFieldErrors(error),
         message: "Please review the program details.",
       }, { status: 400 });
     }

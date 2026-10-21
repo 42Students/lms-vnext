@@ -1,6 +1,9 @@
 import "server-only";
 
 import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { z } from "zod";
+import type { RequestContext } from "@/modules/identity/context";
+import { canReadSkillCatalog } from "./catalog-access";
 import { getDb } from "@/db/client";
 import {
   db10Skills,
@@ -48,9 +51,12 @@ function editDistanceAtMostTwo(first:string,second:string):number {
 
 const columns = {
   id: db10Skills.id,
+  legacySkillId: db10Skills.legacySkillId,
   name: db10Skills.name,
   displayName: db10Skills.displayName,
   category: db10Skills.category,
+  usageCount: db10Skills.usageCount,
+  isPopular: sql<boolean>`${db10Skills.usageCount} > 100`.mapWith(Boolean),
 };
 
 /**
@@ -60,7 +66,7 @@ const columns = {
  * import/migration, global fuzzy index, and ephemeral recent-skills cache remain
  * separately tracked; this service cannot promise unbounded full-catalog parity.
  */
-export async function readSkillCatalog(input: SkillCatalogQuery) {
+async function readSkillCatalogUncached(input: SkillCatalogQuery) {
   const db = getDb();
   const base = eq(db10Skills.isActive, true);
   if (input.mode === "categories") {
@@ -68,13 +74,14 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
       .from(db10Skills)
       .where(and(base, sql`${db10Skills.category} is not null`))
       .orderBy(asc(db10Skills.category));
-    return { categories: categories.flatMap(row => row.category ? [row.category] : []),
-      message: "Categories retrieved successfully" };
+    return { categories: categories.flatMap(row => row.category ? [row.category] : [])
+        .sort((a,b)=>a.localeCompare(b,undefined,{sensitivity:"base"})),
+      message: "Categories retrieved" };
   }
 
   if (input.mode === "category") {
     const items = await db.select(columns).from(db10Skills)
-      .where(and(base, eq(db10Skills.category, input.category!)))
+      .where(and(base, sql<boolean>`lower(${db10Skills.category})=lower(${input.category!})`))
       .orderBy(asc(db10Skills.displayName), asc(db10Skills.id))
       .limit(input.limit);
     return { items };
@@ -82,6 +89,16 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
 
   const q = normalizeSkillSearchQuery(input.query);
   if (input.mode === "popular" || !q) {
+    const fallbackOrder = [
+      "java","python","javascript","react","node.js","typescript",
+      "sql","html","css","spring boot","angular","aws","docker","git",
+    ];
+    // Legacy SkillsCache included a fixed fallback after tracked selections,
+    // then filled remaining places alphabetically. The two counters remain
+    // independent and scoped to this catalog; no full-table cache is required.
+    const fallbackPosition = sql<number>`case lower(${db10Skills.name})
+      ${sql.join(fallbackOrder.map((name,index)=>sql`when ${name} then ${index}`),sql` `)}
+      else 1000 end`;
     // Both legacy usage systems stay independent in storage; the separate
     // skill_usage table's popularity is the v2 primary signal. Catalog count
     // is a tie-breaker/fallback. Never increment one because the other moved.
@@ -95,11 +112,12 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
       .orderBy(
         desc(sql`coalesce(${db10SkillUsage.usageCount}, 0)`),
         desc(db10Skills.usageCount),
+        asc(fallbackPosition),
         asc(db10Skills.displayName),
         asc(db10Skills.id),
       )
       .limit(input.limit);
-    return { items, message:"Popular skills retrieved successfully" };
+    return { items, message:"Popular skills retrieved" };
   }
 
   const searchTerm=LEGACY_SKILL_ALIASES[q]??q;
@@ -107,6 +125,7 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
   const display = sql`lower(${db10Skills.displayName})`;
   const namePrefix = sql<boolean>`left(${normalized}, length(${searchTerm})) = ${searchTerm}`;
   const displayPrefix = sql<boolean>`left(${display}, length(${searchTerm})) = ${searchTerm}`;
+  const nameWordPrefix = sql<boolean>`position(' ' || ${searchTerm} in ${normalized}) > 0`;
   const nameContains = sql<boolean>`position(${searchTerm} in ${normalized}) > 0`;
   const displayContains = sql<boolean>`position(${searchTerm} in ${display}) > 0`;
   const synonymPrefix = sql<boolean>`exists (
@@ -122,11 +141,14 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
   const score = sql<number>`(
     case
       when ${normalized} = ${searchTerm} then 100
+      when ${display} = ${searchTerm} then 95
       when ${namePrefix} then 80
-      when ${displayPrefix} then 70
-      when ${synonymPrefix} then 60
+      when ${displayPrefix} then 75
+      when ${nameWordPrefix} then 60
+      when ${synonymPrefix} then 55
       when ${nameContains} then 40
-      when ${displayContains} then 30
+      when ${displayContains} then 35
+      when ${synonymContains} then 30
       else 20 end
     + least(floor(${db10Skills.usageCount} / 10.0), 50)
     + ${db10Skills.searchPriority}
@@ -136,7 +158,7 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
     .where(and(
       base,
       sql<boolean>`(
-        ${namePrefix} or ${displayPrefix} or
+        ${namePrefix} or ${displayPrefix} or ${nameWordPrefix} or
         ${nameContains} or ${displayContains} or
         ${synonymPrefix} or ${synonymContains}
       )`,
@@ -170,4 +192,84 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
     a.row.displayName.localeCompare(b.row.displayName)||
     a.row.id.localeCompare(b.row.id));
   return { items:[...items,...fuzzy.slice(0,Math.max(0,input.limit-items.length)).map(match=>match.row)] };
+}
+
+/** Twenty-second process-local query coalescing avoids repeated DB scans during
+ * fast autocomplete. A bounded cache and a short TTL mean new/renamed skill
+ * records do not require a privileged remote refresh to become visible.
+ * Authorization remains in the request route, before reading this catalog. */
+const catalogQueryCache = new Map<string, {
+  expiresAt: number;
+  result: ReturnType<typeof readSkillCatalogUncached>;
+}>();
+const MAX_CACHED_SEARCHES = 256;
+const CATALOG_TTL_MS = 20_000;
+
+export async function readSkillCatalog(input: SkillCatalogQuery) {
+  const key = JSON.stringify([input.mode, input.query.toLocaleLowerCase("en-US"),
+    input.category ?? "", input.limit]);
+  const now = Date.now();
+  const cached = catalogQueryCache.get(key);
+  if (cached && cached.expiresAt > now) return cached.result;
+  catalogQueryCache.delete(key);
+  if (catalogQueryCache.size >= MAX_CACHED_SEARCHES) {
+    for (const [key,entry] of catalogQueryCache) {
+      if (entry.expiresAt < now) catalogQueryCache.delete(key);
+    }
+    if (catalogQueryCache.size >= MAX_CACHED_SEARCHES)
+      catalogQueryCache.delete(catalogQueryCache.keys().next().value!);
+  }
+  const result = readSkillCatalogUncached(input);
+  catalogQueryCache.set(key, {expiresAt:now+CATALOG_TTL_MS,result});
+  try { return await result; }
+  catch (error) { catalogQueryCache.delete(key); throw error; }
+}
+
+/** Bounded invalidation hook for a future skill catalog mutation/import route.
+ * It is not an unguarded HTTP endpoint. */
+export function invalidateSkillCatalogSearchCache() {
+  catalogQueryCache.clear();
+}
+
+/** Alias management read, not a mutation: the importer can inspect one
+ * parent skill and check an exact synonym before attempting a deduplicated
+ * write. Distinct canonical IDs remain authoritative across duplicate aliases. */
+function requireCatalogReader(context: RequestContext) {
+  if (!canReadSkillCatalog(context)) throw new Error("FORBIDDEN_SKILL_CATALOG");
+}
+
+export async function listSkillSynonymsForParent(context: RequestContext, skillId: unknown) {
+  requireCatalogReader(context);
+  const id = z.string().uuid().parse(skillId);
+  const [parent] = await getDb().select({ id: db10Skills.id })
+    .from(db10Skills).where(and(eq(db10Skills.id,id),eq(db10Skills.isActive,true))).limit(1);
+  if (!parent) return null;
+  return getDb().select({
+    id:db10SkillSynonyms.id,
+    legacySynonymId:db10SkillSynonyms.legacySynonymId,
+    synonym:db10SkillSynonyms.synonym,
+    skillId:db10SkillSynonyms.skillId,
+  }).from(db10SkillSynonyms).where(eq(db10SkillSynonyms.skillId,id))
+    .orderBy(asc(sql`lower(${db10SkillSynonyms.synonym})`),asc(db10SkillSynonyms.id))
+    .limit(200);
+}
+
+export async function searchSkillsByExactSynonym(context: RequestContext, raw: unknown) {
+  requireCatalogReader(context);
+  const synonym = z.string().trim().min(1).max(100).parse(raw).toLocaleLowerCase("en-US");
+  return getDb().select(columns).from(db10Skills)
+    .innerJoin(db10SkillSynonyms,eq(db10SkillSynonyms.skillId,db10Skills.id))
+    .where(and(eq(db10Skills.isActive,true),
+      sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`))
+    .orderBy(desc(db10Skills.usageCount),asc(db10Skills.displayName),asc(db10Skills.id))
+    .limit(200);
+}
+
+export async function skillSynonymExists(context: RequestContext, raw: unknown) {
+  requireCatalogReader(context);
+  const synonym = z.string().trim().min(1).max(100).parse(raw).toLocaleLowerCase("en-US");
+  const [record] = await getDb().select({id:db10SkillSynonyms.id})
+    .from(db10SkillSynonyms)
+    .where(sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`).limit(1);
+  return Boolean(record);
 }

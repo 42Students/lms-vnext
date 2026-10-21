@@ -8,10 +8,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { CollegeCohortRowActions } from "@/components/academics/college-cohort-management";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
-import {
-  academicDirectoryHref,
-  batchProgressLabel,
-} from "@/modules/academics/college-academic-directory-model";
+import { academicDirectoryHref } from "@/modules/academics/college-academic-directory-model";
 import type {
   listCollegeBatches,
   listCollegeSemesters,
@@ -33,10 +30,18 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
   const semesters = data.kind === "SEMESTERS";
   const title = semesters ? "Semesters" : "Batches";
   const path = semesters ? "/college/semesters" : "/college/batches";
+  const hasFilters = Object.entries(data.query).some(([key, value]) =>
+    !["page","pageSize"].includes(key) && value !== undefined && value !== null &&
+      value !== "" && value !== "ALL");
+  const pageStart = data.total ? Math.min(data.total, (data.query.page-1)*data.query.pageSize+1) : 0;
+  const pageEnd = Math.min(data.total, data.query.page*data.query.pageSize);
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title={title}
+        description={semesters
+          ? "Manage semesters, their courses and credits."
+          : "Manage cohorts, their academic year and current semester."}
         actions={<>
           {actions}
           <Link href="/college/academics"
@@ -45,18 +50,33 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           </Link>
         </>}
       />
-      {prepend ? <section aria-label="Batch actions" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">{prepend}</section> : null}
-      {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
+      <div className="grid min-w-0 grid-cols-1 items-start gap-6 min-[1200px]:grid-cols-24">
+        <div className="min-w-0 min-[1200px]:col-span-10">
+          {prepend ? <section aria-label="Batch actions" className="min-w-0">{prepend}</section> : null}
+          {data.kind === "SEMESTERS" ? <CollegeSemesterCreateForm programs={data.programs} /> : null}
+        </div>
+        <section className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface min-[1200px]:col-span-14"
+          aria-label={semesters ? "Existing Semesters" : "Existing Batches"}>
+          <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
+            <h2 className="text-base font-semibold text-foreground">
+              {semesters ? "Semesters" : "Existing Batches"}
+            </h2>
+            <a href={academicDirectoryHref(data.kind,data.query)} aria-label={"Refresh " + title.toLowerCase()}
+              className="inline-flex min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-muted">
+              <span aria-hidden="true">↻</span> Refresh
+            </a>
+          </header>
       <FilterBar title="Filters"
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {semesters ? "Semester or program" : "Batch or program"}
           <Input form="college-academic-directory-filters" name="q" type="search" maxLength={100} defaultValue={data.query.q}
-            placeholder="Search name or code" className="min-h-11 min-w-0 md:min-h-9" />
+            placeholder={semesters ? "Search semesters" : "Search batch, year, program or status"}
+            className="min-h-11 min-w-0 md:min-h-9" />
         </label>}
         action={<Button type="submit" form="college-academic-directory-filters" variant="primary" className="min-h-11 md:min-h-9">Filter</Button>}>
         <section aria-label={title + " filters"} className="min-w-0">
         <form id="college-academic-directory-filters" action={path} method="get" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] min-[768px]:grid-cols-2 min-[992px]:grid-cols-4">
-          <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid max-w-[200px] gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
               className="min-h-11 min-w-0 md:min-h-9">
@@ -80,9 +100,10 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
                 </>
               ) : (
                 <>
-                  <option value="PLANNED">Planned</option>
                   <option value="ACTIVE">Active</option>
+                  <option value="INACTIVE">Inactive</option>
                   <option value="COMPLETED">Completed</option>
+                  <option value="PLANNED">Planned</option>
                   <option value="ARCHIVED">Archived</option>
                 </>
               )}
@@ -231,46 +252,57 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
             <Button variant="primary" type="submit" className="min-h-11 md:hidden">
               Filter
             </Button>
-            <Link href={path} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
+            {hasFilters ? <Link href={path} className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link">
               Clear
-            </Link>
+            </Link> : null}
           </div>
         </form>
       </section></FilterBar>
 
       <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full border-b border-[var(--lms-canvas-border)]">
         <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
-          {data.total.toLocaleString("en-IN")} matching {semesters ? "program terms" : "cohorts"}
+          {data.total.toLocaleString("en-IN")} {semesters ? "semesters" : "batches"} ·
+          {hasFilters ? " filtered results" : " all records"}
         </p>
         {data.items.length === 0 ? (
           <div role="status" className="space-y-2 p-6 text-sm text-body">
            <p>
-            {data.total === 0
-              ? semesters
-                ? "No semesters match these filters."
-                : "No cohorts match these filters. Batch membership or progression is not inferred from other records."
+            {data.total === 0 ? hasFilters
+              ? semesters ? "No semesters match these filters." : "No batches match search/filters."
+              : semesters ? "No semesters found. Create a program first, then add semesters."
+                : "No batches yet. Create a program first."
               : "No records exist on this page. Select an earlier page."}
            </p>
-           <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">Clear filters and view all {title.toLowerCase()}</Link>
+           {hasFilters ? <Link href={path}
+             className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">
+             Clear filters and view all {title.toLowerCase()}</Link> :
+             <Link href="/college/programs"
+               className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">
+               Go to Programs</Link>}
           </div>
         ) : (
           <>{data.kind === "SEMESTERS" ? (
             <DataTable
               caption="Semester directory"
+              mobileMode="scroll"
               rows={data.items}
               getRowKey={item=>item.id}
-              empty={<p>No semesters match these filters.</p>}
+              empty={<p>{hasFilters ? "No semesters match these filters." :
+                "No semesters found. Create a program first, then add semesters."}</p>}
               columns={[
-                {key:"semester",header:"Semester",mobilePriority:"primary",cell:item=><>
-                  <p className="font-semibold text-foreground">{item.name}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">Semester {item.termNumber}</p>
-                </>},
-                {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
-                  <span>{item.programName} ({item.programCode})</span>},
-                {key:"credits",header:"Credits",mobilePriority:"secondary",cell:item=>item.mappedCredits??0},
-                {key:"courses",header:"Mapped courses",mobilePriority:"secondary",cell:item=>item.mappedCourses},
+                {key:"program",header:"Program",mobilePriority:"secondary",className:"whitespace-nowrap",cell:item=>
+                  <span>{item.programName || "Program name unavailable"}</span>},
+                {key:"number",header:"Semester #",mobilePriority:"secondary",cell:item=>
+                  <StatusBadge tone="info">Sem {item.termNumber}</StatusBadge>},
+                {key:"name",header:"Name",mobilePriority:"primary",cell:item=>
+                  <span className="font-semibold text-foreground">{item.name}</span>},
+                {key:"credits",header:"Credits",mobilePriority:"secondary",cell:item=>
+                  item.mappedCourses > 0 ? item.mappedCredits ?? 0 : "—"},
+                {key:"courses",header:"Courses",mobilePriority:"secondary",cell:item=>item.mappedCourses},
                 {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
-                  item.isActive ? "Active" : "Inactive"},
+                  <StatusBadge tone={item.isActive ? "success" : "error"}>
+                    {item.isActive ? "Active" : "Inactive"}
+                  </StatusBadge>},
                 {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
                   <CollegeSemesterRowActions row={item}/>},
               ]}
@@ -278,52 +310,43 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           ) : (
             <DataTable
               caption="Batch directory"
+              mobileMode="scroll"
               rows={data.items}
               getRowKey={item=>item.id}
-              empty={<p>No batches match these filters.</p>}
+              empty={<p>{hasFilters ? "No batches match search/filters." : "No batches yet. Create a program first."}</p>}
               columns={[
-                {key:"batch",header:"Batch",mobilePriority:"primary",cell:item=><>
-                  <p className="font-semibold text-foreground">{item.name}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
-                </>},
+                {key:"batch",header:"Batch Name",mobilePriority:"primary",className:"whitespace-nowrap",cell:item=>
+                  <span className="font-semibold text-foreground">{item.name}</span>},
                 {key:"program",header:"Program",mobilePriority:"secondary",cell:item=>
-                  <span>{item.programName} ({item.programCode})</span>},
-                {key:"years",header:"Years",mobilePriority:"secondary",cell:item=><>
-                  <p>Start Date: {item.startDate}</p>
-                  <p>End Date: {item.endDate ?? "Not set"}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{item.startPeriodName}</p>
-                </>},
-                {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:item=>
-                  item.academicYear??(item.currentAcademicYearStart !== null
-                    ? String(item.currentAcademicYearStart)+"-"+String((item.currentAcademicYearStart+1)%100).padStart(2,"0")
-                    : "Not recorded")},
+                  <span>{item.programName || "Program name unavailable"}</span>},
+                {key:"years",header:"Years",mobilePriority:"secondary",cell:item=>
+                  item.startDate && item.endDate
+                    ? item.startDate.slice(0,4)+" – "+item.endDate.slice(0,4) : "—"},
                 {key:"semester",header:"Current Semester",mobilePriority:"secondary",cell:item=>
-                  batchProgressLabel(item.currentTermNumber === null ? null : {
-                    currentTermNumber:item.currentTermNumber,
-                    currentAcademicYearStart:item.currentAcademicYearStart,
-                  })},
-                {key:"population",header:"Active classes / learners",mobilePriority:"secondary",cell:item=>
-                  <span>{item.activeSections} classes / {item.activeEnrolledLearners} learners</span>},
-                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
-                  <StatusBadge tone={item.inactiveAt || item.status === "ARCHIVED" ? "neutral" : item.status === "ACTIVE" ? "success" : item.status === "PLANNED" ? "warning" : "info"}>
-                    {item.inactiveAt ? "Inactive" : item.status}
-                  </StatusBadge>},
+                  item.currentTermNumber === null ? "—" :
+                    <StatusBadge tone="info">Semester {item.currentTermNumber}</StatusBadge>},
+                {key:"year",header:"Academic Year",mobilePriority:"secondary",cell:item=>
+                  item.academicYear ?? (item.currentAcademicYearStart !== null
+                    ? String(item.currentAcademicYearStart)+"-"+String((item.currentAcademicYearStart+1)%100).padStart(2,"0")
+                    : "—")},
+                {key:"classes",header:"Classes",mobilePriority:"secondary",cell:item=>item.activeSections},
+                {key:"students",header:"Students",mobilePriority:"secondary",cell:item=>item.activeEnrolledLearners},
+                {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>{
+                  const caption = item.status === "ARCHIVED" ? "Archived" : item.inactiveAt ||
+                    item.status === "PLANNED" ? "Inactive" : item.status === "COMPLETED" ?
+                    "Completed" : "Active";
+                  return <StatusBadge tone={caption === "Active" ? "success" :
+                    caption === "Inactive" ? "warning" : "neutral"}>{caption}</StatusBadge>;
+                }},
                 {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
-                  <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
-                    <Link href={"/college/batches/"+encodeURIComponent(item.id)+"/students"}
-                      className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)]"
-                      aria-label={"View student roster and move students between classes in " + item.name}>
-                      Students
-                    </Link>
-                    <CollegeCohortRowActions row={item} periods={batchPeriods}/>
-                  </div>},
+                  <CollegeCohortRowActions row={item} periods={batchPeriods}/>},
               ]}
             />
           )}</>
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</span>
+        <span className="text-muted-foreground">{pageStart}–{pageEnd} of {data.total} · Page {data.query.page} of {data.totalPages}</span>
         <CollegeDirectoryPageSize current={data.query.pageSize} />
         <div className="flex gap-2">
           {data.query.page > 1 ? (
@@ -340,6 +363,8 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           ) : null}
         </div>
       </nav>
+        </section>
+      </div>
       <p className="text-xs leading-5 text-muted-foreground">
         {semesters
           ? "Mapped course counts include registered curriculum mappings within this college only. Deletion is denied when mappings or non-archived batches exist; editing never changes the assigned program or semester number."

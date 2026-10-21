@@ -28,6 +28,9 @@ export async function GET(request: Request, { params }: Context) {
       const collegeId = url.searchParams.get("collegeId");
       const programs = await listPrograms(context,uuid.parse(collegeId),
         url.searchParams.get("departmentId") ?? url.searchParams.get("deptId"));
+      if (programs.length === 0)
+        return NextResponse.json({status:"error",message:"No programs found for this college",data:[]},
+          {status:404,headers:{"Cache-Control":"private, no-store"}});
       return NextResponse.json({status:"success",message:"Programs retrieved",data:programs},
         {headers:{"Cache-Control":"private, no-store"}});
     }
