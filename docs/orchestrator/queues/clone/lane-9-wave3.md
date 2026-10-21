@@ -11,8 +11,8 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_courses_lesson-resource-materials-service.ts.md` (edit src/modules/courses/lesson-resource-materials-service.ts; 2 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_app_api_courses_lesson-contents_contentId_materials_route.ts.md` (edit src/app/api/courses/lesson-contents/[contentId]/materials/route.ts; 1 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_courses_lesson-resource-materials-service.ts.md` (edit src/modules/courses/lesson-resource-materials-service.ts; 2 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_app_api_courses_lesson-contents_contentId_materials_route.ts.md` (edit src/app/api/courses/lesson-contents/[contentId]/materials/route.ts; 1 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_notifications_exotel-sms.ts.md` (edit src/modules/notifications/exotel-sms.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_platform-settings_admin-editor-service.ts.md` (edit src/modules/platform-settings/admin-editor-service.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_components_courses_college-learning-directory.tsx.md` (edit src/components/courses/college-learning-directory.tsx; 3 findings; best P1)
