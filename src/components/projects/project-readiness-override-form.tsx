@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import {useToast} from "@/components/ui/toast";
 import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
@@ -25,6 +26,7 @@ export function ProjectReadinessOverrideForm({
   compactLayout?: boolean;
 }) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [state, setState] = useState<ReadinessOverrideState | "">(initialState ?? "");
   const [note, setNote] = useState(initialNote ?? "");
   const [pending, setPending] = useState(false);
@@ -87,10 +89,13 @@ export function ProjectReadinessOverrideForm({
       });
       setConfirmOpen(false);
       setFeedback(copy.updated);
+      showToast({tone:"success",title:copy.updated});
       router.refresh();
     } catch (error) {
       // Keep the selected direction and the entered note for a safe retry.
-      setFeedback(error instanceof Error && error.message.trim() ? error.message : "Failed to update readiness");
+      const detail=error instanceof Error&&error.message.trim()?error.message:copy.failed;
+      setFeedback(detail);
+      showToast({tone:"error",title:copy.failed,description:detail});
     } finally {
       pendingRef.current = false;
       setPending(false);
