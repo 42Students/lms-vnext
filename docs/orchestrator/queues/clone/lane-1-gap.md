@@ -49,9 +49,9 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/UserController.java`
 - [x] U009 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementProfileController.java`
 - [x] U010 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/ProfileVerificationController.java`
-- [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/profile/JobPreferencesDTO.java`
-- [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/MobileAuthEmailFallbackSendRequest.java`
-- [ ] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/RecruiterEmailLoginStartRequest.java`
+- [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/profile/JobPreferencesDTO.java`
+- [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/MobileAuthEmailFallbackSendRequest.java`
+- [x] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/RecruiterEmailLoginStartRequest.java`
 - [ ] U014 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthHandoffToken.java`
 - [ ] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AuthToken.java`
 - [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/EmailVerificationToken.java`
