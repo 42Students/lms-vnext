@@ -3,6 +3,7 @@
 import {useTransition} from "react";
 import {useRouter} from "next/navigation";
 import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 
 /** Route-backed clearable company selection, preserving the selected date,
  * view and other chips. Never relies on the browser's local timezone. */
@@ -31,9 +32,8 @@ export function CalendarCompanySelect({href,companies,selected}:{
 /** Applies an IST calendar day immediately without a form submit. */
 export function CalendarDateSelect({href,value}:{href:string;value:string}){
  const router=useRouter();const [pending,startTransition]=useTransition();
- return <input type="date" name="date" defaultValue={value} disabled={pending}
-  required aria-label="Calendar date"
-  className="min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-body md:min-h-9"
+ return <Input type="date" name="date" defaultValue={value} disabled={pending}
+  required aria-label="Calendar date" className="w-full"
   onChange={event=>{
    const date=event.target.value;
    if(!/^\d{4}-\d{2}-\d{2}$/.test(date)||!Number.isFinite(Date.parse(date+"T12:00:00Z")))return;
