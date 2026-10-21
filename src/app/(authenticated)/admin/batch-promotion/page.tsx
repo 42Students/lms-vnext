@@ -79,7 +79,7 @@ export default async function SuperAdminBatchPromotionPage({
       <Button type="submit" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto self-end">Preview</Button>
     </form>
     <section aria-label="Batch promotion queue" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
-      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Batches</h2>} defaultOpen={!input.data.cohortId} contentClassName="pb-[var(--lms-space-4)]">
+      <Disclosure title={<h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Batches</h2>} defaultOpen={!input.data.cohortId} contentClassName="pb-[var(--lms-space-4)]">
       <div className="flex flex-wrap items-center justify-between gap-3">
 
         <p role="status" className="text-sm text-muted-foreground">{visibleCohorts.length} shown of {options.cohorts.length} batches</p>
@@ -111,7 +111,7 @@ export default async function SuperAdminBatchPromotionPage({
     <>
       <section className="min-w-0 space-y-3 border-b border-border pb-5">
         <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{preview.batch.name}</h2>
+          <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{preview.batch.name}</h2>
           <StatusBadge tone={preview.simulatedReadiness ? "success" : "warning"}>{preview.simulatedReadiness ? "No detected blockers" : "Blocked or incomplete"}</StatusBadge>
         </div>
         <p className="text-sm text-body">{preview.batch.programName} · {preview.batch.status}</p>
@@ -143,16 +143,16 @@ export default async function SuperAdminBatchPromotionPage({
           ) : null}
       </section>
       <section className="border-b border-border pb-5">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Known batch blockers ({summary.knownBlockers})</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Known batch blockers ({summary.knownBlockers})</h2>
         {preview.blockers.length ? <ul className="mt-2 list-inside list-disc text-sm text-body">
           {preview.blockers.map(b => <li key={b}>{b.replaceAll("_", " ")}</li>)}
         </ul> : <p className="text-sm text-muted-foreground">No batch-level blocker was detected. Learner and runtime checks still apply.</p>}
       </section>
-      <Disclosure title={<h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Learner-level preview</h2>} contentClassName="space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+      <Disclosure title={<h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Learner-level preview</h2>} contentClassName="space-y-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
         <p className="text-xs text-muted-foreground">Showing at most 100 of {preview.learners.length} examined enrollments; a shortened display is not a complete readiness decision.</p>
         {preview.learners.length ? <div className="grid gap-3 md:grid-cols-2">
           {preview.learners.slice(0, 100).map(learner => <article key={learner.membershipId} className="min-w-0 border-b border-border py-3">
-            <h3 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{learner.name}</h3>
+            <h3 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{learner.name}</h3>
             <p className="mt-1 text-sm text-body">Enrollment: {learner.enrollmentStatus}</p>
             <p className="mt-2 text-sm text-body">{learner.blockers.length ? learner.blockers.join(", ").replaceAll("_", " ") : "No detected learner blocker"}</p>
           </article>)}
