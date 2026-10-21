@@ -432,3 +432,4 @@ src/components/tpo/tpo-spreadsheet-grid.tsx | 1 instances ({"status":0,"badge":0
 src/components/ui/data-table.tsx | 0 instances ({"status":0,"badge":0,"needs":0,"filter":0}, 0 custom, 0 CSS) | none | fixes: none
 src/components/ui/table.tsx | 0 instances ({"status":0,"badge":0,"needs":0,"filter":0}, 0 custom, 0 CSS) | none | fixes: none
 src/components/verification/VerificationReviewDrawer.tsx | 0 instances ({"status":0,"badge":0,"needs":0,"filter":0}, 0 custom, 0 CSS) | none | fixes: none
+src/styles/micro-details.css | none (no badges, chips, status pills, tags, or status palette declarations in this stylesheet) | fixes: none
