@@ -41,7 +41,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_faculty-lesson-authoring.tsx.md` (edit src/components/courses/faculty-lesson-authoring.tsx; 22 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_components_courses_super-admin-content-actions.tsx.md` (edit src/components/courses/super-admin-content-actions.tsx; 22 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_notifications_page.tsx.md` (edit src/app/(authenticated)/notifications/page.tsx; 22 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_lesson-service.ts.md` (edit src/modules/courses/lesson-service.ts; 20 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_lesson-service.ts.md` (edit src/modules/courses/lesson-service.ts; 20 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_tpo-verification-queue-service.ts.md` (edit src/modules/placements/tpo-verification-queue-service.ts; 20 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-20_privacy-policy.md.md` (new; 20 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_quiz-attempt-service.ts.md` (edit src/modules/courses/quiz-attempt-service.ts; 19 findings; best P2)
