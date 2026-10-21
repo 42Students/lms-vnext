@@ -107,7 +107,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      if(live.length)throw Error("Withdraw or resolve active offers before moving back to Interview.");
     }
     if(from==="HIRED"&&next==="OFFERED"){
-     const joined=await tx.select({id:placementJoiningOutcomes.id})
+     const joined=await tx.select({id:placementJoiningOutcomes.offerId})
       .from(placementJoiningOutcomes).innerJoin(placementOffers,
        eq(placementOffers.id,placementJoiningOutcomes.offerId))
       .where(and(eq(placementOffers.applicationId,applicationId),
