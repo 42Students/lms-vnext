@@ -10,7 +10,8 @@ import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { learnerProfileDocumentSchema } from "./profile-validation";
-import { learnerContactEditSchema,learnerContactsAreStale } from "./learner-contact-model";
+import { learnerContactEditSchema,learnerContactsAreStale,
+ validateLearnerAlternatePhoneAgainstPrimary } from "./learner-contact-model";
 import {PeopleServiceError} from "./errors";
 
 
@@ -62,14 +63,9 @@ export async function updateOwnLearnerContacts(
       throw new AuthorizationError("profile.self.manage");
     }
 
-    const alternate = input.contacts.alternatePhone.replace(/\D/g,"");
-    const primary = (user.phoneE164??"").replace(/\D/g,"").slice(-10);
-    if (alternate && (alternate.length < 10 || alternate.length > 15)) {
-      throw new PeopleServiceError("ALTERNATE_PHONE_INVALID");
-    }
-    if (alternate && primary && alternate.slice(-10) === primary) {
-      throw new PeopleServiceError("ALTERNATE_PHONE_SAME_AS_PRIMARY");
-    }
+    const alternateIssue=validateLearnerAlternatePhoneAgainstPrimary(
+      input.contacts.alternatePhone,user.phoneE164);
+    if(alternateIssue)throw new PeopleServiceError(alternateIssue);
     // One locked profile row prevents same-contact lost updates while still
     // allowing unrelated profile sections to merge through jsonb_set.
     await tx.insert(learnerProfiles).values({

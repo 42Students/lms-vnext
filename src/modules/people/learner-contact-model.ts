@@ -30,6 +30,26 @@ export const learnerContactEditSchema = z.object({
 });
 
 
+/** Canonical primary phone belongs to users.phone_e164 and is read-only in
+ * learner profile JSON. Only alternatePhone/contactEmail can be modified.
+ * Enforce comparison on the locked, persisted canonical user row, never a
+ * primary number supplied by the browser. */
+export function validateLearnerAlternatePhoneAgainstPrimary(alternateRaw:string,primaryRaw:string|null){
+ const alternate=alternateRaw.replace(/\D/g,"");
+ const primary=(primaryRaw??"").replace(/\D/g,"");
+ if(!alternate)return null;
+ if(!primary)return "ALTERNATE_PHONE_PRIMARY_REQUIRED" as const;
+ if(alternate.length<10||alternate.length>15)return "ALTERNATE_PHONE_INVALID" as const;
+ return alternate.slice(-10)===primary.slice(-10)
+  ? "ALTERNATE_PHONE_SAME_AS_PRIMARY" as const:null;
+}
+
+export const LEARNER_CONTACT_FIELD_OWNERSHIP={
+ primaryPhone:"Canonical sign-in identity (read-only)",
+ alternatePhone:"Learner profile (editable)",
+ contactEmail:"Learner profile (editable)",
+} as const;
+
 export function learnerContactsAreStale(
   current:{alternatePhone:string;contactEmail:string},
   expected:{alternatePhone:string;contactEmail:string},
