@@ -2,18 +2,42 @@ import {learnerProfileDocumentSchema} from "@/modules/people/profile-validation"
 import {placementReportCsv} from "../report-model";
 export const COMPANY_SHARE_COLUMNS={
  APPLICATION_ID:"Applicant ID",NAME:"Name",ROLL_NUMBER:"Roll number",
- BRANCH:"Branch",UG_BAND:"UG % band",TENTH:"10th %",TWELFTH:"12th % / Diploma",
+ BRANCH:"Branch",UG_BAND:"UG %",TENTH:"10th %",TWELFTH:"12th % / Diploma",
  EMAIL:"Email",PHONE:"Phone",RESUME:"Resume",GITHUB:"GitHub",
  PORTFOLIO:"Portfolio",STAGE:"Stage",
 } as const;
 export type CompanyShareColumn=keyof typeof COMPANY_SHARE_COLUMNS;
 export const DEFAULT_COMPANY_SHARE_COLUMNS:CompanyShareColumn[]=["APPLICATION_ID","NAME","EMAIL"];
+const legacyShareColumnMap:Readonly<Record<string,readonly CompanyShareColumn[]>>={
+ applicantId:["APPLICATION_ID"],name:["NAME"],roll:["ROLL_NUMBER"],
+ branch:["BRANCH"],cgpa:["UG_BAND"],tenth:["TENTH"],
+ twelfth:["TWELFTH"],email:["EMAIL"],phone:["PHONE"],
+ resume:["RESUME"],github:["GITHUB"],portfolio:["PORTFOLIO"],
+ projects:["GITHUB","PORTFOLIO"],stage:["STAGE"],
+};
 export function safeCompanyShareColumns(raw:unknown):CompanyShareColumn[]{
- if(!Array.isArray(raw)||raw.length===0||raw.length>11)return [...DEFAULT_COMPANY_SHARE_COLUMNS];
- const values=raw.filter((value):value is CompanyShareColumn=>
-  typeof value==="string"&&Object.prototype.hasOwnProperty.call(COMPANY_SHARE_COLUMNS,value));
- return values.length===raw.length&&new Set(values).size===values.length?
-  values:[...DEFAULT_COMPANY_SHARE_COLUMNS];
+ if(!Array.isArray(raw)||raw.length===0||raw.length>12)
+  return [...DEFAULT_COMPANY_SHARE_COLUMNS];
+ const columns:CompanyShareColumn[]=["APPLICATION_ID"];
+ for(const value of raw){
+  if(typeof value!=="string")return [...DEFAULT_COMPANY_SHARE_COLUMNS];
+  const mapped=legacyShareColumnMap[value] ??
+    (Object.prototype.hasOwnProperty.call(COMPANY_SHARE_COLUMNS,value)?
+     [value as CompanyShareColumn]:null);
+  if(!mapped)return [...DEFAULT_COMPANY_SHARE_COLUMNS];
+  for(const key of mapped)if(!columns.includes(key))columns.push(key);
+ }
+ return columns;
+}
+export const LEGACY_COMPANY_SHARE_STAGE_LABEL:Readonly<Record<string,string>>={
+ APPLIED:"Applied",SHORTLISTED:"Shortlisted",ASSESSMENT:"Test",
+ INTERVIEW:"Interview",OFFERED:"Offered",HIRED:"Placed",
+ WAITLISTED:"Waitlisted",REJECTED:"Not selected",WITHDRAWN:"Withdrawn",
+};
+export function companyShareStageLabel(status:string|null):string{
+ if(!status)return "-";
+ return LEGACY_COMPANY_SHARE_STAGE_LABEL[status] ??
+  status.toLowerCase().split("_").map(word=>word.charAt(0).toUpperCase()+word.slice(1)).join(" ");
 }
 type Candidate={
  applicationId:string;displayName:string|null;email:string|null;
@@ -61,12 +85,12 @@ export function projectCompanyShareRows(source:readonly Candidate[],rawColumns:u
       ?safeHttpsUrl(row.resumeSignedUrl):"Link not shown",
    GITHUB:safeHttpsUrl(profile?.socialProfiles.githubUrl),
    PORTFOLIO:safeHttpsUrl(profile?.socialProfiles.portfolioUrl),
-   STAGE:row.stage,
+   STAGE:companyShareStageLabel(row.stage),
   };
   return {applicationId:row.applicationId,
    displayName:values.NAME??"Unnamed learner",
    email:columns.includes("EMAIL")?row.email:null,
-   cells:Object.fromEntries(columns.map(key=>[key,values[key]])) as Partial<Record<CompanyShareColumn,string|null>>,
+   cells:Object.fromEntries(columns.map(key=>[key,values[key]??"-"])) as Partial<Record<CompanyShareColumn,string|null>>,
   };
  });
 }
