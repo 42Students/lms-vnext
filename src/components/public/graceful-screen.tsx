@@ -34,7 +34,9 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
     window.location.assign(destination);
   }
   return (
-    <main className={legacyStatus?styles.legacyErrorPage:styles.page}>
+    <main className={legacyStatus
+      ? statusCode===500 ? styles.legacyErrorPage+" "+styles.legacyServerError : styles.legacyErrorPage
+      : styles.page}>
       {!legacyStatus ? <header className={styles.header}>
         <Link href={destination} className={styles.brand} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
