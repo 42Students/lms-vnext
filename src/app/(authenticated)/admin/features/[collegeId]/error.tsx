@@ -17,7 +17,7 @@ export default function CollegeModuleAccessError({
         <Button
           variant="secondary"
           onClick={reset}
-        >
+         className="w-full md:w-auto">
           Retry
         </Button>
       }
