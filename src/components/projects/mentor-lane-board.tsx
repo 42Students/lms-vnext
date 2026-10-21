@@ -105,7 +105,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
    creationSprints.find(item=>item.status==="PLANNED");
  return <section className="space-y-4">
   <Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
-    className="text-sm font-semibold text-link underline focus-visible:underline">Back to project</Link>
+    className="text-sm font-semibold text-link underline focus-visible:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">Back to project</Link>
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
    <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Board</h2>
    <div className="flex flex-wrap items-center gap-2">

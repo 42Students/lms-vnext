@@ -25,40 +25,40 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/tpo/recruiter-inline-stage.tsx`
 - [x] `src/components/tpo/tpo-conversation-bubble.module.css`
 - [x] `src/components/ui/action-pagination.tsx`
-- [ ] `src/components/ui/dialog.tsx`
-- [ ] `src/components/ui/filter-bar.tsx`
-- [ ] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/selection-controls.tsx`
-- [ ] `src/components/ui/tooltip.tsx`
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/project-admin-readiness-page.tsx`
-- [ ] `src/components/projects/project-resource-open-link.tsx`
-- [ ] `src/components/shell/app-shell.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/tpo-companies-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/ui/disclosure.tsx`
-- [ ] `src/components/ui/menu.tsx`
-- [ ] `src/components/ui/selection-controls.tsx`
-- [ ] `src/styles/legacy-skin.css`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/components/academics/academics-overview.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/college/college-person-audit-modal.tsx`
-- [ ] `src/components/courses/assignment-file-open-control.tsx`
-- [ ] `src/components/courses/faculty-contacts-table.tsx`
-- [ ] `src/components/courses/faculty-submission-file-review.tsx`
-- [ ] `src/components/groups/college-group-import-preview.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/projects/learner-board-task-index.tsx`
-- [ ] `src/components/projects/project-admin-missing-college.tsx`
-- [ ] `src/components/projects/project-workspace-readiness.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/ui/error-state.tsx`
+- [x] `src/components/ui/dialog.tsx`
+- [x] `src/components/ui/filter-bar.tsx`
+- [x] `src/components/ui/menu.tsx`
+- [x] `src/components/ui/selection-controls.tsx`
+- [x] `src/components/ui/tooltip.tsx`
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/project-admin-readiness-page.tsx`
+- [x] `src/components/projects/project-resource-open-link.tsx`
+- [x] `src/components/shell/app-shell.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/tpo-companies-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/ui/disclosure.tsx`
+- [x] `src/components/ui/menu.tsx`
+- [x] `src/components/ui/selection-controls.tsx`
+- [x] `src/styles/legacy-skin.css`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/components/academics/academics-overview.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/college/college-person-audit-modal.tsx`
+- [x] `src/components/courses/assignment-file-open-control.tsx`
+- [x] `src/components/courses/faculty-contacts-table.tsx`
+- [x] `src/components/courses/faculty-submission-file-review.tsx`
+- [x] `src/components/groups/college-group-import-preview.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/projects/project-admin-missing-college.tsx`
+- [x] `src/components/projects/project-workspace-readiness.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/ui/error-state.tsx`
 - [ ] `src/components/tpo/tpo-safe-csv-download.tsx`
 - [ ] `src/components/tpo/tpo-students-selection.tsx`
 - [ ] `src/components/tpo/tpo-team-message-actions.tsx`
