@@ -26,7 +26,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
         contentClassName="min-w-0 pb-3 pt-3">
         <SuperAdminFacultyBulkImport collegeId={context.adminScope.collegeId}/>
       </Disclosure>
-      <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href="/admin/people">
+      <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/admin/people">
        Manage memberships, profiles and account status →
       </Link>
     </section>:null}

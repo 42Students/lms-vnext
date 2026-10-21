@@ -57,7 +57,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <ErrorState title="Invalid module access filters"
           description="The module, scope or requested page is invalid. No college module rules were loaded."
           action={<Link href={"/admin/features/"+encodeURIComponent(collegeId)}
-            className="inline-flex min-h-11 items-center text-sm font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 md:min-h-9">
+            className="inline-flex min-h-11 items-center text-sm font-[650] text-primary-text underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4 md:min-h-9">
             Clear filters
           </Link>} />
       </div>
@@ -116,7 +116,7 @@ export default async function SuperAdminCollegeModuleAccessPage({
           Find an active learner to trace the module-access decision through membership, academic scopes, college, organization, global rules and defaults.
         </p>
         <Link href={`/admin/features/${encodeURIComponent(college.id)}/trace`}
-          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">
+          className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9 hover:text-[var(--lms-primary-text)]">
           Open learner access trace →
         </Link>
       </nav>

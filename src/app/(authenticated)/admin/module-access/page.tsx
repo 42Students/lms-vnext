@@ -31,7 +31,7 @@ export default async function SuperAdminModuleAccessPage({
     <PageHeader title="Module Access"/>
     <ErrorState title="Invalid feature filters"
       description="The search or page value is invalid."
-      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:text-primary-hover md:min-h-9 hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
+      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:text-primary-hover md:min-h-9 hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
   </div>;
   const result=await listSuperAdminFeatureControls(context,parsed);
   const scopeMetrics=await getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id));
@@ -39,7 +39,7 @@ export default async function SuperAdminModuleAccessPage({
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Module Access"
       description="Select a college to inspect the existing inherited module access rules."
-      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Feature Controls</Link>}/>
+      actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Feature Controls</Link>}/>
     <section aria-label="Module Access overview" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <p className="text-sm font-semibold text-body">Effective access · {scopeLabel}</p>
       <h2 className="mt-[var(--lms-space-1)] text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Optional module access hierarchy</h2>
@@ -56,14 +56,14 @@ export default async function SuperAdminModuleAccessPage({
           className="w-full"/>
       </label>
       <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
-      <Link className="inline-flex min-h-11 w-full items-center justify-center px-3 py-2 text-sm font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+      <Link className="inline-flex min-h-11 w-full items-center justify-center px-3 py-2 text-sm font-semibold text-primary-text md:min-h-9 hover:text-[var(--lms-primary)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         href="/admin/module-access">Clear filters</Link>
     </form>
     <p role="status" className="text-sm text-body">
       {result.total} colleges · page {result.page} of {result.totalPages}
     </p>
     {result.items.length===0?<EmptyState title="No matching colleges"
-      description="No college in the current scope matches these filters." action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>:
+      description="No college in the current scope matches these filters." action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/>:
       <div className="min-w-0 divide-y divide-border border-y border-border">
         {result.items.map(college=><article key={college.id}
           className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
@@ -72,7 +72,7 @@ export default async function SuperAdminModuleAccessPage({
             <p className="mt-[var(--lms-space-1)] text-sm text-body">{college.code}</p>
           </div>
           <Link href={"/admin/features/"+encodeURIComponent(college.id)}
-            className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto hover:text-primary-hover md:min-h-9 hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto hover:text-primary-hover md:min-h-9 hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Module Access →
           </Link>
         </article>)}

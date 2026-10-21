@@ -25,7 +25,7 @@ export default async function SuperAdminElectivesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Electives" />
     <ErrorState title="Invalid elective filters" description="Search and status must use supported values."
-      action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, options] = await Promise.all([
