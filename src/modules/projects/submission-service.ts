@@ -367,7 +367,8 @@ export async function submitProjectSubmission(
       tx.select({status:projectSprints.status}).from(projectSprints)
         .where(eq(projectSprints.projectId,scope.project.id)),
       tx.select({status:projectTasks.status}).from(projectTasks)
-        .where(eq(projectTasks.projectId,scope.project.id)),
+        .where(and(eq(projectTasks.projectId,scope.project.id),
+          isNull(projectTasks.deletedAt))),
     ]);
     const execution=deriveProjectExecutionReadiness({
       projectStatus:project.status,
