@@ -104,7 +104,7 @@ export const PROJECT_WORKSPACE_SECTIONS = [
 export type ProjectWorkspaceSection =
   (typeof PROJECT_WORKSPACE_SECTIONS)[number];
 
-const PROJECT_WORKSPACE_SECTION_LABELS: Record<
+export const PROJECT_WORKSPACE_SECTION_LABELS: Record<
   ProjectWorkspaceSection,
   string
 > = {
