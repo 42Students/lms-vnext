@@ -1,13 +1,38 @@
 import { z } from "zod";
 
+/**
+ * Persisted program_term_courses.credits and the legacy backend both accept
+ * 0..30. The old interactive editor used 1..10, but historical zero-credit
+ * and 11..30-credit mappings must remain valid when reordered or re-saved.
+ */
+export const termCourseCreditsSchema = z.number().int().min(0).max(30);
+
+/** Legacy default applies only to creating a NEW mapping; never overwrite
+ * imported legacy_is_mandatory / type based on the database CORE default.
+ * Those are distinct storage columns until a deliberate migration resolves
+ * the recorded original mandatory flag.
+ */
+export const newTermCourseCreditsSchema = termCourseCreditsSchema.default(3);
+
+export function validateFullTermCourseOrder(
+  existingIds: readonly string[], proposedIds: readonly string[],
+): string[] {
+  if (!existingIds.length || !proposedIds.length || existingIds.length !== proposedIds.length ||
+      new Set(proposedIds).size !== proposedIds.length ||
+      existingIds.some(id => !proposedIds.includes(id))) {
+    throw new Error("TERM_COURSE_POSITION_INVALID");
+  }
+  return [...proposedIds];
+}
+
 export const collegeTermCourseAddSchema = z.object({
   programTermId: z.string().uuid(),
   courseId: z.string().uuid(),
   type: z.enum(["CORE", "ELECTIVE"]),
-  credits: z.number().int().min(1).max(10),
+  credits: newTermCourseCreditsSchema,
 }).strict();
 export const collegeTermCourseUpdateSchema = z.object({
-  credits: z.number().int().min(1).max(10),
+  credits: termCourseCreditsSchema,
   position: z.number().int().min(1).max(100000),
 }).strict();
 
