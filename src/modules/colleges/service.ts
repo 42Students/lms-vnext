@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  inArray,
   isNull,
   ne,
   sql,
@@ -676,6 +677,67 @@ export async function restoreCollege(context:RequestContext,rawId:unknown){
  });
 }
 
+/** The legacy CollegeSearchCache synonyms; kept local to college searching
+ * so aliases never become new tenant identifiers or authorization decisions. */
+const collegeSearchSynonyms:Readonly<Record<string,string>>={
+ iit:"indian institute of technology",nit:"national institute of technology",
+ iiit:"international institute of information technology",
+ bits:"birla institute of technology and science",
+ vit:"vellore institute of technology",srm:"srm institute of science and technology",
+ amrita:"amrita vishwa vidyapeetham",anna:"anna university",
+ manipal:"manipal institute of technology",pes:"pes university",
+ rvce:"rv college of engineering",bmsce:"bms college of engineering",
+ msrit:"ms ramaiah institute of technology",
+ dsce:"dayananda sagar college of engineering",
+ sjce:"sri jayachamarajendra college of engineering",
+ nie:"national institute of engineering",
+ jss:"jss science and technology university",
+ atria:"atria institute of technology",cmr:"cmr institute of technology",
+ acharya:"acharya institute of technology",
+ "new horizon":"new horizon college of engineering",
+ oxford:"oxford college of engineering",presidency:"presidency university",
+ christ:"christ university","mount carmel":"mount carmel college",
+ "st joseph":"st joseph college",
+};
+function collegeSearchNormalized(value:string){
+ return value.toLocaleLowerCase("en-IN").replace(/[^\\p{L}\\p{N}]+/gu," ").trim();
+}
+/** Bounded edit-distance-2 check for the old cache's rare typo fallback.
+ * Unlike full-matrix distance it exits as soon as a row exceeds the bound. */
+function collegeSearchNear(query:string,name:string):boolean{
+ if(query.length<3||name.length>100)return false;
+ const candidates=[name,...name.split(" ")].filter(Boolean);
+ return candidates.some(candidate=>{
+  if(Math.abs(candidate.length-query.length)>2)return false;
+  let previous=Array.from({length:candidate.length+1},(_,index)=>index);
+  for(let i=1;i<=query.length;i++){
+   const current=[i];
+   let minimum=i;
+   for(let j=1;j<=candidate.length;j++){
+    const distance=Math.min(current[j-1]!+1,previous[j]!+1,
+     previous[j-1]!+(query[i-1]===candidate[j-1]?0:1));
+    current.push(distance);minimum=Math.min(minimum,distance);
+   }
+   if(minimum>2)return false;
+   previous=current;
+  }
+  return previous[candidate.length]!<=2;
+ });
+}
+function collegeSearchScore(fields:readonly string[],term:string){
+ let best=0;
+ for(const field of fields){
+  const value=collegeSearchNormalized(field);
+  if(!value)continue;
+  if(value===term)best=Math.max(best,100);
+  else if(value.startsWith(term))best=Math.max(best,80);
+  else if(value.includes(" "+term))best=Math.max(best,60);
+  else if(value.includes(term))best=Math.max(best,40);
+  else if(best<20&&collegeSearchNear(term,value))best=20;
+ }
+ return best;
+}
+
 /**
  * Safe college-search adapter. The model deliberately keeps UUID IDs rather
  * than fabricating legacy numeric IDs. Never cache records across role/scope
@@ -690,10 +752,36 @@ export async function listAuthorizedCollegeSearchOptions(
  if(q.length>200)throw new RangeError("College search must be 200 characters or fewer");
  const cap=Math.max(1,Math.min(options.limit??(q?15:10),50));
  const rows=await listColleges(context,options.organizationId);
- const needle=q.toLocaleLowerCase("en-IN");
- const matches=q?rows.filter(row=>[row.name,row.code,row.city??"",row.state??""]
-  .some(value=>value.toLocaleLowerCase("en-IN").includes(needle))):rows;
- return matches.slice(0,cap).map(row=>({
+ const term=collegeSearchNormalized(q);
+ const expanded=collegeSearchSynonyms[term]??term;
+ const ranked=rows.map(row=>{
+  const fields=[row.name,row.code,row.city??"",row.state??"",row.country??"",
+   row.addressLine1??"",row.addressLine2??"",row.landmark??""];
+  return {row,score:term?Math.max(
+    collegeSearchScore(fields,term),
+    expanded!==term?collegeSearchScore(fields,expanded):0,
+  ):0};
+ }).filter(item=>!term||item.score>0);
+ // Search usage in the old cache is process-local, and cannot safely be
+ // invented after a restart. Active membership is an explicit, durable
+ // popularity tie-breaker among ALREADY AUTHORIZED colleges only.
+ const popularity=new Map<string,number>();
+ if(ranked.length>1&&ranked.length<=2000){
+  const counts=await getDb().select({
+   collegeId:collegeMemberships.collegeId,
+   total:sql<number>`count(*)::int`,
+  }).from(collegeMemberships).where(and(
+   inArray(collegeMemberships.collegeId,ranked.map(item=>item.row.id)),
+   eq(collegeMemberships.status,"ACTIVE"),
+  )).groupBy(collegeMemberships.collegeId);
+  for(const item of counts)popularity.set(item.collegeId,Number(item.total));
+ }
+ ranked.sort((a,b)=>
+  b.score-a.score||
+  Math.min(Math.floor((popularity.get(b.row.id)??0)/10),20)-
+   Math.min(Math.floor((popularity.get(a.row.id)??0)/10),20)||
+  a.row.name.localeCompare(b.row.name)||a.row.id.localeCompare(b.row.id));
+ return ranked.slice(0,cap).map(({row})=>({
   id:row.id,
   organizationId:row.organizationId,
   name:row.name,
