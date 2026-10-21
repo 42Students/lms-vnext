@@ -121,7 +121,6 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
  exportQuery.set("tab",activeTab);
  return <div className="min-w-0 space-y-5 md:space-y-6">
   <PageHeader title="Profile verification" description={collegeVerificationLegacyCopy.subtitle}/>
-  <PageHeader title="Profile verification" description={collegeVerificationLegacyCopy.subtitle}/>
 
   {truncated?<Banner tone="warning">
    Showing the first 1,000 students in this view. Totals reflect this working set; narrow the filters to review other students.
