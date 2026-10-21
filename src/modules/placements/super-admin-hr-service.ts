@@ -1063,7 +1063,7 @@ export async function grantSuperAdminHrCollegeAccess(
     :new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+3,now.getUTCDate(),now.getUTCHours()));
   if(!Number.isFinite(expiration.getTime())||expiration<=now||
       expiration.getTime()>now.getTime()+5*366*24*60*60*1000)
-    throw new Error("INVALID_VALID_UNTIL: enter YYYY-MM-DD in Asia/Kolkata or an ISO timestamp such as 2026-12-31T23:59:00+05:30");
+    throw new Error("GRANT_EXPIRY_INVALID: INVALID_VALID_UNTIL: enter YYYY-MM-DD in Asia/Kolkata or an ISO timestamp such as 2026-12-31T23:59:00+05:30");
   const relationship =
     await loadActiveRelationship(
       input.companyRelationshipId,
