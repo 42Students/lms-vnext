@@ -22,7 +22,7 @@ export default async function LearnerAcademicRecordPage(){
       <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
       <dd className="mt-1 break-words [overflow-wrap:anywhere] font-medium leading-6 text-foreground">{value||"Not recorded"}</dd>
     </div>)}
-   </dl>:<p role="status" className="mt-3 text-sm text-body">
+   </dl>:<p role="status" className="mt-3 text-sm text-body leading-[22px]">
     No active program enrollment is recorded. Ask your college administrator to correct this if needed.
    </p>}
    <p className="mt-4 max-w-3xl text-xs leading-5 text-muted-foreground">

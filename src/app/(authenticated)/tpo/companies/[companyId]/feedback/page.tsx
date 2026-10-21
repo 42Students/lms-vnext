@@ -86,7 +86,7 @@ export default async function TpoCompanyFeedbackPage({
                         {dateFormat.format(new Date(item.recordedAtIso))} IST
                       </time>
                     </div>
-                    <p className="whitespace-pre-wrap break-words text-sm text-body">{item.note}</p>
+                    <p className="whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{item.note}</p>
                   </li>
                 ))}
               </ul>
@@ -107,7 +107,7 @@ export default async function TpoCompanyFeedbackPage({
           </nav>:null}
         </>
       )}
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-5">
         This is an internal TPO CRM note log, not company-submitted ratings,
         verified recruiter responses or delivered messages. Notes can contain
         sensitive business context; they are not exposed to learners or recruiters.

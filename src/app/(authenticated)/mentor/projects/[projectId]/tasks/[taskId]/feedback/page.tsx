@@ -25,11 +25,11 @@ export default async function Page({params}:{
       }).format(entry.reviewedAt)+" IST":"Review date unavailable"}
      </span>
     </div>
-    <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{entry.feedback}</p>
+    <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{entry.feedback}</p>
    </li>)}</ol>}
   <section role="status" className="border-b border-border pb-4">
    <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Conversation thread unavailable</h2>
-   <p className="mt-2 text-sm text-body">
+   <p className="mt-2 text-sm text-body leading-[22px]">
     The promoted Project schema stores one reviewer-feedback value per submission version.
     It has no task-comments or reply table. Do not enter new comments here; threaded
     conversations are blocked pending migration and product approval.
@@ -39,7 +39,7 @@ export default async function Page({params}:{
    className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
    Back to authorized task Board
   </Link>:null}
-  <p className="text-xs text-muted-foreground">
+  <p className="text-xs text-muted-foreground leading-5">
    Reviewer feedback is not a chat message. Learner identities, private notes and submission URLs are excluded from this read.
   </p>
  </div>;

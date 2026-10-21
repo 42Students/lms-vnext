@@ -22,7 +22,7 @@ export default async function FacultyDiscussionParticipationPage({
         ["Learner messages",data.counts.learner],["Pinned messages",data.counts.pinned]] as const)
         .map(([title,count])=><div key={title}
           className="min-w-0 py-2">
-          <p className="text-xs text-muted-foreground">{title}</p>
+          <p className="text-xs text-muted-foreground leading-5">{title}</p>
           <p className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{count}</p>
         </div>)}
     </section>
@@ -33,7 +33,7 @@ export default async function FacultyDiscussionParticipationPage({
         <ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.recent.map(row=><li key={row.id}
           className="min-w-0 bg-transparent py-3">
           <div className="flex min-w-0 flex-wrap items-center gap-2">
-            <p className="text-sm font-semibold text-[var(--lms-heading)]">{row.senderRole}</p>
+            <p className="text-sm font-semibold text-[var(--lms-heading)] leading-[22px]">{row.senderRole}</p>
             {row.pinned?<Badge tone="neutral">Pinned</Badge>:null}
           </div>
           <time dateTime={row.createdAt} className="text-xs text-muted-foreground">

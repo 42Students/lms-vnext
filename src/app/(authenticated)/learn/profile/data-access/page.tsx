@@ -25,8 +25,8 @@ export default async function LearnerProfileDataAccessPage(){
   </section>
   <section aria-labelledby="data-access-academic-record" className="min-w-0 border-t border-border pt-4">
    <h2 id="data-access-academic-record" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Academic record</h2>
-   <p className="mt-2 max-w-3xl break-words text-sm leading-6 text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
-   <p className="mt-2 max-w-3xl break-words text-sm leading-6 text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
+   <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
+   <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
    <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View academic record →</Link>
   </section>
   <section aria-labelledby="data-access-changes" className="min-w-0 border-t border-border pt-4">
@@ -40,7 +40,7 @@ export default async function LearnerProfileDataAccessPage(){
        {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(event.occurredAt)} IST
       </time>
      </li>)}
-   </ol>:<p role="status" className="mt-3 text-sm text-body">No recorded membership changes to display.</p>}
+   </ol>:<p role="status" className="mt-3 text-sm text-body leading-[22px]">No recorded membership changes to display.</p>}
   </section>
  </div>;
 }

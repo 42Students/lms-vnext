@@ -36,7 +36,7 @@ export default async function MentorProjectReviewCompletenessPage({
       className="border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. Delivery history was not loaded.
     </section>:<>
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         {data.total} persisted final-delivery version{data.total===1?"":"s"}
         {" · "}Project state: {data.projectStatus}
       </p>
@@ -58,14 +58,14 @@ export default async function MentorProjectReviewCompletenessPage({
               </dd>
             </div>
           </dl>
-          {item.submittedAt?<p className="mt-2 text-xs text-muted-foreground">
+          {item.submittedAt?<p className="mt-2 text-xs text-muted-foreground leading-5">
             Submitted {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(item.submittedAt)} IST
-          </p>:<p className="mt-2 text-xs text-muted-foreground">
+          </p>:<p className="mt-2 text-xs text-muted-foreground leading-5">
             No submitted timestamp (draft)
           </p>}
-          {item.reviewedAt?<p className="mt-1 text-xs text-muted-foreground">
+          {item.reviewedAt?<p className="mt-1 text-xs text-muted-foreground leading-5">
             Reviewed {new Intl.DateTimeFormat("en-IN",{
               dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
             }).format(item.reviewedAt)} IST

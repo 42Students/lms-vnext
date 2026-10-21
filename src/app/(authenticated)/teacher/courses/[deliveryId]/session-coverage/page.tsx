@@ -40,7 +40,7 @@ export default async function FacultySessionCoveragePage({
         : <ol className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {data.shown.map(row => <li key={row.id} className="flex min-w-0 flex-col gap-1 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-5">
             <div className="min-w-0">
-              <p className="break-words text-sm font-semibold leading-6 text-[var(--lms-heading)]">{row.title}</p>
+              <p className="break-words text-sm font-semibold leading-[22px] text-[var(--lms-heading)]">{row.title}</p>
               <p className="mt-1 break-words text-sm leading-[22px] text-body">{row.label}</p>
             </div>
             <time dateTime={row.startsAt} className="shrink-0 text-xs leading-5 text-muted-foreground sm:pt-1">
@@ -48,7 +48,7 @@ export default async function FacultySessionCoveragePage({
             </time>
           </li>)}
         </ol>}
-      {data.omitted > 0 ? <p role="status" className="text-sm leading-6 text-body">
+      {data.omitted > 0 ? <p role="status" className="text-sm leading-[22px] text-body">
         Showing latest 40 sessions; {data.omitted} older sessions omitted.
       </p> : null}
     </section>

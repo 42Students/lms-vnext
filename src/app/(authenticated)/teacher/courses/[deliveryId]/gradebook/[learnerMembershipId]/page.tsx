@@ -36,7 +36,7 @@ export default async function FacultyLearnerGradebookPage({
         <div><dt className="text-xs text-muted-foreground">Recorded points</dt><dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{data.learner.earned===null?"Unknown":data.learner.earned+" / "+data.learner.possible}</dd></div>
         <div><dt className="text-xs text-muted-foreground">Recorded percentage</dt><dd className="mt-1 text-xl font-semibold tabular-nums text-[var(--lms-heading)]">{data.learner.percent===null?"Unknown":data.learner.percent+"%"}</dd></div>
       </dl>
-      {data.learner.hasUnknown&&<p className="mt-2 text-xs text-muted-foreground">
+      {data.learner.hasUnknown&&<p className="mt-2 text-xs text-muted-foreground leading-5">
         Some published assessments have no published score for this learner.
       </p>}
     </section>
@@ -50,7 +50,7 @@ export default async function FacultyLearnerGradebookPage({
             className="min-w-0 py-4">
             <Badge tone="neutral">{item.kind==="QUIZ"?"Quiz":"Assignment"}</Badge>
             <h3 className="mt-1 break-words font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{item.title}</h3>
-            <p className="mt-2 text-sm text-body">{item.status==="UNKNOWN"?
+            <p className="mt-2 text-sm text-body leading-[22px]">{item.status==="UNKNOWN"?
               "Score unknown — no published learner grade":
               "Published score: "+item.earned+" / "+item.possible+" ("+item.percent+"%)"}</p>
           </li>)}

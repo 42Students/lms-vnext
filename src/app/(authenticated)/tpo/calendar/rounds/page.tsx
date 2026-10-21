@@ -43,7 +43,7 @@ export default async function TpoRoundCalendarPage({searchParams}:{
      {result.page>1?<Link href={link(result.page-1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 py-2 text-[14px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Previous 200</Link>:null}
      {result.limited?<Link href={link(result.page+1)} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 py-2 text-[14px] font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:bg-[rgba(38,186,199,0.07)]">Next 200</Link>:null}
     </nav>:null}
-    <p className="text-sm text-body">Venue checks use persisted on-campus bookings.
+    <p className="text-sm text-body leading-[22px]">Venue checks use persisted on-campus bookings.
       Unknown duration is a blocker, not an assumed clear venue.
       A pending round is created under its drive before being scheduled here.</p>
   </div>;
