@@ -433,3 +433,28 @@ src/components/ui/data-table.tsx | 0 instances ({"status":0,"badge":0,"needs":0,
 src/components/ui/table.tsx | 0 instances ({"status":0,"badge":0,"needs":0,"filter":0}, 0 custom, 0 CSS) | none | fixes: none
 src/components/verification/VerificationReviewDrawer.tsx | 0 instances ({"status":0,"badge":0,"needs":0,"filter":0}, 0 custom, 0 CSS) | none | fixes: none
 src/styles/micro-details.css | none (no badges, chips, status pills, tags, or status palette declarations in this stylesheet) | fixes: none
+src/app/(authenticated)/tpo/students/preparation-plan/page.tsx | none (no table/data-grid instance) | fixes: none
+src/app/(authenticated)/tpo/verification/error.tsx | none (no table/data-grid instance) | fixes: none
+src/app/(authenticated)/tracker/mine/page.tsx | none (no table/data-grid instance) | fixes: none
+src/app/page.tsx | none (no table/data-grid instance) | fixes: none
+src/components/admin/super-admin-placement-detail-view.tsx | none (no table/data-grid instance) | fixes: none
+src/components/courses/college-assessment-aggregate.tsx | 1 instances (table components 1, header nodes 0, body nodes 0, grid roles 0, CSS selectors 0) | legacy header white #ffffff vs --lms-table-header #ffffff; heading 12px/600 vs shared 12px/600; cell vertical padding 12px vs shared 12px; separator 1px #e5e9f0 vs shared border | fixes: none
+src/components/courses/super-admin-content-directory-page.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/public-join-preview-retry.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/project-admin-reassign-mentor-page.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/breadcrumbs.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/tpo-round-check-in.tsx | none (no table/data-grid instance) | fixes: none
+src/components/placements/tpo-week-hour-calendar.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/learner-project-mobile-filters.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/mentor-project-closeout-control.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/project-delivery-file-uploader.tsx | none (no table/data-grid instance) | fixes: none
+src/components/projects/project-template-view.tsx | none (no table/data-grid instance) | fixes: none
+src/components/shell/learner-notification-bell.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tpo/recruiter-board-theme.module.css | none (no table/data-grid instance) | fixes: none
+src/components/tpo/tpo-campaign-compose.tsx | none (no table/data-grid instance) | fixes: none
+src/components/tpo/tpo-students-bulk-debar.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/data-table.tsx | 8 native/shared table or grid instances | legacy header #ffffff vs --lms-table-header #ffffff; th 12px/600 vs shared text-xs/font-semibold; cells 12px/16px vs shared CSS; border 1px #e5e9f0 vs shared border; 375 width uses ScrollCue | fixes: none
+src/components/ui/file-dropzone.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/list-row.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/segmented-control.tsx | none (no table/data-grid instance) | fixes: none
+src/components/ui/third-party-link.tsx | none (no table/data-grid instance) | fixes: none

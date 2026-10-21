@@ -11,31 +11,31 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/error.tsx`
-- [ ] `src/app/(authenticated)/tracker/mine/page.tsx`
-- [ ] `src/app/page.tsx`
-- [ ] `src/components/admin/super-admin-placement-detail-view.tsx`
-- [ ] `src/components/courses/college-assessment-aggregate.tsx`
-- [ ] `src/components/courses/super-admin-content-directory-page.tsx`
-- [ ] `src/components/placements/public-join-preview-retry.tsx`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/ui/breadcrumbs.tsx`
-- [ ] `src/components/placements/tpo-round-check-in.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/projects/learner-project-mobile-filters.tsx`
-- [ ] `src/components/projects/mentor-project-closeout-control.tsx`
-- [ ] `src/components/projects/project-delivery-file-uploader.tsx`
-- [ ] `src/components/projects/project-template-view.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/tpo/recruiter-board-theme.module.css`
-- [ ] `src/components/tpo/tpo-campaign-compose.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
-- [ ] `src/components/ui/data-table.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
-- [ ] `src/components/ui/list-row.tsx`
-- [ ] `src/components/ui/segmented-control.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/error.tsx`
+- [x] `src/app/(authenticated)/tracker/mine/page.tsx`
+- [x] `src/app/page.tsx`
+- [x] `src/components/admin/super-admin-placement-detail-view.tsx`
+- [x] `src/components/courses/college-assessment-aggregate.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/placements/public-join-preview-retry.tsx`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/ui/breadcrumbs.tsx`
+- [x] `src/components/placements/tpo-round-check-in.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/projects/learner-project-mobile-filters.tsx`
+- [x] `src/components/projects/mentor-project-closeout-control.tsx`
+- [x] `src/components/projects/project-delivery-file-uploader.tsx`
+- [x] `src/components/projects/project-template-view.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/tpo/recruiter-board-theme.module.css`
+- [x] `src/components/tpo/tpo-campaign-compose.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-debar.tsx`
+- [x] `src/components/ui/data-table.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/ui/list-row.tsx`
+- [x] `src/components/ui/segmented-control.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
 - [ ] `src/components/profile/learner-profile-workspace.tsx`
 - [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx`
 - [ ] `src/components/projects/project-admin-collection-controls.tsx`
