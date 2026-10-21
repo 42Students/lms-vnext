@@ -66,6 +66,18 @@ function editDistanceAtMostTwo(first:string,second:string):number {
  return Math.min(3,previous[b.length]??3);
 }
 
+/** A missing synonym relation during partial DB10 rollout is recoverable;
+ * ordinary database errors must still propagate to the caller. */
+function synonymTableNotInstalled(error: unknown) {
+  let current: unknown = error;
+  for (let depth=0;depth<5;depth++) {
+    if (!current || typeof current !== "object") break;
+    if ("code" in current && current.code === "42P01") return true;
+    current = "cause" in current ? current.cause : null;
+  }
+  return false;
+}
+
 const columns = {
   id: db10Skills.id,
   legacySkillId: db10Skills.legacySkillId,
@@ -172,7 +184,25 @@ async function readSkillCatalogUncached(input: SkillCatalogQuery) {
     + ${db10Skills.searchPriority}
   )`;
 
-  const items = await db.select(columns).from(db10Skills)
+  async function selectDirectSkills() {
+    const directScore = sql<number>`(case
+      when ${normalized}=${searchTerm} then 100
+      when ${display}=${searchTerm} then 95
+      when ${namePrefix} then 80
+      when ${displayPrefix} then 75
+      when ${nameWordPrefix} then 60
+      when ${nameContains} then 40
+      when ${displayContains} then 35 else 0 end)
+      + least(floor(${db10Skills.usageCount}/10.0),50) + ${db10Skills.searchPriority}`;
+    return db.select(columns).from(db10Skills).where(and(
+      base,
+      sql<boolean>`(${namePrefix} or ${displayPrefix} or ${nameContains} or ${displayContains})`,
+    )).orderBy(desc(directScore),asc(sql`length(${db10Skills.name})`),
+      asc(db10Skills.displayName),asc(db10Skills.id)).limit(input.limit);
+  }
+  let items: Awaited<ReturnType<typeof selectDirectSkills>>;
+  try {
+    items = await db.select(columns).from(db10Skills)
     .where(and(
       base,
       sql<boolean>`(
@@ -188,6 +218,12 @@ async function readSkillCatalogUncached(input: SkillCatalogQuery) {
       asc(db10Skills.id),
     )
     .limit(input.limit);
+
+  } catch (error) {
+    if (!synonymTableNotInstalled(error)) throw error;
+    // Keep the primary name/display lookup available before alias backfill.
+    items = await selectDirectSkills();
+  }
   if (q.length < 3 || items.length >= Math.min(5,input.limit)) return { items };
   // Tolerate a misspelled FIRST character and single missing letters too:
   // requiring the same first letter made "pyhton" recoverable but not
@@ -283,7 +319,7 @@ export async function listSkillSynonymsForParent(context: RequestContext, skillI
 export async function searchSkillsByExactSynonym(context: RequestContext, raw: unknown) {
   requireCatalogReader(context);
   const synonym = z.string().trim().min(1).max(100).parse(raw).toLocaleLowerCase("en-US");
-  return getDb().select(columns).from(db10Skills)
+  return getDb().selectDistinct(columns).from(db10Skills)
     .innerJoin(db10SkillSynonyms,eq(db10SkillSynonyms.skillId,db10Skills.id))
     .where(and(eq(db10Skills.isActive,true),
       sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`))
@@ -298,4 +334,37 @@ export async function skillSynonymExists(context: RequestContext, raw: unknown) 
     .from(db10SkillSynonyms)
     .where(sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`).limit(1);
   return Boolean(record);
+}
+
+/** Explicit v1/v2 usage events stay independent. The current user must have
+ * catalog access; HTTP callers separately enforce same-origin mutations.
+ * Synchronous awaited SQL writes avoid silently dropping events on worker exit.
+ * No user identifier is stored in either legacy counter. */
+export async function recordSkillSelection(
+  context: RequestContext,
+  raw: {name:string;source:"v1"|"v2";skillId?:string},
+) {
+  requireCatalogReader(context);
+  const data=z.object({
+    name:z.string().trim().min(1).max(200),
+    source:z.enum(["v1","v2"]),
+    skillId:z.string().uuid().optional(),
+  }).strict().parse(raw);
+  const name=data.name.toLocaleLowerCase("en-US");
+  if(data.source==="v1"){
+    if(!data.skillId)throw new Error("CANONICAL_SKILL_REQUIRED");
+    const updated=await getDb().update(db10Skills).set({
+      usageCount:sql`${db10Skills.usageCount}+1`,
+    }).where(and(eq(db10Skills.id,data.skillId),eq(db10Skills.isActive,true)))
+      .returning({id:db10Skills.id});
+    if(!updated.length)throw new Error("SKILL_NOT_FOUND");
+  }else{
+    await getDb().insert(db10SkillUsage).values({
+      skillName:name,usageCount:1,
+    }).onConflictDoUpdate({
+      target:db10SkillUsage.skillName,
+      set:{usageCount:sql`${db10SkillUsage.usageCount}+1`,lastUsed:sql`now()`},
+    });
+  }
+  invalidateSkillCatalogSearchCache();
 }
