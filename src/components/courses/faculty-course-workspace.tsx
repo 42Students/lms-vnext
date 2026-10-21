@@ -536,16 +536,16 @@ export function FacultyCourseWorkspace({
             }))}
           />
           {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-            <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline">
+            <Link href={facultyCourseTabHref(course.deliveryId,"blueprint")} className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">
               Back to Blueprint
             </Link>
             {workspace.lessons.map((lesson,index)=>lesson.id===selectedLessonId?(
               <div key={lesson.id} className="flex flex-wrap items-center gap-3 text-sm">
-                {index>0?<Link className="text-primary-text underline" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1].id)}>
+                {index>0?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index-1].id)}>
                   Previous lesson
                 </Link>:null}
                 <span className="text-muted-foreground">Lesson {index+1} of {workspace.lessons.length}</span>
-                {index+1<workspace.lessons.length?<Link className="text-primary-text underline" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1].id)}>
+                {index+1<workspace.lessons.length?<Link className="text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"?lesson="+encodeURIComponent(workspace.lessons[index+1].id)}>
                   Next lesson
                 </Link>:null}
               </div>
