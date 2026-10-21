@@ -243,18 +243,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/components/projects/mentor-task-allocation.tsx`
 - [x] `src/components/projects/mentor-task-create.tsx`
 - [x] `src/components/projects/mentor-task-details-edit.tsx`
-- [ ] `src/components/projects/project-activity-filtered-list.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/projects/project-admin-collection-controls.tsx`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/projects/project-create-control.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-meeting-controls.tsx`
-- [ ] `src/components/projects/project-participant-list-controls.tsx`
-- [ ] `src/components/projects/project-resource-controls.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/projects/project-team-controls.tsx`
+- [x] `src/components/projects/project-activity-filtered-list.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/projects/project-admin-collection-controls.tsx`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/projects/project-create-control.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/projects/project-meeting-controls.tsx`
+- [x] `src/components/projects/project-participant-list-controls.tsx`
+- [x] `src/components/projects/project-resource-controls.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-team-controls.tsx`
 - [ ] `src/components/projects/project-template-controls.tsx`
 - [ ] `src/components/projects/super-admin-template-create-form.tsx`
 - [ ] `src/components/projects/super-admin-template-overview-editor.tsx`

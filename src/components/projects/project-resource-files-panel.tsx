@@ -186,7 +186,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
   return <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
     <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Attached</h3>
     {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
-      <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
+      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <Input ref={fileInputRef} id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
         onChange={event=>{setSelected(event.target.files?.[0]??null);setFeedback(null);}}
@@ -194,18 +194,18 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("project-resource")}</p>
       <Disclosure title="File details (optional)" defaultOpen={Boolean(uploadTitle||uploadDescription||linkedResourceId)} contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3">
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-        <label className="text-sm font-medium text-body">Title
-          <Input className="mt-1 block w-full"
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+          <Input className="mt-[6px] block w-full"
             maxLength={200} value={uploadTitle} onChange={event=>setUploadTitle(event.target.value)}
             disabled={busy} placeholder="Resource title"/>
         </label>
-        <label className="text-sm font-medium text-body">Description
-          <Input className="mt-1 block w-full"
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
+          <Input className="mt-[6px] block w-full"
             maxLength={4000} value={uploadDescription} onChange={event=>setUploadDescription(event.target.value)}
             disabled={busy} placeholder="Short note about this resource"/>
         </label>
       </div>
-      {resources.length>0?<label className="block text-sm font-medium text-body">Related resource (optional)
+      {resources.length>0?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Related resource (optional)
         <Select value={linkedResourceId} disabled={busy} onChange={event=>setLinkedResourceId(event.target.value)}
           className="mt-1 block w-full">
           <option value="">New standalone file</option>
@@ -264,12 +264,12 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           </Disclosure>:null}
           {editing===file.id&&canManage&&<form onSubmit={event=>void saveEdit(event,file)}
             className="mt-3 grid min-w-0 gap-3 border-t border-[var(--lms-canvas-border)] pt-3 sm:grid-cols-2">
-            <label className="text-sm text-body">Title
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
               <Input required maxLength={200} value={editTitle} disabled={busy}
                 onChange={event=>setEditTitle(event.target.value)}
                 className="mt-1 block w-full"/>
             </label>
-            <label className="text-sm text-body">Description
+            <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
               <Input maxLength={4000} value={editDescription} disabled={busy}
                 onChange={event=>setEditDescription(event.target.value)}
                 className="mt-1 block w-full"/>

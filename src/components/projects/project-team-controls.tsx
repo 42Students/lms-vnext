@@ -250,7 +250,7 @@ export function AddProjectMemberControl({
               )}
             </Select>
           </label>
-          <label className="min-w-0">
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Responsibility label
             </span>

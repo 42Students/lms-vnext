@@ -228,7 +228,7 @@ export function CreateProjectControl({
 
   const form = (
         <form onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4 md:grid-cols-2">
-          <label className="min-w-0">
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Assigned template
             </span>
@@ -249,7 +249,7 @@ export function CreateProjectControl({
               ))}
             </Select>
           </label>
-          <label className="min-w-0">
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Project title
             </span>
@@ -261,7 +261,7 @@ export function CreateProjectControl({
               placeholder="Campus placement portal"
             />
           </label>
-          <label className="min-w-0">
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Slug
             </span>
@@ -279,7 +279,7 @@ export function CreateProjectControl({
               Lowercase letters, numbers and hyphens only.
             </span>
           </label>
-          <label className="min-w-0 md:col-span-2">
+          <label className="min-w-0 md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Summary
             </span>
@@ -292,7 +292,7 @@ export function CreateProjectControl({
               placeholder="Optional context specific to this Project instance."
             />
           </label>
-          <label className="min-w-0">
+          <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Primary mentor
             </span>
@@ -321,7 +321,7 @@ export function CreateProjectControl({
               If selected, the Mentor assignment is validated and committed atomically with workspace creation.
             </span>
           </label>
-          <label className="grid min-w-0 gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Class
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Class
             <Select value={sectionId} onChange={e=>{setSectionId(e.target.value);setRoster([]);setLearnerMembershipIds([]);setLoadedRosterSectionId(null);setRosterError(false);}}
               className="w-full">
               <option value="">No class</option>
