@@ -634,10 +634,18 @@ function appendNotificationCategoryFilters(
   }
 }
 
-function sanitizeNotificationRow<T extends { actionHref: string | null }>(row: T) {
+function sanitizeNotificationRow<T extends {
+  actionHref: string | null;
+  legacyAssessmentUrl?: string | null;
+}>(row: T) {
   return {
     ...row,
     actionHref: safeNotificationActionHref(row.actionHref),
+    // Imported links are untrusted too; external assessment URLs must be
+    // validated on read rather than only when first published.
+    ...("legacyAssessmentUrl" in row
+      ? { legacyAssessmentUrl: safeExternalAssessmentUrl(row.legacyAssessmentUrl) }
+      : {}),
   };
 }
 
@@ -820,9 +828,17 @@ export async function listScopedAdminNotificationPage(
     pageSize: z.number().int().transform((size) => Math.min(200, Math.max(1, size))).default(50),
   }).strict().parse(rawOptions);
 
-  const collegeId = options.collegeId ?? context.adminScope?.collegeId ?? null;
-  let organizationId = options.organizationId ??
-    context.adminScope?.organizationId ?? null;
+  // A selected administrative scope is a hard upper bound. A request can
+  // narrow an organization to a college, but it must never switch tenants.
+  const pinnedCollegeId = context.adminScope?.collegeId ?? null;
+  const pinnedOrganizationId = context.adminScope?.organizationId ?? null;
+  if ((pinnedCollegeId && options.collegeId && options.collegeId !== pinnedCollegeId) ||
+      (pinnedOrganizationId && options.organizationId &&
+       options.organizationId !== pinnedOrganizationId)) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  const collegeId = pinnedCollegeId ?? options.collegeId ?? null;
+  let organizationId = pinnedOrganizationId ?? options.organizationId ?? null;
   if (collegeId) {
     const [college] = await getDb().select({
       id: colleges.id,
