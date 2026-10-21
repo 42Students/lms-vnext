@@ -1373,6 +1373,13 @@
       "when": 1792353071266,
       "tag": "0195_lane15_db10_skills_catalog",
       "breakpoints": true
+    },
+    {
+      "idx": 196,
+      "version": "7",
+      "when": 1792353131266,
+      "tag": "0196_lane15_project_change_history",
+      "breakpoints": true
     }
   ]
 }

@@ -108,11 +108,10 @@ export { learnerImportBatches, learnerImportBatchMembers } from "./db02-learner-
 // Audit storage registered; sync worker remains activation-gated.
 export { db10AuditFindings, db10AuditFindingEvents, db10AuditFindingSyncs } from "./db10-audit-findings.draft";
 
-// DB07 project-audit-staged must NOT be exported until the project-lane
-// migration and event writer are deployed together. The existing projects
-// ledger already owns task comments and delivery event identities; never
-// register duplicate staged tables. DB10 bug_report_activities uses immutable
-// UUID identities and RESTRICT retention, with no legacy integer migration.
+// DB07 meeting/resource history promoted in 0196. Database triggers own its
+// immutable change capture; task comments and delivery events remain in the
+// existing canonical project ledger, not duplicate staged tables.
+export { projectMeetingAuditHistoryStaged, projectResourceAuditHistoryStaged } from "./project-audit-staged";
 
 // Registered DB10 taxonomy; runtime gate stays closed until PostgreSQL replay/seed audit.
 export { db10Skills, db10SkillSynonyms, db10SkillUsage } from "./db10-skills-catalog.draft";

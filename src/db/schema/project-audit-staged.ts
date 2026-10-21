@@ -1,5 +1,5 @@
 /**
- * W03 DB07 SOURCE-ONLY schema candidates. Do not import into db/schema/index.ts,
+ * W03 DB07 schema candidates. Meeting/resource audits promoted by 0196;
  * run against live endpoints or assume tables exist until W01 registers/replays
  * the corresponding Drizzle migration and verifies composite tenant/project FKs.
  *

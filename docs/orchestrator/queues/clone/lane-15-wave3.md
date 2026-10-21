@@ -12,10 +12,10 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 Packets:
 
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_inbound-mail.ts.md` (edit src/db/schema/inbound-mail.ts; 3 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_index.ts.md` (edit src/db/schema/index.ts; 2 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_index.ts.md` (edit src/db/schema/index.ts; 2 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_placements.ts.md` (edit src/db/schema/placements.ts; 17 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_db10-audit-findings.draft.ts.md` (edit src/db/schema/db10-audit-findings.draft.ts; 4 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_project-audit-staged.ts.md` (edit src/db/schema/project-audit-staged.ts; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_project-audit-staged.ts.md` (edit src/db/schema/project-audit-staged.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_platform-setting-overrides.ts.md` (edit src/db/schema/platform-setting-overrides.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_components_placements_learner-placement-job-detail.tsx.md` (edit src/components/placements/learner-placement-job-detail.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-15/W3_src_db_schema_db10-bug-tracker.ts.md` (edit src/db/schema/db10-bug-tracker.ts; 2 findings; best P1)
