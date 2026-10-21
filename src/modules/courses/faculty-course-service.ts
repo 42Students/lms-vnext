@@ -5,7 +5,10 @@ import {
   desc,
   eq,
   isNull,
+  lte,
+  sql,
 } from "drizzle-orm";
+import {z} from "zod";
 import { getDb } from "@/db/client";
 import {
   academicPeriods,
@@ -40,6 +43,17 @@ import {
 
 const cohortDepartments=alias(departments,"faculty_cohort_departments");
 
+/** UUID memberships replace legacy faculty/class integer grants. Semester/year
+ * come from the offering\u2019s academic period, cohort is the former batch, endedAt
+ * is the retired/soft-deleted grant marker. There is no faculty ADMIN subtype:
+ * the membership role switcher selects COLLEGE_ADMIN separately. */
+const facultyDeliveryFilterSchema=z.strictObject({
+  sectionId:z.string().uuid().optional(),
+  cohortId:z.string().uuid().optional(),
+  academicPeriodId:z.string().uuid().optional(),
+});
+export type FacultyDeliveryFilter=z.infer<typeof facultyDeliveryFilterSchema>;
+
 function requireFacultyMembership(
   context: RequestContext,
 ) {
@@ -59,9 +73,10 @@ function requireFacultyMembership(
 
 export async function listFacultyCourseDeliveries(
   context: RequestContext,
+  filters:FacultyDeliveryFilter = {},
 ) {
-  const membership =
-    requireFacultyMembership(context);
+  const membership = requireFacultyMembership(context);
+  const selected=facultyDeliveryFilterSchema.parse(filters);
 
   return getDb()
     .select({
@@ -183,6 +198,9 @@ export async function listFacultyCourseDeliveries(
         isNull(
           courseTeachingAssignments.endedAt,
         ),
+        // A future scheduled teaching grant is not active yet. Ended grants
+        // stay excluded even if a migration encoded a future end timestamp.
+        lte(courseTeachingAssignments.startedAt,sql`now()`),
         isNull(
           courseSectionDeliveries.endedAt,
         ),
@@ -192,6 +210,9 @@ export async function listFacultyCourseDeliveries(
         ),
         eq(courses.status, "ACTIVE"),
         eq(sections.status, "ACTIVE"),
+        selected.sectionId?eq(sections.id,selected.sectionId):undefined,
+        selected.cohortId?eq(cohorts.id,selected.cohortId):undefined,
+        selected.academicPeriodId?eq(academicPeriods.id,selected.academicPeriodId):undefined,
       ),
     )
     .orderBy(
@@ -201,6 +222,28 @@ export async function listFacultyCourseDeliveries(
     );
 }
 
+/** Safe compatibility resolver: never resolve an ambiguous or unauthorized
+ * historical course/class link. Numeric legacy IDs need an explicit migration
+ * crosswalk and are intentionally not guessed from current UUID rows. */
+export async function resolveFacultyCourseDeliveryForLink(
+ context:RequestContext, rawCourse:string, rawClass?:string|null,
+):Promise<string|null>{
+ requireFacultyMembership(context);
+ const course=rawCourse.trim().toLowerCase();
+ const section=(rawClass??"").trim().toLowerCase();
+ if(!course||/^\d+$/.test(course)||(section&&/^\d+$/.test(section))||course.length>160||section.length>160||
+    !/^[a-z0-9_-]+$/.test(course)||
+    (section&&!/^[a-z0-9_-]+$/.test(section)))return null;
+ const rows=await listFacultyCourseDeliveries(context);
+ const matches=rows.filter(row=>{
+  const knownCourse=[row.deliveryId,row.courseId,row.courseCode,
+   row.courseCode.toLowerCase().replace(/[^a-z0-9]+/g,"-")];
+  if(!knownCourse.some(key=>key.toLowerCase()===course))return false;
+  if(!section)return true;
+  return [row.sectionId,row.sectionCode].some(key=>key.toLowerCase()===section);
+ });
+ return matches.length===1?matches[0]!.deliveryId:null;
+}
 export async function getFacultyCourseWorkspace(
   context: RequestContext,
   deliveryIdInput: string,
