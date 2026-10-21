@@ -291,7 +291,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>open()}>Schedule interview</Button>
    </div>
   </div>
-  {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
+  {!available.length?<Banner tone="info">No pending or scheduled interview round is available. Set up a round before scheduling interviews.</Banner>:null}
+  {!candidates.length?<Banner tone="info">No eligible candidate is available in this drive. Open Applications to review candidate screening and shortlisting before scheduling.</Banner>:null}
   <div className="grid min-w-0 gap-3 min-[768px]:hidden" aria-label="Candidate interview cards">
    {visibleAppointments.map(row=>{
     const person=applicant(row.applicationId);
