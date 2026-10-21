@@ -248,7 +248,18 @@ export const placementRecruiterCollegeGrants = pgTable(
     verificationStatus: varchar("verification_status", { length: 24 })
       .notNull()
       .default("PENDING"),
-    revokeReason: text("revoke_reason"),
+    revokeReason: varchar("revoke_reason", { length: 500 }),
+    /** Optional migration-only, never used to authorize privileges. */
+    legacyImportMetadata: jsonb("legacy_import_metadata").$type<{
+      accessId?: number;
+      recruiterId?: number;
+      collegeId?: number;
+      organizationId?: number | null;
+      originalActorType?: string;
+      originalVersion?: number;
+      indefiniteValidUntil?: boolean;
+      unknownCapabilities?: string[];
+    }>(),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -287,6 +298,10 @@ export const placementRecruiterCollegeGrants = pgTable(
     check(
       "placement_recruiter_grant_validity_ck",
       sql`${table.validUntil} is null or ${table.validUntil} > ${table.createdAt}`,
+    ),
+    check(
+      "placement_recruiter_grant_legacy_metadata_ck",
+      sql`${table.legacyImportMetadata} is null or jsonb_typeof(${table.legacyImportMetadata}) = 'object'`,
     ),
     check(
       "placement_recruiter_grant_capabilities_ck",
@@ -1813,6 +1828,64 @@ export const placementOfferStatusHistory = pgTable(
 );
 
 
+
+/**
+ * Append-only private interview evidence. Slot booking, applied round results,
+ * and learner-visible status remain in their existing authoritative tables.
+ * Never expose staff feedback through learner read projections.
+ */
+export const placementInterviewPrivateEvents = pgTable(
+  "placement_interview_private_events",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    jobId: uuid("job_id").notNull().references(
+      () => placementJobs.id, { onDelete: "restrict" },
+    ),
+    roundId: uuid("round_id").notNull().references(
+      () => placementJobRounds.id, { onDelete: "restrict" },
+    ),
+    applicationId: uuid("application_id").notNull().references(
+      () => placementApplications.id, { onDelete: "restrict" },
+    ),
+    eventType: varchar("event_type", { length: 32 }).notNull(),
+    /** Previous and new schedule are timestamptz; imported local times need IST conversion. */
+    previousScheduledAt: timestamp("previous_scheduled_at", { withTimezone: true }),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }),
+    /** Legacy interview IDs are provenance only, not runtime foreign keys. */
+    legacyInterviewId: varchar("legacy_interview_id", { length: 40 }),
+    /** Staff-only rating, recommendation and interviewer notes. */
+    privateFeedback: jsonb("private_feedback").$type<Record<string, unknown>>(),
+    actorUserId: uuid("actor_user_id").notNull().references(
+      () => users.id, { onDelete: "restrict" },
+    ),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [
+    foreignKey({
+      name: "placement_interview_events_round_job_fk",
+      columns: [table.roundId, table.jobId],
+      foreignColumns: [placementJobRounds.id, placementJobRounds.jobId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "placement_interview_events_app_job_fk",
+      columns: [table.applicationId, table.jobId],
+      foreignColumns: [placementApplications.id, placementApplications.jobId],
+    }).onDelete("restrict"),
+    index("placement_interview_private_events_subject_idx").on(
+      table.roundId, table.applicationId, table.createdAt,
+    ),
+    check(
+      "placement_interview_private_events_type_ck",
+      sql`${table.eventType} in ('SCHEDULED', 'CONFIRMED', 'RESCHEDULE_REQUESTED', 'RESCHEDULED', 'COMPLETED', 'CANCELLED', 'NO_SHOW', 'FEEDBACK_RECORDED')`,
+    ),
+    check(
+      "placement_interview_private_events_feedback_ck",
+      sql`${table.privateFeedback} is null or jsonb_typeof(${table.privateFeedback}) = 'object'`,
+    ),
+  ],
+);
 
 export const placementLearnerRequests = pgTable(
   "placement_learner_requests",
