@@ -471,7 +471,7 @@ export function LearnerCourseOverview({
               <article key={update.key} className="py-3 first:pt-0 last:pb-0">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0 flex-1">
-                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                    <Link href={update.href} className="block truncate text-sm font-semibold text-foreground hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-w-0 max-[767px]:min-h-11">
                       {update.title}
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">{update.detail}</p>

@@ -131,7 +131,7 @@ export function LearnerJobsBrowse({
         </Button>
         <div id="learner-drive-filters"
           className={(mobileOpen?"block":"hidden")+" space-y-4 md:block"}>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-3 md:grid-cols-2">
 
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Employment type
@@ -190,7 +190,7 @@ export function LearnerJobsBrowse({
             />
             Closing in 7 days
           </label>
-          <label className="inline-flex min-h-11 w-full flex-col items-stretch gap-[6px] text-[length:var(--lms-font-sm)] sm:ml-auto sm:w-auto sm:flex-row sm:items-center sm:gap-2 md:min-h-[var(--lms-control-height)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+          <label className="inline-flex min-h-11 w-full flex-col items-stretch gap-[6px] text-[length:var(--lms-font-sm)] md:ml-auto md:w-auto md:flex-row md:items-center md:gap-2 md:min-h-[var(--lms-control-height)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Sort by
             <Select value={filters.sort}
               aria-label="Sort placement drives"
