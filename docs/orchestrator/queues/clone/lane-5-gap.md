@@ -43,10 +43,10 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/calendar.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/classes.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/mentor/calendar.js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/calendar.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/attendance.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/calendar.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/classes.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/calendar.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/attendance.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/calendar.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/classes.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Attendance.js`
 - [ ] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Classes.js`
 - [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/teacher/calendar.js`
