@@ -572,10 +572,14 @@ export async function listProjectAdminRiskQueue(
     new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000,
     );
+  const stalledSignal=sql<boolean>`(
+    ${projectInstances.status}<>'COMPLETED' and
+    ${lastActivityAt} <= ${staleCutoff}
+  )`;
   const reasonCount=sql<number>`(
-    case when ${lastActivityAt} <= ${staleCutoff} then 1 else 0 end
-    + case when ${pendingReview} then 1 else 0 end
-    + case when ${blockedTask} then 1 else 0 end
+    (case when ${stalledSignal} then 1 else 0 end)
+    + (case when ${pendingReview} then 1 else 0 end)
+    + (case when ${blockedTask} then 1 else 0 end)
   )`;
   const completedWithOpenRisk=sql<boolean>`(
     ${projectInstances.status}<>'COMPLETED' or
@@ -591,17 +595,17 @@ export async function listProjectAdminRiskQueue(
       : undefined,
     search,
     or(
-      sql`${lastActivityAt} <= ${staleCutoff}`,
+      stalledSignal,
       pendingReview,
       blockedTask,
     ),
-    query.riskBucket === "STALLED" ? sql`${lastActivityAt} <= ${staleCutoff}` :
+    query.riskBucket === "STALLED" ? stalledSignal :
       query.riskBucket === "BLOCKER" ? blockedTask :
       query.riskBucket === "REVIEW" ? pendingReview : undefined,
   );
 
   const [bucketTotals] = await db.select({
-    stalled: sql<number>`count(*) filter (where ${lastActivityAt} <= ${staleCutoff})`.mapWith(Number),
+    stalled: sql<number>`count(*) filter (where ${stalledSignal})`.mapWith(Number),
     blocker: sql<number>`count(*) filter (where ${blockedTask})`.mapWith(Number),
     review: sql<number>`count(*) filter (where ${pendingReview})`.mapWith(Number),
   }).from(projectInstances).where(and(
@@ -734,7 +738,8 @@ export async function listProjectAdminRiskQueue(
         ...project,
         inactiveDays: inactivityDays,
         riskReasons: reasons,
-        riskSeverity: reasons.length >= 2 ? "RISK" : reasons.length === 1 ? "WATCH" : "NONE",
+        riskSeverity: reasons.length>=3?"HIGH_RISK":reasons.length===2?"AT_RISK":
+          reasons.length===1?"WATCH":"NONE",
         blockerReason: project.blockerSummary,
         mentorName:
           mentor?.displayName ?? null,

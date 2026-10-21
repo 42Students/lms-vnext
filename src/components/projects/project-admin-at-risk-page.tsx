@@ -22,6 +22,7 @@ import {ProjectAtRiskPageExport} from "./project-at-risk-page-export";
 import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 import {FilterBar} from "@/components/ui/filter-bar";
 import {DataTable} from "@/components/ui/data-table";
+import {ProjectsServiceError} from "@/modules/projects/errors";
 function riskHref(basePath:string,query:ProjectAdminCollectionQuery,bucket:string|null){
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
@@ -66,15 +67,19 @@ export async function ProjectAdminAtRiskPage({
   const query: ProjectAdminCollectionQuery = parsed.data;
   const riskResult = await listProjectAdminRiskQueue(context, collegeId, query)
     .then(value => ({ ok: true as const, value }))
-    .catch(() => ({ ok: false as const }));
+    .catch(error => ({ ok: false as const, error }));
   if (!riskResult.ok) {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
         actions={<PageBackLink href={basePath} label="Project workspaces" />} />
       <ProjectAdminNav basePath={basePath} active="at-risk" />
-      <ErrorState title="Report could not be loaded"
-        description="Failed to load project workspaces. Your search and filters have not changed."
+      <ErrorState title={riskResult.error instanceof ProjectsServiceError&&
+       riskResult.error.code==="PROJECT_ACCESS_DENIED"?"Access denied":"Report could not be loaded"}
+        description={riskResult.error instanceof ProjectsServiceError&&
+         riskResult.error.code==="PROJECT_ACCESS_DENIED"?
+           "You do not have permission to view this college's project risk report.":
+           "Failed to load project workspaces. Your search and filters have not changed."}
         action={<Link href={basePath+"/at-risk"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry risk queue</Link>} />
     </div>;
   }
@@ -129,8 +134,11 @@ export async function ProjectAdminAtRiskPage({
            cell:project=><StatusBadge tone={project.status==="ACTIVE"?"success":"neutral"}>
              {project.status}</StatusBadge>},
           {key:"severity",header:"Severity",mobilePriority:"secondary",
-           cell:project=><StatusBadge tone={project.riskSeverity==="RISK"?"warning":"neutral"}>
-             {project.riskSeverity==="RISK"?"Risk":"Watch"}</StatusBadge>},
+           cell:project=><StatusBadge
+             tone={project.riskSeverity==="HIGH_RISK"?"danger":
+               project.riskSeverity==="AT_RISK"?"warning":"neutral"}>
+             {project.riskSeverity==="HIGH_RISK"?"High risk":
+               project.riskSeverity==="AT_RISK"?"At risk":"Watch"}</StatusBadge>},
           {key:"reasons",header:"Risk reasons",mobilePriority:"secondary",
            cell:project=><div className="flex flex-wrap gap-1">
              {project.riskReasons.map(reason=><StatusBadge key={reason} tone="warning">{reason}</StatusBadge>)}
@@ -157,7 +165,9 @@ export async function ProjectAdminAtRiskPage({
            </div>},
         ]}
         empty={<EmptyState title="No at-risk projects"
-          description="No at-risk project workspaces match these filters."
+          description={query.q||query.status||query.riskBucket?
+            "No at-risk workspaces match this filter.":
+            "No at-risk projects detected for this college."}
           action={<Link href={riskHref(basePath,query,null)}
             className="text-link underline">Clear risk filter</Link>}/>}
       />
