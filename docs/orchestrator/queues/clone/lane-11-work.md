@@ -112,7 +112,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_not-found.tsx.md` (edit src/app/(authenticated)/admin/not-found.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_admin_hr_page.tsx.md` (edit src/app/(authenticated)/admin/hr/page.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_api_admin_settings_overrides_route.ts.md` (edit src/app/api/admin/settings/overrides/route.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_courses_page.tsx.md` (edit src/app/(authenticated)/learn/courses/page.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_courses_page.tsx.md` (edit src/app/(authenticated)/learn/courses/page.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_not-found.tsx.md` (edit src/app/(authenticated)/learn/not-found.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_my-placements_assessments_page.tsx.md` (edit src/app/(authenticated)/learn/my-placements/assessments/page.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_teacher_courses_page.tsx.md` (edit src/app/(authenticated)/teacher/courses/page.tsx; 2 findings; best P1)
