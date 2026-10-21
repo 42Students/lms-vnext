@@ -16,10 +16,27 @@ const round = z.strictObject({
   name: z.string().trim().max(120)
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid round name"}),
 });
+/** Legacy optional rounds are omitted, not persisted with a blank name. */
+const payPackage = z.strictObject({
+ name: z.string().trim().min(1).max(120),
+ ctcLpa: z.string().regex(/^(?:|\d{1,4}(?:\.\d{1,2})?)$/).default(""),
+ stipendMonthlyInr: z.string().regex(/^\d{0,9}$/).default(""),
+ internshipMonths: z.coerce.number().int().min(1).max(120).optional(),
+}).superRefine((item, ctx) => {
+ if(!item.ctcLpa && (!item.stipendMonthlyInr || Number(item.stipendMonthlyInr)<=0)){
+  ctx.addIssue({code:"custom",path:["ctcLpa"],
+   message:"Set the pay (CTC or stipend) for at least one package"});
+ }
+});
+
 export const hrDriveDraftSchema = z.strictObject({
   title: z.string().trim().min(3,"Enter a role title").max(200)
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid role title"}),
   description: z.string().trim().max(5000),
+  /** Retain original JD link for approved legacy drive imports. */
+  jdUrl: z.string().trim().max(2000).refine(value=>
+    !value || safeRecruiterExternalLink(value)!==null,
+    "Enter a public HTTPS job description link").optional(),
   location: z.string().trim().max(180)
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid location"}),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "INTERNSHIP_FULL_TIME", "CONTRACT"]),
@@ -41,7 +58,12 @@ export const hrDriveDraftSchema = z.strictObject({
   bondAmountInr: z.string().regex(/^\d{0,9}$/),
   maximumActiveBacklogs: z.string().regex(/^\d{0,2}$/),
   branches: z.array(z.string().trim().min(1).max(120)).max(30).default([]),
-  passingYear: z.string().regex(/^(?:|20\d{2})$/,"Enter a valid passing year").default(""),
+  passingYear: z.string().regex(/^(?:|(?:20\d{2}|2100))$/,"Enter a valid passing year").default(""),
+  /** Multi-select years are separate from the older single-year form control. */
+  passingYears: z.array(z.number().int().min(2000).max(2100)).max(101)
+   .refine(years=>new Set(years).size===years.length,
+     "Choose each passing year once").optional(),
+  payPackages: z.array(payPackage).max(25).optional(),
   rounds: z.array(round).max(100,"At most 100 hiring rounds")
    .transform(rows=>rows.filter(item=>item.name.trim().length>0)),
 }).superRefine((data, ctx) => {
@@ -52,6 +74,16 @@ export const hrDriveDraftSchema = z.strictObject({
   if(data.driveMode==="ON_CAMPUS"&&data.externalApplicationUrl){
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
       message:"An application website is only valid for off-campus drives"});
+  }
+  if(data.payPackages && !data.payPackages.some(item=>
+     Number(item.ctcLpa)>0 || Number(item.stipendMonthlyInr)>0)){
+   ctx.addIssue({code:"custom",path:["payPackages"],
+    message:"Set the pay (CTC or stipend) for at least one package"});
+  }
+  if(data.passingYears?.length && data.passingYear &&
+      !data.passingYears.includes(Number(data.passingYear))){
+   ctx.addIssue({code:"custom",path:["passingYear"],
+    message:"The selected passing year must be among the passing years"});
   }
   const uniqueRoundNames = new Set<string>();
   for (const [index, item] of data.rounds.entries()) {
@@ -66,11 +98,12 @@ export const hrDriveDraftSchema = z.strictObject({
     }
     uniqueRoundNames.add(label);
   }
-  if ((data.employmentType==="INTERNSHIP"||data.employmentType==="INTERNSHIP_FULL_TIME") && (!data.stipendMonthlyInr||Number(data.stipendMonthlyInr)<=0)) {
+  if (data.employmentType==="INTERNSHIP" && (!data.stipendMonthlyInr||Number(data.stipendMonthlyInr)<=0) &&
+      !data.payPackages?.some(item=>Number(item.stipendMonthlyInr)>0)) {
     ctx.addIssue({code:"custom",path:["stipendMonthlyInr"],message:"Students need to know the stipend"});
   }
   if (data.employmentType!=="INTERNSHIP" && !data.ctcLpa &&
-      !data.minimumAnnualCtcInr && !data.maximumAnnualCtcInr) {
+      !data.payPackages?.some(item=>Number(item.ctcLpa)>0)) {
     ctx.addIssue({code:"custom",path:["ctcLpa"],message:"CTC is required"});
   }
   if (data.ctcLpa && Number(data.fixedLpa||0)+Number(data.variableLpa||0)>Number(data.ctcLpa)){
@@ -88,10 +121,6 @@ export const hrDriveDraftSchema = z.strictObject({
   const variable = data.variableAnnualCtcInr ? Number(data.variableAnnualCtcInr) : null;
   if (fixed !== null && variable !== null) {
     const combined = fixed + variable;
-    if (min !== null && combined < min) {
-      ctx.addIssue({ code: "custom", path: ["fixedAnnualCtcInr"],
-        message: "Fixed plus variable CTC must reach the stated minimum annual CTC" });
-    }
     if (max !== null && combined > max) {
       ctx.addIssue({ code: "custom", path: ["variableAnnualCtcInr"],
         message: "Fixed plus variable CTC must not exceed the stated maximum annual CTC" });
@@ -105,7 +134,7 @@ export type HrDriveDraft = z.input<typeof hrDriveDraftSchema>;
 
 export function emptyHrDriveDraft(): HrDriveDraft {
   return {
-    title: "", description: "", location: "",
+    title: "", description: "", jdUrl: "", location: "",
     employmentType: "FULL_TIME", workMode: "ONSITE", ctcLpa:"",fixedLpa:"",variableLpa:"",stipendMonthlyInr:"", driveMode:"ON_CAMPUS",externalApplicationUrl:"",
     minimumAnnualCtcInr: "", maximumAnnualCtcInr: "", minimumCgpa: "",
     fixedAnnualCtcInr: "", variableAnnualCtcInr: "", bondMonths: "",
@@ -119,6 +148,7 @@ export function hrDraftFromAuthorizedJob(job: {
   employmentType: string; workMode: string;
   recruiterDriveMode?: string; externalApplicationUrl?:string|null;
   eligibleBranches?:readonly string[];eligiblePassingYear?:number|null;
+  eligiblePassingYears?:readonly number[];jdUrl?:string|null;
   ctcLpa?:string|null;fixedCtcLpa?:string|null;variableCtcLpa?:string|null;
   stipendPerMonthInr?:number|null;
   minimumAnnualCtcInr: number | null; maximumAnnualCtcInr: number | null;
@@ -137,6 +167,7 @@ export function hrDraftFromAuthorizedJob(job: {
     ...base,
     title: job.title,
     description: job.description,
+    jdUrl: safeRecruiterExternalLink(job.jdUrl) ?? "",
     location: job.locations[0] ?? "",
     employmentType: type.success ? type.data : base.employmentType,
     workMode: mode.success ? mode.data : base.workMode,
@@ -144,6 +175,7 @@ export function hrDraftFromAuthorizedJob(job: {
     externalApplicationUrl:job.recruiterDriveMode==="OFF_CAMPUS"?safeExternalLink:"",
     branches:(job.eligibleBranches??[]).map(value=>value.trim()).filter(Boolean).slice(0,30),
     passingYear:job.eligiblePassingYear?.toString()??"",
+    passingYears:job.eligiblePassingYears?.filter(year=>Number.isInteger(year) && year>=2000 && year<=2100),
     ctcLpa:job.ctcLpa??"",fixedLpa:job.fixedCtcLpa??"",
     variableLpa:job.variableCtcLpa??"",
     stipendMonthlyInr:job.stipendPerMonthInr?.toString()??"",

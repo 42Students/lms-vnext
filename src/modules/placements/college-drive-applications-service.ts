@@ -1,10 +1,11 @@
 import "server-only";
 
-import { and, asc, count, eq, exists, ilike, isNull, or, sql } from "drizzle-orm";
+import { and, asc, desc, count, eq, exists, ilike, isNull, or, sql } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, learnerProfiles, placementApplications, placementApplicationScreenings,
-  placementJobRoleOptions, placementJobs, users,
+  placementJobRoleOptions, placementJobs, placementCompanies, placementCompanyRelationships, users,
   cohorts, departments, learnerProgramEnrollments, programs, colleges,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -26,20 +27,35 @@ export async function listCollegeDriveApplications(
   context: RequestContext,
   jobIdInput: unknown,
   raw: unknown,
-  options: { exportAll?: boolean; bulkAll?: boolean } = {},
+  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number } = {},
 ) {
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
   const query = driveApplicationsQuerySchema.parse(raw);
   const collegeId = await requireCollegePlacementAdmin(context);
   const db = getDb();
-  const [drive] = await db.select({ id: placementJobs.id, title: placementJobs.title })
-    .from(placementJobs).where(and(
+  const pageSize = options.pageSize === undefined ? DRIVE_APPLICATIONS_PAGE_SIZE
+    : Math.max(1, Math.min(100, Math.floor(options.pageSize)));
+  const [drive] = await db.select({ id: placementJobs.id, title: placementJobs.title,
+    companyName: placementCompanies.name, legacyJobId: placementJobs.legacyJobId,
+  }).from(placementJobs)
+    .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
+    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+    .where(and(
       eq(placementJobs.id, jobId), eq(placementJobs.collegeId, collegeId),
     )).limit(1);
   if (!drive) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
 
   const base = db.select({
     id: placementApplications.id,
+    legacyApplicationId: placementApplications.legacyApplicationId,
+    membershipId: placementApplications.membershipId,
+    submittedByUserId: placementApplications.submittedByUserId,
+    submittedByName: sql<string | null>`(select actor.display_name from users actor where actor.id = ${placementApplications.submittedByUserId})`.as("submitted_by_name"),
+    // vNext has no persisted AUTOMATED_V1 screening score. Null is evidence
+    // unavailable, not a zero-score candidate for ranking or CSV output.
+    screeningScore: sql<number | null>`null::integer`.as("screening_score"),
+    partialScore: sql<number | null>`null::integer`.as("partial_score"),
+    screeningReason: placementApplicationScreenings.internalReason,
     name: users.displayName,
     email: users.email,
     collegeName: colleges.name,
@@ -98,16 +114,17 @@ export async function listCollegeDriveApplications(
 
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
-    db.select().from(source).orderBy(asc(source.name), asc(source.id))
-      .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : DRIVE_APPLICATIONS_PAGE_SIZE)
-      .offset(options.exportAll || options.bulkAll ? 0 : (query.page - 1) * DRIVE_APPLICATIONS_PAGE_SIZE),
+    db.select().from(source).orderBy(desc(source.submittedAt), asc(source.id))
+      .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : pageSize)
+      .offset(options.exportAll || options.bulkAll ? 0 : (query.page - 1) * pageSize),
     db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   ]);
   const total = totalRows[0]?.total ?? 0;
-  return { drive, query, items, total,
+  return { drive, query, items:items.map(item=>({...item,name:item.name??""})), total,
+    pageSize,scoreSortAvailable:false as const,
     stageCounts:Object.fromEntries(stageCountRows.map(row=>[row.stage,row.total])),
     truncated: options.exportAll && total > DRIVE_APPLICATION_EXPORT_CAP,
-    totalPages: Math.max(1, Math.ceil(total / DRIVE_APPLICATIONS_PAGE_SIZE)),
+    totalPages: Math.max(1, Math.ceil(total / pageSize)),
   };
 }
 
@@ -123,8 +140,60 @@ export async function exportCollegeDriveApplicationsCsv(
   ]);
   if (data.truncated) {
     rows.push(["TRUNCATED — export capped at " + DRIVE_APPLICATION_EXPORT_CAP + " of " + data.total + " matching rows",
-      "", "", "", "", "", "", "", "", "", "", ""]);
+      "", "", "", "", "", "", "", "", "", ""]);
   }
   return { csv: "\uFEFF" + placementReportCsv(headings, rows),
     truncated: data.truncated, exported: data.items.length, total: data.total };
+}
+
+
+/** 0-based paging and the legacy ASSESSMENT default are confined to this
+ * compatibility adapter. The canonical vNext college roster stays 1-based
+ * and never interprets a stage as an offer or automated score. */
+export const legacyCollegeApplicationsQuerySchema=z.object({
+ page:z.coerce.number().int().min(0).max(999).default(0),
+ size:z.coerce.number().int().min(1).max(100).default(20),
+ applicationStatus:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT",
+  "INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"]).default("ASSESSMENT"),
+ status:z.enum(["ALL","SUBMITTED","WITHDRAWN"]).default("ALL"),
+ source:z.enum(["ALL","INTERNAL","EXTERNAL"]).default("ALL"),
+ q:z.string().trim().max(100).default(""),
+ departmentId:z.string().uuid().optional(),
+ programId:z.string().uuid().optional(),
+ cohortId:z.string().uuid().optional(),
+}).strict();
+
+export async function listLegacyCollegeDriveApplications(
+ context:RequestContext,jobId:unknown,raw:unknown,
+){
+ const query=legacyCollegeApplicationsQuerySchema.parse(raw);
+ return listCollegeDriveApplications(context,jobId,{
+  page:query.page+1,stage:query.applicationStatus,status:query.status,
+  source:query.source,q:query.q,
+  departmentId:query.departmentId,programId:query.programId,cohortId:query.cohortId,
+ },{pageSize:query.size});
+}
+
+/** Legacy CSV has application identifiers and audit actor alongside the
+ * applicant fields. A null algorithm score stays blank rather than zero. */
+export async function exportLegacyCollegeDriveApplicationsCsv(
+ context:RequestContext,jobId:unknown,raw:unknown,
+){
+ const data=await listCollegeDriveApplications(context,jobId,raw,{exportAll:true});
+ const headings=["applicationId","jobId","jobTitle","companyName","learnerId",
+  "learnerName","learnerEmail","status","screeningStatus","score",
+  "partialScore","appliedAt","source","notes","rejectionReason",
+  "submittedBy","legacyApplicationId","legacyJobId"];
+ const rows:(string|number|null)[][]=data.items.map(row=>[
+  row.id,data.drive.id,data.drive.title,data.drive.companyName,row.membershipId,
+  row.name,row.email,row.stage,row.screening??"",row.screeningScore,
+  row.partialScore,row.submittedAt.toISOString(),row.source,"",
+  row.screeningReason,row.submittedByName,row.legacyApplicationId,data.drive.legacyJobId,
+ ]);
+ return {
+  csv:"\uFEFF"+placementReportCsv(headings,rows),
+  exported:data.items.length,total:data.total,truncated:data.truncated,
+  warning:data.truncated?"Export limited to "+DRIVE_APPLICATION_EXPORT_CAP+
+   " matching applications. Narrow the filters and export the remainder.":null,
+ };
 }
