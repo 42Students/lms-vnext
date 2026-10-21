@@ -54,7 +54,7 @@ export function CollegeRecurringPreview({
   const [confirming, setConfirming] = useState(false);
   const selected = classes.find((item) => item.id === sectionId);
   const previewChanged = Boolean(result && lastPreviewKey !== previewKey());
-  const invalidRange = Boolean(from && to && from > to);
+  const invalidRange = Boolean((from && to && from > to) || (startTime && endTime && endTime <= startTime));
   function onClass(id: string) {
     setSectionId(id);
     setDeliveryId("");
@@ -174,11 +174,11 @@ export function CollegeRecurringPreview({
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
-              <Input disabled={pending} type="time" required value={startTime} onChange={(e) => setStartTime(e.target.value)}
+              <Input disabled={pending} type="time" required value={startTime} step={300} onChange={(e) => setStartTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
-              <Input disabled={pending} type="time" required value={endTime} onChange={(e) => setEndTime(e.target.value)}
+              <Input disabled={pending} type="time" required value={endTime} step={300} onChange={(e) => setEndTime(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
           </div>
@@ -195,6 +195,7 @@ export function CollegeRecurringPreview({
                 </label>
               ))}
             </div>
+            <p className="text-xs text-muted-foreground">Clear every weekday to repeat daily. Times use five-minute steps (IST).</p>
           </fieldset>
           <Disclosure title="Optional teaching details" defaultOpen={Boolean(facultyId || hallId)} className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 py-3"><div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
             <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
@@ -213,7 +214,7 @@ export function CollegeRecurringPreview({
             </label>
           </div></Disclosure>
           {invalidRange ? <Alert tone="error">To date cannot be earlier than From date.</Alert> : null}
-          <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || invalidRange || !sectionId || !from || !to || weekdays.length === 0}>
+          <Button type="submit" loading={pending} className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || invalidRange || !sectionId || !from || !to}>
             {pending ? "Checking conflicts…" : "Preview sessions"}
           </Button>
           {error ? <Alert tone="error">{error}</Alert> : null}

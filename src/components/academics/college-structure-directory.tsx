@@ -28,9 +28,13 @@ type DirectoryData =
   | Awaited<ReturnType<typeof listCollegeClasses>>
   | Awaited<ReturnType<typeof listCollegeElectives>>;
 
-export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
+export function CollegeStructureDirectory({ data, electiveOptions, classOptions, prepend }: {
   data: DirectoryData;
   prepend?: ReactNode;
+  classOptions?: {
+    cohorts: { id: string; name: string; code: string; programName: string; programId: string }[];
+    periods: { id: string; name: string; code: string }[];
+  };
   electiveOptions?: {
     programs: { id: string; name: string; durationTerms: number }[];
     periods: { id: string; name: string }[];
@@ -404,7 +408,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
                     <Link href={"/college/classes/recurring-preview?classId="+encodeURIComponent(item.id)}
                       className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text"
                       aria-label={"Schedule recurring sessions for "+item.name}>Schedule</Link>
-                    <CollegeClassRowActions row={item}/>
+                    <CollegeClassRowActions row={item} cohorts={classOptions?.cohorts} periods={classOptions?.periods}/>
                     <CollegeSectionLifecycleAction row={{
                       id:item.id,name:item.name,status:item.status,
                       updatedAt:item.updatedAt.toISOString(),
