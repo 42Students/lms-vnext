@@ -20,6 +20,6 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_app_api_announcements_announcementId_route.ts.md` (edit src/app/api/announcements/[announcementId]/route.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_modules_projects_workspace-brief-model.ts.md` (edit src/modules/projects/workspace-brief-model.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_NEW_docs_audit_gap2_lane-20_project-meeting.md.md` (new; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_modules_placements_tpo-academic-import-service.ts.md` (edit src/modules/placements/tpo-academic-import-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_modules_placements_tpo-academic-import-service.ts.md` (edit src/modules/placements/tpo-academic-import-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_NEW_docs_audit_gap2_lane-7_l12-u027-faculty-teaching-assignment-controller.md.md` (new; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_modules_placements_tpo-public-join-link-model.ts.md` (edit src/modules/placements/tpo-public-join-link-model.ts; 1 findings; best P1)
