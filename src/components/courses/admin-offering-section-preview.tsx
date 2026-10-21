@@ -4,6 +4,8 @@ import type {listOfferingSectionPreview} from "@/modules/courses/college-offerin
 import { Select } from "@/components/ui/select";
 import { Alert } from "@/components/ui/alert";
 import { StatusBadge } from "@/components/ui/status-badge";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 
 type Preview=Awaited<ReturnType<typeof listOfferingSectionPreview>>;
 function ItemList({items}:{items:readonly {
@@ -50,9 +52,9 @@ export function AdminOfferingSectionPreview({data}:{data:Preview}){
     The class picker shows the first 200 active sections. To inspect a class outside this list, use its authorized delivery ID below.
     <form method="get" className="mt-2 flex flex-wrap items-center gap-2">
      <label htmlFor="additional-section-id" className="text-[13px] font-semibold">Section delivery ID</label>
-     <input id="additional-section-id" name="deliveryId" type="text" pattern="[0-9a-fA-F-]{36}" maxLength={36}
-      placeholder="Delivery UUID" className="min-h-11 w-[240px] max-w-full rounded-[var(--lms-field-radius)] border border-border px-3 text-sm md:min-h-9"/>
-     <button type="submit" className="min-h-11 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] md:min-h-9">Find class</button>
+     <Input id="additional-section-id" name="deliveryId" type="text" pattern="[0-9a-fA-F-]{36}" maxLength={36}
+      placeholder="Delivery UUID" className="w-[240px] max-w-full"/>
+     <Button type="submit" >Find class</Button>
     </form>
    </Alert>:null}
   {!data.invalid?<div className="space-y-3">
