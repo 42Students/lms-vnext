@@ -163,7 +163,7 @@ export default async function TpoCompanyDetailPage({
         ))}
       </section>
 
-      <Disclosure title="Company access and Team conversation" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
+      <Disclosure title="Company access, email domain and recruiter join link" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3">
       <TpoPublicJoinLinkCard initial={companyLink} scope="COMPANY" companyId={route.companyId} companyName={detail.company.name} />
       <TpoCompanyTeamConversation companyId={route.companyId} companyName={company.name} actorMembershipId={context.membership.id} />
 

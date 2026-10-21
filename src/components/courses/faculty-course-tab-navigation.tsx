@@ -46,9 +46,7 @@ export function FacultyCourseTabNavigation({
       <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="min-w-0 flex-1">
           <PageBackLink href="/teacher/courses" label="Back to courses" />
-          <p className="mt-2 min-w-0 break-words text-[14px] font-semibold leading-5 text-[var(--lms-heading)]">
-            {courseName} · {sectionName}
-          </p>
+          <p className="sr-only">{courseName} · {sectionName}</p>
         </div>
         {teachingSections.length > 1 ? (
           <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:max-w-[18rem]">

@@ -93,3 +93,12 @@ export function translateLegacyBrandingLoginMethods(raw:string|null|undefined):
   default:return null;
  }
 }
+
+/** Read-only alias for legacy branding consumers; dedicated scoped policy remains authoritative. */
+export async function readLegacyCollegeBrandingSignInMethods(context:RequestContext,collegeId:unknown){
+ const result=await readAdminCollegeSignInPolicy(context,collegeId);
+ const method=result.policy.method??"EMAIL_AND_PHONE";
+ const loginMethods=method==="PHONE_AND_EMAIL"?"PHONE_EMAIL":
+   method==="EMAIL_ONLY"?"EMAIL_ONLY":method==="PHONE_ONLY"?"PHONE_ONLY":"EMAIL_PHONE";
+ return {collegeId:result.college.id,loginMethods,policy:result.policy};
+}

@@ -133,6 +133,7 @@ export function CollegeProjectSummaryEditorFull({
   {open?<div className="mt-4 space-y-4">
    <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",160)}
+    <p className="col-span-full text-xs text-muted-foreground" aria-live="polite">{form.title.length}/160 characters</p>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style}
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
@@ -144,7 +145,7 @@ export function CollegeProjectSummaryEditorFull({
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
      {hasTaskData?<span className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
     </label>
-    {field("Phase","phase",120)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}
+    {field("Phase","phase",80)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class<Select className={style} value={form.sectionId}
      onChange={e=>change("sectionId",e.target.value)}>
       <option value="">No class</option>
