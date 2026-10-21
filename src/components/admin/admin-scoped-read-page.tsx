@@ -101,6 +101,8 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   title==="Faculty Assignments"?"No assignments found.":"No matching records";
  // Explicit legacy headings restore navigable columns while the authorized
  // server directory continues to own filtering, identity and pagination.
+ const teachingRoleLabel=(value:string)=>value==="PRIMARY"?"Primary Instructor":
+  value==="CO_TEACHER"?"Co-Teacher":value==="TA"?"Teaching Assistant":humanStatus(value);
  const detailValue=(row:SuperAdminReadRow,label:string)=>
   row.details.find(detail=>detail.startsWith(label+": "))?.slice(label.length+2)??"—";
  const actionCell=(row:SuperAdminReadRow)=><div aria-label={row.title+" actions"} className="flex min-w-0 flex-col items-start gap-2">
@@ -134,7 +136,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
   {key:"semester",header:"Semester",mobilePriority:"secondary",cell:row=>detailValue(row,"Semester")},
   {key:"year",header:"Year",mobilePriority:"secondary",cell:row=>detailValue(row,"Year")},
-  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=><StatusBadge tone={detailValue(row,"Teaching role")==="PRIMARY"?"success":"neutral"}>{humanStatus(detailValue(row,"Teaching role"))}</StatusBadge>},
+  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=><StatusBadge tone={detailValue(row,"Teaching role")==="PRIMARY"?"success":"neutral"}>{teachingRoleLabel(detailValue(row,"Teaching role"))}</StatusBadge>},
   {key:"active",header:"Active",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status==="ACTIVE"?"Yes":"No"}</StatusBadge>},
   {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
  ];
