@@ -54,3 +54,5 @@
 - TPO audit G2-11-006-034/051: route error boundary now carries legacy-style retry copy, but preserving last successful rows requires the page's client-side stale-while-revalidate state; the page belongs to a different packet/lane.
 
 - Template resource G2-12-029-024: indexed title/URL validation and explicit existing 200-item cap are applied. Legacy 500-item cap requires separate shared `projectTemplateBlueprintSchema` and write-service updates by their owners.
+
+- Grade audit G2-17-019-013/041: added `assignment-grade-audit-transition-model.ts` deriving before/after event values exclusively from transaction-owned prior and updated rows, rejecting mismatched identity/version and no-op transitions. DB06 history is still intentionally unregistered (`database-parity-db06-history-contract.md`): grading service and migration owners must implement row locking, transactional event INSERTs, deferred completeness guards and migration/live verification before claiming parity. No active producer/history API or DB migration is asserted by this helper.
