@@ -219,24 +219,47 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       className="mt-4">Open application details</Button>:null}
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
     {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
-    {detail?<div className="mt-4 min-w-0 space-y-6">
-      <div className="border-b border-border py-4">
-       <h3 className="font-semibold">{detail.application.name??"Unnamed learner"} · {detail.application.role}</h3>
-       <div className="mt-3 grid min-w-0 gap-x-4 gap-y-2 text-sm sm:grid-cols-2 [&>p]:min-w-0 [&>p]:break-words [&>p]:[overflow-wrap:anywhere]">
-        <p>Email: {detail.application.email??"Not provided"}</p>
-        <p>Mobile: {detail.application.phone??"Not provided"}</p>
-        <p>Roll: {detail.application.rollNumber??"Not recorded"}</p>
-        <p>Source: {detail.application.source}</p>
-        <p>Pipeline: {detail.stage??"Applied"}</p>
-        <p>Application: {detail.application.status}</p>
-        <p>Applied Date: {when(detail.application.submittedAt)}</p>
-        <p>Eligibility: {detail.application.eligibilityStatus}</p>
-       </div>
-       {detail.screening?<div className="mt-4 border-t border-border pt-3 text-sm">
-        <p className="font-semibold">Screening · {detail.screening.status}</p>
-        {detail.screening.candidateMessage?<p>Candidate feedback: {detail.screening.candidateMessage}</p>:null}
-        {detail.screening.internalReason?<p>Internal screening reason: {detail.screening.internalReason}</p>:null}
-       </div>:null}
+    {detail?<div className="mt-4 min-w-0 space-y-4">
+      <div className="min-w-0 rounded-[8px] border border-[#f0f0f0] px-4 pb-4 pt-2">
+       <section className="border-b border-border py-3" aria-labelledby="application-candidate-heading">
+        <h3 id="application-candidate-heading" className="text-base font-semibold text-heading">Candidate</h3>
+        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-[11rem_minmax(0,1fr)] [&>dd]:break-words [&>dd]:[overflow-wrap:anywhere]">
+         <dt className="font-semibold text-body">Learner Name</dt><dd>{detail.application.name||"-"}</dd>
+         <dt className="font-semibold text-body">Email</dt><dd>{detail.application.email||"-"}</dd>
+         <dt className="font-semibold text-body">Phone</dt><dd>{detail.application.phone||"-"}</dd>
+         <dt className="font-semibold text-body">Roll</dt><dd>{detail.application.rollNumber||"-"}</dd>
+         <dt className="font-semibold text-body">Role</dt><dd>{detail.application.role||"-"}</dd>
+        </dl>
+       </section>
+       <section className="py-3" aria-labelledby="application-decision-heading">
+        <h3 id="application-decision-heading" className="text-base font-semibold text-heading">Status &amp; decision</h3>
+        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-[11rem_minmax(0,1fr)] [&>dd]:break-words [&>dd]:[overflow-wrap:anywhere]">
+         <dt className="font-semibold text-body">Current Status</dt>
+         <dd>{detail.stage??detail.application.status}</dd>
+         {detail.application.rejectionReason&&(detail.stage==="REJECTED"||detail.screening?.status==="REJECTED")?<>
+          <dt className="font-semibold text-body">Rejection feedback</dt>
+          <dd className="whitespace-pre-wrap">{detail.application.rejectionReason}</dd>
+         </>:null}
+         {detail.application.status==="WITHDRAWN"&&detail.application.statusBeforeWithdrawal?<>
+          <dt className="font-semibold text-body">Status before withdrawal</dt>
+          <dd>{detail.application.statusBeforeWithdrawal}</dd>
+         </>:null}
+         {detail.application.papRequested!==null&&detail.application.papRequested!==undefined?<>
+          <dt className="font-semibold text-body">PAP requested</dt>
+          <dd>{detail.application.papRequested?"Yes":"No"}</dd>
+         </>:null}
+         <dt className="font-semibold text-body">Applied Date</dt>
+         <dd>{when(detail.application.submittedAt)}</dd>
+         <dt className="font-semibold text-body">Last Updated</dt>
+         <dd>{detail.application.statusUpdatedByName?
+           detail.application.statusUpdatedByName+" on "+when(detail.application.statusUpdatedAt):
+           when(detail.application.statusUpdatedAt??detail.application.submittedAt)}</dd>
+         <dt className="font-semibold text-body">Source</dt>
+         <dd>{detail.application.sourceProvider??detail.application.source}</dd>
+         <dt className="font-semibold text-body">Eligibility</dt>
+         <dd>{detail.application.eligibilityStatus}</dd>
+        </dl>
+       </section>
       </div>
       <section className="border-b border-border py-4">
        <h3 className="font-semibold">Resume and match score</h3>
