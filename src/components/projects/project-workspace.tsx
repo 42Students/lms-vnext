@@ -1675,7 +1675,7 @@ export function ProjectWorkspace({
                         <div><dt className="font-semibold">Submitted at</dt>
                           <dd>{formatDateTime(submission.submittedAt)}</dd></div>
                         <div><dt className="font-semibold">Revisions</dt>
-                          <dd>{Math.max(0, submission.version - 1)}</dd></div>
+                          <dd>{submission.legacyRevisionCount ?? "—"}</dd></div>
                       </dl>
                     ) : null}
                     {mode !== "LEARNER" && submission.notes ? (

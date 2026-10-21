@@ -154,7 +154,8 @@ export async function getProjectWorkspaceView(
     version:latest.version,
     status:latest.status,
     reviewStatus:latestReview?.decision??latest.legacyReviewStatus??"PENDING",
-    revisionCount:latest.legacyRevisionCount??null,
+    revisionCount:latest.legacyRevisionCount??
+      Math.max(0,finalDelivery.submissions.filter(item=>item.version<=latest.version).length-1),
     submittedAt:latest.submittedAt,
     submittedBy:actorName(latest.submittedByMembershipId),
     reviewedAt:latestReview?.reviewedAt??null,
