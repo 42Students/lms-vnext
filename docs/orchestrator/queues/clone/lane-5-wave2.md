@@ -11,9 +11,9 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_companies_page.tsx.part1of3.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_companies_page.tsx.part2of3.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_companies_page.tsx.part3of3.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 36 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_companies_page.tsx.part1of3.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_companies_page.tsx.part2of3.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_companies_page.tsx.part3of3.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 36 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_admin-scoped-read-page.tsx.part1of3.md` (edit src/components/admin/admin-scoped-read-page.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_admin-scoped-read-page.tsx.part2of3.md` (edit src/components/admin/admin-scoped-read-page.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_admin_admin-scoped-read-page.tsx.part3of3.md` (edit src/components/admin/admin-scoped-read-page.tsx; 15 findings; best P2)
