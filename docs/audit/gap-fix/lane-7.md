@@ -119,3 +119,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-17_lesson-content-class-sequence-entity.md.md` | 2/2 lesson-content delivery ordering findings handed to Courses + schema owner: actual registered migration, runtime readiness/503 and disabled UI must be verified together. 0 out-of-area edits; **not fixed**. No code or CI execution.
 
 - `src_lib_outbound.ts.md` | G2-13-011-021 intentional at-most-once unsafe POST preserved and documented; G2-14-012-050 bounded 10s transport already present, added safe exhausted-retryable-status telemetry `outbound.retry_deferred` without URL, body or recipients. Full provider-idempotency capability and outbox reconciliation require Messaging owner; **partial, not full parity**. No code or CI execution.
+
+- `NEW_docs_audit_gap2_lane-16_u020-college.md.md` | G2-16-020-019 handed to src/modules/colleges/service.ts + faculty-chair association model/migration; chair/vice-chair historical FK and tenant scope require college schema association, not changed here. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_job-application-status-history-service-impl.md.md` | G2-20-011-015 handed to src/modules/placements/application-status-history-service.ts + parent status mutation transaction; status-history write is currently transactional and deliberately fail-closed; product decision needed before any fail-open downgrade. **Not fixed**, no execution/CI.
