@@ -51,7 +51,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-drive-change-requests.ts.md` (edit src/db/schema/placement-drive-change-requests.ts; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db10-general-notices.draft.ts.md` (edit src/db/schema/db10-general-notices.draft.ts; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_profile-verification.ts.md` (edit src/db/schema/profile-verification.ts; 5 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-learner-general-requests.ts.md` (edit src/db/schema/placement-learner-general-requests.ts; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-learner-general-requests.ts.md` (edit src/db/schema/placement-learner-general-requests.ts; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_auth_session.ts.md` (edit src/auth/session.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_auth_login-repository.ts.md` (edit src/modules/auth/login-repository.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-collaboration.ts.md` (edit src/db/schema/tpo-collaboration.ts; 4 findings; best P1)
