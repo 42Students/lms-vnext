@@ -121,6 +121,10 @@ export function FacultyCourseRoster({
 
   return (
     <div className="min-w-0 space-y-6">
+      <header className="min-w-0 space-y-1">
+        <h2 className="text-2xl font-semibold leading-8 text-[var(--lms-heading)]">Class list</h2>
+        <p className="text-sm text-muted-foreground">{sectionName}</p>
+      </header>
       <div className="grid grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] md:grid-cols-3">
         {[
           ["Students", learners.length],
@@ -143,13 +147,8 @@ export function FacultyCourseRoster({
 
       <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-              Class list
-            </p>
-            <h2 className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">
-              {sectionName}
-            </h2>
+          <div className="min-w-0">
+            <p className="text-sm text-body">Search or export students in this class.</p>
           </div>
           <div className="grid w-full min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end lg:max-w-[42rem]">
           <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] print:hidden leading-4">
