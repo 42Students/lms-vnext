@@ -70,7 +70,7 @@ export default async function TpoShortlistSharePreviewPage({
       {preservedHistory.sharePage?<Input type="hidden" name="sharePage" value={preservedHistory.sharePage}/>:null}
       <label className="grid min-w-0 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search shortlisted learner
         <Input type="search" name="q" defaultValue={parsed.data.q} maxLength={80}
-          placeholder="Learner name" />
+          placeholder="Learner Name" />
       </label>
       <Button type="submit" className="min-h-11 w-full px-6 sm:w-auto md:min-h-9">
         Search

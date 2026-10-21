@@ -45,7 +45,7 @@ export default async function TpoPlacementTeamPage() {
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        title="Placement Team"
+        title="Placement team"
         description="A read-only directory of active TPO memberships, persisted faculty team assignments and dated Drive Day student coordinators in your college."
         actions={
           <Link
