@@ -212,7 +212,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    <p className="text-sm">{noteSelection.length} selected</p>
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </Disclosure>
-  <label className="flex min-h-11 min-w-0 flex-wrap items-center gap-3 text-sm font-semibold">Sort visible roster page
+  <label className="flex min-h-11 min-w-0 flex-wrap items-center gap-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort visible roster page
    <Select value={pageSort} onChange={e=>setPageSort(e.target.value as typeof pageSort)}
     >
     <option value="NAME">Name</option><option value="APPLICATIONS_DESC">Applications · most</option>

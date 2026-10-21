@@ -245,18 +245,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
 - [x] `src/components/tpo/tpo-student-note-editor.tsx`
 - [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
-- [ ] `src/components/tpo/tpo-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-students-assign-prep.tsx`
-- [ ] `src/components/tpo/tpo-students-drive-visibility.tsx`
-- [ ] `src/components/tpo/tpo-students-selection.tsx`
-- [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-team-ask-panel.tsx`
-- [ ] `src/components/tpo/tpo-team-assign-unowned.tsx`
-- [ ] `src/components/tpo/tpo-team-away-form.tsx`
-- [ ] `src/components/tpo/tpo-team-handover.tsx`
-- [ ] `src/components/tpo/tpo-team-message-actions.tsx`
-- [ ] `src/components/tpo/tpo-team-rename.tsx`
-- [ ] `src/components/tpo/tpo-team-search.tsx`
+- [x] `src/components/tpo/tpo-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-students-assign-prep.tsx`
+- [x] `src/components/tpo/tpo-students-drive-visibility.tsx`
+- [x] `src/components/tpo/tpo-students-selection.tsx`
+- [x] `src/components/tpo/tpo-students-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`
+- [x] `src/components/tpo/tpo-team-assign-unowned.tsx`
+- [x] `src/components/tpo/tpo-team-away-form.tsx`
+- [x] `src/components/tpo/tpo-team-handover.tsx`
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`
+- [x] `src/components/tpo/tpo-team-rename.tsx`
+- [x] `src/components/tpo/tpo-team-search.tsx`
 - [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
 - [ ] `src/components/tracker/audit-finding-status-action.tsx`
 - [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`

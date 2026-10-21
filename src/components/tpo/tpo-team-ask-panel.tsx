@@ -50,7 +50,7 @@ function AskActions({threadId,ask,ownId}:{threadId:string;ask:Ask;ownId:string})
      {busy?"Saving…":confirmation==="DONE"?"Mark done":"Cancel the ask"}
     </Button>
    </div>}>
-   {confirmation==="DONE"?<label className="grid min-w-0 gap-1 text-sm">A note goes into the conversation as your reply (optional)
+   {confirmation==="DONE"?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">A note goes into the conversation as your reply (optional)
     <Textarea rows={2} maxLength={2000} disabled={busy} value={note}
      onChange={event=>{setNote(event.target.value);setError("");}} className="w-full min-w-0"/>
    </label>:null}
@@ -94,12 +94,12 @@ export function TpoTeamAskPanel({threadId,actorId,recipientId,recipientName,reci
   <form onSubmit={event=>void create(event)} className="grid min-w-0 gap-3">
    <p className="break-words text-sm">Ask {recipientName}</p>
    {recipientAwayLabel?<Alert tone="warning">{recipientName.split(" ")[0]} is away until {recipientAwayLabel}.</Alert>:null}
-   <label className="grid min-w-0 gap-1 text-sm">What needs doing?
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What needs doing?
     <Input required maxLength={200} disabled={busy} value={title}
      onChange={event=>{setTitle(event.target.value);key.current=null;setError("");}}
      className="min-h-11 w-full min-w-0 md:min-h-9"/>
    </label>
-   <label className="grid min-w-0 gap-1 text-sm">By (optional, IST)
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">By (optional, IST)
     <Input type="datetime-local" disabled={busy} value={due}
      onChange={event=>{setDue(event.target.value);key.current=null;setError("");}}
      className="min-h-11 w-full min-w-0 md:min-h-9"/>

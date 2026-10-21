@@ -84,7 +84,7 @@ export function TpoStudentSavedViews({embedded=false}:{embedded?:boolean}){
     {recent.map(view=><Button className="min-h-11 w-full break-words sm:w-auto md:min-h-9" variant="secondary" type="button" key={view.id} disabled={busy} onClick={()=>void use(view)}
      >{view.name}</Button>)}</div>:null}
    <Disclosure title="Save or update a view" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
-   <label className="grid min-w-0 gap-1 text-sm">View name
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">View name
     <Input className="w-full min-w-0" value={name} maxLength={100} disabled={busy} onChange={e=>setName(e.target.value)}
      />
    </label>

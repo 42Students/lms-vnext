@@ -40,7 +40,7 @@ export function TpoTeamMessageActions({threadId,messageId,body,expectedBodyHash,
     </Button>
    </div>}>
    <form id={editFormId} onSubmit={event=>{event.preventDefault();void submit("EDIT");}} className="min-w-0 space-y-2">
-    <label className="block min-w-0 text-sm">Edit message
+    <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Edit message
      <Textarea value={draft} maxLength={4000} required rows={3} disabled={busy}
       onChange={event=>{setDraft(event.target.value);setError("");}} className="mt-1 w-full min-w-0"/>
     </label>
