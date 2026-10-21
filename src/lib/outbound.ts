@@ -2,6 +2,9 @@
  * GR-50: bounded resilient server-side provider requests (Exotel/ZeptoMail/R2).
  * Usage: await outboundFetch(url, { method: "POST", idempotencyKey, body });
  * Non-idempotent POST is attempted once unless an idempotency key is supplied.
+ * Caller must verify that the provider honors its idempotency header before
+ * enabling unsafe-operation retries. Exhausted HTTP statuses are logged without
+ * provider body, URLs, recipient data or credential disclosure.
  * Provider text is never exposed to callers through the thrown error.
  */
 import { friendlyApiError } from "@/lib/friendly-error";
@@ -49,7 +52,18 @@ export async function outboundFetch(url: string, options: OutboundOptions = {}):
     const timer = setTimeout(() => controller.abort(), Math.max(1, timeoutMs));
     try {
       const response = await fetchImpl(url, { ...init, headers, signal: controller.signal });
-      if (!RETRYABLE_STATUSES.has(response.status) || attempt === attempts) return response;
+      if (!RETRYABLE_STATUSES.has(response.status) || attempt === attempts) {
+        if (RETRYABLE_STATUSES.has(response.status)) {
+          // A provider may have accepted a timed-out or rejected POST. Report
+          // uncertainty for outbox reconciliation; never retry without confirmed deduplication.
+          logInfo("outbound.retry_deferred", {
+            requestId, attempt, status: response.status,
+            circuitBreaker: repeatable ? "bounded retries exhausted" :
+              "unsafe provider operation; manual/outbox reconciliation required",
+          });
+        }
+        return response;
+      }
       // Discard the body before trying again so pooled connections are reusable.
       await response.body?.cancel();
       logInfo("outbound.retry", { requestId, attempt, status: response.status,

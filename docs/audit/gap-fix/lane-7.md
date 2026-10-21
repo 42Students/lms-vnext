@@ -111,3 +111,11 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_l13-u022-tpo-request-controller.md.md` | 4/4 finding IDs mapped to Placements TPO standalone-request scope and decision error contracts. No code outside lane-7 changed. **Handoff, not fixed**. No execution/CI.
 
 - `NEW_docs_audit_gap2_lane-7_l17-u021-public-job-response-dto.md.md` | 4/4 finding IDs mapped to public job migration, slug redirect, and whitelisted DTO projection. No code outside lane-7 changed. **Handoff, not fixed**. No execution/CI.
+
+- `src_app_authenticated_dashboard_page.tsx.md` | G2-10-005-007 and G2-9-035-007 applied: no-college Super Admin is now legacy hero + exactly four platform cards + scope tip; no misleading global metric summaries or tenant-count fetch. G2-10-005-031 and G2-9-035-031 already fixed in `SuperAdminTodayBoard` (literal error and Retry link present); preserved. Static JSX/import review, no code/CI execution.
+
+- `NEW_docs_audit_gap2_lane-2_r2-config.md.md` | 3/3 storage configuration findings triaged and routed to owning storage policy/service; no R2 credentials or unsafe fallback introduced. Existing `getPrivateR2Config` enforces four nonblank parameters and typed errors; runtime 503/ops diagnostics and deployment docs remain external dependency. **Handoff, not fixed**, no execution or CI.
+
+- `NEW_docs_audit_gap2_lane-17_lesson-content-class-sequence-entity.md.md` | 2/2 lesson-content delivery ordering findings handed to Courses + schema owner: actual registered migration, runtime readiness/503 and disabled UI must be verified together. 0 out-of-area edits; **not fixed**. No code or CI execution.
+
+- `src_lib_outbound.ts.md` | G2-13-011-021 intentional at-most-once unsafe POST preserved and documented; G2-14-012-050 bounded 10s transport already present, added safe exhausted-retryable-status telemetry `outbound.retry_deferred` without URL, body or recipients. Full provider-idempotency capability and outbox reconciliation require Messaging owner; **partial, not full parity**. No code or CI execution.
