@@ -11,8 +11,8 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_activity_notification-list.tsx.part1of2.md` (edit src/components/activity/notification-list.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_activity_notification-list.tsx.part2of2.md` (edit src/components/activity/notification-list.tsx; 12 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_activity_notification-list.tsx.part1of2.md` (edit src/components/activity/notification-list.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_activity_notification-list.tsx.part2of2.md` (edit src/components/activity/notification-list.tsx; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_NEW_docs_audit_gap2_lane-7_u017-college-admin-workspace-team.md.part1of2.md` (new; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_NEW_docs_audit_gap2_lane-7_u017-college-admin-workspace-team.md.part2of2.md` (new; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_app_authenticated_admin_course-progress_students_page.tsx.part1of2.md` (edit src/app/(authenticated)/admin/course-progress/students/page.tsx; 40 findings; best P2)
