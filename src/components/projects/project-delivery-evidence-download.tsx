@@ -16,6 +16,8 @@ export function legacyProjectDeliveryEvidenceState(
  if(!legacyReference || legacyReference.length>2048 || /[\\x00-\\x1f\\x7f\\\\]/.test(legacyReference))
   return "UNAVAILABLE";
  // Deliberately never allow a legacy URL or key to become an href.
+ // A trusted server-side migration must resolve the tenant-bound original
+ // storage key to a private file record; only then can a new grant be minted.
  if(/^https:\/\//i.test(legacyReference)){
   try {
    const url=new URL(legacyReference);
@@ -44,7 +46,13 @@ export function ProjectDeliveryEvidenceDownload({projectId,fileId,name,legacyRef
           headers:{"Content-Type":"application/json"},
           body:JSON.stringify({disposition:"attachment"})},
       );
-      if(!response.ok)throw new Error("Could not open this attachment. Please retry.");
+      if(!response.ok){
+        if(response.status===401)throw new Error("Your session expired. Sign in again before opening this attachment.");
+        if(response.status===403)throw new Error("You no longer have permission to download this attachment.");
+        if(response.status===404)throw new Error("This attachment was not found. Refresh the project delivery record.");
+        if(response.status===410)throw new Error("The download grant expired. Try opening the attachment again.");
+        throw new Error("Could not open this attachment. Please retry.");
+      }
       const payload:unknown=await response.json();
       const url=payload&&typeof payload==="object"&&"grant" in payload
         &&payload.grant&&typeof payload.grant==="object"&&"url" in payload.grant
@@ -55,9 +63,11 @@ export function ProjectDeliveryEvidenceDownload({projectId,fileId,name,legacyRef
       setError(caught instanceof Error?caught.message:"Could not open this attachment. Please retry.");
     } finally {setBusy(false);}
   }
-  return <span className="inline-flex flex-col items-start gap-1">
+  return <span className="flex min-w-0 max-w-full flex-col items-start gap-1">
     {evidenceState==="READY"?<Button variant="secondary" disabled={busy}
-      onClick={()=>void download()}>{busy?"Opening file…":"Open attachment · "+name}</Button>
+      className="h-auto min-h-11 max-w-full whitespace-normal break-words text-left md:min-h-9"
+      title={name} aria-label={"Open attachment: "+name}
+      onClick={()=>void download()}>{busy?"Opening file…":<span className="min-w-0 break-all">{"Open attachment · "+name}</span>}</Button>
      : <span role="status" className="text-xs text-muted-foreground">
       {evidenceState==="MIGRATION_REQUIRED"
        ?"Legacy attachment needs verification before download."

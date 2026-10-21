@@ -12,6 +12,8 @@ import {CollegeLessonVisibilityControl} from "@/components/courses/college-lesso
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { PageHeader } from "@/components/ui/page-header";
+import { LessonPageSizePreference } from "@/components/courses/lesson-page-size-preference";
+import {collegeLearningDirectoryHasPageCap} from "@/modules/courses/college-learning-directory-model";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
@@ -86,6 +88,7 @@ export default async function SuperAdminLessonsPage({
     data.items.length > 1 && new Set(data.items.map(item => item.learningPathId)).size === 1 &&
     data.items.every(item => item.status === "ACTIVE");
   return <div className="min-w-0 space-y-4 md:space-y-6">
+    <LessonPageSizePreference storageKey="admin-lessons-page-size" />
     <PageHeader title="Lessons"
       description="Authored lessons in the selected college."
     />
@@ -262,6 +265,7 @@ export default async function SuperAdminLessonsPage({
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
       <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
         <span>Page {data.query.page} of {data.totalPages} · {pageSize} per page</span>
+        {collegeLearningDirectoryHasPageCap(data.total,pageSize)?<span role="status" className="text-warning-text">Showing only the first 1,000 pages. Narrow search or course filters for older lessons.</span>:null}
         <form className="flex items-center gap-2">
           <input type="hidden" name="q" value={data.query.q}/>
           <input type="hidden" name="status" value={data.query.status}/>
