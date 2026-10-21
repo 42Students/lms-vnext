@@ -54,8 +54,15 @@ export async function getProjectActivityPage(
       // Preserve PostgreSQL microseconds; JS Date only serializes milliseconds.
       cursorOccurredAt: sql<string>`to_char(${activityEvents.occurredAt} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`.as("cursor_occurred_at"),
       // Prefer immutable import-time actor display metadata if present.
-      actorDisplayName: sql<string|null>`coalesce(nullif(${activityEvents.metadata} ->> 'actorName',''), ${users.displayName})`,
-      actorType: sql<string|null>`nullif(${activityEvents.metadata} ->> 'actorType','')`,
+      actorDisplayName: sql<string|null>`coalesce(
+        nullif(${activityEvents.actorNameSnapshot},''),
+        nullif(${activityEvents.metadata} ->> 'actorName',''),
+        ${users.displayName}
+      )`,
+      actorType: sql<string|null>`coalesce(
+        nullif(${activityEvents.actorRoleSnapshot},''),
+        nullif(${activityEvents.metadata} ->> 'actorType','')
+      )`,
       sourceTab: sql<string|null>`nullif(${activityEvents.metadata} ->> 'sourceTab','')`,
     })
     .from(activityEvents)
@@ -86,16 +93,13 @@ export async function getProjectActivityPage(
         ),
         or(
           and(
-            eq(
-              activityEvents.subjectType,
-              "project",
-            ),
-            eq(
-              activityEvents.subjectId,
-              scope.project.id,
-            ),
+            or(eq(activityEvents.subjectType,"project"),
+               eq(activityEvents.subjectType,"project_instance")),
+            eq(activityEvents.subjectId,scope.project.id),
           ),
           sql`${activityEvents.metadata} ->> 'projectId' = ${scope.project.id}`,
+          scope.project.legacyProjectId!==null?
+           eq(activityEvents.legacyProjectId,scope.project.legacyProjectId):undefined,
         ),
       ),
     )
@@ -107,7 +111,8 @@ export async function getProjectActivityPage(
     )
     .limit(101);
 
-  return { events: rows.slice(0, 100), hasMore: rows.length > 100 };
+  return {message:"Project activity feed retrieved",
+    events: rows.slice(0, 100), hasMore: rows.length > 100};
 }
 
 /** Preserve the original bounded array contract for existing shared workspaces. */
