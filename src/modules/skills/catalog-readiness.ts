@@ -7,12 +7,15 @@
  * Stage 2: import/preview normalized source skills and curated synonyms using
  * the guarded administrative seed job. Reconcile unmatched source skills.
  * Stage 3: after source/count verification, set
- * DB10_SKILLS_READY=DB10_VERIFIED to enable the catalog's read-side API.
+ * DB10_SKILLS_READY=DB10_VERIFIED, DB10_SKILLS_SYNONYMS_READY=SEED_VERIFIED,
+ * and DB10_SKILLS_SOURCE_RECONCILED=LEGACY_RTF_RECONCILED to enable reads.
+ * Do not set flags merely because migrations appear in the repository.
  */
 export type SkillCatalogReadiness = {
   schemaReplayVerified: boolean;
   catalogReplayVerified: boolean;
   synonymsSeedVerified: boolean;
+  sourceReconciled: boolean;
   enabled: boolean;
 };
 
@@ -20,13 +23,16 @@ export function skillsCatalogReadiness(): SkillCatalogReadiness {
   const schemaReplayVerified = process.env.DB10_SKILLS_SCHEMA_READY === "DB10_REPLAY_VERIFIED";
   const catalogReplayVerified = process.env.DB10_SKILLS_READY === "DB10_VERIFIED";
   const synonymsSeedVerified = process.env.DB10_SKILLS_SYNONYMS_READY === "SEED_VERIFIED";
+  const sourceReconciled = process.env.DB10_SKILLS_SOURCE_RECONCILED === "LEGACY_RTF_RECONCILED";
   return {
     schemaReplayVerified,
     catalogReplayVerified,
     synonymsSeedVerified,
-    // All three registered tables and curated synonyms must be replayed before enabling any reader.
-    // Never open the read side before actual schema and catalog replay.
-    enabled: schemaReplayVerified && catalogReplayVerified && synonymsSeedVerified,
+    sourceReconciled,
+    // Search parity needs verified source coverage and synonyms, not just an
+    // empty schema or a manual "ready" switch after partial import.
+    enabled: schemaReplayVerified && catalogReplayVerified &&
+      synonymsSeedVerified && sourceReconciled,
   };
 }
 

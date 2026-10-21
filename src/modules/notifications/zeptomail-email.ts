@@ -143,6 +143,7 @@ export type ZeptoMailTemplateMessage = {
 
 export type ZeptoMailFailureCode =
   | "TOKEN_NOT_CONFIGURED"
+  | "CREDENTIAL_ROTATION_UNVERIFIED"
   | "ENDPOINT_INVALID"
   | "TEMPLATE_NOT_CONFIGURED"
   | "EVENT_EMAIL_DISABLED"
@@ -284,6 +285,13 @@ export async function sendZeptoMailTemplate(
 ): Promise<ZeptoMailSendResult> {
   const purpose = message.purpose;
   if (!config.token.trim()) return notSent(purpose, "TOKEN_NOT_CONFIGURED");
+  // Legacy source contained an exposed provider token. Require an explicit
+  // operational attestation that the old key was REVOKED and a new one provisioned.
+  // No token values, hashes or leaked defaults may be stored in source or logs.
+  if ((env.APP_ENV === "production" || env.STAGE === "prod" || env.STAGE === "production") &&
+      env.ZEPTOMAIL_LEGACY_KEY_REVOKED !== "confirmed") {
+    return notSent(purpose, "CREDENTIAL_ROTATION_UNVERIFIED");
+  }
   if (!isSecureMailProviderEndpoint(config.apiUrl)) return notSent(purpose, "ENDPOINT_INVALID");
   if (purpose.kind === "EVENT" && !LEGACY_EMAIL_EVENTS.has(purpose.event)) {
     return notSent(purpose, "EVENT_EMAIL_DISABLED");
