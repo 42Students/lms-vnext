@@ -40,6 +40,11 @@ export function CreateProjectControl({
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [summary, setSummary] = useState("");
+  const [phase, setPhase] = useState("Planning");
+  const [progressPercent, setProgressPercent] = useState(0);
+  const [dueLabel, setDueLabel] = useState("");
+  const [blocker, setBlocker] = useState("");
+  const [nextAction, setNextAction] = useState("");
   const [mentors, setMentors] = useState<
     { membershipId: string; displayName: string; email: string }[]
   >([]);
@@ -76,6 +81,8 @@ export function CreateProjectControl({
     setTitle("");
     setSlug("");
     setSummary("");
+    setPhase("Planning");setProgressPercent(0);
+    setDueLabel("");setBlocker("");setNextAction("");
     setMentorMembershipId("");
     setMentorQuery("");setRosterSearch("");
     setSectionId("");setRoster([]);setLearnerMembershipIds([]);setInitialStatus("PLANNED");
@@ -201,6 +208,11 @@ export function CreateProjectControl({
           title: title.trim(),
           slug: slug.trim(),
           summary: summary.trim() || undefined,
+          phase: phase.trim() || undefined,
+          progressPercent,
+          dueLabel: dueLabel.trim() || undefined,
+          blocker: blocker.trim() || undefined,
+          nextAction: nextAction.trim() || undefined,
           primaryMentorMembershipId:mentorMembershipId||undefined,
           sectionId:sectionId||undefined,
           learnerMembershipIds,
@@ -240,7 +252,8 @@ export function CreateProjectControl({
   }
 
   const dirty = Boolean(templateId || title || slug || summary || mentorMembershipId ||
-    sectionId || learnerMembershipIds.length || initialStatus !== "PLANNED");
+    sectionId || learnerMembershipIds.length || initialStatus !== "PLANNED" ||
+    phase !== "Planning" || progressPercent !== 0 || dueLabel || blocker || nextAction);
   const discard = useProjectEditorDiscardGuard(open, dirty, pending, () => {
     setOpen(false);
     if (standalone) router.push(basePath);
@@ -329,6 +342,38 @@ export function CreateProjectControl({
               placeholder="Optional context specific to this Project instance."
             />
           </label>
+          <div className="grid min-w-0 gap-4 md:col-span-2 sm:grid-cols-2">
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              Phase
+              <Input className="mt-1" maxLength={120} value={phase}
+                onChange={event => setPhase(event.target.value)} placeholder="Planning" />
+            </label>
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              Progress (%)
+              <Input className="mt-1" type="number" min={0} max={100}
+                value={progressPercent}
+                onChange={event => setProgressPercent(Math.max(0, Math.min(100,
+                  Number(event.target.value) || 0)))} />
+            </label>
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] sm:col-span-2">
+              Due Label
+              <Input className="mt-1" maxLength={80} value={dueLabel}
+                onChange={event => setDueLabel(event.target.value)}
+                placeholder="e.g. Before the final review" />
+            </label>
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              Blocker
+              <Textarea className="mt-1" maxLength={4000} value={blocker}
+                onChange={event => setBlocker(event.target.value)}
+                placeholder="Optional blocker or dependency" />
+            </label>
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+              Next Action
+              <Textarea className="mt-1" maxLength={4000} value={nextAction}
+                onChange={event => setNextAction(event.target.value)}
+                placeholder="Optional next step" />
+            </label>
+          </div>
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Primary mentor
