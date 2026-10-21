@@ -1,6 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {Fragment,type ReactNode} from "react";
-import {ProjectAuditActionSelect,ProjectAuditRefreshButton} from "@/components/projects/project-audit-filters";
+import {type ReactNode} from "react";
+import {ProjectAuditRefreshButton} from "@/components/projects/project-audit-filters";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
@@ -140,7 +140,7 @@ export async function ProjectAdminAuditPage({
   const filters = parseProjectAdminAuditQuery(legacyLink.params);
   const { eventType, importance, subjectType, subjectId, from, to } = filters;
   const allTime=!from&&!to;
-  const pageLimit=allTime?25:200;
+  const pageLimit=25;
 
   const activityRead =
     await listActivityEvents(
@@ -244,7 +244,7 @@ export async function ProjectAdminAuditPage({
       <div className="min-w-0">
         <PageBackLink href={basePath} label="Project workspaces" />
         <PageHeader title="Project audit"
-          description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
+          description="Who changed what, and when — check daily for anything unexpected."
           actions={<div className="flex flex-wrap gap-2">
             <ProjectAuditRefreshButton/>
             <Link href={basePath==="/admin/projects"?"/admin/audit":"/college/activity"}
@@ -252,6 +252,7 @@ export async function ProjectAdminAuditPage({
           </div>}/>
       </div>
       <ProjectAdminNav basePath={basePath} active="audit" />
+      {globalTemplateAudit?<p className="text-xs text-body">Platform-wide Projects activity includes global template changes.</p>:null}
 
       {legacyLink.needsCursorReplay?<Banner tone="warning" role="status">
         This old audit link requested page {legacyLink.legacyPage+1}.
@@ -289,7 +290,7 @@ export async function ProjectAdminAuditPage({
       >
         <label>
           <span className="mb-1 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Action
+            Filter by action
           </span>
           <Select className={inputClass} name="action" defaultValue={eventType??""}>
             <option value="">All actions</option>
@@ -389,15 +390,17 @@ export async function ProjectAdminAuditPage({
           {label:"Actions shown"+(partialCoverage?" (partial)":""),value:coveredEvents},
           {label:"People who made changes"+(partialCoverage?" (partial)":""),value:peopleCount},
           {label:"Destructive actions"+(partialCoverage?" (partial)":""),value:destructiveCount},
-        ]).map(item=><div key={item.label} className="p-4">
+        ]).map(item=><div key={item.label} className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
           <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{item.label}</p>
-          <p className="mt-2 text-2xl font-semibold tabular-nums">{item.value}</p>
+          <p className={"mt-2 text-2xl font-semibold tabular-nums "+(item.label.startsWith("Destructive")?"text-error":"text-foreground")}>
+            {item.label.startsWith("Destructive")?<span aria-hidden="true" className="mr-2">⚠</span>:null}
+            {item.value}</p>
         </div>)}
       </section>
       <p role="status" className="text-xs text-body">
-        Displaying {coveredEvents} raw audit actions in {groups.length} grouped entries.
+        Displaying {coveredEvents} raw audit actions in {result.groups.length} grouped entries.
         {partialCoverage?" Counts are minimums for this page; older events are available below.":""}
-        {allTime?" All-time pages show up to 25 actions.":" Date-filtered views show up to 200 actions."}
+        {" Up to 25 actions are shown per page."}
       </p>
       <div className="flex min-w-0 flex-col gap-2 md:flex-row md:items-center md:justify-between">
         <div className="flex min-w-0 flex-wrap items-center gap-3">
@@ -414,46 +417,74 @@ export async function ProjectAdminAuditPage({
         occurredAt:item.event.occurredAt.toISOString(),
       }))}/>
       </div>
-      <section aria-label="Workspace audit actions" className="space-y-2">
-        <h2 className="text-sm font-semibold text-foreground">Workspace actions</h2>
-        <div className="divide-y divide-border">
-          {rawEvents.map(item=>{
-            const metadata=(item.event.metadata??{}) as Record<string,unknown>;
-            const workspaceId=linkedWorkspaceId({
-              subjectId:item.event.subjectId,subjectType:item.event.subjectType,
-              metadata,
-            });
-            return <div key={item.event.id} className="flex flex-wrap items-center justify-between gap-3 py-2 text-sm">
-              <div className="min-w-0">
-                <p className="break-words font-semibold">{item.event.subjectLabel??item.event.subjectType}</p>
-                <p className="break-words text-xs text-body">
-                  {item.event.eventType} · {item.actor.displayName??"System"} · {
-                    new Intl.DateTimeFormat("en-IN",{
-                      timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
-                    }).format(item.event.occurredAt)}
-                </p>
-              </div>
-              {workspaceId?<Link
-                href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
-                className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
-                Open workspace
-              </Link>:null}
-            </div>;
-          })}
+      <section aria-label="Change log" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <h2 className="text-base font-semibold text-foreground">Change log</h2>
+          <p role="status" className="text-xs text-body">{rawEvents.length} actions on this page</p>
         </div>
+        {rawEvents.length===0?<p className="border-y border-border py-4 text-sm text-body">
+          {eventType||importance||subjectId||subjectType||from||to?
+            "No changes match these filters. Clear filters to see all activity.":
+            "No changes recorded yet."}
+        </p>:<div className="min-w-0 max-w-full overflow-x-auto">
+          <table className="w-full min-w-[760px] text-left text-sm">
+            <caption className="sr-only">Project change log by action, entity, actor and date</caption>
+            <thead><tr className="border-b border-border text-xs text-muted-foreground">
+              <th scope="col" className="p-3">Action</th>
+              <th scope="col" className="p-3">Entity</th>
+              <th scope="col" className="p-3">Actor</th>
+              <th scope="col" className="p-3">When</th>
+            </tr></thead>
+            <tbody>{rawEvents.map(item=>{
+              const event=item.event;
+              const metadata=(event.metadata??{}) as Record<string,unknown>;
+              const workspaceId=linkedWorkspaceId({subjectId:event.subjectId,
+                subjectType:event.subjectType,metadata});
+              return <tr key={event.id} className="border-b border-border align-top last:border-0">
+                <td className="min-w-[210px] p-3">
+                  <details>
+                    <summary className="cursor-pointer font-semibold text-link focus-visible:outline-2 focus-visible:outline-primary">
+                      <StatusBadge tone={destructiveProjectAction(event.eventType)?"error":"info"}>
+                        {projectActionLabel(event.eventType)}</StatusBadge>
+                      <span aria-hidden="true" className="ml-2">▾</span>
+                    </summary>
+                    <div className="mt-2 space-y-2 break-words text-xs text-body">
+                      <p>{event.summary}</p>
+                      <p>Action key: <code className="break-all">{event.eventType}</code></p>
+                      <p>Event ID: <code className="break-all">{event.id}</code></p>
+                      <div className="border-t border-border pt-2">{auditDetailValue(metadata)}</div>
+                    </div>
+                  </details>
+                </td>
+                <td className="min-w-[195px] p-3">
+                  <p className="font-semibold">{event.subjectLabel||auditEntityType(event.subjectType)}</p>
+                  <p className="mt-1 break-all text-xs text-muted-foreground">{event.subjectType} · {event.subjectId}</p>
+                  <Link href={basePath+"/audit?"+(()=>{
+                    const params=new URLSearchParams(preservedRefreshQuery);
+                    params.set("subjectId",event.subjectId);return params.toString();
+                  })()} className="mt-1 inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
+                    Filter to this entity
+                  </Link>
+                  {workspaceId?<Link href={basePath+"/"+encodeURIComponent(workspaceId)+"/summary?from=audit"}
+                    className="block min-h-9 text-xs font-semibold text-link underline">Open workspace</Link>:null}
+                </td>
+                <td className="min-w-[145px] p-3">
+                  <p>{item.actor?.displayName||"System"}</p>
+                  {item.actor?.id?<p className="mt-1 break-all text-xs text-muted-foreground">{item.actor.id}</p>:null}
+                </td>
+                <td className="min-w-[160px] p-3 tabular-nums">
+                  <time dateTime={event.occurredAt.toISOString()}>{projectEventTime(event.occurredAt)}</time>
+                </td>
+              </tr>;
+            })}</tbody>
+          </table>
+        </div>}
       </section>
-      <ActivityCenter
-        emptyActionHref={basePath + "/audit"}
-        groups={groups}
-        nextRemaining={result.remainingCount}
-        nextHref={
-          result.nextCursor
-            ? basePath +
-              "/audit?" +
-              nextParams.toString()
-            : null
-        }
-      />
+
+      {result.nextCursor?<Link href={basePath+"/audit?"+nextParams.toString()}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+        Load older events{result.remainingCount?" ("+result.remainingCount+" remaining)":""}
+      </Link>:null}
 
       <p className="text-xs text-muted-foreground leading-[20px]">
         This view reflects persisted vNext Project activity events. Legacy-only audit actions remain tracked as W03 parity work until their producers are implemented against the shared activity taxonomy.
