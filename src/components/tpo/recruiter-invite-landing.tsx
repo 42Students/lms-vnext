@@ -248,7 +248,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div>
 
       <p className="mt-5 text-center text-xs text-muted-foreground leading-[20px]">
-        Already have an account? <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/login">Sign in</Link>
+        Already have an account? <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline" href="/login">Sign in</Link>
       </p>
     </>,
   );
