@@ -16,7 +16,7 @@ export const courseTeachingAssignmentIdSchema =
 const courseNameSchema = z
   .string()
   .trim()
-  .min(1)
+  .min(1,"Enter a course name")
   .max(255,"Maximum 255 characters");
 
 const courseCodeSchema = z
@@ -35,7 +35,7 @@ const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters")
 /** Immutable legacy/public course slug; the department-local code is separate. */
 export const courseSlugSchema=z.string().trim()
  .regex(/^[a-z0-9][a-z0-9-]{0,63}$/,"Invalid slug format");
-const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable();
+const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/,"Use a colour like #0a7c88").nullable();
 
 /** Legacy CourseDTO crosswalk (IDs remain tenant-scoped UUIDs): course_name
  * -> name, short_title -> shortTitle (120 DB chars), dept_id -> departmentId,
@@ -46,7 +46,7 @@ const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable();
  * the vNext internal code; created_by_org_id is intentionally excluded because
  * the service derives organization from the verified department/actor scope. */
 export const createCourseInputSchema = z.object({
-  departmentId: z.string().uuid(),
+  departmentId: z.string().uuid("Select a department"),
   parentCourseId:z.string().uuid().nullable().optional(),
   name: courseNameSchema,
   code: courseCodeSchema,
@@ -164,7 +164,7 @@ export const createCourseTeachingAssignmentInputSchema =
     deliveryId:
       courseSectionDeliveryIdSchema,
     membershipId: z.string().uuid(),
-    role: z.enum(COURSE_TEACHING_ROLES),
+    role: z.enum(COURSE_TEACHING_ROLES).default("PRIMARY"),
   }).strict();
 
 /** A stale browser must not silently overwrite another administrator's role edit. */
@@ -175,10 +175,67 @@ export const changeCourseTeachingAssignmentRoleInputSchema = z.object({
 /** A single class may have several courses; batch writes must commit together. */
 export const createCourseTeachingAssignmentsBatchInputSchema = z.object({
   deliveryIds: z.array(courseSectionDeliveryIdSchema).min(1).max(10)
-    .refine(ids=>new Set(ids).size===ids.length,"Choose each course only once"),
+    .refine(ids=>new Set(ids).size===ids.length,"Duplicate course: choose each course only once"),
   membershipId: z.string().uuid(),
-  role: z.enum(COURSE_TEACHING_ROLES),
+  role: z.enum(COURSE_TEACHING_ROLES).default("PRIMARY"),
 }).strict();
+
+/** Legacy CourseDTO adapter for explicitly resolved college-scoped UUIDs.
+ * The original integers dept_id / course_id are NOT trusted in a vNext
+ * request; a caller must first resolve them against its acting college.
+ * Legacy field names are normalized without relaxing the typed vNext model.
+ */
+export const legacyCourseDraftSchema=z.object({
+ departmentId:z.string().uuid("Select a department"),
+ course_name:z.string().trim().min(1,"Enter a course name").max(255,"Maximum 255 characters"),
+ short_title:z.string().trim().min(1,"Enter short display name").max(255).optional(),
+ official_course_code:z.string().trim().max(40,"Maximum 40 characters").optional(),
+ in_this_course_description:z.string().trim().min(1,"In this Course Description is required").max(5000),
+ takeaways:z.array(z.string().trim().min(1)).max(50).optional(),
+ parentCourseId:z.string().uuid().nullable().optional(),
+ enabled:z.boolean().optional(),
+ cardColor:courseCardColorSchema.optional(),
+}).strict();
+
+export function normalizeLegacyCourseDraft(
+ raw:unknown,internalCode:string,
+):z.input<typeof createCourseInputSchema>{
+ const source=legacyCourseDraftSchema.parse(raw);
+ const ordered=source.takeaways?.map(item=>item.trim()).filter(Boolean)??[];
+ const points=ordered.join("\n");
+ if(points.length>2000)throw new Error("Course Takeaways exceed 2000 characters");
+ const shortTitle=(source.short_title??source.course_name).slice(0,120);
+ return createCourseInputSchema.parse({
+  departmentId:source.departmentId,name:source.course_name,
+  shortTitle,code:internalCode,officialCode:source.official_course_code||null,
+  description:source.in_this_course_description,
+  takeaways:points||null,enabled:source.enabled??true,
+  cardColor:source.cardColor??null,parentCourseId:source.parentCourseId??null,
+ });
+}
+
+/** Old bulk faculty/course mappings are imported in explicit delivery batches.
+ * Limit each locked transaction to ten grants, matching the native endpoint.
+ * De-duplicate repeated IDs and preserve per-input diagnostics instead of
+ * silently issuing the same course grant twice. */
+export function planLegacyFacultyCourseBatches(
+ rawDeliveryIds:readonly string[],batchSize=10,
+){
+ if(!Number.isInteger(batchSize)||batchSize<1||batchSize>10)
+  throw new RangeError("Faculty course batch size must be between 1 and 10");
+ const batches:string[][]=[],duplicateIndices:number[]=[],invalidIndices:number[]=[];
+ const seen=new Set<string>();
+ for(const [index,id] of rawDeliveryIds.entries()){
+  const parsed=courseSectionDeliveryIdSchema.safeParse(id);
+  if(!parsed.success){invalidIndices.push(index);continue;}
+  if(seen.has(parsed.data)){duplicateIndices.push(index);continue;}
+  seen.add(parsed.data);
+  let batch=batches.at(-1);
+  if(!batch||batch.length===batchSize){batch=[];batches.push(batch);}
+  batch.push(parsed.data);
+ }
+ return {batches,duplicateIndices,invalidIndices};
+}
 
 export type CreateCourseInput = z.infer<
   typeof createCourseInputSchema
