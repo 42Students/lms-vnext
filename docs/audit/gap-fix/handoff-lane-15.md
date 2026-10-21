@@ -182,3 +182,5 @@
 - College drive bulk archive G2-9-015-068: bulk CLOSE preview only returns pendingLettersWithdrawn; extend impact if UI needs exact interview notification counts. Actual archive remains separate and must use per-drive impact confirmation.
 
 - Mentor release rollup G2-17-017-005/015: parent loader must supply verified `readiness` with readyToShip, completedSprintCount, committedPoints, completedPoints from tenant-scoped persisted release/sprint/task service; Ship stays disabled without those authoritative fields and server reconfirms gate.
+
+- Department archive legacy client G2-18-027-017: map DEPARTMENT_HAS_DEPENDENCIES 409+usage+safe message from current apiErrorResponse to old status ERROR conflict UI; do not reproduce raw server exception detail.

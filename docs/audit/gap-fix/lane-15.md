@@ -344,3 +344,6 @@
 
 - work2 #59 `mentor-release-editor.tsx` | G2-17-017-005/015: optional authoritative readiness totals (sprints, completed/committed points), Ship disabled until at least one/all linked sprints completed, versioned POST ship with confirmation and success/error states; parent rollup input remains integration handoff.
 - work2 #60 `faculty-profile-repeatable.tsx` | G2-1-003-040: exact 'Remove this entry?' confirmation title and delayed-save explanation moved into ConfirmDialog description; unsaved draft deletion only after confirmation.
+
+- work2 #61 `tpo/reports/failure-reasons/page.tsx` | G2-13-031-090: plotted applied FAIL shares using applied-decision denominator (not total adverse events), excluded unknown denominator from percentage chart instead of reporting zero, and explicitly named absent reasons.
+- work2 #62 `api/college/departments/[departmentId]/route.ts` | G2-18-027-017: documented standardized 409 DEPARTMENT_HAS_DEPENDENCIES mapping with safe message/usage/requestId and no-store archive response. Did not leak raw legacy exception text.
