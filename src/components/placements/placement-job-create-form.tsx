@@ -66,7 +66,9 @@ const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 const textareaClass = "min-h-28 w-full min-w-0";
 type ImportantDateRow = {id:number;label:string;date:string};
 type CustomRuleRow = {id:number;label:string;value:string};
-type ExtraPackageRow = {id:number;name:string;ctcLpa:string};
+type ExtraPackageRow = {id:number;name:string;ctcLpa:string;
+  fixedLpa:string;variableLpa:string;joiningBonusLpa:string;
+  stipendPerMonthInr:string;stipendMonths:string};
 
 function splitList(value: string) {
   return value
@@ -144,6 +146,8 @@ export function PlacementJobCreateForm({
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase()||company.otherNames?.some(alias=>alias.toLowerCase()===initialCompanyName.toLowerCase()))?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
+  const [driveMode,setDriveMode]=useState<"ON_CAMPUS"|"POOL"|"OFF_CAMPUS">("ON_CAMPUS");
+  const [applicationMode,setApplicationMode]=useState<"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY">("INTERNAL");
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
   const nextRowId=useRef(1000);
   const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:""}]);
@@ -169,6 +173,7 @@ export function PlacementJobCreateForm({
   const [saveError,setSaveError]=useState<string|null>(null);
   const [loadingCopy,setLoadingCopy]=useState(false);
   const [copyJobId,setCopyJobId]=useState("");
+  const autoCopyHandled=useRef(false);
   const [cancelConfirmOpen,setCancelConfirmOpen]=useState(false);
   const clonableDrives=companies.flatMap(company=>
     (company.memory?.existingRoles??[]).map(role=>({
@@ -250,6 +255,8 @@ export function PlacementJobCreateForm({
       setEnteredDriveTitle(copiedTitle);
       setCompanyMode("EXISTING");
       setCompanyRelationshipId(source.companyRelationshipId);
+      setDriveMode("ON_CAMPUS");
+      setApplicationMode("INTERNAL");
       const fields:Record<string,string>={
         description:source.description??"",
         jobTypeLabel:source.jobTypeLabel??(source.employmentType==="INTERNSHIP"?"Internship":"Full-time"),
@@ -310,6 +317,21 @@ export function PlacementJobCreateForm({
   useEffect(()=>{
     try{setUncertainCreate(localStorage.getItem(uncertainKey)==="1");}catch{}
   },[uncertainKey]);
+  useEffect(()=>{
+    if(autoCopyHandled.current)return;
+    const sourceId=new URLSearchParams(window.location.search).get("duplicateFrom");
+    if(!sourceId||!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(sourceId))
+      return;
+    autoCopyHandled.current=true;
+    const task=window.setTimeout(()=>{
+      // Existing unsaved work wins over any URL-based copy request.
+      try{if(localStorage.getItem(backupKey))return;}catch{}
+      setCopyJobId(sourceId);
+      void loadCloneSource(sourceId);
+    },0);
+    return ()=>window.clearTimeout(task);
+    // Duplication is a one-time initial form seed, not a background sync.
+  },[backupKey]);
   const saveBrowserDraft=useCallback((form:HTMLFormElement)=>{
     if(clearedBackup.current)return;
     try{
@@ -321,11 +343,11 @@ export function PlacementJobCreateForm({
         }else values[field.name]=field.value;
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
-        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,
+        companyMode,companyRelationshipId,driveMode,applicationMode,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,
         eligibilityPreset,importantDateRows,customRuleRows,roundRows,extraPackages,wantedSkills,partialDraft:createdJobRef.current}));
       setLastLocalSaveAt(Date.now());
     }catch{/* Storage may be unavailable in private mode; form still works. */}
-  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,
+  },[backupKey,companyMode,companyRelationshipId,driveMode,applicationMode,departmentFilter,selectedProgramIds,selectedCohortIds,
     selectedSectionIds,eligibilityPreset,importantDateRows,customRuleRows,roundRows,extraPackages,wantedSkills]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
@@ -335,6 +357,8 @@ export function PlacementJobCreateForm({
         if(!raw||!formRef.current)return;
         const saved=JSON.parse(raw) as {values?:Record<string,string>;checked?:string[];
           companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
+          driveMode?:"ON_CAMPUS"|"POOL"|"OFF_CAMPUS";
+          applicationMode?:"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY";
           selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
           departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset;
           importantDateRows?:ImportantDateRow[];customRuleRows?:CustomRuleRow[];
@@ -350,6 +374,10 @@ export function PlacementJobCreateForm({
           setPartialJobId(resume.jobId);
         }
         if(saved.companyMode==="EXISTING"||saved.companyMode==="NEW")setCompanyMode(saved.companyMode);
+        if(saved.driveMode==="ON_CAMPUS"||saved.driveMode==="POOL"||saved.driveMode==="OFF_CAMPUS")
+          setDriveMode(saved.driveMode);
+        if(saved.applicationMode==="INTERNAL"||saved.applicationMode==="HYBRID"||
+          saved.applicationMode==="EXTERNAL_ONLY")setApplicationMode(saved.applicationMode);
         if(saved.companyRelationshipId&&companies.some(c=>c.relationshipId===saved.companyRelationshipId))
           setCompanyRelationshipId(saved.companyRelationshipId);
         setSelectedProgramIds((saved.selectedProgramIds??[]).filter(id=>academicOptions.programs.some(p=>p.id===id)));
@@ -376,7 +404,13 @@ export function PlacementJobCreateForm({
         }
         if(Array.isArray(saved.extraPackages)&&saved.extraPackages.length<=10){
           setExtraPackages(saved.extraPackages.filter(row=>row&&typeof row.id==="number"&&
-            typeof row.name==="string"&&typeof row.ctcLpa==="string"));
+            typeof row.name==="string"&&typeof row.ctcLpa==="string").map(row=>({
+            ...row,
+            fixedLpa:String(row.fixedLpa??""),variableLpa:String(row.variableLpa??""),
+            joiningBonusLpa:String(row.joiningBonusLpa??""),
+            stipendPerMonthInr:String(row.stipendPerMonthInr??""),
+            stipendMonths:String(row.stipendMonths??""),
+          })));
         }
         const restoredIds=[...(saved.importantDateRows??[]),...(saved.customRuleRows??[]),...(saved.roundRows??[]),...(saved.extraPackages??[])]
           .map(row=>row.id).filter(id=>Number.isInteger(id)&&id>=0);
@@ -472,6 +506,7 @@ export function PlacementJobCreateForm({
         const name=String(data.get("companyName")??"").trim();
         const domain=String(data.get("companyDomain")??"").trim();
         const website=String(data.get("companyWebsite")??"").trim();
+        if(!name)throw new Error("Please enter company name.");
         if(name.length<2||name.length>150)
           throw new Error("Company name must be between 2 and 150 characters");
         if(!domain&&!website)
@@ -605,14 +640,39 @@ export function PlacementJobCreateForm({
           throw new Error(label + " must be between 0 and " + max + ".");
         }
       }
+      function moneyField(raw:string,max:number,label:string){
+        if(!raw.trim())return null;
+        const value=Number(raw);
+        if(!Number.isFinite(value)||value<0||value>max||Math.abs(Math.round(value*100)-value*100)>1e-7)
+          throw new Error(label+" must be between 0 and "+max+" with at most two decimal places.");
+        return value;
+      }
+      function durationField(raw:string,label:string){
+        if(!raw.trim())return null;
+        const value=Number(raw);
+        if(!Number.isInteger(value)||value<1||value>120)
+          throw new Error(label+" must be between 1 and 120 months.");
+        return value;
+      }
       const defaultRoleTitle=title;
       const validatedPackages=extraPackages.map(row=>{
-        const name=row.name.trim(),ctc=nullableDecimal(row.ctcLpa);
+        const name=row.name.trim(),ctc=moneyField(row.ctcLpa,1000,"Package CTC");
         if(name.length<2||name.length>200)throw new Error("Each package needs a name between 2 and 200 characters.");
-        if(ctc===null||ctc<0||ctc>1000)
-          throw new Error("Each additional package needs a CTC between 0 and 1000 LPA.");
-        return {name,annualCtcInr:Math.round(ctc*100_000)};
+        if(ctc===null)throw new Error("Each additional package needs a CTC between 0 and 1000 LPA.");
+        const fixedLpa=moneyField(row.fixedLpa,1000,"Fixed CTC"),
+          variableLpa=moneyField(row.variableLpa,1000,"Variable CTC"),
+          joiningBonusLpa=moneyField(row.joiningBonusLpa,1000,"Joining bonus"),
+          stipendPerMonthInr=moneyField(row.stipendPerMonthInr,10_000_000,"Stipend per month"),
+          stipendMonths=durationField(row.stipendMonths,"Stipend duration");
+        if(stipendMonths!==null&&stipendPerMonthInr===null)
+          throw new Error("Add a monthly stipend when duration is set.");
+        return {name,ctcLpa:ctc,fixedLpa,variableLpa,joiningBonusLpa,
+          stipendPerMonthInr,stipendMonths,annualCtcInr:Math.round(ctc*100_000)};
       });
+      const primaryJoiningBonus=moneyField(String(data.get("joiningBonusLpa")??""),1000,"Joining bonus");
+      const primaryStipendMonths=durationField(String(data.get("stipendMonths")??""),"Stipend duration");
+      if(primaryStipendMonths!==null&&!String(data.get("stipendPerMonthInr")??"").trim())
+        throw new Error("Add a monthly stipend when duration is set.");
       if(new Set([defaultRoleTitle,...validatedPackages.map(row=>row.name)].map(name=>name.toLocaleLowerCase("en"))).size!==validatedPackages.length+1)
         throw new Error("Each package must have a different name from the main job role and other packages.");
       const fingerprint=JSON.stringify({
@@ -620,7 +680,7 @@ export function PlacementJobCreateForm({
         selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...effectiveCohortIds].sort(),
         selectedSectionIds:[...effectiveSectionIds].sort(),
-        companyMode,companyRelationshipId,roundPreset,importantDateRows,customRuleRows,roundRows,extraPackages,
+        companyMode,companyRelationshipId,driveMode,applicationMode,roundPreset,importantDateRows,customRuleRows,roundRows,extraPackages,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
         throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
@@ -693,7 +753,9 @@ export function PlacementJobCreateForm({
           ).trim(),
           description,
           legacyPostingDetails:{
-            campusPool:{hostCollege,reportingTime,travelNote},
+            campusPool:{hostCollege:driveMode==="POOL"?hostCollege:"",
+              reportingTime:driveMode==="POOL"?reportingTime:null,
+              travelNote:driveMode==="POOL"?travelNote:""},
             portal:{studentsRegisterSeparately,name:studentsRegisterSeparately?portalName:"",
               url:studentsRegisterSeparately?portalUrl:""},
             skillsWanted,
@@ -838,12 +900,22 @@ export function PlacementJobCreateForm({
         },
       );
 
-      // Never create duplicate packages after a partial save or a lost role response.
+      // The default named package maps to the primary role option. Other rows
+      // remain non-primary options; retrying a partial save never duplicates them.
+      const savedRoles=await apiFetch<{roles:Array<{id:string;title:string;status:string;isPrimary:boolean}>}>(
+        `/api/placements/jobs/${encodeURIComponent(jobId)}/roles`,
+        {credentials:"same-origin",timeoutMs:30000},
+      );
+      const defaultRole=savedRoles.roles.find(role=>role.isPrimary&&role.status==="ACTIVE");
+      if(!defaultRole)throw new Error("Could not load the draft's default pay package.");
+      await requestJson(`/api/placements/jobs/${encodeURIComponent(jobId)}/roles/${encodeURIComponent(defaultRole.id)}`,"PATCH",{
+        joiningBonusLpa:primaryJoiningBonus,
+        stipendMonths:primaryStipendMonths,
+        stipendPerMonthInr:moneyField(String(data.get("stipendPerMonthInr")??""),10_000_000,"Stipend per month"),
+        fixedLpa:moneyField(String(data.get("fixedLpa")??""),1000,"Fixed CTC"),
+        variableLpa:moneyField(String(data.get("variableLpa")??""),1000,"Variable CTC"),
+      });
       if(validatedPackages.length){
-        const savedRoles=await apiFetch<{roles:Array<{title:string;status:string}>}>(
-          `/api/placements/jobs/${encodeURIComponent(jobId)}/roles`,
-          {credentials:"same-origin",timeoutMs:30000},
-        );
         for(const pkg of validatedPackages){
           if(savedRoles.roles.some(row=>row.title.trim().toLocaleLowerCase("en")===pkg.name.toLocaleLowerCase("en"))){
             continue;
@@ -860,6 +932,12 @@ export function PlacementJobCreateForm({
             openings:null,
             minimumAnnualCtcInr:pkg.annualCtcInr,
             maximumAnnualCtcInr:pkg.annualCtcInr,
+            ctcLpa:pkg.ctcLpa,
+            fixedLpa:pkg.fixedLpa,
+            variableLpa:pkg.variableLpa,
+            joiningBonusLpa:pkg.joiningBonusLpa,
+            stipendPerMonthInr:pkg.stipendPerMonthInr,
+            stipendMonths:pkg.stipendMonths,
           });
         }
       }
@@ -1180,7 +1258,7 @@ export function PlacementJobCreateForm({
             Create the learner-facing job opportunity and application window.
           </p>
         </div>
-        <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-3">
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job Title
@@ -1220,6 +1298,27 @@ export function PlacementJobCreateForm({
                 <option key={type.label} value={type.label}>{type.label}</option>)}
             </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Job types are managed in Settings &gt; Job types. A switched-off type remains on existing drives but cannot be selected for new drives.</span>
+          </label>
+          <label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Mode
+            </span>
+            <Select className={inputClass} value={driveMode}
+              onChange={event=>{
+                const mode=event.target.value as "ON_CAMPUS"|"POOL"|"OFF_CAMPUS";
+                setDriveMode(mode);
+                setApplicationMode(mode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL");
+                markDirty();
+              }}>
+              <option value="ON_CAMPUS">On campus</option>
+              <option value="POOL">Pool (at another college)</option>
+              <option value="OFF_CAMPUS">Off campus (company&apos;s site)</option>
+            </Select>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              {driveMode==="POOL"?"Held at another college; your students travel there.":
+                driveMode==="OFF_CAMPUS"?"Students apply on the company's site; you track them here.":
+                "Students apply here; rounds at your college or online."}
+            </span>
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -1265,82 +1364,6 @@ export function PlacementJobCreateForm({
               step={1}
             />
           </label>
-          <h3 className="sm:col-span-2 mt-2 border-t border-border pt-4 text-base font-semibold text-foreground">Pay packages</h3>
-          <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">Default package · main job role. Salary amounts are in LPA unless labelled otherwise.</p>
-          <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Minimum CTC (LPA)
-            </span>
-            <Input
-              className={inputClass}
-              name="minimumLpa"
-              type="number"
-              min={0}
-              max={1000}
-              step="0.5"
-            />
-            <span className="mt-1 block text-xs text-muted-foreground">CTC Range, e.g. 6–10 LPA; use minimum and maximum fields.</span>
-          </label>
-          <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Maximum CTC (LPA)
-            </span>
-            <Input
-              className={inputClass}
-              name="maximumLpa"
-              type="number"
-              min={0}
-              max={1000}
-              step="0.5"
-            />
-          </label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Fixed CTC (LPA)
-          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Variable CTC (LPA)
-          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Stipend per month (INR)
-          </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
-          <div className="grid gap-1 rounded-lg border border-border bg-muted/30 p-3 text-sm">
-            <span className="font-semibold">Visibility</span>
-            <span className="text-body">College only · this drive stays within the selected college workspace.</span>
-            <span className="text-xs text-muted-foreground">Choose eligible departments, programs and batches below to narrow its audience.</span>
-          </div>
-          <div className="grid gap-3 border-t border-border pt-3 sm:col-span-2">
-            {extraPackages.map((pkg,index)=>(
-              <div key={pkg.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]">
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">Package name
-                  <Input className={inputClass} maxLength={200} placeholder="e.g. Digital, Ninja"
-                    aria-label={"Package "+(index+2)+" name"} value={pkg.name}
-                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,name:event.target.value}:row))}/>
-                </label>
-                <label className="grid min-w-0 gap-1 text-xs font-semibold">CTC (LPA)
-                  <Input className={inputClass} type="number" min={0} max={1000} step="0.5"
-                    aria-label={"Package "+(index+2)+" CTC in LPA"} value={pkg.ctcLpa}
-                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,ctcLpa:event.target.value}:row))}/>
-                </label>
-                <Button variant="secondary" type="button" className="self-end text-danger"
-                  aria-label={"Remove package "+(index+2)}
-                  onClick={()=>{setExtraPackages(rows=>rows.filter(row=>row.id!==pkg.id));markDirty();}}>
-                  Remove package
-                </Button>
-              </div>
-            ))}
-            <Button variant="secondary" type="button" disabled={extraPackages.length>=10}
-              className="min-h-11 justify-self-start border-dashed md:min-h-9"
-              onClick={()=>{setExtraPackages(rows=>[...rows,{id:nextRowId.current++,name:"",ctcLpa:""}]);markDirty();}}>
-              Add another package
-            </Button>
-            <p className="text-xs text-muted-foreground">
-              Additional pay tracks are saved as separate role options on this drive. Configure per-role bonuses and stipend duration in the saved drive workspace.
-            </p>
-          </div>
-          <label className="flex items-center gap-3 text-sm font-semibold text-body">
-            <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
-            Dream drive (college held-offer cap exception)
-          </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application mode
@@ -1348,7 +1371,11 @@ export function PlacementJobCreateForm({
             <Select
               className={inputClass}
               name="applicationMode"
-              defaultValue="INTERNAL"
+              value={applicationMode}
+              onChange={event=>{
+                setApplicationMode(event.target.value as "INTERNAL"|"HYBRID"|"EXTERNAL_ONLY");
+                markDirty();
+              }}
             >
               <option value="INTERNAL">
                 LMS application
@@ -1362,9 +1389,9 @@ export function PlacementJobCreateForm({
             </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </label>
-          <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Employer application URL
+          {applicationMode!=="INTERNAL"||driveMode==="OFF_CAMPUS"?<label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              Company application link
             </span>
             <Input
               className={inputClass}
@@ -1372,8 +1399,8 @@ export function PlacementJobCreateForm({
               type="url"
               placeholder="Required for hybrid/external-only"
             />
-            <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS employer registration portal link. A separate portal name is not saved by this workflow.</span>
-          </label>
+            <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS company registration link. Off-campus drives require this link.</span>
+          </label>:null}
           <div>
             <label>
               <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -1419,6 +1446,110 @@ export function PlacementJobCreateForm({
                 }
               }}>Use 11:59 PM IST</Button>
           </div>
+        </div>
+      </section>
+
+      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Pay packages">
+        <h2 className="m-0 border-b border-border pb-3 text-base font-semibold text-foreground">Pay packages</h2>
+        <div className="grid min-w-0 gap-4 pt-4 sm:grid-cols-2 md:grid-cols-3">
+
+          <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">Default package · main job role. Salary amounts are in LPA unless labelled otherwise.</p>
+          <label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Minimum CTC (LPA)
+            </span>
+            <Input
+              className={inputClass}
+              name="minimumLpa"
+              type="number"
+              min={0}
+              max={1000}
+              step="0.5"
+            />
+            <span className="mt-1 block text-xs text-muted-foreground">CTC Range, e.g. 6–10 LPA; use minimum and maximum fields.</span>
+          </label>
+          <label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Maximum CTC (LPA)
+            </span>
+            <Input
+              className={inputClass}
+              name="maximumLpa"
+              type="number"
+              min={0}
+              max={1000}
+              step="0.5"
+            />
+          </label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Fixed CTC (LPA)
+          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Variable CTC (LPA)
+          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Stipend per month (INR)
+          </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Joining bonus (LPA)
+          </span><Input className={inputClass} name="joiningBonusLpa" type="number" min={0} max={1000} step="0.5"/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Duration (months)
+          </span><Input className={inputClass} name="stipendMonths" type="number" min={1} max={120} step={1}/></label>
+          <div className="grid gap-1 rounded-lg border border-border bg-muted/30 p-3 text-sm">
+            <span className="font-semibold">Visibility</span>
+            <span className="text-body">College only · this drive stays within the selected college workspace.</span>
+            <span className="text-xs text-muted-foreground">Choose eligible departments, programs and batches below to narrow its audience.</span>
+          </div>
+          <div className="grid gap-3 border-t border-border pt-3 sm:col-span-2">
+            {extraPackages.map((pkg,index)=>(
+              <div key={pkg.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2 lg:grid-cols-3">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Package name
+                  <Input className={inputClass} maxLength={200} placeholder="e.g. Digital, Ninja"
+                    aria-label={"Package "+(index+2)+" name"} value={pkg.name}
+                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,name:event.target.value}:row))}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">CTC (LPA)
+                  <Input className={inputClass} type="number" min={0} max={1000} step="0.5"
+                    aria-label={"Package "+(index+2)+" CTC in LPA"} value={pkg.ctcLpa}
+                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,ctcLpa:event.target.value}:row))}/>
+                </label>
+                {([
+                  ["fixedLpa","Fixed (LPA)",1000,"0.5"],
+                  ["variableLpa","Variable (LPA)",1000,"0.5"],
+                  ["joiningBonusLpa","Joining bonus (LPA)",1000,"0.5"],
+                  ["stipendPerMonthInr","Stipend / month (INR)",10000000,"1"],
+                  ["stipendMonths","Duration (months)",120,"1"],
+                ] as const).map(([field,label,max,step])=>(
+                  <label key={field} className="grid min-w-0 gap-1 text-xs font-semibold">{label}
+                    <Input className={inputClass} type="number" min={field==="stipendMonths"?1:0}
+                      max={max} step={step} value={pkg[field]}
+                      aria-label={"Package "+(index+2)+" "+label}
+                      onChange={event=>setExtraPackages(rows=>rows.map(row=>
+                        row.id===pkg.id?{...row,[field]:event.target.value}:row))}/>
+                  </label>
+                ))}
+                <Button variant="secondary" type="button" className="self-end text-danger"
+                  aria-label={"Remove package "+(index+2)}
+                  onClick={()=>{setExtraPackages(rows=>rows.filter(row=>row.id!==pkg.id));markDirty();}}>
+                  Remove package
+                </Button>
+              </div>
+            ))}
+            <Button variant="secondary" type="button" disabled={extraPackages.length>=10}
+              className="min-h-11 justify-self-start border-dashed md:min-h-9"
+              onClick={()=>{setExtraPackages(rows=>[...rows,{id:nextRowId.current++,name:"",ctcLpa:"",
+                    fixedLpa:"",variableLpa:"",joiningBonusLpa:"",stipendPerMonthInr:"",stipendMonths:""}]);markDirty();}}>
+              Add another package
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Additional pay tracks are saved as separate role options. Every bonus and stipend duration is stored with its named package.
+            </p>
+          </div>
+          <label className="flex items-center gap-3 text-sm font-semibold text-body">
+            <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
+            Dream drive (college held-offer cap exception)
+          </label>
         </div>
       </section>
 
