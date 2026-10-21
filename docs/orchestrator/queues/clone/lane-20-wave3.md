@@ -11,7 +11,7 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_app_authenticated_hr_placements_jobs_jobId_page.tsx.md` (edit src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx; 5 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_app_authenticated_hr_placements_jobs_jobId_page.tsx.md` (edit src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx; 5 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_NEW_docs_audit_gap2_lane-7_u015-college-admin-workspace-summary.md.md` (new; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_src_components_projects_project-template-view.tsx.md` (edit src/components/projects/project-template-view.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-20/W3_NEW_docs_audit_gap2_lane-11_l18-u023-learner-eligibility-controller.md.md` (new; 3 findings; best P1)
