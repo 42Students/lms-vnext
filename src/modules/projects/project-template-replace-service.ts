@@ -3,6 +3,7 @@ import "server-only";
 import { randomUUID } from "node:crypto";
 import { and, asc, eq, ilike, isNull, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {templateResourceMaterializationFields} from "./template-resource-materialization";
 import {
   projectInstances, projectTemplateCollegeAssignments, projectTemplates,
   projectTemplateVersions, projectReleases, projectSprints, projectTasks,
@@ -168,7 +169,8 @@ export async function replaceProjectWorkspaceTemplate(
           [...blueprint.resources].sort((a, b) => a.sequence - b.sequence).map(row => ({
             projectId: project.id, templateKey: row.key, title: row.title,
             description: row.description ?? null, url: row.url ?? null,
-            required: row.required, sequence: row.sequence,
+            required: row.required,...templateResourceMaterializationFields(row),
+            sequence: row.sequence,
           })),
         );
       }

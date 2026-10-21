@@ -8,6 +8,7 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {templateResourceMaterializationFields} from "./template-resource-materialization";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { notifyProjectMemberships, notifyActiveProjectMembers } from "./project-notification-service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -420,6 +421,7 @@ export async function createProjectInstance(
                 resource.description ?? null,
               url: resource.url ?? null,
               required: resource.required,
+              ...templateResourceMaterializationFields(resource),
               sequence: resource.sequence,
             })),
         );
