@@ -104,7 +104,7 @@ export default async function OffersPage({params,searchParams}:{params:Promise<{
     </div>
    </details>
   </form>
-  <p role="status" className="text-sm text-body">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
+  <p role="status" className="text-sm text-body leading-[1.6]">Showing {data.totalMatching===0?0:(data.page-1)*data.pageSize+1}–{Math.min(data.totalMatching,data.page*data.pageSize)} of {data.totalMatching} matching offer versions. Page {data.page} of {data.totalPages}.</p>
   {data.rows.length===0?<EmptyState title="No offers match this filter."/>:
    <section aria-label="Recorded offers" className="min-w-0 divide-y divide-border border-y border-border">{data.rows.map(row=><article key={row.id} className="min-w-0 py-4">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-3"><div className="min-w-0 flex-1"><h2 className="break-words text-base font-semibold leading-6 text-foreground">{row.name}</h2><p className="break-words text-sm text-body">{row.role} · {row.kind==="LOI"?"Letter of intent":"Offer"} · {row.annualCtcInr==null?"Pay not recorded":"₹"+(row.annualCtcInr/100000).toLocaleString("en-IN")+" LPA"}</p><p className="mt-1 text-xs text-body">Roll: {row.rollNumber??"Not recorded"} · Batch: {row.batch??"Not recorded"} · Branch: {row.branch??"Not recorded"}</p></div><StatusBadge tone={row.status==="ACCEPTED"?"success":row.status==="DECLINED"?"error":row.status==="PENDING"?"warning":"neutral"}>{row.status}</StatusBadge></div>
