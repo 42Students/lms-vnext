@@ -125,46 +125,57 @@ export default async function SuperAdminTenantSetup({
       {value:"STRUCTURE",label:"1. Tenant structure",href:tabLink("STRUCTURE")},
       {value:"LAUNCH",label:"2. Launch setup",href:tabLink("LAUNCH")},
     ]}/>
-  {tab==="STRUCTURE"?<>
-   <section aria-label="Create organization and college" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
-    <div className="min-w-0 space-y-3 border-b border-border pb-4">
-     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Create an organization</h2>
-     {orgCreate?<OrganizationCreateForm/>:
-      <Banner tone="warning">Organization creation is not permitted in your selected administrative scope.</Banner>}
-    </div>
-    <div className="min-w-0 space-y-3 border-b border-border pb-4">
-     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Create a college</h2>
-     {creatable.length?<CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
-      <Banner tone="warning">No authorized active organization is available. Create one or change the Super Admin scope.</Banner>}
-    </div>
-   </section>
-   <section aria-label="Existing organizations and colleges" className="grid min-w-0 gap-4 min-[992px]:grid-cols-2">
-    <div className="min-w-0 border-b border-border pb-4">
-     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Organizations</h2>
-      <Link href="/admin/organizations" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
+  {tab==="STRUCTURE"&&!globallyScoped?
+   <Banner tone="warning" role="alert">
+    Tenant structure is a platform-wide workspace. Clear your selected organization and college scope to manage global organizations and colleges. Global tenant lists and creation are hidden in the current scope.
+   </Banner>:
+   tab==="STRUCTURE"?<>
+    <section aria-label="Organization setup" className="min-w-0 space-y-4 border-b border-border pb-6">
+     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Organizations</h2>
+     {organizationFailed?<Banner tone="error" action={retry}>
+      Organizations could not be loaded. College creation and organization changes are disabled until the authorized directory is available.
+     </Banner>:null}
+     {orgCreate?<div className="min-w-0 space-y-3">
+      <h3 className="font-semibold text-body">Create New Organization</h3>
+      <OrganizationCreateForm/>
+     </div>:!organizationFailed?<Banner tone="warning">Organization creation is not permitted in this administrative scope.</Banner>:null}
+     {!organizationFailed?<div className="min-w-0 space-y-3 border-t border-border pt-4">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+       <h3 className="font-semibold text-body">Existing Organizations</h3>
+       <Link href="/admin/organizations" className="font-semibold text-primary-text underline">Manage all</Link>
+      </div>
+      <TenantSetupOrganizationList rows={organizations.map(o=>({
+       id:o.id,name:o.name,canManage:can(context,"organization.manage",{organizationId:o.id}),
+      }))}/>
+     </div>:null}
+    </section>
+    <section aria-label="College setup" className="min-w-0 space-y-4 border-b border-border pb-6">
+     <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Colleges</h2>
+     {collegesFailed?<Banner tone="error" action={retry}>
+      Colleges could not be loaded. Retry the college directory before interpreting this as an empty roster.
+     </Banner>:null}
+     <div className="min-w-0 space-y-3">
+      <h3 className="font-semibold text-body">Create New College</h3>
+      {creatable.length&&list&&!organizationFailed?
+       <CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
+       <Banner tone="warning">No verified, authorized active organization is available for college creation. Create an organization or retry the directory.</Banner>}
      </div>
-     <ul className="mt-3 space-y-2 text-sm text-body">
-      {organizations.slice(0,20).map(o=><li key={o.id} className="break-words [overflow-wrap:anywhere] border-b border-border py-2">{o.name}</li>)}
-     </ul>
-     {organizations.length>20?<p className="mt-2 text-xs text-muted-foreground">First 20 shown; use Manage all for the full directory.</p>:null}
-    </div>
-    <div className="border-b border-border pb-4">
-     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Colleges</h2>
-      <Link href="/admin/tenants" className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage all</Link>
-     </div>
-     <ul className="mt-3 space-y-2 text-sm text-body">
-      {list?.items.map(item=><li key={item.id} className="break-words border-b border-border py-2">
-       <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.name}</Link>
-       {" · "}{item.code} · {item.status}
-      </li>)}
-     </ul>
-     {!list?.items.length?<EmptyState title="No colleges in the current scope" description="No colleges in the current scope."/>:null}
-     <p className="mt-2 text-xs text-muted-foreground">First page only. Archived colleges remain marked; no implicit restoration.</p>
-    </div>
-   </section>
-   <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Continue to launch setup →</Link>
+     {!collegesFailed?<div className="min-w-0 space-y-3 border-t border-border pt-4">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+       <h3 className="font-semibold text-body">Existing Colleges</h3>
+       <Link href="/admin/tenants" className="font-semibold text-primary-text underline">Manage all</Link>
+      </div>
+      <ul className="min-w-0 divide-y divide-border text-sm text-body">
+       {list?.items.map(item=><li key={item.id} className="min-w-0 py-2">
+        <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="font-semibold text-primary-text underline">{item.name}</Link>
+        {" · "}{item.code} · {item.status}
+       </li>)}
+      </ul>
+      {list&&!list.items.length?<EmptyState title="No colleges in the current scope" description="Create the first college from an authorized active organization."/>:null}
+      <p className="text-xs text-muted-foreground">First college directory page only. Open Manage all for the full authorized directory.</p>
+     </div>:null}
+    </section>
+    <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Continue to launch setup →</Link>
   </>:college?<>
    <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">{college.name} · Launch setup</h2>
    <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
