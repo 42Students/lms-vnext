@@ -397,16 +397,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/activity/activity-center.tsx`
 - [x] `src/components/admin/college-branding-preview.tsx`
 - [x] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/organization-actions.tsx`
-- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
-- [ ] `src/components/auth/login-form.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/courses/admin-assessment-read-directory.tsx`
-- [ ] `src/components/courses/admin-course-display-editor.tsx`
-- [ ] `src/components/courses/admin-offering-learning-page.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/organization-actions.tsx`
+- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
+- [x] `src/components/auth/login-form.tsx`
+- [x] `src/components/college/college-student-csv-import.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/admin-course-display-editor.tsx`
+- [x] `src/components/courses/admin-offering-learning-page.tsx`
 - [ ] `src/components/courses/assignment-file-open-control.tsx`
 - [ ] `src/components/courses/assignment-submission-control.tsx`
 - [ ] `src/components/courses/college-assignment-create.tsx`
