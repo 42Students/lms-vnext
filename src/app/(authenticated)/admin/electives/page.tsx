@@ -28,16 +28,24 @@ export default async function SuperAdminElectivesPage({
       action={<Link href="/admin/electives" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
-  const [data, options] = await Promise.all([
+  const [data, optionResult] = await Promise.all([
     listSuperAdminElectives(context, parsed.data),
-    context.adminScope?.collegeId ? listCollegeElectiveSlotOptions(context) : Promise.resolve(null),
+    context.adminScope?.collegeId
+      ? listCollegeElectiveSlotOptions(context).then(options => ({ options, error: false as const }))
+        .catch(() => ({ options: null, error: true as const }))
+      : Promise.resolve({ options: null, error: false as const }),
   ]);
+  const options = optionResult.options;
   return <div className="min-w-0 space-y-5">
     <PageHeader title="Electives"
       description="Manage elective slots and their offerings for this college." />
     {data.state === "CHOOSE_COLLEGE" ? <EmptyState title="Select a college to continue"
       description="Choose a college in the header above to see its electives." /> :
     <>
+      {optionResult.error ? <p role="alert" className="border border-amber-300 bg-amber-50 p-3 text-sm">
+        Unavailable: programs, courses, faculty, classes or batches could not be verified.
+        <Link href="/admin/electives" className="ml-2 font-semibold underline">Retry options</Link>
+      </p> : null}
       {options ? <CollegeSlotManager options={options} /> : null}
       <form aria-label="Filter elective slots" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
@@ -97,6 +105,9 @@ export default async function SuperAdminElectivesPage({
               id:item.id, name:item.name, description:item.description ?? null,
               version:item.version, credits:item.credits, minPick:item.minPick,
               maxPick:item.maxPick, status:item.status,
+              programId:item.programId, academicPeriodId:item.academicPeriodId,
+              semesterNumber:item.semesterNumber, academicYear:item.academicYear,
+              hasEnrollmentHistory:item.hasEnrollmentHistory,
             }} />
             <CollegeElectiveLifecycleAction slotId={item.id} name={item.name}
               status={item.status} version={item.version} />
