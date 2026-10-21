@@ -1,6 +1,9 @@
 import "server-only";
 
 import { and, asc, desc, eq, sql } from "drizzle-orm";
+import { z } from "zod";
+import type { RequestContext } from "@/modules/identity/context";
+import { canReadSkillCatalog } from "./catalog-access";
 import { getDb } from "@/db/client";
 import {
   db10Skills,
@@ -189,4 +192,47 @@ export async function readSkillCatalog(input: SkillCatalogQuery) {
     a.row.displayName.localeCompare(b.row.displayName)||
     a.row.id.localeCompare(b.row.id));
   return { items:[...items,...fuzzy.slice(0,Math.max(0,input.limit-items.length)).map(match=>match.row)] };
+}
+
+/** Alias management read, not a mutation: the importer can inspect one
+ * parent skill and check an exact synonym before attempting a deduplicated
+ * write. Distinct canonical IDs remain authoritative across duplicate aliases. */
+function requireCatalogReader(context: RequestContext) {
+  if (!canReadSkillCatalog(context)) throw new Error("FORBIDDEN_SKILL_CATALOG");
+}
+
+export async function listSkillSynonymsForParent(context: RequestContext, skillId: unknown) {
+  requireCatalogReader(context);
+  const id = z.string().uuid().parse(skillId);
+  const [parent] = await getDb().select({ id: db10Skills.id })
+    .from(db10Skills).where(and(eq(db10Skills.id,id),eq(db10Skills.isActive,true))).limit(1);
+  if (!parent) return null;
+  return getDb().select({
+    id:db10SkillSynonyms.id,
+    legacySynonymId:db10SkillSynonyms.legacySynonymId,
+    synonym:db10SkillSynonyms.synonym,
+    skillId:db10SkillSynonyms.skillId,
+  }).from(db10SkillSynonyms).where(eq(db10SkillSynonyms.skillId,id))
+    .orderBy(asc(sql`lower(${db10SkillSynonyms.synonym})`),asc(db10SkillSynonyms.id))
+    .limit(200);
+}
+
+export async function searchSkillsByExactSynonym(context: RequestContext, raw: unknown) {
+  requireCatalogReader(context);
+  const synonym = z.string().trim().min(1).max(100).parse(raw).toLocaleLowerCase("en-US");
+  return getDb().select(columns).from(db10Skills)
+    .innerJoin(db10SkillSynonyms,eq(db10SkillSynonyms.skillId,db10Skills.id))
+    .where(and(eq(db10Skills.isActive,true),
+      sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`))
+    .orderBy(desc(db10Skills.usageCount),asc(db10Skills.displayName),asc(db10Skills.id))
+    .limit(200);
+}
+
+export async function skillSynonymExists(context: RequestContext, raw: unknown) {
+  requireCatalogReader(context);
+  const synonym = z.string().trim().min(1).max(100).parse(raw).toLocaleLowerCase("en-US");
+  const [record] = await getDb().select({id:db10SkillSynonyms.id})
+    .from(db10SkillSynonyms)
+    .where(sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`).limit(1);
+  return Boolean(record);
 }
