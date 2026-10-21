@@ -32,7 +32,12 @@ export async function PUT(request: Request) {
         context,
         await request.json(),
       );
-    return NextResponse.json({ order });
+    return NextResponse.json({
+      order,
+      status: "OK",
+      message: "OK",
+      data: "Order updated",
+    });
   } catch (error) {
     return apiErrorResponse(error);
   }
