@@ -81,7 +81,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_groups_college-group-detail-write-service.ts.md` (edit src/modules/groups/college-group-detail-write-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-placement-edit-service.ts.md` (edit src/modules/announcements/tpo-placement-edit-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-4_cross-third-party-integrations.md.md` (new; 3 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_faculty-profile-navigation.ts.md` (edit src/modules/people/faculty-profile-navigation.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_faculty-profile-navigation.ts.md` (edit src/modules/people/faculty-profile-navigation.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-1_l11-u031-cross-forms.md.md` (new; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_learner-contact-model.ts.md` (edit src/modules/people/learner-contact-model.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_learner-profile-document-edit-service.ts.md` (edit src/modules/people/learner-profile-document-edit-service.ts; 2 findings; best P2)

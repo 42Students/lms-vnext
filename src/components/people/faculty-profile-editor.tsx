@@ -5,7 +5,7 @@ import { LoadingState } from "@/components/ui/loading-state";
 import { useRef,useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
-import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
+import {FACULTY_PROFILE_LEGACY_NAV} from "@/modules/people/faculty-profile-navigation";
 import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired} from "@/modules/people/faculty-profile-error-model";
 import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
@@ -117,14 +117,9 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <nav aria-label="Profile sections" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
     <p className="mb-[var(--lms-space-2)] text-sm font-semibold text-foreground">Jump to a profile section</p>
     <div className="flex min-w-0 snap-x snap-proximity gap-[var(--lms-space-2)] overflow-x-auto overscroll-x-contain pb-[var(--lms-space-2)]">
-     <a href="#faculty-identity-readonly" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Identity documents</a>
-     <a href="#faculty-contact" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Contact</a>
-     {[...FACULTY_PROFILE_NAV].sort((left,right)=>{
-      const order=["personalDetails","experiences","education","certifications","skills","languages","publications","awards","socialProfiles","address","metadata","about"];
-      return order.indexOf(left.section)-order.indexOf(right.section);
-     }).map(item=><a key={item.section}
+     {FACULTY_PROFILE_LEGACY_NAV.map(item=><a key={item.key}
       className="inline-flex min-h-11 shrink-0 snap-start items-center rounded-[var(--lms-control-radius)] border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
-      href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
+      href={item.href} aria-label={item.editable?item.label:item.label+" (read-only)"}>{item.label}</a>)}</div>
   </nav>
   <div className="grid min-w-0 gap-4 lg:grid-cols-2 [&>form]:min-w-0 [&>form]:rounded-[var(--lms-control-radius)] [&>form]:border [&>form]:border-border [&>form]:px-4 [&>form]:py-3">
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
