@@ -63,10 +63,10 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoEmailCampaignController.java`
 - [x] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/LearnerGroupController.java`
 - [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/StudentImageController.java`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicShareController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LessonController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CompanyController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/index.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Programs.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/teacher/profile.js`
-- [ ] U031 (Cross-cutting area) `cross/20: Public pages, marketing pages, privacy/terms, demo requests, unsubscribe pages, invites`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicShareController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LessonController.java`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CompanyController.java`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/index.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Programs.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/teacher/profile.js`
+- [x] U031 (Cross-cutting area) `cross/20: Public pages, marketing pages, privacy/terms, demo requests, unsubscribe pages, invites`
