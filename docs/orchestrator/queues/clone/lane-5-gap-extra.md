@@ -14,6 +14,6 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L15-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerRegistrationController.java`
 - [x] L17-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/GradeAuditLog.java`
 - [x] L17-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantSettings.js`
-- [ ] L18-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyVerification.java`
+- [x] L18-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyVerification.java`
 - [ ] L18-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/SemesterManagement.js`
 - [ ] L19-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicTenantController.java`
