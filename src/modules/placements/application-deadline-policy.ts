@@ -33,3 +33,10 @@ export function canAcceptPlacementApplications(
   return jobStatus === "PUBLISHED" &&
     !isPlacementApplicationDeadlinePassed(deadline, now);
 }
+
+// The old scheduled expiry sweep required a *strictly past* deadline.
+// Keep the exact-time >= deny for an application writer; do not introduce
+// a premature persisted CLOSED transition at equality.
+export function wasPublishedDriveExpiredForLegacySweep(status:string,deadline:Date|null,now:Date):boolean{
+ return status==="PUBLISHED"&&deadline instanceof Date&&deadline.getTime()<now.getTime();
+}

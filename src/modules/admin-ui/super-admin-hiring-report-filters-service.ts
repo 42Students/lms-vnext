@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {cohorts,colleges,departments,placementJobs,programs} from "@/db/schema";
+import {cohorts,colleges,departments,placementJobs,programs,placementCompanyRelationships,placementCompanies} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireSuperAdminSelectedCollege} from "./super-admin-selected-college";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -15,7 +15,9 @@ export async function getSuperAdminHiringReportFilters(context:RequestContext){
   .limit(1);
  if(!college)throw new AuthorizationError("placements.read");
  const [jobsResult,deptsResult,progsResult,batchesResult]=await Promise.allSettled([
-  db.select({id:placementJobs.id,name:placementJobs.title}).from(placementJobs)
+  db.select({id:placementJobs.id,name:placementJobs.title,companyName:placementCompanies.name}).from(placementJobs)
+   .leftJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
+   .leftJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .where(eq(placementJobs.collegeId,scope.collegeId)).orderBy(asc(placementJobs.title)).limit(2000),
   db.select({id:departments.id,name:departments.name}).from(departments)
    .where(eq(departments.collegeId,scope.collegeId)).orderBy(asc(departments.name)).limit(1000),

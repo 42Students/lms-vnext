@@ -41,7 +41,19 @@ export async function deleteTpoUnpublishedDraft(context:RequestContext,rawJobId:
   if(!saved)return {archived:false,reason:"STALE" as const,
     message:"The drive changed. Refresh and try again."};
   await auditTpoJobChange(tx,context,job,"placements.draft.archived","archived unpublished",{
+   legacySoftDelete:true,legacyIsActive:false,legacyIsDeleted:true,
    unpublished:true,submittedApplications:0,issuedOffers:0});
   return {archived:true,reason:null,message:"Draft drive deleted"};
  });
+}
+
+// Retain the immutable, read-only history of a soft-deleted old-LMS drive.
+export async function getTpoArchivedDriveHistory(ctx:RequestContext,rawId:unknown){
+ const collegeId=await requireTpoJobCollege(ctx),jobId=placementJobIdSchema.parse(rawId);
+ const [job]=await getDb().select({id:placementJobs.id,title:placementJobs.title,
+  status:placementJobs.status,archivedAt:placementJobs.archivedAt,updatedAt:placementJobs.updatedAt})
+  .from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId),
+   eq(placementJobs.status,"ARCHIVED"))).limit(1);
+ if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ return {...job,readOnly:true as const,legacyIsDeleted:true as const};
 }

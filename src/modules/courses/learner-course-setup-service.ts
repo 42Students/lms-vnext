@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq} from "drizzle-orm";
+import {and,asc,eq,isNull,or} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,learnerProgramEnrollments,programs,programTerms,
  sectionEnrollments,sections} from "@/db/schema";
@@ -32,7 +32,7 @@ export async function getLearnerCourseSetupStatus(context:RequestContext):Promis
  if(!cohort||cohort.status==="ARCHIVED")return "BATCH_NOT_FOUND";
  const [terms,classRows]=await Promise.all([
   db.select({id:programTerms.id}).from(programTerms)
-    .where(eq(programTerms.programId,enrollment.programId)).limit(1),
+    .where(and(eq(programTerms.programId,enrollment.programId),or(isNull(programTerms.legacyWasDeleted),eq(programTerms.legacyWasDeleted,false)))).limit(1),
   db.select({id:sectionEnrollments.id,status:sections.status}).from(sectionEnrollments)
    .innerJoin(sections,eq(sections.id,sectionEnrollments.sectionId))
    .where(and(eq(sectionEnrollments.learnerEnrollmentId,enrollment.id),
@@ -56,7 +56,18 @@ export async function listLearnerProgramSemesters(context:RequestContext){
   .where(and(eq(learnerProgramEnrollments.membershipId,member.id),
     eq(learnerProgramEnrollments.status,"ACTIVE"))).limit(1);
  if(!active[0])return [];
- return db.select({termNumber:programTerms.termNumber,name:programTerms.name})
-  .from(programTerms).where(eq(programTerms.programId,active[0].programId))
-  .orderBy(asc(programTerms.termNumber));
+ return db.select({termNumber:programTerms.termNumber,name:programTerms.name,
+  isActive:programTerms.isActive,legacySemesterId:programTerms.legacySemesterId})
+  .from(programTerms).where(and(eq(programTerms.programId,active[0].programId),
+   or(isNull(programTerms.legacyWasDeleted),eq(programTerms.legacyWasDeleted,false))))
+  .orderBy(asc(programTerms.termNumber),asc(programTerms.id));
+}
+
+// Legacy semester-picker projection: inactive history is visible, deleted
+// entries excluded; no caller-selected student or college is accepted.
+export async function listOwnLearnerSemesterPicker(ctx:RequestContext){
+ return (await listLearnerProgramSemesters(ctx)).map(item=>({
+  semester:item.termNumber,name:item.name,
+  legacySemesterId:item.legacySemesterId,isActive:item.isActive,
+ }));
 }

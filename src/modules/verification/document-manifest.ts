@@ -13,3 +13,16 @@ export function verificationDocumentManifest(snapshot:SafeSnapshot):Verification
  }
  return result;
 }
+
+// Only backend-issued private object receipts are authoritative, never old
+// public R2 URLs or a client-provided signed thumbnail.
+export type VerificationPrivateMediaGrant={
+ receiptId:string;purpose:VerificationDocumentReference["purpose"];
+ expiresAt:string;mimeType:"image/png"|"image/jpeg"|"image/webp"|"application/pdf";
+ readOnly:true;visibility:"PRIVATE";scannerStatus:"PENDING"|"CLEAN"|"REJECTED";
+};
+export function verificationPreviewAllowed(grant:VerificationPrivateMediaGrant,now:Date):boolean{
+ const expires=new Date(grant.expiresAt).getTime();
+ return grant.scannerStatus==="CLEAN"&&grant.visibility==="PRIVATE"&&grant.readOnly&&
+  Number.isFinite(expires)&&expires>now.getTime();
+}

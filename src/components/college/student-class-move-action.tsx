@@ -50,6 +50,7 @@ export function StudentClassMoveAction({ membershipId, name }: {
   }
   const selected = loaded?.options.find(item => item.id === targetId);
   const canMove = loaded && selected && selected.id !== loaded.current.sectionId;
+  const original=loaded?.options.find(item=>item.id===loaded.current.sectionId);
   const moveConfirmation=selected?studentSectionMoveMessage(name,selected.name):"";
   function submit() {
     if (!loaded || !canMove || !selected || busy || moving.current) return;
@@ -71,7 +72,8 @@ export function StudentClassMoveAction({ membershipId, name }: {
         setOpen(false);
         setLoaded(null);
         setTargetId("");
-        showToast({tone:"success",title:"Learner moved successfully"});
+        showToast({tone:"success",title:"Learner moved successfully",
+         description:(original?.name??"Previous class")+" → "+selected.name+". Enrollment history was retained."});
         router.refresh();
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : "Move failed");
@@ -90,7 +92,8 @@ export function StudentClassMoveAction({ membershipId, name }: {
         className="min-h-11 w-full md:w-auto md:min-h-9" loading={busy}>Confirm move</Button>
     </div>}>
       <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <p className="max-w-prose text-xs leading-5 text-body">Same batch and academic period only</p>
+      <p className="max-w-prose text-xs leading-5 text-body">Same batch and academic period only. Your existing section enrollment is ended and history retained.</p>
+      {loaded?<p className="text-sm text-body">Current class: <strong>{original?.name??"Current class"}</strong></p>:null}
       {loaded && loaded.options.every(item => item.id === loaded.current.sectionId) ?
         <EmptyState title="No eligible classes" description="No other eligible class is available in the current batch and period."/> : null}
       {loaded && loaded.options.some(item => item.id !== loaded.current.sectionId) ? <Select className="min-h-11 w-full md:min-h-9" aria-label={"Destination class for " + name}

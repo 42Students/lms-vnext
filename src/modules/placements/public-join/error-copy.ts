@@ -1,5 +1,10 @@
 export const JOIN_ERROR_COPY={
  EMAIL_NO_MX:"This domain doesn't receive email. Check the spelling",
+ EMAIL_INVALID:"Enter a valid company email address.",
+ EMAIL_PERSONAL:"Use your company work email rather than a personal address.",
+ EMAIL_DISPOSABLE:"Temporary email addresses cannot be used for recruitment.",
+ EMAIL_ACADEMIC:"Use a company domain rather than an academic address.",
+ EMAIL_IP_ADDRESS:"Use a registered company email domain, not an IP address.",
  EMAIL_MX_UNAVAILABLE:"We couldn't check the email domain right now. This does not mean your address is invalid. Retry sending the code.",
  PHONE_STORAGE_NOT_READY:"Mobile contact storage is not ready. Remove the optional mobile number or ask the placement cell to enable it.",
  INVALID_MOBILE:"Enter a valid 10-digit mobile number, or leave it blank.",
@@ -44,4 +49,15 @@ export function joinFieldError(code:unknown):{
  if(value==="COMPANY_REQUIRED")return {field:"company",
   message:JOIN_ERROR_COPY.COMPANY_REQUIRED,retryable:false};
  return {field:null,message:joinErrorMessage(code),retryable:false};
+}
+
+/** Map the six legacy domain diagnoses to safe, differentiated help. */
+export function legacyJoinDomainDecisionMessage(status:string):{message:string;retryable:boolean}{
+ const mapping:Record<string,keyof typeof JOIN_ERROR_COPY>={
+  INVALID:"EMAIL_INVALID",PERSONAL:"EMAIL_PERSONAL",DISPOSABLE:"EMAIL_DISPOSABLE",
+  ACADEMIC:"EMAIL_ACADEMIC",IP_ADDRESS:"EMAIL_IP_ADDRESS",NO_MAIL:"EMAIL_NO_MX",
+ };
+ const key=mapping[status.toUpperCase()];
+ return key?{message:JOIN_ERROR_COPY[key],retryable:false}:
+  {message:JOIN_ERROR_COPY.EMAIL_MX_UNAVAILABLE,retryable:true};
 }

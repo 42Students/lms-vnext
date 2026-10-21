@@ -98,7 +98,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
    className="min-w-0">
-   <option value="">All {label.toLowerCase()}</option>{q[key]&&!values.some(item=>item.id===q[key])?<option value={q[key]}>Current selected {label.toLowerCase()}</option>:null}{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
+   <option value="">All {label.toLowerCase()}{label==="Job"?"s":""}</option>{q[key]&&!values.some(item=>item.id===q[key])?<option value={q[key]}>Current selected {label.toLowerCase()}</option>:null}{values.map(item=><option key={item.id} value={item.id}>{label==="Job"?item.name.slice(0,30)+(item.name.length>30?"…":"")+(("companyName" in item&&item.companyName)?" - "+item.companyName:""):item.name}</option>)}</Select></label>
  );
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
