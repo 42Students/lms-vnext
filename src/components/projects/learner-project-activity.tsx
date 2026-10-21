@@ -38,26 +38,26 @@ export function LearnerProjectActivity({ projectId, events, categoryInput, fromI
     <h2 className="text-lg font-semibold text-foreground">Activity</h2>
     <form method="get" action={route} className="grid min-w-0 grid-cols-1 gap-3 border-b border-border pb-5 md:grid-cols-2 min-[992px]:grid-cols-5">
       <input type="hidden" name="tab" value="activity" />
-      <label className="text-sm font-semibold text-foreground">Activity type
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Activity type
         <Select name="activityCategory" defaultValue={category}
-          className="mt-2 min-h-11 w-full border border-border px-3 text-sm font-normal md:min-h-9">
+          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9">
           {learnerProjectActivityCategories.map(item => <option key={item.value} value={item.value}>{item.label}</option>)}
         </Select>
       </label>
-      <label className="text-sm font-semibold text-foreground">From (IST)
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">From (IST)
         <Input type="date" name="activityFrom" defaultValue={parsed.success ? parsed.data.from : ""}
-          className="mt-2 min-h-11 w-full border border-border px-3 text-sm font-normal md:min-h-9" />
+          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
       </label>
-      <label className="text-sm font-semibold text-foreground">Through (IST)
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Through (IST)
         <Input type="date" name="activityTo" defaultValue={parsed.success ? parsed.data.to : ""}
-          className="mt-2 min-h-11 w-full border border-border px-3 text-sm font-normal md:min-h-9" />
+          className="mt-[6px] min-h-11 w-full border border-border px-3 text-[var(--lms-font-base)] font-normal md:min-h-9" />
       </label>
       <Button type="submit" className="min-h-11 self-end md:min-h-9">Apply</Button>
       <Link data-unskin="" href={route + "?tab=activity"} className="inline-flex min-h-11 md:min-h-9 items-center justify-center self-end rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-body-text)] bg-white hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.05)] transition-colors duration-150 motion-reduce:transition-none hover:underline">Clear</Link>
     </form>
     {parsed.success && pageRows.length > 0 ? (
       <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-        <label className="min-w-0 flex-1 text-sm font-semibold text-foreground">Find in this activity page
+        <label className="min-w-0 flex-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Find in this activity page
           <Input type="search" maxLength={100} value={textQuery}
             onChange={event=>setTextQuery(event.target.value)}
             placeholder="Search summary, subject or actor"

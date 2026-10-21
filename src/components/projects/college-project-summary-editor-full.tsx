@@ -61,7 +61,7 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
    setOpen(false);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Save failed");}finally{setBusy(false);}
  }
- const field=(label:string,key:keyof typeof form,max:number)=><label className="text-sm font-semibold">
+ const field=(label:string,key:keyof typeof form,max:number)=><label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
   {label}<Input className={style} maxLength={max} value={form[key]} onChange={e=>change(key,e.target.value)}/>
  </label>;
  return <section className="border-b border-border pb-5">
@@ -70,32 +70,32 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
   {open?<div className="mt-4 space-y-4">
    <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",200)}
-    <label className="text-sm font-semibold">Status<Select className={style}
+    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style}
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
        <option key={v} value={v}>{v}</option>)}
     </Select></label>
-    <label className="text-sm font-semibold">Progress %<Input className={style} type="number" min={0} max={100}
+    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
      value={form.progressPercent} onChange={e=>change("progressPercent",Number(e.target.value))}/></label>
     {field("Phase","phase",120)}{field("Due label","dueLabel",160)}{field("Course label","courseLabel",160)}
-    <label className="text-sm font-semibold">Class<Select className={style} value={form.sectionId}
+    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class<Select className={style} value={form.sectionId}
      onChange={e=>change("sectionId",e.target.value)}>
       <option value="">No class</option>
       {form.sectionId&&!classes.some(v=>v.id===form.sectionId)?<option value={form.sectionId}>Current class</option>:null}
       {classes.map(v=><option key={v.id} value={v.id}>{v.name} · {v.code}</option>)}
     </Select></label>
-    {(["startDate","endDate"] as const).map(key=><label key={key} className="text-sm font-semibold">
+    {(["startDate","endDate"] as const).map(key=><label key={key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
      {key==="startDate"?"Start date":"End date"}
      <Input className={style} type="date" value={form[key]} onChange={e=>change(key,e.target.value)}/>
     </label>)}
-    <label className="text-sm font-semibold">Sprint length (weeks)<Input className={style} type="number"
+    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint length (weeks)<Input className={style} type="number"
      min={1} max={104} value={form.sprintLengthWeeks} onChange={e=>change("sprintLengthWeeks",e.target.value)}/></label>
-    <label className="text-sm font-semibold">Estimation unit<Select className={style}
+    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimation unit<Select className={style}
      value={form.estimationUnit} onChange={e=>change("estimationUnit",e.target.value)}>
       <option value="POINTS">Points</option><option value="HOURS">Hours</option><option value="TASKS">Tasks</option>
     </Select></label>
    </div>
-   {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-[length:var(--lms-font-sm)] font-semibold leading-4">
+   {(["summary","blocker","nextAction"] as const).map(k=><label key={k} className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
     {k==="summary"?"Summary":k==="blocker"?"Blocker":"Next action"}
     <Textarea className={style+" min-h-24"} maxLength={4000} value={form[k]}
      onChange={e=>change(k,e.target.value)}/>

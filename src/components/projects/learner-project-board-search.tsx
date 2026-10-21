@@ -19,15 +19,15 @@ export function LearnerProjectBoardSearch({
       <form action={"/learn/projects/"+encodeURIComponent(projectId)}
         method="get" className="grid gap-3 py-3 sm:grid-cols-2 xl:grid-cols-3">
         <input type="hidden" name="tab" value="board" />
-        <label className="flex-1 text-sm font-semibold text-foreground">
+        <label className="flex-1 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Search tasks
           <Input name="taskSearch" type="search" maxLength={100} defaultValue={search}
-            placeholder="Task title or details" className="mt-1 min-h-11 md:min-h-9" />
+            placeholder="Task title or details" className="mt-[6px] min-h-11 md:min-h-9" />
         </label>
-        <label className="text-sm font-semibold text-foreground">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Priority
           <Select name="priority" defaultValue={priority}
-            className="mt-1 min-h-11 md:min-h-9">
+            className="mt-[6px] min-h-11 md:min-h-9">
             <option value="">All priorities</option>
             <option value="LOW">Low</option>
             <option value="MEDIUM">Medium</option>
@@ -35,10 +35,10 @@ export function LearnerProjectBoardSearch({
             <option value="CRITICAL">Critical</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold text-foreground">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select name="taskStatus" defaultValue={status}
-            className="mt-1 min-h-11 md:min-h-9">
+            className="mt-[6px] min-h-11 md:min-h-9">
             <option value="">All statuses</option>
             <option value="TODO">To do</option>
             <option value="IN_PROGRESS">In progress</option>
@@ -47,32 +47,32 @@ export function LearnerProjectBoardSearch({
             <option value="DONE">Done</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold text-foreground">Task order
-          <Select name="taskSort" defaultValue={taskSort} className="mt-1 min-h-11 md:min-h-9">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task order
+          <Select name="taskSort" defaultValue={taskSort} className="mt-[6px] min-h-11 md:min-h-9">
             <option value="DEFAULT">Project order</option><option value="PRIORITY">Highest priority first</option>
             <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option>
           </Select>
         </label>
-        <label className="text-sm font-semibold text-foreground">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Sprint
           <Select name="sprintId" defaultValue={sprintId}
-            className="mt-1 min-h-11 md:min-h-9">
+            className="mt-[6px] min-h-11 md:min-h-9">
             <option value="">All sprints</option>
             {sprints.map(sprint => <option key={sprint.id} value={sprint.id}>{sprint.title}</option>)}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-foreground">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Release
           <Select name="releaseId" defaultValue={releaseId}
-            className="mt-1 min-h-11 md:min-h-9">
+            className="mt-[6px] min-h-11 md:min-h-9">
             <option value="">All releases</option>
             {releases.map(release=>(
               <option key={release.id} value={release.id}>{release.title}</option>
             ))}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-foreground">Assignee
-          <Select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-1 min-h-11 md:min-h-9">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignee
+          <Select name="assignee" defaultValue={mine ? "mine" : ""} className="mt-[6px] min-h-11 md:min-h-9">
             <option value="">Everyone</option><option value="mine">Mine</option>
           </Select>
         </label>
