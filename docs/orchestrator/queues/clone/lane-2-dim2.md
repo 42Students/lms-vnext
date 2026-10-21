@@ -392,34 +392,34 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/components/courses/faculty-quiz-question-editor.tsx`
 - [x] `src/components/courses/faculty-quiz-review.tsx`
 - [x] `src/components/courses/faculty-report-csv-download.tsx`
-- [ ] `src/components/courses/faculty-report-legacy-charts.module.css`
+- [x] `src/components/courses/faculty-report-legacy-charts.module.css`
 - [ ] `src/components/courses/faculty-submission-file-review.tsx`
-- [ ] `src/components/courses/faculty-video-preview.tsx`
-- [ ] `src/components/courses/learner-assessment-metrics.module.css`
+- [x] `src/components/courses/faculty-video-preview.tsx`
+- [x] `src/components/courses/learner-assessment-metrics.module.css`
 - [ ] `src/components/courses/learner-assessment-overview.tsx`
 - [ ] `src/components/courses/learner-course-discussion.tsx`
 - [ ] `src/components/courses/learner-course-list.tsx`
 - [ ] `src/components/courses/learner-course-overview.tsx`
-- [ ] `src/components/courses/learner-course-progress.module.css`
+- [x] `src/components/courses/learner-course-progress.module.css`
 - [ ] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.module.css`
+- [x] `src/components/courses/learner-quiz-attempt.module.css`
 - [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/learner-roadmap-item-dialog.tsx`
-- [ ] `src/components/courses/learner-video-player.tsx`
-- [ ] `src/components/courses/legacy-upload-meter.module.css`
+- [x] `src/components/courses/learner-roadmap-item-dialog.tsx`
+- [x] `src/components/courses/learner-video-player.tsx`
+- [x] `src/components/courses/legacy-upload-meter.module.css`
 - [ ] `src/components/courses/lesson-resource-materials-control.tsx`
 - [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/electives/college-elective-offering-manager.tsx`
-- [ ] `src/components/electives/college-slot-manager.tsx`
+- [x] `src/components/electives/college-elective-offering-manager.tsx`
+- [x] `src/components/electives/college-slot-manager.tsx`
 - [ ] `src/components/hr/hr-drive-draft-form.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
-- [ ] `src/components/hr/recruiter-calendar-legacy.module.css`
-- [ ] `src/components/hr/recruiter-drive-funnel.module.css`
+- [x] `src/components/hr/hr-unsent-drive-alert.tsx`
+- [x] `src/components/hr/recruiter-calendar-legacy.module.css`
+- [x] `src/components/hr/recruiter-drive-funnel.module.css`
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/hr/recruiter-private-rating-editor.tsx`
-- [ ] `src/components/marketing/marketing-layout.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/hr/recruiter-private-rating-editor.tsx`
+- [x] `src/components/marketing/marketing-layout.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
 - [ ] `src/components/people/faculty-profile-metadata.tsx`
 - [ ] `src/components/people/faculty-profile-repeatable.tsx`
 - [ ] `src/components/people/faculty-profile-skills.tsx`
