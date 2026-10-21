@@ -1,4 +1,5 @@
 import "server-only";
+import { z } from "zod";
 
 import {
   and,
@@ -24,6 +25,7 @@ import {
 
 import {
   hasMembershipRole,
+  isSuperAdmin,
   type RequestContext,
 } from "@/modules/identity/context";
 import {
@@ -252,5 +254,82 @@ export async function getTpoMyNotifications(
       preferenceTableAvailable,
       persistedPreferences,
     ),
+  };
+}
+
+/**
+ * Super Admin notification audit, intentionally separate from the TPO inbox.
+ * The legacy fetchAll contract paginates from page zero, default 50, max 200.
+ * A selected admin organization/college limits the query rather than expanding it.
+ * This is a read-only recipient-level audit (one row per delivered/scheduled
+ * notification), not a cross-tenant permission for other roles.
+ */
+const platformNotificationAuditQuerySchema = z.object({
+  pageNo: z.coerce.number().int().min(0).max(100000).default(0),
+  pageSize: z.coerce.number().int().min(1).max(200).default(50),
+}).strict();
+
+export async function getPlatformNotificationAudit(
+  context: RequestContext,
+  rawQuery: unknown = {},
+) {
+  const query = platformNotificationAuditQuerySchema.parse(rawQuery);
+  if (!isSuperAdmin(context)) throw new AuthorizationError("activity.read");
+
+  const organizationId = context.adminScope?.organizationId ?? null;
+  const collegeId = context.adminScope?.collegeId ?? null;
+  const db = getDb();
+
+  // Never trust a cached SUPER_ADMIN role: recheck the actor and role in
+  // persisted rows before querying notifications from other recipients.
+  await db.transaction(async (tx) => {
+    const persisted = await assertPersistedPlatformPermission(
+      tx, context, "activity.read", {
+        ...(organizationId ? { organizationId } : {}),
+        ...(collegeId ? { collegeId } : {}),
+      },
+    );
+    if (!isSuperAdmin(persisted)) throw new AuthorizationError("activity.read");
+  });
+
+  const conditions: SQL[] = [];
+  if (organizationId) conditions.push(eq(activityEvents.organizationId, organizationId));
+  if (collegeId) conditions.push(eq(activityEvents.collegeId, collegeId));
+  const where = conditions.length ? and(...conditions) : undefined;
+
+  const [totals, rows] = await Promise.all([
+    db.select({ total: count() }).from(inAppNotifications)
+      .innerJoin(activityEvents, eq(inAppNotifications.eventId, activityEvents.id))
+      .where(where),
+    db.select({
+      id: inAppNotifications.id,
+      recipientUserId: inAppNotifications.userId,
+      eventId: inAppNotifications.eventId,
+      title: inAppNotifications.title,
+      body: inAppNotifications.body,
+      createdAt: inAppNotifications.createdAt,
+      readAt: inAppNotifications.readAt,
+      deliveryStatus: inAppNotifications.deliveryStatus,
+      deliveredAt: inAppNotifications.deliveredAt,
+      collegeId: activityEvents.collegeId,
+      organizationId: activityEvents.organizationId,
+      module: activityEvents.module,
+      eventType: activityEvents.eventType,
+    }).from(inAppNotifications)
+      .innerJoin(activityEvents, eq(inAppNotifications.eventId, activityEvents.id))
+      .where(where)
+      .orderBy(desc(inAppNotifications.createdAt), desc(inAppNotifications.id))
+      .limit(query.pageSize)
+      .offset(query.pageNo * query.pageSize),
+  ]);
+
+  const total = Number(totals[0]?.total ?? 0);
+  return {
+    pageNo: query.pageNo,
+    pageSize: query.pageSize,
+    total,
+    totalPages: Math.ceil(total / query.pageSize),
+    scope: { organizationId, collegeId },
+    items: rows,
   };
 }

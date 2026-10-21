@@ -41,6 +41,17 @@ async function submitFollowup(
   }
 }
 
+// One lock shared by every rendered move/done form for a given follow-up ID.
+const pendingFollowupIds = new Set<string>();
+function beginFollowupChange(followupId:string):boolean {
+  if (pendingFollowupIds.has(followupId)) return false;
+  pendingFollowupIds.add(followupId);
+  return true;
+}
+function endFollowupChange(followupId:string):void {
+  pendingFollowupIds.delete(followupId);
+}
+
 const inputClass =
   "min-h-11 sm:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground";
 
@@ -156,6 +167,7 @@ export function TpoCalendarMoveFollowup({
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (busy || !beginFollowupChange(followupId)) return;
     const data = new FormData(event.currentTarget);
     setBusy(true);
     setMessage("");
@@ -171,12 +183,13 @@ export function TpoCalendarMoveFollowup({
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not reschedule follow-up.");
     } finally {
+      endFollowupChange(followupId);
       setBusy(false);
     }
   }
 
   async function onDone() {
-    if (busy) return;
+    if (busy || !beginFollowupChange(followupId)) return;
     setBusy(true);
     setMessage("");
     try {
@@ -191,6 +204,7 @@ export function TpoCalendarMoveFollowup({
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Could not mark follow-up done.");
     } finally {
+      endFollowupChange(followupId);
       setBusy(false);
     }
   }

@@ -14,6 +14,24 @@ import { publicJoinErrorCopy,validatePublicJoinClient } from "@/modules/placemen
 import { publicJoinFormSchema } from "@/modules/placements/public-join/form-model";
 import { JOIN_ERROR_COPY,joinErrorMessage } from "@/modules/placements/public-join/error-copy";
 
+type JoinField="email"|"name"|"phone"|"companyName"|"code";
+function joinFieldForError(message:string):JoinField|null{
+ if(message.startsWith("Enter your company name"))return "companyName";
+ if(message.startsWith("Enter your name"))return "name";
+ if(message.includes("mobile")||message.includes("phone"))return "phone";
+ if(message.includes("code")||message.includes("Code"))return "code";
+ if(message.includes("email")||message.includes("domain"))return "email";
+ return null;
+}
+function joinFieldForCode(code:unknown):JoinField|null{
+ if(typeof code!=="string")return null;
+ if(["WRONG_CODE","CODE_EXPIRED","CODE_LOCKED","CODE_REQUIRED"].includes(code))return "code";
+ if(["EMAIL_NO_MX","EMAIL_MX_UNAVAILABLE","OTHER_COMPANY_EMAIL"].includes(code))return "email";
+ if(["INVALID_MOBILE","PHONE_STORAGE_NOT_READY"].includes(code))return "phone";
+ if(["INVALID_NAME","NAME_REQUIRED"].includes(code))return "name";
+ if(["INVALID_COMPANY_NAME","COMPANY_REQUIRED"].includes(code))return "companyName";
+ return null;
+}
 function knownJoinError(code:unknown):boolean{
   return typeof code==="string"&&Object.prototype.hasOwnProperty.call(JOIN_ERROR_COPY,code);
 }
@@ -24,6 +42,11 @@ export function PublicRecruiterJoinForm({
   const hasRecordedOpen=useRef(false);
   const submittingRef=useRef(false);
   const errorSummaryRef=useRef<HTMLDivElement>(null);
+  const emailRef=useRef<HTMLInputElement>(null);
+  const nameRef=useRef<HTMLInputElement>(null);
+  const phoneRef=useRef<HTMLInputElement>(null);
+  const companyNameRef=useRef<HTMLInputElement>(null);
+  const codeRef=useRef<HTMLInputElement>(null);
   useEffect(()=>{
     if(preview.kind!=="READY"||hasRecordedOpen.current)return;
     hasRecordedOpen.current=true;
@@ -43,7 +66,25 @@ export function PublicRecruiterJoinForm({
   const [signInEmail,setSignInEmail]=useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState("");
-  useEffect(()=>{if(error)errorSummaryRef.current?.focus();},[error]);
+  const [fieldErrors,setFieldErrors]=useState<Partial<Record<JoinField,string>>>({});
+  const [focusField,setFocusField]=useState<JoinField|null>(null);
+  function showError(message:string,field:JoinField|null=null){
+   setError(message);setFocusField(field);
+   setFieldErrors(field?{[field]:message}:{});
+  }
+  function clearField(field:JoinField){
+   setFieldErrors(current=>({...current,[field]:undefined}));
+   if(focusField===field){setError("");setFocusField(null);}
+  }
+  useEffect(()=>{
+   if(!error)return;
+   const target=focusField==="email"?emailRef.current:
+    focusField==="name"?nameRef.current:
+    focusField==="phone"?phoneRef.current:
+    focusField==="companyName"?companyNameRef.current:
+    focusField==="code"?codeRef.current:null;
+   (target??errorSummaryRef.current)?.focus();
+  },[error,focusField]);
   const college = preview.kind === "READY" ? preview.collegeName : "";
   const company = preview.kind === "READY" ? preview.companyDomain ?? "" : "";
   const companyLabel = preview.kind === "READY"
@@ -53,13 +94,20 @@ export function PublicRecruiterJoinForm({
     if(submittingRef.current)return;
     const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope,stage:"SEND"});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
-    if (validation || !parsed.success) {
-      setError(validation??"Enter your work email and name before requesting a code.");
-      return;
+    if(validation||!parsed.success){
+     const field=validation?joinFieldForError(validation):
+      (parsed.success?null:parsed.error.issues[0]?.path[0]);
+     const allowed:JoinField|null=field==="email"||field==="name"||
+      field==="phone"||field==="companyName"?field:null;
+     const message=validation??(allowed==="name"?"Enter your name":
+      allowed==="email"?"Enter a valid email":
+      allowed==="phone"?"Enter a valid 10-digit mobile number, or leave it blank.":
+      allowed==="companyName"?"Enter your company name":"Check the contact details.");
+     showError(message,allowed);return;
     }
     submittingRef.current=true;
     setPending(true);
-    setError("");
+    setError("");setFieldErrors({});setFocusField(null);
     try {
       const response = await fetch(
         scope === "COMPANY" ? "/api/public/company-join/send-code" : "/api/public/college-join/send-code",
@@ -69,7 +117,7 @@ export function PublicRecruiterJoinForm({
       if(!response.ok){
         const body:unknown=await response.json().catch(()=>null);
         const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
-        setError(knownJoinError(code)?joinErrorMessage(code,"SEND"):publicJoinErrorCopy("SEND",response.status,String(code??"COULD_NOT_SEND_CODE"),scope,company));return;
+        showError(knownJoinError(code)?joinErrorMessage(code,"SEND"):publicJoinErrorCopy("SEND",response.status,String(code??"COULD_NOT_SEND_CODE"),scope,company),joinFieldForCode(code));return;
       }
       const responseData=await response.json().catch(()=>null) as {companyName?:string|null}|null;
       setKnownCompany(responseData?.companyName??null);
@@ -77,7 +125,7 @@ export function PublicRecruiterJoinForm({
       setSentTo(parsed.data.email);
       setCode("");
     } catch {
-      setError(joinErrorMessage(null,"SEND"));
+      showError(joinErrorMessage(null,"SEND"));
     } finally {
       submittingRef.current=false;
       setPending(false);
@@ -88,13 +136,22 @@ export function PublicRecruiterJoinForm({
     if(submittingRef.current)return;
     const validation=validatePublicJoinClient({email,name,phone,companyName,companyDomain:company,scope});
     const parsed = publicJoinFormSchema.safeParse({ email, name, designation, phone, companyName });
-    if (validation||!parsed.success||!/^[0-9]{6}$/.test(code)) {
-      setError(validation??(!code.trim()?"Enter the 6-digit code":"The code has 6 digits"));
-      return;
+    if(validation||!parsed.success||!/^[0-9]{6}$/.test(code)){
+     const rawField=validation?joinFieldForError(validation):
+      (parsed.success?null:parsed.error.issues[0]?.path[0]);
+     const field:JoinField|null=rawField==="email"||rawField==="name"||
+      rawField==="phone"||rawField==="companyName"?rawField:
+      !/^[0-9]{6}$/.test(code)?"code":null;
+     const message=validation??(field==="code"?
+      (!code.trim()?"Enter the 6-digit code":"The code has 6 digits"):
+      field==="name"?"Enter your name":field==="email"?"Enter a valid email":
+      field==="companyName"?"Enter your company name":
+      field==="phone"?"Enter a valid 10-digit mobile number, or leave it blank.":"Check the contact details.");
+     showError(message,field);return;
     }
     submittingRef.current=true;
     setPending(true);
-    setError("");
+    setError("");setFieldErrors({});setFocusField(null);
     try {
       const response = await fetch(
         scope === "COMPANY" ? "/api/public/company-join/join" : "/api/public/college-join/join",
@@ -104,14 +161,14 @@ export function PublicRecruiterJoinForm({
       if(!response.ok){
         const body:unknown=await response.json().catch(()=>null);
         const code=body&&typeof body==="object"&&"error" in body?(body as {error:unknown}).error:null;
-        setError(knownJoinError(code)?joinErrorMessage(code):publicJoinErrorCopy("JOIN",response.status,String(code??"COULD_NOT_JOIN"),scope,company));return;
+        showError(knownJoinError(code)?joinErrorMessage(code):publicJoinErrorCopy("JOIN",response.status,String(code??"COULD_NOT_JOIN"),scope,company),joinFieldForCode(code));return;
       }
       const result=await response.json() as {outcome:"JOINED"|"ALREADY_JOINED";signInEmail:string};
       setAlreadyJoined(result.outcome==="ALREADY_JOINED");
       setSignInEmail(result.signInEmail);
       setJoined(true);
     } catch {
-      setError(joinErrorMessage(null));
+      showError(joinErrorMessage(null));
     } finally {
       submittingRef.current=false;
       setPending(false);
@@ -133,13 +190,14 @@ export function PublicRecruiterJoinForm({
           </div>
         ) : joined ? (
           <>
+            <span aria-hidden="true" className="mb-3 flex size-10 items-center justify-center rounded-full bg-[var(--lms-primary-subtle)] text-lg font-bold text-primary-text">✓</span>
             <PageHeader title={alreadyJoined?"You already have access to "+college:"You now have access to "+college} />
             <p className="mt-3 text-sm text-body">
               {alreadyJoined
                 ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
                 : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
             </p>
-            <Link href="/login" className="mt-4 inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">Sign in</Link>
+            <Link href="/login" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
           </>
         ) : (
           <>
@@ -148,14 +206,16 @@ export function PublicRecruiterJoinForm({
               Join with your company email. You can then request placement drives and review the students who apply.
             </p>
             {sentTo?<h2 className="mt-5 text-lg font-semibold text-foreground">One more step</h2>:null}
-            <form className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
+            <form noValidate className="mt-4 min-w-0 space-y-4" aria-busy={pending} onSubmit={event=>{
              event.preventDefault(); if(sentTo)void join();else void sendCode();
             }}>
               <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Work email
-                <Input type="email" required autoComplete="email" value={email} disabled={Boolean(sentTo)}
-                  onChange={event => setEmail(event.target.value)} maxLength={254}
+                <Input ref={emailRef} type="email" required autoComplete="email" value={email} disabled={Boolean(sentTo)}
+                  aria-invalid={Boolean(fieldErrors.email)} aria-describedby={fieldErrors.email?"join-email-error":undefined}
+                  onChange={event => {setEmail(event.target.value);clearField("email");}} maxLength={254}
                   className="w-full min-w-0" />
+                {fieldErrors.email?<span id="join-email-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.email}</span>:null}
                 <span className="text-xs font-normal text-muted-foreground">
                   {scope === "COMPANY"
                     ? "Your " + companyLabel + " email. You'll sign in with it."
@@ -164,11 +224,13 @@ export function PublicRecruiterJoinForm({
               </label>
               <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Your name
-                <Input type="text" required autoComplete="name" value={name} maxLength={150}
-                  onChange={event => setName(event.target.value)}
+                <Input ref={nameRef} type="text" required autoComplete="name" value={name} maxLength={150}
+                  aria-invalid={Boolean(fieldErrors.name)} aria-describedby={fieldErrors.name?"join-name-error":undefined}
+                  onChange={event => {setName(event.target.value);clearField("name");}}
                   className="w-full min-w-0" />
+                {fieldErrors.name?<span id="join-name-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.name}</span>:null}
               </label>
-              <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
+              <details open={Boolean(fieldErrors.phone) || undefined} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
                 <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text min-[768px]:min-h-9">Optional contact details</summary>
                 <div className="grid min-w-0 gap-4 pt-3 min-[768px]:grid-cols-2">
               <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
@@ -179,9 +241,11 @@ export function PublicRecruiterJoinForm({
               </label>
               <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Mobile (optional)
-                <Input type="tel" autoComplete="tel" value={phone} maxLength={14}
-                  onChange={event => setPhone(event.target.value)}
+                <Input ref={phoneRef} type="tel" autoComplete="tel" value={phone} maxLength={14}
+                  aria-invalid={Boolean(fieldErrors.phone)} aria-describedby={fieldErrors.phone?"join-phone-error":undefined}
+                  onChange={event => {setPhone(event.target.value);clearField("phone");}}
                   className="w-full min-w-0" />
+                {fieldErrors.phone?<span id="join-phone-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.phone}</span>:null}
                 <span className="text-xs font-normal text-muted-foreground">
                   Only for the placement cell to call you. You never sign in with it.
                 </span>
@@ -192,9 +256,11 @@ export function PublicRecruiterJoinForm({
               {scope === "COLLEGE"&&!knownCompany&&sentTo ? (
                 <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                   Company name
-                  <Input type="text" value={companyName} maxLength={200}
-                    onChange={event => setCompanyName(event.target.value)}
+                  <Input ref={companyNameRef} type="text" value={companyName} maxLength={200}
+                    aria-invalid={Boolean(fieldErrors.companyName)} aria-describedby={fieldErrors.companyName?"join-company-error":undefined}
+                    onChange={event => {setCompanyName(event.target.value);clearField("companyName");}}
                     className="w-full min-w-0" />
+                  {fieldErrors.companyName?<span id="join-company-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.companyName}</span>:null}
                 </label>
               ) : null}
               {!sentTo ? (
@@ -203,9 +269,11 @@ export function PublicRecruiterJoinForm({
                 <>
                   <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                     Code sent to {sentTo}
-                    <Input value={code} required autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
-                      onChange={event => setCode(event.target.value)}
+                    <Input ref={codeRef} value={code} required autoComplete="one-time-code" inputMode="numeric" pattern="[0-9]{6}" maxLength={6}
+                      aria-invalid={Boolean(fieldErrors.code)} aria-describedby={fieldErrors.code?"join-code-error":undefined}
+                      onChange={event => {setCode(event.target.value);clearField("code");}}
                       className="w-full min-w-0" />
+                    {fieldErrors.code?<span id="join-code-error" role="alert" className="text-xs font-normal text-error">{fieldErrors.code}</span>:null}
                     <span className="text-xs font-normal text-muted-foreground">This proves the email is yours.</span>
                   </label>
                   <div className="flex flex-wrap gap-3">

@@ -156,7 +156,8 @@ export async function createOwnTpoGeneralRequest(ctx:RequestContext,raw:unknown)
   if(existing){
    if(existing.reason!==input.reason||!existing.payloadMatches)
     throw new TpoGeneralRequestError("TARGET_CHANGED");
-   return {id:existing.id,replayed:true};
+   return {id:existing.id,replayed:true,
+    message:"You already sent this request. The placement cell will answer it."};
   }
   const [request]=await tx.insert(placementLearnerGeneralRequests).values({
    collegeId:member.collegeId,membershipId:member.id,kind:input.kind,

@@ -28,6 +28,9 @@ export const placementTpoLeads = pgTable(
   "placement_tpo_leads",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyLeadId: integer("legacy_lead_id"),
+    legacyCollegeId: integer("legacy_college_id"),
+    legacyOwnerFacultyId: integer("legacy_owner_faculty_id"),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -139,6 +142,8 @@ export const placementTpoLeadActivities = pgTable(
   "placement_tpo_lead_activities",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyActivityId: integer("legacy_activity_id"),
+    legacyLeadId: integer("legacy_lead_id"),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -185,6 +190,8 @@ export const placementTpoFollowups = pgTable(
   "placement_tpo_followups",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyFollowupId: integer("legacy_followup_id"),
+    legacyLeadId: integer("legacy_lead_id"),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -300,6 +307,8 @@ export const placementTpoEmailCampaigns = pgTable(
   "placement_tpo_email_campaigns",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyCampaignId: integer("legacy_campaign_id"),
+    legacySenderUserId: integer("legacy_sender_user_id"),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -308,6 +317,10 @@ export const placementTpoEmailCampaigns = pgTable(
       .references(() => users.id, { onDelete: "restrict" }),
     status: varchar("status", { length: 16 }).notNull().default("DRAFT"),
     totalRecipients: integer("total_recipients").notNull().default(0),
+    legacySubject: text("legacy_subject"),
+    legacyBody: text("legacy_body"),
+    legacySentCount: integer("legacy_sent_count"),
+    legacyFailedCount: integer("legacy_failed_count"),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
       .defaultNow(),
@@ -338,10 +351,13 @@ export const placementTpoEmailCampaignRecipients = pgTable(
   "placement_tpo_email_campaign_recipients",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyRecipientId: integer("legacy_recipient_id"),
     collegeId: uuid("college_id").notNull(),
     campaignId: uuid("campaign_id").notNull(),
     leadId: uuid("lead_id").notNull(),
     recipientKey: varchar("recipient_key", { length: 64 }).notNull(),
+    /** Historical SHA-256 is not valid as a current signed unsubscribe proof. */
+    legacyUnsubscribeSha256: varchar("legacy_unsubscribe_sha256", { length: 64 }),
     status: varchar("status", { length: 24 }).notNull().default("PENDING"),
     unsubscribedAt: timestamp("unsubscribed_at", { withTimezone: true }),
     sentAt: timestamp("sent_at", { withTimezone: true }),
@@ -371,6 +387,10 @@ export const placementTpoEmailCampaignRecipients = pgTable(
       t.campaignId,
       t.recipientKey,
     ),
+    index("tpo_email_recipient_legacy_unsubscribe_idx").on(t.legacyUnsubscribeSha256)
+      .where(sql`${t.legacyUnsubscribeSha256} is not null`),
+    check("tpo_email_recipient_legacy_unsubscribe_ck",
+      sql`${t.legacyUnsubscribeSha256} is null or ${t.legacyUnsubscribeSha256} ~ '^[a-f0-9]{64}$'`),
     index("tpo_email_recipient_college_campaign_idx").on(
       t.collegeId,
       t.campaignId,

@@ -1,0 +1,9 @@
+# Profile verification historical field and status mapping (lane-14)
+
+Legacy numeric learner/student and verification IDs must resolve via a tenant-scoped legacy_id_map into users, collegeMemberships and two independent EDUCATION/IDENTITY profileVerifications records. Do not merge mixed Identity nested fields into Education or share private document receipts across memberships. The original marksheet URL is untrusted; only same-owner, CLEAN private receipt and scoped verifier may open evidence.
+
+Current profile-verification statuses SUBMITTED, SENT_BACK, VERIFIED, UPDATE_PENDING carry an optimistic rowVersion. Preserve legacy status/change history and do not fabricate missing reviewer actors to satisfy native event FK. Native timeline profileVerificationEvents stores action, actorKind, actorName, note and occurredAt; new nullable original event/action keys preserve any source taxonomy without granting role authority. A reviewer role must still be rechecked at commit.
+
+Academic marks publication already persists originalGrade, originalScale, originalMax, appliedRule and converted percentage basis points to profile_verification_academic_marks; publishVerifiedEducation atomically updates placementCandidateAcademicEvidence including eligible percent/UG CGPA and PG-or-UG passingYear. New nullable legacyQualificationId, legacyGradingType, earnedMarks, raw CGPA, and raw passingYear preserve original source columns for audited import only. Do not assign a raw string as validated numeric, round silently, or overwrite VERIFIED marks with unverified SELF claims; crosswalk conversion from legacy BigDecimal must be tested against vNext fixed-point conversion and college's CGPA policy.
+
+Source old /api/v1/profile-verification URL and timeline names need an explicit authenticated adapter/redirect, not direct numeric IDs in routes. Verification event history is append-only with actual actor IDs. Migration 0232 is unregistered and no code, SQL or CI ran.

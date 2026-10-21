@@ -8,6 +8,9 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 type JobItem={job:{id:string;createdByUserId:string};collegeId:string;relationshipId:string};
 type ApprovedAttribution={userId:string;jobId:string|null;status?:string};
 
+/** Accurate caption for the scoped, authorized job-attribution count. */
+export const RECRUITER_TEAM_DRIVE_COUNT_LABEL="Visible published or closed drives attributed here";
+
 /** Count each authorized job only once. A duplicate or conflicting approval
  * record cannot arbitrarily credit a colleague: fall back to the persisted
  * job creator until an authoritative single attribution can be established.

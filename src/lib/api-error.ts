@@ -38,7 +38,11 @@ export function apiErrorResponse(error: unknown) {
     const code = typeof body.error === "string" ? body.error : undefined;
     return NextResponse.json({
       ...body,
-      message: friendlyApiError({ status, code }),
+      // Teaching-scope denial is safe to explain without exposing a foreign
+      // course. Other authorization failures intentionally remain generic.
+      message: code === "FACULTY_TEACHING_SCOPE_REQUIRED"
+        ? "You do not teach this course or class"
+        : friendlyApiError({ status, code }),
       requestId,
     }, { ...init, status, headers });
   };

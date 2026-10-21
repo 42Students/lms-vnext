@@ -31,7 +31,7 @@ export function parseTpoImportCsvRecords(source: string, maxRecords = 5001): str
     }
     field += ch;
   }
-  if (quoted) throw new Error("Unclosed quoted field in import CSV.");
+  if (quoted) throw new Error("Unclosed quoted field in CSV");
   if (row.length || field) pushRow();
   return rows;
 }

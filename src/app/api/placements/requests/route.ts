@@ -22,7 +22,7 @@ export async function POST(request: Request) {
         await request.json(),
       );
     return NextResponse.json(
-      { request: placementRequest },
+      placementRequest,
       { status: 201 },
     );
   } catch (error) {

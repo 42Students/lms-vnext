@@ -111,3 +111,43 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_l13-u022-tpo-request-controller.md.md` | 4/4 finding IDs mapped to Placements TPO standalone-request scope and decision error contracts. No code outside lane-7 changed. **Handoff, not fixed**. No execution/CI.
 
 - `NEW_docs_audit_gap2_lane-7_l17-u021-public-job-response-dto.md.md` | 4/4 finding IDs mapped to public job migration, slug redirect, and whitelisted DTO projection. No code outside lane-7 changed. **Handoff, not fixed**. No execution/CI.
+
+- `src_app_authenticated_dashboard_page.tsx.md` | G2-10-005-007 and G2-9-035-007 applied: no-college Super Admin is now legacy hero + exactly four platform cards + scope tip; no misleading global metric summaries or tenant-count fetch. G2-10-005-031 and G2-9-035-031 already fixed in `SuperAdminTodayBoard` (literal error and Retry link present); preserved. Static JSX/import review, no code/CI execution.
+
+- `NEW_docs_audit_gap2_lane-2_r2-config.md.md` | 3/3 storage configuration findings triaged and routed to owning storage policy/service; no R2 credentials or unsafe fallback introduced. Existing `getPrivateR2Config` enforces four nonblank parameters and typed errors; runtime 503/ops diagnostics and deployment docs remain external dependency. **Handoff, not fixed**, no execution or CI.
+
+- `NEW_docs_audit_gap2_lane-17_lesson-content-class-sequence-entity.md.md` | 2/2 lesson-content delivery ordering findings handed to Courses + schema owner: actual registered migration, runtime readiness/503 and disabled UI must be verified together. 0 out-of-area edits; **not fixed**. No code or CI execution.
+
+- `src_lib_outbound.ts.md` | G2-13-011-021 intentional at-most-once unsafe POST preserved and documented; G2-14-012-050 bounded 10s transport already present, added safe exhausted-retryable-status telemetry `outbound.retry_deferred` without URL, body or recipients. Full provider-idempotency capability and outbox reconciliation require Messaging owner; **partial, not full parity**. No code or CI execution.
+
+- `NEW_docs_audit_gap2_lane-16_u020-college.md.md` | G2-16-020-019 handed to src/modules/colleges/service.ts + faculty-chair association model/migration; chair/vice-chair historical FK and tenant scope require college schema association, not changed here. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_job-application-status-history-service-impl.md.md` | G2-20-011-015 handed to src/modules/placements/application-status-history-service.ts + parent status mutation transaction; status-history write is currently transactional and deliberately fail-closed; product decision needed before any fail-open downgrade. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_student-image-controller.md.md` | G2-20-024-017 reviewed; student-image gallery is still staged only and protected object storage is required. Exact target handoff recorded, no schema/verification/gallery mutation. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_student-image.md.md` | G2-20-015-025 reviewed; student-image gallery is still staged only and protected object storage is required. Exact target handoff recorded, no schema/verification/gallery mutation. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-6_project-template-college.md.md` | 1/1 findings reviewed and routed to Projects/schema legacy assignment import owner. No historical null assignedBy forged; product decision for explicit system actor. **Handoff, not fixed**. No tests/CI.
+
+- `NEW_docs_audit_gap2_lane-2_temporary-sms-outage-recovery.md.md` | 3/3 findings reviewed and routed to Exotel SMS provider/diagnostics owner. No temporary test OTP bypass revived; privacy-safe provider warning remains intentional. **Handoff, not fixed**. No tests/CI.
+
+- `src_lib_api-error.ts.md` | G2-2-036-019 applied: exact, non-revealing teaching-scope message for FACULTY_TEACHING_SCOPE_REQUIRED. G2-2-036-020 kept generic permission 403 vs known scoped-resource 404 (do not infer foreign college from plain AuthorizationError). G2-2-037-022 partial: route-specific help and toast copy must be mapped by endpoint/action, not centralized across unrelated name fields; handoff. No execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_company-controller.md.md` | 2/2 company controller status/name and feedback findings routed to Placements company edit/create UI/service. Central api-error cannot safely infer which entity's `name` failed validation or whether the company was restored. **Handoff, not fixed**. No execution/CI.
+
+- `src_lib_api-fetch.ts.md` | G2-1-037-020 applied: explicit abort now throws `ApiFetchCancelledError` (status 499, empty message, silent=true, retryable=false) before network warning; timeout remains 504. Exported cancellation type guard for call sites; no local retry UI created. Static source review only.
+
+- `src_lib_tpo-recruiter-invite-api-error.ts.md` | G2-3-026-027 partially applied: NOT_ALLOWED invite now 400 rather than 409, with safe actionable rejection message; unusable link remains same generic 404 with no token details, retained machine codes. Per-field legacy InviteRejected codes absent from current service and need typed model extension; handoff recorded. No code execution/CI.
+
+- `src_modules_admin-scope_service.ts.md` | G2-1-002-029 partially applied: AdminScopeServiceError now carries privacy-safe invalid/archived college/organization selection recovery copy without leaking identifiers; intentionally preserves one-scope-at-a-time vNext selector. API response currently chooses friendly message by code: add `ADMIN_SCOPE_NOT_FOUND` override in lane-owned friendly-error catalog when its packet is reached. Not a legacy 500; static review only.
+
+- `NEW_docs_audit_gap2_lane-4_ai-grading.md.md` | G2-4-001-020, G2-4-001-021, G2-4-001-022, G2-4-001-023, G2-4-001-024, G2-4-001-025, G2-4-001-026, G2-4-001-027 all **skipped intentionally**: AI grading is explicitly OUT OF SCOPE by owner decision 2026-10-15 (docs/decisions/2026-10-14-orchestrator-defaults.md items 9 and 12). No AI validation, UI, provider or route recreated. Queue processed without functional parity claim. No execution/CI.
+
+- `NEW_docs_audit_gap2_lane-4_api-ai-grading-grade-booklet.md.md` | 7/7 findings G2-4-002-013, G2-4-002-014, G2-4-002-015, G2-4-002-016, G2-4-002-017, G2-4-002-018, G2-4-002-020 intentionally skipped: AI grading and all AI routes are explicitly out of scope by owner decision 2026-10-15 (orchestrator-defaults.md 9,12). No grader/health routes, API keys, fake success UI or paid provider calls added; no CI.
+
+- `NEW_docs_audit_gap2_lane-4_api-ai-grading-health.md.md` | 4/4 findings G2-4-003-010, G2-4-003-011, G2-4-003-012, G2-4-003-013 intentionally skipped: AI grading and all AI routes are explicitly out of scope by owner decision 2026-10-15 (orchestrator-defaults.md 9,12). No grader/health routes, API keys, fake success UI or paid provider calls added; no CI.
+
+- `src_lib_friendly-error.ts.md` | G2-1-037-021/-023/-024 applied: legacy timeout, session-expired and conflict phrasing in shared friendly errors; draft state not cleared by this helper. Also mapped ADMIN_SCOPE_NOT_FOUND to actionable safe scope-choice text, completing earlier admin-scope message handoff. Static only; no tests/CI.
+
+- `src_lib_safe-format.ts.md` | G2-2-037-021 applied with opt-in `validateClassScheduleDateRange` for ISO days: exact legacy startDate/endDate field/range text, strict date rollover rejection and bounded sanitized echo. Existing generic validateDateRange unchanged so unrelated forms are not affected. Caller wiring required in Academic class-schedule form (handoff), not yet user-facing; no CI.

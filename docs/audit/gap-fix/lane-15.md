@@ -254,3 +254,18 @@
 
 ## Lane-15 queue disposition
 - All 59 per-file work packets are ticked in `docs/orchestrator/queues/clone/lane-15-work.md`; each handled as either scoped schema/migration change, already-fixed verification, immutable-existing-SQL disposition, or documented conflicting staged cutover handoff. No code, TypeScript compiler, tests, CI or SQL replay executed. New migrations 0164–0170 remain UNVERIFIED and must pass migration integration before use.
+
+- work2 #1 `src/modules/placements/tpo-student-notes-service.ts` | G2-4-022-028: return legacy `ok:true` acknowledgment while preserving accurate added/skipped/member IDs. No change to authorization or partial-skip semantics.
+- work2 #2 `src/app/api/placements/recruiter/bell/route.ts` | G2-10-025-037: POST retains counted `marked` and adds legacy `ok:true` acknowledgment; GET untouched.
+
+- work2 #3 `tpo-public-placement-content-editor.tsx` | G2-17-022-018: legacy load failure copy and Retry using Next router refresh; save failure retains dirty draft and explanatory retry text. No invented content GET route.
+- work2 #4 `placements/recruiter/profile/details/route.ts` | G2-10-025-030: valid JSON null body now returns HTTP 400 `BODY_REQUIRED`; malformed JSON/oversized body still retains security error contract.
+
+- work2 #5 `campaign-unsubscribe-confirm.tsx` | G2-20-031-023 confirmation result exact success title and message already exist at confirmed page, POST-only control preserved; G2-1-025-018 restored typographic apostrophe in error.
+- work2 #6 `tpo-crm-validation.ts` | G2-14-022-021/022/025 restored exact activity type, recruiter-name, and follow-up date validation wording through Zod4 field errors; existing shape, authorization, phone normalization preserved.
+
+- work2 #7 `recruiter-calendar-model.ts` | G2-5-005-067: documented stable type/ID/start/end/where/status/authorization mapping ROUND/SLOT/DEADLINE/RESULTS_DUE to new calendar plus separate results reminders. No unintended change in event visibility.
+- work2 #8 `tpo-team-asks-service.ts` | G2-3-022-014: verified same-college ACTIVE assignee now yields typed ADD_PEOPLE conflict with only safe membership ID if absent from private thread; actor/nonmember remains 404. HTTP serialization of typed 409 to existing route handed off since route not in this packet.
+
+- work2 #9 `tpo-draft-drive-model.ts` | G2-3-011-033: constrained canonical label syntax; added scoped picker helper allowing all active configured labels and hidden saved historical choice only in its existing edit context. Employment category remains separate; createPlacementJob already verifies tenant status/built-ins. UI sourcing of all five choices handed off.
+- work2 #10 `public-page/publication-service.ts` | G2-17-022-026: added live publish eligibility signal requiring explicit enabled/published state and current >=5 consented active learners; historical snapshot not treated as live approval. 12-month metric aggregation remains in scoped public-read service and is handed off.

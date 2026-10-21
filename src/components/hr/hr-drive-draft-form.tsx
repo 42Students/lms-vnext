@@ -69,6 +69,7 @@ export function HrDriveDraftForm({
    const [draftDecision,setDraftDecision]=useState<"RESTORE"|"CLEAR"|null>(null);
   const router=useRouter();
   const [savedRequestId,setSavedRequestId]=useState<string|null>(null);
+  const [approvedJobId,setApprovedJobId]=useState<string|null>(null);
   const [submitting,setSubmitting] = useState(false);
   const attempted = useRef<{signature:string;submissionId:string}|null>(null);
   const submittedRef=useRef(false);
@@ -204,11 +205,18 @@ export function HrDriveDraftForm({
         setNotice("Could not verify the saved request. Check Drives before retrying.");
         return;
       }
+      const receipt = (raw as {request:{id:string;status?:unknown;approvedJobId?:unknown}}).request;
+      // Only a durable approved draft job ID distinguishes automatic approval
+      // from a request still waiting for the placement cell's decision.
+      const approvedId = receipt.status === "DRAFT" && typeof receipt.approvedJobId === "string"
+        ? receipt.approvedJobId : null;
       submittedRef.current=true;
+      setApprovedJobId(approvedId);
       try{
         window.sessionStorage.setItem(feedbackKey,fixRequestId
           ? editMode==="EDIT"?"Saved. The placement cell sees the new version.":"Request resent to the placement cell."
-          : "Sent to the placement cell for review");
+          : approvedId ? "Approved. The placement cell sets the dates and opens it to students."
+            : "Sent to the placement cell for review");
       }catch{/* A verified save must not depend on flash storage. */}
       // REC-home-drives-29: a submitted request is no longer an unsent local draft.
       try{window.localStorage.removeItem(storageKey);window.sessionStorage.removeItem(storageKey);}
@@ -231,10 +239,12 @@ export function HrDriveDraftForm({
   }
 
   if(savedRequestId) return <section role="status" className="min-w-0 max-w-3xl space-y-4 border-y border-border bg-transparent py-4 md:py-6">
-    <h2 className="text-lg font-semibold text-foreground">Sent to the placement cell for review</h2>
-    <p className="text-sm text-body">Your request was saved. The placement cell will review and set the dates before it can open to students.</p>
+    <h2 className="text-lg font-semibold text-foreground">{approvedJobId ? "Drive approved" : "Request sent"}</h2>
+    <p className="text-sm text-body">{approvedJobId
+      ? "Approved. The placement cell sets the dates and opens it to students."
+      : "Your request was saved. The placement cell will review and set the dates before it can open to students."}</p>
     <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap">
-      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+"&view=WAITING"}
+      <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)+(approvedJobId?"&view=DRAFT":"&view=WAITING")}
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text min-[768px]:min-h-9 min-[768px]:w-auto hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open the request</a>
       <a href={"/hr/drives?collegeId="+encodeURIComponent(collegeId)}
         className="inline-flex min-h-11 w-full items-center justify-center min-[768px]:min-h-9 min-[768px]:w-auto rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-medium text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Go to Drives</a>
@@ -269,6 +279,8 @@ export function HrDriveDraftForm({
           Hire again · copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
         </p>
       ) : null}
+      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
+      <div className="min-w-0 space-y-5">
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Role and work</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
@@ -446,7 +458,7 @@ export function HrDriveDraftForm({
                   onClick={()=>{setDraft(current=>duplicateHrDraftRound(current,index));setShowPreview(false);}}>
                   Duplicate
                 </Button>
-                <Button type="button" disabled={draft.rounds.length <= 1}
+                <Button type="button"
                   variant="secondary" className="max-[767px]:flex-1"
                   onClick={() => setDraft((current) => ({
                     ...current, rounds: current.rounds.filter((_, i) => i !== index),
@@ -456,7 +468,9 @@ export function HrDriveDraftForm({
           ))}
         </div>
       </section>
-      <section className="border-b border-border pb-5">
+      </div>
+      <aside aria-label="Drive preview and submit" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:sticky lg:top-6">
+      <section className="min-w-0">
         <h2 className="font-semibold text-foreground">What students will see · local preview</h2>
         <p className="mt-1 text-sm text-body">
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
@@ -499,7 +513,7 @@ export function HrDriveDraftForm({
           </Alert>
         ) : null}
         {/* Live locally held student-facing draft preview; never imply publication. */}
-          {showPreview ? <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
+          <div className="mt-4 min-w-0 space-y-2 break-words border-y border-border bg-transparent py-4 text-sm text-body">
             <h3 className="text-base font-semibold text-foreground">{draft.title.trim()||"Role title"}</h3>
             <p className="whitespace-pre-wrap">{draft.description||"Add a job description to see it here."}</p>
             <p>{draft.location} · {draft.employmentType.replaceAll("_", " ")} · {draft.driveMode==="OFF_CAMPUS"?"Off campus":"On campus"} · {draft.workMode}</p>
@@ -537,12 +551,14 @@ export function HrDriveDraftForm({
             <p className="text-xs text-muted-foreground">
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
-          </div> : null}
+          </div>
         {notice ? <InlineNotice tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"} message={notice}/> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
         </p>
       </section>
+      </aside>
+      </div>
     </div>
   );
 }

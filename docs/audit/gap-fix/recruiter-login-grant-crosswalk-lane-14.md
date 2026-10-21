@@ -1,0 +1,7 @@
+# Recruiter sign-in grant filter (lane 14)
+
+Legacy recruiter identity is an independent numeric record with optional email/mobile and soft deletion/suspension. VNext uses one canonical users login shared across multiple college memberships and recruiter profile. Both recruiter-specific repository grant predicates now require active user, recruiter profile, company, company relationship, college and organization; verified unexpired college recruiter grant with DRIVES capability; and matching company relationship. They use the same conditions as live request-context recruiter resolution.
+
+findUserByPhone and findUserByEmail still return canonical identity even when recruiter profile is archived because the same user may be an authorized learner, faculty or college admin. Do not hide all memberships based on a retired recruiter persona; recruiter-only flow must fail closed based on live grant, without leaking which contact or company is registered.
+
+Legacy numeric Recruiter ID, phone with country normalization, archived/suspended status and company ID require audited scoped legacy_id_map and invite/grant verification. URL/OTP public error copy and future recruiter-specific anti-enumeration require a separate explicit recruiter intent. No tests or code execution.

@@ -1,0 +1,9 @@
+# TPO conversation and share-event historical bridge (lane 14)
+
+Legacy TPO message threads contain a reply_token and a recruiter_emailed_at throttle marker for once-per-6-hours email reminders when unread. New replyTokenHash must be a secret-keyed digest of a cryptographically random token, never the raw token emailed to a recruiter. Email-to-thread routing must verify the token in constant time, ensure same-college recruiter access is currently active, prevent replay, and update recruiterEmailedAt transactionally when handed off. The schema alone does not send or receive email.
+
+Legacy messages are of kind MESSAGE or EVENT, with event subtype and optional linked change_request_id, and transport via APP/EMAIL. Events represent drive-change transitions, must not increment unread MESSAGE counts or trigger email. The new changeRequestId FK resolves to native placement_drive_change_requests UUID; service must additionally prove same thread college and job, recruiter company grant, actor and message kind/transport constraints. Original numeric request/thread/message IDs require scoped import conversion.
+
+Legacy learner placement-profile share/download audit is backed by placement_tpo_share_links (college, job, tokenHash, maxStage, columns, expiration/revocation) and placement_tpo_share_events (OPENED, DOWNLOADED_LIST/ZIP etc). The new action-time index assists historical activity reads but is not a replacement for authorized learner data-access joins; a student must see only their own eligible share event with verified stage/audience, and revoked or expired links must not be represented as live access. The share event schema has no direct learner actor key; deriving learner disclosure needs importer/workflow-owned mapping, not guesses.
+
+Migration 0234 is unregistered. No message sender, inbound email routing, share audit read endpoint or CI was executed.

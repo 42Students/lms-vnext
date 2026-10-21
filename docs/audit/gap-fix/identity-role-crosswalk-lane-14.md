@@ -1,0 +1,9 @@
+# Legacy account persona mapping — lane 14
+
+Source userType/facultyType and old numeric IDs are diagnostics for an approved importer, never runtime permission claims. Legacy roles: SUPER_ADMIN -> system SUPER_ADMIN (faculty id 0 special case requires trusted source verification); ADMIN -> college membership COLLEGE_ADMIN; TPO, MENTOR, FACULTY, LEARNER -> corresponding membership roles, each scoped to its actual legacy college; RECRUITER -> shared users identity + verified recruiter profile and company grants, not an arbitrary college membership.
+
+Old USER_ROLES records may be missing even when userType/facultyType identifies a persona. The importer must compare those sources and quarantine conflicts; it must not copy global role rows into every college. Numeric learner/faculty/admin IDs map through tenant-scoped legacy_id_map, using all source entity types to avoid collisions. Role display names and old portal homes are user-facing compatibility copy, not new login endpoints.
+
+Runtime already loads system roles by canonical user, but membership roles only for the single selected ACTIVE membership. narrowToActiveRole narrows the active workspace rather than unioning roles. Membership switch endpoint separately checks requested membership ownership, active status and whether requested role is held; stale role cookie may safely fall back to an actually held role but must never expand privileges. Learner class/section/elective authorization remains in scoped enrollment/delivery service queries, not in this general identity context.
+
+No import, login migration, or permission test was executed.

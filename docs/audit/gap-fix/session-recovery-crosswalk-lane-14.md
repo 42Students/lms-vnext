@@ -1,0 +1,7 @@
+# Legacy refresh to first-party session recovery (lane 14)
+
+Legacy /refresh-cookie and /refresh JWT endpoints used tokenVersion checks and role-bound credentials. VNext uses a five-day opaque, keyed-digest device session resolved on each authenticated request: missing/invalid/expired/revoked session is rejected, disabled global user revokes effectively, and active chosen membership and recruiter grants are resolved from DB at request boundary. There is no refresh-token or token-type to retry.
+
+sessionRecoveryFor(code) is a pure reusable contract: SESSION_MISSING/INVALID/EXPIRED/REVOKED -> SIGN_IN, clearStoredSession true, retryRefresh false; RECENT_SIGN_IN_REQUIRED -> STEP_UP, keep session, retryRefresh false. It does not perform navigation or broadcast browser events itself. Shared authenticated layout, api-error, client fetch interceptors and cross-tab sign-out owner must wire this mapping to clear cookies and route to login with a safe return path. Legacy error text may be displayed only on explicitly supported compatibility routes; do not pretend a refresh token exists.
+
+Client must not repeat invalid/expired requests, and membership/recruiter authorization must still run on each protected route even for a valid opaque session. Cookie-provided role is a requested selection only; runtime context must verify DB-held active role. HTTP-level API inventory and stale-token recovery are outside this file and are handed off. No code/tests/CI executed.

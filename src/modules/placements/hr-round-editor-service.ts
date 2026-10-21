@@ -13,6 +13,26 @@ import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
 
+/** Legacy RecruiterDriveController (117–180) coverage.
+ * The source route owns selected-college authorization; vNext identifies an
+ * active recruiter grant and UUID job instead. Unmapped actions MUST NOT be
+ * treated as supported merely because the round editor exists.
+ */
+export const HR_LEGACY_DRIVE_ACTION_COVERAGE = {
+ drives: { legacy: "GET /drives", vNext: "GET /api/placements/recruiter/jobs", state: "adapted" },
+ rounds: { legacy: "GET /drives/{jobId}/rounds", vNext: "GET /api/placements/recruiter/drives/{jobId}/rounds", state: "adapted" },
+ applicants: { legacy: "GET /drives/{jobId}/applicants", vNext: "GET /api/placements/recruiter/jobs/{jobId}/applicants", state: "adapted" },
+ pipeline: { legacy: "GET /drives/{jobId}/pipeline", vNext: "hr-job-read-service", state: "verify-output-shape" },
+ resumesZip: { legacy: "POST /drives/{jobId}/resumes", vNext: null, state: "not-verified" },
+ roundCreate: { legacy: "POST /drives/{jobId}/rounds", vNext: "POST /api/placements/recruiter/drives/{jobId}/rounds", state: "adapted" },
+ roundUpdate: { legacy: "PUT /drives/{jobId}/rounds/{roundId}", vNext: "POST /api/placements/recruiter/drives/{jobId}/rounds", state: "adapted-with-CAS" },
+ roundDelete: { legacy: "DELETE /drives/{jobId}/rounds/{roundId}", vNext: "POST /api/placements/recruiter/drives/{jobId}/rounds", state: "cancelled-with-CAS" },
+ results: { legacy: "POST /drives/{jobId}/rounds/{roundId}/results", vNext: null, state: "not-verified" },
+ slotRead: { legacy: "GET /drives/{jobId}/rounds/{roundId}/slots", vNext: "hr-interview-slot-service", state: "verify-round-projection" },
+ slotPropose: { legacy: "POST /drives/{jobId}/rounds/{roundId}/slots", vNext: "POST /api/placements/recruiter/drives/{jobId}/interview-slots", state: "single-slot-adapter" },
+ selections: { legacy: "POST /drives/{jobId}/selections", vNext: null, state: "not-verified" },
+} as const;
+
 export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw:unknown){
  const jobId=z.string().uuid().parse(rawJobId),input=hrRoundFormSchema.parse(raw);
  if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)

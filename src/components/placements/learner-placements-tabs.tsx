@@ -15,7 +15,13 @@ export const learnerPlacementsLegacyTabs = [
   { label: "Placement cell", href: "/learn/my-placements/placement" },
 ] as const;
 
-export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersonalAlerts?:number|null}) {
+/** The Notices tab mirrors the old college-wide announcements count.
+ * Personal placement alerts belong in the Notices page, not its tab badge.
+ * The caller must supply a tenant-scoped unread announcement count. */
+export function LearnerPlacementsTabs({
+ unreadCollegeAnnouncements=null,
+ unreadPersonalAlerts: _unreadPersonalAlerts=null,
+}:{unreadCollegeAnnouncements?:number|null;unreadPersonalAlerts?:number|null}) {
   const pathname = usePathname();
   const router=useRouter();
   const touchStart=useRef<{x:number;y:number;scrollLeft:number;scroller:HTMLElement|null}|null>(null);
@@ -55,8 +61,8 @@ export function LearnerPlacementsTabs({unreadPersonalAlerts=null}:{unreadPersona
           value: tab.href,
           href: tab.href,
           label: tab.label,
-          count: tab.label==="Notices" && unreadPersonalAlerts!==null && unreadPersonalAlerts>0
-            ? unreadPersonalAlerts : undefined,
+          count: tab.label==="Notices" && unreadCollegeAnnouncements!==null && unreadCollegeAnnouncements>0
+            ? unreadCollegeAnnouncements : undefined,
         }))} />
     </div>
   );

@@ -67,6 +67,12 @@ export async function saveProjectTaskPlan(
       const releaseMap = new Map(releases.map(release => [release.id, release]));
 
       for (const { prior, next } of changed) {
+        // A started/blocked task may only be moved into an ACTIVE sprint;
+        // PLANNED sprints and the backlog can hold TODO work, not started work.
+        if (prior!.sprintId !== next.sprintId && prior!.status !== "TODO" &&
+            (!next.sprintId || sprintMap.get(next.sprintId)?.status !== "ACTIVE")) {
+          throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+        }
         // Both source and target must still permit edits; never migrate tasks out
         // of a completed sprint or into a shipped release.
         for (const sprintId of [prior!.sprintId, next.sprintId]) {
@@ -102,8 +108,9 @@ export async function saveProjectTaskPlan(
         const group = task.sprintId ?? "__BACKLOG__";
         nextSequence.set(group, Math.max(nextSequence.get(group) ?? -1, task.sequence));
       }
-      const now = new Date(Math.max(Date.now(),
-        ...current.map(task => task.updatedAt.getTime())) + 1);
+      const latestTimestamp = current.reduce(
+        (latest, task) => Math.max(latest, task.updatedAt.getTime()), Date.now());
+      const now = new Date(latestTimestamp + 1);
       const updatedTaskIds: string[] = [];
       for (const { prior, next } of changed) {
         const task = prior!;

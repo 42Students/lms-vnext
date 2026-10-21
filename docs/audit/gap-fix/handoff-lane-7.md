@@ -893,3 +893,61 @@ Current TPO decision service inner-joins application+job and does not support nu
 - G2-17-021-050 | `src/modules/placements/learner-job-service.ts + public job DTO route` | Keep public projection narrowly safe and never reuse learner eligibility view on public URLs.
 
 Do not expose private eligibility/targeting in anonymous DTOs or assume legacy numeric job IDs equal current UUIDs. **4/4 handed off, not fixed.**
+
+## R2 private storage configuration — wave-1 handoff (2026-10-21)
+
+- G2-2-004-008 | `docs/architecture/file-and-video-apis.md + src/modules/storage/r2-config.ts` | Update provisioning/playbook and fail capability gracefully where unset.
+- G2-2-004-012 | `src/modules/storage/file-lifecycle.ts + route-level storage error mapping` | Guard runtime upload/download operations and return 503 rather than crashing routes.
+- G2-2-004-011 | `src/modules/storage/file-errors.ts + operator readiness diagnostics` | Map typed error to safe setup message and ops diagnostic.
+
+R2 must fail closed for missing credentials and unsafe bucket reuse. Unrelated routes should stay functional; localized 503 and safe setup messaging need Storage owner. **3/3 handed off, not fixed.**
+
+## Lesson content delivery/class sequence (2026-10-21)
+
+- G2-17-018-006 | `src/db/schema/lesson-content-class-sequence.ts + drizzle/ + src/modules/courses/faculty-content-order-service.ts` | Register DB05 delivery order migration and remove disabled state after acceptance.
+- G2-17-018-014 | `src/db/schema/lesson-content-class-sequence.ts + drizzle/ + src/modules/courses/faculty-content-order-service.ts` | Ship registered migration or show clear disabled copy with ops recovery.
+
+Do not unconditionally enable reorder or fabricate successful migration before real DB service readiness. **2/2 handed off, not fixed.**
+
+## Outbound mail delivery reconciliation (2026-10-21)
+
+- G2-13-011-021 / G2-14-012-050 | `src/modules/messaging/service.ts + src/modules/messaging/providers.ts + src/modules/notifications/zeptomail-email.ts` | Register provider-supported idempotency/reconciliation key and durable uncertainty status in outbound queue before any retry of an unsafe POST; use new safe `outbound.retry_deferred` diagnostic for operations, never resend blindly.
+
+- G2-16-020-019 | `src/modules/colleges/service.ts + faculty-chair association model/migration` | Implement assignment/validation as separate association with audit. Require college-scoped faculty membership before chair/vice-chair assignment.
+
+- G2-20-011-015 | `src/modules/placements/application-status-history-service.ts + parent status mutation transaction` | Decide audit integrity fail-closed vs legacy fail-open, implement consistent safe response/retry Do not swallow audit write errors without documented audit-integrity policy and transactional compensation.
+- G2-20-024-017 | `src/db/schema/db04-profile-education-images.staged.ts + src/modules/verification/document-manifest.ts + learner gallery API/UI` | Implement authorized upload/grant/read lifecycle Do not expose public image URLs or accept arbitrary image keys: verify learner membership, scoped receipt, private scan and one-time grant completion.
+- G2-20-015-025 | `src/db/schema/db04-profile-education-images.staged.ts + src/modules/verification/document-manifest.ts + learner gallery API/UI` | Integrate upload grant/complete and authorized read URLs before profile gallery launch Do not expose public image URLs or accept arbitrary image keys: verify learner membership, scoped receipt, private scan and one-time grant completion.
+
+## Legacy template assignment actor — lane-7 handoff (2026-10-21)
+
+- G2-6-017-008 | `src/db/schema/projects.ts + template assignment import mapping` | Choose explicit system actor for historical unowned assignments; provide backward-compatible import fallback.
+
+Choose an auditable migration/system principal for legacy null actor; do not silently turn not-null FK nullable without owner decision.
+
+## Temporary SMS outage recovery — lane-7 handoff (2026-10-21)
+
+- G2-2-005-010 | `src/modules/notifications/exotel-sms.ts` | Confirm business-level handling of provider false and non-runtime exceptions; avoid swallowing unrelated runtime exceptions.
+- G2-2-005-011 | `src/modules/notifications/exotel-sms.ts` | Record intentional log format change; no obsolete fallback wording required.
+- G2-2-005-012 | `src/modules/notifications/exotel-sms.ts` | Retain non-PII error class observability but do not mention expired bypass.
+
+Legacy temporary testing fallback is intentionally removed. Never restore OTP bypass on provider failure; retain bounded retries, typed unavailable UX and no-PII error classes.
+
+## API permission and company copy mapping — wave-1 handoff (2026-10-21)
+
+- G2-2-036-020 | `src/modules/placements/recruiter-drive-request-service.ts + scoped HR entity routes` | Emit privacy-safe NOT_FOUND for cross-college recruiter object IDs while keeping explicit role-denied as generic FORBIDDEN. Do not infer resource visibility from generic AuthorizationError.
+- G2-2-037-022 | `feature API routes + UI error boundaries` | Map exact old error copy only when the specific action and field are known, not all Zod name errors globally. Keep safe generic request failures and correlation ID otherwise.
+- G2-20-027-008 | `src/modules/placements/company-service.ts + company form action UX` | Map field error Maintain one scoped typed error contract, no brand-name guessing from global field errors.
+- G2-20-027-010 | `src/modules/placements/company-service.ts + company form action UX` | Map toast wording Maintain one scoped typed error contract, no brand-name guessing from global field errors.
+
+## Recruiter invite typed rejection parity (2026-10-21)
+
+- G2-3-026-027 | `src/modules/placements/tpo-recruiter-invite-service.ts + public-recruiter-invite-accept-service.ts + invite UI` | Expand typed reject reasons for field-specific EMAIL_REQUIRED/verification errors, then render safe per-field messages; keep token invalid collapsed to 404. Adapter now emits 400 for known NOT_ALLOWED and preserves safe generic descriptions.
+
+## Admin scope selection copy — lane-7 follow-up (2026-10-21)
+
+- G2-1-002-029 | `src/app/api/auth/admin-scope/route.ts + src/lib/friendly-error.ts + scope selector UI` | Map known ADMIN_SCOPE_NOT_FOUND to non-revealing invalid-selection help. Schema intentionally selects one organization OR one college at a time; no mismatched two-ID payload is accepted. Preserve request-ID and private response headers.
+
+## Legacy class schedule date-range copy — lane-7 shared helper (2026-10-21)
+
+- G2-2-037-021 | `src/components/academics/college-class-schedule-editor.tsx + academic schedule API/UI` | Consume exported `validateClassScheduleDateRange` from `src/lib/safe-format.ts` for class-schedule-only start/end errors. Preserve `startDate`/`endDate` field names, do not replace generic date validation elsewhere. Existing helper is ready but not wired by this lane.

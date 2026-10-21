@@ -185,7 +185,7 @@ export async function attachCollegeApplicationOfferLetter(ctx:RequestContext,job
    subjectType:"placement_offer",subjectId:offer.id,
    summary:"Offer letter attached to application",metadata:{jobId:application.jobId,applicationId:parent.id},
   });
-  return {offerId:offer.id,attachedAt:now.toISOString()};
+  return {offerId:offer.id,attachedAt:now.toISOString(),message:"Offer letter attached"};
  });
 }
 

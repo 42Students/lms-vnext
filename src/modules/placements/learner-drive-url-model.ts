@@ -27,10 +27,13 @@ export function readLearnerDriveUrl(raw:string):{
   }
   // Never accept tenant selectors or duplicate facets; valid independent filters survive.
   const v=learnerDriveUrlSchema.parse(safe);
+  // Old LMS bookmarks used ?tab=saved. Treat it as an alias only when the
+  // modern saved= selector is absent; do not trust repeated/unknown tabs.
+  const legacySaved=query.getAll("tab").length===1&&query.get("tab")==="saved";
   return {filters:{
     search:v.q,employmentType:v.type,location:v.loc,sort:v.sort,
     eligibleOnly:v.eligible==="1",closingSoon:v.soon==="1",availability:v.availability,
-  },page:v.page,savedOnly:v.saved==="1"};
+  },page:v.page,savedOnly:v.saved==="1"||(v.saved===undefined&&legacySaved)};
 }
 export function learnerDriveQueryWithChanges(
   current:string,changes:Record<string,string|null>,
@@ -43,6 +46,9 @@ export function learnerDriveQueryWithChanges(
     if(values.length===1 && values[0] &&
        learnerDriveUrlSchema.safeParse({ [key]: values[0] }).success) query.set(key,values[0]);
   }
+  // Canonicalize old saved-tab bookmarks after preserving the selected tab.
+  if(!query.has("saved")&&prev.getAll("tab").length===1&&prev.get("tab")==="saved")
+    query.set("saved","1");
   for(const [key,value] of Object.entries(changes)){
     if(!allowed.includes(key))continue;
     if(!value||value==="all")query.delete(key);

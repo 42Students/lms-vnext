@@ -25,7 +25,7 @@ export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boole
     url.pathname!=="/campaign-unsubscribe/confirmed")
     throw new Error("UNCONFIRMED");
    router.push(url.pathname+url.search);
-  }catch{setError("That didn't work. Please try again.");}
+  }catch{setError("That didn’t work. Please try again.");}
   finally{window.clearTimeout(timeout);pendingRef.current=false;setPending(false);}
  }
  return <form onSubmit={event=>void confirm(event)} className="mt-4 space-y-3">

@@ -1,12 +1,22 @@
 /** Typed placement requests for learner circumstances not tied to an LMS job application.
  * Proposal SQL requires orchestrator registration before route runtime use. */
 import {sql} from "drizzle-orm";
-import {check,foreignKey,index,jsonb,pgTable,text,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
+import {bigint,check,foreignKey,index,integer,jsonb,pgTable,text,timestamp,uniqueIndex,uuid,varchar} from "drizzle-orm/pg-core";
 import {colleges} from "./colleges";
 import {collegeMemberships} from "./memberships";
 import {users} from "./users";
 export const placementLearnerGeneralRequests=pgTable("placement_learner_general_requests",{
  id:uuid("id").defaultRandom().primaryKey(),
+ /** Historical StudentRequest source data, never native authorization. */
+ legacyRequestId:bigint("legacy_request_id",{mode:"bigint"}),
+ legacyLearnerId:integer("legacy_learner_id"),
+ legacyJobId:integer("legacy_job_id"),
+ legacyApplicationId:integer("legacy_application_id"),
+ legacyRequestType:varchar("legacy_request_type",{length:64}),
+ legacyStatus:varchar("legacy_status",{length:24}),
+ legacyDecisionActorId:integer("legacy_decision_actor_id"),
+ legacyDecisionActorType:varchar("legacy_decision_actor_type",{length:32}),
+ escalateAt:timestamp("escalate_at",{withTimezone:true}),
  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
  membershipId:uuid("membership_id").notNull(),
  kind:varchar("kind",{length:40}).notNull(),
@@ -27,6 +37,8 @@ export const placementLearnerGeneralRequests=pgTable("placement_learner_general_
  uniqueIndex("placement_general_request_one_pending_target_uq").on(t.membershipId,t.kind,t.targetKey)
   .where(sql`${t.status}='PENDING'`),
  index("placement_general_request_college_queue_idx").on(t.collegeId,t.status,t.requestedAt),
+ index("placement_general_request_escalation_idx").on(t.collegeId,t.status,t.escalateAt),
+ check("placement_general_request_legacy_status_ck",sql`${t.legacyStatus} is null or ${t.legacyStatus} in ('PENDING','APPROVED','REJECTED','AUTO_APPROVED')`),
  index("placement_general_request_member_idx").on(t.collegeId,t.membershipId,t.requestedAt),
  check("placement_general_request_kind_ck",sql`${t.kind} in ('OFF_CAMPUS_OFFER','REGISTRATION_CHANGE','ABSENCE_DISPUTE','CORRECTION_WITH_PROOF','PLACEMENT_AFTER_PLACEMENT')`),
  check("placement_general_request_status_ck",sql`${t.status} in ('PENDING','APPROVED','REJECTED','CANCELLED')`),
