@@ -60,7 +60,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U019 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/index.js`
 - [x] U020 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/new.js`
 - [x] U021 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/workspaces/reassign-mentor.js`
-- [ ] U022 (FE page) `docs/legacy-source/frontend/src/pages/mentor/contacts/[contactsTab].js`
+- [x] U022 (FE page) `docs/legacy-source/frontend/src/pages/mentor/contacts/[contactsTab].js`
 - [ ] U023 (FE page) `docs/legacy-source/frontend/src/pages/mentor/contacts/index.js`
 - [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/mentor/fileExplorer.js`
 - [ ] U025 (FE page) `docs/legacy-source/frontend/src/pages/mentor/index.js`
