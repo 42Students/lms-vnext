@@ -522,7 +522,7 @@ export async function listProjectAdminRiskQueue(
   const instanceBlocker = sql.raw('"project_instances"."blocker"');
   const lastActivityAt = sql<Date>`greatest(
     ${instanceUpdatedAt},
-    coalesce((select max(pt.updated_at) from project_tasks pt where pt.project_id = ${instanceId}), 'epoch'::timestamptz),
+    coalesce((select max(pt.updated_at) from project_tasks pt where pt.project_id = ${instanceId} and pt.deleted_at is null), 'epoch'::timestamptz),
     coalesce((select max(ps.updated_at) from project_sprints ps where ps.project_id = ${instanceId}), 'epoch'::timestamptz),
     coalesce((select max(pr.updated_at) from project_releases pr where pr.project_id = ${instanceId}), 'epoch'::timestamptz),
     coalesce((select max(pfs.updated_at) from project_submissions pfs where pfs.project_id = ${instanceId}), 'epoch'::timestamptz),
@@ -545,7 +545,7 @@ export async function listProjectAdminRiskQueue(
     nullif(trim(${instanceBlocker}), '') is not null
     or exists (
       select 1 from project_tasks blocked
-      where blocked.project_id = ${instanceId}
+      where blocked.project_id = ${instanceId} and blocked.deleted_at is null
         and blocked.status = 'BLOCKED'
         and nullif(trim(blocked.blocker_reason), '') is not null
     )
@@ -553,7 +553,7 @@ export async function listProjectAdminRiskQueue(
   const blockerSummary = sql<string | null>`coalesce(nullif(trim(${instanceBlocker}), ''), (
     select nullif(trim(blocked.blocker_reason), '')
     from project_tasks blocked
-    where blocked.project_id = ${instanceId}
+    where blocked.project_id = ${instanceId} and blocked.deleted_at is null
       and blocked.status = 'BLOCKED'
       and nullif(trim(blocked.blocker_reason), '') is not null
     order by blocked.updated_at desc, blocked.id desc limit 1
@@ -562,6 +562,11 @@ export async function listProjectAdminRiskQueue(
     new Date(
       Date.now() - 7 * 24 * 60 * 60 * 1000,
     );
+  const signalScore = sql<number>`(
+     (case when ${lastActivityAt} <= ${staleCutoff} then 1 else 0 end)
+   + (case when ${pendingReview} then 1 else 0 end)
+   + (case when ${blockedTask} then 1 else 0 end)
+  )`;
   const where = and(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
@@ -622,7 +627,7 @@ export async function listProjectAdminRiskQueue(
         .orderBy(
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
             query.riskSort==="SEVERITY"
-              ? asc(sql`case when ${blockedTask} or (${lastActivityAt} <= ${staleCutoff} and ${pendingReview}) then 0 else 1 end`)
+              ? desc(signalScore)
               : asc(lastActivityAt),
           asc(projectInstances.title),
           asc(projectInstances.id),
@@ -714,7 +719,7 @@ export async function listProjectAdminRiskQueue(
         ...project,
         inactiveDays: inactivityDays,
         riskReasons: reasons,
-        riskSeverity: reasons.length >= 2 ? "RISK" : reasons.length === 1 ? "WATCH" : "NONE",
+        riskSeverity: reasons.length >= 3 ? "HIGH" : reasons.length === 2 ? "RISK" : reasons.length === 1 ? "WATCH" : "NONE",
         blockerReason: project.blockerSummary,
         mentorName:
           mentor?.displayName ?? null,

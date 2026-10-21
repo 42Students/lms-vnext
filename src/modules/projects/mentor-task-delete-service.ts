@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectTasks,projectTaskSubmissions,projectTaskComments} from "@/db/schema";
@@ -22,7 +22,7 @@ export async function deleteMentorProjectTask(context:RequestContext,projectIdRa
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
   await assertPersistedProjectMutationActor(tx,context,scope);
   const [task]=await tx.select().from(projectTasks)
-    .where(and(eq(projectTasks.id,taskId),eq(projectTasks.projectId,scope.project.id)))
+    .where(and(eq(projectTasks.id,taskId),eq(projectTasks.projectId,scope.project.id),isNull(projectTasks.deletedAt)))
     .for("update").limit(1);
   if(!task||task.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
     throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
@@ -41,6 +41,8 @@ export async function deleteMentorProjectTask(context:RequestContext,projectIdRa
     subjectType:"project_task",subjectId:task.id,subjectLabel:task.title,
     summary:"Mentor removed task from project board",
     metadata:{projectId:scope.project.id,taskId:task.id,deleted:true,
+      deletedByWorkspace:true, deletionSource:"WORKSPACE", templateKey:task.templateKey,
+      tombstone:true, deletedAt:new Date().toISOString(),
       commentCount:comments.length,formerAssigneeMembershipId:task.assigneeMembershipId},
     groupKey:"project:"+scope.project.id,
   });
@@ -49,11 +51,15 @@ export async function deleteMentorProjectTask(context:RequestContext,projectIdRa
     title:"Task removed",body:task.title+" was removed from your project.",
     actionHref:"/learn/projects/"+scope.project.id+"?tab=board",
   });
-  if(comments.length)await tx.delete(projectTaskComments).where(and(
-    eq(projectTaskComments.projectId,scope.project.id),eq(projectTaskComments.taskId,task.id)));
-  const [deleted]=await tx.delete(projectTasks).where(and(eq(projectTasks.id,task.id),
-    eq(projectTasks.projectId,scope.project.id))).returning({id:projectTasks.id});
+  // Preserve the task key and provenance as a real tombstone: template
+  // reapplication must not resurrect a task intentionally removed here.
+  // Comments remain bound to this historical task for a scoped audit read.
+  const [deleted]=await tx.update(projectTasks)
+    .set({deletedAt:new Date(),deletedByWorkspace:true,updatedByMembershipId:context.membership?.id??null})
+    .where(and(eq(projectTasks.id,task.id),eq(projectTasks.projectId,scope.project.id),
+      isNull(projectTasks.deletedAt)))
+    .returning({id:projectTasks.id});
   if(!deleted)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-  return {deleted:true,commentCount:comments.length};
+  return {deleted:true,tombstoned:true,deletedByWorkspace:true,templateKey:task.templateKey,commentCount:comments.length};
  });
 }

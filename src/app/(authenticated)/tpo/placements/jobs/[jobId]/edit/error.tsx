@@ -12,9 +12,9 @@ export default function ErrorPage({ reset }: { error: Error & { digest?: string 
       actions={<PageBackLink href="/tpo/placements/lifecycle" label="Back to drives" />}
     />
     <Alert tone="error">
-      <p className="text-sm text-body">No changes were saved. Retry loading this drive, or return to the drive list.</p>
+      <p className="text-sm text-body">Some drive setup data could not be loaded. Retry before editing this drive. No changes were saved.</p>
       <div className="mt-4 flex flex-wrap items-center gap-3">
-        <Button onClick={reset}>Retry</Button>
+        <Button onClick={reset}>Retry setup data</Button>
       </div>
     </Alert>
   </div>;

@@ -1,3 +1,4 @@
+import {CollegeProgressCapture} from "@/components/courses/college-progress-last-good";
 import { CollegeCourseMissingScope } from "@/components/courses/college-course-missing-scope";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -72,7 +73,9 @@ export default async function CollegeCourseProgressPage({ searchParams }: { sear
           Export recorded course activity CSV
         </Link>
       </div>} />
-    <CollegeLearnerProgressReport data={report}/>
-    <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
+    <CollegeProgressCapture>
+      <CollegeLearnerProgressReport data={report}/>
+      <CollegeLearningDirectory data={await listCollegeCourseProgress(context, parsed.data)} showHeader={false} />
+    </CollegeProgressCapture>
   </div>;
 }
