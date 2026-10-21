@@ -20,6 +20,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
  const [savedHours,setSavedHours]=useState(correctionWindowHours),[savedThreshold,setSavedThreshold]=useState(eligibilityThresholdPercent);
  const [source,setSource]=useState<"UNKNOWN"|"COLLEGE"|"DEFAULT">("UNKNOWN");
  const [reloading,setReloading]=useState(false);
+ const [resetConfirm,setResetConfirm]=useState(false);
  const [message,setMessage]=useState(""),[failed,setFailed]=useState(false);
  useEffect(()=>{
   let cancelled=false;
@@ -112,7 +113,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
    if(field==="correctionWindowHours")setHours(String(data.policy.correctionWindowHours));
    else setThreshold(String(data.policy.eligibilityThresholdPercent));
    setSource(data.hasCollegeOverride?"COLLEGE":"DEFAULT");
-   setMessage(label+" reset to default");
+   setMessage(label+" set to default value. Other custom college settings remain saved.");
    showToast({tone:"success",title:label+" updated"});
    router.refresh();
   }catch(error){
@@ -121,6 +122,36 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
   }finally{
    actionLock.current=false;setSaving(false);
   }
+ }
+ async function resetCollegeOverride(){
+  if(saving||actionLock.current||reloading)return;
+  actionLock.current=true;setSaving(true);setMessage("");setFailed(false);
+  try{
+   const response=await fetch("/api/attendance/admin/policy",{
+    method:"DELETE",credentials:"same-origin",headers:{"content-type":"application/json"},
+    body:JSON.stringify({collegeId,confirmed:true,
+     expectedCorrectionWindowHours:savedHours,
+     expectedEligibilityThresholdPercent:savedThreshold}),
+   });
+   if(!response.ok)throw new Error(response.status===409
+    ?"Attendance policy changed elsewhere. Reload before resetting."
+    :"Could not reset this college's policy. Try again.");
+   const data=await response.json() as {
+    policy:{correctionWindowHours:number;eligibilityThresholdPercent:number};
+    hasCollegeOverride:boolean;
+   };
+   setSavedHours(data.policy.correctionWindowHours);
+   setSavedThreshold(data.policy.eligibilityThresholdPercent);
+   setHours(String(data.policy.correctionWindowHours));
+   setThreshold(String(data.policy.eligibilityThresholdPercent));
+   setSource("DEFAULT");setResetConfirm(false);
+   setMessage("College policy reset to default.");
+   showToast({tone:"success",title:"Attendance policy reset to default"});
+   router.refresh();
+  }catch(error){
+   setFailed(true);
+   setMessage(error instanceof Error?error.message:"Unable to reset college policy.");
+  }finally{actionLock.current=false;setSaving(false);}
  }
  useEffect(()=>{
   if(!message||failed)return;
@@ -139,7 +170,7 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <div className="flex flex-wrap gap-2">
      <Button size="sm" type="button" disabled={saving||reloading||!hoursDirty||!withinRange} onClick={()=>requestSave("correctionWindowHours")}>Save</Button>
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} aria-label="Reload late marking policy" onClick={()=>void reloadField("correctionWindowHours")}>Reload</Button>
-     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void resetField("correctionWindowHours")}>Reset to default</Button>
+     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void resetField("correctionWindowHours")}>Set field to default</Button>
     </div>
     <span id="late-marking-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">How long after a class ends attendance can be marked or corrected (hours). The legacy tenant editor allowed up to 8,760 hours; this college allows up to {maxCorrectionHours} hours under its effective attendance policy. A higher value cannot be saved here.</span>
    </div>
@@ -152,14 +183,24 @@ export function SuperAdminAttendanceSettingsEditor({collegeId,eligibilityThresho
     <div className="flex flex-wrap gap-2">
      <Button size="sm" type="button" disabled={saving||reloading||!thresholdDirty||!thresholdValid} onClick={()=>requestSave("eligibilityThresholdPercent")}>Save</Button>
      <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} aria-label="Reload minimum attendance policy" onClick={()=>void reloadField("eligibilityThresholdPercent")}>Reload</Button>
-     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void resetField("eligibilityThresholdPercent")}>Reset to default</Button>
+     <Button size="sm" variant="secondary" type="button" disabled={saving||reloading} onClick={()=>void resetField("eligibilityThresholdPercent")}>Set field to default</Button>
     </div>
     <span id="minimum-attendance-help" className="max-w-prose text-xs font-normal leading-5 text-muted-foreground">Shown to students, and used here to flag students below it. It does not block anyone from exams. (%)</span>
    </div>
   </div>
   <p className="hidden text-sm text-body print:block leading-[22px]">Late marking: {correctionWindowHours} hours · Minimum attendance: {eligibilityThresholdPercent}%</p>
-  <p className="text-xs text-muted-foreground print:hidden">Source: {source==="COLLEGE"?"Custom college override":source==="DEFAULT"?"Effective default (no college override)":"Unavailable; reload to verify"} · Each Save changes only its own setting. Reset to default saves 24 hours or 75% for this college. It does not delete the separate college policy row. Platform/organization inheritance is not inferred.</p>
+  <p className="text-xs text-muted-foreground print:hidden">Source: {source==="COLLEGE"?"Custom college override":source==="DEFAULT"?"Effective default (no college override)":"Unavailable; reload to verify"} · Each Save changes only its own setting. Set field to default saves the number 24 hours or 75%, preserving other custom settings. Reset college override below deletes the entire custom policy row and restores both defaults. Platform/organization inheritance is not inferred.</p>
+  {source==="COLLEGE"?<div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+    <p className="text-xs text-muted-foreground">Custom college policy active · both fields can be reset to the default policy together.</p>
+    <Button variant="secondary" type="button" disabled={saving||reloading}
+      onClick={()=>setResetConfirm(true)}>Reset college policy to default</Button>
+   </div>:source==="DEFAULT"?<p className="text-xs font-semibold text-muted-foreground">Default policy · no custom college override</p>:null}
   {message?<Alert tone={failed?"error":"success"}>{message}</Alert>:null}
+  <ConfirmDialog open={resetConfirm} onOpenChange={setResetConfirm}
+    title="Reset entire college attendance policy?"
+    description="This deletes the custom college policy. Late marking becomes 24 hours and minimum attendance becomes 75%. This change is audited."
+    confirmLabel="Reset policy to default" confirmVariant="danger" pending={saving}
+    onConfirm={()=>void resetCollegeOverride()}/>
   <ConfirmDialog open={confirming} onOpenChange={setConfirming} title="Save attendance setting for this college?"
    description="Only the chosen setting changes. The other value stays at its latest saved value." confirmVariant="primary" confirmLabel="Save setting"
    pending={saving} onConfirm={()=>void save()}>
