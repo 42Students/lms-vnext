@@ -1,3 +1,8 @@
+export type LearnerBookedConfirmation={
+ roundId:string;roundName:string;roundKind:string;href:string;
+ booked:boolean;confirmed:boolean;pendingMoveRequest:boolean;
+ startsAt:Date|null;
+};
 export type LearnerPlacementTodo={
  key:string;label:string;detail:string;href:string;priority:"URGENT"|"SOON"|"NORMAL";
 };
@@ -5,6 +10,9 @@ export type LearnerPlacementTodo={
  * attendance confirmation is needed, so it links to the schedule instead. */
 export function learnerWaitingOnYou(input:{
  pendingOffers:number|null;
+ /** Persisted per-candidate slot facts; omitted data never implies a booking. */
+ bookedConfirmations?:readonly LearnerBookedConfirmation[];
+ now?:Date;
  urgentAssessment:{roundName:string;href:string;when:Date}|null;
  urgentInterview:{roundName:string;href:string;when:Date}|null;
  nextAction:{title:string;href:string;detail:string}|null;
@@ -14,6 +22,23 @@ export function learnerWaitingOnYou(input:{
  profileFixes?:readonly {label:string;href:string}[];
 }):LearnerPlacementTodo[]{
  const items:LearnerPlacementTodo[]=[];
+ const nowMs=(input.now??new Date()).getTime();
+ const bookedConfirmations=(input.bookedConfirmations??[]).filter(row=>
+  row.booked&&!row.confirmed&&!row.pendingMoveRequest&&
+  row.roundKind!=="TALK"&&
+  row.startsAt!==null&&Number.isFinite(row.startsAt.getTime())&&
+  row.startsAt.getTime()>=nowMs&&
+  row.href.startsWith("/learn/my-placements/"));
+ const seenRoundIds=new Set<string>();
+ for(const booking of [...bookedConfirmations].sort((a,b)=>
+   a.startsAt!.getTime()-b.startsAt!.getTime()||a.roundId.localeCompare(b.roundId))){
+  if(seenRoundIds.has(booking.roundId))continue;
+  seenRoundIds.add(booking.roundId);
+  items.push({key:"confirm:"+booking.roundId,
+   label:"Confirm "+booking.roundName,
+   detail:"Your interview or assessment slot is booked but not yet confirmed.",
+   href:booking.href,priority:"URGENT"});
+ }
  for(const fix of input.profileFixes??[]){
   if(!fix.href.startsWith("/learn/profile"))continue;
   items.push({key:"profile:"+fix.href,label:fix.label,
