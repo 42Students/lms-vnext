@@ -976,3 +976,15 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-7-004-008/-064 | `src/components/projects/project-admin-readiness-page.tsx` | Mount canonical ProjectWorkspaceReadiness details by selected workspace and preserve release/override context.
 - G2-13-012-027 / G2-12-012-015 / G2-12-012-031 | `src/modules/placements/public-join/domain-model.ts + approved PSL dataset` | Replace partial hand-maintained public suffix list with reviewed maintained PSL without unsafe registrable-domain guessing; new packages forbidden in lane.
+
+- G2-11-006-021 | `src/modules/placements/tpo-audit-service.ts + TpoAuditPage` | Implement scoped About/What happened/Who/When facet option count queries and checklist chips, not only links.
+- G2-12-024-021 | `src/modules/log-alerts/admin-service.ts` | Add hour-scoped query over full recorded incidents to avoid latest100 cutoff for manual digests, retaining bounded tenant and rate guards.
+
+- G2-12-026-007/-039 | `src/modules/projects/activity-service.ts` | Add exact eventType and page/size API aliases to bounded project activity service if legacy clients need them; category/IST date filtering now wired.
+- G2-12-020-017/-055 | `src/modules/placements/public-join/domain-model.ts + company-curation-domain-model.ts` | Replace partial manual suffixes with maintained reviewed PSL normalization across all company gates (new packages forbidden without owner approval).
+
+- G2-11-006-003 | `src/modules/placements/tpo-audit-service.ts` | Map legacy recruiter and student context IDs to authorized vNext URLs; grid adapts UUID drive links.
+- G2-2-034-040 | `src/lib/report-client-error.ts + upload clients` | Emit safe FILE_UPLOAD_FAILURE classification/code only; never raw filename/presigned URL.
+
+- G2-5-018-025/-020 | `src/app/api/projects/[projectId]/activity/route.ts + activity event import` | Reconcile legacy projectId row migration to project scoped subjects/metadata and add optional legacy success envelope if compatibility clients require it.
+- G2-1-034-057 | `src/modules/placements/public-recruiter-invite-accept-service.ts + recruit consent UI` | Design PENDING_HR → JOINED consent lifecycle for existing recruiters while preserving token one-time use and verified college scope.

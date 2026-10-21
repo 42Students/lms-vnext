@@ -181,3 +181,15 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace-readiness.tsx.md` | Exact 'Readiness could not be loaded' restored for safe error state; removed incorrect releases-as-blocker text, clarified override facts. Group-page canonical panel integration remains. No CI.
 - `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-join_domain-model.ts.md` | Tightened company-domain exact/subdomain matching against malformed labels and documented conservative PSL fallback. Full maintained PSL not installed and new packages forbidden, so complete registrable-domain parity remains a dependency. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_audit_page.tsx.md` | Added guidance to existing category/actor/date filter surfaces; legacy dynamic four-checklist option counts remain unimplemented without scoped faceting service. No CI.
+- `docs/audit/gap-fix-work/packets/lane-13/src_modules_log-alerts_manual-ops.ts.md` | DIGEST now accepts clamped 1..336 requested hours, uses that window for new-signature counts and labels capped latest100 sampling honestly. Full hour-window DB query remains pending; no CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-6_l12-u026-project-workspace-controller.md.md` | Project activity route now passes category/sourceTab and IST date bounds to existing authorized cursor service; eventType exact and offset-page aliases still require model integration; saved 400/404 behavior remains typed. No CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-trusted-domain-validation.ts.md` | TPO trusted-domain input now handles email, @domain and HTTPS website host while blocking credential/search/hash URLs; full PSL and shared superadmin normalization still requires approved registry. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-audit-grid.tsx.md` | Known UUID legacy drive link now maps to scoped vNext job route; other recruiter/student deep links require migration mapping. No CI.
+- `docs/audit/gap-fix-work/packets/lane-13/src_modules_log-alerts_redaction.ts.md` | Alert redaction masks short uploaded filenames/extensions in addition to URLs and credentials; upload event/codes caller integration remains. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_activity-service.ts.md` | Activity service now projects immutable actorName, actorType, sourceTab JSON provenance where available, with current-name fallback. Legacy projectId data crosswalk and success envelope still require importer/API route. No CI.
+- `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-1_recruiter-invite-token.md.md` | Existing recruiter invite acceptance persists JOINED without legacy pending consent gate; security-sensitive membership lifecycle requires service/DB decision, no unsafe unilateral transition. Handed off, not fixed. No CI.

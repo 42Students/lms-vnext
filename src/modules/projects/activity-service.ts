@@ -53,8 +53,10 @@ export async function getProjectActivityPage(
         activityEvents.occurredAt,
       // Preserve PostgreSQL microseconds; JS Date only serializes milliseconds.
       cursorOccurredAt: sql<string>`to_char(${activityEvents.occurredAt} AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`.as("cursor_occurred_at"),
-      actorDisplayName:
-        users.displayName,
+      // Prefer immutable import-time actor display metadata if present.
+      actorDisplayName: sql<string|null>`coalesce(nullif(${activityEvents.metadata} ->> 'actorName',''), ${users.displayName})`,
+      actorType: sql<string|null>`nullif(${activityEvents.metadata} ->> 'actorType','')`,
+      sourceTab: sql<string|null>`nullif(${activityEvents.metadata} ->> 'sourceTab','')`,
     })
     .from(activityEvents)
     .leftJoin(
@@ -118,5 +120,6 @@ export async function listProjectActivity(
     subjectType: event.subjectType, subjectId: event.subjectId,
     subjectLabel: event.subjectLabel, summary: event.summary,
     occurredAt: event.occurredAt, actorDisplayName: event.actorDisplayName,
+    actorType:event.actorType,sourceTab:event.sourceTab,
   }));
 }
