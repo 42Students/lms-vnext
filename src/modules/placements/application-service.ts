@@ -1012,6 +1012,14 @@ export async function listOwnPlacementApplications(
         id: placementCompanies.id,
         name: placementCompanies.name,
       },
+      // Legacy JOIN FETCH learner/job equivalent: one authorized membership
+      // projection, not an extra per-application learner lookup. Historical
+      // numeric IDs are deliberately not exposed as identity credentials.
+      learner: {
+        membershipId: collegeMemberships.id,
+        collegeId: collegeMemberships.collegeId,
+        displayName: users.displayName,
+      },
       // One indexed, participant-scoped projection for each upcoming slot.
       // No per-application N+1 queries or unbooked room inventory disclosure.
       nextInterviewAt: sql<Date | null>`(
@@ -1057,13 +1065,25 @@ export async function listOwnPlacementApplications(
         placementCompanyRelationships.companyId,
       ),
     )
-    .where(
-      eq(
-        placementApplications.membershipId,
-        membership.id,
+    .innerJoin(collegeMemberships, and(
+      eq(collegeMemberships.id, placementApplications.membershipId),
+      eq(collegeMemberships.collegeId, membership.collegeId),
+      eq(collegeMemberships.status, "ACTIVE"),
+    ))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      eq(placementApplications.membershipId, membership.id),
+      // Old own-history reader included a withdrawn record despite soft
+      // deletion, but not unrelated, deliberately deleted historical rows.
+      or(
+        isNull(placementApplications.legacyWasDeleted),
+        eq(placementApplications.legacyWasDeleted, false),
+        eq(placementApplications.status, "WITHDRAWN"),
       ),
-    )
-    .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id));
+    ))
+    // The first apply timestamp remains stable across withdrawal/reapply.
+    .orderBy(desc(sql`coalesce(${placementApplications.firstAppliedAt}, ${placementApplications.submittedAt})`),
+      desc(placementApplications.id));
 }
 
 /** Calendar data is drawn from the learner's own persisted applications,
