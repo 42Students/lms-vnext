@@ -62,7 +62,11 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
     collegeId,projectIds:[projectId],mentorMembershipId:mentorId,roleLabel:roleLabel.trim()||"Project Mentor",
    }) as ReassignOutcome;
    if(result.reassignedCount!==1){
-    setError(result.skippedCount>0?"This workspace already has the selected mentor.":"Could not reassign this workspace. Your selection has been kept.");
+    const failure=result.failures.find(row=>row.projectId===projectId);
+    setError(result.skippedCount>0?"This workspace already has the selected mentor.":
+     failure?.code==="PROJECT_MEMBER_ROLE_REQUIRED"?"The selected faculty member no longer has an active Mentor membership in this college. Search again.":
+     failure?.code==="PROJECT_INVALID_STATE"?"This workspace cannot be changed in its current state.":
+     "Could not reassign this workspace. Your selection has been kept.");
     return;
    }
    setOpen(false);setConfirming(false);
@@ -74,7 +78,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
  }
  return <>
   <Button size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");setHasSearched(false);setConfirming(false);setMentorRequired(false);setMentorId("");setSelectedMentor(null);setMentors([]);void load("");}}>
-   Reassign mentor…
+   ↻ Reassign mentor…
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!busy){setOpen(next);if(!next){requestSequence.current++;setConfirming(false);}}}}
    title="Reassign mentor"
@@ -101,7 +105,10 @@ export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorNam
      {mentorRequired&&!mentorId?<span role="alert" className="text-[12px] text-error">Mentor is required</span>:null}
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
-     <Input value={roleLabel} onChange={e=>setRoleLabel(e.target.value)} maxLength={120} placeholder="Project Mentor"/>
+     <Input value={roleLabel} onChange={e=>setRoleLabel(e.target.value)} maxLength={120}
+      title="Optional label shown on the project team roster; it does not change the mentor’s permissions."
+      aria-describedby="mentor-role-label-help" placeholder="Project Mentor"/>
+     <span id="mentor-role-label-help" className="text-xs font-normal leading-5 text-muted-foreground">This label appears beside the mentor on the roster; it does not change permissions.</span>
     </label>
     {!searching&&!error&&hasSearched&&mentors.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-muted-text)]">No eligible mentors found. Search by another name or email.</p>:null}
     <Banner tone="warning">

@@ -9,7 +9,6 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {LoadingState} from "@/components/ui/loading-state";
 import {Checkbox} from "@/components/ui/checkbox";
-import {collegeProjectRosterCapacity} from "@/modules/projects/college-project-roster-model";
 import {useToast} from "@/components/ui/toast";
 
 type Candidate={membershipId:string;displayName:string|null;email:string|null};
@@ -28,49 +27,46 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const [busy,setBusy]=useState(false);
  const [confirmOpen,setConfirmOpen]=useState(false);
  const [mode,setMode]=useState<"ADD"|"REPLACE">("ADD");
- const [optionLimit,setOptionLimit]=useState(100);
  const [searching,setSearching]=useState(false);
  const [search,setSearch]=useState("");
  const [options,setOptions]=useState<Candidate[]>([]);
  const [selected,setSelected]=useState<string[]>([]);
  const [initial,setInitial]=useState<string[]>([]);
- const [mode,setMode]=useState<"ADD"|"REPLACE">("ADD");
  const [page,setPage]=useState(1);
  const [searchErrors,setSearchErrors]=useState("");
- const sequence=useRef(0);
  const [version,setVersion]=useState(expectedUpdatedAt);
  const [roleLabel,setRoleLabel]=useState("");
  const [error,setError]=useState("");
  const endpoint="/api/projects/"+encodeURIComponent(projectId);
  async function load(){
-  const request=++sequence.current;
+  const request=++requestSequence.current;
   setError("");setSearchErrors("");setLoaded(false);setSearching(true);setMode("ADD");setPage(1);
   try{
    const [members,candidates]=await Promise.all([
     apiFetch<{members:Member[]}>(endpoint+"/members",{cache:"no-store"}),
     apiFetch<{candidates:Candidate[]}>(endpoint+"/member-candidates?role=LEARNER&limit=20",{cache:"no-store"}),
    ]);
-   if(request!==sequence.current)return;
+   if(request!==requestSequence.current)return;
    const learners=members.members.filter(member=>member.role==="LEARNER");
    const choices=[...learners,...candidates.candidates];
    setOptions([...new Map(choices.map(candidate=>[candidate.membershipId,candidate])).values()]);
    const ids=learners.map(x=>x.membershipId);
    setSelected([]);setInitial(ids);setVersion(expectedUpdatedAt);setLoaded(true);
-  }catch{if(request===sequence.current)setError("Failed to load learners. Try again.");}
-  finally{if(request===sequence.current)setSearching(false);}
+  }catch{if(request===requestSequence.current)setError("Failed to load learners. Try again.");}
+  finally{if(request===requestSequence.current)setSearching(false);}
  }
  async function find(){
   if(busy||!loaded)return;
-  const request=++sequence.current;
+  const request=++requestSequence.current;
   setSearching(true);setSearchErrors("");setPage(1);
   try{
    const params=new URLSearchParams({role:"LEARNER",q:search.trim(),limit:"20"});
    const response=await apiFetch<{candidates:Candidate[]}>(endpoint+"/member-candidates?"+params,{cache:"no-store"});
-   if(request!==sequence.current)return;
+   if(request!==requestSequence.current)return;
    setOptions(previous=>[...new Map([...previous,...response.candidates].map(row=>[row.membershipId,row])).values()]);
-  }catch{if(request===sequence.current)setSearchErrors(
+  }catch{if(request===requestSequence.current)setSearchErrors(
    search.trim()?"Failed to search learners. Try again.":"Failed to load learners. Try again.");
-  }finally{if(request===sequence.current)setSearching(false);}
+  }finally{if(request===requestSequence.current)setSearching(false);}
  }
  const effectiveIds=mode==="REPLACE"?selected:
    [...new Set([...initial,...selected])];
@@ -108,9 +104,9 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  }
 
  return <>
-  <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>Manage students</Button>
+  <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>✎ Manage students…</Button>
   <Dialog open={open} onOpenChange={value=>{if(!busy){setOpen(value);if(!value)requestSequence.current++;}}}
-   title="Manage students"
+   title="Manage students…"
    description="Add learners to this workspace, or explicitly choose to replace existing students. All changes are saved together.">
    <div className="space-y-4">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
