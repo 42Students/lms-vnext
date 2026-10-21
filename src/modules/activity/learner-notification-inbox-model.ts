@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { safeNotificationActionHref } from "./notification-action";
+import { safeNotificationActionHref, safeExternalAssessmentUrl } from "./notification-action";
 import { learnerNotificationCategory } from "./learner-notification-category";
 export const learnerNotificationInboxQuerySchema = z.object({
   category:z.enum(["all","course","project","general","job"]).optional().default("all"),
@@ -12,7 +12,20 @@ export type LearnerInboxQuery = z.infer<typeof learnerNotificationInboxQuerySche
  * redirect and rejects conflicting category/tab parameters.
  */
 export function legacyLearnerNotificationCategory(value:unknown){
- return z.enum(["course","project","general","job"]).safeParse(value).data??null;
+ if(typeof value!=="string")return null;
+ const normalized=value.trim().toLowerCase();
+ return z.enum(["all","course","project","general","job"]).safeParse(normalized).data??null;
+}
+/** External job assessments follow the old new-tab behaviour without allowing
+ * unsafe schemes, embedded credentials or opener access. Internal app links
+ * remain governed by learnerNotificationTarget below. */
+export function learnerExternalAssessmentLaunch(value:string|null|undefined){
+ const href=safeExternalAssessmentUrl(value);
+ return href?{href,target:"_blank" as const,rel:"noopener noreferrer" as const}:null;
+}
+/** Announcement/broadcast notices never acquire an invented unread state. */
+export function learnerNotificationIsUnread(item:{source?:"ANNOUNCEMENT";readAt:string|null}){
+ return item.source!=="ANNOUNCEMENT"&&item.readAt===null;
 }
 /** Only validated learner inbox filters become navigable URLs; never identity selectors. */
 export function learnerNotificationInboxHref(raw: unknown) {
@@ -37,7 +50,7 @@ export function filterLearnerInbox<T extends {
   const search=q.q.toLocaleLowerCase();
   return items.filter(item=>(
     (q.category==="all" || learnerNotificationCategory(item)===q.category) &&
-    (q.unread==="all" || (item.source!=="ANNOUNCEMENT" && item.readAt===null)) &&
+    (q.unread==="all" || learnerNotificationIsUnread(item)) &&
     (!search || (item.title+" "+item.body).toLocaleLowerCase().includes(search))
   ));
 }

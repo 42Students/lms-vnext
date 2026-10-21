@@ -81,7 +81,8 @@ export async function POST(request: Request) {
   logError("client.error", new Error(redactAlertText(safeMessage)), {
     ...identity, component: safeBrowserComponent(report),
     path: safeAlertPath(report.path), requestId: report.requestId,
-    errorName: safeBrowserComponent({ name: report.name }), status: 500,
+    errorName: safeBrowserComponent({ name: report.name }),
+    viewportBand: report.viewport, status: 500,
   });
   // Telemetry is fire-and-forget. 202 is success even for clients that do
   // not await the response; never show this endpoint's errors as a UI toast.

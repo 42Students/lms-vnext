@@ -91,6 +91,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
   [placementTpoMessages.threadId],{
     threadId:placementTpoMessages.threadId,
     body:sql<string>`left(${placementTpoMessages.body},160)`,
+    truncated:sql<boolean>`char_length(${placementTpoMessages.body}) > 160`,
     senderType:placementTpoMessages.senderType,
   }).from(placementTpoMessages)
    .where(inArray(placementTpoMessages.threadId,visible.map(row=>row.id)))
@@ -98,6 +99,7 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
     desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id)):[];
  const byPreview=new Map(previews.map(row=>[row.threadId,{
   text:conversationSnippet(row.body),senderType:row.senderType,
+  truncated:row.truncated,
  }]));
  return {status:"READY" as const,choices:grants,collegeId,
   items:visible.map(t=>({
@@ -108,5 +110,12 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
   })),pages:pagination.pages,page:pagination.page,total:ordered.length,
   first:pagination.first,last:pagination.last,
   unreadTotal:Number(globalUnread?.total??0),
-  unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
+  unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0),
+  searchHelp:"Search drive titles, conversation IDs and messages across every page.",
+  previewLimit:160,
+  // Thread IDs and timestamps detect deletion, creation and newer messages,
+  // including when the first row has not changed.
+  pulseVersion:accessible.map(t=>t.id+":"+(t.lastMessageAt?.toISOString()??t.createdAt.toISOString()))
+    .sort().join("|")+"|unread:"+Number(globalUnread?.total??0),
+ };
 }
