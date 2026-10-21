@@ -1,0 +1,48 @@
+# Dev-only external trigger for the registered, fenced TPO offer-expiry job.
+# Before applying: provision vnext-integrations.TPO_NOTICE_SCHEDULER_SECRET
+# (32+ UTF-8 bytes) and set on the web deployment:
+# TPO_SCHEDULED_OFFER_EXPIRY_ENABLED=true and
+# TPO_SCHEDULER_ACTOR_USER_ID=<existing service actor user UUID>.
+# Production rollout requires separate verification of DB migration 0133,
+# two-worker lease behavior, notifications and deployment IAM.
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: vnext-tpo-offer-expiry
+  namespace: lms-dev-2026
+spec:
+  schedule: "*/15 * * * *"
+  timeZone: "Asia/Kolkata"
+  concurrencyPolicy: Forbid
+  successfulJobsHistoryLimit: 2
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      ttlSecondsAfterFinished: 3600
+      template:
+        spec:
+          automountServiceAccountToken: false
+          restartPolicy: Never
+          containers:
+            - name: tick
+              image: curlimages/curl:8.12.1
+              command:
+                - /bin/sh
+                - -ec
+                - |
+                  curl -fsS --connect-timeout 3 --max-time 120 -o /dev/null \
+                    -X POST -H "x-tpo-scheduler-key: $TPO_NOTICE_SCHEDULER_SECRET" \
+                    http://lms-vnext.lms-dev-2026.svc.cluster.local:8080/api/internal/placements/tpo/offer-expiry/run
+              env:
+                - name: TPO_NOTICE_SCHEDULER_SECRET
+                  valueFrom:
+                    secretKeyRef:
+                      name: vnext-integrations
+                      key: TPO_NOTICE_SCHEDULER_SECRET
+              resources:
+                requests: { cpu: 20m, memory: 32Mi }
+                limits: { cpu: 100m, memory: 64Mi }
+              securityContext:
+                allowPrivilegeEscalation: false
+                capabilities: { drop: ["ALL"] }
