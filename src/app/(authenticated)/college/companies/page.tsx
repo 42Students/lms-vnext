@@ -84,7 +84,7 @@ export default async function CollegeCompaniesPage({
       <StatTile label="Companies" value={activeCount??"Unavailable"}/>
       <StatTile label="Deleted" value={deletedCount??"Unavailable"}/>
       <StatTile label="Visible now" value={data.total}
-        description={query.q||query.showDeleted==="1"?"After search and filters":"Current working list"}/>
+        detail={query.q||query.showDeleted==="1"?"After search and filters":"Current working list"}/>
       <StatTile label="With drives" value={withDrives??"Unavailable"}/>
     </section>
     <CollegeCompanyCreate collegeId={collegeId}/>
