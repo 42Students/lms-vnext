@@ -1,6 +1,6 @@
 import "server-only";
 import {createHash} from "node:crypto";
-import {and,desc,eq,isNull,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import {getDb} from "@/db/client";
@@ -91,17 +91,17 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
   const [user]=await tx.select({id:users.id,status:users.platformStatus})
    .from(users).where(sql`lower(${users.email})=${email}`).for("update").limit(1);
   if(!user||user.status!=="ACTIVE")throw invalid();
-  // Do not create a recruiter profile on behalf of an existing account.
-  if(!known)await tx.insert(placementRecruiterProfiles).values({
+  // The pending grant FK requires a recruiter profile. Creating that
+  // unprivileged profile does NOT activate a recruiter grant or impersonate
+  // the existing account; the signed-in user must accept first.
+  await tx.insert(placementRecruiterProfiles).values({
    userId:user.id,companyId:relationship.companyId,createdByUserId:user.id,
    title:updatedDesignation,
   }).onConflictDoNothing();
   const [profile]=await tx.select().from(placementRecruiterProfiles)
     .where(eq(placementRecruiterProfiles.userId,user.id)).for("update").limit(1);
-  if(!known&&(!profile||profile.companyId!==relationship.companyId||
-    profile.status!=="ACTIVE"))throw invalid();
-  if(known&&profile&&(profile.companyId!==relationship.companyId||
-    profile.status!=="ACTIVE"))throw invalid();
+  if(!profile||profile.companyId!==relationship.companyId||
+    profile.status!=="ACTIVE")throw invalid();
   const [existing]=await tx.select({id:placementRecruiterCollegeGrants.id})
    .from(placementRecruiterCollegeGrants).where(and(
     eq(placementRecruiterCollegeGrants.recruiterUserId,user.id),
@@ -109,28 +109,6 @@ export async function acceptPublicTpoRecruiterInviteOtp(rawToken:unknown,rawCode
     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
    )).limit(1);
   if(existing)throw invalid();
-  if(known){
-   // The existing schema deliberately has only ACTIVE/REVOKED grants.
-   // Represent pending consent by a consumed challenge + scoped lead marker,
-   // NOT by an ACTIVE grant, which would authorize the recruiter prematurely.
-   const [consumed]=await tx.update(recruiterInviteCodes).set({consumedAt:now})
-    .where(and(eq(recruiterInviteCodes.id,challenge.id),
-      isNull(recruiterInviteCodes.consumedAt))).returning({id:recruiterInviteCodes.id});
-   if(!consumed)throw invalid();
-   const [pending]=await tx.update(placementTpoLeads).set({
-    recruiterUserId:user.id,inviteTokenHash:null,updatedAt:now,
-    name:updatedName,designation:updatedDesignation,phoneNorm:updatedPhone,
-   }).where(and(eq(placementTpoLeads.id,lead.id),
-    eq(placementTpoLeads.collegeId,lead.collegeId),
-    eq(placementTpoLeads.inviteTokenHash,hash),
-    isNull(placementTpoLeads.recruiterUserId))).returning({id:placementTpoLeads.id});
-   if(!pending)throw invalid();
-   await tx.insert(placementTpoLeadActivities).values({
-    collegeId:lead.collegeId,leadId:lead.id,type:"SYSTEM",isSystem:true,
-    note:"Recruiter invite awaiting signed-in consent",createdAt:now,
-   });
-   return {result:"PENDING_HR" as const,email,collegeName:relationship.collegeName};
-  }
   const [grant]=await tx.insert(placementRecruiterCollegeGrants).values({
    recruiterUserId:user.id,companyRelationshipId:lead.companyRelationshipId,
    grantedByUserId:user.id,
@@ -197,7 +175,6 @@ export async function listSignedInRecruiterPendingInvites(context:RequestContext
   invitedContact:placementTpoLeads.emailNorm,
   invitedAt:placementRecruiterCollegeGrants.createdAt,
  }).from(placementRecruiterCollegeGrants)
- .innerJoin(placementRecruiterProfiles,eq(placementRecruiterProfiles.userId,placementRecruiterCollegeGrants.recruiterUserId))
  .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
  .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
  .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
@@ -205,8 +182,6 @@ export async function listSignedInRecruiterPendingInvites(context:RequestContext
  .where(and(
   eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
   eq(placementRecruiterCollegeGrants.status,"PENDING_RECRUITER"),
-  eq(placementRecruiterProfiles.status,"ACTIVE"),
-  eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
   eq(placementCompanyRelationships.status,"ACTIVE"),
   eq(placementCompanies.status,"ACTIVE"),eq(colleges.status,"ACTIVE"),
  )).orderBy(desc(placementRecruiterCollegeGrants.createdAt),desc(placementRecruiterCollegeGrants.id));
@@ -226,9 +201,7 @@ export async function resolveSignedInRecruiterPendingInvite(
     relationship:placementCompanyRelationships,
     college:colleges,
     company:placementCompanies,
-    profile:placementRecruiterProfiles,
   }).from(placementRecruiterCollegeGrants)
-   .innerJoin(placementRecruiterProfiles,eq(placementRecruiterProfiles.userId,placementRecruiterCollegeGrants.recruiterUserId))
    .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementRecruiterCollegeGrants.companyRelationshipId))
    .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
    .innerJoin(colleges,eq(colleges.id,placementCompanyRelationships.collegeId))
@@ -238,13 +211,20 @@ export async function resolveSignedInRecruiterPendingInvite(
      eq(colleges.id,rawCollegeId),eq(colleges.status,"ACTIVE"),
      eq(placementCompanyRelationships.status,"ACTIVE"),
      eq(placementCompanies.status,"ACTIVE"),
-     eq(placementRecruiterProfiles.status,"ACTIVE"),
-     eq(placementRecruiterProfiles.companyId,placementCompanyRelationships.companyId),
    )).for("update").limit(1);
   if(!record)return false;
   const now=new Date();
   let validUntil:Date|null=null;
   if(action==="accept"){
+   const [profile]=await tx.select().from(placementRecruiterProfiles)
+    .where(eq(placementRecruiterProfiles.userId,context.user.id))
+    .for("update").limit(1);
+   if(profile&&(profile.companyId!==record.company.id||profile.status!=="ACTIVE"))
+    throw invalid();
+   if(!profile)await tx.insert(placementRecruiterProfiles).values({
+     userId:context.user.id,companyId:record.company.id,
+     createdByUserId:context.user.id,
+   }).onConflictDoNothing();
    const [setting]=await tx.select({months:placementTpoCollegeSettings.recruiterAccessMonths})
     .from(placementTpoCollegeSettings).where(eq(placementTpoCollegeSettings.collegeId,record.college.id)).limit(1);
    validUntil=recruiterGrantValidUntil(now,recruiterAccessMonthsOrDefault(setting?.months));
@@ -272,7 +252,7 @@ export async function resolveSignedInRecruiterPendingInvite(
      organizationId:record.college.organizationId,collegeId:record.college.id,
      module:"PLACEMENTS",eventType:"PLACEMENTS_RECRUITER_JOINED",
      subjectType:"placement_tpo_lead",subjectId:record.leadId,
-     summary:"Recruiter joined by invitation",subjectLabel:record.profile.title??record.company.name,
+     summary:"Recruiter joined by invitation",subjectLabel:record.company.name,
      metadata:{recruiterUserId:context.user.id,companyRelationshipId:record.relationship.id},
    }).returning({id:activityEvents.id});
    const team=await tx.selectDistinct({userId:collegeMemberships.userId}).from(collegeMemberships)
@@ -280,7 +260,7 @@ export async function resolveSignedInRecruiterPendingInvite(
     .where(and(eq(collegeMemberships.collegeId,record.college.id),
      eq(collegeMemberships.status,"ACTIVE"),eq(membershipRoles.role,"TPO")));
    const notice=publicRecruiterJoinedNotification({
-    name:record.profile.title??record.company.name,companyName:record.company.name,scope:"COLLEGE"});
+    name:record.company.name,companyName:record.company.name,scope:"COLLEGE"});
    if(team.length)await tx.insert(inAppNotifications).values(team.map(member=>({
     eventId:event.id,userId:member.userId,...notice,
    }))).onConflictDoNothing();
