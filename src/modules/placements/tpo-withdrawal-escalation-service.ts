@@ -9,6 +9,23 @@ import {activityEvents,collegeMemberships,colleges,inAppNotifications,membership
  * next scheduled round. No read endpoint or user-facing GET performs writes.
  * activity_events.dedupe_key is a durable per-request idempotency guard.
  */
+/** Every-fifteen-minutes scheduling with a twelve-minute nominal lease.
+ * A process-local lease would be unsafe across replicas: the durable unique
+ * activity event plus locked pending request is the cross-worker write guard.
+ */
+export const TPO_WITHDRAWAL_ESCALATION_SCHEDULE={
+ intervalMinutes:15,leaseMinutes:12,windowHours:24,
+ concurrency:"transaction-lock-and-deduped-event" as const,
+};
+/** Other daily TPO jobs use IST dates, never UTC-midnight dates.
+ * Asia/Kolkata has a fixed UTC+05:30 civil offset for the current calendar. */
+export function tpoIstCalendarDayWindow(now:Date):{from:Date;through:Date}{
+ const ms=now.getTime();
+ if(!Number.isFinite(ms))throw new Error("Invalid daily scheduler clock");
+ const istOffset=330*60_000;
+ const fromMs=Math.floor((ms+istOffset)/86400000)*86400000-istOffset;
+ return {from:new Date(fromMs),through:new Date(fromMs+86400000)};
+}
 /** The scheduler clock is trusted only after validating it. The 24-hour
  * boundary includes the exact endpoint and never crosses via local timezone. */
 export function tpoWithdrawalEscalationWindow(now:Date):{from:Date;through:Date}{
