@@ -263,7 +263,10 @@ export function LectureHallManager({
           <form className="space-y-[var(--lms-space-4)]" onSubmit={(event) => { event.preventDefault(); save(true); }}>
             {createError ? <Banner tone="error">{createError}</Banner> : null}
             <div>
-              <label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+              <div className="flex items-center justify-between gap-2">
+                <label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+                {createDraft.departmentId?<Button type="button" size="sm" variant="ghost" disabled={pending} onClick={()=>setCreateDraft({...createDraft,departmentId:""})}>Clear</Button>:null}
+              </div>
               <Select id="create-hall-dept" className="min-h-11 w-full md:min-h-9" value={createDraft.departmentId}
                 onChange={(event) => setCreateDraft({ ...createDraft, departmentId: event.target.value })}>
                 <option value="">{LECTURE_HALL_COPY.departmentPlaceholder}</option>
@@ -311,7 +314,7 @@ export function LectureHallManager({
           <div className="flex min-w-0 flex-wrap gap-2 print:hidden">
             <label htmlFor="hall-search" className="sr-only">Search halls</label>
             <Input id="hall-search" type="search" value={search} onChange={event=>{setSearch(event.target.value);setPage(1);}} placeholder="Search halls" className="min-h-9 w-44"/>
-            <Button type="button" size="sm" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Refresh</Button>
+            <Button type="button" size="sm" variant="secondary" disabled={pending} loading={pending} onClick={()=>startTransition(()=>router.refresh())}>Refresh</Button>
             <Button type="button" size="sm" variant="secondary" disabled={pending||visibleHalls.length===0} onClick={exportCsv}>Export CSV</Button>
             <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">Rows per page
               <Select aria-label="Lecture halls rows per page" className="min-h-9 w-20" value={String(pageSize)}
@@ -320,6 +323,7 @@ export function LectureHallManager({
               </Select>
             </label>
           </div>
+          {pending?<p role="status" aria-live="polite" className="text-xs text-muted-foreground">Refreshing lecture halls…</p>:null}
       {visibleHalls.length === 0 ? (
         <EmptyState
           title={search?"No lecture halls match these filters.":emptyState?.title ?? "No lecture halls found."}
@@ -407,11 +411,6 @@ export function LectureHallManager({
           </div>
           <div className="grid min-w-0 grid-cols-2 gap-3">
             <div>
-              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
-              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} required value={draft.capacity}
-                onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
-            </div>
-            <div>
               <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
               <Select className="min-h-11 md:min-h-9" id="hall-type" required value={draft.roomType}
                 onChange={(e) => setDraft({ ...draft, roomType: e.target.value })}>
@@ -421,9 +420,17 @@ export function LectureHallManager({
                 ))}
               </Select>
             </div>
+            <div>
+              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
+              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} required value={draft.capacity}
+                onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
+            </div>
           </div>
           <div>
-            <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+            <div className="flex items-center justify-between gap-2">
+              <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+              {draft.departmentId?<Button type="button" size="sm" variant="ghost" disabled={pending} onClick={()=>setDraft({...draft,departmentId:""})}>Clear</Button>:null}
+            </div>
             <Select className="min-h-11 md:min-h-9" id="hall-dept" value={draft.departmentId}
               onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
               <option value="">{LECTURE_HALL_COPY.departmentPlaceholder}</option>
