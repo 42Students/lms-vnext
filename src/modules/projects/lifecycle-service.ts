@@ -844,3 +844,11 @@ export async function shipProjectRelease(
     return shipped;
   });
 }
+
+/** Legacy ProjectWorkspaceService transition crosswalk. The admin and
+ * mentor writers are distinct audited paths: do not call both per action. */
+export const LEGACY_PROJECT_SPRINT_TRANSITIONS = {
+ startSprint:{from:"PLANNED",to:"ACTIVE",adminWriter:"startProjectSprint",mentorAction:"START"},
+ completeSprint:{from:"ACTIVE",to:"COMPLETED",adminWriter:"completeProjectSprint",mentorAction:"COMPLETE"},
+ reopenSprint:{from:"COMPLETED",to:"ACTIVE",adminWriter:"reopenProjectSprint",mentorAction:"REOPEN"},
+} as const;

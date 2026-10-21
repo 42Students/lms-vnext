@@ -8,6 +8,7 @@ import { AuthorizationError, can, requirePermission } from "@/modules/permission
 import { PlacementsServiceError } from "./errors";
 import { requirePlacementManageScope } from "./scope";
 import { isTpoCompanyTrustCurrent, tpoCompanyTrustChangeSchema } from "./tpo-company-trust-model";
+import { getTpoCompanyDetailReadOnly } from "./tpo-company-detail-read-service";
 
 export class TpoCompanyTrustConflict extends Error {
   constructor() {
@@ -39,9 +40,10 @@ export async function updateConfirmedTpoCompanyTrust(
   const actorUserId = context.user.id;
   const actorMembershipId = membership.id;
 
-  return getDb().transaction(async (tx) => {
+  const change=await getDb().transaction(async (tx) => {
     const [relationship] = await tx.select({
       id: placementCompanyRelationships.id,
+      companyId: placementCompanyRelationships.companyId,
       isTrusted: placementCompanyRelationships.isTrusted,
     }).from(placementCompanyRelationships).where(and(
       eq(placementCompanyRelationships.id, input.relationshipId),
@@ -89,8 +91,33 @@ export async function updateConfirmedTpoCompanyTrust(
 
     return {
       relationshipId: relationship.id,
+      companyId: relationship.companyId,
       isTrusted: input.nextTrusted,
       changedAt: now.toISOString(),
     };
   });
+  const detail=await getTpoCompanyDetailReadOnly(context,change.companyId)
+    .catch(()=>null);
+  return {
+    relationshipId:change.relationshipId,
+    isTrusted:change.isTrusted,
+    changedAt:change.changedAt,
+    refreshed:detail?{
+      company:detail.company,
+      relationship:detail.relationship,
+      hiringPulse:detail.hiringPulse,
+    }:null,
+  };
 }
+
+/** Trust alone is insufficient to publish directly. Every grant, company
+ * verification and college opt-in must be persisted and rechecked in the
+ * actual recruiter publish transaction. */
+export function canTrustedRecruiterAutoPublish(input:{
+ trusted:boolean;recruiterHasCurrentGrant:boolean;
+ collegeAllowsDirectPublishing:boolean;verifiedCompany:boolean;
+}):boolean{
+ return input.trusted&&input.recruiterHasCurrentGrant&&
+  input.collegeAllowsDirectPublishing&&input.verifiedCompany;
+}
+
