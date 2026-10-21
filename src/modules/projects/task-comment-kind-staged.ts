@@ -10,3 +10,18 @@ export const PROJECT_TASK_COMMENT_KIND_LABELS: Record<ProjectTaskCommentKind,str
 export function projectTaskCommentKindLabel(kind:ProjectTaskCommentKind):string {
   return PROJECT_TASK_COMMENT_KIND_LABELS[kind];
 }
+
+/** Historic system-generated task actions use separate kinds, never accepted by
+ * the human composer. Display all persisted kinds without fabricating status.
+ */
+export const PROJECT_TASK_SYSTEM_KIND_LABELS={
+  PROGRESS:"Progress",NEEDS_HELP:"Needs help",REVIEW:"Review",
+  BLOCKED:"Blocked",STATUS_UPDATE:"Status update",
+} as const;
+export function projectTaskActivityLabel(kind:string):string{
+ if(kind in PROJECT_TASK_COMMENT_KIND_LABELS)
+  return PROJECT_TASK_COMMENT_KIND_LABELS[kind as ProjectTaskCommentKind];
+ if(kind in PROJECT_TASK_SYSTEM_KIND_LABELS)
+  return PROJECT_TASK_SYSTEM_KIND_LABELS[kind as keyof typeof PROJECT_TASK_SYSTEM_KIND_LABELS];
+ return "Task update";
+}
