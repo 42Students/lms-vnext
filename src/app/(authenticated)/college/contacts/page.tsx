@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { ErrorState } from "@/components/ui/error-state";
@@ -25,12 +26,28 @@ const dateFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"A
 const initials="ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 export default async function CollegeContactsPage({searchParams}:{searchParams:Promise<RawSearch>}){
  const context=await getCurrentRequestContext();
- if(!context.membership||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
+ if(!context.membership) return <div className="min-w-0 space-y-4">
+  <PageHeader title="Contacts"/>
+  <ErrorState title="Admin not assigned to a college"
+    description="Select a college to browse contacts. No contact details can be shown without an active college membership."
+    action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+ </div>;
+ if(context.membership.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
  const raw=await searchParams;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
- catch(error){return <div className="min-w-0 space-y-[var(--lms-space-4)]"><PageHeader title="Contacts"/>
-  <ErrorState title="Invalid contact filters" description={collegeContactFilterMessage(error)}
+ catch(error){
+  const identifiers=[
+    ["programId","Program"],["facultyDepartmentId","Department"],
+    ["sectionId","Class"],["cohortId","Cohort / batch"],
+  ] as const;
+  const invalid=identifiers.find(([field])=>
+    typeof raw[field]==="string"&&raw[field]!==""&&!z.string().uuid().safeParse(raw[field]).success);
+  const description=invalid
+    ? invalid[1]+" identifier must be a valid UUID. Choose an existing "+invalid[1].toLowerCase()+" from the filter list."
+    : collegeContactFilterMessage(error);
+  return <div className="min-w-0 space-y-[var(--lms-space-4)]"><PageHeader title="Contacts"/>
+  <ErrorState title="Invalid contact filters" description={description}
    action={<Link href="/college/contacts" className="inline-flex items-center min-h-11 md:min-h-9 underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Reset contact filters</Link>}/></div>;}
  const [results,choices]=await Promise.all([listCollegeContacts(context,filter),listCollegeContactFilterOptions(context)]);
  const pageCount=Math.max(1,Math.ceil(results.total/results.pageSize));

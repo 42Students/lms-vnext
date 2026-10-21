@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
+import { Banner } from "@/components/ui/banner";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
 import {CollegeQuizCreate} from "@/components/courses/college-quiz-create";
@@ -18,7 +18,12 @@ export default async function CollegeQuizzesPage({
   searchParams,
 }: { searchParams: Promise<SearchParams> }) {
   const context = await getCurrentRequestContext();
-  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
+  if(!context.membership)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Quizzes" />
+    <Banner tone="warning"><strong>Admin not assigned to a college</strong>
+      <p>You must be assigned to a college to manage quizzes. Contact your administrator.</p>
+    </Banner>
+  </div>;
   const params = await searchParams;
   const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,deliveryId: one(params.deliveryId)||undefined,periodCode:one(params.periodCode)||undefined,cohortCode:one(params.cohortCode)||undefined,programCode:one(params.programCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), results:one(params.results), page: one(params.page) };
   const validation = collegeAssessmentListQuerySchema.safeParse(
@@ -34,8 +39,20 @@ export default async function CollegeQuizzesPage({
       </div>
     );
   }
-  const data = await listCollegeAssessmentAggregate(context, "QUIZ", validation.data);
-  const lessons=await getCollegeQuizAuthoringOptions(context);
-  return <CollegeAssessmentAggregate data={data}
-    leading={<CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>} />;
+  try {
+    const [data, lessons] = await Promise.all([
+      listCollegeAssessmentAggregate(context, "QUIZ", validation.data),
+      getCollegeQuizAuthoringOptions(context),
+    ]);
+    return <CollegeAssessmentAggregate data={data}
+      leading={<CollegeQuizCreate lessons={lessons} deliveries={data.reviewDeliveries}/>} />;
+  } catch {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Quizzes" />
+      <ErrorState title="Quizzes could not be loaded"
+        description="The quiz list could not be refreshed. Your existing quizzes were not changed."
+        action={<Link href="/college/quizzes" prefetch={false}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+    </div>;
+  }
 }

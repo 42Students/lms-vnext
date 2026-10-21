@@ -1,6 +1,6 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { Banner } from "@/components/ui/banner";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAcademicDirectory } from "@/components/academics/college-academic-directory";
 import { ErrorState } from "@/components/ui/error-state";
@@ -18,7 +18,12 @@ export default async function CollegeSemestersPage({
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Semesters" />
+    <Banner tone="warning"><strong>Admin not assigned to a college</strong>
+      <p>You must be assigned to a college to view and manage semesters. Contact your administrator.</p>
+    </Banner>
+  </div>;
   const params = academicDirectorySearchParams(await searchParams);
   const parsed = collegeSemesterDirectorySchema.safeParse(params);
   if (!parsed.success) {
