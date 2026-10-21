@@ -15,6 +15,8 @@ import { facultyReportCsvHref } from "@/modules/courses/faculty-report-csv-reque
 import { FacultyAssignmentReview } from "@/components/courses/faculty-assignment-review";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Banner } from "@/components/ui/banner";
+import { ErrorState } from "@/components/ui/error-state";
 import { getFacultyAssignmentReport } from "@/modules/courses/faculty-assessment-report-service";
 import { facultySubmissionListHref } from "@/modules/courses/faculty-assignment-submissions-model";
 
@@ -28,7 +30,11 @@ export default async function FacultyAssignmentReportPage({
   const context = await getCurrentRequestContext();
   const { contentId } = await params;
   const parsed=parseFacultyAssessmentReportRoute(contentId,await searchParams);
-  if(!parsed) notFound();
+  if(!parsed)return <section className="min-w-0 space-y-4">
+    <PageHeader title="Assignment report" />
+    <ErrorState title="Report not found." description="This assignment report link is not valid."
+      action={<Link href="/teacher/allAssignments" className="font-semibold text-primary-text underline">Back to assignments</Link>}/>
+  </section>;
   let report:Awaited<ReturnType<typeof getFacultyAssignmentReport>>;
   try {
     report=await getFacultyAssignmentReport(context,parsed.assessmentId,parsed.deliveryId);
@@ -45,6 +51,11 @@ export default async function FacultyAssignmentReportPage({
   } = report;
   return (
     <div className="min-w-0 max-w-full space-y-6">
+      {report.rosterUnavailable?<Banner tone="warning" role="status">
+        Report is partially loaded. The current student roster could not be verified, so student rows and submission counts are hidden until retry.
+        <a className="ml-2 font-semibold text-primary-text underline"
+          href={"/teacher/report/assignment/"+encodeURIComponent(contentId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}>Retry roster</a>
+      </Banner>:null}
       <PageHeader title={assignment.title} description={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
         actions={<div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <Link href="/teacher/allAssignments" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline sm:w-auto md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -73,7 +84,7 @@ export default async function FacultyAssignmentReportPage({
         title={assignment.title}
         subtitle={[assignment.courseName, assignment.sectionName, assignment.lessonName].join(" · ")}
         summary={[
-          "Submitted: " + metrics.submitted + "/" + metrics.eligibleLearners,
+          "Submitted: " + (report.rosterUnavailable ? "Roster unavailable" : metrics.submitted + "/" + metrics.eligibleLearners),
           "Average score: " + (metrics.averagePercent === null ? "Unknown" : metrics.averagePercent + "%"),
           "Graded: " + metrics.graded + "/" + metrics.submitted,
           "On time: " + metrics.onTime + "; Late: " + metrics.late + "; Not submitted: " + metrics.missing,
@@ -94,7 +105,7 @@ export default async function FacultyAssignmentReportPage({
       />
       <dl aria-label="Assignment report summary" className="grid min-w-0 grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
-          ["Submitted", `${metrics.submitted}/${metrics.eligibleLearners}`],
+          ["Submitted", report.rosterUnavailable ? "—" : `${metrics.submitted}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Graded", `${metrics.graded}/${metrics.submitted}`],
           ["Due date", assignment.dueAt ? new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }).format(assignment.dueAt) : "—"],
@@ -188,7 +199,7 @@ export default async function FacultyAssignmentReportPage({
         <h2 id="section-not-submitted" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
           Not submitted
         </h2>
-        {missingLearners.length === 0 ? (
+        {report.rosterUnavailable ? <p className="mt-3 text-sm text-muted-foreground">Not-submitted status is unavailable until the roster is verified.</p> : missingLearners.length === 0 ? (
           <p className="mt-3 text-sm text-body leading-[22px]">
             Every currently eligible learner has submitted.
           </p>
