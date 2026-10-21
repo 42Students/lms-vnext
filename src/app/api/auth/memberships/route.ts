@@ -28,6 +28,17 @@ const switchMembershipSchema = z.strictObject({
   role: z.enum(MEMBERSHIP_ROLES).optional(),
 });
 
+/** Native mobile JWT switch-token was a legacy transport. vNext intentionally
+ * supports first-party HttpOnly browser sessions only: no raw bearer or
+ * refresh token is returned by list/switch, even to an active membership.
+ * Native clients must open the verified college LMS host in a browser session.
+ */
+export const MEMBERSHIP_SWITCH_TRANSPORT = {
+  browser: "FIRST_PARTY_COOKIE",
+  nativeTokenPair: "RETIRED",
+  nativeNextStep: "OPEN_VERIFIED_LMS_HOST",
+} as const;
+
 class MembershipTenantLookupUnavailable extends Error {}
 class MembershipHostChangeRequired extends Error {}
 
@@ -121,6 +132,7 @@ export async function GET() {
       membershipSelectionRequired:!selected,
       // Domain authority is checked by the server, not a client boolean flag.
       hostNavigation:"FIRST_PARTY_COOKIE",
+      nativeSwitchTransport:MEMBERSHIP_SWITCH_TRANSPORT,
       adminScopeEndpoint:"/api/auth/admin-scope",
     });
   } catch (error) {
@@ -149,6 +161,18 @@ export async function POST(request: Request) {
         { error: tooLarge?"REQUEST_TOO_LARGE":"INVALID_REQUEST" },
         { status: tooLarge?413:400 },
       );
+    }
+
+    const requestedTransport=body!==null&&typeof body==="object"&&!Array.isArray(body)
+      ? (body as Record<string,unknown>).transport : null;
+    if(requestedTransport==="NATIVE_TOKEN_PAIR"||requestedTransport==="BEARER_TOKEN"||
+       requestedTransport==="switch-token"){
+      return privateAuthJson({
+        error:"NATIVE_SWITCH_TOKEN_RETIRED",
+        message:"Native token-pair switching is not supported. Open the selected college's verified LMS host and sign in using the browser session.",
+        nextStep:MEMBERSHIP_SWITCH_TRANSPORT.nativeNextStep,
+        sessionTransport:MEMBERSHIP_SWITCH_TRANSPORT.browser,
+      },{status:410});
     }
 
     const parsed = switchMembershipSchema.safeParse(body);

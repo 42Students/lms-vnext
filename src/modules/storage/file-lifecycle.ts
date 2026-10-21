@@ -309,6 +309,36 @@ export function legacyFileReadOptions(mode: LegacyFileReadMode, fileName: string
   };
 }
 
+/** No compatibility route may accept a URL and fetch remote bytes into R2.
+ * The legacy /upload/import-*-from-url and /upload/validate-video-url actions
+ * are retired: they bypass the authenticated owner/college scoped grant,
+ * MIME/magic-byte attestation and the READY gate. Faculty can instead use a
+ * LINK resource for a public HTTPS document, or upload an authorized local
+ * file/video with issueObjectUpload and verifyUploadedObject. This decision
+ * intentionally does not introduce an SSRF-prone proxy or a second scanner
+ * bypass. URL-import requests have no storage object or audit side effect.
+ */
+export const LEGACY_URL_IMPORT_ROUTES = {
+  "/api/v1/upload/import-file-from-url": {
+    enabled: false,
+    replacement: "FEATURE_FILE_UPLOAD_OR_HTTPS_LINK",
+  },
+  "/api/v1/upload/import-video-from-url": {
+    enabled: false,
+    replacement: "LESSON_VIDEO_PRIVATE_UPLOAD",
+  },
+  "/api/v1/upload/validate-video-url": {
+    enabled: false,
+    replacement: "LOCAL_VIDEO_FILE_VALIDATION",
+  },
+} as const;
+
+export function retiredLegacyUrlImportRoute(path: string) {
+  return Object.prototype.hasOwnProperty.call(LEGACY_URL_IMPORT_ROUTES, path)
+    ? LEGACY_URL_IMPORT_ROUTES[path as keyof typeof LEGACY_URL_IMPORT_ROUTES]
+    : null;
+}
+
 /** Retained for support parity when the private R2 service is unavailable.
  * Do not surface the bucket, signing headers or exception details.
  */
