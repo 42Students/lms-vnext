@@ -1,5 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
+import {SuperAdminInterviewEdit} from "@/components/admin/super-admin-interview-edit";
 import {useMemo,useState,useTransition} from "react";
 import Link from "next/link";
 import {useRouter} from "next/navigation";
@@ -25,6 +26,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
   durationMinutes:e.endsAt?Math.max(1,Math.round((Date.parse(e.endsAt)-Date.parse(e.startsAt))/60000)):30,
  }));
  const conflicts=useMemo(()=>bookingConflicts(events),[events]);
+ const interviewerChoices=useMemo(()=>events.flatMap(event=>event.interviewer?[event.interviewer]:[]),[events]);
  const filtered=useMemo(()=>events.filter(e=>
   (kind==="ALL"||e.kind===kind)&&(status==="ALL"||e.status===status)&&
   (mode==="ALL"||calendarMode(e)===mode)&&
@@ -120,6 +122,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
       {row.meetingUrl?<a href={row.meetingUrl} target="_blank" rel="noopener noreferrer"
         className="inline-flex min-h-11 items-center font-semibold text-link underline">Join online interview</a>:null}
       <div className="flex flex-wrap gap-4">
+       {row.jobId&&row.status==="SCHEDULED"?<SuperAdminInterviewEdit jobId={row.jobId} appointmentId={row.id} interviewers={interviewerChoices}/>:null}
        {row.jobId?<Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}
         aria-label={"View interview for "+(row.candidateName??"candidate")+" · "+(row.jobTitle??row.title)}
         className="inline-flex min-h-11 items-center font-semibold text-link underline">View</Link>:null}
@@ -146,6 +149,7 @@ export function SuperAdminInterviewOperations({events,today,truncated=false}:{ev
      </>},
      {key:"venue",header:"Venue",mobilePriority:"secondary",cell:row=>row.venue??"Not recorded"},
      {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="flex min-w-0 flex-wrap gap-[var(--lms-space-2)]">
+      {row.jobId&&row.status==="SCHEDULED"?<SuperAdminInterviewEdit jobId={row.jobId} appointmentId={row.id} interviewers={interviewerChoices}/>:null}
       {row.jobId?<Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
        href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)+"/schedule"}>Open schedule</Link>:null}
       <a className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 print:hidden"
