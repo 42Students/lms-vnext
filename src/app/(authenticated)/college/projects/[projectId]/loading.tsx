@@ -1,5 +1,6 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
+import { Skeleton } from "@/components/ui/skeleton";
 
 /** GR-19: loading is bounded by a visible recovery action. */
 export default function Loading() {
