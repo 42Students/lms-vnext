@@ -28,32 +28,32 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/ui/empty-state.tsx`
 - [x] `src/components/ui/input.tsx`
 - [x] `src/components/ui/popover.tsx`
-- [ ] `src/components/ui/tabs.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.module.css`
-- [ ] `src/components/projects/legacy-project-board.module.css`
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx`
-- [ ] `src/components/projects/project-delivery-file-uploader.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
-- [ ] `src/components/shell/topbar/topbar.module.css`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
-- [ ] `src/components/ui/button-group.tsx`
-- [ ] `src/components/ui/filter-chip.tsx`
-- [ ] `src/components/ui/range-slider.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/admin/college-setup-checklist.tsx`
-- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
-- [ ] `src/components/college/college-student-csv-import.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/hr/recruiter-profile-access.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/ui/tabs.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.module.css`
+- [x] `src/components/projects/legacy-project-board.module.css`
+- [x] `src/components/projects/project-admin-at-risk-page.tsx`
+- [x] `src/components/projects/project-delivery-file-uploader.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/shell/topbar/topbar.module.css`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/ui/button-group.tsx`
+- [x] `src/components/ui/filter-chip.tsx`
+- [x] `src/components/ui/range-slider.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/admin/college-setup-checklist.tsx`
+- [x] `src/components/attendance/learner-attendance-workspace.tsx`
+- [x] `src/components/college/college-student-csv-import.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/hr/recruiter-profile-access.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
 - [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
 - [ ] `src/components/projects/mentor-task-allocation.tsx`
 - [ ] `src/components/projects/project-admin-workspace-list.tsx`
 - [ ] `src/components/tpo/recruiter-invite-landing.tsx`
@@ -67,11 +67,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/preview/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [x] `src/app/(authenticated)/tracker/logs/page.tsx`
 - [ ] `src/components/admin/college-branding-form.tsx`
 - [ ] `src/components/courses/admin-course-create-panel.tsx`
 - [ ] `src/components/courses/assignment-multipart-parts-editor.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
 - [ ] `src/components/placements/applicant-notes-panel.tsx`
 - [ ] `src/components/placements/learner-career-rounds.tsx`
 - [ ] `src/components/placements/placement-offer-controls.tsx`
@@ -80,13 +80,13 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [ ] `src/components/shell/topbar/account-menu.tsx`
 - [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
 - [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
-- [ ] `src/components/ui/popover.tsx`
+- [x] `src/components/ui/popover.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
 - [ ] `src/components/academics/college-recurring-preview.tsx`
 - [ ] `src/components/admin/person-membership-actions.tsx`
 - [ ] `src/components/college/college-role-directory-workspace.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
 - [ ] `src/components/courses/learner-quiz-attempt.tsx`
 - [ ] `src/components/placements/learner-placement-job-detail.tsx`
 - [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
@@ -97,7 +97,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [ ] `src/components/placements/tpo-selection-import.tsx`
 - [ ] `src/components/projects/mentor-task-allocation.tsx`
 - [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
+- [x] `src/components/tpo/recruiter-saved-view-controls.tsx`
 - [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
 - [ ] `src/components/ui/pagination.tsx`

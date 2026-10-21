@@ -29,13 +29,13 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  // Student registration owns the page h1; the directory then has a section
  // heading. Other callers retain the original PageHeader by default.
  const heading=(eyebrow:string,detail?:string,exportAction?:ReactNode)=>headingMode==="section"
-  ? <div><h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{title}</h2>
+  ? <div><h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{title}</h2>
      {detail?<p className="mt-1 text-sm text-body leading-[22px]">{detail}</p>:null}</div>
   : compactReadLayout
     ? <div className="min-w-0 space-y-2">
        {backHref?<PageBackLink href={backHref} label="Placement overview" />:null}
        <PageHeader title={title}/>
-       <p className="max-w-3xl text-sm leading-5 text-body">{detail ?? eyebrow}</p>
+       <p className="max-w-3xl text-sm text-body leading-[22px]">{detail ?? eyebrow}</p>
       </div>
     : <PageHeader title={title} description={detail ?? eyebrow}
        actions={backHref||exportAction||headerActions?<>{headerActions}{backHref?<PageBackLink href={backHref} label="Placement overview" />:null}{exportAction}</>:undefined}/>;
@@ -225,7 +225,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <div className="grid min-w-0 gap-2 md:grid-cols-[minmax(0,1fr)_auto] md:items-center md:gap-6">
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
-          <h2 className="m-0 min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{row.title}</h2>
+          <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
           <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
         </div>
         <p className="mt-1 break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
@@ -247,7 +247,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
-     <h2 className="m-0 min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{row.title}</h2>
+     <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
      <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
     </div>
     <p className="break-words text-sm text-body leading-[22px]">{row.subtitle}</p>

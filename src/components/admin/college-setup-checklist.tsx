@@ -14,7 +14,7 @@ export function CollegeSetupChecklist({ phases }: { phases: Phases }) {
     <div className="mt-4 space-y-4">
     <div className="flex flex-wrap items-baseline justify-between gap-3">
       <div>
-        <h2 className="text-xl font-semibold text-[var(--lms-heading)]">{COLLEGE_SETUP_GUIDE_COPY.heading}</h2>
+        <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{COLLEGE_SETUP_GUIDE_COPY.heading}</h2>
         <p className="mt-1 text-sm text-body leading-[22px]">{COLLEGE_SETUP_GUIDE_COPY.intro}</p>
       </div>
       <p className="text-sm text-muted-foreground leading-[22px]" aria-label="Setup steps containing persisted data">

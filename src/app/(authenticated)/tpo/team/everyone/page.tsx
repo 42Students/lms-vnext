@@ -32,7 +32,7 @@ export default async function TpoEveryonePage({searchParams}:{
    Everyone is not available until its database migration is registered. No team messages were loaded.
   </p>:<>
    <section aria-labelledby="section-everyone-conversation" className="min-w-0 space-y-3 border-b border-border pb-4">
-    <h2 id="section-everyone-conversation" className="text-[16px] font-semibold leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Everyone conversation</h2>
+    <h2 id="section-everyone-conversation" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Everyone conversation</h2>
     {result.rows.length?<ol aria-label="Everyone messages" className="min-w-0 divide-y divide-border">
       {result.rows.map(row=><li key={row.id} className="min-w-0 py-3">
        <p className="text-xs font-medium text-muted-foreground leading-[20px]">{row.authorMembershipId===context.membership?.id?"You":row.authorName} ·
