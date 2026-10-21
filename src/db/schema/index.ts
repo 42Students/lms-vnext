@@ -113,3 +113,6 @@ export { db10AuditFindings, db10AuditFindingEvents, db10AuditFindingSyncs } from
 // ledger already owns task comments and delivery event identities; never
 // register duplicate staged tables. DB10 bug_report_activities uses immutable
 // UUID identities and RESTRICT retention, with no legacy integer migration.
+
+// Registered DB10 taxonomy; runtime gate stays closed until PostgreSQL replay/seed audit.
+export { db10Skills, db10SkillSynonyms, db10SkillUsage } from "./db10-skills-catalog.draft";
