@@ -1,6 +1,6 @@
 import {z} from "zod";
 
-const reason=z.string().trim().min(3).max(2000);
+const reason=z.string().trim().min(3).max(999,"Keep the reason under 1000 characters.");
 const uuid=z.string().uuid();
 const nonempty=z.string().trim().min(1).max(1000);
 const proofUrl=z.union([
@@ -13,10 +13,20 @@ const proofUrl=z.union([
  }, "Use a safe HTTPS proof link"),
 ]).default("");
 const requiredProofUrl=proofUrl.refine(value=>value.length>0,"An HTTPS proof link is required");
+/** Legacy request picker maps to typed specialized/general workflows. */
+export const legacyLearnerRequestChoices=[
+ {legacyKind:"WITHDRAWAL",kind:"APPLICATION_WITHDRAWAL",flow:"SPECIAL"},
+ {legacyKind:"OFFER_EXTENSION",kind:"OFFER_EXTENSION",flow:"SPECIAL"},
+ {legacyKind:"REGISTRATION_CHANGE",kind:"REGISTRATION_CHANGE",flow:"GENERAL"},
+ {legacyKind:"ABSENCE_DISPUTE",kind:"ABSENCE_DISPUTE",flow:"GENERAL"},
+ {legacyKind:"CORRECTION",kind:"CORRECTION_WITH_PROOF",flow:"GENERAL"},
+ {legacyKind:"EXTERNAL_OFFER",kind:"OFF_CAMPUS_OFFER",flow:"GENERAL"},
+ {legacyKind:"PAP",kind:"PLACEMENT_AFTER_PLACEMENT",flow:"GENERAL"},
+] as const;
 
 export const tpoGeneralRequestInputSchema=z.discriminatedUnion("kind",[
  z.object({kind:z.literal("OFF_CAMPUS_OFFER"),reason,
-  companyName:z.string().trim().min(1).max(150),ctcLpa:z.string().regex(/^\d{1,8}(?:\.\d{1,2})?$/).refine(value=>Number(value)>0,"Pay must be greater than zero"),
+  companyName:z.string().trim().min(1,"Which company?").max(150),ctcLpa:z.string().regex(/^\d{1,8}(?:\.\d{1,2})?$/),
   proofUrl}),
  z.object({kind:z.literal("REGISTRATION_CHANGE"),reason,cohortId:uuid,
   choice:z.enum(["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"]),

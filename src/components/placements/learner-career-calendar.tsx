@@ -27,6 +27,7 @@ import {
   shiftCareerCalendarDay,
   type CareerCalendarEvent,
   type CareerCalendarSourceRound,
+  type CareerCalendarSupplement,
   type CareerCalendarView,
 } from "@/modules/placements/learner-career-calendar-model";
 import {Button} from "@/components/ui/button";
@@ -62,11 +63,13 @@ function hrefForEvent(event: CareerCalendarEvent) {
 
 export function LearnerCareerCalendar({
   rounds,
+  supplements=[],
   initialAnchor,
   todayAnchor=initialAnchor,
   surface="calendar",
 }: {
   rounds: readonly CareerCalendarSourceRound[];
+  supplements?:readonly CareerCalendarSupplement[];
   initialAnchor: string;
   todayAnchor?:string;
   surface?: "calendar" | "schedule";
@@ -84,7 +87,7 @@ export function LearnerCareerCalendar({
   const [selectedKey,setSelectedKey]=useState<string|null>(null);
   const [selectedDayKey,setSelectedDayKey]=useState<string|null>(null);
 
-  const events = careerCalendarEvents(rounds);
+  const events = careerCalendarEvents(rounds,supplements);
   const filtered = filter === "ALL"
     ? events
     : events.filter((event) => event.kind === filter);
@@ -122,6 +125,9 @@ export function LearnerCareerCalendar({
       }).format(new Date(selectedDayKey+"T12:00:00.000Z")).replace(",", "")
     : "Day schedule";
   function showEventDetail(event:CareerCalendarEvent){
+    if(event.eventType && event.eventType!=="ROUND"){
+      setSelectedKey(null);setSelectedDayKey(event.dayKey);return;
+    }
     setSelectedDayKey(null);
     setSelectedKey(event.key);
   }
@@ -310,10 +316,10 @@ export function LearnerCareerCalendar({
                         >
                         Event details
                       </Button>
-                      <Link href={learnerCareerCalendarEventTarget(event)}
+                      {(!event.eventType||event.eventType==="ROUND")?<Link href={learnerCareerCalendarEventTarget(event)}
                         className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text sm:w-auto md:min-h-[var(--lms-control-height)] hover:underline focus-visible:underline">
                         Open exact round →
-                      </Link>
+                      </Link>:null}
                     </div>
                   </li>
                 ))}
@@ -363,10 +369,10 @@ export function LearnerCareerCalendar({
                 onClick={()=>showEventDetail(event)}>
                 Event details
               </Button>
-              <Link href={hrefForEvent(event)}
+              {(!event.eventType||event.eventType==="ROUND")?<Link href={hrefForEvent(event)}
                 className="inline-flex min-h-[var(--lms-control-height)] max-[767px]:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline focus-visible:underline">
                 View application →
-              </Link>
+              </Link>:null}
             </div>
           </article>
         ))}
@@ -387,8 +393,13 @@ export function LearnerCareerCalendar({
                   className="min-w-0 space-y-2 border-b border-border pb-4 text-sm">
                   <h3 className="font-semibold text-foreground">{event.title}</h3>
                   <p className="text-body">{event.companyName} · {event.roleTitle}</p>
-                  <p className="text-body">Scheduled (IST): {displayDate(event.start)}</p>
+                  <p className="text-body">{event.eventType==="EXAM_BLOCK"?"Blocked day":event.eventType==="APPLICATION_DEADLINE"?"Deadline":"Scheduled (IST)"}: {displayDate(event.start)}</p>
+                  {event.mode?<p className="text-body">Mode: {event.mode==="VIRTUAL"?"Online":event.mode==="ON_CAMPUS"?"On campus":event.mode}</p>:null}
+                  {event.venue?<p className="text-body">Venue: {event.venue}</p>:null}
+                  {event.durationMinutes?<p className="text-body">Duration: {event.durationMinutes} minutes</p>:null}
+                  {event.note?<p className="text-body">{event.note}</p>:null}
                   <div className="flex flex-wrap gap-3">
+                    {(!event.eventType||event.eventType==="ROUND")?<>
                     <Link href={learnerCareerCalendarEventTarget(event)}
                       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
                       Open exact round
@@ -396,7 +407,7 @@ export function LearnerCareerCalendar({
                     <Link href="/learn/my-placements/schedule?view=coming"
                       className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
                       Check attendance or request reschedule
-                    </Link>
+                    </Link></>:null}
                   </div>
                 </li>
               ))}
@@ -426,7 +437,10 @@ export function LearnerCareerCalendar({
             <dd className="mt-1 text-foreground">{selected.companyName}</dd></div>
           <div><dt className="font-semibold text-muted-foreground">Role</dt>
             <dd className="mt-1 text-foreground">{selected.roleTitle}</dd></div>
-          {selected.rescheduled?<div className="md:col-span-2">
+          {selected.mode?<div><dt className="font-semibold text-muted-foreground">Mode</dt><dd className="mt-1 text-foreground">{selected.mode}</dd></div>:null}
+           {selected.venue?<div><dt className="font-semibold text-muted-foreground">Venue</dt><dd className="mt-1 text-foreground">{selected.venue}</dd></div>:null}
+           {selected.durationMinutes?<div><dt className="font-semibold text-muted-foreground">Duration</dt><dd className="mt-1 text-foreground">{selected.durationMinutes} minutes</dd></div>:null}
+           {selected.rescheduled?<div className="md:col-span-2">
             <dt className="sr-only">Reschedule notice</dt>
             <dd role="status" className="text-body">Approved reschedule applied to this event.</dd>
           </div>:null}

@@ -101,3 +101,27 @@ export async function sweepExpiredPlacementOffers(
     return expired;
   });
 }
+
+/** Drain multiple short, skip-locked transactions within a fixed run budget.
+ * A scheduled invoker may call this repeatedly; this function does not
+ * imply that a deployment cron or reminder service is configured. A worker
+ * may see zero unlocked rows while another transaction is still processing.
+ */
+export async function drainExpiredPlacementOffers(actorUserId:string,now:Date,opts:{
+ batchSize?:number;maxBatches?:number;maxRunMs?:number;
+}={}):Promise<{expired:number;batches:number;drained:boolean}>{
+ const batchSize=opts.batchSize??100,maxBatches=opts.maxBatches??20,maxRunMs=opts.maxRunMs??15_000;
+ if(!Number.isInteger(batchSize)||batchSize<1||batchSize>100||
+    !Number.isInteger(maxBatches)||maxBatches<1||maxBatches>100||
+    !Number.isInteger(maxRunMs)||maxRunMs<100||maxRunMs>120_000)
+  throw new Error("Invalid offer sweep run bounds");
+ if(!Number.isFinite(now.getTime()))throw new Error("Invalid offer sweep reference date");
+ const stopAt=Date.now()+maxRunMs;
+ let expired=0,batches=0;
+ while(batches<maxBatches&&Date.now()<stopAt){
+  const changed=await sweepExpiredPlacementOffers(actorUserId,now,batchSize);
+  batches++;expired+=changed;
+  if(changed<batchSize)return {expired,batches,drained:true};
+ }
+ return {expired,batches,drained:false};
+}
