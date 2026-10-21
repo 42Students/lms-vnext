@@ -93,16 +93,16 @@ Record ONE proof line per file in docs/audit/ux/dim-lane-15.md: file, number of 
 - [x] `src/app/placements/page.tsx`
 - [x] `src/components/academics/academics-create-panel.tsx`
 - [x] `src/components/academics/college-academic-directory.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-hall-booking-action.tsx`
-- [ ] `src/components/academics/college-promotion-confirmation.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-structure-directory.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/academics/learner-class-schedule.tsx`
-- [ ] `src/components/academics/section-operations.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-hall-booking-action.tsx`
+- [x] `src/components/academics/college-promotion-confirmation.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-structure-directory.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/academics/learner-class-schedule.tsx`
+- [x] `src/components/academics/section-operations.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [ ] `src/components/admin/admin-program-directory.tsx`
 - [ ] `src/components/admin/admin-scoped-read-page.tsx`
 - [ ] `src/components/admin/college-bulk-import.tsx`

@@ -189,7 +189,7 @@ export function LearnerNotificationsInbox({
   return (
     <section className="min-w-0 space-y-[var(--lms-space-4)]" aria-label="Learner notifications inbox">
       <p role="status" className="break-words text-sm text-body min-[768px]:hidden leading-[22px]">{mobileSummary}</p>
-      <nav aria-label="Filter notifications by type" className="min-w-0" data-slot="notification-header-metrics">
+      <div role="group" aria-label="Filter notifications by type" className="min-w-0" data-slot="notification-header-metrics">
         <div className="flex min-w-0 flex-wrap gap-2 pb-1">
           {learnerNotificationCategories.map(({ key, label }) => (
             <FilterChip
@@ -211,7 +211,7 @@ export function LearnerNotificationsInbox({
             </FilterChip>
           ))}
         </div>
-      </nav>
+      </div>
       <div className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-3)] min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto_auto]">
         <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:col-span-1">
           Search notifications
