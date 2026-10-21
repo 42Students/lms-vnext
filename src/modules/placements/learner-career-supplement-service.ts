@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {eq} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementTpoBlockedDates} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";

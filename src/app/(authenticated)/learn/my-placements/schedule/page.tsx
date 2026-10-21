@@ -8,7 +8,7 @@ import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
-import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
+import { initialCareerCalendarDay,type CareerCalendarSupplement } from "@/modules/placements/learner-career-calendar-model";
 import {listLearnerCareerCalendarSupplements} from "@/modules/placements/learner-career-supplement-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
@@ -27,7 +27,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const [workspaceResult,resultsResult,calendarResult]=await Promise.allSettled([
     getLearnerPlacementRequestWorkspace(context),
     listOwnAppliedPlacementResults(context),
-    ...(view==="calendar"?[listLearnerCareerCalendarSupplements(context)]:[]),
+    view==="calendar"?listLearnerCareerCalendarSupplements(context):
+      Promise.resolve([] as CareerCalendarSupplement[]),
   ]);
   if(workspaceResult.status==="rejected"){
     if(workspaceResult.reason instanceof AuthorizationError)throw workspaceResult.reason;
