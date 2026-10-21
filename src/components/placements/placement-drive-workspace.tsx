@@ -450,11 +450,13 @@ export async function PlacementDriveWorkspace({
         Could not load: Publication readiness. Publishing is unavailable until these checks recover.
         Refresh the drive to try again.
        </Alert>:null}
-      <section aria-label="Drive status and details" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <section aria-label="Drive status and details" className="min-w-0 border-b border-l-[3px] border-border pb-[var(--lms-space-4)] pl-3"
+        style={{borderLeftColor:headerFacts.heroAccent}}>
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm">
-          <StatusBadge tone={expiredPublished?"warning":job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>
-            {job.status==="PUBLISHED"?(expiredPublished?"Expired":"Open"):headerFacts.status}
-           </StatusBadge>
+          <span className="font-semibold text-muted-foreground">Status</span>
+          <StatusBadge tone={headerFacts.statusTone}>{headerFacts.status}</StatusBadge>
+          <span className="font-semibold text-muted-foreground">Job type</span>
+          <span>{headerFacts.legacyFacts[1]?.value}</span>
           <span>{headerFacts.applicationMode}</span>
           <span>· {headerFacts.workMode}</span>
           <span>· {headerFacts.employmentType}</span>

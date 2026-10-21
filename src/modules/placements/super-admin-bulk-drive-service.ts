@@ -17,7 +17,8 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 
 const inputSchema = z.strictObject({
   action: z.enum(["OPEN", "CLOSE"]),
-  jobIds: z.array(z.uuid()).min(1).max(25).refine(ids => new Set(ids).size === ids.length),
+  // A legacy page can select up to 100 drives; each write is still scoped, audited and atomic.
+  jobIds: z.array(z.uuid()).min(1).max(100).refine(ids => new Set(ids).size === ids.length),
 });
 const commitSchema = inputSchema.extend({confirmed: z.literal(true)});
 
@@ -54,7 +55,8 @@ export async function previewSuperAdminBulkDrives(context: RequestContext, raw: 
     pendingLettersWithdrawn: offers.length,
     recordedApplications:applicationCount[0]?.total??0,
     recordedInterviews:interviewCount[0]?.total??0,
-    actionDescription:input.action==="CLOSE"
+    chunkSize:25,chunkCount:Math.ceil(input.jobIds.length/25),
+     actionDescription:input.action==="CLOSE"
       ?"Close prevents new applications, preserves applications and interview history, withdraws issued offers, and records learner notifications. It does not delete the drive."
       :"Reopen permits new applications; previously withdrawn offers are not restored.",
     rows};
@@ -107,7 +109,10 @@ export async function updateSuperAdminBulkDrives(context: RequestContext, raw: u
   const allowed = new Set(preview.rows.filter(row => input.action === "CLOSE"
     ? row.status === "PUBLISHED" : row.status === "CLOSED").map(row => row.id));
   const results: {jobId: string; status: "UPDATED" | "SKIPPED"; reason: string}[] = [];
-  for (const jobId of input.jobIds) {
+  // Callers retry only SKIPPED IDs after another preview; every job retains
+  // its own authorization, state check and audit event.
+  for(let start=0;start<input.jobIds.length;start+=25){
+   for(const jobId of input.jobIds.slice(start,start+25)){
     if (!allowed.has(jobId)) {
       results.push({jobId, status: "SKIPPED",
         reason: "Drive unavailable or not in the required status. Refresh and retry."});
@@ -127,7 +132,10 @@ export async function updateSuperAdminBulkDrives(context: RequestContext, raw: u
         :"Could not update this drive. Refresh and retry.";
       results.push({jobId,status:"SKIPPED",reason});
     }
+   }
   }
-  return {updated: results.filter(row => row.status === "UPDATED").length,
+  return {requested:input.jobIds.length,chunkSize:25,
+    chunkCount:Math.ceil(input.jobIds.length/25),
+    updated: results.filter(row => row.status === "UPDATED").length,
     skipped: results.filter(row => row.status === "SKIPPED").length, results};
 }
