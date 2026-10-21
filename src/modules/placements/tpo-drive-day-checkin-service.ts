@@ -20,7 +20,7 @@ export class TpoAttendanceStaleError extends Error {
 }
 
 /**
- * TPO-only confirmed PRESENT/ABSENT check-in. Missing attendance is WAITING.
+ * TPO-only confirmed attendance/room progression. Missing attendance is WAITING.
  * An already-recorded identical state is idempotent and writes no second audit.
  */
 export async function confirmTpoDriveDayCheckIn(
@@ -80,7 +80,7 @@ export async function confirmTpoDriveDayCheckIn(
         .limit(1);
       if(withdrawal)throw new PlacementsServiceError("PLACEMENT_REQUEST_PENDING_WITHDRAWAL");
     }
-    if (input.status === "PRESENT") {
+    if (input.status !== "ABSENT") {
       // P-S1-02: being on the existing shortlist never overrides a later ban.
       const bans = await tx.select().from(placementDebarments).where(and(
         eq(placementDebarments.collegeId, collegeId),
@@ -98,18 +98,28 @@ export async function confirmTpoDriveDayCheckIn(
       prior?.status ?? null, input.expectedAttendance, input.status,
     );
     if (decision === "STALE") throw new TpoAttendanceStaleError();
-    if (decision === "UNCHANGED" && prior) return { attendance: prior, changed: false as const };
+    // A completed interview cannot be rewound; completing an interview
+    // requires both a present check-in and an in-progress record.
+    const previous=prior?.status??"WAITING";
+    if((input.status==="IN_INTERVIEW"&&previous!=="PRESENT"&&previous!=="IN_INTERVIEW")||
+       (input.status==="DONE"&&previous!=="IN_INTERVIEW"&&previous!=="DONE")||
+       (previous==="DONE"&&input.status!=="DONE")||
+       (previous==="IN_INTERVIEW"&&input.status==="ABSENT"))
+      throw new PlacementsServiceError("PLACEMENT_ROUND_INVALID_TRANSITION");
+    const room=input.room===undefined?prior?.room??null:input.room;
+    if(decision==="UNCHANGED"&&prior&&prior.room===room)
+      return { attendance: prior, changed: false as const };
     const now = new Date();
     let written: typeof prior | undefined;
     if (prior) {
       [written] = await tx.update(placementRoundAttendance).set({
-        status: input.status, room: null, markedByUserId: actorUserId,
+        status: input.status, room, markedByUserId: actorUserId,
         markedAt: now, updatedAt: now,
       }).where(eq(placementRoundAttendance.id, prior.id)).returning();
     } else {
       [written] = await tx.insert(placementRoundAttendance).values({
         roundId, applicationId: input.applicationId, status: input.status,
-        room: null, markedByUserId: actorUserId, markedAt: now, updatedAt: now,
+        room, markedByUserId: actorUserId, markedAt: now, updatedAt: now,
       }).onConflictDoNothing().returning();
     }
     if (!written) throw new TpoAttendanceStaleError();
@@ -120,7 +130,8 @@ export async function confirmTpoDriveDayCheckIn(
       subjectType: "placement_round_attendance", subjectId: written.id,
       subjectLabel: "Drive Day check-in", summary: "TPO confirmed round attendance",
       metadata: { roundId, applicationId: input.applicationId,
-        previousStatus: prior?.status ?? "WAITING", status: input.status },
+        previousStatus: prior?.status ?? "WAITING", status: input.status,
+        previousRoom:prior?.room??null,room },
       occurredAt: now,
     });
     return { attendance: written, changed: true as const };
