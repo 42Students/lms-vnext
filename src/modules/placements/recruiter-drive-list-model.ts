@@ -12,6 +12,17 @@ export const recruiterDriveListQuerySchema = z.object({
 }).strict();
 export type RecruiterDriveListQuery = z.infer<typeof recruiterDriveListQuerySchema>;
 
+/** Legacy initial tab depends on verified per-college counts, not a blind ALL.
+ * The route must call this after retrieving requests and live-drive totals,
+ * then write the chosen view to the URL only when no explicit view was given.
+ */
+export function recruiterDefaultDriveView(counts:{waiting:number;live:number}):
+  RecruiterDriveListQuery["view"] {
+ if(counts.waiting>0)return "WAITING";
+ if(counts.live>0)return "LIVE";
+ return "ALL";
+}
+
 export type RecruiterDriveListItem = {
   collegeId: string;
   job: { id: string; title: string; status: string; archivedAt: Date | null;
