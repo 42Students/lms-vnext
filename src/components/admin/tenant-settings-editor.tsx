@@ -70,8 +70,10 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  const changed=keys.filter(item=>draft[item.key]!== (existing.get(item.key)?.value??""));
  const impact=changed.some(item=>item.dangerous);
  const dirty=changed.length>0||otherDirty;
- const invalid=changed.map(spec=>({key:spec.key,message:validateValue(spec,draft[spec.key]??"")}))
-  .filter((item):item is {key:string;message:string}=>item.message!==null);
+ const invalid=changed.flatMap(spec=>{
+  const message=validateValue(spec,draft[spec.key]??"");
+  return message?[{key:spec.key,message}]:[];
+ });
  const invalidKeys=new Map(invalid.map(item=>[item.key,item.message]));
  useEffect(()=>{
   if(!dirty)return;
@@ -159,7 +161,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
      <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="warning">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.dangerous||spec.key.startsWith("otp.")?<StatusBadge tone="warning">Stored · runtime activation unverified</StatusBadge>:null}
-     <p className="m-0 text-xs font-normal leading-5 text-body">{runtimeHint(spec)}</p>
+     <span className="text-xs font-normal leading-5 text-body">{runtimeHint(spec)}</span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
       aria-invalid={Boolean(invalidKeys.get(spec.key))}
       aria-describedby={invalidKeys.has(spec.key)?"tenant-invalid-"+spec.key:undefined}
