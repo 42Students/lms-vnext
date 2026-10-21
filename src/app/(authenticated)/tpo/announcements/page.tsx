@@ -195,7 +195,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {(row.buttonUrl?.startsWith("https://")&&row.buttonLabel)||tab.data==="from-42"?
      <div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
       {row.buttonUrl?.startsWith("https://")&&row.buttonLabel?<a href={row.buttonUrl} rel="noopener noreferrer"
-       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 font-semibold text-primary-text min-[768px]:min-h-[var(--lms-control-height)]">
+       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 font-[650] text-primary-text min-[768px]:min-h-[var(--lms-control-height)] md:min-h-9 text-sm">
        {row.buttonLabel} ↗
       </a>:null}
       {tab.data==="from-42"?<TpoPlacementCellReadAction id={row.id}/>:null}
@@ -294,9 +294,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
    <div className="flex w-full flex-wrap gap-2 sm:w-auto">
     {result.page>1?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page-1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none">Previous</Link>:null}
+      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm">Previous</Link>:null}
     {result.hasMore?<Link href={"/tpo/announcements?tab="+tab.data+(showTeam?"&mine=0":"")+"&page="+(result.page+1)}
-      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none">Show older</Link>:null}
+      className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-primary-text hover:text-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] sm:min-h-[var(--lms-control-height)] sm:flex-none md:min-h-9 text-sm">Show older</Link>:null}
    </div>
   </nav>:null}
  </div>;
