@@ -457,6 +457,19 @@ export async function issueProjectFileDownloadGrant(
   ) {
     throw new StorageFileError("STORAGE_FILE_NOT_READY");
   }
+  // Revalidate persisted verified metadata at the final signed-read boundary:
+  // imported/corrupt rows must not bypass the project resource MIME/size and
+  // safe filename rules merely because an earlier upload marked them READY.
+  const verifiedDeclaration = validateStorageDeclaration("project-resource", {
+    originalName: row.originalName,
+    contentType: row.verifiedContentType,
+    sizeBytes: row.verifiedSizeBytes,
+  });
+  if (!verifiedDeclaration.ok) throw new StorageFileError("STORAGE_FILE_NOT_READY");
+  if (row.declaredSizeBytes !== verifiedDeclaration.value.sizeBytes ||
+      row.declaredContentType !== verifiedDeclaration.value.contentType) {
+    throw new StorageFileError("STORAGE_FILE_NOT_READY");
+  }
   const disposition =
     options.disposition === "inline" && /^(application\/pdf|image\/(png|jpeg|webp))$/.test(row.verifiedContentType)
       ? "inline"
