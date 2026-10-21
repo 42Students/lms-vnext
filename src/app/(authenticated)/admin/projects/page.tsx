@@ -145,8 +145,8 @@ export default async function SuperAdminProjectsPage({
           }))} />
         <Dropdown trigger="More" label="Project workspace actions" align="end" mobileSheet>
           <div className="grid min-w-0 gap-2">
-            <Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">Create workspace</Link>
-            <Link href="/admin/projects/reassign-mentor" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">Bulk reassign mentor</Link>
+            <Link href="/admin/projects/workspaces/new" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Create workspace</Link>
+            <Link href="/admin/projects/reassign-mentor" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Bulk reassign mentor</Link>
           </div>
         </Dropdown>
       </div>

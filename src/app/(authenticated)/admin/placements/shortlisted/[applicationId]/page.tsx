@@ -21,7 +21,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    <PageHeader title="Shortlisted applicant"/>
    <ErrorState title="Select a college to continue"
     description="An active Super Admin with a selected college is required to view shortlisted applicant details."
-    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to shortlisted applicants</Link>}/>
+    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to shortlisted applicants</Link>}/>
   </div>;
  }
  let detail:Awaited<ReturnType<typeof getSuperAdminShortlistedDetail>>;
@@ -32,7 +32,7 @@ export default async function SuperAdminShortlistedDetail({params}:{params:Promi
    <PageHeader title="Shortlisted applicant"/>
    <ErrorState title="Shortlisted applicant unavailable"
     description="This applicant detail could not be loaded. Your selected college has not changed."
-    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Back to shortlisted applicants</Link>}/>
+    action={<Link href="/admin/placements/shortlisted" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to shortlisted applicants</Link>}/>
   </div>;
  }
  if(!detail)notFound();

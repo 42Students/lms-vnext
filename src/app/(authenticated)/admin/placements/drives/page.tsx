@@ -31,7 +31,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
  if(!parsed.success)return <div className="min-w-0 space-y-4">
   <PageHeader title="All drives"/>
   <ErrorState title="Invalid drive filters" description="Choose valid filters and page number."
-   action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Clear filters</Link>}/>
+   action={<Link href="/admin/placements/drives" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear filters</Link>}/>
  </div>;
  // Keep an unavailable college reporting backend from crashing the entire
  // Super Admin drive directory; preserve the validated filter on Retry.
@@ -46,7 +46,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     ?"Your account cannot manage drives in this college."
     :"This college's drives could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminDriveDirectoryHref(parsed.data)}
-    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">
+    className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
     {loaded.denied?"Back to dashboard":"Retry loading drives"}
    </Link>}
   />
@@ -70,7 +70,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    cell:row=><span className="tabular-nums">{row.metrics.submittedApplications}</span>},
   {key:"actions",header:"Actions",mobilePriority:"action",
    cell:row=><Link href={"/admin/placements/jobs/"+encodeURIComponent(row.job.id)}
-    className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">
+    className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
     Open drive →</Link>},
  ];
  return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -78,9 +78,9 @@ export default async function SuperAdminDrivesPage({searchParams}:{
    description="Review and open every persisted non-archived drive in the selected college."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-center sm:justify-end">
     <PageBackLink href="/admin/placements" label="Placement overview" />
-    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Look up a student&apos;s placement status →</Link>
+    <Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Look up a student&apos;s placement status →</Link>
     <Link href="/admin/placements/new"
-     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Create drive →</Link>
+     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Create drive →</Link>
    </div>} />
   <form action="/admin/placements/drives" method="get" aria-label="Filter placement drives"
    className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_minmax(0,13rem)_auto_auto]">
@@ -102,7 +102,7 @@ export default async function SuperAdminDrivesPage({searchParams}:{
     </Select>
    </label>
    <Button type="submit" className="min-h-11 w-full sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
-   <Link href="/admin/placements/drives" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] underline-offset-4">Clear all</Link>
+   <Link href="/admin/placements/drives" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear all</Link>
   </form>
   <SuperAdminBulkDriveActions drives={data.items.map(row=>({id:row.job.id,title:row.job.title,status:row.job.status,companyName:row.company.name}))} />
   <p role="status" className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching drives · Page {data.page} of {data.totalPages}</p>
