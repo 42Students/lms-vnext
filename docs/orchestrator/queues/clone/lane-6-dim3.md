@@ -20,22 +20,22 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/projects/legacy-project-board.module.css`
 - [x] `src/components/projects/mentor-release-editor.tsx`
 - [x] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-workspace-readiness.module.css`
-- [ ] `src/components/shell/legacy-mobile-footer.css`
-- [ ] `src/components/tpo/recruiter-inline-owner.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tracker/tracker-quick-report-launcher.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/list-toolbar.tsx`
-- [ ] `src/components/ui/select.tsx`
-- [ ] `src/components/ui/toast.tsx`
-- [ ] `src/components/profile/learner-skill-catalog-input.tsx`
-- [ ] `src/components/projects/mentor-delivery-lock-control.tsx`
-- [ ] `src/components/projects/project-admin-nav.tsx`
-- [ ] `src/components/projects/project-participant-list-controls.tsx`
-- [ ] `src/components/shell/account-actions.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/projects/project-workspace-readiness.module.css`
+- [x] `src/components/shell/legacy-mobile-footer.css`
+- [x] `src/components/tpo/recruiter-inline-owner.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tracker/tracker-quick-report-launcher.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/list-toolbar.tsx`
+- [x] `src/components/ui/select.tsx`
+- [x] `src/components/ui/toast.tsx`
+- [x] `src/components/profile/learner-skill-catalog-input.tsx`
+- [x] `src/components/projects/mentor-delivery-lock-control.tsx`
+- [x] `src/components/projects/project-admin-nav.tsx`
+- [x] `src/components/projects/project-participant-list-controls.tsx`
+- [x] `src/components/shell/account-actions.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
 - [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [ ] `src/components/ui/date-input.tsx`
