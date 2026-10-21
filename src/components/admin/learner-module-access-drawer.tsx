@@ -4,6 +4,7 @@ import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {StatusBadge} from "@/components/ui/status-badge";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
 import {useEffect,useRef,useState} from "react";
 import Link from "next/link";
@@ -37,6 +38,10 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
  const [rosterRows,setRosterRows]=useState<Learner[]>([]);
  const [rosterFilter,setRosterFilter]=useState<"overrides"|"locked">("overrides");
  const [rosterRetry,setRosterRetry]=useState(0);
+ const [repairRule,setRepairRule]=useState<{membershipId:string;module:"projects"|"electives"}|null>(null);
+ const [repairPending,setRepairPending]=useState(false);
+ const [repairMessage,setRepairMessage]=useState("");
+ const [repairVerified,setRepairVerified]=useState(false);
  const [traceOpen,setTraceOpen]=useState(false);
  const [message,setMessage]=useState("");
  const [failedMemberId,setFailedMemberId]=useState<string|null>(null);
@@ -53,6 +58,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    setMessage("");setFailedMemberId(null);setCompletedSearch("");
    setRosterOpen(false);setRosterRows([]);setRoster({page:1,total:0,totalPages:1});
    setRosterError("");setRosterLoading(false);setTraceOpen(false);
+   setRepairRule(null);setRepairMessage("");setRepairVerified(false);
   });
   return ()=>window.cancelAnimationFrame(frame);
  },[collegeId]);
@@ -88,7 +94,55 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
   if(value.trim().length>=2)
    timeout.current=setTimeout(()=>{void lookup(value.trim());},300);
  }
- function close(){seq.current++;setDetail(null);setTraceOpen(false);setMessage("");setFailedMemberId(null);}
+ function close(){seq.current++;setDetail(null);setTraceOpen(false);setMessage("");setFailedMemberId(null);setRepairRule(null);}
+ /** A legacy lock with no stored boolean is an exceptional import state, not
+  * an Off override. Attempt only an audited INHERIT transition and verify it
+  * with an independent GET before asserting that the lock was repaired. */
+ async function repairOrphanLock(){
+  const target=repairRule;
+  if(!target||repairPending)return;
+  const token=seq.current;
+  const url="/api/admin/features/"+encodeURIComponent(collegeId)+
+   "/students/"+encodeURIComponent(target.membershipId)+"/rules";
+  setRepairPending(true);setRepairMessage("");setRepairVerified(false);
+  try{
+   const refreshed=await fetch(url,{cache:"no-store"});
+   const snapshot:unknown=await refreshed.json().catch(()=>null);
+   const rules=refreshed.ok&&snapshot&&typeof snapshot==="object"&&"rules" in snapshot&&
+    Array.isArray(snapshot.rules)?snapshot.rules as unknown[]:[];
+   const current=rules.find(row=>Boolean(row)&&typeof row==="object"&&
+    "module" in row&&row.module===target.module);
+   if(!current||typeof current!=="object"||!("enabled" in current)||
+    !("locked" in current)||current.enabled!==null||current.locked!==true){
+    setRepairMessage("The legacy lock is no longer in the expected state. Recheck the learner trace before changing access.");
+    return;
+   }
+   const response=await fetch(url,{method:"PUT",headers:{"content-type":"application/json"},
+    body:JSON.stringify({action:"INHERIT",module:target.module,expected:null})});
+   if(!response.ok){
+    setRepairMessage("The server could not clear this legacy lock. It may need migration review; no repair was confirmed.");
+    return;
+   }
+   const check=await fetch(url,{cache:"no-store"});
+   const verified:unknown=await check.json().catch(()=>null);
+   const rows=check.ok&&verified&&typeof verified==="object"&&"rules" in verified&&
+    Array.isArray(verified.rules)?verified.rules as unknown[]:[];
+   const after=rows.find(row=>Boolean(row)&&typeof row==="object"&&
+    "module" in row&&row.module===target.module);
+   if(!after||typeof after!=="object"||!("enabled" in after)||!("locked" in after)||
+    after.enabled!==null||after.locked!==false){
+    setRepairMessage("The change was not confirmed by the persisted rule recheck. Do not treat this lock as cleared.");
+    return;
+   }
+   if(token!==seq.current)return;
+   setRepairVerified(true);
+   setRepairMessage("Legacy membership lock cleared. Recheck the full effective access trace.");
+   setRepairRule(null);
+   void lookup(search,target.membershipId);
+  }catch{
+   if(token===seq.current)setRepairMessage("Could not verify the legacy lock repair. Check the persisted rule again.");
+  }finally{setRepairPending(false);}
+ }
  useEffect(()=>{
   if(!rosterOpen)return;
   const controller=new AbortController();
@@ -195,6 +249,7 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
    </div>:null}
    {detail?<div className="min-w-0 space-y-[var(--lms-space-4)]">
     {message?<p role="alert" className="max-w-prose break-words text-sm text-error leading-[22px]">{message}</p>:null}
+    {repairMessage?<Alert tone={repairVerified?"success":"warning"}>{repairMessage}</Alert>:null}
     <div className="min-w-0"><h3 className="text-lg font-semibold text-[var(--lms-heading)]">{detail.displayName||"#"+detail.membershipId.slice(0,8)}</h3>
       <p className="text-sm text-body leading-[22px]">{detail.rollNumber||"No roll number"}</p>
     </div>
@@ -256,6 +311,14 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
          </StatusBadge>:null}
          {rule.blocked?<span className="text-warning-text">Locked by a broader rule</span>:null}
         </div>
+        {rule.locked&&rule.stored===null?<div className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3">
+         <p className="text-xs text-body leading-5">Legacy lock with no stored On/Off value. This needs an audited
+          lock-only repair; it must not silently become Off.</p>
+         <Button type="button" variant="secondary" size="sm" disabled={repairPending}
+          onClick={()=>{setRepairMessage("");setRepairVerified(false);setRepairRule({
+           membershipId:detail.membershipId,module:rule.module
+          });}}>Review legacy lock repair</Button>
+        </div>:null}
         <StudentRuleEditor collegeId={collegeId}
          membershipId={detail.membershipId} module={rule.module} stored={rule.stored}
          locked={rule.locked} blocked={rule.blocked}/>
@@ -275,5 +338,14 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
     <p className="text-xs text-body leading-5">This reads persisted learner access. It does not sign in as the student.</p>
    </div>:null}
   </Drawer>
+  <ConfirmDialog open={repairRule!==null} onOpenChange={opened=>{if(!opened&&!repairPending)setRepairRule(null);}}
+   title="Clear legacy learner lock"
+   description="Remove a lock without a stored On/Off value so this learner inherits the next applicable module rule."
+   confirmLabel="Clear legacy lock" pending={repairPending} confirmVariant="danger"
+   onConfirm={()=>{void repairOrphanLock();}}>
+   <p className="text-sm leading-5 text-body">Super Admin permission and the current stored state are verified again before the attempted repair.
+    If the legacy record cannot be represented in this database, the change will not be reported as successful.</p>
+   {repairMessage?<Alert tone="warning">{repairMessage}</Alert>:null}
+  </ConfirmDialog>
  </section>;
 }
