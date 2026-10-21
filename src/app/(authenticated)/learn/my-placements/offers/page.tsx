@@ -105,7 +105,7 @@ export default async function LearnerOffersPage({
   })), Date.parse(snapshotNowIso));
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <Link
         href="/learn/my-placements/applications"
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline"

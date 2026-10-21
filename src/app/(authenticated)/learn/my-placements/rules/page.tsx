@@ -18,7 +18,7 @@ export default async function LearnerPlacementRulesPage({
   const { evidence, preferences, preparation, back, ruleApplicability, policyView } =
     await getOwnLearnerPlacementRulesView(context, parsed.success ? parsed.data : {});
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <Link href={back.href}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
         ← {back.label}
@@ -30,7 +30,7 @@ export default async function LearnerPlacementRulesPage({
         {policyView?<div className="mt-3 space-y-2">
           <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Where you stand:</h3>
           <p role="status" className="text-sm leading-6 text-body">{policyView.personal}</p>
-          <ul className="max-w-3xl list-disc space-y-2 pl-5 text-sm leading-6 text-body">
+          <ul className="max-w-3xl list-disc space-y-2 pl-6 text-sm leading-6 text-body">
             {policyView.points.map(point=><li key={point}>{point}</li>)}
           </ul>
           <p className="text-xs text-muted-foreground">Drive-level eligibility and the saved terms of each offer remain authoritative. Changes are not assumed to apply retroactively.</p>
