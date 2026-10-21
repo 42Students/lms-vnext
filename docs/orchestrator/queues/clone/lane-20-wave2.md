@@ -48,7 +48,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_components_auth_device-list.tsx.md` (edit src/components/auth/device-list.tsx; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_storage_ui-models.ts.md` (edit src/modules/storage/ui-models.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-student-nudge-send-service.ts.md` (edit src/modules/placements/tpo-student-nudge-send-service.ts; 5 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_courses_faculty-report-students.ts.md` (edit src/modules/courses/faculty-report-students.ts; 5 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_courses_faculty-report-students.ts.md` (edit src/modules/courses/faculty-report-students.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_api_placements_recruiter_conversations_threadId_reply_route.ts.md` (edit src/app/api/placements/recruiter/conversations/[threadId]/reply/route.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_api_tpo_verification_review_route.ts.md` (edit src/app/api/tpo/verification/review/route.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_components_courses_faculty-submission-file-review.tsx.md` (edit src/components/courses/faculty-submission-file-review.tsx; 4 findings; best P2)
