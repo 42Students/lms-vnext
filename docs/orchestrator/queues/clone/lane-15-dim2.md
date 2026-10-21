@@ -239,16 +239,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/components/projects/project-create-control.tsx`
 - [x] `src/components/projects/project-delivery-file-uploader.tsx`
 - [x] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-meeting-controls.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-readiness-override-form.tsx`
-- [ ] `src/components/projects/project-resource-controls.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/projects/project-task-comments.tsx`
-- [ ] `src/components/projects/project-template-controls.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/shell/admin-scope-switcher.tsx`
+- [x] `src/components/projects/project-meeting-controls.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-readiness-override-form.tsx`
+- [x] `src/components/projects/project-resource-controls.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-task-comments.tsx`
+- [x] `src/components/projects/project-template-controls.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/shell/admin-scope-switcher.tsx`
 - [ ] `src/components/shell/learner-notification-bell.tsx`
 - [ ] `src/components/shell/learner-topbar-tools.tsx`
 - [ ] `src/components/shell/topbar/account-menu.tsx`
