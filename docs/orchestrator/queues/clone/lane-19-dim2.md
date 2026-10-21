@@ -307,16 +307,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/error.tsx`
 - [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/loading.tsx`
 - [x] `src/app/(authenticated)/admin/features/error.tsx`
-- [ ] `src/app/(authenticated)/admin/features/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/hr/loading.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/job-settings/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/loading.tsx`
+- [x] `src/app/(authenticated)/admin/hr/loading.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/[membershipId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/hiring/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/job-settings/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/settings/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/joining/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/offers/page.tsx`
 - [ ] `src/app/(authenticated)/admin/placements/screenings/page.tsx`
