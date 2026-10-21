@@ -178,8 +178,8 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
       remember("lane", value);
     }} items={[
       {key:"",label:"All lanes"},{key:"BACKLOG",label:"Backlog"},
-      {key:"TODO",label:"To Do"},{key:"IN_PROGRESS",label:"In Progress"},
-      {key:"IN_REVIEW",label:"In Review"},{key:"BLOCKED",label:"Blocked"},
+      {key:"TODO",label:"To do"},{key:"IN_PROGRESS",label:"In progress"},
+      {key:"IN_REVIEW",label:"In review"},{key:"BLOCKED",label:"Blocked"},
       {key:"DONE",label:"Completed"},
     ]} />
     {activeFilterCount > 0 ? <Badge tone="neutral">

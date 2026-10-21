@@ -380,17 +380,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/components/placements/learner-placement-journey.tsx`
 - [x] `src/components/placements/learner-placement-offers.tsx`
 - [x] `src/components/placements/placement-job-create-workspace.tsx`
-- [ ] `src/components/placements/placement-recruiter-access.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/projects/college-project-student-roster-dialog.tsx`
-- [ ] `src/components/projects/learner-project-board-search.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/placements/placement-recruiter-access.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-bulk-drive-actions.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-drive-saved-views.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/projects/college-project-student-roster-dialog.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
 - [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
 - [ ] `src/components/projects/mentor-meeting-reschedule.tsx`
 - [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
