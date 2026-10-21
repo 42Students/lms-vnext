@@ -23,12 +23,19 @@ export class CollegeGroupManagementError extends Error {
   }
 }
 
-function ownCollege(context: RequestContext) {
+async function ownCollege(context: RequestContext) {
   if(isSuperAdmin(context)){
     const scope=context.adminScope;
     if(!scope?.collegeId)throw new AuthorizationError("academics.manage");
-    requirePermission(context,"academics.manage",{collegeId:scope.collegeId,organizationId:scope.organizationId??undefined});
-    return {collegeId:scope.collegeId,organizationId:scope.organizationId??""};
+    const [college]=await getDb().select({
+      id:colleges.id,organizationId:colleges.organizationId,
+    }).from(colleges).where(eq(colleges.id,scope.collegeId)).limit(1);
+    if(!college||scope.organizationId&&college.organizationId!==scope.organizationId)
+      throw new AuthorizationError("academics.manage");
+    requirePermission(context,"academics.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+    return {collegeId:college.id,organizationId:college.organizationId};
   }
   const member = context.membership;
   if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
@@ -97,7 +104,7 @@ async function auditGroup(
 
 export async function createCollegeStudyGroup(context: RequestContext, raw: unknown) {
   const input = collegeStudyGroupCreateSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   return getDb().transaction(async (tx) => {
     await lockCollege(tx, context, member.collegeId, member.organizationId);
     await ensureUniqueName(tx, member.collegeId, input.name);
@@ -124,7 +131,7 @@ export async function createCollegeStudyGroup(context: RequestContext, raw: unkn
 export async function changeCollegeStudyGroup(context: RequestContext, groupIdRaw: unknown, raw: unknown) {
   const groupId = collegeGroupIdSchema.parse(groupIdRaw);
   const input = collegeStudyGroupChangeSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   return getDb().transaction(async (tx) => {
     await lockCollege(tx, context, member.collegeId, member.organizationId);
     const [group] = await tx.select().from(lmsGroups)
@@ -197,7 +204,7 @@ export async function changeCollegeStudyGroup(context: RequestContext, groupIdRa
  * versioned repair. ELECTIVE/PROJECT_TEAM remain owned by their modules. */
 export async function inspectCollegeStudyGroupCounts(context:RequestContext,groupIdRaw:unknown){
  const groupId=collegeGroupIdSchema.parse(groupIdRaw);
- const member=ownCollege(context);
+ const member=await ownCollege(context);
  return getDb().transaction(async tx=>{
   await lockCollege(tx,context,member.collegeId,member.organizationId);
   const [group]=await tx.select({
