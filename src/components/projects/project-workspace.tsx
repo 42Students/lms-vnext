@@ -257,7 +257,7 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
       readiness.readinessOverride.state,hasFinalSubmission);
   const tasks = readiness.execution.tasks;
   const sprints = readiness.execution.sprints;
-  const doneTasks = workspace.tasks.filter(task => task.status === "DONE");
+  const doneTasks = workspace.tasks.filter(task => task.status === "DONE"&&!task.deletedAt);
   const withSubmission = doneTasks.filter(task => workspace.taskSubmissions.some(submission =>
     submission.taskId === task.id && Boolean(submission.submissionUrl))).length;
   const totalPlanItems = tasks.total + sprints.total;
@@ -412,11 +412,12 @@ function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
 }
 
 /** The same project title, mentor subtitle and status badge above every mentor detail tab. */
-export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
+export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,section}: {
   workspace: Workspace;
   mode: "LEARNER" | "MENTOR" | "ADMIN";
   backHref?: string;
   backLabel?: string;
+  section?:ProjectWorkspaceSection;
 }) {
   return (
     <PageHeader
@@ -426,7 +427,11 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                  workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
                  workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
                 .filter(Boolean).join(" · ")||"Project workspace"
-              : (workspace.project.summary ?? undefined)}
+              : mode==="ADMIN"&&section==="readiness"?
+                "Understand submission readiness, proof coverage and any manual override at a glance.":
+                mode==="ADMIN"&&section==="summary"?
+                  "Health, setup and operating details for this workspace.":
+                  workspace.project.summary??undefined}
             actions={
               <div className="flex w-full min-w-0 flex-wrap items-center gap-2 sm:w-auto">
                 {mode==="ADMIN"&&backHref?<PageBackLink href={backHref} label={backLabel??"Back to projects"}/>:null}
@@ -591,7 +596,8 @@ export function ProjectWorkspace({
       {mode!=="ADMIN"?<PageBackLink href={backHref} label={backLabel === "Projects" ? "Back to projects" : backLabel} />:null}
       {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
-      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
+      {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} section={activeSection}
+          backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
@@ -609,6 +615,11 @@ export function ProjectWorkspace({
       {mode === "ADMIN" && riskReason ? (
         <section role="status" className="border-y border-warning-border bg-warning-subtle px-4 py-3 text-sm">
           Opened from At-risk projects · {riskReason === "STALLED" ? "Stalled" : riskReason === "BLOCKER" ? "Active blocker" : "Pending review"}
+          {riskReason==="BLOCKER"&&!workspace.project.blocker?.trim()&&
+            !workspace.tasks.some(task=>task.status==="BLOCKED")?
+            " · The recorded blocker has cleared. Refresh the risk report for current counts.":null}
+          {riskReason==="REVIEW"&&!workspace.taskSubmissions.some(item=>item.status==="SUBMITTED")?
+            " · No task submissions currently await review. Refresh the risk report.":null}
         </section>
       ) : null}
 
