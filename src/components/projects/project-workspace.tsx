@@ -968,7 +968,9 @@ export function ProjectWorkspace({
             <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
           {mode==="ADMIN"&&!readOnly
-            ?<CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
+            ?<CollegeProjectMentorDialog projectId={workspace.project.id}
+              collegeId={workspace.project.collegeId}
+              currentMentorName={workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName}/>
             :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
           {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId
             ?<CollegeProjectStudentRosterDialog projectId={workspace.project.id}
