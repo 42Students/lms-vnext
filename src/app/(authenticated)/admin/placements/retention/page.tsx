@@ -8,12 +8,23 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
 import {EmptyState} from "@/components/ui/empty-state";
 import {Banner} from "@/components/ui/banner";
+import {ErrorState} from "@/components/ui/error-state";
 export default async function SuperAdminRetentionPage(){
  const context=await getCurrentRequestContext();
  if(!context.adminScope?.collegeId)return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]"><PageHeader title="Data retention report" actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
   <EmptyState title="Select a college" description="Choose a college to review candidate retention candidates."/></div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
- const report=await getSuperAdminPlacementRetentionReport(context);
+ let report:Awaited<ReturnType<typeof getSuperAdminPlacementRetentionReport>>;
+ try {
+  report=await getSuperAdminPlacementRetentionReport(context);
+ } catch {
+  return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+   <PageHeader title="Data retention report" actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
+   <ErrorState title="Couldn't load the data retention report."
+    description="The retention review could not be loaded. Nothing has been deleted or marked for deletion."
+    action={<Link href="/admin/placements/retention?retry=1" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 font-semibold text-primary-text hover:border-[var(--lms-primary)] md:min-h-9">Retry</Link>}/>
+  </div>;
+ }
  const fmt=(d:Date)=>d.toLocaleDateString("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  const columns:DataTableColumn<(typeof report.rows)[number]>[]=[
   {key:"applicant",header:"Applicant",mobilePriority:"primary",cell:row=><strong className="block min-w-0 break-words font-semibold text-[var(--lms-heading)]">{row.applicantName}</strong>},
