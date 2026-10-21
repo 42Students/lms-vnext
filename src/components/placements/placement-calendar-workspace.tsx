@@ -622,6 +622,26 @@ export async function PlacementCalendarWorkspace({
       now,
     );
 
+  const bookedInterviews=bookings?.events??[];
+  const bookedTimes=audience==="SUPER_ADMIN"?bookedInterviews.map(event=>({
+   event,start:Date.parse(event.startsAt),end:Date.parse(event.endsAt),
+   room:(event.venue??event.meetingUrl??"").trim().toLowerCase(),
+   interviewer:(event.interviewer??"").trim().toLowerCase(),
+  })):[];
+  const bookedConflictCount=bookedTimes.filter((item,index)=>
+   bookedTimes.some((other,i)=>i!==index&&
+    item.start<other.end&&other.start<item.end&&
+    (item.event.candidateMembershipId===other.event.candidateMembershipId||
+     Boolean(item.room&&item.room===other.room)||
+     Boolean(item.interviewer&&item.interviewer===other.interviewer)))).length;
+  const adminMetricKnown=Boolean(bookings&&(!bookings.failed||bookings.stale));
+  const adminMetrics=[
+   ["Scheduled",bookedInterviews.length],
+   ["Today",bookedInterviews.filter(event=>placementCalendarDayKey(new Date(event.startsAt))===today).length],
+   ["Companies",new Set(bookedInterviews.map(event=>event.companyName)).size],
+   ["Conflicts",bookedConflictCount],
+  ] as const;
+
   const previous =
     shiftCareerCalendarDay(
       state.anchor,
@@ -785,7 +805,7 @@ export async function PlacementCalendarWorkspace({
                 ["Follow-ups", summary.followups],
                 ["All events", summary.total],
               ]
-            : [
+            : audience==="SUPER_ADMIN"?adminMetrics:[
                 ["College rounds", summary.rounds],
                 ["Matching events", summary.total],
               ]
@@ -798,7 +818,8 @@ export async function PlacementCalendarWorkspace({
               {label}
             </p>
             <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
-              {loadedResponse ? count : "Unavailable"}
+              {audience==="SUPER_ADMIN"?(adminMetricKnown?count:"Unavailable"):
+                loadedResponse?count:"Unavailable"}
             </p>
           </div>
         ))}
