@@ -50,7 +50,7 @@
   padding: 12px;
   border: 1px solid #e3e8ef;
   border-radius: 10px;
-  background: #fff;
+  background: var(--lms-white);
 }
 .day[data-today="true"] {
   border-color: #2f6fed;
@@ -67,8 +67,8 @@
   padding: 8px !important;
   border: 1px solid #e3e8ef !important;
   border-radius: 8px !important;
-  background: #fff !important;
-  color: #334155;
+  background: var(--lms-white) !important;
+  color: var(--lms-topbar-ink);
   font-size: 12px;
   text-decoration: none;
   cursor: pointer;
@@ -78,7 +78,7 @@
   border-color: #cdd5e0 !important;
 }
 .event:focus-visible {
-  outline: 2px solid #0a7c88;
+  outline: 2px solid var(--lms-button-primary);
   outline-offset: 2px;
 }
 .time {

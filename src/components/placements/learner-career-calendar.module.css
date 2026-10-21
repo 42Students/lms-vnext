@@ -152,7 +152,7 @@
 .legendChip[data-kind="OTHER"]:hover:not(:disabled),
 .legendChip[data-kind="OTHER"][aria-pressed="true"] {
   background: #f1f5f9 !important;
-  color: #334155 !important;
+  color: var(--lms-topbar-ink) !important;
   border-color: #475569 !important;
 }
 .legendChip[data-kind="OTHER"][aria-pressed="true"] {
@@ -223,7 +223,7 @@
   border-left: 3px solid #475569;
   border-radius: 6px;
   background: #f1f5f9;
-  color: #334155;
+  color: var(--lms-topbar-ink);
   font-size: 13px;
   line-height: 1.35;
   overflow: hidden;
