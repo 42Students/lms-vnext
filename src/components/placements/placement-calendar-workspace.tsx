@@ -1174,8 +1174,9 @@ export async function PlacementCalendarWorkspace({
                 : "Events in visible period"}
             </h2>
             <p className="mt-1 text-sm text-muted-foreground">
-              {visibleEvents.length} matching event
-              {visibleEvents.length === 1 ? "" : "s"} ·{" "}
+              {loadedResponse
+                ? `${visibleEvents.length} matching event${visibleEvents.length === 1 ? "" : "s"}`
+                : "Matching event count unavailable"} ·{" "}
               {dateLabel(window.from)} –{" "}
               {dateLabel(window.to)}
             </p>
