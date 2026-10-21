@@ -27,6 +27,7 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { parseSuperAdminAnnouncementParams } from "@/modules/announcements/super-admin-list-query";
 import { announcementVisibilityAt } from "@/modules/announcements/visibility-model";
 import {announcementHistoryEmptyMessage} from "@/modules/announcements/admin-history-empty-model";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { ANNOUNCEMENT_SENDER_TYPES } from "@/modules/announcements/validation";
 
 function currentTimeMs() {
@@ -42,7 +43,13 @@ export default async function AnnouncementsPage({
   if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE") {
     redirect("/dashboard");
   }
-  const params = parseSuperAdminAnnouncementParams(await searchParams);
+  const rawParams = await searchParams;
+  // The legacy search used `query`; retain it as an alias for the canonical `q`.
+  const {query: legacyQuery, ...canonicalParams} = rawParams;
+  const params = parseSuperAdminAnnouncementParams({
+    ...canonicalParams,
+    q: canonicalParams.q ?? legacyQuery,
+  });
   if (!params) {
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Announcements" description="Review and publish college notices." />
@@ -97,11 +104,11 @@ export default async function AnnouncementsPage({
   ]);
   if(!pageResult.ok||!pageResult.value)return <div className="min-w-0 space-y-6">
     <PageHeader title="Announcements" description="Review and publish college notices."/>
-    <ErrorState title="Announcements could not be loaded"
+    <ErrorState title="Couldn&apos;t load announcements"
       description="The authorized notice list is temporarily unavailable. No published notice was changed."
       action={<Link href="/admin/announcements"
         className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
-        Retry announcements
+        Retry
       </Link>}/>
   </div>;
   const page=pageResult.value;
@@ -146,6 +153,20 @@ export default async function AnnouncementsPage({
       return {ok:false as const,value:new Map<string,{delivered:number;read:number;cellRead:number}>()};
     });
   const receipts=receiptResult.value;
+  // Only SUPER_ADMIN-to-COLLEGE rows belong to the legacy Placement cells feed.
+  // The persisted broadcast identity prevents grouping unrelated notices with equal copy.
+  const groupedBroadcasts = new Map<string, typeof page.items>();
+  for (const item of page.items) {
+    if (item.senderType !== "SUPER_ADMIN" || item.receiverType !== "COLLEGE") continue;
+    const groupKey = item.broadcastGroupId ?? item.id;
+    const copies = groupedBroadcasts.get(groupKey) ?? [];
+    copies.push(item);
+    groupedBroadcasts.set(groupKey, copies);
+  }
+  const broadcastFeed = [...groupedBroadcasts].map(([id, copies]) => ({
+    id, copies, first: copies[0]!,
+  })).sort((a,b)=>Number(b.first.isPinned)-Number(a.first.isPinned)
+    || b.first.createdAt.getTime()-a.first.createdAt.getTime());
   const next = page.nextCursor
     ? "/admin/announcements?" + new URLSearchParams({
         ...(includeDeleted ? { deleted: "1" } : {}),
@@ -163,16 +184,62 @@ export default async function AnnouncementsPage({
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Announcements"
-        description="Target, schedule, pin, edit, soft-delete and restore college communications."
-        actions={
-          <Link
-            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-foreground md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]"
-          >
+        description="To placement cells. Each one gets a bell and reads it under Announcements > From 42."
+        actions={<SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>} 
+      />
+      <section aria-label="Announcements to placement cells" className="min-w-0 space-y-4">
+        <h2 className="m-0 text-lg font-semibold text-foreground">Announcements to placement cells</h2>
+        {broadcastFeed.length === 0 ? (
+          <p className="border-y border-border py-6 text-sm text-muted-foreground">
+            {params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted
+              ? "No announcements match the selected filters." : "Nothing sent yet."}
+          </p>
+        ) : (
+          <div className="divide-y divide-border border-y border-border">
+            {broadcastFeed.map(({id, copies, first})=>{
+              const reached = copies.reduce((total,copy)=>total+(receipts.get(copy.id)?.cellRead ?? 0),0);
+              const ended = first.expiresAt !== null && first.expiresAt.getTime() <= now;
+              const state = first.deletedAt ? "Deleted" : ended ? "Ended"
+                : first.scheduledAt && first.scheduledAt.getTime() > now ? "Scheduled" : "Live";
+              return <article key={id} className="py-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span>From 42</span>
+                    {first.isPinned ? <StatusBadge tone="info">Pinned</StatusBadge> : null}
+                    <StatusBadge tone={state==="Live"?"success":state==="Scheduled"?"warning":"neutral"}>{state}</StatusBadge>
+                  </div>
+                  <time className="text-xs text-muted-foreground" dateTime={first.createdAt.toISOString()}>
+                    {first.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST
+                  </time>
+                </div>
+                <h3 className="mt-2 text-base font-semibold text-foreground">{first.title}</h3>
+                <p className="mt-1 whitespace-pre-wrap text-sm text-body">{first.message}</p>
+                {first.buttonLabel && first.buttonUrl && /^https:\/\/[^\s]+$/i.test(first.buttonUrl)
+                  ? <a href={first.buttonUrl} className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">{first.buttonLabel} ↗</a> : null}
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
+                  <span>Sent to {copies.length} placement {copies.length === 1 ? "cell" : "cells"} on this page</span>
+                  <span>{reached} of {copies.length} placement cells read on this page</span>
+                  {first.expiresAt ? <span>Show until {first.expiresAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
+                  {first.updatedAt.getTime() !== first.createdAt.getTime()
+                    ? <span>Updated {first.updatedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
+                </div>
+              </article>;
+            })}
+          </div>
+        )}
+        {page.nextCursor ? <p className="text-xs text-muted-foreground">
+          This feed shows one authorized page at a time. Continue to Older announcements below to see earlier placement-cell broadcasts.
+        </p> : null}
+      </section>
+      <section aria-label="Announcement management" className="min-w-0 space-y-4 border-t border-border pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><h2 className="m-0 text-lg font-semibold text-foreground">Announcement management</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Search, filter, export and manage authorized announcements. Placement-cell broadcasts are grouped above.</p></div>
+          <Link href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:bg-[var(--lms-primary-subtle)]">
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
-        }
-      />
+        </div>
       <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
         <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search announcement title or message
@@ -222,7 +289,6 @@ export default async function AnnouncementsPage({
         action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry colleges</Link>}>
         Broadcast colleges could not be loaded. No broadcast audience was assumed or published.
       </Banner>:null}
-      <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
       {!receiptResult.ok?<Banner tone="warning" role="status"
         action={<Link href="/admin/announcements" className="font-semibold text-primary-text underline">Retry read receipts</Link>}>
         Placement-cell read counts are temporarily unavailable. Do not infer unread or zero reach.
@@ -267,6 +333,7 @@ export default async function AnnouncementsPage({
           </Link>
         </div>
       ) : null}
+      </section>
     </div>
   );
 }
