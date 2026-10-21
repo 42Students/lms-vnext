@@ -123,6 +123,8 @@ export async function ProjectAdminReadinessPage({
     getProjectReadiness(context,selected),
     listCollegeReadinessReleases(context,collegeId,selected),
   ]):[null,null];
+  const selectedHasFinalSubmission=Boolean(selectedReadiness?.finalSubmission.latest &&
+    selectedReadiness.finalSubmission.latest.status!=="DRAFT");
   const selectedReadiness=readinessRead?.status==="fulfilled"?readinessRead.value:null;
   const releaseUnavailable=releasesRead?.status==="rejected";
   const releaseContext=releasesRead?.status==="fulfilled"?releasesRead.value:[];
@@ -195,13 +197,16 @@ export async function ProjectAdminReadinessPage({
               <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
                 <div><dt className="text-xs font-semibold text-body">State</dt>
                   <dd className="mt-1 font-semibold">{
+                    selectedHasFinalSubmission?"Submission already exists":
                     selectedReadiness.readinessOverride.state==="FORCE_UNLOCK"?"Ready (manual)":
                     selectedReadiness.readinessOverride.state==="FORCE_BLOCK"?"Not ready (manual)":
                     effectiveProjectSubmissionReady(selectedReadiness.execution.complete,null)?"Ready":"Not ready"
                   }</dd></div>
                 <div><dt className="text-xs font-semibold text-body">Reason</dt>
                   <dd className="mt-1 whitespace-pre-wrap">{
-                    selectedReadiness.readinessOverride.note??
+                    (selectedHasFinalSubmission?
+                       "An existing final submission takes precedence over manual overrides.":
+                       selectedReadiness.readinessOverride.note)??
                     (selectedReadiness.execution.complete?"All tasks and sprints are complete":
                       "Incomplete tasks or sprints")
                   }</dd></div>

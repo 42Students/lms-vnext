@@ -247,8 +247,11 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
     <p className="mt-1 text-sm">The workspace loaded, but its readiness calculation was not included. Retry before making a submission-readiness decision.</p>
     <Link href={"?retry=1"} className="mt-2 inline-flex text-sm font-semibold text-link underline">Retry</Link>
   </section>;
+  const hasFinalSubmission=Boolean(readiness.finalSubmission.latest &&
+    readiness.finalSubmission.latest.status!=="DRAFT");
   const ready = workspace.project.status !== "ARCHIVED" &&
-    effectiveProjectSubmissionReady(readiness.execution.complete, readiness.readinessOverride.state);
+    effectiveProjectSubmissionReady(readiness.execution.complete,
+      readiness.readinessOverride.state,hasFinalSubmission);
   const tasks = readiness.execution.tasks;
   const sprints = readiness.execution.sprints;
   const doneTasks = workspace.tasks.filter(task => task.status === "DONE");
@@ -272,7 +275,8 @@ function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Submission readiness</p>
           <h2 className="mt-1 text-lg font-semibold text-foreground">
-            {ready ? "This workspace is ready to submit" : "This workspace still has readiness gaps"}
+            {hasFinalSubmission?"This workspace already has a final submission":
+              ready ? "This workspace is ready to submit" : "This workspace still has readiness gaps"}
           </h2>
         </div>
         <StatusBadge tone={ready ? "success" : "error"}>{ready ? "Ready" : "Not ready"}</StatusBadge>

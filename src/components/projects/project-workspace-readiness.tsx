@@ -38,8 +38,11 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         action={<PageBackLink href={basePath} label="Back to workspaces" />}/>
     </div>;
   const readiness=result.value;
-  const isReady = readiness.projectStatus !== "ARCHIVED" &&
-    effectiveProjectSubmissionReady(readiness.execution.complete, readiness.readinessOverride.state);
+  const hasFinalSubmission=Boolean(readiness.finalSubmission.latest &&
+    readiness.finalSubmission.latest.status!=="DRAFT");
+  const isReady=readiness.projectStatus!=="ARCHIVED"&&
+    effectiveProjectSubmissionReady(readiness.execution.complete,
+      readiness.readinessOverride.state,hasFinalSubmission);
   return <div className="min-w-0 space-y-4">
     <ProjectAdminNav basePath={basePath} active="readiness" />
     <div className="min-w-0">
@@ -60,11 +63,14 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Current readiness</h2>
       <dl className="mt-4 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0">
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{
+          hasFinalSubmission?"Submission already exists":
           readiness.readinessOverride.state==="FORCE_UNLOCK"?"Ready (manual override)":
           readiness.readinessOverride.state==="FORCE_BLOCK"?"Not ready (manual override)":
           readiness.execution.complete?"Ready":"Not ready"
         }</dd></div>
-        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason</dt><dd className="mt-2 whitespace-pre-wrap break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.note??
+        <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason</dt><dd className="mt-2 whitespace-pre-wrap break-words text-[var(--lms-body-text)]">{hasFinalSubmission?
+          "An existing final submission takes precedence over manual readiness overrides.":
+          readiness.readinessOverride.note??
           (readiness.execution.complete?"All execution items completed":"Incomplete tasks or sprints")}</dd></div>
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission status</dt>
           <dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
