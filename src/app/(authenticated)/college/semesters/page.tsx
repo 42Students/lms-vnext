@@ -45,10 +45,16 @@ export default async function CollegeSemestersPage({
   const refreshHref="/college/semesters"+(currentFilters.size?"?"+currentFilters.toString():"");
   if(!directory.ok)return <div className="min-w-0 space-y-4">
     <PageHeader title="Semesters"/>
-    <Banner tone="warning">Could not refresh semesters or program choices. The selected college and filters have been preserved.</Banner>
+    <Banner tone="warning">
+      Could not load semesters or program choices. The selected college and filters have been preserved.
+      The last visible results are not being presented as a successful refresh.
+    </Banner>
     <ErrorState title="Unable to load semesters"
-      description="The selected college's semester records could not be loaded. Retry the same filters."
-      action={<Link href={refreshHref} className="font-semibold text-primary-text underline">Retry semesters and programs</Link>}/>
+      description="Semester and program choices share one college-scoped read. Retry with the same filters rather than treating an unavailable program list as empty."
+      action={<div className="flex flex-wrap items-center gap-4">
+        <Link href={refreshHref} prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry semesters</Link>
+        <Link href={refreshHref} prefetch={false} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry programs</Link>
+      </div>}/>
   </div>;
   return <div className="min-w-0 space-y-4">
     <CollegeAcademicDirectory

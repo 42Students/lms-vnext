@@ -101,7 +101,9 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
         title="All Quizzes"
       />
       {linkedWarning?<Alert tone="info" role="status">{linkedWarning}</Alert>:null}
-      <section aria-label="Quiz listing" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+      {/* The shared app canvas owns the white surface; avoid a second bordered
+          PageShell/card around the legacy-style quiz table and its toolbar. */}
+      <section aria-label="Quiz listing" className="min-w-0">
       <LearnerAssessmentOverview
         key={overview.selectedCourseId??"all"}
         initialCourseId={overview.selectedCourseId??""}

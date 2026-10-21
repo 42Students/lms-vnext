@@ -3,6 +3,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { ClassTeamWorkspaceCreator } from "@/components/projects/class-team-workspace-creator";
 import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import Link from "next/link";
@@ -34,11 +35,18 @@ export default async function AdminClassProjectWorkspacePage({searchParams}:{
     </div>;
   }
   const requested=(await searchParams).templateId;
+  // An old numeric template identifier is not a grant. Only a template that
+  // is assigned to the currently selected admin college can be preselected.
   const selected=typeof requested==="string"&&templates.some(t=>t.templateId===requested)?requested:null;
+  const unrecognizedTemplate=requested!==undefined&&!selected;
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
     {templates.length === 0 ? <PageBackLink href="/admin/projects" label="Back to workspaces" /> : null}
     <PageHeader title="Create project workspace"
       description="Every workspace starts from a template — pick one below." />
+    {unrecognizedTemplate?<Banner tone="warning">
+      The linked template is not assigned to the selected college or is an old template identifier.
+      Choose an available template below; no workspace has been created.
+    </Banner>:null}
     {templates.length === 0 ? <EmptyState title="No assigned templates" description="Assign a published Project template to this college first."
       action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto md:min-h-9">Project templates</Link>}/> :
       <ClassTeamWorkspaceCreator key={context.user.id+":"+collegeId+":"+(context.adminScope?.organizationId??"")} collegeId={collegeId} userId={context.user.id} basePath="/admin/projects" initialTemplateId={selected} templates={templates.map(t => ({templateId:t.templateId,title:t.title,version:t.version,summary:t.summary}))}/>}
