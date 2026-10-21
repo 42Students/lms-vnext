@@ -94,7 +94,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_activity_learner-notification-membership-service.ts.md` (edit src/modules/activity/learner-notification-membership-service.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_attendance_parent-sms-provider.ts.md` (edit src/modules/attendance/parent-sms-provider.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_placement-tpo-notice-audiences.ts.md` (edit src/db/schema/placement-tpo-notice-audiences.ts; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_sidebar-nav.tsx.md` (edit src/components/shell/sidebar-nav.tsx; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_sidebar-nav.tsx.md` (edit src/components/shell/sidebar-nav.tsx; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_activity_learner-notification-read-service.ts.md` (edit src/modules/activity/learner-notification-read-service.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_admin-ui_super-admin-screening-detail-service.ts.md` (edit src/modules/admin-ui/super-admin-screening-detail-service.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_auth_session-response-guard.tsx.md` (edit src/components/auth/session-response-guard.tsx; 1 findings; best P2)
