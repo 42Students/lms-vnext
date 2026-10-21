@@ -16,7 +16,7 @@ export default function LearnerNotificationHistoryError({
       description="The requested notification page could not be retrieved. This does not mean your history is empty."
       action={<div className="flex w-full flex-col items-stretch gap-2 sm:w-auto sm:flex-row sm:justify-center sm:gap-3">
         <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
-        <Link href="/learn/notifications" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">
+        <Link href="/learn/notifications" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-4 text-sm font-[650] text-[var(--lms-link-text)] hover:underline">
           Notifications
         </Link>
       </div>}
