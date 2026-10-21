@@ -6,12 +6,13 @@ import { and, desc, eq, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   activityEvents, collegeMemberships, membershipRoles, inAppNotifications,
-  colleges, organizations, placementCompanies,
+  colleges, organizations, placementCompanies, placementCompanyDomains,
   placementCompanyRelationships, placementPublicJoinLinks,
   placementPublicJoinChallenges, placementRecruiterProfiles,
   placementRecruiterCollegeGrants, placementTpoCollegeSettings, users,
 } from "@/db/schema";
-import { registrableWorkDomain,matchesCompanyDomain } from "./domain-model";
+import { registrableWorkDomain } from "./domain-model";
+import { companyJoinEmailCandidate } from "./company-preview-policy";
 import { publicJoinAcceptSchema } from "./form-model";
 import { matchesPublicJoinCode, PUBLIC_JOIN_MAX_FAILURES, PUBLIC_JOIN_PER_IP_JOIN_HOUR } from "./code-policy";
 import { opaqueNetworkTag, PublicJoinCodeError } from "./send-code-service";
@@ -93,7 +94,15 @@ export async function acceptPublicRecruiterJoin(
     if (!link) return "DENIED";
     const emailDomain = registrableWorkDomain(email);
     if(!emailDomain)return "OTHER_COMPANY_EMAIL";
-    if(scope==="COMPANY"&&!matchesCompanyDomain(email,link.companyDomain??""))return "OTHER_COMPANY_EMAIL";
+    if(scope==="COMPANY"){
+      if(!link.companyId)return "OTHER_COMPANY_EMAIL";
+      const verified=await tx.select({domain:placementCompanyDomains.domain})
+        .from(placementCompanyDomains).where(and(
+          eq(placementCompanyDomains.companyId,link.companyId),
+          eq(placementCompanyDomains.verifiedBy42,true)));
+      if(!companyJoinEmailCandidate(email,[link.companyDomain??"",
+        ...verified.map(item=>item.domain)]))return "OTHER_COMPANY_EMAIL";
+    }
     const hourAgo = new Date(now.getTime() - 60 * 60_000);
     const counts = await tx.execute<{ n: number }>(sql`
       select count(*)::integer as n from placement_public_join_rate_events

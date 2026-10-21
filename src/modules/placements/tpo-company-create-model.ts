@@ -1,10 +1,15 @@
 import { z } from "zod";
 import { createPlacementCompanyInputSchema } from "./validation";
+import { publicRecruiterWorkEmailSchema } from "./public-college-join-model";
 
 /** College ownership comes from the authenticated TPO membership, never JSON. */
 export const tpoCreateCompanySchema = createPlacementCompanyInputSchema
   .omit({ collegeId: true, isTrusted: true })
-  .extend({ confirmed: z.literal(true) })
+  .extend({
+    confirmed: z.literal(true),
+    recruiterEmail: publicRecruiterWorkEmailSchema.optional(),
+    notTheSame: z.boolean().optional(),
+  })
   .strict();
 
 /** Explicit review-only path for a company with the same name but a provably
