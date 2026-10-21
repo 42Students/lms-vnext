@@ -74,7 +74,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
   const [error, setError] = useState<string | null>(null);
   const [notice,setNotice]=useState("");
   async function save() {
-    if (inFlight.current) return;
+    if (inFlight.current||!dirty) return;
     const values = {
       countsAsPlacedAt: form.countsAsPlacedAt,
       maxHeldOffers: Number(form.maxHeldOffers),
@@ -123,7 +123,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       <p className="mt-2 text-sm text-body leading-[22px]">
         The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
       </p>
-      <div className="mt-4 flex min-w-0 flex-wrap items-end gap-3">
+      <div className="mt-4 flex min-w-0 flex-wrap items-center gap-3 border-t border-border pt-4">
         <label className="inline-flex min-w-[180px] flex-1 flex-col gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
           A student counts as placed when the offer is
           <Select value={form.countsAsPlacedAt} disabled={busy}
@@ -144,9 +144,10 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
         ))}
       </div>
       <section role="status" className="mt-4 min-w-0 space-y-1 border-t border-border pt-4 text-sm text-body">
-        <p>A student may hold {Number.isFinite(held)?held:0} offers (released or accepted) before the next rule applies.</p>
+        <p>A student may hold {Number.isFinite(held)?held:0} {held===1?"offer":"offers"} (released or accepted) before the next rule applies.</p>
         <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
         <p className="mt-3 border-t border-border pt-2">For example: A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
+        <p className="mt-2">If a student needs more time to respond, the placement cell can extend the response deadline by 48 hours.</p>
       </section>
       <Button type="button" disabled={busy||!dirty} onClick={() => void save()}
         className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
