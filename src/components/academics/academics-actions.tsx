@@ -89,7 +89,7 @@ function AcademicActionMenu({ children }: { children: ReactNode }) {
 }
 
 function AcademicDialogFooter({ children }: { children: ReactNode }) {
-  return <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">{children}</div>;
+  return <div className="min-w-0 flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">{children}</div>;
 }
 
 export function ProgramActions({
