@@ -49,8 +49,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/course-progress.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Home/Home.js`
 - [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobSlugGenerator.java`
-- [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobLifecycleService.java`
-- [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/AdminJobServiceImpl.java`
+- [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobLifecycleService.java`
+- [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/AdminJobServiceImpl.java`
 - [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/programs/ProgramSearchController.java`
 - [ ] U014 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/applications/JobApplicationSearchDTO.java`
 - [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobRound.java`
