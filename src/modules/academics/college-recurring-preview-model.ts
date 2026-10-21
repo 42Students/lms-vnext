@@ -18,9 +18,19 @@ export const recurringPreviewSchema = z.object({
   deliveryId: z.string().uuid().nullable().optional(),
 }).strict().superRefine((v, ctx) => {
   if (v.from > v.to) ctx.addIssue({ code: "custom", path: ["to"], message: "End date precedes start" });
-  const days = Math.round((Date.parse(v.to + "T00:00:00Z") -
-    Date.parse(v.from + "T00:00:00Z")) / 86400000);
-  if (days > 92) ctx.addIssue({ code: "custom", path: ["to"], message: "Maximum 93 inclusive days" });
+  // The old LMS caps occurrences, not the number of calendar days. An
+  // entire semester with one session per week is valid when <=200 dates.
+  if(v.from<=v.to){
+    const selected=new Set(v.weekdays);
+    const start=Date.parse(v.from+"T00:00:00Z");
+    const end=Date.parse(v.to+"T00:00:00Z");
+    let occurrences=0;
+    for(let date=start;date<=end&&occurrences<=200;date+=86400000){
+      if(selected.size===0||selected.has(new Date(date).getUTCDay()))occurrences++;
+    }
+    if(occurrences>200)ctx.addIssue({code:"custom",path:["to"],
+      message:"That range would create more than 200 sessions. Narrow the date range or weekdays."});
+  }
   if (v.endTime <= v.startTime) ctx.addIssue({ code: "custom", path: ["endTime"], message: "End time must follow start" });
   if (new Set(v.weekdays).size !== v.weekdays.length)
     ctx.addIssue({ code: "custom", path: ["weekdays"], message: "Duplicate weekdays" });

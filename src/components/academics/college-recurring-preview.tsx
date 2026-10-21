@@ -39,7 +39,7 @@ export function CollegeRecurringPreview({
   const [sectionId, setSectionId] = useState(chosen?.id ?? "");
   const [title, setTitle] = useState("Class session");
   const [deliveryId, setDeliveryId] = useState("");
-  const [skipped, setSkipped] = useState<Array<{localDate:string;reasons:string[]}>>([]);
+  const [skipped, setSkipped] = useState<Array<{localDate:string;reasons:string[];error?:string}>>([]);
   const [created, setCreated] = useState<number | null>(null);
   const [requested,setRequested]=useState<number|null>(null);
   const [savedSessionIds,setSavedSessionIds]=useState<string[]>([]);
@@ -146,7 +146,7 @@ export function CollegeRecurringPreview({
     setSkipped([]);
     startTransition(async () => {
       try {
-        const value=await apiFetch<{created?:number;requested?:number;sessionIds?:string[];skipped?:Array<{localDate:string;reasons:string[]}>}>(
+        const value=await apiFetch<{created?:number;requested?:number;sessionIds?:string[];skipped?:Array<{localDate:string;reasons:string[];error?:string}>}>(
           "/api/academics/sections/recurring-execute",{
           method: "POST", headers: {"content-type":"application/json"},
           body: JSON.stringify({
@@ -213,7 +213,7 @@ export function CollegeRecurringPreview({
                 onChange={(e) => setFrom(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
             </label>
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 93 days)
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To (up to 200 matching sessions)
               <Input disabled={pending} type="date" required value={to} min={from || selected?.periodStart} max={selected?.periodEnd}
                 onChange={(e) => setTo(e.target.value)}
                 className="min-h-11 min-w-0 md:min-h-9" />
@@ -278,7 +278,8 @@ export function CollegeRecurringPreview({
         {skipped.length > 0 && <>
           <p className="font-semibold">These dates were skipped:</p>
           <ul className="list-inside list-disc">{skipped.map(item =>
-            <li key={item.localDate}>{item.localDate}: {item.reasons.map(reason => reason.replaceAll("_", " ")).join(", ")}</li>)}</ul>
+            <li key={item.localDate}>{item.localDate}: {item.error ??
+              item.reasons.map(reason => reason.replaceAll("_", " ")).join(", ")}</li>)}</ul>
         </>}
       </Alert> : null}
       {result ? <section aria-label="Schedule preview results" className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
