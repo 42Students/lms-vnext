@@ -3,20 +3,20 @@
 import {
   useRef,
   useState,
+  useTransition,
 } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { Dropdown } from "@/components/ui/dropdown";
 import { Disclosure } from "@/components/ui/disclosure";
-import { Menu, MenuItem } from "@/components/ui/menu";
 import {
   DataTable,
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { Select } from "@/components/ui/select";
@@ -153,6 +153,7 @@ export function SuperAdminHrAccounts({
 }) {
   const router = useRouter();
   const { showToast } = useToast();
+  const [refreshing,startRefresh]=useTransition();
 
   const [dialog, setDialog] =
     useState<DialogState>(null);
@@ -565,25 +566,23 @@ export function SuperAdminHrAccounts({
     }
   }
 
-  const accountActions = (account: HrAccount, mobile = false) => (
-    <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] print:hidden lg:justify-end">
-      <Button variant="secondary" size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={pending||saving} onClick={() => openDetail(account)}>View</Button>
-      <Dropdown label="Recruiter actions" trigger="Actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
-        <Menu className="w-full min-w-0">
-          <MenuItem disabled={pending || saving || !account.accountManageable}
-            title={!account.accountManageable ? mobile
-              ? "Active grants exist outside the selected administrative scope"
-              : "This recruiter has grants outside the selected administrative scope"
-              : undefined}
-            onClick={() => openEdit(account)}>Edit</MenuItem>
-          {account.status !== "DISABLED" && account.legacyStatus!=="DELETED" ? (
-            <MenuItem disabled={pending || !account.accountManageable}
-              onClick={() => quickStatus(account)}>{account.status === "ACTIVE" ? "Suspend" : "Reactivate"}</MenuItem>
-          ) : null}
-          <MenuItem disabled={pending || !account.accountManageable}
-            onClick={() => setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</MenuItem>
-        </Menu>
-      </Dropdown>
+  const accountActions = (account:HrAccount, mobile=false) => (
+    <div className={"flex min-w-0 flex-wrap items-center gap-2 print:hidden "+(mobile?"mt-3":"")}>
+      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+       disabled={pending||saving} onClick={()=>openDetail(account)}>View</Button>
+      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+       disabled={pending||saving||!account.accountManageable}
+       title={!account.accountManageable?"This recruiter has grants outside the selected administrative scope":undefined}
+       onClick={()=>openEdit(account)}>Edit</Button>
+      {account.status!=="DISABLED"&&account.legacyStatus!=="DELETED"?
+       <Button variant={account.status==="ACTIVE"?"danger":"secondary"} size="sm"
+        className="min-h-11 md:min-h-9" disabled={pending||saving||!account.accountManageable}
+        title={!account.accountManageable?"Out-of-scope college grants prevent account-wide changes":undefined}
+        onClick={()=>quickStatus(account)}>{account.status==="ACTIVE"?"Suspend":"Reactivate"}</Button>:null}
+      <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+       disabled={pending||saving||!account.accountManageable||account.status!=="ACTIVE"}
+       title={!account.accountManageable?"Account has grants outside the selected administrative scope":account.status!=="ACTIVE"?"Only active recruiters can be signed out":undefined}
+       onClick={()=>setConfirmation({kind:"terminate",userId:account.userId,name:hrDisplayName(account)})}>Sign out</Button>
     </div>
   );
 
@@ -593,9 +592,10 @@ export function SuperAdminHrAccounts({
       header: "Name",
       cell: (account) => (
         <div>
-          <p className="m-0 break-words font-semibold text-foreground">
+          <button type="button" className="m-0 min-h-9 max-w-full break-words text-left font-semibold text-primary-text underline underline-offset-2 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]"
+            onClick={()=>openDetail(account)} aria-label={"View recruiter "+hrDisplayName(account)}>
             {hrDisplayName(account)}
-          </p>
+          </button>
           <p className="mt-1 break-words text-xs text-muted-foreground">
             {account.email || account.title || "—"}
           </p>
@@ -618,16 +618,7 @@ export function SuperAdminHrAccounts({
       header: "Colleges",
       cell: (account) =>
         account.grants.length > 0 ? (
-          <div className="min-w-0">
-            <p className="m-0 text-sm font-semibold text-body">
-              {account.grants.length} active
-            </p>
-            <p className="m-0 max-w-64 break-words text-xs leading-5 text-muted-foreground">
-              {account.grants
-                .map((grant) => grant.collegeName)
-                .join(", ")}
-            </p>
-          </div>
+          <button type="button" className="min-h-9 font-semibold tabular-nums text-primary-text underline hover:text-primary-hover" aria-label={"View "+account.grants.length+" visible college grants for "+hrDisplayName(account)} onClick={()=>openDetail(account)}>{account.grants.length}</button>
         ) : (
           <span className="text-muted-foreground">
             No visible grants
@@ -647,8 +638,8 @@ export function SuperAdminHrAccounts({
     },
     {
       key: "actions",
-      header: <span className="sr-only">Actions</span>,
-      className: "text-right",
+      header: "Actions",
+      className: "min-w-[310px] text-right",
       cell: (account) => accountActions(account),
     },
   ];
@@ -677,7 +668,7 @@ export function SuperAdminHrAccounts({
         }
       />
 
-      <p role="status" className="border-l-2 border-border bg-surface-subtle px-4 py-3 text-sm text-body">{scopeDescription} Account-wide actions are restricted by the current administrative scope.</p>
+      <Alert tone="info"><span>{scopeDescription} Account-wide actions are restricted by the current administrative scope.</span></Alert>
       {optionsError?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
         College options could not be loaded. Create and grant changes require verified college relationships.{" "}
         <Button type="button" variant="secondary" size="sm" disabled={optionsLoading}
@@ -816,10 +807,10 @@ export function SuperAdminHrAccounts({
                   <article key={account.userId} className="min-w-0 py-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div className="min-w-0 flex-1">
-                        <h2 className="m-0 break-words text-base font-semibold text-foreground">{hrDisplayName(account)}</h2>
+                        <h2 className="m-0 break-words text-base font-semibold text-foreground"><button type="button" onClick={()=>openDetail(account)} className="min-h-9 text-left font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">{hrDisplayName(account)}</button></h2>
                         <p className="mt-1 break-words text-xs text-muted-foreground">{account.email || account.phoneE164 || "No contact listed"}</p>
                       </div>
-                      <StatusBadge tone={hrStatusTone(account.status)}>{account.status==="ARCHIVED"?"Suspended":account.status==="ACTIVE"?"Active":"Disabled"}</StatusBadge>
+                      <StatusBadge tone={hrAccountStatusTone(account)}>{hrAccountStatusLabel(account)}</StatusBadge>
                     </div>
                     <dl className="mt-3 grid min-w-0 gap-2 text-sm">
                       <div><dt className="text-xs text-muted-foreground">Company</dt><dd className="m-0 break-words">{account.companyName}</dd></div>
