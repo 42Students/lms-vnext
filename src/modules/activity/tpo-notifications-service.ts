@@ -74,7 +74,7 @@ export async function getTpoPersonalInbox(context: RequestContext, rawQuery: unk
     cursor.invalid
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
-          limit: 50,
+          limit:query.limit,
           unreadOnly: query.view === "unread",
           collegeId: membership.collegeId,
           ...(cursor.cursor ?? {}),
@@ -96,7 +96,7 @@ export async function getTpoPersonalInbox(context: RequestContext, rawQuery: unk
   const nextCursor=page.nextCursor;
   return {query,cursor,page,unreadCount:Number(unread[0]?.total??0),
     unreadCountSource:"PERSISTED_COLLEGE_UNREAD" as const,
-    pageSize:50,hasOlder:Boolean(nextCursor),
+    pageSize:query.limit,hasOlder:Boolean(nextCursor),
     olderHref:nextCursor?tpoInboxPageHref(query.view,nextCursor):null,
     recentCutoff:new Date(0),partialRead:false};
 }
