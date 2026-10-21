@@ -1,28 +1,46 @@
 import Link from "next/link";
-import {getCurrentRequestContext} from "@/auth/request-context";
-import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
-import {PageHeader} from "@/components/ui/page-header";
-import {Alert} from "@/components/ui/alert";
-import {ErrorState} from "@/components/ui/error-state";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
+import { getProjectAdminCollegeId } from "@/modules/projects/admin-college-scope";
+import { listSoftDeletedProjectWorkspaces } from "@/modules/projects/project-soft-delete-service";
 
-/** ARCHIVED is not DELETED. Never misrepresent archived records as recovered deletions. */
-export default async function CollegeDeletedWorkspacesPage(){
- const context=await getCurrentRequestContext();
- if(!getProjectAdminCollegeId(context))return <div className="min-w-0 space-y-4">
-  <PageHeader title="Deleted workspaces"/>
-  <ErrorState title="No college selected"
-    description="Choose an active college before viewing workspace retention information."
-    action={<Link href="/dashboard" className="font-semibold text-link underline">Back to dashboard</Link>}/>
- </div>;
- return <div className="min-w-0 space-y-4">
-  <PageHeader title="Deleted workspaces"
-    actions={<Link href="/college/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Workspaces</Link>}/>
-  <Alert tone="info">A distinct deleted-workspace read model is not registered.
-    Archived workspaces are separate from deleted workspaces.
-    No deleted count or recoverability state is inferred from the archive.</Alert>
-  <Link href="/college/projects?status=ARCHIVED"
-    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-    View archived workspaces
-  </Link>
- </div>;
+export default async function DeletedCollegeProjectsPage() {
+  const context = await getCurrentRequestContext();
+  const collegeId = getProjectAdminCollegeId(context);
+  const projects = collegeId
+    ? await listSoftDeletedProjectWorkspaces(context, collegeId)
+    : [];
+  return <div className="min-w-0 space-y-5">
+    <PageHeader title="Deleted workspaces"
+      description="Soft-deleted Project workspaces are retained and can be recovered by an authorized administrator."
+      actions={<Link href="/college/projects"
+        className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+        Back to workspaces
+      </Link>} />
+    {!collegeId
+      ? <EmptyState title="No college selected" description="Choose a college from the account switcher to view deleted workspaces." />
+      : projects.length === 0
+        ? <EmptyState title="No deleted workspaces" description="Workspaces moved to Deleted workspaces will appear here for recovery." />
+        : <div className="min-w-0 divide-y divide-border border-y border-border">
+          {projects.map(project => <article key={project.id}
+            className="flex min-w-0 flex-wrap items-start justify-between gap-3 py-4">
+            <div className="min-w-0">
+              <p className="m-0 break-words font-semibold text-foreground">{project.title}</p>
+              <p className="mt-1 text-xs text-body">
+                Deleted {project.deletedAt ? project.deletedAt.toLocaleString("en-IN", {
+                  timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
+                }) : "—"} · Archived for safety
+              </p>
+            </div>
+            <Link href={"/college/projects/" + encodeURIComponent(project.id) + "/summary"}
+              className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link">
+              Review and recover
+            </Link>
+          </article>)}
+        </div>}
+    {projects.length === 200
+      ? <p role="status" className="text-sm text-body">Showing the first 200 deleted workspaces.</p>
+      : null}
+  </div>;
 }

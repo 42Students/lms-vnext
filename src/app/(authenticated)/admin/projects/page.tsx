@@ -160,6 +160,10 @@ export default async function SuperAdminProjectsPage({
           {value:"table",label:"Table",href:viewHref("table"),count:result.total},
           {value:"cards",label:"Cards",href:viewHref("cards"),count:result.total},
         ]} />
+      <Link href="/admin/projects/deleted"
+        className="inline-flex min-h-9 items-center font-semibold text-link underline">
+        Deleted workspaces
+      </Link>
       <FilterBar title="Project workspace filters"><ProjectAdminFilters query={query} legacyWorkspaces /></FilterBar>
       <ListToolbar label="Project workspaces" viewCount={result.total}
         exportAction={<ProjectWorkspacePageExport items={result.items.map(item=>({

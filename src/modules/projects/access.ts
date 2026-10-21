@@ -51,6 +51,7 @@ export async function loadProjectScope(
 export async function requireProjectManageAccess(
   context: RequestContext,
   projectIdInput: string,
+  options: { includeDeleted?: boolean } = {},
 ) {
   // Projects IDs and their existence are private: an unprivileged TPO,
   // recruiter or learner must not distinguish a real foreign ID from a guess.
@@ -70,6 +71,9 @@ export async function requireProjectManageAccess(
     );
   }
 
+  if (scope.project.deletedAt && !options.includeDeleted) {
+    throw new ProjectsServiceError("PROJECT_NOT_FOUND");
+  }
   return scope;
 }
 
@@ -93,6 +97,10 @@ export async function requireProjectReadAccess(
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
   const scope =
     await loadProjectScope(projectIdInput);
+
+  if (scope.project.deletedAt && !can(context, "projects.manage", {
+    organizationId: scope.organizationId, collegeId: scope.collegeId,
+  })) throw new ProjectsServiceError("PROJECT_NOT_FOUND");
 
   if (
     can(context, "projects.manage", {

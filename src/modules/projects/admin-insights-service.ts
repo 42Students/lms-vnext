@@ -126,6 +126,7 @@ export async function listProjectAdminSnapshots(
     : undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
+    isNull(projectInstances.deletedAt),
     query.status
       ? eq(projectInstances.status, query.status)
       : undefined,
@@ -562,6 +563,7 @@ export async function listProjectAdminRiskQueue(
     );
   const where = and(
     eq(projectInstances.collegeId, college.id),
+    isNull(projectInstances.deletedAt),
     ne(projectInstances.status, "ARCHIVED"),
     ne(projectInstances.status, "COMPLETED"),
     query.status
@@ -584,6 +586,7 @@ export async function listProjectAdminRiskQueue(
     review: sql<number>`count(*) filter (where ${pendingReview})`.mapWith(Number),
   }).from(projectInstances).where(and(
     eq(projectInstances.collegeId, college.id),
+    isNull(projectInstances.deletedAt),
     ne(projectInstances.status, "ARCHIVED"),
     ne(projectInstances.status, "COMPLETED"),
   ));
@@ -772,7 +775,8 @@ export async function getProjectAdminSubmissionSummary(context: RequestContext, 
     pendingReview: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'SUBMITTED')`.mapWith(Number),
     needsStudentAction: sql<number>`count(*) filter (where ${projectInstances.status} = 'ACTIVE' and ${latestStatus} = 'CHANGES_REQUESTED')`.mapWith(Number),
     reviewed: sql<number>`count(*) filter (where ${latestApproved})`.mapWith(Number),
-  }).from(projectInstances).where(eq(projectInstances.collegeId, college.id));
+  }).from(projectInstances).where(and(eq(projectInstances.collegeId, college.id),
+    isNull(projectInstances.deletedAt)));
   return {
     activeWorkspaces: row?.activeWorkspaces ?? 0,
     pendingReview: row?.pendingReview ?? 0,
@@ -827,6 +831,7 @@ export async function listProjectAdminSubmissionQueue(
     : undefined;
   const where = and(
     eq(projectInstances.collegeId, college.id),
+    isNull(projectInstances.deletedAt),
     // The unfiltered All view intentionally includes revision history.
     // Operational status shortcuts must never show superseded versions.
     query.submissionStatus?isCurrentProjectSubmissionSql():undefined,

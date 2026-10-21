@@ -343,6 +343,7 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                     projectId={workspace.project.id}
                     status={workspace.project.status}
                     expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
+                    deleted={Boolean(workspace.project.deletedAt)}
                   />
                 ) : null}
                 {mode === "ADMIN" ? (
