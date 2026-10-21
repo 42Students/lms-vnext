@@ -8,6 +8,7 @@ import {
   ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {templateResourceMaterializationFields} from "./template-resource-materialization";
 import {legacyWorkspaceProjection} from "./legacy-workspace-projection";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -156,6 +157,9 @@ export async function createProjectInstance(
     createProjectInstanceInputSchema.parse(rawInput);
   const college =
     await loadProjectCollegeScope(input.collegeId);
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled){
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
 
   requirePermission(context, "projects.manage", {
     organizationId: college.organizationId,
@@ -178,6 +182,27 @@ export async function createProjectInstance(
       await assertPersistedPlatformPermission(tx,context,"projects.manage",{
         collegeId:college.id,organizationId:college.organizationId,
       });
+      // The published assignment may be revoked after preflight. Serialize
+      // this create against template lifecycle and college assignment writes.
+      const [currentAssignment]=await tx.select({
+        templateVersionId:projectTemplateCollegeAssignments.templateVersionId,
+        publishedVersion:projectTemplates.publishedVersion,
+        status:projectTemplates.status,
+        version:projectTemplateVersions.version,
+      }).from(projectTemplateCollegeAssignments)
+      .innerJoin(projectTemplates,eq(projectTemplates.id,projectTemplateCollegeAssignments.templateId))
+      .innerJoin(projectTemplateVersions,eq(projectTemplateVersions.id,
+        projectTemplateCollegeAssignments.templateVersionId))
+      .where(and(
+        eq(projectTemplateCollegeAssignments.collegeId,college.id),
+        eq(projectTemplateCollegeAssignments.templateId,input.templateId),
+        isNull(projectTemplateCollegeAssignments.revokedAt),
+      )).for("share").limit(1);
+      if(!currentAssignment||currentAssignment.status!=="PUBLISHED"||
+        currentAssignment.publishedVersion!==currentAssignment.version||
+        currentAssignment.templateVersionId!==assigned.templateVersionId){
+        throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_ASSIGNED");
+      }
       if (input.primaryMentorMembershipId) {
         const [mentor] = await tx
           .select({
@@ -403,9 +428,9 @@ export async function createProjectInstance(
             sequence: task.sequence,
           };
         });
-      await tx
-        .insert(projectTasks)
-        .values(taskValues);
+      if(taskValues.length>0){
+        await tx.insert(projectTasks).values(taskValues);
+      }
 
       if (blueprint.resources.length > 0) {
         await tx.insert(projectResources).values(
@@ -493,14 +518,17 @@ export async function listProjectInstances(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled){
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
 
   return getDb()
     .select()
     .from(projectInstances)
-    .where(
+    .where(and(
       eq(projectInstances.collegeId, college.id),
       isNull(projectInstances.deletedAt),
-    )
+    ))
     .orderBy(asc(projectInstances.title));
 }
 
@@ -517,6 +545,9 @@ export async function archiveProjectInstance(
       context,
       projectIdInput,
     );
+  if(!(await resolveOptionalModuleAccess(context)).projects.enabled){
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  }
   const db = getDb();
 
   return db.transaction(async (tx) => {
@@ -527,6 +558,7 @@ export async function archiveProjectInstance(
         and(
           eq(projectInstances.id, scope.project.id),
           eq(projectInstances.collegeId, scope.collegeId),
+          isNull(projectInstances.deletedAt),
         ),
       )
       .for("update")
@@ -564,6 +596,7 @@ export async function archiveProjectInstance(
           eq(projectInstances.id, project.id),
           eq(projectInstances.collegeId, scope.collegeId),
           ne(projectInstances.status, "ARCHIVED"),
+          isNull(projectInstances.deletedAt),
         ),
       )
       .returning();
