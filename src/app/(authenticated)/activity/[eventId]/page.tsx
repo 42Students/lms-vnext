@@ -11,7 +11,7 @@ import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 function when(value: Date) {
   return value.toLocaleString("en-IN", {
     dateStyle: "medium",
-    timeStyle: "long",
+    timeStyle: "short",
     timeZone: "Asia/Kolkata",
   });
 }
