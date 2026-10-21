@@ -22,5 +22,5 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L15-U031 (Cross-cutting area) `cross/15: Learning flow: courses, lessons, quizzes, assignments, attendance, grading, certificates`
 - [x] L17-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DiscussionController.java`
 - [x] L18-U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectMember.java`
-- [ ] L18-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DepartmentController.java`
+- [x] L18-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DepartmentController.java`
 - [ ] L19-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java`
