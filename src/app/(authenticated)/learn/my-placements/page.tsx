@@ -228,7 +228,7 @@ export default async function LearnerPlacementsPage({
   });
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <PageHeader
         title="My Placements"
         description={LEARNER_PLACEMENTS_HOME_SUBTITLE}
