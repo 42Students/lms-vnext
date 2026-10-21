@@ -323,6 +323,13 @@ export async function submitCourseAssignment(
           receipt.deliveryId !== input.deliveryId ||
           receipt.expiresAt.getTime() <=
             Date.now() ||
+          // DB06 requires a privileged CLEAN scan and retained attestation.
+          receipt.scanStatus !== "CLEAN" ||
+          receipt.scanAttestedBy !== "lms-vnext-privileged-scanner" ||
+          !receipt.scanAttestedAt ||
+          receipt.scanAttestedAt.getTime() > Date.now() ||
+          !receipt.retentionUntil ||
+          receipt.retentionUntil.getTime() < Date.now() ||
           receipt.objectKey !==
             preparedFile.receipt.objectKey ||
           receipt.uploadTokenHash !==
@@ -386,6 +393,7 @@ export async function submitCourseAssignment(
 
         const attestation =
           preparedFile.attestation;
+        const consumedAt = new Date();
         // Consume the locked receipt before the attested file row. The
         // composite FK binds the file to this exact consumption snapshot.
         const [claimed] = await tx
@@ -399,7 +407,7 @@ export async function submitCourseAssignment(
               attestation.sizeBytes,
             sha256Hex:
               attestation.sha256Hex,
-            consumedAt: new Date(),
+            consumedAt,
             consumedBySubmissionId:
               created!.id,
             updatedAt: new Date(),
@@ -413,6 +421,10 @@ export async function submitCourseAssignment(
               isNull(courseUploadReceipts.consumedAt),
               sql`${courseUploadReceipts.expiresAt} > now()`,
               eq(courseUploadReceipts.revoked, false),
+              eq(courseUploadReceipts.scanStatus, "CLEAN"),
+              eq(courseUploadReceipts.scanAttestedBy, "lms-vnext-privileged-scanner"),
+              sql`${courseUploadReceipts.scanAttestedAt} <= ${consumedAt}`,
+              sql`${courseUploadReceipts.retentionUntil} >= ${consumedAt}`,
             ),
           )
           .returning({
@@ -823,15 +835,18 @@ export async function gradeAssignmentSubmission(
     const [updated] = await tx
       .update(assignmentSubmissions)
       .set({
-        // The old score is captured from the same CAS-updated database row,
-        // never from the earlier, potentially stale request snapshot.
-        previousPoints: sql<number | null>`${assignmentSubmissions.pointsAwarded}`,
-        pointsAwarded: input.pointsAwarded,
-        feedback: input.feedback ?? null,
-        gradingStatus: "GRADED",
+        // Hiding a published grade is not a regrade: preserve its points,
+        // prior points, grading timestamp and original grader. Regrades
+        // capture the previous score from the CAS-updated row.
+        ...(hideOnly ? {} : {
+          previousPoints: sql<number | null>`${assignmentSubmissions.pointsAwarded}`,
+          pointsAwarded: input.pointsAwarded,
+          feedback: input.feedback ?? null,
+          gradingStatus: "GRADED" as const,
+          gradedByUserId: context.user.id,
+          gradedAt: now,
+        }),
         gradePublished: false,
-        gradedByUserId: context.user.id,
-        gradedAt: now,
         version: sql<number>`${assignmentSubmissions.version} + 1`,
         updatedAt: now,
       })
