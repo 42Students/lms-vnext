@@ -122,7 +122,7 @@ export default async function FacultyCalendarPage({
         A Section-wide session is shown without guessing a course link.
       </p>
     </section>
-    <section aria-label="Detailed class schedule" className="min-w-0 space-y-3 border-t border-border pt-5">
+    <section aria-label="Detailed class schedule" className="min-w-0 space-y-3 border-t border-border pt-6">
       <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Detailed day/week schedule</h2>
       <LearnerClassSchedule sections={schedule.sections} courses={schedule.courses}
         events={events} courseBasePath="/teacher/courses"

@@ -29,7 +29,7 @@ export default async function FacultyTeachingProfilePage({
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getOwnFacultyTeachingSection(context,parsed.data);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader title="Current teaching assignments"
       description={"Registered teaching deliveries for "+data.title+" in this college."}
       actions={<Link href="/teacher/profile"

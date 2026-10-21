@@ -29,7 +29,7 @@ export default async function FacultyResponseFollowUpsPage({
   const context = await getCurrentRequestContext();
   const data = await getFacultyResponseFollowUps(context, parsed.data);
   const emptyState = facultyFollowupEmptyState(data.query,data.sections.length);
-  return <div className="min-w-0 max-w-full space-y-5">
+  return <div className="min-w-0 max-w-full space-y-6">
     <PageHeader eyebrow="Faculty · Assessments" title="Response follow-ups"
       description="Published assessments past their due date with missing responses from learners in your current teaching Sections."
       actions={<Link href="/teacher/results"
