@@ -8,7 +8,6 @@ import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { Alert } from "@/components/ui/alert";
 import { useToast } from "@/components/ui/toast";
 import {Dialog} from "@/components/ui/dialog";
-import {Disclosure} from "@/components/ui/disclosure";
 import {Dropdown} from "@/components/ui/dropdown";
 import { Menu, MenuItem } from "@/components/ui/menu";
 import {Input} from "@/components/ui/input";
@@ -82,8 +81,11 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
   programs: Option[]; periods: Option[]; academicSetupHref?: string;
 }) {
   const router = useRouter();
+  const pathname = usePathname();
+  const programsHref = pathname?.startsWith("/admin/") ? "/admin/programs" : "/college/programs";
   const { showToast } = useToast();
   const [pending, startTransition] = useTransition();
+  const [programQuery, setProgramQuery] = useState("");
   const [programId, setProgramId] = useState("");
   const [startPeriodId, setStartPeriodId] = useState("");
   const [expectedEndPeriodId, setExpectedEndPeriodId] = useState("");
@@ -164,24 +166,33 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
     });
   }
 
-  return <Disclosure ariaLabel="Create Batch" title={<h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Create Batch</h2>} className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
+  return <section aria-label="Create New Batch" className="min-w-0 space-y-[var(--lms-space-3)] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-canvas-padding)]">
+    <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">Create New Batch</h2>
     {programs.length === 0 || periods.length === 0
       ? <p role="status" className="mt-2 text-sm text-muted-foreground leading-[22px]">
-        {programs.length === 0 ? "Create a program before adding batches." : <>
+        {programs.length === 0 ? <>
+          No programs in this college yet. <Link href={programsHref}
+            className="font-semibold text-[var(--lms-link-text)] underline">Go to Programs</Link>
+        </> : <>
           Create a usable academic period before adding batches.{" "}
           <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
         </>}
       </p>
-      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-          <Select value={programId} error={Boolean(fieldErrors.programId)}
+      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] lg:grid-cols-2">
+        <div className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label htmlFor="create-batch-program">Program</label>
+          <Input type="search" value={programQuery} onChange={e => setProgramQuery(e.target.value)}
+            aria-label="Search programs" placeholder="Search programs by name or code" disabled={pending} />
+          <Select id="create-batch-program" required value={programId} error={Boolean(fieldErrors.programId)}
             onChange={e => { setProgramId(e.target.value); setFieldErrors(current => ({ ...current, programId: "" })); }}
-            className="min-h-11 md:min-h-9 ">
+            className="min-h-11 md:min-h-9">
             <option value="">Select program</option>
-            {programs.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
+            {programs.filter(p => p.id === programId ||
+              (p.name + " " + p.code).toLowerCase().includes(programQuery.toLowerCase())).map(p =>
+                <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
           {fieldErrors.programId ? <span role="alert" className="text-xs text-error">{fieldErrors.programId}</span> : null}
-        </label>
+        </div>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start academic period
           <Select value={startPeriodId} error={Boolean(fieldErrors.startPeriodId)}
             onChange={e => startPeriodChanged(e.target.value)}
@@ -192,7 +203,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
           {fieldErrors.startPeriodId ? <span role="alert" className="text-xs text-error">{fieldErrors.startPeriodId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
-          <Input maxLength={255} value={name} error={Boolean(fieldErrors.name)}
+          <Input maxLength={255} value={name} placeholder="e.g., 2024–2028 Batch" error={Boolean(fieldErrors.name)}
             onChange={e => { setName(e.target.value); setFieldErrors(current => ({ ...current, name: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
           {fieldErrors.name ? <span role="alert" className="text-xs text-error">{fieldErrors.name}</span> : null}
@@ -255,7 +266,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
         <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending||dateInvalid} type="submit" className="w-full md:w-auto"
             >
-            {pending ? "Creating…" : "Create Batch"}
+            <span aria-hidden="true">＋</span> {pending ? "Creating…" : "Create Batch"}
           </Button>
         </div>
       </form>}
@@ -264,7 +275,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
       <Button variant="ghost" type="button" className="self-start"
         onClick={() => { setNotice(""); setNoticeIsError(false); }}>Dismiss</Button>
     </Alert> : null}
-  </Disclosure>;
+  </section>;
 }
 
 export function CollegeCohortRowActions({ row, periods }: {
