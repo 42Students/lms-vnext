@@ -29,18 +29,28 @@ export function safeNotificationActionHref(
   return value;
 }
 
-/** External assessment links are separate from notification actionHref:
- * allow only absolute HTTPS/HTTP URLs and never make them a trusted internal path.
+/**
+ * External assessment URLs are deliberately separate from an internal
+ * actionHref. Reject whitespace, control characters, backslashes, credentials
+ * and any scheme other than HTTP(S) before presenting a staff-authored link.
  */
 export function safeExternalAssessmentUrl(
-  value:string|null|undefined,
-):string|null {
-  if(!value||value.length>2048||/[\\x00-\\x20\\x7f\\\\]/.test(value))return null;
+  value: string | null | undefined,
+): string | null {
+  if (!value || value.length > 2048 || /[\x00-\x20\x7f\\]/.test(value)) {
+    return null;
+  }
   try {
-    const url=new URL(value);
-    if((url.protocol!=="https:"&&url.protocol!=="http:")||
-        !url.hostname||url.username||url.password)return null;
-    return url.toString();
+    const parsed = new URL(value);
+    if (
+      (parsed.protocol !== "https:" && parsed.protocol !== "http:") ||
+      !parsed.hostname ||
+      parsed.username ||
+      parsed.password
+    ) {
+      return null;
+    }
+    return parsed.toString();
   } catch {
     return null;
   }
