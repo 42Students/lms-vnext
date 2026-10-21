@@ -410,6 +410,28 @@ export function ProjectWorkspace({
     );
   }
 
+  // Keep unassigned work visible to administrators. It is a real product-backlog
+  // state in vNext, not an empty or missing sprint.
+  const backlogTasks = workspace.tasks.filter(task => task.sprintId === null);
+  const backlogColumns: DataTableColumn<Workspace["tasks"][number]>[] = [
+    { key: "key", header: "Key", mobilePriority: "secondary", cell: task => task.legacyTaskKey || task.templateKey },
+    { key: "priority", header: "Priority", mobilePriority: "secondary",
+      cell: task => <StatusBadge tone="neutral">{label(task.priority)}</StatusBadge> },
+    { key: "title", header: "Title", mobilePriority: "primary", cell: task => task.title },
+    { key: "sprint", header: "Sprint", mobilePriority: "secondary", cell: () => "Backlog" },
+    { key: "estimate", header: "Estimate", mobilePriority: "secondary",
+      cell: task => mentorEstimateLabel(task.estimatePoints, workspace.project.estimationUnit) },
+    { key: "type", header: "Type", mobilePriority: "secondary",
+      cell: task => task.taskType ? label(task.taskType) : "Not specified" },
+    { key: "dueLabel", header: "Due label", mobilePriority: "secondary", cell: task => task.dueLabel || "—" },
+    { key: "description", header: "Description", mobilePriority: "secondary",
+      cell: task => <span className="block max-w-64 whitespace-pre-wrap break-words">{task.description || "—"}</span> },
+    { key: "doneWhen", header: "Done when", mobilePriority: "secondary",
+      cell: task => <span className="block max-w-64 whitespace-pre-wrap break-words">{task.acceptanceCriteria || "—"}</span> },
+    { key: "approach", header: "Approach", mobilePriority: "secondary",
+      cell: task => <span className="block max-w-64 whitespace-pre-wrap break-words">{task.approach || "—"}</span> },
+  ];
+
   const reviewsBySubmission = new Map(
     workspace.finalDelivery.reviews.map(
       (review) => [
@@ -964,6 +986,19 @@ export function ProjectWorkspace({
               {release.title} · {label(release.status)}
             </a>)}
           </nav>:null}
+        {mode === "ADMIN" && backlogTasks.length > 0 ? (
+          <section aria-label="Product backlog" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+            <div>
+              <h3 className="text-base font-semibold text-foreground">Product backlog</h3>
+              <p className="mt-1 text-sm text-body">
+                {backlogTasks.length} task{backlogTasks.length === 1 ? "" : "s"} not assigned to a sprint.
+                Tasks remain in the backlog until explicitly allocated to an active plan.
+              </p>
+            </div>
+            <DataTable columns={backlogColumns} rows={backlogTasks}
+              getRowKey={task => task.id} caption="Unassigned project tasks" />
+          </section>
+        ) : null}
         <div className="space-y-4">
           {workspace.releases.map((release) => (
             <article
@@ -1195,6 +1230,8 @@ export function ProjectWorkspace({
                               </div>
                             </div>
                             <dl className="mt-3 grid gap-2 text-xs text-body sm:grid-cols-2">
+                              <div><dt className="font-semibold">Key</dt>
+                                <dd>{task.legacyTaskKey || task.templateKey}</dd></div>
                               <div><dt className="font-semibold">Assignee</dt><dd>{taskFacts.assignee}</dd></div>
                               <div><dt className="font-semibold">Due date</dt>
                                 <dd>{taskFacts.dueDate}
@@ -1204,11 +1241,15 @@ export function ProjectWorkspace({
                                     </span> : null}
                                 </dd>
                               </div>
-                              {mode==="MENTOR"?<div>
-                                <dt className="font-semibold">Sprint</dt><dd>{sprint.title}</dd>
-                              </div>:null}
+                              <div><dt className="font-semibold">Sprint</dt><dd>{sprint.title}</dd></div>
+                              <div><dt className="font-semibold">Due label</dt>
+                                <dd>{task.dueLabel || "Not set"}</dd></div>
                               <div><dt className="font-semibold">Estimate</dt><dd>{mentorEstimateLabel(task.estimatePoints,workspace.project.estimationUnit)}</dd></div>
                               <div><dt className="font-semibold">Task type</dt><dd>{taskFacts.taskType}</dd></div>
+                              {task.acceptanceCriteria ? <div className="sm:col-span-2">
+                                <dt className="font-semibold">Done when</dt>
+                                <dd className="whitespace-pre-wrap break-words">{task.acceptanceCriteria}</dd>
+                              </div> : null}
                               {taskFacts.blockerReason ? <div className="sm:col-span-2">
                                 <dt className="font-semibold">Blocker note</dt>
                                 <dd className="whitespace-pre-wrap break-words">{taskFacts.blockerReason}</dd>
