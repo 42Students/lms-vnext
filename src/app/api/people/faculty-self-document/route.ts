@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import { loadOwnFacultyProfileDocumentStaged } from "@/modules/people/faculty-profile-self.staged";
 import { patchOwnFacultyProfileSection } from "@/modules/people/faculty-self-section-service";
 import {facultySelfEditableSection} from "@/modules/people/faculty-self-section-model";
+import {FACULTY_LEGACY_PROFILE_COMPATIBILITY} from "@/modules/people/faculty-legacy-compatibility";
 import {z} from "zod";
 import { readBoundedFacultyProfileJson,FacultyProfileBodyTooLarge } from "@/modules/people/faculty-profile-request-body";
 
@@ -12,6 +13,9 @@ export const runtime="nodejs";
 export async function GET(request:Request){
  try{
   const context=await getCurrentRequestContext();
+  if(new URL(request.url).searchParams.get("compatibility")==="legacy")
+    return NextResponse.json({routes:FACULTY_LEGACY_PROFILE_COMPATIBILITY},
+      {headers:{"Cache-Control":"private, no-store"}});
   const current=await loadOwnFacultyProfileDocumentStaged(context);
   const section=new URL(request.url).searchParams.get("section");
   if(section===null)return NextResponse.json({
