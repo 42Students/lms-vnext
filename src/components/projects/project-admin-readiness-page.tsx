@@ -8,9 +8,7 @@ import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-re
 import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases} from "@/modules/projects/college-readiness-releases-service";
 import {z} from "zod";
 import {requireProjectManageAccess} from "@/modules/projects/access";
-import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {effectiveProjectSubmissionReady} from "@/modules/projects/readiness-override-model";
-import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
