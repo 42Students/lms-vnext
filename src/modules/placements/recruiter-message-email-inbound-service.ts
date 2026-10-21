@@ -95,7 +95,8 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    id:randomUUID(),sourceMessageId,
    fromAddress:input.from,toAddress:input.to,
    subject:input.subject?.trim()||"(no subject)",
-   bodyPlain:fullText,receivedAt:new Date(),status:"NEW",
+   bodyPlain:fullText,originalBodyPlain:fullText,
+   bodyPreview:fullText.slice(0,1000),receivedAt:new Date(),status:"NEW",
   }).onConflictDoNothing().returning({id:inboundMailMessages.id});
   if(!received)return {accepted:true,replayed:true,outcome:"DUPLICATE" as const};
   const auditResult=async(outcome:Exclude<RecruiterInboundOutcome,"DUPLICATE">)=>{
