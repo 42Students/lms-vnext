@@ -152,8 +152,8 @@ export function TpoRoundDriveDayReadOnly({
       return false;
     }finally{setGateBusy(false);inFlight.current=false;}
   }
-  const pasteTokens=pasteText.split(/[\n,;]+/).map(value=>value.trim()).filter(Boolean);
   const pastePreview=useMemo(()=>{
+    const pasteTokens=pasteText.split(/[\n,;]+/).map(value=>value.trim()).filter(Boolean);
     const matched:RoundRow[]=[];
     const unresolved:string[]=[];
     const used=new Set<string>();
