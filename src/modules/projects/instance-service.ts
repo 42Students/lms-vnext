@@ -3,6 +3,7 @@ import {
   asc,
   eq,
   inArray,
+  isNotNull,
   isNull,
   ne,
 } from "drizzle-orm";
@@ -246,12 +247,13 @@ export async function createProjectInstance(
           .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
             eq(membershipRoles.role,"LEARNER")))
           .innerJoin(learnerProgramEnrollments,eq(learnerProgramEnrollments.membershipId,collegeMemberships.id))
-          .innerJoin(sectionEnrollments,and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
-            eq(sectionEnrollments.sectionId,input.sectionId!),
+          .leftJoin(sectionEnrollments,and(eq(sectionEnrollments.learnerEnrollmentId,learnerProgramEnrollments.id),
+            input.sectionId ? eq(sectionEnrollments.sectionId,input.sectionId) : undefined,
             eq(sectionEnrollments.status,"ACTIVE")))
           .where(and(inArray(collegeMemberships.id,input.learnerMembershipIds),
             eq(collegeMemberships.collegeId,college.id),eq(collegeMemberships.status,"ACTIVE"),
-            eq(learnerProgramEnrollments.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
+            eq(learnerProgramEnrollments.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+            input.sectionId ? isNotNull(sectionEnrollments.id) : undefined));
         if(new Set(members.map(row=>row.id)).size!==input.learnerMembershipIds.length)
           throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
       }
