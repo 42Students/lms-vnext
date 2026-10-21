@@ -47,7 +47,11 @@ export default async function PublicPlacementSettingsPage({
     <Alert tone="warning">
      Public placement settings storage is unavailable until the registered migration is ready. No publication preference was changed.
     </Alert>}
-   {value.ready&&!view.canEnable&&!view.enabled?<Alert tone="warning">Public statistics cannot be enabled without a recorded cohort of at least five.</Alert>:null}
+   {value.ready&&!view.canEnable&&!view.enabled?<Alert tone="warning">
+     Publication is off until at least five active learners have chosen placements, consented to public reporting, and joined an invited batch.
+     This is an intentional vNext privacy gate before publishing; the old LMS permitted publication while suppressing each small metric separately.
+     <Link href="/tpo/batches" className="ml-1 font-semibold text-link underline underline-offset-2">Review batches and invitations</Link>.
+    </Alert>:null}
    <Disclosure title="How your public placements look" className="mt-5 min-w-0 border-t border-border pt-4" contentClassName="min-w-0 pt-3">
    <section aria-label="Published placement preview" className="min-w-0 space-y-3">
     <p className="text-xs text-muted-foreground">Only actual, privacy-cleared public figures are previewed. Unpublished, stale or suppressed counts are not filled from private dashboards.</p>

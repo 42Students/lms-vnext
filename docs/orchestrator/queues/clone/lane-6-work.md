@@ -65,7 +65,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_announcements_route.ts.md` (edit src/app/api/placements/tpo/announcements/route.ts; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-6/src_app_enterprises_page.tsx.md` (edit src/app/enterprises/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-6/NEW_docs_audit_gap2_lane-16_u015-job-eligibility.md.md` (new; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-6/NEW_docs_audit_gap2_lane-17_tpo-placements-page-controller.md.md` (new; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-6/NEW_docs_audit_gap2_lane-17_tpo-placements-page-controller.md.md` (new; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/NEW_docs_audit_gap2_lane-6_l11-u014-tpo-home.md.md` (new; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_audit_export_route.ts.md` (edit src/app/api/placements/tpo/audit/export/route.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_app_api_placements_tpo_companies_detail_route.ts.md` (edit src/app/api/placements/tpo/companies/detail/route.ts; 2 findings; best P1)
