@@ -6,6 +6,7 @@ import { drizzleTenantDomainRepository } from "./repository";
 import {
   createTenantDomain,
   deleteTenantDomain,
+  editTenantDomainHost,
   listTenantDomains,
   resolveTenantFromHost,
   setPrimaryTenantDomain,
@@ -44,6 +45,14 @@ export function verifyTenantDomainWithRuntime(
     drizzleTenantDomainRepository,
     dnsTenantDomainVerifier,
   );
+}
+
+export function editTenantDomainHostWithRuntime(
+  context:RequestContext,
+  domainId:string,
+  input:{expectedHost:string;host:string},
+){
+  return editTenantDomainHost(context,domainId,input,drizzleTenantDomainRepository);
 }
 
 export function setPrimaryTenantDomainWithRuntime(

@@ -7,6 +7,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {sanitizePublicCollegeBranding} from "./public-branding-model";
+import {effectiveCollegeSignInMethod} from "./public-signin-policy-service";
 import {
   collegeBrandingSaveSchema,
   sameCollegeBranding,
@@ -17,6 +18,14 @@ export type CollegeBrandingView = CollegeBrandingInput & {
   version: number;
 };
 
+/** Legacy crosswalk: logoUrl is a safe public HTTPS fallback, while the
+ * verified uploaded college.logoObjectPath takes priority via the public
+ * /api/colleges/:id/branding/logo endpoint. Legacy sign-in loginMethods does
+ * NOT belong in presentation branding: college_signin_policies is the
+ * separately versioned, audited source of truth with EMAIL_AND_PHONE default.
+ * Existing colleges require no historical ID or R2 object-key migration.
+ * An absent field in this vNext editor is intentional NULL/clear, not a
+ * legacy partial-update; expectedVersion protects concurrent form saves. */
 export const EMPTY_BRANDING: CollegeBrandingInput = {
   logoUrl: null,
   faviconUrl: null,
@@ -94,12 +103,16 @@ function toView(row: Awaited<ReturnType<typeof loadBranding>>): CollegeBrandingV
  * already resolved from the verified host.
  */
 export async function getPublicCollegeBranding(collegeId: string) {
-  const [college, row] = await Promise.all([
-    loadCollege(collegeId).catch(() => null),
-    loadBranding(collegeId),
-  ]);
-  if (!college) return null;
-  const view=toView(row);
+  // Only a missing/inactive college resolves to absent branding. A storage
+  // outage must propagate instead of looking like an unknown public tenant.
+  let college: Awaited<ReturnType<typeof loadCollege>>;
+  try {
+    college = await loadCollege(collegeId);
+  } catch (error) {
+    if (error instanceof CollegeBrandingNotFoundError) return null;
+    throw error;
+  }
+  const view=toView(await loadBranding(collegeId));
   return { collegeName: college.name, ...view,
     ...sanitizePublicCollegeBranding(view),
     ...(college.logoObjectPath?.startsWith("branding/"+college.id+"/")?{
@@ -117,7 +130,13 @@ export async function getCollegeBranding(
     organizationId: college.organizationId,
     collegeId: college.id,
   });
-  return { collegeName: college.name, ...toView(await loadBranding(collegeId)),
+  const [branding,signInMethod]=await Promise.all([
+    loadBranding(collegeId),
+    effectiveCollegeSignInMethod(college.id),
+  ]);
+  // Keep four sign-in choices sourced from college_signin_policies rather
+  // than accepting legacy loginMethods inside the branding payload.
+  return { collegeName: college.name, signInMethod, ...toView(branding),
     uploadedLogoUrl:college.logoObjectPath?.startsWith("branding/"+college.id+"/")?
      "/api/colleges/"+college.id+"/branding/logo":null,
   };
