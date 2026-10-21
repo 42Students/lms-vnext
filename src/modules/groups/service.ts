@@ -225,6 +225,7 @@ export async function joinGroup(
   memberIdInput: string,
   requestedMode: "SELF" | "MANUAL" = "SELF",
   requireStudyGroup = false,
+  importSource: "MANUAL" | "CSV" = "MANUAL",
 ) {
   const groupId = uuid.parse(groupIdInput);
   const memberId = uuid.parse(memberIdInput);
@@ -273,7 +274,7 @@ export async function joinGroup(
       waitlistPosition = (last?.position ?? 0) + 1;
     }
     const patch = {
-      state: newState, source: mode, isLocked: existing?.isLocked ?? false,
+      state: newState, source: mode === "SELF" ? "SELF" : importSource, isLocked: existing?.isLocked ?? false,
       waitlistPosition, joinedAt: available ? new Date() : null,
       updatedAt: new Date(),
     } as const;
@@ -289,7 +290,7 @@ export async function joinGroup(
       .where(eq(lmsGroups.id, groupId));
     await emitEvent(tx, {
       groupId, membershipId: memberId, fromState: existing?.state ?? null,
-      toState: newState, source: mode, context,
+      toState: newState, source: mode === "SELF" ? "SELF" : importSource, context,
     });
     return saved!;
   });

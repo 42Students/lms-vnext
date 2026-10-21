@@ -88,6 +88,11 @@ export async function POST(request: Request) {
       ok: true,
       next: "/dashboard",
       selectedMembership: Boolean(autoMembershipId),
+      // Return next-step hints, never the legacy auth token pair.
+      // Discover roles and colleges only over the authenticated cookie.
+      membershipSelectionRequired: !autoMembershipId,
+      membershipsEndpoint: "/api/auth/memberships",
+      sessionEndpoint: "/api/auth/session",
     });
     response.cookies.set(SESSION_COOKIE_NAME, session.token, {
       ...base,

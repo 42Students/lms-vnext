@@ -32,7 +32,7 @@ export function facultyProfileErrorCode(raw:unknown):string|undefined{
 /** Human-facing labels are static: never echo private Faculty profile values. */
 export function facultyProfileSaveSectionLabel(section:string):string {
  const labels:Record<string,string>={
-  about:"About",personalDetails:"Personal details",address:"Address",
+  about:"About",personalDetails:"Personal details",contact:"Contact",address:"Address",
   socialProfiles:"Social profiles",languages:"Languages",education:"Education",
   certifications:"Certifications",experiences:"Experience",skills:"Skills",
   publications:"Publications",awards:"Awards",metadata:"Metadata",

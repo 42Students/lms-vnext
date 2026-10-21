@@ -72,6 +72,17 @@ const contactSchema = z
     contactMail: "",
   });
 
+/** Validate contact edits strictly while preserving older empty contacts on read. */
+export const facultyContactEditSchema = contactSchema.superRefine((value, ctx) => {
+  if (!value.contactMobile) ctx.addIssue({
+    code: "custom", path: ["contactMobile"], message: "Primary mobile number is required",
+  });
+  if (value.contactPhone && value.contactPhone === value.contactMobile) ctx.addIssue({
+    code: "custom", path: ["contactPhone"],
+    message: "Alternate mobile number must differ from primary mobile number",
+  });
+});
+
 const addressSchema = z
   .object({
     currentAddress: text(2000),
@@ -289,13 +300,13 @@ export const facultyProfileDocumentSchema = z
     contact: contactSchema,
     address: addressSchema,
     socialProfiles: socialSchema,
-    languages: z.array(languageSchema).max(30).default([]),
-    education: z.array(educationSchema).max(30).default([]),
-    certifications: z.array(certificationSchema).max(50).default([]),
-    experiences: z.array(experienceSchema).max(50).default([]),
-    skills: z.array(skillSchema).max(100).default([]),
-    publications: z.array(publicationSchema).max(100).default([]),
-    awards: z.array(awardSchema).max(100).default([]),
+    languages: z.array(languageSchema).default([]),
+    education: z.array(educationSchema).default([]),
+    certifications: z.array(certificationSchema).default([]),
+    experiences: z.array(experienceSchema).default([]),
+    skills: z.array(skillSchema).default([]),
+    publications: z.array(publicationSchema).default([]),
+    awards: z.array(awardSchema).default([]),
     metadata: z
       .record(z.string().trim().min(1).max(120), metadataScalar)
       .default({}),
@@ -338,3 +349,27 @@ export const emptyFacultyProfileDocument =
 export type FacultyProfileDocument = z.infer<
   typeof facultyProfileDocumentSchema
 >;
+
+/** Non-identifying pre-migration exceptions. Never truncate historic lists. */
+export function facultyLegacyProfileExceptions(raw: unknown): string[] {
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) return ["Invalid legacy profile shape"];
+  const record = raw as Record<string, unknown>;
+  const oldLimits: Record<string, number> = {
+    languages: 30, education: 30, certifications: 50, experiences: 50,
+    skills: 100, publications: 100, awards: 100,
+  };
+  const issues: string[] = [];
+  for (const [name, oldLimit] of Object.entries(oldLimits)) {
+    const value = record[name];
+    if (Array.isArray(value) && value.length > oldLimit) {
+      issues.push(name + ": " + value.length + " rows require no-truncation migration review");
+    }
+  }
+  const contact = record.contact;
+  if (contact && typeof contact === "object" && !Array.isArray(contact)) {
+    const values = contact as Record<string, unknown>;
+    if (values.contactPhone && !values.contactMobile) issues.push("Alternate contact requires primary mobile");
+    if (values.contactPhone && values.contactPhone === values.contactMobile) issues.push("Duplicate primary and alternate mobile");
+  }
+  return issues;
+}
