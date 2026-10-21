@@ -730,12 +730,12 @@ export function RecruiterLeadsWorkspace({
             {!needsExpanded?<p className="text-xs text-muted-foreground leading-[20px]">Show needs doing to review outreach priorities.</p>:null}
           </section>
           <div className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
-            <label className="min-w-48 flex-1 text-sm">
+            <label className="min-w-48 flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Search name, company or contact
               <Input className={inputStyle + " mt-1.5 min-w-0"} value={query} onChange={e => updateFilter("query",e.target.value)}
                 placeholder="Search recruiter leads" />
             </label>
-            <label className="min-w-40 text-sm">
+            <label className="min-w-40 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Stage
               <Select className={inputStyle + " mt-1.5 min-w-0"} value={stage}
                 onChange={e => updateFilter("stage",e.target.value)}>
@@ -771,14 +771,14 @@ export function RecruiterLeadsWorkspace({
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
               className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4">
-              <label className="text-sm">Status
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
                   {["ALL","JOINED","UNSUBSCRIBED","NOT_JOINED"].map(item=>
                    <option key={item} value={item}>{item==="ALL"?"All statuses":item.replaceAll("_"," ")}</option>)}
                 </Select>
               </label>
-              <label className="text-sm">Owner
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Owner
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={ownerFilter}
                   onChange={e=>updateFilter("owner",e.target.value)}>
                   <option value="ALL">All owners</option>
@@ -787,14 +787,14 @@ export function RecruiterLeadsWorkspace({
                    .sort().map(name=><option key={name} value={name}>{name}</option>)}
                 </Select>
               </label>
-              <label className="text-sm">Invite
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Invite
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={inviteFilter}
                   onChange={e=>updateFilter("invite",e.target.value)}>
                   {["ALL","NOT_INVITED","SENT","OPENED","BOUNCED","JOINED"].map(item=>
                    <option key={item} value={item}>{item==="ALL"?"All invites":item.replaceAll("_"," ")}</option>)}
                 </Select>
               </label>
-              <label className="text-sm">Source
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={sourceFilter}
                   onChange={e=>updateFilter("source",e.target.value)}>
                   <option value="ALL">All sources</option>
@@ -802,7 +802,7 @@ export function RecruiterLeadsWorkspace({
                    .sort().map(name=><option key={name} value={name}>{name.replaceAll("_"," ")}</option>)}
                 </Select>
               </label>
-              <label className="text-sm">Company
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyFilter}
                   onChange={e=>updateFilter("company",e.target.value)}>
                   <option value="ALL">All companies</option>
@@ -810,7 +810,7 @@ export function RecruiterLeadsWorkspace({
                     .sort().map(name=><option key={name} value={name}>{name}</option>)}
                 </Select>
               </label>
-              <label className="text-sm">Drives that ran
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drives that ran
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={driveFilter}
                   onChange={e=>updateFilter("drives",e.target.value)}>
                   <option value="ALL">Any drive count</option>
@@ -820,12 +820,12 @@ export function RecruiterLeadsWorkspace({
                   <option value="SIX_PLUS">6 or more drives</option>
                 </Select>
               </label>
-              <label className="text-sm">Designation
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation
                 <Input className={inputStyle+" mt-1.5 min-w-0"} value={designationFilter}
                   placeholder="Search designation" maxLength={100}
                   onChange={e=>updateFilter("designation",e.target.value)}/>
               </label>
-              <label className="text-sm">Can be reached by
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Can be reached by
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={reachFilter}
                   onChange={e=>updateFilter("reach",e.target.value)}>
                   <option value="ALL">Any contact method</option>
@@ -836,7 +836,7 @@ export function RecruiterLeadsWorkspace({
                   <option value="NEITHER">Neither</option>
                 </Select>
               </label>
-              <label className="text-sm">Next follow-up
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Next follow-up
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={nextFilter}
                   onChange={e=>updateFilter("nextFollowup",e.target.value)}>
                   <option value="ALL">Any date</option>
@@ -848,7 +848,7 @@ export function RecruiterLeadsWorkspace({
                   <option value="NONE">None set</option>
                 </Select>
               </label>
-              <label className="text-sm">Last activity
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last activity
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={activityFilter}
                   onChange={e=>updateFilter("lastActivity",e.target.value)}>
                   <option value="ALL">Any activity</option>
@@ -858,7 +858,7 @@ export function RecruiterLeadsWorkspace({
                   <option value="NEVER">Never</option>
                 </Select>
               </label>
-              <label className="text-sm">Added
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Added
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={addedFilter}
                   onChange={e=>updateFilter("added",e.target.value)}>
                   <option value="ALL">Any date</option>
@@ -923,11 +923,11 @@ export function RecruiterLeadsWorkspace({
           ) : view === "companies" ? (
             <section className="space-y-3" aria-label="Company filters">
               <div className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 md:grid-cols-3">
-                <label className="text-sm">Search company or people
+                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search company or people
                   <Input type="search" className={inputStyle+" mt-1.5 min-w-0"} value={companySearch}
                     onChange={e=>setCompanySearch(e.target.value)} placeholder="Search companies"/>
                 </label>
-                <label className="text-sm">Contact
+                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact
                   <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyContacts}
                     onChange={e=>setCompanyContacts(e.target.value)}>
                     <option value="ALL">All companies</option>
@@ -935,7 +935,7 @@ export function RecruiterLeadsWorkspace({
                     <option value="NONE">Without contacts</option>
                   </Select>
                 </label>
-                <label className="text-sm">Drives that ran
+                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drives that ran
                   <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyHistory}
                     onChange={e=>setCompanyHistory(e.target.value)}>
                     <option value="ALL">Any drive history</option>
@@ -943,7 +943,7 @@ export function RecruiterLeadsWorkspace({
                     <option value="NONE">No drives yet</option>
                   </Select>
                 </label>
-                <label className="text-sm">Communication
+                <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Communication
                   <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyCommunicationFilter}
                     onChange={e=>setCompanyCommunicationFilter(e.target.value)}>
                     <option value="ALL">All communication</option>
@@ -1130,18 +1130,18 @@ export function RecruiterLeadsWorkspace({
           dismissible={!saving} title="Add recruiter lead">
           <form ref={createDialogRef} onSubmit={e=>void create(e)}
             className="min-w-0 space-y-4">
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">Name *<Input ref={createNameRef} className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name *<Input ref={createNameRef} className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">Email<Input className={inputStyle + " mt-1.5 min-w-0"} type="email" maxLength={150}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Email<Input className={inputStyle + " mt-1.5 min-w-0"} type="email" maxLength={150}
               value={form.email} onChange={e => field("email", e.target.value)} /></label>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">Phone<Input className={inputStyle + " mt-1.5 min-w-0"} type="tel" maxLength={30}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Phone<Input className={inputStyle + " mt-1.5 min-w-0"} type="tel" maxLength={30}
               value={form.phone} onChange={e => field("phone", e.target.value)} /></label>
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
             {duplicate ? <p role="alert" className="text-sm text-foreground leading-[22px]">
               Contact already exists: <Link className="underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">Company *<Input className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company *<Input className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
               value={form.companyName} onChange={e => field("companyName", e.target.value)}
               list="known-engage-companies" placeholder="Company name" />
               <datalist id="known-engage-companies">
@@ -1151,9 +1151,9 @@ export function RecruiterLeadsWorkspace({
                 Choose a company you&apos;ve worked with, or type a new company name.
               </span>
             </label>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">Designation<Input className={inputStyle + " mt-1.5 min-w-0"} maxLength={100}
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation<Input className={inputStyle + " mt-1.5 min-w-0"} maxLength={100}
               value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">Where did you find them?
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did you find them?
               <Select className={inputStyle + " mt-1.5 min-w-0"} value={form.source}
                 onChange={e => field("source", e.target.value)}>
                 <option value="">Added by hand</option>
@@ -1162,11 +1162,11 @@ export function RecruiterLeadsWorkspace({
             </label>
             <details className="border-t border-border pt-3" open={Boolean(form.followupDate)}>
               <summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">First follow-up (optional, IST)</summary>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">First follow-up (optional, IST)
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First follow-up (optional, IST)
               <Input type="date" className={inputStyle+" mt-1.5 min-w-0"} min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())} value={form.followupDate}
                 onChange={e=>field("followupDate",e.target.value)}/>
             </label>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4">Follow-up note (optional)
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Follow-up note (optional)
               <Textarea className={inputStyle+" mt-1.5 min-w-0"} maxLength={500} value={form.followupNote}
                 onChange={e=>field("followupNote",e.target.value)}
                 disabled={!form.followupDate}

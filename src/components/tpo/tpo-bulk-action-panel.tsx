@@ -195,7 +195,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
     remaining rows stay selected for the following batch. Each batch must be reviewed and confirmed separately.
    </p>:null}
   {target==="STUDENTS"?<Disclosure title="Select by roll number" className="min-w-0 border-t border-border print:hidden" contentClassName="space-y-2 px-2 pb-3">
-   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Paste roll numbers (comma, whitespace or line separated)
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Paste roll numbers (comma, whitespace or line separated)
      <Textarea value={pastedRolls} onChange={event=>setPastedRolls(event.target.value)}
       rows={2} maxLength={40000} placeholder="23CS001, 23CS002" />
    </label>
@@ -250,14 +250,14 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    onClick={()=>void runGuarded(undoLastRun)}>Undo last student batch (five minutes)</Button>:null}
   {undoNotice?<p role="status" aria-live="polite" className="text-sm">{undoNotice}</p>:null}
   <div className="grid gap-3 md:grid-cols-2 print:hidden">
-   <label className="min-w-0 text-sm font-semibold text-body">Action
-    <Select className="mt-1 min-h-11 w-full md:min-h-9" value={action} disabled={busy}
+   <label className="min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Action
+    <Select className="mt-[6px] min-h-11 w-full md:min-h-9" value={action} disabled={busy}
       onChange={e=>{setAction(e.target.value as Action);invalidate();}}
       >
      {options.map(option=><option key={option.value} value={option.value}>{option.label}</option>)}
     </Select>
    </label>
-   {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="min-w-0 text-sm font-semibold text-body">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context / private note / message"}
+   {(target==="APPLICATIONS"||(target==="STUDENTS"&&action==="INELIGIBLE"))?<label className="min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{target==="STUDENTS"?"Ineligibility reason (required)":"Review context / private note / message"}
     {target==="STUDENTS"?<div className="mb-2 mt-2 flex flex-wrap gap-2" role="group" aria-label="Ineligibility reason presets">
       {TPO_INELIGIBLE_REASONS.map(preset=><Button variant="secondary" type="button" key={preset}
        disabled={busy} onClick={()=>{setNote(preset);invalidate();}}
@@ -265,7 +265,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
       <Button variant="secondary" type="button" disabled={busy} onClick={()=>{setNote("");invalidate();}}
        >Other</Button>
     </div>:null}
-    <Textarea className="mt-1 w-full min-w-0" value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
+    <Textarea className="mt-[6px] w-full min-w-0" value={note} disabled={busy} maxLength={target==="STUDENTS"?200:1000} rows={2}
       onChange={e=>{setNote(e.target.value);invalidate();}}
       />
    </label>:null}
@@ -281,7 +281,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
    </Button>
    {target==="APPLICATIONS"&&jobId&&safeSelected.length>0?<Disclosure title="Other actions" className="min-w-0 border-b border-border" contentClassName="min-w-0 space-y-2 px-2 pb-3">
      <p className="text-xs text-muted-foreground">Share only this selection using an expiring link. Every selected application is rechecked for a current shortlist before issuance. Review one by one opens each candidate&apos;s authorized detail.</p>
-     <label className="flex flex-wrap items-center gap-2 text-sm">Link expires in
+     <label className="flex flex-wrap items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Link expires in
       <Select value={shareDays} onChange={event=>setShareDays(Number(event.target.value))}
         disabled={busy} >
        {[1,2,3,4,5,6,7].map(day=><option key={day} value={day}>{day} day{day===1?"":"s"}</option>)}

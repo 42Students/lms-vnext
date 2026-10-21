@@ -191,24 +191,24 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       </div>
 
       <div className="mt-5 space-y-3">
-        <label className="block text-sm font-semibold text-foreground">
+        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Work email
           <Input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
-            className="mt-1 min-h-11 w-full md:min-h-9"/>
+            className="mt-[6px] min-h-11 w-full md:min-h-9"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
             {"From your invitation. You'll sign in with it."}
           </span>
         </label>
-        <label className="block text-sm font-semibold text-foreground">Your name
+        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Your name
          <Input required maxLength={150} autoComplete="name" value={name}
            onChange={event=>setName(event.target.value)}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
         </label>
-        <label className="block text-sm font-semibold text-foreground">Designation (optional)
+        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Designation (optional)
          <Input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
         </label>
-        <label className="block text-sm font-semibold text-foreground">Mobile (optional)
+        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Mobile (optional)
          <Input type="tel" autoComplete="tel" maxLength={30} value={mobile}
            onChange={event=>setMobile(event.target.value)}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
@@ -220,7 +220,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
           </Button>
         ):(
           <>
-            <label className="block text-sm font-semibold text-foreground">
+            <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Code sent to {invite.contactEmail}
               <Input type="text" inputMode="numeric" autoComplete="one-time-code"
                 pattern="[0-9]{6}" maxLength={6} value={code} onChange={event=>setCode(event.target.value)}
