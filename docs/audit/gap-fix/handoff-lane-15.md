@@ -541,3 +541,30 @@
 - G2-9-003-087 — src/modules/academics/cohort-service.ts / batch UI: Create field mapping and account for original status values.
 - G2-9-029-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value
 - G2-9-023-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value
+
+## Wave2 bug report legacy identity and reporter provenance
+- G2-19-020-007 — src/modules/tracker report, search and activity services; report UI: Map numeric reporter_access_id to UUID for legacy issue history.
+- G2-19-020-009 — src/modules/tracker report, search and activity services; report UI: Convert timezone meaning on migration.
+- G2-19-020-011 — src/modules/tracker report, search and activity services; report UI: Add validated display-name search query/index or prohibit impersonating lookup.
+- G2-19-020-024 — src/modules/tracker report, search and activity services; report UI: Document inactive-on-intake behavior and activation workflow.
+- G2-19-020-035 — src/modules/tracker report, search and activity services; report UI: Provide case-insensitive name/active index if enrollment used.
+- G2-19-020-038 — src/modules/tracker report, search and activity services; report UI: Normalize UTC/IST on imports.
+- G2-19-020-042 — src/modules/tracker report, search and activity services; report UI: Resolve name lookup/index strategy.
+- G2-16-002-087 — src/modules/tracker report, search and activity services; report UI: Either support optional captured source metadata in API/quick report or document retained read-only fields.
+- G2-16-003-079 — src/modules/tracker report, search and activity services; report UI: Confirm historical report reference migration or approved no-migration, and reflect source metadata.
+- G2-16-004-078 — src/modules/tracker report, search and activity services; report UI: Maintain old publicID lookup compatibility if historical data imported; owner says no migration might waive.
+- G2-20-020-004 — src/modules/tracker report, search and activity services; report UI: Map IDs
+- G2-20-020-022 — src/modules/tracker report, search and activity services; report UI: Migration crosswalk
+- G2-3-021-007 — src/modules/tracker report, search and activity services; report UI: Legacy BIGINT event and issue IDs, timestamp DATETIME(6) unzoned; vNext UUID IDs, timestamptz, restrictive issue FK. Specify import identity/timezone mapping.
+- G2-3-021-035 — src/modules/tracker report, search and activity services; report UI: Legacy index issue+createdAt ASC and full fetch; VNext same index but cursor ORDER BY createdAt/id DESC, no compound tie-breaker index. Add index for stable keyset paging.
+- G2-3-021-043 — src/modules/tracker report, search and activity services; report UI: Legacy actor_name may be set without user FK, vNext actorUserId or accessId XOR constraint requires resolving historical Engineering/reporter event authors. Supply migration system actor.
+- G2-4-021-002 — src/modules/tracker report, search and activity services; report UI: Preserve historical public IDs and old route links with safe resolver.
+- G2-4-021-004 — src/modules/tracker report, search and activity services; report UI: Reconstruct detail sections and activity timeline with exact labels/order.
+- G2-4-021-007 — src/modules/tracker report, search and activity services; report UI: Capture safe browser,viewport and source context from authenticated application.
+- G2-4-021-014 — src/modules/tracker report, search and activity services; report UI: Wire remaining context fields with safe allowlist.
+- G2-4-021-032 — src/modules/tracker report, search and activity services; report UI: Verify upload UI, provisional grants and screenshot display in report form.
+- G2-4-021-056 — src/modules/tracker report, search and activity services; report UI: Use index to implement scoped efficient environment count.
+- G2-4-021-058 — src/modules/tracker report, search and activity services; report UI: Handle public ID collision retries and format historical ids.
+- G2-4-021-063 — src/modules/tracker report, search and activity services; report UI: Define IST/source zone on migration to prevent wrong incident chronology.
+- G2-4-021-065 — src/modules/tracker report, search and activity services; report UI: Backfill missing/duplicate legacy IDs with logged reconciliation.
+- G2-8-031-068 — src/modules/tracker report, search and activity services; report UI: Document legacy bug status/attachment field mapping and migration consequences; no data migration expected but functional parity required.
