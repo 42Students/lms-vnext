@@ -47,3 +47,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-14_l18-u021-job-important-date-event-dto.md.md` | 16/16 audit findings assigned to specific Placements calendar/model/schema target files. 0 edits to out-of-area modules; generic importantDates and learner visible+applied union require controlled data model work. **Handoff, not fixed**. No TypeScript run or CI.
 
 - `NEW_docs_audit_gap2_lane-6_l11-u020-tpo-recruiters.md.md` | 16/16 audit findings assigned to specific TPO recruiter leads/UI/messaging target files. 0 edits to out-of-area modules; invite delivery and drag/drop stage policy require coordinated TPO service changes. **Handoff, not fixed**. No TypeScript run or CI.
+
+- `NEW_docs_audit_gap2_lane-7_l13-u023-learner-schedule-controller.md.md` | 16/16 exact-ID findings reviewed; 0 edits in out-of-area Placements learner schedule/read/reschedule and booking code. Targeted owner handoff per finding; booked candidate slots must remain separate from tentative rounds. **Handoff, not fixed**; no execution or CI.
+
+- `NEW_docs_audit_gap2_lane-8_project-template.md.md` | 16/16 exact-ID findings reviewed; 0 edits in out-of-area Projects templates/blueprint/schema and export UI. Targeted owner handoff per finding; existing legacy provenance columns do not prove full JSON historical migration. **Handoff, not fixed**; no execution or CI.
