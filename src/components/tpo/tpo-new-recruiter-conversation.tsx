@@ -6,6 +6,8 @@ import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useId,useRef,useState} from "react";
 import {Dialog} from "@/components/ui/dialog";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
 import {useToast} from "@/components/ui/toast";
 import {TPO_QUICK_REPLIES} from "@/modules/placements/tpo-message-draft-model";
@@ -21,6 +23,8 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  const [message,setMessage]=useState("");
  const [createdThreadId,setCreatedThreadId]=useState<string|null>(null);
+ const [discardOpen,setDiscardOpen]=useState(false);
+ const [recruiterSearch,setRecruiterSearch]=useState("");
  const selectRef=useRef<HTMLSelectElement>(null);
  const launchRef=useRef<HTMLButtonElement>(null);
  const inFlightRef=useRef(false);
@@ -31,8 +35,9 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
   try{if(value)sessionStorage.setItem(draftKey,value);else sessionStorage.removeItem(draftKey);}
   catch{/* Private browsing may disable storage. */}
  }
- function close(){
+ function close(force=false){
   if(busy)return;
+  if(!force&&message.trim()){setDiscardOpen(true);return;}
   setOpen(false);setError("");
   launchRef.current?.focus();
  }
@@ -88,18 +93,22 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
   <Dialog open={open} onOpenChange={next=>{if(!next)close();}} dismissible={!busy}
    title="New message to a recruiter"
    footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
-     <Button variant="secondary" type="button" onClick={()=>editMessage("")} disabled={!message||busy}
+     <Button variant="secondary" type="button" onClick={()=>setDiscardOpen(true)} disabled={!message||busy}
        className="min-h-11 w-full sm:w-auto md:min-h-9">Discard draft</Button>
      <Button variant="primary" type="submit" form={formId} disabled={!id||!message.trim()||busy} loading={busy}
        className="min-h-11 w-full sm:w-auto md:min-h-9">{busy?"Sending…":"Send"}</Button>
    </div>}>
     <form id={formId} onSubmit={event=>{event.preventDefault();void create();}} className="space-y-3">
+     <p className="text-sm text-body">Choose a recruiter with active college access. This creates their General thread; select a drive thread for job-specific changes.</p>
+     <label className="block text-xs font-semibold text-muted-foreground">Search active recruiters
+       <Input type="search" value={recruiterSearch} onChange={event=>setRecruiterSearch(event.target.value)} placeholder="Search recruiter or company" className="mt-1 min-h-11 md:min-h-9"/>
+     </label>
      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recruiter
       <Select ref={selectRef} aria-label="Recruiter" required value={id}
        onChange={e=>{setId(e.target.value);setCreatedThreadId(null);setError("");}} disabled={busy}
        className="mt-1 min-h-11 w-full border px-2">
        <option value="">Choose a recruiter</option>
-       {recruiters.map(r=><option key={r.userId} value={r.userId}>
+       {recruiters.filter(r=>(r.displayName+" "+r.companyName).toLowerCase().includes(recruiterSearch.trim().toLowerCase())).map(r=><option key={r.userId} value={r.userId}>
         {(r.displayName?.trim()||"Unnamed recruiter")+" · "+r.companyName}
        </option>)}
       </Select>
@@ -135,5 +144,10 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
 
     </form>
   </Dialog>
+  <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+    title="Discard this message draft?" description="Your unsent recruiter message will be lost."
+    confirmLabel="Discard draft" confirmVariant="danger" onConfirm={()=>{
+      editMessage("");setDiscardOpen(false);close(true);
+    }}/>
  </div>;
 }

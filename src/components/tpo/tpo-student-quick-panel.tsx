@@ -25,6 +25,8 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  onNavigate:(membershipId:string)=>void;onClose:()=>void;recordedOutcome?:AfterCollegeOutcome|null;
 }){
  const [tab,setTab]=useState<Tab>("Profile");
+ const [contactRevealed,setContactRevealed]=useState(false);
+ const [contactNotice,setContactNotice]=useState("");
  // Tie cached data to its membership so a rapid Next/Previous never shows
  // another learner's private notes while a fresh request is in flight.
  const [storedDetail,setStoredDetail]=useState<{studentId:string;value:PanelDetail}|null>(null);
@@ -84,8 +86,9 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
  const history="/tpo/students/"+encodeURIComponent(student.membershipId)+"/history";
  const participation="/tpo/students/"+encodeURIComponent(student.membershipId)+"/participation";
  return <Drawer open={true} onOpenChange={next=>{if(!next)onClose();}}
-  title={"Student panel for "+student.displayName}
-  description={student.branchName+" · "+student.cohortName} footer={<div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
+  title={student.displayName+" · "+(student.rollNumber??student.registrationNumber??"No roll number")}
+  description={student.programName+" · "+student.branchName+" · "+student.cohortName+
+   (student.classIds.length===0?" · Class not assigned":student.classIds.length===1?" · One active class":" · Multiple classes")} footer={<div className="grid w-full min-w-0 grid-cols-2 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-center">
     <span className="col-span-2 text-center text-xs text-muted-foreground sm:col-span-1 sm:col-start-2 sm:row-start-1">{index+1} of {rows.length} on this page</span>
     <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-1 sm:row-start-1 md:min-h-9" disabled={index<=0} onClick={()=>onNavigate(rows[index-1].membershipId)}>← Previous</Button>
     <Button variant="secondary" type="button" className="min-h-11 w-full sm:col-start-3 sm:row-start-1 md:min-h-9" disabled={index<0||index>=rows.length-1}
@@ -96,6 +99,19 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     <p className="mt-1 min-w-0 break-words text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
     <p className="mt-2 min-w-0 break-words text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
    </section>
+   <nav aria-label="Student placement snapshots" className="mt-4 grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4">
+     {([
+       ["Applications",student.applicationCount,"Placement"],
+       ["Offers",student.offerCount,"Placement"],
+       ["Profile",student.verification.status==="VERIFIED"?"Verified":"Review","Profile"],
+       ["Prep", "Not measured","Profile"],
+     ] as const).map(([name,count,destination])=>
+       <Button key={name} type="button" variant="secondary" onClick={()=>void chooseTab(destination)}
+         className="flex min-h-16 min-w-0 flex-col items-start justify-center gap-1 rounded border border-border bg-surface px-3">
+         <span className="text-xs font-semibold text-muted-foreground">{name}</span>
+         <strong className="text-lg font-semibold text-foreground">{count}</strong>
+       </Button>)}
+   </nav>
    <Tabs ariaLabel="Student panel pages" className="mt-4" value={tab} renderPanel={false} controlledOnly
     onValueChange={next=>{void chooseTab(next as Tab);}}
     items={tabs.map(t=>({
@@ -109,6 +125,33 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
       <h3 className="font-semibold">Needs attention</h3>
       {attention.length?<ul className="list-disc space-y-1 pl-5 break-words">{attention.map(item=><li key={item}>{item}</li>)}</ul>
        :<p className="text-body">No attention flags derived from the current roster evidence.</p>}
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+        <h3 className="font-semibold">Contact details</h3>
+        <p className="mt-1 text-xs text-muted-foreground">Contact stays masked until intentionally revealed by the placement officer. Phone is only available as last four digits here.</p>
+        {!contactRevealed?<Button type="button" variant="secondary" onClick={()=>setContactRevealed(true)} className="mt-2 min-h-11 md:min-h-9">Reveal email</Button>:
+          <div className="mt-2 flex flex-wrap items-center gap-2">
+            <span className="break-all text-sm">{student.email??"No email on record"}</span>
+            {student.email?<><Button variant="secondary" type="button" onClick={()=>{
+              void navigator.clipboard.writeText(student.email??"").then(()=>setContactNotice("Email copied")).catch(()=>setContactNotice("Copy failed; select the email manually."));
+            }}>Copy email</Button><a href={"mailto:"+encodeURIComponent(student.email)}
+              className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Email student</a></>:null}
+            <Button variant="ghost" type="button" onClick={()=>{setContactRevealed(false);setContactNotice("");}}>Hide</Button>
+          </div>}
+        {contactNotice?<p role="status" className="text-xs text-muted-foreground">{contactNotice}</p>:null}
+        <p className="mt-2 text-xs text-muted-foreground">Phone: {student.profileFacts?.phoneMasked??"Not recorded"}</p>
+      </section>
+      <h3 className="border-t border-border pt-4 font-semibold">Academic marks</h3>
+      <dl className="grid min-w-0 gap-2 sm:grid-cols-2">
+        {([
+          ["10th",student.tenthPct],["12th",student.twelfthPct],["Diploma",student.diplomaPct],
+          ["UG",student.ugPct],["PG (profile entry)",student.profileFacts?.pgPercentage],
+        ] as const).map(([label,value])=><div key={label} className="rounded border border-border p-2">
+          <dt className="text-xs text-muted-foreground">{label}</dt>
+          <dd className="font-semibold">{value==null?"Not recorded":String(value)+"%"}</dd>
+          <p title="Academic record verification is a separate workflow; a converted percentage is not automatically verified."
+            className="text-xs text-muted-foreground">{student.marksVerified?"Verified record":"Not independently verified"} · {label.startsWith("PG")?"Learner profile entry":"Entered/converted academic record"}</p>
+        </div>)}
+      </dl>
       <h3 className="border-t border-border pt-4 font-semibold">Recorded learner facts</h3>
       <dl className="grid min-w-0 grid-cols-1 gap-x-5 gap-y-0 md:grid-cols-2">
        {[
@@ -126,7 +169,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
         ["Profile check",student.verification.status==="UNKNOWN"?"Verification unavailable":tpoStudentDisplayLabel(student.verification.status)],
         ["Placements decision",tpoStudentDisplayLabel(student.participationStatus)],
         ["Offers waiting on their answer",student.offersAwaitingAnswer],
-        ["Prep %","Not recorded"],
+        ["Prep %","Not measured — open placement prep readiness"],
         ["Registration",student.registrationChoice??"Not recorded"],
         ].map(([label,value])=><div key={String(label)} className="min-w-0 border-b border-border py-2.5">
         <dt className="break-words text-xs text-muted-foreground">{label}</dt><dd className="min-w-0 break-words font-semibold">{value}</dd>
