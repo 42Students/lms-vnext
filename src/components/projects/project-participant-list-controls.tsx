@@ -266,7 +266,9 @@ export function ProjectParticipantPagination({
       );
     }
     if (target > 1) {
-      params.set("page", String(target));
+      // Mentor list has legacy ?page=N zero-based bookmarks; avoid ambiguity
+      // with the canonical one-based page1 navigation.
+      params.set(basePath==="/mentor/projects"?"page1":"page",String(target));
     }
     const value = params.toString();
     return value
