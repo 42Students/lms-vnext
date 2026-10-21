@@ -229,3 +229,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-configuration-read-service.ts.md` | Verified college-scoped job type readers already provide per-type nonarchived drive counts and built-in fallbacks; added explicit 12-key legacy compatibility inventory. Other 10 key sources and a composed response need owner integrations. No CI.
 - `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_learner-notification-inbox-model.ts.md` | Verified learner notifications page already validates and canonical-redirects legacy tab aliases; exported safe category parser. CourseSlug/class-scoped filters and target-specific CTAs need authorized service/UI mapping. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-student-section-move-model.ts.md` | Exported exact Learner moved successfully copy for post-success UI; confirmation and scoped CAS unchanged. Caller must integrate result and refresh source/destination; handoff. No CI.
+- `docs/audit/gap-fix-work/packets/lane-9/src_modules_messaging_runtime-safety.ts.md` | Documented deliberate safer nonproduction exact-recipient allowlist over legacy @domain grants, added privacy-safe suppression reason without relaxing APP_ENV deny-by-default. No CI.

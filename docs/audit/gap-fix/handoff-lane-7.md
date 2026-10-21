@@ -1024,3 +1024,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-2-030-010/-028 | `src/modules/placements/tpo-configuration-read-service.ts + other choices providers` | Compose genuine authorized 12-key catalogue from owning modules; do not return fabricated empty choices.
 - G2-17-026-010 / G2-18-004-014 | `src/app/(authenticated)/learn/notifications/page.tsx + learner notification source` | Map courseSlug over courseId with authorized enrollment and translate safe known CTA types; legacy tab alias already present.
+
+- G2-5-027-037 | `src/components/college/student-class-move-action.tsx` | On verified successful PATCH, show studentSectionMoveSuccessMessage and refreshed source/destination, do not show preemptively.
+- G2-13-011-024 / G2-18-010-036 | `src/modules/messaging/providers.ts + dev provisioning docs` | Migrate DEV_MAIL_ALLOW exact addresses to AUTH_TEST_EMAILS and classify suppression; domain wildcards require explicit owner approval and remain disabled in nonprod.
