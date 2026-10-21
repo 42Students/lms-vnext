@@ -42,9 +42,9 @@ export default async function LearnerPlacementCellPage({
         <Link href="/learn/my-placements/rules?from=cell" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Read placement rules →</Link>
       </section>
       <nav aria-label="Placement cell resources" className="flex min-w-0 flex-col items-start gap-1 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
-        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Read all college notices →</Link>
-        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placement-cell authored notices →</Link>
-        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Notification preferences →</Link>
+        <Link href="/learn/my-placements/announcements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Read all college notices →</Link>
+        <Link href="/learn/my-placements/announcements?source=placement-cell" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Placement-cell authored notices →</Link>
+        <Link href="/learn/my-placements/notification-preferences" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Notification preferences →</Link>
       </nav>
       {alertRead.available ? <LearnerPlacementAlerts alerts={alertRead.items} /> : (
         <Alert tone="warning" role="alert">

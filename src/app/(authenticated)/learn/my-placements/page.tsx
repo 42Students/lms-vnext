@@ -236,11 +236,11 @@ export default async function LearnerPlacementsPage({
 
       <div className="flex flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
         <Link href="/learn/my-placements/preparation"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Placement preparation checklist →
         </Link>
         <Link href="/learn/my-placements/notification-preferences"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
           Placement notification choices →
         </Link>
       </div>
