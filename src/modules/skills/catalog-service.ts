@@ -293,7 +293,7 @@ export async function listSkillSynonymsForParent(context: RequestContext, skillI
 export async function searchSkillsByExactSynonym(context: RequestContext, raw: unknown) {
   requireCatalogReader(context);
   const synonym = z.string().trim().min(1).max(100).parse(raw).toLocaleLowerCase("en-US");
-  return getDb().select(columns).from(db10Skills)
+  return getDb().selectDistinct(columns).from(db10Skills)
     .innerJoin(db10SkillSynonyms,eq(db10SkillSynonyms.skillId,db10Skills.id))
     .where(and(eq(db10Skills.isActive,true),
       sql<boolean>`lower(${db10SkillSynonyms.synonym})=${synonym}`))
