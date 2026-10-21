@@ -24,8 +24,12 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     let body: unknown;
     try { body = await request.json(); }
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
+    // Shared broadcasts use a single tenant-scoped, version-checked
+    // transaction in the service, not a single recipient update.
+    const announcement=await updateAnnouncement(context,announcementId,body);
     return NextResponse.json({
-      announcement: await updateAnnouncement(context, announcementId, body),
+      status:"UPDATED",announcement,
+      actionScope:announcement.broadcastGroupId?"BROADCAST_GROUP":"SINGLE_NOTICE",
     },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return announcementApiError(error);
@@ -45,8 +49,10 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     let body: unknown;
     try { body = await request.json(); }
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
+    const announcement=await deleteAnnouncement(context,announcementId,body);
     return NextResponse.json({
-      announcement: await deleteAnnouncement(context, announcementId, body),
+      status:"DELETED",announcement,
+      actionScope:announcement.broadcastGroupId?"BROADCAST_GROUP":"SINGLE_NOTICE",
     },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return announcementApiError(error);

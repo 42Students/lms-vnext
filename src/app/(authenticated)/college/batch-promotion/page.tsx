@@ -34,9 +34,10 @@ export default async function CollegeBatchPromotionPage({
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="min-w-0 space-y-4">
     <PageHeader title="Batch Promotion"/>
-    <ErrorState title="Admin not assigned to a college"
-      description="Contact your administrator to assign a college before promoting batches."
-      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+    <Alert tone="warning" title="Admin not assigned to a college">
+      You must be assigned to a college to view and manage batch promotion. Contact your administrator.
+    </Alert>
+    <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Choose a college in your account switcher →</Link>
   </div>;
   const incoming = await searchParams;
   const showCompleted = first(incoming.showCompleted) === "1";
