@@ -130,9 +130,9 @@ export async function POST(request: Request) {
         error:"LEARNING_PATH_REQUIRED",
         message:"Select an authorized course offering and its learningPathId. Legacy numeric course IDs and slugs cannot identify a tenant on their own.",
       },{status:400,headers:noStore});
-    const mapped=(raw.lesson_name!==undefined && raw.name===undefined)
-      ?{...raw,name:raw.lesson_name,lesson_name:undefined}
-      :raw;
+    const {lesson_name:legacyLessonName,...modern}=raw;
+    const mapped=(legacyLessonName!==undefined && modern.name===undefined)
+      ?{...modern,name:legacyLessonName}:modern;
     const lesson = await createCourseLesson(context,mapped);
 
     return NextResponse.json(
