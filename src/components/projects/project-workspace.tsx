@@ -1324,7 +1324,7 @@ export function ProjectWorkspace({
                             href={source}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-link hover:text-primary-hover"
+                            className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open source ↗
                           </a>
@@ -1334,7 +1334,7 @@ export function ProjectWorkspace({
                             href={demo}
                             target="_blank"
                             rel="noreferrer"
-                            className="text-link hover:text-primary-hover"
+                            className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open demo ↗
                           </a>
@@ -1607,7 +1607,7 @@ export function ProjectWorkspace({
                         href={href}
                         target="_blank"
                         rel="noreferrer"
-                        className="mt-3 inline-flex text-sm font-semibold text-link hover:text-primary-hover"
+                        className="mt-3 inline-flex text-sm font-semibold text-link hover:text-[var(--lms-primary-text)]"
                       >
                         Join meeting ↗
                       </a>
