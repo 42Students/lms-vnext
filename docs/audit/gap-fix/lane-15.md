@@ -230,3 +230,9 @@
 
 ## Packet 55 — course upload ownership and multi-file producer
 - `src_db_schema_course-upload-receipts-staged.ts.md` | G2-12-021-007/027: reviewed per-file receipt sequence, attestation, object scope and unique guards; documented old numeric owner_user_id/type→verified college membership/role mapping. Existing relation can represent multiple ordered files, but the live producer only uses index zero. | Staged schema intentionally NOT exported or registered due existing live assignment_submission_files overlap and incomplete scanner/storage authorization cutover. Implement multi-file selection/consumption at service/UI with per-file CLEAN attestation. No SQL migration, no project code executed.
+
+## Packet 56 — attendance correction hours DDL drift
+- `drizzle_0033_attendance_foundation.sql.md` | G2-14-009-082: registered original migration 0033 caps correctionWindowHours 1..168 while active TS schema allows 1..8760. Added registered additive migration 0170 to replace that CHECK with 1..8760, preserving older SQL immutability and existing default 24. | Policy service must verify permitted maximum is intentional per college and bounded correction grant; no database migration executed or tested.
+
+## Packet 57 — quiz question points cap mismatch
+- `drizzle_0007_courses_c4b_quizzes.sql.md` | G2-16-016-035: original 0007/active quizzes.ts and generic quiz-validation.ts allow 1..1000, but old QuizQuestionRequestDTO cap is 100 and faculty-quiz-authoring-model already imposes <=100. | Coordinated change REQUIRED: lowering only SQL/schema would let generic validator admit 101..1000 and cause DB rejects. Immutable 0007 unmodified; handoff to quiz validation owner to align model+API+schema in one release after checking stored questions. No history import required in greenfield; no SQL executed.
