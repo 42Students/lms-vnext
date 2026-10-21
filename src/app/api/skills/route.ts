@@ -150,6 +150,9 @@ export async function GET(request: Request) {
     if (error instanceof ZodError) {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     }
+    // Do not hide authentication/authorization failures behind a legacy 500.
+    const mapped = apiErrorResponse(error);
+    if (mapped.status !== 500) return mapped;
     if (compat === "v1" && (
       requestedMode === "search" ||
       requestedMode === "popular" ||
@@ -161,6 +164,6 @@ export async function GET(request: Request) {
         { status: 500, headers: { "Cache-Control": "private, no-store" } },
       );
     }
-    return apiErrorResponse(error);
+    return mapped;
   }
 }
