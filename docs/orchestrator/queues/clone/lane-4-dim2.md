@@ -153,16 +153,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/college/contacts/error.tsx`
 - [x] `src/app/(authenticated)/college/contacts/page.tsx`
 - [x] `src/app/(authenticated)/college/course-progress/error.tsx`
-- [ ] `src/app/(authenticated)/college/course-progress/page.tsx`
-- [ ] `src/app/(authenticated)/college/courses/error.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/courses/offerings/[offeringId]/not-found.tsx`
-- [ ] `src/app/(authenticated)/college/departments/error.tsx`
-- [ ] `src/app/(authenticated)/college/domains/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx`
-- [ ] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
+- [x] `src/app/(authenticated)/college/course-progress/page.tsx`
+- [x] `src/app/(authenticated)/college/courses/error.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/error.tsx`
+- [x] `src/app/(authenticated)/college/courses/offerings/[offeringId]/not-found.tsx`
+- [x] `src/app/(authenticated)/college/departments/error.tsx`
+- [x] `src/app/(authenticated)/college/domains/error.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/error.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/allocate/page.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/error.tsx`
+- [x] `src/app/(authenticated)/college/electives/[slotId]/offerings/[offeringId]/roster/page.tsx`
 - [ ] `src/app/(authenticated)/college/electives/error.tsx`
 - [ ] `src/app/(authenticated)/college/electives/page.tsx`
 - [ ] `src/app/(authenticated)/college/error.tsx`
