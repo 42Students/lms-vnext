@@ -24,8 +24,8 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-2.md: surface | regres
 - [x] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [x] `src/app/(authenticated)/admin/features/page.tsx`
 - [x] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/super-admin-platform-block-action.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/app/(authenticated)/teach/not-found.tsx`
-- [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/admin/super-admin-platform-block-action.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/app/(authenticated)/teach/not-found.tsx`
+- [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
