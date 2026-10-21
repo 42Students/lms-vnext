@@ -3,46 +3,80 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { EmptyState } from "@/components/ui/empty-state";
-import {useMemo,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import styles from "./legacy-project-touch-actions.module.css";
 type Workspace={id:string;title:string;status:string};
-export function AdminReadinessWorkspacePicker({items,selected,action}:{
- items:Workspace[];selected:string|null;action:string;
+export function AdminReadinessWorkspacePicker({items,selected,action,collegeId,initialTotal}:{
+ items:Workspace[];selected:string|null;action:string;collegeId:string;initialTotal:number;
 }){
+
  const [search,setSearch]=useState("");
  const [choice,setChoice]=useState(selected??"");
- const [page,setPage]=useState(1),pageSize=25;
- const matching=useMemo(()=>items.filter(item=>
-  (item.title+" "+item.id).toLocaleLowerCase().includes(search.toLocaleLowerCase())),[items,search]);
- const count=Math.max(1,Math.ceil(matching.length/pageSize)),current=Math.min(page,count);
- const rows=matching.slice((current-1)*pageSize,current*pageSize);
+ const [page,setPage]=useState(1);
+ const [result,setResult]=useState({items:items.slice(0,25),total:initialTotal,
+   page:1,pageSize:25,totalPages:Math.max(1,Math.ceil(initialTotal/25))});
+ const [busy,setBusy]=useState(false),[error,setError]=useState("");
+ const requestSeq=useRef(0);
+ useEffect(()=>{
+  const request=++requestSeq.current;
+  const controller=new AbortController();
+  const timer=window.setTimeout(()=>{
+   setBusy(true);setError("");
+   const params=new URLSearchParams({collegeId,q:search.trim(),page:String(page)});
+   void fetch("/api/projects/readiness-choices?"+params.toString(),{
+    signal:controller.signal,credentials:"same-origin",cache:"no-store",
+   }).then(async response=>{
+    if(!response.ok)throw Error("Couldn't load workspaces. Retry the search.");
+    return response.json() as Promise<{
+      items:Workspace[];total:number;page:number;pageSize:number;totalPages:number;
+    }>;
+   }).then(data=>{
+    if(!controller.signal.aborted&&request===requestSeq.current)setResult(data);
+   }).catch(()=>{
+    if(!controller.signal.aborted&&request===requestSeq.current)
+      setError("Couldn't load workspaces. Retry the search.");
+   }).finally(()=>{
+    if(!controller.signal.aborted&&request===requestSeq.current)setBusy(false);
+   });
+  },250);
+  return()=>{window.clearTimeout(timer);controller.abort();};
+ },[collegeId,page,search]);
+ const current=result.page,total=result.total,count=result.totalPages;
+ const selectedRow=items.find(item=>item.id===choice);
+ const rows=selectedRow&&!result.items.some(item=>item.id===selectedRow.id)
+   ?[selectedRow,...result.items]:result.items;
+ const startIndex=total===0?0:(current-1)*25+1,finish=Math.min(total,current*25);
  return <form method="get" action={action} className={"min-w-0 space-y-3 "+styles.legacy}>
-  <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Select workspace
-   <Input value={search} onChange={e=>{setSearch(e.target.value);setPage(1)}}
-    placeholder="Search workspaces by title or ID" aria-label="Search workspaces by title or ID" className="mt-1 min-h-11 w-full max-w-[420px] md:min-h-9"/></label>
-  <label className="grid min-w-0 max-w-[420px] gap-1 text-sm font-semibold text-muted-foreground">
-    Select workspace
-    <Select name="workspaceId" aria-label="Select workspace" value={choice}
-      onChange={event=>setChoice(event.target.value)} required className="min-h-11 w-full md:min-h-9">
-      <option value="">Select a workspace</option>
-      {rows.map(item=><option value={item.id} key={item.id}>{item.title} · {item.status}</option>)}
-      {choice&&!rows.some(item=>item.id===choice)?<option value={choice}>
-        {items.find(item=>item.id===choice)?.title??"Selected workspace"}
-      </option>:null}
-    </Select>
-  </label>
-  {!rows.length?<EmptyState title="No matching workspaces" description="Change the search to find another workspace."/>:null}
-
+  <label className="block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search workspace title or ID
+   <Input type="search" maxLength={120} value={search}
+    onChange={e=>{setSearch(e.target.value);setPage(1)}}
+    placeholder="Search workspace" className="mt-1 min-h-11 w-full md:min-h-9"/></label>
+  {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  <fieldset disabled={busy||Boolean(error)} className="max-h-64 min-w-0 space-y-1 overflow-y-auto overscroll-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
+   <legend className="sr-only">Select a workspace</legend>
+   {rows.map(item=><label key={item.id} className="flex min-h-11 min-w-0 cursor-pointer items-center gap-2 rounded-[var(--lms-control-radius)] px-2 text-sm text-body hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:min-h-9">
+    <Radio name="workspaceId" value={item.id} checked={choice===item.id}
+      onChange={()=>setChoice(item.id)}/>
+    <span className="min-w-0 flex-1 break-words">{item.title}</span>
+    <StatusBadge tone={item.status==="ACTIVE"||item.status==="COMPLETED"?"success":item.status==="PLANNED"?"info":"neutral"} className="shrink-0">{item.status}</StatusBadge>
+   </label>)}
+   {!rows.length?<EmptyState title="No matching workspaces" description="No matching workspaces."/>:null}
+  </fieldset>
   <div className="flex min-w-0 flex-col gap-2 text-sm text-body md:flex-row md:items-center md:justify-between">
-   <span>{matching.length === 0 ? "0–0" : ((current - 1) * pageSize + 1) + "–" + Math.min(current * pageSize, matching.length)} of {matching.length}{items.length >= 1000 ? " (first 1,000 loaded)" : ""}</span>
+   <span role="status">{busy?"Loading workspaces…":startIndex+"–"+finish+" of "+total}</span>
    <div className="flex flex-wrap gap-2">
-    <Button type="button" variant="secondary" disabled={current===1} onClick={()=>setPage(x=>Math.max(1,x-1))}
-      >Previous workspaces</Button>
-    <Button type="button" variant="secondary" disabled={current===count} onClick={()=>setPage(x=>Math.min(count,x+1))}
-      >Next workspaces</Button>
+    <Button type="button" variant="secondary" disabled={busy||page===1}
+     onClick={()=>setPage(x=>Math.max(1,x-1))}
+      >Previous</Button>
+    <Button type="button" variant="secondary" disabled={busy||page>=count}
+     onClick={()=>setPage(x=>Math.min(count,x+1))}
+      >Next</Button>
+    {error?<Button type="button" variant="secondary" onClick={()=>{
+       setSearch(value=>value+" ");setError("");
+     }}>Retry</Button>:null}
    </div>
   </div>
-  <Button type="submit" disabled={!choice} className="min-h-11 w-full md:min-h-9 md:w-auto">
+  <Button type="submit" disabled={!choice||busy||Boolean(error)} className="min-h-11 w-full md:min-h-9 md:w-auto">
    View readiness</Button>
  </form>;
 }

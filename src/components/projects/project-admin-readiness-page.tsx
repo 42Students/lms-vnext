@@ -5,7 +5,7 @@ import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
-import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases,
+import {listCollegeReadinessWorkspaceChoicePage,listCollegeReadinessReleases,
  resolveCollegeReadinessWorkspaceId} from "@/modules/projects/college-readiness-releases-service";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {effectiveProjectSubmissionReady} from "@/modules/projects/readiness-override-model";
@@ -97,9 +97,10 @@ export async function ProjectAdminReadinessPage({
   const read = await Promise.allSettled([
     listProjectAdminSnapshots(context, collegeId, query),
     listCollegeActiveReadinessOverrides(context, collegeId),
-    listCollegeReadinessWorkspaceChoices(context,collegeId),
-  ]);
-  if (read.some(result=>result.status==="rejected")) return <div className="min-w-0 space-y-4">
+    listCollegeReadinessWorkspaceChoicePage(context,collegeId,{page:1,search:""}),
+  ]).then(value => ({ ok: true as const, value }))
+    .catch(() => ({ ok: false as const }));
+  if (!read.ok) return <div className="min-w-0 space-y-4">
     <PageHeader title="Submission readiness"
       description="Execution completion and final-delivery readiness across project workspaces."
       actions={<PageBackLink href={basePath} label="Project workspaces" />} />
@@ -116,9 +117,9 @@ export async function ProjectAdminReadinessPage({
     .then(scope=>scope.collegeId===collegeId?scope:null).catch(()=>null):null;
   const selected=selectedScope?.project.id??null;
   const outsideScope=Boolean(requested&&!selected);
-  const pickerChoices=selectedScope&&!workspaceChoices.some(item=>item.id===selected)
+  const pickerChoices=selectedScope&&!workspaceChoices.items.some(item=>item.id===selected)
     ?[{id:selectedScope.project.id,title:selectedScope.project.title,
-      status:selectedScope.project.status},...workspaceChoices]:workspaceChoices;
+      status:selectedScope.project.status},...workspaceChoices.items]:workspaceChoices.items;
   const [readinessRead,releasesRead]=selected?await Promise.allSettled([
     getProjectReadiness(context,selected),
     listCollegeReadinessReleases(context,collegeId,selected),
@@ -184,7 +185,8 @@ export async function ProjectAdminReadinessPage({
           its releases and any manual override. Choose a college workspace below.
         </Banner>:null}
         <AdminReadinessWorkspacePicker key={selected??"no-selection"}
-          items={pickerChoices} selected={selected} action={readinessPath}/>
+          items={pickerChoices} selected={selected} action={readinessPath}
+          collegeId={collegeId} initialTotal={workspaceChoices.total}/>
         {selected ? <>
           {selectedProject?.status==="ARCHIVED"?<Banner tone="warning" role="status">This archived workspace is not in the active picker. You can still review its current manual override.</Banner>:null}
           <section aria-label="Current readiness" className="space-y-2 border-b border-border pb-3">
