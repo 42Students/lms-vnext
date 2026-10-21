@@ -313,56 +313,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
 - [x] `src/components/courses/super-admin-lesson-create.tsx`
 - [x] `src/components/groups/college-group-actions.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/groups/college-group-import-preview.tsx`
-- [ ] `src/components/groups/college-study-member-actions.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/hr-notification-read-button.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/hr-unsent-drive-alert.tsx`
-- [ ] `src/components/hr/recruiter-conversation-read-control.tsx`
-- [ ] `src/components/hr/recruiter-conversation-reply-form.tsx`
-- [ ] `src/components/hr/recruiter-decision-read-button.tsx`
-- [ ] `src/components/hr/recruiter-drive-focus-refresh.tsx`
-- [ ] `src/components/hr/recruiter-profile-access.tsx`
-- [ ] `src/components/hr/recruiter-request-cancel-button.tsx`
-- [ ] `src/components/hr/recruiter-request-feedback.tsx`
-- [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
-- [ ] `src/components/people/faculty-profile-text-section.tsx`
-- [ ] `src/components/placements/applicant-notes-panel.tsx`
-- [ ] `src/components/placements/campaign-unsubscribe-confirm.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
-- [ ] `src/components/placements/college-company-create.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/drive-day-roster.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-general-requests.tsx`
-- [ ] `src/components/placements/learner-placement-academic-evidence.tsx`
-- [ ] `src/components/placements/learner-placement-alert-action.tsx`
-- [ ] `src/components/placements/learner-placement-alerts.tsx`
-- [ ] `src/components/placements/learner-placement-job-detail.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-placement-partial-alert.tsx`
-- [ ] `src/components/placements/learner-placement-preferences.tsx`
-- [ ] `src/components/placements/learner-placement-requests.tsx`
-- [ ] `src/components/placements/learner-placements-tabs.tsx`
-- [ ] `src/components/placements/learner-save-drive-button.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
-- [ ] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-job-lifecycle-controls.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
-- [ ] `src/components/placements/placement-recruiter-access.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/groups/college-group-import-preview.tsx`
+- [x] `src/components/groups/college-study-member-actions.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/hr/hr-notification-read-button.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/hr/hr-unsent-drive-alert.tsx`
+- [x] `src/components/hr/recruiter-conversation-read-control.tsx`
+- [x] `src/components/hr/recruiter-conversation-reply-form.tsx`
+- [x] `src/components/hr/recruiter-decision-read-button.tsx`
+- [x] `src/components/hr/recruiter-drive-focus-refresh.tsx`
+- [x] `src/components/hr/recruiter-profile-access.tsx`
+- [x] `src/components/hr/recruiter-request-cancel-button.tsx`
+- [x] `src/components/hr/recruiter-request-feedback.tsx`
+- [x] `src/components/hr/recruiter-round-inline-editor.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/people/faculty-profile-text-section.tsx`
+- [x] `src/components/placements/applicant-notes-panel.tsx`
+- [x] `src/components/placements/campaign-unsubscribe-confirm.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/placements/college-company-create.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/drive-day-roster.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-general-requests.tsx`
+- [x] `src/components/placements/learner-placement-academic-evidence.tsx`
+- [x] `src/components/placements/learner-placement-alert-action.tsx`
+- [x] `src/components/placements/learner-placement-alerts.tsx`
+- [x] `src/components/placements/learner-placement-job-detail.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-placement-partial-alert.tsx`
+- [x] `src/components/placements/learner-placement-preferences.tsx`
+- [x] `src/components/placements/learner-placement-requests.tsx`
+- [x] `src/components/placements/learner-placements-tabs.tsx`
+- [x] `src/components/placements/learner-save-drive-button.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
+- [x] `src/components/placements/placement-draft-edit-form.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-workspace.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-job-lifecycle-controls.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/placement-recruiter-access.tsx`
 - [ ] `src/components/placements/placement-request-queue.tsx`
 - [ ] `src/components/placements/placement-role-options.tsx`
 - [ ] `src/components/placements/placement-season-manager.tsx`
