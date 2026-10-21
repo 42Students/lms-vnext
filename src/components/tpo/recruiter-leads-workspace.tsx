@@ -39,6 +39,7 @@ import type {TpoSpreadsheetGridProps} from "./tpo-spreadsheet-grid";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Select} from "@/components/ui/select";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {GridWorkspace} from "./grid/grid-workspace";
 import {legacyGridExportFilename} from "@/modules/placements/grid-export-filename";
 import boardStyles from "./recruiter-board-theme.module.css";
@@ -97,21 +98,36 @@ function inviteLabel(status:string):string{
 }
 const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
  {key:"Contact",label:"Contact",read:lead=>(lead.name||"Unnamed contact")+
- (lead.designation?" · "+lead.designation:"")},
+ (lead.designation?" · "+lead.designation:""),
+ render:lead=><span className="inline-flex min-w-0 flex-col items-start leading-tight">
+  <strong className="max-w-full truncate text-[var(--lms-heading)]">{lead.name||"Unnamed contact"}</strong>
+  {lead.designation?<small className="max-w-full truncate text-[11px] text-muted-foreground">{lead.designation}</small>:null}
+ </span>},
  {key:"Status",label:"Status",read:lead=>lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"},
- {key:"Stage",label:"Stage",read:lead=>RECRUITER_STAGE_LEGACY_LABELS[lead.stage]},
+ {key:"Stage",label:"Stage",read:lead=>RECRUITER_STAGE_LEGACY_LABELS[lead.stage],
+ render:lead=><StatusBadge tone={lead.stage==="NOT_NOW"?"neutral":lead.stage==="CONTACTED"?"warning":
+  lead.stage==="RECRUITED"||lead.stage==="JOINED"?"success":"info"}>{RECRUITER_STAGE_LEGACY_LABELS[lead.stage]}</StatusBadge>},
  {key:"Company",label:"Company",read:lead=>lead.companyName||"Not set"},
   {key:"Designation",label:"Designation",read:lead=>lead.designation||"-"},
  {key:"Email",label:"Email",read:lead=>lead.emailNorm},
  {key:"Phone",label:"Phone",read:lead=>lead.phoneNorm},
  {key:"Flags",label:"Flags",read:lead=>lead.chips.map(chip=>chip==="QUIET"?
- "Quiet "+lead.quietDays+"d":RECRUITER_ATTENTION_LABELS[chip]).join(" · ")||"-"},
+ "Quiet "+lead.quietDays+"d":RECRUITER_ATTENTION_LABELS[chip]).join(" · ")||"-",
+ render:lead=>lead.chips?.length?<span className="flex max-w-full flex-wrap gap-1">{lead.chips.map(chip=>
+  <StatusBadge key={chip} tone={chip==="OVERDUE"?"error":chip==="QUIET"?"warning":"info"} className="min-w-0! px-2!">
+   {chip==="QUIET"?"Quiet "+lead.quietDays+"d":RECRUITER_ATTENTION_LABELS[chip]}
+  </StatusBadge>)}</span>:<span className="text-muted-foreground">-</span>},
  {key:"Owner",label:"Owner",read:lead=>lead.ownerName||"Unassigned"},
  {key:"Last activity",label:"Last activity",read:lead=>recruiterDate(lead.lastActivityAt),
   sortKind:"date",sortValue:lead=>lead.lastActivityAt?new Date(lead.lastActivityAt).getTime():null},
  {key:"Next follow-up",label:"Next follow-up",read:lead=>recruiterDate(lead.nextFollowupAt),
   sortKind:"date",sortValue:lead=>lead.nextFollowupAt?new Date(lead.nextFollowupAt).getTime():null},
- {key:"Invite",label:"Invite",read:lead=>inviteLabel(lead.inviteStatus)},
+ {key:"Invite",label:"Invite",read:lead=>inviteLabel(lead.inviteStatus),
+ render:lead=><StatusBadge tone={lead.inviteStatus==="JOINED"?"success":
+  ["BOUNCED","UNSUBSCRIBED"].includes(lead.inviteStatus)?"error":
+  ["SENT","OPENED","CLICKED"].includes(lead.inviteStatus)?"info":"neutral"}>
+  {inviteLabel(lead.inviteStatus)}
+ </StatusBadge>},
  {key:"Added",label:"Added",read:lead=>recruiterDate(lead.createdAt,true),
   sortKind:"date",sortValue:lead=>new Date(lead.createdAt).getTime()},
  {key:"Came from",label:"Came from",read:lead=>sourceLabel(lead.source)},
