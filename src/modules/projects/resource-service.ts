@@ -201,7 +201,7 @@ export async function createProjectResource(
       const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("CREATED",{
         projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
       },resource,undefined,scope.access==="LEARNER"?"LEARNER":
-         scope.access==="MENTOR"?"MENTOR":"ADMIN"));
+         scope.access==="MENTOR"?"MENTOR":"ADMIN",{before:null,after:resource}));
       await notifyActiveProjectMembers(tx,event.id,{
         projectId:scope.project.id,collegeId:scope.collegeId,
         roles:["MENTOR"],exceptUserId:context.user.id,
@@ -355,7 +355,7 @@ export async function updateProjectResource(
 
     const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("UPDATED",{
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
-    },updated,randomUUID()));
+    },updated,randomUUID(),undefined,{before:resource,after:updated}));
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,
       roles:["MENTOR"],exceptUserId:context.user.id,
@@ -452,7 +452,7 @@ export async function archiveProjectResource(
 
     await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("ARCHIVED",{
       projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
-    },archived));
+    },archived,undefined,undefined,{before:resource,after:archived}));
     return archived;
   });
 }
