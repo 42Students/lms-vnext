@@ -1,0 +1,7 @@
+# Lane 13 handoffs (wave 1)
+
+- Deployment/storage owner / G2-3-010-031, G2-20-009-008, G2-3-010-004/005/019/029/030: before real production files, provision isolated least-privilege private R2 credentials and trusted scanner. If a legacy dataset ever exists, inventory/rehost public originals, verify scoped references and remove exposures; no migration is intended for new vNext tenants.
+- Storage API owners / G2-3-010-013, G2-3-010-016, G2-4-033-028, G2-20-009-030: every upload/download/playback grant must validate role, tenant, membership, parent record and visible course/lesson state rather than trusting object-key IDs; no raw legacy fallback.
+- src/modules/storage/file-access.ts / G2-10-027-026, G2-3-010-009/011: client messages for invalid folder vs unsupported folder and bucket not configured; keep missing-object separate from backend outage, never reveal unauthorized key.
+- src/db/schema/db10-announcements.ts / G2-19-024-013/045: design stable broadcastGroupId, immutable college target snapshot and grouped transactional CAS mutations plus durable scheduled outbox/retry worker. Until deployed, scheduled field deliberately unavailable; per-college row mutation is NOT grouped broadcast editing.
+- src/app/api/admin/announcements/broadcast/route.ts and Super Admin announcement list / G2-19-024-013/020: implement guarded grouped PATCH/DELETE with proper Saved/Deleted notice and distinct-college reads after DB group migration; never edit/delete only one child's broadcast row.
