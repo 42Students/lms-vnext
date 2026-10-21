@@ -9,6 +9,23 @@ import {closePlacementJob} from "./job-service";
 import {reopenCollegeDrive} from "./college-drive-reopen-service";
 import {PlacementsServiceError} from "./errors";
 
+/** Compatibility for the old isActive boolean. Legacy activation is not
+ * equivalent to publishing an unreviewed draft; never publish a DRAFT via
+ * an unversioned toggle. vNext still requires confirmed lifecycle actions. */
+export function legacyCollegeDriveActivation(
+ currentStatus:string,isActive:boolean,
+):{action:"OPEN"|"CLOSE"|null;reason:string}{
+ if(currentStatus==="PUBLISHED")return isActive
+  ?{action:null,reason:"Drive is already open"}
+  :{action:"CLOSE",reason:"Close the published drive"};
+ if(currentStatus==="CLOSED")return isActive
+  ?{action:"OPEN",reason:"Reopen the closed drive"}
+  :{action:null,reason:"Drive is already closed"};
+ return {action:null,reason:currentStatus==="DRAFT"
+  ?"Draft drives must pass publication checks before opening"
+  :"Drive status cannot be changed with the legacy activation toggle"};
+}
+
 export const collegeBulkDriveInput=z.strictObject({
  action:z.enum(["OPEN","CLOSE"]),
  jobIds:z.array(z.uuid()).min(1,"Select at least one drive").max(25,"Select 25 drives or fewer per batch").refine(ids=>new Set(ids).size===ids.length,
@@ -32,7 +49,8 @@ export async function previewCollegeBulkDrives(ctx:RequestContext,raw:unknown){
  return {requested:input.jobIds.length,eligible:eligible.length,ignored:ignored.length,
   excluded:input.jobIds.length-rows.length,
   pendingLettersWithdrawn:offers.length,selectionLimit:25,
-  confirmationMessage:"Review and confirm up to 25 drives per batch. Closing a drive keeps its applications and interview history; issued offers may be withdrawn.",rows};
+  confirmationMessage:"Review and confirm up to 25 drives per batch. "+(input.jobIds.length>=25?"For more drives, submit another batch. ":"")+
+   "Closing a drive keeps its applications and interview history; issued offers may be withdrawn.",rows};
 }
 /** Per-drive operations intentionally return partial failures, not false all-or-nothing claims. */
 export async function updateCollegeBulkDrives(ctx:RequestContext,raw:unknown){

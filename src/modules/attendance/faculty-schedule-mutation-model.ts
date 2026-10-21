@@ -1,9 +1,11 @@
 import {z} from "zod";
 const timestamp=z.iso.datetime({offset:true});
 const details=z.object({
-  title:z.string().trim().min(3).max(160),
-  description:z.string().trim().max(1000).nullable(),
-  location:z.string().trim().max(240).nullable(),
+  // Old ClassScheduleDTO permitted no title at all. Optional enhanced
+  // vNext fields remain bounded but are not required for scheduling.
+  title:z.string().trim().max(160).default(""),
+  description:z.string().trim().max(1000).nullable().default(null),
+  location:z.string().trim().max(240).nullable().default(null),
   startsAt:timestamp,endsAt:timestamp,
 }).strict();
 export const facultyAttendanceScheduleSchema=z.discriminatedUnion("action",[
