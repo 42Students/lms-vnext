@@ -3,6 +3,7 @@ import { and,desc,eq,sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import { placementTpoMessages,placementTpoMessageThreads,users } from "@/db/schema";
+import {placementDriveChangeRequests} from "@/db/schema/placement-drive-change-requests";
 import { hasMembershipRole,type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listMessageThreads } from "./tpo-messaging-service";
@@ -13,6 +14,7 @@ export type TpoRecruiterMessageItem={
  id:string;senderType:string;senderId:string;senderName:string|null;
  body:string;createdAt:Date;readAt:Date|null;
  via:string;kind:string;event:string|null;changeRequestId:string|null;
+ changeRequestHref:string|null;requestSummary:string|null;
 };
 export async function getTpoRecruiterThreadDetail(context:RequestContext,rawId:unknown){
  const id=z.string().uuid().parse(rawId),member=context.membership;
@@ -32,13 +34,37 @@ export async function getTpoRecruiterThreadDetail(context:RequestContext,rawId:u
   event:placementTpoMessages.event,changeRequestId:placementTpoMessages.changeRequestId,
   body:placementTpoMessages.body,createdAt:placementTpoMessages.createdAt,
   readAt:placementTpoMessages.readAt,
+  requestField:placementDriveChangeRequests.field,
+  requestStatus:placementDriveChangeRequests.status,
+  requestJobId:placementDriveChangeRequests.jobId,
+  threadJobId:placementTpoMessageThreads.jobId,
  }).from(placementTpoMessages).innerJoin(placementTpoMessageThreads,
    eq(placementTpoMessageThreads.id,placementTpoMessages.threadId))
   .leftJoin(users,eq(users.id,placementTpoMessages.senderUserId))
+  .leftJoin(placementDriveChangeRequests,and(
+    eq(placementDriveChangeRequests.id,placementTpoMessages.changeRequestId),
+    eq(placementDriveChangeRequests.jobId,placementTpoMessageThreads.jobId),
+  ))
   .where(and(eq(placementTpoMessages.threadId,thread.id),
    eq(placementTpoMessageThreads.collegeId,member.collegeId)))
   .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
   .limit(100);
- const messages:TpoRecruiterMessageItem[]=newest.reverse();
+ // A quoted change request is exposed only when its job matches the
+ // authorized thread's job. A foreign or deleted link stays non-navigable.
+ const messages:TpoRecruiterMessageItem[]=newest.reverse().map(row=>{
+  const safeRequest=Boolean(row.changeRequestId&&row.threadJobId&&
+    row.requestJobId===row.threadJobId);
+  return {
+   id:row.id,senderType:row.senderType,senderId:row.senderId,
+   senderName:row.senderName,body:row.body,createdAt:row.createdAt,
+   readAt:row.readAt,via:row.via,kind:row.kind,event:row.event,
+   changeRequestId:safeRequest?row.changeRequestId:null,
+   changeRequestHref:safeRequest?
+    "/tpo/placements/jobs/"+encodeURIComponent(row.threadJobId!)+
+     "/change-requests?requestId="+encodeURIComponent(row.changeRequestId!):null,
+   requestSummary:safeRequest&&row.requestField?
+    row.requestField.replaceAll("_"," ")+" · "+row.requestStatus:null,
+  };
+ });
  return {thread,messages,total:count?.total??0};
 }
