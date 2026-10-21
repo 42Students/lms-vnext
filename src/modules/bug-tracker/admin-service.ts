@@ -13,6 +13,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges } from "@/db/schema/colleges";
+import {activityEvents} from "@/db/schema/activity";
 import {
   db10BugReportActivities,
   db10BugReportAttachments,
@@ -44,6 +45,9 @@ import {trackerActivityCursorSchema} from "./admin-detail-cursor-model";
 
 type BugRow = typeof db10BugReports.$inferSelect;
 
+/** Tracker logs use authenticated, identifiable accounts instead of the legacy shared
+ * bcrypt-password gate. This removes an unauditable password-only bypass; do not
+ * accept legacy log-view secrets in query strings or session-less requests. */
 function requireTrackerAdmin(context: RequestContext) {
   if (
     context.user.platformStatus !== "ACTIVE" ||
@@ -282,6 +286,18 @@ export async function getBugTrackerIssueForAdmin(
   const attachments=attachmentRows.slice(0,50);
   const lastAttachment=attachments.at(-1);
   const last=activities.at(-1);
+  // Audit the *successful* account-based view, never raw IP, headers,
+  // signed media links, engineering notes or private attachment keys.
+  // Persist before returning the privileged details.
+  await getDb().insert(activityEvents).values({
+    actorUserId:context.user.id,
+    module:"PLATFORM",
+    eventType:"platform.tracker.issue_viewed",
+    subjectType:"bug_report",
+    subjectId:row.report.id,
+    summary:"Bug Tracker issue viewed",
+    metadata:{publicId:row.report.publicId,access:"account"},
+  });
   return { report:row.report,activities,attachments,
     activityUnavailable:activityResult.status==="rejected",
     attachmentsUnavailable:attachmentResult.status==="rejected",
@@ -301,6 +317,8 @@ export async function updateBugTrackerWorkflowForAdmin(
 ) {
   requireTrackerAdmin(context);
   const publicId = trackerPublicIdSchema.parse(publicIdInput);
+  // All permitted workflow status values are validated centrally. Invalid
+  // values fail closed before any row update or actor audit mutation.
   const input = trackerWorkflowUpdateSchema.parse(rawInput);
   const now = new Date();
 
@@ -371,6 +389,8 @@ export async function retestBugTrackerIssueForAdmin(
 ) {
   requireTrackerAdmin(context);
   const publicId = trackerPublicIdSchema.parse(publicIdInput);
+  // applyBugWorkflowRetest preserves the legacy "Issue is not ready for
+  // retest." conflict whenever the issue is not READY_FOR_RETEST.
   const input = trackerRetestSchema.parse(rawInput);
   const now = new Date();
 

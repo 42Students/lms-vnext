@@ -43,6 +43,7 @@ export default async function TpoPlacementTeamPage() {
   );
 
   const { members, summary, sources } = data;
+  const actorMembershipId = context.membership.id;
   const candidates = sources.teamAssignmentsAvailable
     ? await listTpoTeamAssignableStaff(context)
     : [];
@@ -162,7 +163,7 @@ export default async function TpoPlacementTeamPage() {
               {key:"manage",header:"Team access",cell:member=><TpoSettingsTeamRemove
                 membershipId={member.membershipId} displayName={member.displayName}
                 removable={sources.teamAssignmentsAvailable && (member.roles.includes("TPO_ADMIN") || member.roles.includes("FACULTY_COORDINATOR"))}
-                isSelf={member.membershipId===context.membership.id}
+                isSelf={member.membershipId===actorMembershipId}
                 permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}/>},
               {key:"duties",header:"Student duties",mobilePriority:"secondary",cell:member=>
                 member.studentDuties.length===0?<span className="text-muted-foreground">—</span>:

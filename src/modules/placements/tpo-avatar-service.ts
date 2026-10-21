@@ -60,7 +60,7 @@ export async function confirmOwnTpoAvatar(context:RequestContext,input:unknown){
   await tx.insert(activityEvents).values({
    organizationId:member.organizationId,collegeId:member.collegeId,
    actorUserId:context.user.id,actorMembershipId:member.id,
-   module:"PEOPLE",eventType:"people.tpo_avatar.updated",subjectType:"faculty_profile",
+   module:"IDENTITY",eventType:"people.tpo_avatar.updated",subjectType:"faculty_profile",
    subjectId:member.id,summary:"Placement officer photo updated",
    metadata:{replaced:Boolean(old),cleanupQueued:managed},
   });
