@@ -51,7 +51,7 @@ export default async function SuperAdminBatchPromotionPage({
   return <div className="min-w-0 space-y-5">
     <PageHeader  title="Batch Promotion"
       description="Review scoped promotion eligibility, then explicitly confirm with a locked version and a transactional blocker recheck. Class moves are managed separately in the batch roster." />
-    <form method="get" role="search" aria-label="Batch promotion preview filters" className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1200px]:grid-cols-3">
+    <form method="get" role="search" aria-label="Batch promotion preview filters" className="grid min-w-0 items-end gap-[8px] border-b border-border pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1200px]:grid-cols-3">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
         <Select name="programId" defaultValue={input.data.programId ?? ""}
           className="min-h-11 min-[768px]:min-h-9">

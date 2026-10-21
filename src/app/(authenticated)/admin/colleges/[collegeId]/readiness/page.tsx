@@ -135,7 +135,7 @@ export default async function CollegeReadinessPage({
       <PageHeader
         title={`${college.name} · Readiness Gate`}
         description={`Read-only go-live checklist for ${college.code}. Checks use persisted, college-scoped data. No settings are modified.`}
-        actions={<div className="flex min-w-0 flex-wrap items-center gap-3">
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4">
           <PageBackLink href="/admin/colleges" label="Colleges"/>
           <StatusBadge tone={overallTone(evaluation.overall)}>{overallLabel(evaluation.overall)}</StatusBadge>
         </div>}
@@ -213,7 +213,7 @@ export default async function CollegeReadinessPage({
           </StatusBadge>
         </div>
 
-        <form method="get" role="search" aria-label="Readiness check filters" className="mt-[var(--lms-space-4)] grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+        <form method="get" role="search" aria-label="Readiness check filters" className="mt-[var(--lms-space-4)] grid min-w-0 items-end gap-[8px] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
           <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:w-auto md:min-w-40">Show checks
             <Select name="status" defaultValue={parsed.status} className="min-h-11 min-[768px]:min-h-9">
               <option value="ALL">All ten checks</option><option value="NEEDS_ATTENTION">Needs attention</option><option value="FAIL">Failed</option><option value="UNKNOWN">Unknown source</option><option value="PASS">Passed</option>

@@ -249,7 +249,7 @@ export default async function ActivityPage({
        ].map(link=><Link key={link.label} href={link.href}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] font-[650] hover:border-[var(--lms-primary)] md:min-h-9">{link.label}</Link>)}</div>
       </nav>:null}
-      <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-4 border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
+      <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         {isSuperAdmin(context) ? (
           <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">College</span>
