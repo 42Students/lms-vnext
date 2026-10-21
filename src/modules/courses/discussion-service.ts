@@ -2,6 +2,7 @@ import "server-only";
 
 import {
   and,
+  asc,
   desc,
   eq,
   isNull,
@@ -33,7 +34,11 @@ import {facultyReplyParentTokenMatches} from "./faculty-discussion-reply-model";
 const deliveryIdSchema = z.string().uuid();
 const messageIdSchema = z.string().uuid();
 const createDiscussionMessageSchema = z.object({
-  messageText: z.string().trim().min(1).max(LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH),
+  messageText: z.string().trim()
+    .min(1, { message: "Message cannot be empty" })
+    .max(LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH, {
+      message: "Message is too long for this Discussion",
+    }),
   replyToMessageId: messageIdSchema.optional(),
   expectedParentUpdatedAt:z.string().datetime({offset:true}).optional(),
   confirmed:z.literal(true).optional(),
@@ -84,12 +89,10 @@ async function loadDiscussionMessage(
   const [message] = await getDb()
     .select()
     .from(courseDiscussionMessages)
-    .where(
-      eq(
-        courseDiscussionMessages.id,
-        messageId,
-      ),
-    )
+    .where(and(
+      eq(courseDiscussionMessages.id, messageId),
+      isNull(courseDiscussionMessages.deletedAt),
+    ))
     .limit(1);
 
   if (!message) {
@@ -141,7 +144,11 @@ export async function listCourseDiscussionMessages(
     .innerJoin(collegeMemberships,
       eq(collegeMemberships.id, courseDiscussionMessages.senderMembershipId))
     .innerJoin(users, eq(users.id, collegeMemberships.userId))
-    .where(and(eq(courseDiscussionMessages.deliveryId, deliveryId), before))
+    .where(and(
+      eq(courseDiscussionMessages.deliveryId, deliveryId),
+      isNull(courseDiscussionMessages.deletedAt),
+      before,
+    ))
     .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
     .limit(page.limit + 1);
   // Pinning remains visible even after its message is outside the newest page.
@@ -161,6 +168,7 @@ export async function listCourseDiscussionMessages(
     .where(and(
       eq(courseDiscussionMessages.deliveryId, deliveryId),
       eq(courseDiscussionMessages.pinned, true),
+      isNull(courseDiscussionMessages.deletedAt),
     ))
     .orderBy(desc(courseDiscussionMessages.createdAt), desc(courseDiscussionMessages.id))
     .limit(1);
@@ -215,6 +223,80 @@ async function assertLiveLearnerDiscussionWriter(
   if(!active)throw new CoursesServiceError("DISCUSSION_POST_ACCESS_DENIED");
 }
 
+/** Changed-row feed for classroom polling: clients apply active upserts and
+ * privacy-safe tombstones by stable UUID, without fetching the entire thread.
+ * Use the returned microsecond timestamp and UUID together for lossless paging.
+ * Bare 'since' deliberately includes equal-time rows; this may repeat a row
+ * but cannot silently skip a same-timestamp update. */
+export async function listCourseDiscussionChanges(
+  context: RequestContext,
+  deliveryIdInput: string,
+  rawQuery: unknown,
+) {
+  const query = z.object({
+    since: z.string().datetime({
+      offset: true,
+      message: "since must be an ISO-8601 timestamp",
+    }),
+    afterId: messageIdSchema.optional(),
+    limit: z.coerce.number().int().min(1).max(100).default(60),
+  }).strict().parse(rawQuery);
+  const { deliveryId, mode } =
+    await discussionAccess(context, deliveryIdInput, true);
+  if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
+  const changedAfter = query.afterId
+    ? sql`(${courseDiscussionMessages.updatedAt}, ${courseDiscussionMessages.id}) >
+        (${query.since}::timestamptz, ${query.afterId}::uuid)`
+    : sql`${courseDiscussionMessages.updatedAt} >= ${query.since}::timestamptz`;
+  const fetched = await getDb().select({
+    id: courseDiscussionMessages.id,
+    deliveryId: courseDiscussionMessages.deliveryId,
+    senderMembershipId: courseDiscussionMessages.senderMembershipId,
+    senderName: users.displayName,
+    messageText: courseDiscussionMessages.messageText,
+    pinned: courseDiscussionMessages.pinned,
+    deletedAt: courseDiscussionMessages.deletedAt,
+    updatedAtExact: sql<string>`to_char(${courseDiscussionMessages.updatedAt}
+      AT TIME ZONE 'UTC', 'YYYY-MM-DD"T"HH24:MI:SS.US"Z"')`,
+  }).from(courseDiscussionMessages)
+    .innerJoin(collegeMemberships,
+      eq(collegeMemberships.id, courseDiscussionMessages.senderMembershipId))
+    .innerJoin(users, eq(users.id, collegeMemberships.userId))
+    .where(and(
+      eq(courseDiscussionMessages.deliveryId, deliveryId),
+      changedAfter,
+    ))
+    .orderBy(asc(courseDiscussionMessages.updatedAt), asc(courseDiscussionMessages.id))
+    .limit(query.limit + 1);
+  const hasMore = fetched.length > query.limit;
+  const rows = hasMore ? fetched.slice(0, query.limit) : fetched;
+  const last = rows.at(-1);
+  return {
+    deliveryId,
+    changes: rows.map(row => row.deletedAt
+      ? {
+          id: row.id,
+          deliveryId: row.deliveryId,
+          deleted: true as const,
+          updatedAtExact: row.updatedAtExact,
+        }
+      : {
+          id: row.id,
+          deliveryId: row.deliveryId,
+          deleted: false as const,
+          senderMembershipId: row.senderMembershipId,
+          senderName: row.senderName,
+          messageText: row.messageText,
+          pinned: row.pinned,
+          updatedAtExact: row.updatedAtExact,
+          isMine: context.membership?.id === row.senderMembershipId,
+        }),
+    nextCursor: hasMore && last
+      ? { since: last.updatedAtExact, afterId: last.id }
+      : null,
+  };
+}
+
 export async function createCourseDiscussionMessage(
   context: RequestContext,
   deliveryIdInput: string,
@@ -251,7 +333,8 @@ export async function createCourseDiscussionMessage(
     const [parent]=input.replyToMessageId
       ? await tx.select().from(courseDiscussionMessages)
         .where(and(eq(courseDiscussionMessages.id,input.replyToMessageId),
-          eq(courseDiscussionMessages.deliveryId,deliveryId))).for("share").limit(1)
+          eq(courseDiscussionMessages.deliveryId,deliveryId),
+          isNull(courseDiscussionMessages.deletedAt))).for("share").limit(1)
       : [null];
     if(input.replyToMessageId&&!parent)
       throw new CoursesServiceError("DISCUSSION_MESSAGE_NOT_FOUND");
@@ -354,6 +437,7 @@ export async function toggleCourseDiscussionPin(
     }).where(and(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),
+      isNull(courseDiscussionMessages.deletedAt),
       concurrency?sql`date_trunc('milliseconds', ${courseDiscussionMessages.updatedAt}) =
         ${new Date(concurrency.expectedUpdatedAt).toISOString()}::timestamptz`:undefined,
     )).returning();
@@ -392,9 +476,11 @@ export async function deleteCourseDiscussionMessage(
   );
 
   if (mode === "LEARNER") await requireOwnCourseLearnerRead(context);
+  // The legacy author can delete their own post even while it is pinned;
+  // the tombstone also releases the pinned slot atomically.
   const canDelete =
     mode !== "LEARNER" ||
-    (context.membership?.id === message.senderMembershipId && !message.pinned);
+    context.membership?.id === message.senderMembershipId;
 
   if (!canDelete) {
     throw new CoursesServiceError(
@@ -407,13 +493,22 @@ export async function deleteCourseDiscussionMessage(
   return getDb().transaction(async (tx) => {
     if(mode==="LEARNER")await assertLiveLearnerDiscussionWriter(tx,context);
     if (mode === "FACULTY") await assertLiveFacultyDiscussionModerator(tx,context,message.deliveryId);
-    const [deleted] = await tx.delete(courseDiscussionMessages).where(and(
+    // Retain the stable ID and moderation evidence for delta subscribers.
+    // Normal history hides deleted rows; delta reads return only the redacted
+    // tombstone, never the retained body, sender identity or attribution.
+    const [deleted] = await tx.update(courseDiscussionMessages).set({
+      deletedAt: sql`greatest(now(), ${courseDiscussionMessages.createdAt})`,
+      pinned: false,
+      pinnedByUserId: null,
+      updatedAt: sql`greatest(now(), ${courseDiscussionMessages.createdAt},
+        ${courseDiscussionMessages.updatedAt} + interval '1 millisecond')`,
+    }).where(and(
       eq(courseDiscussionMessages.id, message.id),
       eq(courseDiscussionMessages.deliveryId, message.deliveryId),
-      mode === "LEARNER" ? and(
-        eq(courseDiscussionMessages.senderMembershipId, context.membership!.id),
-        eq(courseDiscussionMessages.pinned, false),
-      ) : undefined,
+      isNull(courseDiscussionMessages.deletedAt),
+      mode === "LEARNER"
+        ? eq(courseDiscussionMessages.senderMembershipId, context.membership!.id)
+        : undefined,
       concurrency?sql`date_trunc('milliseconds', ${courseDiscussionMessages.updatedAt}) =
         ${new Date(concurrency.expectedUpdatedAt).toISOString()}::timestamptz`:undefined,
     )).returning({ id: courseDiscussionMessages.id });
