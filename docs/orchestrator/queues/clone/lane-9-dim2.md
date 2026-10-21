@@ -33,36 +33,36 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [x] `src/components/activity/notification-list.tsx`
 - [x] `src/components/admin/academic-module-scope-inventory.tsx`
-- [ ] `src/components/admin/admin-program-directory.tsx`
-- [ ] `src/components/admin/admin-scoped-read-page.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/department-directory.tsx`
-- [ ] `src/components/admin/descendant-feature-rule-editor.tsx`
-- [ ] `src/components/admin/inbound-mail-list.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/lecture-hall-manager.tsx`
-- [ ] `src/components/admin/managed-college-subdomain.tsx`
-- [ ] `src/components/admin/organization-actions.tsx`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
-- [ ] `src/components/admin/student-rule-editor.tsx`
-- [ ] `src/components/admin/super-admin-college-company-actions.tsx`
-- [ ] `src/components/admin/super-admin-company-edit.tsx`
-- [ ] `src/components/admin/super-admin-company-identities.tsx`
-- [ ] `src/components/admin/super-admin-faculty-assignment-create.tsx`
-- [ ] `src/components/admin/super-admin-faculty-bulk-import.tsx`
-- [ ] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
-- [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/admin/tenant-domain-manager.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/admin/admin-program-directory.tsx`
+- [x] `src/components/admin/admin-scoped-read-page.tsx`
+- [x] `src/components/admin/college-archive-button.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/department-directory.tsx`
+- [x] `src/components/admin/descendant-feature-rule-editor.tsx`
+- [x] `src/components/admin/inbound-mail-list.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/lecture-hall-manager.tsx`
+- [x] `src/components/admin/managed-college-subdomain.tsx`
+- [x] `src/components/admin/organization-actions.tsx`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
+- [x] `src/components/admin/student-rule-editor.tsx`
+- [x] `src/components/admin/super-admin-college-company-actions.tsx`
+- [x] `src/components/admin/super-admin-company-edit.tsx`
+- [x] `src/components/admin/super-admin-company-identities.tsx`
+- [x] `src/components/admin/super-admin-faculty-assignment-create.tsx`
+- [x] `src/components/admin/super-admin-faculty-bulk-import.tsx`
+- [x] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
+- [x] `src/components/admin/super-admin-hr-account-dialog.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/admin/tenant-domain-manager.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
 - [ ] `src/components/announcements/announcement-admin-workspace.tsx`
 - [ ] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
 - [ ] `src/components/attendance/admin-attendance-workspace.tsx`
@@ -310,13 +310,13 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 51 files (101 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: every colour must be a legacy token or exactly a legacy value; replace tailwind default palette and stray hex with tokens; check text contrast; no pure black text.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
 - [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
 - [ ] `src/app/globals.css`
 - [ ] `src/app/login-shell.module.css`
 - [ ] `src/components/academics/learner-class-schedule.module.css`
 - [ ] `src/components/academics/legacy-class-month-grid.module.css`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [ ] `src/components/admin/legacy-college-stat.module.css`
 - [ ] `src/components/courses/college-learner-progress-report.module.css`
 - [ ] `src/components/courses/faculty-course-home-signals.module.css`
