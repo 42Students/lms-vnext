@@ -6,7 +6,7 @@ import { useRef,useState } from "react";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { beginFacultyProfileSave } from "@/modules/people/faculty-profile-save-lock";
 import {FACULTY_PROFILE_NAV,facultyProfileAnchor} from "@/modules/people/faculty-profile-navigation";
-import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired,facultyProfileSavedStatus} from "@/modules/people/faculty-profile-error-model";
+import {facultyProfileSaveFailure,facultyProfileUnconfirmedSaveMessage,facultyProfileErrorCode,facultyProfileSaveSectionLabel,facultyProfileReloadRequired} from "@/modules/people/faculty-profile-error-model";
 import {facultyProfileSaveReceipt,FacultyProfileSaveResponseError} from "@/modules/people/faculty-profile-save-response";
 import type { FacultyProfileDocument } from "@/modules/people/faculty-profile-document";
 import type { FacultySelfSection } from "@/modules/people/faculty-self-section-model";
@@ -41,12 +41,13 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
  const [savingSection,setSavingSection]=useState<FacultySelfSection|null>(null);
  const saveInFlight=useRef(false);
  const [error,setError]=useState<string|null>(null);
+ const [fieldErrorKeys,setFieldErrorKeys]=useState<string[]>([]);
  const [success,setSuccess]=useState<string|null>(null);
  const [needsReload,setNeedsReload]=useState(false);
  const [reloadOpen,setReloadOpen]=useState(false);
  async function save(section:FacultySelfSection,value:unknown){
   if(!beginFacultyProfileSave(saveInFlight))return;
-  setSavingSection(section);setPending(true);setError(null);setSuccess(null);setNeedsReload(false);
+  setSavingSection(section);setPending(true);setError(null);setFieldErrorKeys([]);setSuccess(null);setNeedsReload(false);
   try{
    const response=await fetch("/api/people/faculty-self-document",{
     method:"PATCH",headers:{"Content-Type":"application/json"},
@@ -55,13 +56,23 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    if(!response.ok){
     const problem:unknown=await response.json().catch(()=>null);
     const code=facultyProfileErrorCode(problem);
+    const detail=problem&&typeof problem==="object"&&!Array.isArray(problem)?"fieldErrors" in problem?problem.fieldErrors:null:null;
+    if(detail&&typeof detail==="object"&&!Array.isArray(detail)){
+      setFieldErrorKeys(Object.keys(detail).filter(key=>/^[a-zA-Z][\w.\[\]]{0,79}$/.test(key)).slice(0,8));
+    }
     setNeedsReload(facultyProfileReloadRequired(code,response.status));
     setError(facultyProfileSaveFailure(code,response.status));return;
    }
    const result=facultyProfileSaveReceipt(await response.json(),version);
+   const previous=document[section];
+   const removed=Array.isArray(previous)&&Array.isArray(value)&&value.length<previous.length;
+   const added=Array.isArray(previous)&&Array.isArray(value)&&value.length>previous.length;
    setDocument(result.document);setVersion(result.version);
    setSectionRevisions(current=>advanceFacultySectionRevision(current,section));
-   setSuccess(facultyProfileSavedStatus(section,result.version));
+   // Legacy save/toast copy is retained in an accessible persistent status.
+   // "Deleted" applies only after the server confirms a shorter saved list.
+   setSuccess(removed?"Deleted successfully!":added?"Added":"Saved");
+   window.dispatchEvent(new Event("profileUpdated"));
   }catch(error){
    if(error instanceof FacultyProfileSaveResponseError){
     setNeedsReload(true);
@@ -77,6 +88,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
   {error?<Alert tone="error" className="max-w-[80ch] space-y-[var(--lms-space-2)]">
    <p className="m-0 break-words [overflow-wrap:anywhere]">{error}</p>
+   {fieldErrorKeys.length?<p className="mt-2 text-sm">Check: {fieldErrorKeys.join(", ")}</p>:null}
    {needsReload?<Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9" onClick={()=>{
     setReloadOpen(true);
    }} >Reload latest profile</Button>:null}
@@ -85,10 +97,33 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   {success?<Alert tone="success" className="max-w-[80ch]">{success}</Alert>:null}
   <nav aria-label="Profile sections" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
     <p className="mb-[var(--lms-space-2)] text-sm font-semibold text-foreground">Jump to a profile section</p>
-    <div className="flex min-w-0 snap-x snap-proximity gap-[var(--lms-space-2)] overflow-x-auto overscroll-x-contain pb-[var(--lms-space-2)]">{FACULTY_PROFILE_NAV.map(item=><a key={item.section}
+    <div className="flex min-w-0 snap-x snap-proximity gap-[var(--lms-space-2)] overflow-x-auto overscroll-x-contain pb-[var(--lms-space-2)]">
+     <a href="#faculty-identity-readonly" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Identity documents</a>
+     <a href="#faculty-contact-readonly" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Contact</a>
+     {FACULTY_PROFILE_NAV.map(item=><a key={item.section}
       className="inline-flex min-h-11 shrink-0 snap-start items-center rounded-[var(--lms-control-radius)] border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
       href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
   </nav>
+  <div className="grid min-w-0 gap-4 lg:grid-cols-2 [&>form]:min-w-0 [&>form]:rounded-[var(--lms-control-radius)] [&>form]:border [&>form]:border-border [&>form]:px-4 [&>form]:py-3">
+   <section id="faculty-identity-readonly" aria-label="Identity documents" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
+    <h2 className="text-base font-semibold text-foreground">Identity documents</h2>
+    <p className="text-sm text-muted-foreground">College-managed records. Private documents are not downloadable from the public profile.</p>
+    <dl className="grid min-w-0 gap-2 text-sm">
+     <div><dt className="font-semibold">Aadhaar (masked)</dt><dd className="break-words text-body">{document.identitySummary.aadhaarLast4?"•••• "+document.identitySummary.aadhaarLast4:"Not provided"}</dd></div>
+     <div><dt className="font-semibold">PAN evidence</dt><dd className="text-body">{document.identitySummary.panDocumentId?"On file":"Not uploaded"}</dd></div>
+     <div><dt className="font-semibold">Aadhaar evidence</dt><dd className="text-body">{document.identitySummary.aadhaarDocumentId?"On file":"Not uploaded"}</dd></div>
+     <div><dt className="font-semibold">Profile photo</dt><dd className="text-body">{document.profileImageDocumentId?"On file":"Not uploaded"}</dd></div>
+    </dl>
+   </section>
+   <section id="faculty-contact-readonly" aria-label="Contact" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
+    <h2 className="text-base font-semibold text-foreground">Contact</h2>
+    <p className="text-sm text-muted-foreground">These self-profile contact details are read-only here. Sign-in and official contact records are managed by your college.</p>
+    <dl className="grid min-w-0 gap-2 text-sm">
+     <div><dt className="font-semibold">Mobile</dt><dd className="break-words text-body">{document.contact.contactMobile||"Not provided"}</dd></div>
+     <div><dt className="font-semibold">Phone</dt><dd className="break-words text-body">{document.contact.contactPhone||"Not provided"}</dd></div>
+     <div><dt className="font-semibold">Email</dt><dd className="break-words text-body">{document.contact.contactMail||"Not provided"}</dd></div>
+    </dl>
+   </section>
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
    description="Introduce your teaching and research interests."
    fields={ABOUT_FIELDS} initial={{description:document.about.description}} pending={pending} onSave={save}/>
@@ -132,5 +167,6 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    description="Edit your own languages records. Removals are drafts until saved."
    initial={document.languages} fields={LANGUAGE_FIELDS} maxItems={30}
    create={newFacultyLanguage} pending={pending} onSave={save}/>
+  </div>
  </div>;
 }
