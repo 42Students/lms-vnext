@@ -46,7 +46,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_projects_meeting-service.ts.md` (edit src/modules/projects/meeting-service.ts; 10 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_placements_learner-placement-event-copy.ts.md` (edit src/modules/placements/learner-placement-event-copy.ts; 10 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_components_admin_department-create-form.tsx.md` (edit src/components/admin/department-create-form.tsx; 10 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_placements_admin-company-directory-model.ts.md` (edit src/modules/placements/admin-company-directory-model.ts; 10 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_placements_admin-company-directory-model.ts.md` (edit src/modules/placements/admin-company-directory-model.ts; 10 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_app_authenticated_college_groups_groupId_page.tsx.md` (edit src/app/(authenticated)/college/groups/[groupId]/page.tsx; 10 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_components_admin_college-dashboard-cards.tsx.md` (edit src/components/admin/college-dashboard-cards.tsx; 8 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_NEW_docs_audit_gap2_lane-6_l11-u026-public-bug-tracker-controller.md.md` (new; 8 findings; best P2)
