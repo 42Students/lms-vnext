@@ -225,6 +225,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <Checkbox disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
     Create another quiz after saving
    </label>
+   {error?<Banner tone="error" role="alert">{error}</Banner>:null}
    <div className="sticky bottom-0 z-10 flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 md:flex-row md:items-center">
     <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void create()} className="min-h-11 w-full md:min-h-9 md:w-auto"
      >
@@ -234,7 +235,6 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    </div>
   </div>
   </Dialog>
-  {error?<Banner tone="error">{error}</Banner>:null}
   {notice?<Banner tone="success">{notice}</Banner>:null}
   {dialog}
  </section>;
