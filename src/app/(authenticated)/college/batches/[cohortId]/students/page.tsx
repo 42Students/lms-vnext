@@ -81,7 +81,7 @@ export default async function CollegeBatchStudentsPage({
         <Input type="search" name="q" form="batch-students-roster-filters" defaultValue={q} maxLength={100} />
       </label>}
       action={<Button type="submit" form="batch-students-roster-filters" className="min-h-11 min-w-24 md:min-h-9">Search</Button>}>
-      <form id="batch-students-roster-filters" method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:max-w-[320px]">
+      <form id="batch-students-roster-filters" method="get" className="grid min-w-0 items-end gap-[8px] md:max-w-[320px]">
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
           <Select name="sectionId" defaultValue={sectionId ?? ""}>
             <option value="">All classes</option>
