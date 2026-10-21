@@ -100,7 +100,7 @@ export async function PlacementJobCreateWorkspace({
         eyebrow={eyebrow}
         title="Create drive"
         description="Build the opportunity students will see"
-        actions={<PageBackLink href={basePath} label="Back to drives" />}
+        actions={<PageBackLink href={basePath} label="Back to Drives" />}
       />
       {preFormActions ? <div className="min-w-0">{preFormActions}</div> : null}
       {pastDrives.length>0?<Disclosure title="Clone a past drive" className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
