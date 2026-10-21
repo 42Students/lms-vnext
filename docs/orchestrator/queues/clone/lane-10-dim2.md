@@ -123,16 +123,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/college/faculty/[membershipId]/page.tsx`
 - [x] `src/app/(authenticated)/college/faculty/error.tsx`
 - [x] `src/app/(authenticated)/college/faculty/import/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/error.tsx`
-- [ ] `src/app/(authenticated)/college/groups/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/error.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/error.tsx`
-- [ ] `src/app/(authenticated)/college/lecture-halls/page.tsx`
-- [ ] `src/app/(authenticated)/college/lessons/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/import-preview/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/[groupId]/rule-preview/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/error.tsx`
+- [x] `src/app/(authenticated)/college/groups/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/error.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/error.tsx`
+- [x] `src/app/(authenticated)/college/lecture-halls/page.tsx`
+- [x] `src/app/(authenticated)/college/lessons/error.tsx`
 - [ ] `src/app/(authenticated)/college/people/error.tsx`
 - [ ] `src/app/(authenticated)/college/people/manage/error.tsx`
 - [ ] `src/app/(authenticated)/college/people/manage/page.tsx`
