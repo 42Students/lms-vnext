@@ -18,6 +18,9 @@ export const lessonContentDeliverySequences = pgTable(
     legacyLessonContentId: bigint("legacy_lesson_content_id", { mode: "bigint" }),
     legacySequence: bigint("legacy_sequence", { mode: "bigint" }),
     deliveryId: uuid("delivery_id").notNull().references(() => courseSectionDeliveries.id, { onDelete: "cascade" }),
+    // FK ties the delivery to this exact offering; the DB05 trigger then
+    // verifies the lesson/content offering is the same.
+    offeringId: uuid("offering_id").notNull(),
     sequence: integer("sequence").notNull(),
     updatedByUserId: uuid("updated_by_user_id").notNull().references(() => users.id, { onDelete: "restrict" }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
@@ -29,6 +32,11 @@ export const lessonContentDeliverySequences = pgTable(
       name: "lesson_content_delivery_sequences_content_lesson_fk",
       columns: [table.lessonContentId, table.lessonId],
       foreignColumns: [lessonContents.id, lessonContents.lessonId],
+    }).onDelete("cascade"),
+    foreignKey({
+      name: "lesson_content_delivery_sequences_delivery_offering_fk",
+      columns: [table.deliveryId, table.offeringId],
+      foreignColumns: [courseSectionDeliveries.id, courseSectionDeliveries.offeringId],
     }).onDelete("cascade"),
     uniqueIndex("lesson_content_delivery_sequences_order_uq")
       .on(table.deliveryId,table.lessonId,table.sequence),
@@ -57,4 +65,20 @@ export function mapLegacyLessonDeliveryOrder(
  if(source.sequence<0n||source.sequence>2147483647n)return null;
  return {deliveryId:delivery.deliveryId,lessonContentId:content.lessonContentId,
     lessonId:source.lessonId,sequence:Number(source.sequence)};
+}
+
+/** The original import mapper remains source-compatible. The promoted
+ * delivery-offering witness must also be resolved from the trusted scoped
+ * import maps, never guessed from a client-provided class or lesson ID. */
+export function mapLegacyLessonDeliveryOrderWithOffering(
+ source:LegacyLessonSequenceSource,
+ scopedClassMap:ReadonlyMap<bigint,{deliveryId:string;lessonId:string;offeringId:string}>,
+ scopedContentMap:ReadonlyMap<bigint,{lessonContentId:string;lessonId:string;offeringId:string}>,
+):{deliveryId:string;lessonContentId:string;lessonId:string;offeringId:string;sequence:number}|null {
+ const base=mapLegacyLessonDeliveryOrder(source,scopedClassMap,scopedContentMap);
+ const delivery=scopedClassMap.get(source.classId);
+ const content=scopedContentMap.get(source.contentId);
+ if(!base||!delivery||!content||!delivery.offeringId||
+    delivery.offeringId!==content.offeringId)return null;
+ return {...base,offeringId:delivery.offeringId};
 }

@@ -1,9 +1,11 @@
 /**
- * DB10 skills catalog schema DRAFT ONLY.
+ * DB10 skills catalog: schema exported in src/db/schema/index.ts and canonical
+ * migration 0195 is listed in the Drizzle journal. These facts alone do NOT
+ * prove that PostgreSQL replay, legacy synonym import, or seed reconciliation
+ * completed. Keep catalog/usage API activation fail-closed until all three are
+ * verified by the database migration owner.
  *
- * Chat 1 owns migration registration and src/db/schema/index.ts. This file is
- * deliberately unexported until the DB10 source contract is reviewed and a
- * numbered migration is replayed on disposable PostgreSQL.
+ * 0236 is a separate staged proposal and must not be replayed over 0195.
  *
  * Legacy runtime evidence:
  * - Skill / SkillRepository: active searchable catalog, category filters,

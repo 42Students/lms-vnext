@@ -52,6 +52,10 @@ export const placementDriveChangeRequests=pgTable("placement_drive_change_reques
  check("placement_drive_changes_status_ck",sql`${t.status} in ('OPEN','ACCEPTED','ANSWERED','DECLINED','WITHDRAWN')`),
  check("placement_drive_changes_content_ck",sql`length(trim(${t.proposedValue}))>=2 and length(trim(${t.reason}))>=3`),
  check("placement_drive_changes_applied_ck",sql`(${t.appliedAt} is null and ${t.appliedByUserId} is null and ${t.appliedJobVersion} is null) or (${t.status} = 'ACCEPTED' and ${t.mode} = 'SUGGEST' and ${t.appliedAt} is not null and ${t.appliedByUserId} is not null and ${t.appliedJobVersion} > 0)`),
+ // Once 0305 is promoted, ACCEPTED is only possible after an in-transaction
+ // job write plus a receipt, never a standalone request-status transition.
+ check("placement_drive_changes_accepted_receipt_ck",
+  sql`${t.status} <> 'ACCEPTED' or (${t.appliedAt} is not null and ${t.appliedByUserId} is not null and ${t.appliedJobVersion} is not null)`),
  check("placement_drive_changes_decision_ck",sql`(${t.status}='OPEN' and ${t.decidedAt} is null and ${t.decidedByUserId} is null) or (${t.status}<>'OPEN' and ${t.decidedAt} is not null and ${t.decidedByUserId} is not null)`),
 ]);
 export const placementDriveChangeRequestMessages=pgTable("placement_drive_change_request_messages",{
@@ -73,4 +77,57 @@ export function normalizeLegacyDriveChangeStatus(raw:string):
  const key=raw.trim().toUpperCase();
  if(key==="REPLIED")return "DECLINED";
  return key==="OPEN"||key==="ACCEPTED"||key==="ANSWERED"||key==="DECLINED"||key==="WITHDRAWN"?key:null;
+}
+
+/** Normalize only unambiguous job-wide changes. Other legacy fields such as
+ * ROLE_TITLE, CTC, MIN_CGPA, and BRANCHES require their specific role/policy
+ * writers; silently accepting their request without changing those rows is
+ * forbidden. The service must lock the college-owned job, perform this patch,
+ * CAS-increment job.version and write the applied receipt atomically.
+ */
+export type SafeDriveChangeJobPatch =
+ | {field:"DEADLINE"; changes:{applicationDeadline:Date}}
+ | {field:"LOCATION"; changes:{locations:string[]}};
+
+export function prepareSafeDriveChangeJobPatch(
+ input:{mode:string;field:string;legacyField:string|null;proposedValue:string},
+ now:Date=new Date(),
+):SafeDriveChangeJobPatch|null {
+ if(input.mode!=="SUGGEST"||!Number.isFinite(now.getTime()))return null;
+ const field=input.legacyField??input.field;
+ const value=input.proposedValue.trim();
+ if(field==="DEADLINE"){
+  // Date-only and timezone-free timestamps are ambiguous around IST. A
+  // recruiter must supply an explicit instant, never a local parsed guess.
+  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(?::\d{2}(?:\.\d{1,3})?)?(?:Z|[+-]\d{2}:\d{2})$/.test(value))
+   return null;
+  // Native Date parsing may silently turn 30 February into March. Check
+  // the source wall-clock date before applying its explicit zone offset.
+  const [datePart,timePart]=value.split("T");
+  const [year,month,day]=datePart.split("-").map(Number);
+  const [hour,minute]=timePart.slice(0,5).split(":").map(Number);
+  const second=timePart[5]===":"?Number(timePart.slice(6,8)):0;
+  const wall=new Date(Date.UTC(year,month-1,day,hour,minute,second));
+  const offset=/([+-])(\d{2}):(\d{2})$/.exec(value);
+  if(year<100||wall.getUTCFullYear()!==year||
+     wall.getUTCMonth()+1!==month||wall.getUTCDate()!==day||
+     wall.getUTCHours()!==hour||wall.getUTCMinutes()!==minute||
+     wall.getUTCSeconds()!==second||
+     (offset&&(Number(offset[2])>23||Number(offset[3])>59)))
+   return null;
+  const proposed=new Date(value);
+  if(!Number.isFinite(proposed.getTime())||proposed.getTime()<=now.getTime())
+   return null;
+  return {field:"DEADLINE",changes:{applicationDeadline:proposed}};
+ }
+ if(field==="LOCATION"){
+  const values=value.split(",").map(part=>part.trim());
+  if(values.length<1||values.length>25||
+     values.some(location=>location.length<1||location.length>255))
+   return null;
+  if(new Set(values.map(location=>location.toLocaleLowerCase("en-IN"))).size!==values.length)
+   return null;
+  return {field:"LOCATION",changes:{locations:values}};
+ }
+ return null;
 }
