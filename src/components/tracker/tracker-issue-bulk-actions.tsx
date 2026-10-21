@@ -8,11 +8,13 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useToast} from "@/components/ui/toast";
 import {BUG_STATUSES,type BugStatus} from "@/modules/bug-tracker/workflow";
 
 type Row={publicId:string;version:number;status:string};
 export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
   const router=useRouter();
+  const {showToast}=useToast();
   const lock=useRef(false);
   const [selecting,setSelecting]=useState(false);
   const [selected,setSelected]=useState<string[]>([]);
@@ -33,7 +35,12 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
     try{
       // Each write still goes through the authorized version-checked single-issue
       // workflow. A failed row does not prevent later rows from being processed.
-      for(const id of selected){
+      // Three independent workers preserve partial successes and CAS guards.
+      const remaining=[...selected];
+      await Promise.all(Array.from({length:Math.min(3,remaining.length)},async()=>{
+      while(remaining.length){
+        const id=remaining.shift();
+        if(!id)break;
         const row=rows.find(item=>item.publicId===id);
         if(!row){failures.push(id);reasons[id]="This issue is no longer on the current page.";continue;}
         if(row.status===status){completed++;continue;}
@@ -49,15 +56,18 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
             "Unable to update this issue.";
         }
       }
+      }));
       setFailed(failures);setSuccess(completed);
       // A successful write must never be retried against its stale version.
       setSelected(failures);
       if(completed)router.refresh();
       if(failures.length){
+        showToast({tone:"error",title:failures.length+" issue(s) could not be updated."});
         const first=failures[0];
         setNotice(failures.length+" could not be updated ("+failures.join(", ")+"): "+
           (reasons[first]??"Refresh issue details and retry."));
       }else{
+        showToast({tone:"success",title:"Updated "+completed+" issue(s)."});
         setSelecting(false);
         setNotice("Updated "+completed+" issue(s).");
       }
@@ -67,20 +77,23 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-center">
       <Button variant="secondary" type="button" disabled={busy} className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={()=>{setSelecting(v=>!v);setSelected([]);setFailed([]);setNotice("");}}
        >
-        {selecting?"Close selection":"Select issues"}
+        {selecting?"Cancel selection":"Select issues"}
       </Button>
       {selecting?<span role="status" className="text-sm">{selected.length} selected</span>:null}
     </div>
     {selecting?<div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-2)] md:flex md:flex-wrap">
-        <Button variant="ghost" className="min-h-11 w-full underline text-primary-text md:min-h-9 md:w-auto" type="button" disabled={busy} onClick={()=>setSelected(rows.map(x=>x.publicId))}
-         >Select this page</Button>
-        <Button variant="ghost" className="min-h-11 w-full underline text-primary-text md:min-h-9 md:w-auto" type="button" disabled={busy} onClick={()=>setSelected([])}
-         >Clear selection</Button>
-      </div>
+      <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-9">
+        <Checkbox disabled={busy||rows.length===0} aria-label="All on this page"
+          checked={rows.length>0&&rows.every(row=>selected.includes(row.publicId))}
+          indeterminate={rows.some(row=>selected.includes(row.publicId))&&!rows.every(row=>selected.includes(row.publicId))}
+          onChange={event=>setSelected(event.target.checked?rows.map(row=>row.publicId):[])} />
+        All on this page
+      </label>
       <div role="group" aria-label="Issues on this page" className="grid min-w-0 max-h-64 grid-cols-1 gap-0 overflow-y-auto overscroll-contain border-y border-border md:grid-cols-2 md:gap-x-[var(--lms-space-4)]">
-        {rows.map(row=><label key={row.publicId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] border-b border-border/50 py-[var(--lms-space-2)] text-sm md:min-h-9">
-          <Checkbox checked={selected.includes(row.publicId)} disabled={busy}
+        {rows.map(row=><label key={row.publicId} tabIndex={busy?-1:0}
+          onKeyDown={event=>{if(event.target===event.currentTarget&&(event.key==="Enter"||event.key===" ")){event.preventDefault();toggle(row.publicId);}}}
+          className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] border-b border-border/50 py-[var(--lms-space-2)] text-sm md:min-h-9">
+          <Checkbox aria-label={"Select "+row.publicId} checked={selected.includes(row.publicId)} disabled={busy}
             onChange={()=>toggle(row.publicId)}/>
           {row.publicId} <span className="text-muted-foreground">({row.status.toLowerCase().replaceAll("_"," ")})</span>
         </label>)}
@@ -94,7 +107,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
         </label>
         <Button variant="primary" type="button" disabled={busy||selected.length===0} loading={busy} className="min-h-11 w-full md:min-h-9 md:w-auto md:justify-self-start" onClick={()=>void apply()}
          >
-          {busy?"Updating…":"Apply to "+selected.length+" selected"}
+          {busy?"Updating…":"Apply"}
         </Button>
       </div>
     </div>:null}
@@ -103,7 +116,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
     <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
       title={"Apply to "+selected.length+" selected"}
       description={"Set status to… "+status.replaceAll("_"," ")}
-      confirmLabel={"Apply to "+selected.length+" selected"} confirmVariant="primary" pending={busy}
+      confirmLabel="Apply" confirmVariant="primary" pending={busy}
       onConfirm={()=>void apply(true)}>
       {notice?<InlineNotice tone={failed.length?"error":"info"} message={notice}/>:null}
     </ConfirmDialog>

@@ -17,6 +17,14 @@ import {friendlyApiError} from "@/lib/friendly-error";
 import {LEGACY_FACULTY_TYPES} from "@/modules/people/college-faculty-type-model";
 
 type Kind="FACULTY"|"LEARNER";
+function normalizeLegacyDateOfBirth(value:string):string {
+  if(/^\d{4}-\d{2}-\d{2}$/.test(value))return value;
+  const match=/^(\d{2})-(\d{2})-(\d{4})$/.exec(value);
+  if(!match)return value;
+  const iso=match[3]+"-"+match[2]+"-"+match[1];
+  const date=new Date(iso+"T00:00:00Z");
+  return Number.isNaN(date.getTime())||date.toISOString().slice(0,10)!==iso?"":iso;
+}
 type Department={id:string;name:string};
 type Person={
   id:string;kind:Kind;name:string;canonicalPhone:string;canonicalEmail:string;
@@ -63,8 +71,9 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
       const result=await apiFetch<{person:Person}>(base+"?kind="+kind,{cache:"no-store"});
       if(!result.person)throw Error("Profile details unavailable");
       if(request===requestId.current){
-        initialProfile.current=JSON.stringify(result.person);
-        setPerson(result.person as Person);
+        const normalized={...result.person,dateOfBirth:normalizeLegacyDateOfBirth(result.person.dateOfBirth??"")};
+        initialProfile.current=JSON.stringify(normalized);
+        setPerson(normalized as Person);
       }
     }catch(reason){if(request===requestId.current)setError(reason instanceof Error?reason.message:friendlyApiError({}));}
     finally{if(request===requestId.current)setLoading(false);}
@@ -106,7 +115,8 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
       confirmLabel="Discard edits" cancelLabel="Keep editing"
       onConfirm={leave}/>
     <Button variant="secondary" type="button" onClick={()=>void load()}
-      className="min-h-11 md:min-h-9">
+      aria-label={(kind==="FACULTY"?"Edit Faculty ":"Edit Student ")+membershipId}
+      title={kind==="FACULTY"?"Edit Faculty":"Edit Student"} className="min-h-11 md:min-h-9">
       {kind==="FACULTY"?"Edit Faculty":"Edit Student"}
     </Button>
     {success&&<Alert tone="success" className="mt-2">{success}</Alert>}
@@ -182,7 +192,8 @@ export function CollegePersonEditAction({membershipId,kind,departments=[]}:{
             <Textarea disabled={pending} className="min-w-0" rows={2} maxLength={1000}
               value={person.address} onChange={e=>patch("address",e.target.value)}/>
           </label>
-          <label className="grid gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Bio
+          <label className="grid gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Bio / Description
+            <span className="text-xs font-normal text-muted-foreground">Brief description</span>
             <Textarea disabled={pending} className="min-w-0" rows={3} maxLength={3000}
               value={person.bio} onChange={e=>patch("bio",e.target.value)}/>
           </label>

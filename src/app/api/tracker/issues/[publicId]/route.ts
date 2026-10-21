@@ -15,6 +15,8 @@ export async function GET(
   request: Request,
   { params }: { params: Promise<{ publicId: string }> },
 ) {
+  // DB10_TRACKER_READY=DB10_VERIFIED is enabled only after migration 0076
+  // and permissions are checked. A disabled install must not claim 404.
   if (!trackerAdminRuntimeEnabled()) {
     return NextResponse.json(
       { error: "DB10_TRACKER_MIGRATIONS_PENDING" },
@@ -26,12 +28,19 @@ export async function GET(
     const { publicId } = await params;
     if(!isSuperAdmin(context)){
       if(new URL(request.url).search)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
-      const [report,activities,attachments]=await Promise.all([
-        getMyTrackerReport(context,publicId),listMyTrackerReportHistory(context,publicId),
+      // The primary issue is the permission boundary. Independent history
+      // and attachment read failures must not hide an otherwise valid report.
+      const report=await getMyTrackerReport(context,publicId);
+      const [history,images]=await Promise.allSettled([
+        listMyTrackerReportHistory(context,publicId),
         listMyTrackerReportScreenshots(context,publicId),
       ]);
-      return NextResponse.json({report,activities,attachments},
-        {headers:{"cache-control":"private, no-store"}});
+      return NextResponse.json({
+        report,
+        activities:history.status==="fulfilled"?history.value:[],
+        attachments:images.status==="fulfilled"?images.value:[],
+        partialDetailsUnavailable:history.status!=="fulfilled"||images.status!=="fulfilled",
+      },{headers:{"cache-control":"private, no-store"}});
     }
     const query=new URL(request.url).searchParams;
     const raw:Record<string,string>={};

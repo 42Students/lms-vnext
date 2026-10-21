@@ -14,6 +14,8 @@ import { bindGlobalEmailSuppressionHashToOutbox, deriveGlobalEmailSuppressionHas
  * isolated outbox + suppression drafts and disposable PostgreSQL tests pass.
  *
  * This does NOT dispatch email, SMS or WhatsApp. QUEUED != sent/delivered.
+ * Scheduled in-app notifications use their own 200-row release batch;
+ * announcements must not be routed as free-text SMS without DLT approval.
  * An authorized producer should call the transactional variant inside its
  * own business mutation, so intent + encrypted outbox row commit atomically.
  */

@@ -1,7 +1,6 @@
 "use client";
 import {Button} from "@/components/ui/button";
-import {InlineNotice} from "@/components/ui/inline-notice";
-import {useState} from "react";
+import {useToast} from "@/components/ui/toast";
 
 type FullIssue={
   publicId:string;status:string;severity:string;environment:string;
@@ -56,7 +55,7 @@ function issueMarkdown(issue:FullIssue,url:string,attachmentCount:number){
   return lines.join("\n");
 }
 export function TrackerIssueCopyActions({publicId,description,page,issue,attachmentCount=0}:Props){
-  const [notice,setNotice]=useState<{tone:"success"|"error";message:string}|null>(null);
+  const {showToast}=useToast();
   async function copy(kind:"link"|"markdown"){
     const link=window.location.origin+"/tracker/issues/"+encodeURIComponent(publicId);
     const value=kind==="link"?link:issue?
@@ -64,19 +63,24 @@ export function TrackerIssueCopyActions({publicId,description,page,issue,attachm
       ["## "+publicId+" — "+page,"","### What went wrong",description,"","**Link:** "+link].join("\n");
     try{
       await navigator.clipboard.writeText(value);
-      setNotice({tone:"success",message:kind==="link"?
+      showToast({tone:"success",title:kind==="link"?
         "Link to "+publicId+" copied":publicId+" copied as markdown"});
     }catch{
-      setNotice({tone:"error",message:kind==="link"?
+      showToast({tone:"error",title:kind==="link"?
         "Could not copy the link — copy it from the address bar instead.":
         "Could not copy to the clipboard in this browser."});
     }
   }
   return <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center md:gap-3" aria-label="Issue sharing">
-    <Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto"
-      onClick={()=>void copy("link")}>Copy link</Button>
-    <Button variant="secondary" type="button" className="min-h-11 w-full md:min-h-9 md:w-auto"
-      onClick={()=>void copy("markdown")}>Copy as markdown</Button>
-    {notice?<InlineNotice tone={notice.tone} message={notice.message}/>:null}
+    <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-9 sm:px-2 md:min-h-9"
+      aria-label="Copy issue link" title="Copy link" onClick={()=>void copy("link")}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+      <span className="sr-only">Copy link</span>
+    </Button>
+    <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-9 sm:px-2 md:min-h-9"
+      aria-label="Copy issue as markdown" title="Copy as markdown" onClick={()=>void copy("markdown")}>
+      <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 4H5a3 3 0 0 0-3 3v10a3 3 0 0 0 3 3h14a3 3 0 0 0 3-3V7a3 3 0 0 0-3-3h-2M6 15v-6l3 3 3-3v6M16 9v6m-2-2 2 2 2-2"/></svg>
+      <span className="sr-only">Copy as markdown</span>
+    </Button>
   </div>;
 }

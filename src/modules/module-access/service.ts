@@ -20,6 +20,21 @@ import {
   type RequestContext,
 } from "@/modules/identity/context";
 
+/** Exact old ModuleFeatureCatalog order and app_settings key crosswalk.
+ * Legacy LEARNER/CLASS/BATCH scopes are MEMBERSHIP/SECTION/COHORT here;
+ * rules are now stored in module_access_rules with UUID scopes rather than
+ * AppSettingRepository values. Courses/audiences are separate permissions and
+ * must be checked independently of these optional-module switches. */
+export const LEGACY_MODULE_SETTING_KEYS = {
+  projects:"module.projects.enabled",
+  placements:"module.placements.enabled",
+  electives:"module.electives.enabled",
+} as const;
+export const LEGACY_SCOPE_NAME_BY_VNEXT = {
+  MEMBERSHIP:"LEARNER",SECTION:"CLASS",COHORT:"BATCH",
+  PROGRAM:"PROGRAM",DEPARTMENT:"DEPARTMENT",COLLEGE:"COLLEGE",
+  ORGANIZATION:"ORGANIZATION",GLOBAL:"GLOBAL",
+} as const;
 export const OPTIONAL_MODULE_KEYS = [
   "projects",
   "placements",
@@ -164,6 +179,50 @@ export function resolveModuleAccessFromRules(
     placements: resolveOne("placements"),
     electives: resolveOne("electives"),
   };
+}
+
+/** Read-only hierarchy explanation for module-access tree UIs.
+ * A locked ancestor outranks a nearer unlocked rule; remaining stored rules
+ * are shadowed rather than silently hidden. Placement eligibility/audience
+ * is a separate learner-specific gate and is not implied by this result. */
+export function explainOptionalModuleAccess(
+  chain: readonly ModuleAccessScope[],
+  rules: readonly ModuleAccessRule[],
+): Record<OptionalModuleKey,{
+  effective:ModuleAccessResolution;
+  visibleRules:readonly (ModuleAccessRule&{legacyLevel:string;shadowed:boolean})[];
+}> {
+  const effective=resolveModuleAccessFromRules(chain,rules);
+  const explain=(module:OptionalModuleKey)=>{
+    const winner=effective[module];
+    const visibleRules=chain.flatMap(scope=>{
+      if(isModuleScopeIgnored(module,scope.scopeType))return [];
+      const match=rules.find(rule=>rule.module===module&&
+        rule.scopeType===scope.scopeType&&rule.scopeId===scope.scopeId);
+      return match?[{...match,
+        legacyLevel:LEGACY_SCOPE_NAME_BY_VNEXT[scope.scopeType],
+        shadowed:!(winner.level===scope.scopeType&&winner.scopeId===scope.scopeId)}]:[];
+    });
+    return {effective:winner,visibleRules};
+  };
+  return {
+    projects:explain("projects"),
+    placements:explain("placements"),
+    electives:explain("electives"),
+  };
+}
+
+/** Old GET /api/v1/features/mine was wrapped in Response(status,message,data).
+ * Endpoint adapters still enforce principal scope and learner eligibility. */
+export function toLegacyModuleFlagsEnvelope(access:OptionalModuleAccess){
+  const modules={
+    projects:access.projects.enabled,
+    placements:access.placements.enabled,
+    electives:access.electives.enabled,
+  };
+  return {status:"OK" as const,message:"OK" as const,data:{
+    projectsEnabled:modules.projects,placementsEnabled:modules.placements,modules,
+  }};
 }
 
 function pushScope(
