@@ -15,6 +15,8 @@ const uuid=z.string().uuid();
 const body=z.strictObject({
  title:z.string().trim().min(1).max(220),
  description:z.string().trim().max(4000).nullable().optional(),
+ /** A release target is a calendar day, never a client-local timestamp. */
+ targetDate:z.iso.date().nullable().optional(),
  expectedUpdatedAt:z.iso.datetime({offset:true}).optional(),
 });
 type Mode="CREATED"|"UPDATED"|"DELETED";
@@ -52,8 +54,10 @@ export async function writeMentorProjectRelease(
    while(keys.has(templateKey)){const suffix="-"+serial++;
      templateKey="custom-"+slug.slice(0,64-7-suffix.length)+suffix;}
    const [row]=await tx.insert(projectReleases).values({
-    projectId,templateKey,sequence:(last?.sequence??-1)+1,
-    title:(input as {title:string;description?:string|null}).title,description:(input as {title:string;description?:string|null}).description??null,status:"PLANNED",
+    projectId,templateKey:"custom-"+randomUUID(),sequence:(last?.sequence??-1)+1,
+    title:(input as {title:string;description?:string|null;targetDate?:string|null}).title,
+    description:(input as {description?:string|null}).description??null,
+    targetDate:(input as {targetDate?:string|null}).targetDate??null,status:"PLANNED",
    }).returning();
    result=row??null;change="CREATED";
   }else if(operation==="PATCH"){
@@ -64,7 +68,9 @@ export async function writeMentorProjectRelease(
    if(!updatedAt)throw new ProjectsServiceError("PROJECT_LIFECYCLE_INVALID_STATE");
    const [row]=await tx.update(projectReleases).set({
     title:(input as {title:string;description?:string|null}).title,
-    description:(input as {title:string;description?:string|null}).description??null,
+    description:(input as {description?:string|null}).description??null,
+    ...((input as {targetDate?:string|null}).targetDate!==undefined
+      ?{targetDate:(input as {targetDate?:string|null}).targetDate}:{}),
     updatedAt,
    }).where(and(eq(projectReleases.id,existing.id),eq(projectReleases.projectId,projectId))).returning();
    result=row??null;change="UPDATED";
