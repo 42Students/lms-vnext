@@ -8,6 +8,7 @@ export type CollegeContentKind = z.infer<typeof collegeContentKindSchema>;
 export const collegeContentQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   courseCode: z.string().trim().max(64).optional(),
+  lessonId:z.string().uuid().optional(),
   programCode: z.string().trim().min(1).max(64).optional(),
   cohortCode:z.string().trim().min(1).max(64).optional(),
   periodCode: z.string().trim().min(1).max(64).optional(),
@@ -38,6 +39,7 @@ export function collegeContentHref(kind: CollegeContentKind, query: CollegeConte
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.courseCode) params.set("courseCode", query.courseCode);
+  if(query.lessonId)params.set("lessonId",query.lessonId);
   if (kind !== "LIVE_CLASS" && query.programCode) params.set("programCode",query.programCode);
   if(kind!=="LIVE_CLASS"&&query.cohortCode)params.set("cohortCode",query.cohortCode);
   if(kind!=="LIVE_CLASS"&&query.periodCode)params.set("periodCode",query.periodCode);
@@ -76,7 +78,7 @@ export function collegeContentSearchParams(
   params: Record<string, string | string[] | undefined>,
 ) {
   const raw: Record<string, string> = {};
-  for (const key of ["q", "courseCode", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentName", "offeringType", "lessonStatus", "status", "format", "scope", "deliveryId", "visibility", "offeringStatus", "page", "pageSize"] as const) {
+  for (const key of ["q", "courseCode", "lessonId", "programCode", "cohortCode", "periodCode", "pathStatus", "departmentName", "offeringType", "lessonStatus", "status", "format", "scope", "deliveryId", "visibility", "offeringStatus", "page", "pageSize"] as const) {
     const value = params[key];
     if (typeof value === "string") raw[key] = value;
     else if (value !== undefined) return null;
