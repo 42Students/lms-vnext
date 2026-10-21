@@ -17,10 +17,17 @@ type RouteContext = {
 export async function GET(request: Request, { params }: RouteContext) {
   try {
     const rawParams = await params;
-    const ids = z.object({
+    const parsedIds = z.object({
       contentId: z.string().uuid(),
       materialId: z.string().uuid(),
-    }).parse(rawParams);
+    }).safeParse(rawParams);
+    if (!parsedIds.success) {
+      return Response.json(
+        { error: "INVALID_REQUEST", message: "Invalid Resource material" },
+        { status: 400, headers: { "Cache-Control": "private, no-store" } },
+      );
+    }
+    const ids = parsedIds.data;
     const url = new URL(request.url);
     const values = url.searchParams.getAll("deliveryId");
     if (values.length > 1 ||
@@ -30,9 +37,16 @@ export async function GET(request: Request, { params }: RouteContext) {
         { status: 400, headers: { "Cache-Control": "private, no-store" } },
       );
     }
-    const deliveryId = values[0] === undefined
+    const parsedDelivery = values[0] === undefined
       ? null
-      : z.string().uuid().parse(values[0]);
+      : z.string().uuid().safeParse(values[0]);
+    if (parsedDelivery && !parsedDelivery.success) {
+      return Response.json(
+        { error: "INVALID_REQUEST", message: "Invalid Resource material" },
+        { status: 400, headers: { "Cache-Control": "private, no-store" } },
+      );
+    }
+    const deliveryId = parsedDelivery?.data ?? null;
     const context = await getCurrentRequestContext();
     const grant = await authorizeOrNotFound(() =>
       grantLessonResourceMaterialFile(
