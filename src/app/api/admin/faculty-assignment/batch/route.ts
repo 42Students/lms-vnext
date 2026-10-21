@@ -15,9 +15,18 @@ export async function POST(request:Request){
   return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const context=await getCurrentRequestContext();
-  const body:unknown=await request.json();
+  let body:unknown;
+  try{body=await request.json();}
+  catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
+  if(body&&typeof body==="object"&&!Array.isArray(body)){
+    const fields=body as Record<string,unknown>;
+    if(fields.courseId!==undefined||fields.courseIds!==undefined)
+      return NextResponse.json({error:"DELIVERY_IDS_REQUIRED",
+        message:"Select a Section and its course deliveries before assigning faculty."},
+        {status:400});
+  }
   const assignments=await createCourseTeachingAssignmentsBatch(context,body);
-  return NextResponse.json({assignments,
+  return NextResponse.json({assignments,createdCount:assignments.length,
     message:assignments.length===1?"Association created successfully.":
       "Created "+assignments.length+" teaching assignments for this class."},{status:201,
     headers:{"Cache-Control":"private, no-store"}});
