@@ -113,13 +113,13 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
                 {phoneVisible && col.mobilePriority!=="action" ?
                   <span className="mr-2 font-medium text-body md:hidden">{col.mobileLabel??col.header}</span>:null}
                 {col===primary && (typeof content==="string"||typeof content==="number")
-                  ? <strong className="break-words text-base text-foreground md:text-sm">{content}</strong>
+                  ? <strong className="break-words text-sm font-semibold leading-5 text-[var(--lms-heading)]">{content}</strong>
                   : content}
               </td>;
             })}
             {extra.length ? <td className="block min-w-0 py-1 md:hidden">
               <Disclosure title="More details" className="mt-2 pt-2">
-                <dl className="grid gap-[var(--lms-space-2)] text-[13px] leading-5">{extra.map(col=><div key={col.key} className="min-w-0">
+                <dl className="grid gap-[var(--lms-space-2)] text-[13px] leading-[22px]">{extra.map(col=><div key={col.key} className="min-w-0">
                   <dt className="font-medium text-body">{col.mobileLabel??col.header}</dt>
                   <dd className="break-words text-foreground">{cell(item,col)}</dd>
                 </div>)}</dl>
