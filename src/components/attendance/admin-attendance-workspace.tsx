@@ -275,7 +275,7 @@ export function AdminAttendanceWorkspace({
           }),
         },
       );
-      setNotice("Attendance corrected for "+learnerName(target.learner)+" — "+target.session.title+".");
+      setNotice(status==="PRESENT"?"Marked present":"Marked absent");
       setTarget(null);
       router.refresh();
     } catch (cause) {
