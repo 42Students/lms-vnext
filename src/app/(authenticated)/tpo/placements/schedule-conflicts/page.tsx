@@ -41,7 +41,7 @@ export default async function TpoScheduleConflictsPage({
           title="Invalid scheduling window"
           description="Only a window of 1–90 days is supported." />
         <Link href="/tpo/placements/schedule-conflicts"
-          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Reset window</Link>
+          className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Reset window</Link>
       </div>
     );
   }
@@ -53,7 +53,7 @@ export default async function TpoScheduleConflictsPage({
         eyebrow="TPO · Drive scheduling"
         title="Round venue conflicts"
         description="Potential same-venue overlaps in scheduled rounds of published drives. This is not a student timetable conflict detector."
-        actions={<Link href="/tpo/placements" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary sm:w-auto md:min-h-9">← Placement operations</Link>}
+        actions={<Link href="/tpo/placements" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Placement operations</Link>}
       />
       <form method="get" className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-[minmax(0,14rem)_auto] sm:items-end">
         <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">

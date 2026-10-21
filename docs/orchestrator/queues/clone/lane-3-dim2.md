@@ -295,18 +295,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-3.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/letters/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/[offerId]/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/offers/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/new/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/results/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/[roundId]/slots/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/rounds/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/selections/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/new/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/overview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/schedule-conflicts/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/profile/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/[batchId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx`
