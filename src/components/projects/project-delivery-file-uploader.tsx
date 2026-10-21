@@ -43,7 +43,15 @@ export function ProjectDeliveryFileUploader({projectId,disabled,onUploaded}:{
     req.send(file);
    });
    const saved=await json<{file:ProjectResourceFile}>(base+"/"+encodeURIComponent(grant.file.id)+"/complete","POST");
+   // The attachment must reference the exact scanner-verified project file
+   // record, not arbitrary metadata supplied by the browser or signed PUT.
    if(saved.file.status!=="READY")throw Error("File requires verification before attaching.");
+   if(saved.file.projectId!==projectId || saved.file.id!==grant.file.id ||
+      saved.file.resourceId!==null ||
+      saved.file.originalName!==declaration.originalName ||
+      saved.file.contentType!==declaration.contentType ||
+      saved.file.sizeBytes!==declaration.sizeBytes)
+      throw Error("Verified file metadata does not match this upload. Please try again.");
    onUploaded({kind:"FILE",name:saved.file.originalName,fileId:saved.file.id,url:null});
    setFile(null);setProgress(0);
   }catch(e){setError(e instanceof Error?e.message:"File upload failed.");}finally{setBusy(false);}
