@@ -81,8 +81,17 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   offered:out.offered+row.offered,hired:out.hired+row.hired,rejected:out.rejected+row.rejected,
   withdrawn:out.withdrawn+row.withdrawn,waitlisted:out.waitlisted+row.waitlisted,
  }),{totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0});
- const funnelTotals=historicalHiringTotals(data.funnelRows);
+ const funnelTotals=data.funnelRows.reduce((out,row)=>({
+  applied:out.applied+row.applied,shortlisted:out.shortlisted+row.shortlisted,
+  assessment:out.assessment+row.assessment,interview:out.interview+row.interview,
+  offered:out.offered+row.offered,hired:out.hired+row.hired,
+ }),{applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0});
  const funnel=hiringFunnel(funnelTotals);
+ const observedShortlistHours=data.funnelRows
+  .map(row=>row.averageHoursToFirstShortlist)
+  .filter((hours):hours is number=>typeof hours==="number"&&Number.isFinite(hours)&&hours>=0);
+ const meanShortlistHours=observedShortlistHours.length
+  ?Math.round(observedShortlistHours.reduce((sum,hours)=>sum+hours,0)/observedShortlistHours.length):null;
  const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
  const visibleRows=[...reportRows,...groups.map(group=>({
   ...group,companyId:"",jobId:"total:"+group.companyName,jobTitle:"Company total",
@@ -170,7 +179,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   </section>
   <section className="min-w-0 rounded-[8px] border border-border bg-surface p-4" aria-label="Hiring Funnel">
    <h2 className="mb-4 text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Hiring Funnel</h2>
-   {totals.totalApplications===0?
+   {funnelTotals.applied===0?
     <p role="status" className="text-sm text-muted-foreground">No funnel data</p>:
     <ol className="max-w-[500px] space-y-3">{funnel.map((step,index)=>
      <li key={step.key} className="min-w-0">
@@ -188,7 +197,11 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
        value={step.widthPercent} maximum={100} unit="percent"/>
      </li>)}</ol>}
   </section>
-  <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
+  {meanShortlistHours!==null?<div className="w-full rounded-[8px] border border-border bg-surface p-3 sm:max-w-[280px]">
+   <p className="text-sm text-muted-foreground">Avg. time to shortlist</p>
+   <p className="mt-2 text-2xl font-semibold tabular-nums">{meanShortlistHours.toLocaleString("en-IN")} <span className="text-sm font-normal">hrs</span></p>
+   <p className="mt-1 text-xs text-muted-foreground">Mean of drives with recorded first-shortlist transitions.</p>
+  </div>:<p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. A first-shortlist transition is required before this metric can be calculated.</p>}
   <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 rounded-[8px] border border-border bg-surface p-4">
    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</h2>
    <DataTable columns={columns} rows={visibleRows} getRowKey={row=>row.jobId}
@@ -203,6 +216,6 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     <Pagination page={reportPage} pageCount={reportPages} label="Company hiring results pagination" hrefForPage={reportPageHref}/>
    </div>:null}
   </section>
-  <p className="text-xs text-muted-foreground">Stage counts are current persisted application stages, not historical transitions. Hired stage is not a substitute for confirmed joining. This report does not infer match scores or private candidate contacts.</p>
+  <p className="text-xs text-muted-foreground">Headline counts are current persisted application stages; the funnel uses ever-reached stage history. Hired requires a confirmed accepted offer and joining outcome. This report does not infer match scores or private candidate contacts.</p>
  </div>;
 }
