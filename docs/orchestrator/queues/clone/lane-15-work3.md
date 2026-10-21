@@ -15,7 +15,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_app_api_people_faculty-self-document_route.ts.md` (edit src/app/api/people/faculty-self-document/route.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_company-share_column-model.ts.md` (edit src/modules/placements/company-share/column-model.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_workspace-view-service.ts.md` (edit src/modules/projects/workspace-view-service.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_learner-notification-read-service.ts.md` (edit src/modules/activity/learner-notification-read-service.ts; 4 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_learner-notification-read-service.ts.md` (edit src/modules/activity/learner-notification-read-service.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_lecture-hall-copy.ts.md` (edit src/modules/academics/lecture-hall-copy.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_contacts_error.tsx.md` (edit src/app/(authenticated)/college/contacts/error.tsx; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_components_shell_shell-model.ts.md` (edit src/components/shell/shell-model.ts; 2 findings; best P1)
