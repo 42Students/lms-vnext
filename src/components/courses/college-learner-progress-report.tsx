@@ -14,7 +14,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 type Result=Awaited<ReturnType<typeof getCollegeLearnerProgressReport>>;
 
 export function CollegeLearnerProgressReport({data}:{data:Result}){
- const {choices,report}=data;
+ const {choices,report,selectionError}=data;
  const [sectionId,setSectionId]=useState(report?.chosen.sectionId??"");
  const [offeringId,setOfferingId]=useState(report?.chosen.offeringId??"");
  const sections=new Map<string,string>();
@@ -58,12 +58,18 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     Clear
    </Link>
   </form>
+  {selectionError?<p role="alert" className="border border-[var(--lms-canvas-border)] p-3 text-sm text-[var(--lms-error)]">
+   {selectionError}
+  </p>:null}
   {!report?<p className="text-sm text-muted-foreground leading-[22px]">
    Select a Class and Course to see each enrolled learner’s progress.
   </p>:<>
+   {report.noMeasurableWork?<p role="status" className="border border-[var(--lms-canvas-border)] p-3 text-sm text-body">
+    {report.emptyReason} No student has a measurable completion percentage yet.
+   </p>:null}
    <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] lg:grid-cols-4" role="group" aria-label="Class course progress summary">
     {[
-     ["Average completion",report.averageCompletion+"%"],
+     ["Average completion",report.averageCompletion===null?"—":report.averageCompletion+"%"],
      ["Students",String(report.students)],
      ["Not started",String(report.notStarted)],
      ["Items measured",String(report.itemsMeasured)],
@@ -79,7 +85,8 @@ export function CollegeLearnerProgressReport({data}:{data:Result}){
     caption="Course Progress by learner"
     rows={report.rows}
     getRowKey={row=>row.membershipId}
-    empty={<EmptyState title="No enrolled learners" description="No active learner enrollments for this Class and Course." />}
+    empty={<EmptyState title={report.noMeasurableWork?"No measurable work":"No enrolled learners"}
+      description={report.noMeasurableWork?"No published videos, assignments or quizzes are available to measure.":"No active learner enrollments for this Class and Course."} />}
     columns={[
      {key:"student",header:"Student",mobilePriority:"primary" as const,cell:(row)=><strong className="break-words text-foreground">{row.name}</strong>},
      {key:"roll",header:"Roll number",mobilePriority:"secondary" as const,cell:(row)=>row.rollNumber??"—"},

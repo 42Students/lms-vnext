@@ -12,7 +12,7 @@ import {
 } from "./assignment-file-validation";
 
 export const courseAssignmentIdSchema =
-  z.string().uuid();
+  z.string().uuid({error:"Lesson content not found. Enter a valid assignment ID."});
 export const assignmentSubmissionIdSchema =
   z.string().uuid();
 
@@ -159,23 +159,91 @@ const multipartFileSubmissionSchema = assignmentFileSubmissionSchema
     }
     const ids = input.uploadReceiptIds ??
       (input.uploadReceiptId ? [input.uploadReceiptId] : []);
-    if (ids.length === 0 || new Set(ids).size !== ids.length) {
+    if ((ids.length === 0 && !input.textContent && !input.links?.length) ||
+        new Set(ids).size !== ids.length) {
       ctx.addIssue({
         code: "custom", path: ["uploadReceiptIds"],
-        message: "Each submitted file needs its own upload receipt",
+        message: ids.length===0?"Submit at least one valid part.":"Duplicate submission item ID.",
       });
+    }
+    if(ids.length===0&&input.textContent&&input.links?.length){
+      ctx.addIssue({code:"custom",path:["uploadReceiptIds"],
+        message:"A written response and links require at least one verified file receipt."});
     }
   });
 
-export const submitAssignmentInputSchema =
-  z.discriminatedUnion(
-    "submissionType",
-    [
-      textSubmissionSchema,
-      linkSubmissionSchema,
-      multipartFileSubmissionSchema,
-    ],
-  );
+const singleSubmissionInputSchema=z.discriminatedUnion("submissionType",[
+  textSubmissionSchema,linkSubmissionSchema,multipartFileSubmissionSchema,
+]);
+
+// Legacy multi-asset requests arrive as an ordered part array. Every
+// attachment ID is a vNext verified upload receipt, never a raw object key.
+const submissionPartSchema=z.discriminatedUnion("kind",[
+  z.strictObject({kind:z.literal("FILE"),uploadReceiptId:z.uuid(),
+    id:z.uuid().optional()}),
+  z.strictObject({kind:z.literal("TEXT"),textContent:z.string().trim().min(1).max(50000),
+    id:z.uuid().optional()}),
+  z.strictObject({kind:z.literal("LINK"),
+    linkKind:z.enum(["REPOSITORY_LINK","EXTERNAL_LINK"]),
+    url:z.string().trim().max(2048).url().refine(value=>
+      new URL(value).protocol==="https:"&&!new URL(value).username&&!new URL(value).password,
+      "Only credential-free https submission links are allowed"),
+    caption:z.string().trim().max(255).default(""),id:z.uuid().optional()}),
+]);
+const partsInputSchema=z.strictObject({
+  deliveryId:courseSectionDeliveryIdSchema,
+  submissionParts:z.array(submissionPartSchema).min(1,"Add a submission part.").max(40),
+}).superRefine((input,ctx)=>{
+  const ids=new Set<string>(),receipts=new Set<string>();
+  let files=0,texts=0,links=0;
+  input.submissionParts.forEach((part,index)=>{
+    if(part.id){
+      if(ids.has(part.id))
+        ctx.addIssue({code:"custom",path:["submissionParts",index,"id"],
+          message:"Duplicate submission item ID."});
+      ids.add(part.id);
+    }
+    if(part.kind==="FILE"){
+      files++;
+      if(receipts.has(part.uploadReceiptId))
+        ctx.addIssue({code:"custom",path:["submissionParts",index,"uploadReceiptId"],
+          message:"Duplicate submission item ID."});
+      receipts.add(part.uploadReceiptId);
+    }else if(part.kind==="TEXT")texts++;
+    else links++;
+  });
+  if(files>20)ctx.addIssue({code:"custom",path:["submissionParts"],
+    message:"A submission can contain at most 20 files."});
+  if(links>20)ctx.addIssue({code:"custom",path:["submissionParts"],
+    message:"A submission can contain at most 20 links."});
+  if(texts>1)ctx.addIssue({code:"custom",path:["submissionParts"],
+    message:"Combine written responses into one text part."});
+  if(!files&&texts&&links)ctx.addIssue({code:"custom",path:["submissionParts"],
+    message:"Combining text and links requires a verified file receipt."});
+  if(!files&&links>1)ctx.addIssue({code:"custom",path:["submissionParts"],
+    message:"Combining multiple links requires a verified file receipt."});
+}).transform(input=>{
+  const files=input.submissionParts.filter((part):part is Extract<typeof part,{kind:"FILE"}>=>part.kind==="FILE");
+  const texts=input.submissionParts.filter((part):part is Extract<typeof part,{kind:"TEXT"}>=>part.kind==="TEXT");
+  const links=input.submissionParts.filter((part):part is Extract<typeof part,{kind:"LINK"}>=>part.kind==="LINK");
+  if(!files.length&&!links.length){
+    return {deliveryId:input.deliveryId,submissionType:"TEXT" as const,
+      textContent:texts[0]?.textContent??""};
+  }
+  if(!files.length&&!texts.length&&links.length===1){
+    return {deliveryId:input.deliveryId,submissionType:"LINK" as const,
+      linkKind:links[0]!.linkKind,submissionUrl:links[0]!.url};
+  }
+  return {deliveryId:input.deliveryId,submissionType:"FILE" as const,
+    uploadReceiptIds:files.map(part=>part.uploadReceiptId),
+    textContent:texts[0]?.textContent,
+    links:links.map(part=>({kind:part.linkKind,url:part.url,caption:part.caption}))};
+});
+/** Accept both the existing single-type shape and the normalized mixed
+ * parts format, then validate the resulting persisted submission contract. */
+export const submitAssignmentInputSchema=z.union([
+  singleSubmissionInputSchema,partsInputSchema,
+]).pipe(singleSubmissionInputSchema);
 
 export const assignmentSubmissionTypeSchema =
   z.enum(ASSIGNMENT_SUBMISSION_TYPES);
@@ -218,7 +286,7 @@ export type UpdateCourseAssignmentInput =
     typeof updateCourseAssignmentInputSchema
   >;
 export type SubmitAssignmentInput =
-  z.infer<
+  z.input<
     typeof submitAssignmentInputSchema
   >;
 export type GradeAssignmentSubmissionInput =

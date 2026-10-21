@@ -17,6 +17,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  const options=deliveries.filter(row=>row.offeringId===offeringId&&
   (!specificDeliveryId||row.deliveryId===specificDeliveryId));
  const [deliveryId,setDeliveryId]=useState(options[0]?.deliveryId??"");
+ const [viewAllSections,setViewAllSections]=useState(false);
  const [opened,setOpened]=useState(false),[loading,setLoading]=useState(false);
  const [attempts,setAttempts]=useState<Attempt[]>([]),[error,setError]=useState("");
  const [learnerSearch,setLearnerSearch]=useState("");
@@ -30,8 +31,12 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
     "&deliveryId="+encodeURIComponent(chosen.deliveryId)+
     "&page="+requestedPage,{cache:"no-store"});
    const data=await response.json().catch(()=>null);
-   if(!response.ok||!Array.isArray(data?.attempts))
-    throw Error("Could not load quiz attempts. Check your selected Section and try again.");
+   if(!response.ok)throw Error("Could not load quiz attempts. Check your selected Section and try again.");
+   if(!Array.isArray(data?.attempts)||typeof data?.hasMore!=="boolean"||
+     !data.attempts.every((item:unknown)=>item!==null&&typeof item==="object"&&
+       typeof (item as Attempt).id==="string"&&
+       Array.isArray((item as Attempt).answers)))
+    throw Error("Unexpected submissions response. Please retry.");
    setAttempts(data.attempts);setPage(requestedPage);setHasMore(Boolean(data.hasMore));
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not load quiz attempts.");}
   finally{setLoading(false);}
@@ -39,11 +44,22 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
  if(!options.length||status==="DRAFT")return null;
  return <div className="min-w-0 mt-2 space-y-2">
   {options.length>1?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
-   <Select value={chosen.deliveryId} disabled={loading} onChange={e=>{
-    setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
+   <Select value={viewAllSections?"ALL":chosen.deliveryId} disabled={loading} onChange={e=>{
+    const next=e.target.value;setViewAllSections(next==="ALL");
+    if(next!=="ALL")setDeliveryId(next);
+    setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
     className="min-h-11 md:min-h-9">
+    <option value="ALL">All sections (one section at a time)</option>
     {options.map(x=><option key={x.deliveryId} value={x.deliveryId}>{x.sectionName} ({x.sectionCode})</option>)}
    </Select></label>:null}
+  {viewAllSections?<div className="space-y-4" aria-label="All quiz submission sections">
+   <p className="text-xs text-muted-foreground">Every authorized Section is available below, with its own complete paged attempt history.</p>
+   {options.map(option=><section key={option.deliveryId} className="border-b border-border pb-4">
+    <h3 className="mb-2 text-sm font-semibold">{option.sectionName} ({option.sectionCode})</h3>
+    <CollegeQuizAttempts quizId={quizId} offeringId={offeringId}
+      specificDeliveryId={option.deliveryId} deliveries={[option]} status={status}/>
+   </section>)}
+  </div>:<>
   <Button variant="secondary" type="button" loading={loading} disabled={loading} onClick={()=>opened?setOpened(false):void open()}
    aria-expanded={opened} className="min-h-11 md:min-h-9">
    {opened?"Close submissions":loading?"Loading…":"Submissions"}
@@ -56,7 +72,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground leading-5">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
    {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <label className="undefinedmb-[6px] grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search students on this page
+    <label className="mb-[6px] grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search students on this page
      <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-11 md:min-h-9" placeholder="Student name or email"/>
     </label>
@@ -99,5 +115,6 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
       </div>
      </nav>:null}
   </div>:null}
+  </>}
  </div>;
 }

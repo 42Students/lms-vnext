@@ -30,7 +30,9 @@ export default async function FacultyCourseTabPage({
   if(requestedLesson&&!z.string().uuid().safeParse(requestedLesson).success)notFound();
   if(requestedContent&&!z.string().uuid().safeParse(requestedContent).success)notFound();
   const owningLesson=requestedContent?workspace.lessons.find(lesson=>
-    lesson.contents.some(content=>content.id===requestedContent)):null;
+    lesson.contents.some(content=>content.id===requestedContent)||
+    lesson.assignments.some(item=>item.id===requestedContent)||
+    lesson.quizzes.some(item=>item.id===requestedContent)):null;
   if(requestedContent&&!owningLesson)notFound();
   const lessonId=requestedLesson??owningLesson?.id??null;
   if(lessonId&&!workspace.lessons.some(lesson=>lesson.id===lessonId))notFound();
@@ -65,7 +67,7 @@ export default async function FacultyCourseTabPage({
     redirect(facultyCourseTabHref(deliveryId,"blueprint")+"?"+safe.toString());
   }
   const [homeSignals, displayResult] = await Promise.all([
-    getFacultyCourseHomeSignals(context, workspace),
+    getFacultyCourseHomeSignals(context, workspace).catch(()=>null),
     loadCourseDisplayContentIfReady(workspace.course.courseId)
       .then(data=>({data,failed:false}))
       .catch(()=>({data:null,failed:true})),
@@ -80,8 +82,7 @@ export default async function FacultyCourseTabPage({
         </Link>
       </Banner> : null}
       {requestedContent ? <Banner tone="info" role="status">
-        This content belongs to the selected lesson. Open the lesson's content list to review the item.
-        Automatic content highlighting is not yet available.
+        Showing the selected lesson item in Blueprint. Use its View action for details.
       </Banner> : null}
       <FacultyCourseWorkspace
         workspace={workspace}
@@ -90,6 +91,7 @@ export default async function FacultyCourseTabPage({
         view={courseTab[0] === "home" ? "OVERVIEW" : "BLUEPRINT"}
         contentFilter={filter}
         selectedLessonId={lessonId}
+        selectedContentId={requestedContent}
       />
     </div>
   );

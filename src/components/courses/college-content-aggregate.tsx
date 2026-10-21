@@ -197,7 +197,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
                     <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="ARCHIVED"?"neutral":"warning"}>{item.status}</StatusBadge>
                   </div>
                   <h2 className="break-words text-base font-semibold text-foreground">{item.title}</h2>
-                  <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
+                  <CollegeContentPreview playback={item.playback} data={{title:item.title,course:item.courseName,lesson:item.lessonName,
                    type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
                    visible:item.visibleToStudents,details:videos?collegeContentDuration(item.durationSeconds):
                     "Materials: "+(item.materialsCount??"Unavailable")}}/>
@@ -210,7 +210,11 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
                     Lesson: {item.lessonName} · Path: {item.learningPathTitle} ({item.learningPathStatus})
                   </p>
                   {item.status !== "ARCHIVED" ? <CollegeStudentVisibilityControl contentId={item.id} initialVisible={item.visibleToStudents} initialUpdatedAt={item.updatedAt.toISOString()} /> : null}
-                  {!videos?<p className="text-xs text-muted-foreground">Materials: {item.materialsCount===null?"Unavailable until DB05 is verified":item.materialsCount}</p>:null}
+                  {!videos?<p className="text-xs text-muted-foreground">Materials: {item.materialsCount===null?"Unavailable until DB05 is verified":item.materialsCount}
+                    {item.legacyMaterialsPending>0?" · "+item.legacyMaterialsPending+" legacy material(s) awaiting import":""}
+                    {item.legacyFilesPending>0?" · "+item.legacyFilesPending+" file(s) need verification":""}</p>:null}
+                  {videos&&item.contentType==="VIDEO"&&!item.playback?
+                    <p className="text-xs text-muted-foreground">Stored video playback requires a verified asset import.</p>:null}
                   <p className="text-xs text-muted-foreground">
                     {collegeContentScopeLabel(item.deliveryId)} · {item.visibleToStudents ? "Visible to students" : "Hidden from students"}
                     {videos ? " · " + collegeContentDuration(item.durationSeconds) : ""}
@@ -228,7 +232,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
                   {key:"content",header:"Content",mobilePriority:"primary" as const,
                     cell:(item)=><div className="min-w-0">
                       <p className="break-words font-semibold text-foreground">{item.title}</p>
-                      <CollegeContentPreview data={{title:item.title,course:item.courseName,lesson:item.lessonName,
+                      <CollegeContentPreview playback={item.playback} data={{title:item.title,course:item.courseName,lesson:item.lessonName,
                         type:item.contentType,status:item.status,scope:collegeContentScopeLabel(item.deliveryId),
                         visible:item.visibleToStudents,details:videos?collegeContentDuration(item.durationSeconds):
                         "Materials: "+(item.materialsCount??"Unavailable")}}/>
@@ -249,7 +253,10 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
                       <span className="block text-xs text-muted-foreground">{item.learningPathTitle} ({item.learningPathStatus})</span>
                     </span>},
                   ...(!videos?[{key:"materials",header:"Materials",mobilePriority:"secondary" as const,
-                    cell:(item:(typeof data.items)[number])=>item.materialsCount===null?"—":item.materialsCount}]:[]),
+                    cell:(item:(typeof data.items)[number])=><span>{item.materialsCount===null?"—":item.materialsCount}
+                      {item.legacyMaterialsPending>0?<span className="block text-xs text-muted-foreground">
+                        {item.legacyMaterialsPending} legacy material(s) need verified import
+                      </span>:null}</span>}]:[]),
                   {key:"scope",header:"Scope",mobilePriority:"secondary" as const,
                     cell:(item)=><span>{collegeContentScopeLabel(item.deliveryId)}
                       <span className="block text-xs">{item.visibleToStudents?"Visible to students":"Hidden from students"}</span>
@@ -274,8 +281,10 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
       </div>
       <p className="text-xs leading-5 text-muted-foreground">
         This catalogue shows authorization-scoped content metadata. Publishing state does not by itself grant learner visibility.
-        No storage key, file download, signed URL or external playback URL is returned here.
-        Use the authoring controls above or the offering workspace to manage content.
+        No storage key or permanent playback URL is returned here. Verified stored videos
+        resolve a short-lived signed View grant only after a staff action.
+        Historical file keys and Resource JSON children need verified private-storage import
+        before they can be opened. Use the authoring controls or offering workspace to manage content.
       </p>
     </div>
   );
