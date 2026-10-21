@@ -16,11 +16,27 @@ export function parseStoredDraft<T>(stored: string | null): T | null {
   } catch { return null; }
 }
 
+/** Restoring a severity-only tracker draft would falsely claim an issue was started. */
+export function meaningfulDraft<T>(key:string,value:T,initialValue:T):boolean{
+ if(!value||typeof value!=="object"||Array.isArray(value))return false;
+ const saved=value as Record<string,unknown>;
+ if(key==="tracker-issue-report"){
+  return ["reporterName","accountRole","environment","page","screen","section",
+    "issueType","description","evidenceLink"].some(field=>{
+   const current=saved[field];
+   const initial=(initialValue as Record<string,unknown>)[field];
+   return typeof current==="string"&&current.trim()!==""&&current!==initial;
+  });
+ }
+ return JSON.stringify(value)!==JSON.stringify(initialValue);
+}
 export function useFormDraft<T>(key: string, initialValue: T, options: {
   debounceMs?: number; enabled?: boolean;
 } = {}) {
-  const { debounceMs = 500, enabled = true } = options;
-  const storageKey = `lms:draft:${key}`;
+  const { debounceMs = key==="tracker-issue-report"?250:500, enabled = true } = options;
+  const storageKey = key==="tracker-issue-report"?"42tracker_report_draft_v1":`lms:draft:${key}`;
+  const previousKey=key==="tracker-issue-report"?"lms:draft:tracker-issue-report":null;
+  const initialRef=useRef(initialValue);
   const [draft, updateDraft] = useState<T>(initialValue);
   const [ready, setReady] = useState(false);
   const [restored, setRestored] = useState(false);
@@ -36,8 +52,13 @@ export function useFormDraft<T>(key: string, initialValue: T, options: {
     if (!enabled) return;
     const timer = setTimeout(() => {
       try {
-        const parsed = parseStoredDraft<T>(localStorage.getItem(storageKey));
-        if (parsed !== null && !cleared.current && !editedBeforeRestore.current) {
+        const stored=localStorage.getItem(storageKey)??(previousKey?localStorage.getItem(previousKey):null);
+        const parsed = parseStoredDraft<T>(stored);
+        if(parsed!==null&&!meaningfulDraft(key,parsed,initialRef.current)){
+          localStorage.removeItem(storageKey);
+          if(previousKey)localStorage.removeItem(previousKey);
+        }
+        if (parsed !== null && meaningfulDraft(key,parsed,initialRef.current) && !cleared.current && !editedBeforeRestore.current) {
           latestDraft.current = parsed;
           updateDraft(parsed);
           setRestored(true);
@@ -48,26 +69,32 @@ export function useFormDraft<T>(key: string, initialValue: T, options: {
       setReady(true);
     }, 0);
     return () => clearTimeout(timer);
-  }, [enabled, storageKey]);
+  }, [enabled, storageKey,previousKey,key]);
 
+  const flushDraft=()=>{
+    if(!enabled||cleared.current||!dirtyRef.current)return;
+    try{
+      if(meaningfulDraft(key,latestDraft.current,initialRef.current)){
+        localStorage.setItem(storageKey,JSON.stringify(latestDraft.current));
+        if(previousKey)localStorage.removeItem(previousKey);
+      }else{
+        localStorage.removeItem(storageKey);
+        if(previousKey)localStorage.removeItem(previousKey);
+      }
+    }catch{/* Browser storage can be disabled; React state remains intact. */}
+  };
   useEffect(() => {
     if (!enabled || !ready || !dirty || cleared.current) return;
     const timer = setTimeout(() => {
-      try { localStorage.setItem(storageKey, JSON.stringify(draft)); }
-      catch { /* form remains in React state */ }
+      flushDraft();
     }, Math.max(0, debounceMs));
     return () => clearTimeout(timer);
   }, [enabled, ready, dirty, draft, storageKey, debounceMs]);
 
   useEffect(() => {
     if (!enabled) return;
-    const flushDraft = () => {
-      if (cleared.current || !dirtyRef.current) return;
-      try { localStorage.setItem(storageKey, JSON.stringify(latestDraft.current)); }
-      catch { /* Private browsing may disable storage; keep the React value. */ }
-    };
     const warn = (event: BeforeUnloadEvent) => {
-      if (!dirtyRef.current) return;
+      if (!dirtyRef.current || !meaningfulDraft(key,latestDraft.current,initialRef.current)) return;
       // A user who accepts the warning still gets their latest edit back.
       flushDraft();
       event.preventDefault();
@@ -97,9 +124,9 @@ export function useFormDraft<T>(key: string, initialValue: T, options: {
     dirtyRef.current = false;
     setDirty(false);
     setRestored(false);
-    try { localStorage.removeItem(storageKey); }
+    try { localStorage.removeItem(storageKey);if(previousKey)localStorage.removeItem(previousKey); }
     catch { /* clearing is best effort if storage is unavailable */ }
   };
 
-  return { draft, setDraft, restored, dirty, clearDraft };
+  return { draft, setDraft, restored, dirty, clearDraft, flushDraft };
 }

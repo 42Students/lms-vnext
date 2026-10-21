@@ -23,7 +23,7 @@ const label = "block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms
 
 export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,knownErrorId}:{contextPrefill?:string;canSearchSimilar?:boolean;knownErrorId?:string}={}) {
   const initial={reporterName:"",accountRole:"",environment:"",page:"",screen:"",section:"",issueType:"",severity:"NOT_SURE",description:contextPrefill?"\n\nCaptured context:\n"+contextPrefill:"",evidenceLink:""};
-  const {draft,setDraft,restored,dirty,clearDraft}=useFormDraft("tracker-issue-report",initial);
+  const {draft,setDraft,restored,dirty,clearDraft,flushDraft}=useFormDraft("tracker-issue-report",initial);
   const {page,screen}=draft;
   const patch=(key:keyof typeof initial,value:string)=>setDraft(current=>({...current,[key]:value}));
   const [pending, setPending] = useState(false);
@@ -91,6 +91,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       return;
     }
     setFieldErrors({});
+    flushDraft();
     submitLock.current=true;
     setPending(true); setError("");
     try {

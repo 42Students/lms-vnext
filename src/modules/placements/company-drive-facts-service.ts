@@ -1,4 +1,4 @@
-import { and, eq, sql } from "drizzle-orm";
+import { and, eq, inArray, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -12,6 +12,32 @@ import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { deriveCompanyDriveFacts } from "./company-drive-facts-policy";
+
+/** One scoped aggregate for an entire visible page of company relationships.
+ * Avoids joining every candidate/offer in memory, and preserves the old
+ * "No drives yet" vs recorded-last-posting distinction. No name fuzzy joins. */
+export async function getManagedCompanyDriveUsageBatch(context:RequestContext,
+ collegeIdInput:unknown,relationshipIdsInput:unknown){
+ const collegeId=z.string().uuid().parse(collegeIdInput);
+ const relationshipIds=[...new Set(z.array(z.string().uuid()).max(200).parse(relationshipIdsInput))];
+ await requirePlacementManageScope(context,collegeId);
+ if(relationshipIds.length===0)return new Map<string,{driveCount:number;lastPostedAt:Date|null}>();
+ const rows=await getDb().select({
+  relationshipId:placementCompanyRelationships.id,
+  driveCount:sql<number>`count(distinct ${placementJobs.id})::int`,
+  lastPostedAt:sql<Date|null>`max(coalesce(${placementJobs.publishedAt},${placementJobs.legacyPostedAt},${placementJobs.createdAt}))`,
+ }).from(placementCompanyRelationships)
+ .leftJoin(placementJobs,and(
+  eq(placementJobs.companyRelationshipId,placementCompanyRelationships.id),
+  eq(placementJobs.collegeId,placementCompanyRelationships.collegeId),
+ ))
+ .where(and(eq(placementCompanyRelationships.collegeId,collegeId),
+  inArray(placementCompanyRelationships.id,relationshipIds)))
+ .groupBy(placementCompanyRelationships.id);
+ return new Map(rows.map(row=>[row.relationshipId,{
+  driveCount:row.driveCount,lastPostedAt:row.lastPostedAt,
+ }]));
+}
 
 /**
  * W04 source of truth for W05 derived CRM Drive facts.
@@ -66,10 +92,13 @@ export async function getManagedCompanyDriveFacts(
       eq(placementJobs.companyRelationshipId, relationshipId),
     ));
 
+  const usage=(await getManagedCompanyDriveUsageBatch(context,collegeId,[relationshipId])).get(relationshipId);
   return {
     collegeId,
     companyRelationshipId: relationship.id,
     relationshipExists: true,
+    driveCount:usage?.driveCount??0,
+    lastPostedAt:usage?.lastPostedAt??null,
     ...deriveCompanyDriveFacts(rows),
   };
 }

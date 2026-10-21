@@ -17,6 +17,9 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
  requirePermission(context,"identity.self.manage");
  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
   throw new AuthorizationError("identity.self.manage");
+ // The older employer form edited first and last names independently. The
+ // canonical user row stores one displayName, so reject excess combined length
+ // instead of truncating either field (which would lose identity information).
  const name=joinHrRecruiterName(input.firstName,input.lastName);
  const title=normalizeRecruiterDesignation(input.title);
  const phone=input.phone.trim().startsWith("+91")

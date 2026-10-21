@@ -18,14 +18,15 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
   const name=draft.name;
   const setName=(value:string)=>setDraft({...draft,name:value});
   const [error, setError] = useState<string | null>(null);
+  const [nameError,setNameError]=useState(false);
   const {pending,run:guardedRun}=useGuardedAction({busyLabel:"Creating..."});
 
   function submit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setError(null);
+    setError(null);setNameError(false);
 
     const cleanName=name.trim().replace(/\s+/g," ");
-    if(!cleanName){setError("Please enter organization name");return;}
+    if(!cleanName){setError("Please enter organization name");setNameError(true);document.getElementById("organization-name")?.focus();return;}
     void guardedRun(async () => {
       try {
         const payload=await apiFetch<unknown>("/api/organizations",{
@@ -52,7 +53,8 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           :cause instanceof FriendlyFetchError && cause.status===409
             ? "Organization name already exists"
             :cause instanceof Error?cause.message:"Could not create organization. Please try again.";
-        setError(message);
+        setError(message);setNameError(true);
+        document.getElementById("organization-name")?.focus();
         showToast({tone:"error",title:"Failed to create organization: "+message});
       }
     });
@@ -69,19 +71,19 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           htmlFor="organization-name"
           className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
         >
-          Organization name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
+          Organization Name<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
         </label>
         <Input
           id="organization-name"
           value={name}
-          onChange={(event) => { setName(event.target.value); setError(null); }}
+          onChange={(event) => { setName(event.target.value); setError(null);setNameError(false); }}
           required
-          aria-invalid={Boolean(error && !name.trim())}
-          aria-describedby={error&&!name.trim()?"organization-name-error":undefined}
+          aria-invalid={nameError}
+          aria-describedby={nameError?"organization-name-error":undefined}
           maxLength={255}
           placeholder="e.g., ABC University"
         />
-        {error&&!name.trim()?<p id="organization-name-error" role="alert" className="mt-1 text-xs text-error">Please enter organization name</p>:null}
+        {nameError?<p id="organization-name-error" role="alert" className="mt-1 text-xs text-error">{error??"Please enter organization name"}</p>:null}
       </div>
       <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-fit" disabled={pending} loading={pending}>
         <span aria-hidden="true" className="mr-2">＋</span>{pending ? "Creating…" : "Create Organization"}
