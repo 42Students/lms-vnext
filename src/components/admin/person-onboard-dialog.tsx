@@ -67,6 +67,11 @@ export function PersonOnboardDialog({
   );
   const [pending, startTransition] = useTransition();
   const inFlightRef=useRef(false);
+  const firstNameRef=useRef<HTMLInputElement|null>(null);
+  const lastNameRef=useRef<HTMLInputElement|null>(null);
+  const displayNameRef=useRef<HTMLInputElement|null>(null);
+  const phoneRef=useRef<HTMLInputElement|null>(null);
+  const emailRef=useRef<HTMLInputElement|null>(null);
 
   function reset() {
     setDisplayName("");setFirstName("");setLastName("");
@@ -97,17 +102,24 @@ export function PersonOnboardDialog({
     );
   }
 
+  function fail(field:string,message:string){
+    setFieldError({field,message});
+    const refs:Record<string,React.RefObject<HTMLInputElement|null>>={
+      firstName:firstNameRef,lastName:lastNameRef,displayName:displayNameRef,phone:phoneRef,email:emailRef,
+    };
+    refs[field]?.current?.focus();
+  }
   function submit() {
     if(pending||inFlightRef.current||profileIncomplete)return;
-    if(!forcedRole && !displayName.trim()){setFieldError({field:"displayName",message:"Enter a name"});return;}
-    if(forcedRole && !firstName.trim()){setFieldError({field:"firstName",message:"Enter the first name"});return;}
-    if(forcedRole && !lastName.trim()){setFieldError({field:"lastName",message:"Enter the last name"});return;}
-    if(!phoneE164.trim()){setFieldError({field:"phone",message:forcedRole==="FACULTY"?"Enter the mobile number":"Mobile required"});return;}
-    if(forcedRole && !indianMobileToE164(phoneE164)){setFieldError({field:"phone",message:"Mobile number must be 10 digits"});return;}
-    if(forcedRole==="FACULTY"&&!departmentId){setFieldError({field:"department",message:"Choose a department"});return;}
-    if(forcedRole==="FACULTY"&&!facultyType){setFieldError({field:"facultyType",message:"Choose a faculty type"});return;}
+    if(!forcedRole && !displayName.trim()){fail("displayName","Enter a name");return;}
+    if(forcedRole && !firstName.trim()){fail("firstName","Enter the first name");return;}
+    if(forcedRole && !lastName.trim()){fail("lastName","Enter the last name");return;}
+    if(!phoneE164.trim()){fail("phone",forcedRole==="FACULTY"?"Enter the mobile number":"Mobile required");return;}
+    if((forcedRole||roles.includes("COLLEGE_ADMIN")||roles.includes("TPO"))&&!indianMobileToE164(phoneE164)){fail("phone","Mobile number must be 10 digits");return;}
+    if(forcedRole==="FACULTY"&&!departmentId){fail("department","Choose a department");return;}
+    if(forcedRole==="FACULTY"&&!facultyType){fail("facultyType","Choose a faculty type");return;}
     if(email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())){
-      setFieldError({field:"email",message:"Enter a valid email"});return;
+      fail("email","Enter a valid email");return;
     }
     setFieldError(null);setOnboardError("");
     inFlightRef.current=true;
@@ -119,7 +131,7 @@ export function PersonOnboardDialog({
         body: JSON.stringify({
           collegeId,
           displayName:forcedRole?legacyPersonName(firstName,lastName):displayName,
-          phoneE164:forcedRole?indianMobileToE164(phoneE164):phoneE164,
+          phoneE164:forcedRole||roles.includes("COLLEGE_ADMIN")||roles.includes("TPO")?indianMobileToE164(phoneE164):phoneE164,
           ...(email.trim() ? { email } : {}),
           roles:forcedRole==="FACULTY"&&registerAsMentor?["FACULTY","MENTOR"]:onboardingRoleSelection(forcedRole,roles),
           ...(forcedRole==="FACULTY"?{facultyProfile:{kind:"FACULTY",primaryDepartmentId:departmentId,
@@ -171,14 +183,17 @@ export function PersonOnboardDialog({
 
   return (
     <>
-      <Button className="min-h-11 w-full md:min-h-9 md:w-auto" aria-label={forcedRole === "COLLEGE_ADMIN" ? "Onboard College Admin" : forcedRole === "TPO" ? "Onboard TPO" : undefined} onClick={() => setOpen(true)}>
-        {forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
+      <Button className="min-h-11 w-full gap-2 md:min-h-9 md:w-auto"
+       aria-label={forcedRole === "COLLEGE_ADMIN" ? "Onboard College Admin" : forcedRole === "TPO" ? "Onboard TPO" : undefined}
+       disabled={pending} onClick={() => {reset();setOpen(true);}}>
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>
+        {forcedRole === "FACULTY" ? "Register faculty" : forcedRole === "COLLEGE_ADMIN" ? "Create College Admin" : forcedRole === "TPO" ? "Create TPO" : "Onboard person"}
       </Button>
       <Dialog
         open={open}
         onOpenChange={next=>{if(!next)requestClose();}}
         dismissible={!pending}
-        title={forcedRole === "FACULTY" ? "Register New Faculty" : "Onboard person"}
+        title={forcedRole === "FACULTY" ? "Register New Faculty" : forcedRole==="COLLEGE_ADMIN"?"Create College Admin":forcedRole==="TPO"?"Create TPO":"Onboard person"}
         description="Create or reuse a canonical identity and an active college membership. No external invitation is sent."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
@@ -199,42 +214,44 @@ export function PersonOnboardDialog({
               }
               onClick={submit}
             >
-              {pending ? "Onboarding…" : forcedRole === "FACULTY" ? "Register Faculty" : "Onboard person"}
+              {pending ? "Onboarding…" : forcedRole === "FACULTY" ? "Register Faculty" : forcedRole==="COLLEGE_ADMIN"||forcedRole==="TPO"?"Create":"Onboard person"}
             </Button>
           </div>
         }
       >
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          {onboardError?<Alert tone="error" className="md:col-span-2">
+        <div className={"grid min-w-0 gap-[var(--lms-space-4)] "+(forcedRole==="FACULTY"?"md:grid-cols-2":"md:grid-cols-3")}>
+          {onboardError?<Alert tone="error" className={forcedRole==="FACULTY"?"md:col-span-2":"md:col-span-3"}>
             {forcedRole==="FACULTY"?"Faculty was not registered.":"Admin user was not created"} {onboardError}
           </Alert>:null}
-          {forcedRole?<div className="grid min-w-0 gap-[var(--lms-space-4)] md:col-span-2 md:grid-cols-2">
+          {forcedRole?<div className={"grid min-w-0 gap-[var(--lms-space-4)] "+(forcedRole==="FACULTY"?"md:col-span-2":"md:col-span-3")+" md:grid-cols-2"}>
             <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
-              <Input className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required
+              <Input ref={firstNameRef} className="min-h-11 md:min-h-9" value={firstName} maxLength={120} required autoComplete="given-name"
+                aria-describedby={fieldError?.field==="firstName"?"onboard-first-error":undefined}
                 aria-invalid={fieldError?.field==="firstName"} onChange={e=>{setFirstName(e.target.value);setFieldError(null);}} placeholder="First name"/>
-              {fieldError?.field==="firstName"?<span role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
+              {fieldError?.field==="firstName"?<span id="onboard-first-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
             </label>
             <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last Name
-              <Input className="min-h-11 md:min-h-9" value={lastName} maxLength={120} required
+              <Input ref={lastNameRef} className="min-h-11 md:min-h-9" value={lastName} maxLength={120} required autoComplete="family-name"
+                aria-describedby={fieldError?.field==="lastName"?"onboard-last-error":undefined}
                 aria-invalid={fieldError?.field==="lastName"} onChange={e=>{setLastName(e.target.value);setFieldError(null);}} placeholder="Last name"/>
-              {fieldError?.field==="lastName"?<span role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
+              {fieldError?.field==="lastName"?<span id="onboard-last-error" role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
             </label>
-          </div>:<div className="min-w-0 md:col-span-2">
+          </div>:<div className="min-w-0">
             <label
               htmlFor={`onboard-name-${collegeId}`}
               className="mb-[var(--lms-space-2)] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]"
             >
               Display name
             </label>
-            <Input className="min-h-11 md:min-h-9"
+            <Input ref={displayNameRef} className="min-h-11 md:min-h-9" autoComplete="name"
               id={`onboard-name-${collegeId}`}
               value={displayName}
               onChange={(event) => {setDisplayName(event.target.value);setFieldError(null);}}
-              aria-invalid={fieldError?.field==="displayName"}
+              aria-invalid={fieldError?.field==="displayName"} aria-describedby={fieldError?.field==="displayName"?"onboard-display-error":undefined}
               maxLength={255}
               placeholder="Full name"
             />
-            {fieldError?.field==="displayName"?<p role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
+            {fieldError?.field==="displayName"?<p role="alert" id="onboard-display-error" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
           </div>
 }
           <div>
@@ -244,15 +261,16 @@ export function PersonOnboardDialog({
             >
               Phone
             </label>
-            <Input className="min-h-11 md:min-h-9"
+            <Input ref={phoneRef} className="min-h-11 md:min-h-9"
               id={`onboard-phone-${collegeId}`}
               value={phoneE164}
               onChange={(event) => {setPhoneE164(event.target.value);setFieldError(null);}}
               aria-invalid={fieldError?.field==="phone"}
+              aria-describedby={fieldError?.field==="phone"?"onboard-phone-error":undefined}
               placeholder={forcedRole?"9876543210":"+919876543210"}
-              inputMode="tel"
+              inputMode="tel" autoComplete="tel" maxLength={forcedRole?13:20}
             />
-            {fieldError?.field==="phone"?<p role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:
+            {fieldError?.field==="phone"?<p id="onboard-phone-error" role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:
               forcedRole?<p className="mt-1 text-xs text-muted-foreground">Mobile number must be 10 digits</p>:null}
           </div>
           <div>
@@ -262,16 +280,16 @@ export function PersonOnboardDialog({
             >
               Email · optional
             </label>
-            <Input className="min-h-11 md:min-h-9"
+            <Input ref={emailRef} className="min-h-11 md:min-h-9" autoComplete="email"
               id={`onboard-email-${collegeId}`}
               type="email"
               value={email}
               onChange={(event) => {setEmail(event.target.value);setFieldError(null);}}
-              aria-invalid={fieldError?.field==="email"}
+              aria-invalid={fieldError?.field==="email"} aria-describedby={fieldError?.field==="email"?"onboard-email-error":undefined}
               maxLength={320}
               placeholder="name@example.com"
             />
-            {fieldError?.field==="email"?<p role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
+            {fieldError?.field==="email"?<p id="onboard-email-error" role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
           </div>
           {forcedRole==="FACULTY" ? <fieldset className="grid min-w-0 gap-[var(--lms-space-3)] border-y border-border py-[var(--lms-space-4)] md:col-span-2">
             <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty details</legend>
@@ -309,7 +327,7 @@ export function PersonOnboardDialog({
             <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Bio
               <Textarea rows={3} maxLength={3000} disabled={pending} value={bio} onChange={event=>setBio(event.target.value)}/>
             </label>
-            <legend className="text-[var(--lms-font-sm)] font-semibold text-body">Faculty type</legend>
+            <p className="text-[var(--lms-font-sm)] font-semibold text-body">Additional assignment</p>
             <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body md:min-h-9">
               <Checkbox checked={registerAsMentor} disabled={pending}
                 onChange={event=>setRegisterAsMentor(event.target.checked)}/>
@@ -322,10 +340,17 @@ export function PersonOnboardDialog({
           </p>:null}
           {forcedRole && forcedRole!=="FACULTY" ? <p className="md:col-span-2 text-sm text-body">
             Membership role: <strong>{roleLabel(forcedRole)}</strong>.
-          </p> : !forcedRole ? <fieldset className="md:col-span-2">
+          </p> : !forcedRole ? <fieldset className="md:col-span-3">
             <legend className="mb-2 text-xs font-semibold text-body">
               Membership roles
             </legend>
+            <div className="mb-3 flex flex-wrap items-center gap-2">
+             <span className="text-xs text-muted-foreground">Quick role:</span>
+             {(["COLLEGE_ADMIN","TPO"] as const).map(role=><Button key={role} type="button"
+              variant={roles.length===1&&roles[0]===role?"primary":"secondary"} size="sm"
+              className="min-h-11 md:min-h-9" disabled={pending}
+              onClick={()=>setRoles([role])}>{role==="COLLEGE_ADMIN"?"College Admin":"TPO"}</Button>)}
+            </div>
             <div className="divide-y divide-border border-y border-border">
               {MEMBERSHIP_ROLES.map((role) => (
                 <label
