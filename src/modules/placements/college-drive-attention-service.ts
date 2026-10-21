@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
+import {and,desc,eq,inArray,isNull,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
  placementJobs,placementCompanies,placementCompanyRelationships,users} from "@/db/schema";
@@ -92,6 +92,8 @@ export async function getCollegeDriveAttention(context:RequestContext){
  // named learner examples, not a second estimate of the category totals.
  // No learner outside this authorized college or selected drives is returned.
  if(categories.length){
+  const lowConversionJobs=categories.filter(item=>item.category==="LOW_CONVERSION")
+   .map(item=>item.jobId);
   const actionable=await db.select({
    id:placementApplications.id,jobId:placementApplications.jobId,
    displayName:users.displayName,
@@ -104,6 +106,9 @@ export async function getCollegeDriveAttention(context:RequestContext){
      and not exists(select 1 from placement_round_candidate_slots s
        where s.job_id=${placementApplications.jobId}
         and s.application_id=${placementApplications.id} and s.status='BOOKED')`,
+   lowConversion:sql<boolean>`coalesce(${placementCollegeApplicationStages.stage},
+     ${placementApplicationScreenings.status},'APPLIED') not in
+     ('SHORTLISTED','ASSESSMENT','INTERVIEW','WAITLISTED','OFFERED','HIRED')`,
    missingLetter:sql<boolean>`exists(select 1 from placement_offers o
       where o.application_id=${placementApplications.id}
        and o.status in ('ISSUED','ACCEPTED')
@@ -120,7 +125,8 @@ export async function getCollegeDriveAttention(context:RequestContext){
    .where(and(
     inArray(placementApplications.jobId,jobs.map(job=>job.id)),
     eq(placementApplications.status,"SUBMITTED"),
-    sql`(
+    or(
+     sql`(
       (coalesce(${placementCollegeApplicationStages.stage},
         case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
          when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
@@ -134,7 +140,14 @@ export async function getCollegeDriveAttention(context:RequestContext){
        where o.application_id=${placementApplications.id}
         and o.status in ('ISSUED','ACCEPTED')
         and (o.offer_letter_url is null or trim(o.offer_letter_url)=''))
-     )`,
+     )`,,
+     lowConversionJobs.length?and(
+      inArray(placementApplications.jobId,lowConversionJobs),
+      sql`coalesce(${placementCollegeApplicationStages.stage},
+        ${placementApplicationScreenings.status},'APPLIED') not in
+        ('SHORTLISTED','ASSESSMENT','INTERVIEW','WAITLISTED','OFFERED','HIRED')`,
+     ):undefined,
+    ),
    ))
    .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
    .limit(900);
@@ -144,13 +157,15 @@ export async function getCollegeDriveAttention(context:RequestContext){
    if(applicant.stale)matches.push("STALE_APPLIED");
    if(applicant.unscheduled)matches.push("INTERVIEW_UNSCHEDULED");
    if(applicant.missingLetter)matches.push("MISSING_OFFER_LETTER");
+   if(applicant.lowConversion)matches.push("LOW_CONVERSION");
    for(const category of matches){
     const item=byCategory.get(applicant.jobId+":"+category);
     if(!item||item.examples.length>=3)continue;
     item.examples.push({
      id:applicant.id,name:applicant.displayName?.trim()||"Unnamed learner",
      detail:category==="STALE_APPLIED"?"Application awaiting review":
-      category==="INTERVIEW_UNSCHEDULED"?"Interview not scheduled":"Offer letter missing",
+      category==="INTERVIEW_UNSCHEDULED"?"Interview not scheduled":
+      category==="MISSING_OFFER_LETTER"?"Offer letter missing":"Awaiting shortlist review",
      href:"/college/placements/jobs/"+encodeURIComponent(applicant.jobId)+
       "/applications?applicationId="+encodeURIComponent(applicant.id),
     });
