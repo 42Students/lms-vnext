@@ -88,7 +88,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-8/NEW_docs_audit_gap2_lane-18_learner-calendar.md.md` (new; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_modules_academics_college-mapping-model.ts.md` (edit src/modules/academics/college-mapping-model.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_academics_college-recurring-preview.tsx.md` (edit src/components/academics/college-recurring-preview.tsx; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-8/src_components_hr_recruiter-conversation-reply-form.tsx.md` (edit src/components/hr/recruiter-conversation-reply-form.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_hr_recruiter-conversation-reply-form.tsx.md` (edit src/components/hr/recruiter-conversation-reply-form.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_hr_hr-company-reports-grid.tsx.md` (edit src/components/hr/hr-company-reports-grid.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_app_authenticated_hr_conversations_page.tsx.md` (edit src/app/(authenticated)/hr/conversations/page.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-8/src_components_hr_recruiter-conversation-live-refresh.tsx.md` (edit src/components/hr/recruiter-conversation-live-refresh.tsx; 2 findings; best P1)
