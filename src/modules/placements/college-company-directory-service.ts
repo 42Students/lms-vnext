@@ -13,7 +13,7 @@ export type DirectoryQuery=Pick<CollegeCompaniesQuery,"q"|"page">&
 
 /** All filters, totals, and exports operate exclusively inside the caller's persisted college. */
 export async function listCollegeCompanyDirectory(
-  context:RequestContext,query:DirectoryQuery,options:{exportAll?:boolean}={},
+  context:RequestContext,query:DirectoryQuery,options:{exportAll?:boolean;exportOffset?:number}={},
 ){
   const collegeId=await requireCollegePlacementAdmin(context);
   const showDeleted=query.showDeleted==="1";
@@ -39,9 +39,9 @@ export async function listCollegeCompanyDirectory(
   const drives=sql<number>`(select count(*)::int from placement_jobs job
     where job.company_relationship_id = ${placementCompanyRelationships.id}
       and job.college_id = ${collegeId})`;
-  const lastActive=sql<Date>`coalesce((select max(job.updated_at)
+  const lastActive=sql<Date|null>`(select max(job.updated_at)
     from placement_jobs job where job.company_relationship_id = ${placementCompanyRelationships.id}
-      and job.college_id = ${collegeId}),${placementCompanyRelationships.updatedAt})`;
+      and job.college_id = ${collegeId})`;
   // These counts are historical, not merely current active applications.
   // Every nested query is restricted to the same persisted college and link.
   const applicants=sql<number>`(select count(*)::int from placement_applications app
@@ -84,12 +84,17 @@ export async function listCollegeCompanyDirectory(
       .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
       .where(where)
       .orderBy(sort==="COMPANY"?asc(placementCompanies.name):
-        sort==="DRIVES"?desc(drives):desc(lastActive),asc(placementCompanies.name),
+        sort==="DRIVES"?desc(drives):sql`${lastActive} desc nulls last`,asc(placementCompanies.name),
         asc(placementCompanyRelationships.id))
       .limit(limit)
-      .offset(options.exportAll?0:(query.page-1)*pageSize),
+      .offset(options.exportAll?
+        (Number.isSafeInteger(options.exportOffset)&&Number(options.exportOffset)>=0?options.exportOffset!:0):
+        (query.page-1)*pageSize),
   ]);
   const total=totals[0]?.total??0;
+  // The 2,000-row window bounds memory for both dashboard metrics and CSV.
+  // The export route explicitly walks successive windows until the scoped
+  // total is exhausted; no CSV silently stops after the first 2,000 rows.
   return {items:options.exportAll?items.slice(0,2000):items,total,
     truncated:Boolean(options.exportAll&&items.length>2000),
     totalPages:Math.max(1,Math.ceil(total/pageSize))};
