@@ -6,14 +6,29 @@ import {collegeMemberships,placementApplications,placementApplicationScreenings,
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
+import {platformSettingOverrides} from "@/db/schema/platform-setting-overrides";
+import {storedPlacementPolicyValue} from "./platform-placement-policy-model";
 
-const DEFAULT_STALE_DAYS=7;
 export type CollegeAttentionCategory="STALE_APPLIED"|"INTERVIEW_UNSCHEDULED"|"MISSING_OFFER_LETTER"|"LOW_CONVERSION";
 type AttentionExample={id:string;name:string;detail:string;href:string};
 type AttentionItem={jobId:string;title:string;category:CollegeAttentionCategory;
  count:number;href:string;examples:AttentionExample[]};
-export async function getCollegeDriveAttention(context:RequestContext){
+export async function getCollegeDriveAttention(context:RequestContext,rawJobId?:string){
  const collegeId=await requireCollegePlacementAdmin(context),db=getDb();
+ if(rawJobId&&!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(rawJobId))
+  throw Error("Invalid drive identifier.");
+ const settingKeys=["placement.staleAppliedDays","placement.closingSoonDays",
+  "placement.needsAttentionSampleCap","placement.lowConversionThreshold"];
+ const overrides=await db.select({key:platformSettingOverrides.key,value:platformSettingOverrides.value})
+  .from(platformSettingOverrides)
+  .where(and(eq(platformSettingOverrides.scopeType,"GLOBAL"),
+   eq(platformSettingOverrides.scopeId,"GLOBAL"),inArray(platformSettingOverrides.key,settingKeys)));
+ const values=new Map(overrides.map(row=>[row.key,row.value]));
+ const staleDays=storedPlacementPolicyValue("placement.staleAppliedDays",values.get("placement.staleAppliedDays"));
+ const closingDays=storedPlacementPolicyValue("placement.closingSoonDays",values.get("placement.closingSoonDays"));
+ const sampleCap=storedPlacementPolicyValue("placement.needsAttentionSampleCap",values.get("placement.needsAttentionSampleCap"));
+ const conversionThreshold=storedPlacementPolicyValue("placement.lowConversionThreshold",values.get("placement.lowConversionThreshold"));
+ const staleBefore=new Date(Date.now()-staleDays*86400000);
  // Distinct paginated active jobs and cross-status KPI counts. Never use the
  // first 60 job rows as the total number of drives in this college.
  const [driveCounts]=await db.select({
@@ -33,7 +48,21 @@ export async function getCollegeDriveAttention(context:RequestContext){
   .where(and(eq(placementJobs.collegeId,collegeId),
     eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt)))
   .orderBy(desc(placementJobs.createdAt)).limit(60);
- if(!jobs.length)return {jobs:[],total:0,categories:[] as AttentionItem[],hasOfferLetterEvidence:true,lookbackDays:DEFAULT_STALE_DAYS,
+ // Include a directly opened older or archived job without widening its
+ // visibility to public discovery or silently limiting attention to 60 drives.
+ if(rawJobId&&!jobs.some(job=>job.id===rawJobId)){
+  const [target]=await db.select({id:placementJobs.id,title:placementJobs.title,
+   companyName:placementCompanies.name,deadline:placementJobs.applicationDeadline,
+   status:placementJobs.status})
+   .from(placementJobs)
+   .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,collegeId)))
+   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+   .where(and(eq(placementJobs.collegeId,collegeId),eq(placementJobs.id,rawJobId))).limit(1);
+  if(target)jobs.push(target);
+ }
+ if(!jobs.length)return {jobs:[],total:0,categories:[] as AttentionItem[],hasOfferLetterEvidence:true,lookbackDays:staleDays,
   allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount};
  const records=await db.select({
   jobId:placementApplications.jobId,
@@ -43,7 +72,7 @@ export async function getCollegeDriveAttention(context:RequestContext){
       case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
        when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
        else 'APPLIED' end)='APPLIED'
-    and ${placementApplications.submittedAt} < now()- interval '7 days')::integer`.as("stale"),
+    and ${placementApplications.submittedAt} < ${staleBefore})::integer`.as("stale"),
   withoutSlot:sql<number>`count(*) filter (where
     ${placementCollegeApplicationStages.stage}='INTERVIEW'
     and not exists(select 1 from placement_round_candidate_slots s
@@ -82,8 +111,8 @@ export async function getCollegeDriveAttention(context:RequestContext){
    category:"INTERVIEW_UNSCHEDULED",count:row.withoutSlot,href:base+"?stage=INTERVIEW",examples:[]});
   if(row.missingOfferLetter>0)categories.push({jobId:job.id,title:job.title,
    category:"MISSING_OFFER_LETTER",count:row.missingOfferLetter,href:base+"?stage=OFFERED",examples:[]});
-  if(job.deadline&&job.deadline.getTime()>now&&job.deadline.getTime()-now<3*86400000&&
-    row.total>=5&&row.shortlisted/row.total<0.15){
+  if(job.deadline&&job.deadline.getTime()>now&&job.deadline.getTime()-now<closingDays*86400000&&
+    row.total>=5&&row.shortlisted/row.total<conversionThreshold){
     categories.push({jobId:job.id,title:job.title,category:"LOW_CONVERSION",
      count:row.total-row.shortlisted,href:base+"?stage=APPLIED",examples:[]});
   }
@@ -101,7 +130,7 @@ export async function getCollegeDriveAttention(context:RequestContext){
      case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
       when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
       else 'APPLIED' end)='APPLIED'
-     and ${placementApplications.submittedAt}<now()-interval '7 days'`,
+     and ${placementApplications.submittedAt}<${staleBefore}`,
    unscheduled:sql<boolean>`${placementCollegeApplicationStages.stage}='INTERVIEW'
      and not exists(select 1 from placement_round_candidate_slots s
        where s.job_id=${placementApplications.jobId}
@@ -131,7 +160,7 @@ export async function getCollegeDriveAttention(context:RequestContext){
         case when ${placementApplicationScreenings.status}='SHORTLISTED' then 'SHORTLISTED'
          when ${placementApplicationScreenings.status}='REJECTED' then 'REJECTED'
          else 'APPLIED' end)='APPLIED'
-       and ${placementApplications.submittedAt}<now()-interval '7 days')
+       and ${placementApplications.submittedAt}<${staleBefore})
       or (${placementCollegeApplicationStages.stage}='INTERVIEW' and not exists(
        select 1 from placement_round_candidate_slots s
        where s.job_id=${placementApplications.jobId}
@@ -160,7 +189,7 @@ export async function getCollegeDriveAttention(context:RequestContext){
    if(applicant.lowConversion)matches.push("LOW_CONVERSION");
    for(const category of matches){
     const item=byCategory.get(applicant.jobId+":"+category);
-    if(!item||item.examples.length>=3)continue;
+    if(!item||item.examples.length>=sampleCap)continue;
     item.examples.push({
      id:applicant.id,name:applicant.displayName?.trim()||"Unnamed learner",
      detail:category==="STALE_APPLIED"?"Application awaiting review":
@@ -179,5 +208,5 @@ export async function getCollegeDriveAttention(context:RequestContext){
   total:categories.reduce((count,item)=>count+item.count,0),
   categories,hasOfferLetterEvidence:true,
   allDriveCount,activeDriveCount,inactiveDriveCount:allDriveCount-activeDriveCount,
-  lookbackDays:DEFAULT_STALE_DAYS};
+  lookbackDays:staleDays,closingSoonDays:closingDays,sampleCap,conversionThreshold};
 }
