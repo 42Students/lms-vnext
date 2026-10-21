@@ -4,6 +4,6 @@ AUDIT ONLY: do not change code. Units moved here from slower lanes. Rules, facet
 
 - [x] (from lane 2) L20-U031 (Cross-cutting area) `cross/20: Public pages, marketing pages, privacy/terms, demo requests, unsubscribe pages, invites`
 - [x] (from lane 4) L18-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/overview.js`
-- [ ] (from lane 5) L19-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicTenantController.java`
-- [ ] (from lane 9) L18-U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/jobs/JobSearchCache.java`
+- [x] (from lane 5) L19-U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicTenantController.java`
+- [x] (from lane 9) L18-U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/jobs/JobSearchCache.java`
 - [ ] (from lane 7) L18-U031 (Cross-cutting area) `cross/18: People management: onboarding, bulk import, profile fields, suspension, roles, deletion`
