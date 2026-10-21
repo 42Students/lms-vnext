@@ -57,6 +57,17 @@ function invalidPublicInvite(): never {
   throw new TpoRecruiterInviteServiceError("TPO_RECRUITER_INVITE_NOT_FOUND");
 }
 
+/** Display the original LocalDateTime semantics in Asia/Kolkata, never browser-local. */
+export function legacyRecruiterInviteIstLocalTime(value: Date): string {
+  const fields = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata", year: "numeric", month: "2-digit", day: "2-digit",
+    hour: "2-digit", minute: "2-digit", second: "2-digit", hourCycle: "h23",
+  }).formatToParts(value);
+  const get = (type: Intl.DateTimeFormatPartTypes) => fields.find(x=>x.type===type)?.value ?? "00";
+  return get("year")+"-"+get("month")+"-"+get("day")+"T"+
+    get("hour")+":"+get("minute")+":"+get("second");
+}
+
 function indiaDateSixMonthsAfter(now: Date): string {
   const parts = new Intl.DateTimeFormat("en-CA", {
     timeZone: "Asia/Kolkata",
@@ -298,6 +309,10 @@ export async function previewRecruiterInvite(
     companyName: row.lead.companyName,
     contactName: row.lead.name,
     contactEmail: row.lead.emailNorm,
+    // Legacy recruiter-invite consumers read "email" rather than contactEmail.
+    email: row.lead.emailNorm,
+    // No verified review-drive link exists on the lead; do not invent one.
+    reviewDrive: null as string | null,
     designation: row.lead.designation,
     expiresAt: new Date(
       row.lead.inviteSentAt!.getTime() + 7 * 24 * 60 * 60 * 1000,
@@ -469,3 +484,9 @@ export function unsubscribeRecruiterInvite(
 ) {
   return mutatePublicInvite(token, now, "UNSUBSCRIBE");
 }
+
+/** Reminder dates are based on a single original issuance, not a new rolling
+ * seven-day window; a browser's POST /opened stays the trusted open signal.
+ * Do not make public GET mutate a lead: email scanners prefetch invite URLs.
+ */
+export const RECRUITER_INVITE_REMINDER_DAY = 4;

@@ -9,7 +9,6 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Input} from "@/components/ui/input";
 import {LoadingState} from "@/components/ui/loading-state";
 import {Checkbox} from "@/components/ui/checkbox";
-import {Select} from "@/components/ui/select";
 import {collegeProjectRosterCapacity} from "@/modules/projects/college-project-roster-model";
 import {useToast} from "@/components/ui/toast";
 
@@ -34,7 +33,6 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const [search,setSearch]=useState("");
  const [options,setOptions]=useState<Candidate[]>([]);
  const [selected,setSelected]=useState<string[]>([]);
- const [mode,setMode]=useState<"ADD"|"REPLACE">("ADD");
  const [initial,setInitial]=useState<string[]>([]);
  const [version,setVersion]=useState(expectedUpdatedAt);
  const [roleLabel,setRoleLabel]=useState("");
@@ -76,7 +74,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
   const nextTotal=mode==="REPLACE"?selected.length:initial.length+adding.length;
   if(!selected.length){setError("At least one learner is required.");return;}
   if(nextTotal>500){
-   setError("This workspace has "+initial.length+" active students. The requested change would bring it to "+nextTotal+"; the maximum is 500.");
+   setError("This would exceed the 500-learner limit for this workspace — currently "+(mode==="ADD"?initial.length:0)+", adding "+(mode==="ADD"?adding.length:selected.length)+".");
    return;
   }
   lock.current=true;setBusy(true);setError("");
@@ -106,6 +104,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const removeCount=mode==="REPLACE"?initial.filter(id=>!selected.includes(id)).length:0;
  const nextTotal=mode==="REPLACE"?selected.length:initial.length+
   selected.filter(id=>!initial.includes(id)).length;
+ const capacity=collegeProjectRosterCapacity(initial,selected,mode==="REPLACE");
  const removedNames=options.filter(option=>initial.includes(option.membershipId)&&
   !selected.includes(option.membershipId)).map(option=>option.displayName?.trim()||"Unnamed member");
  const removalSummary=removedNames.slice(0,10).join(", ")+
@@ -154,7 +153,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
       <span className="min-w-0 break-words">{option.displayName??option.email??"Learner"}</span>
      </label>)}
      {!options.length?<p className="text-sm text-muted-foreground leading-[22px]">No eligible learners available. Search by name or email.</p>:null}
-     {nextTotal>=500?<p role="status" className="text-sm text-muted-foreground">Maximum 500 students can be selected.</p>:null}
+     {nextTotal>=500?<p role="status" className="text-sm text-muted-foreground">{capacity.allowed?"Maximum 500 students can be selected.":capacity.message}</p>:null}
      </fieldset>
     </div>:searching?<LoadingState label="Loading eligible learners…"/>:error?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)

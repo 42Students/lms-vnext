@@ -12,6 +12,7 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
   const router = useRouter();
   const [reason, setReason] = useState("");
   const [error, setError] = useState("");
+  const [success,setSuccess]=useState("");
   const [open, setOpen] = useState(false);
   const [pending, start] = useTransition();
   const pendingRef = useRef(false);
@@ -24,6 +25,7 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
     }
 
     pendingRef.current = true;
+    setSuccess("");
     start(async () => {
       try {
         const response = await fetch("/api/people/" + encodeURIComponent(membershipId) + "/lifecycle", {
@@ -31,23 +33,37 @@ export function CollegeStudentLifecycleAction({ membershipId, name, status }: {
           body: JSON.stringify(suspend ? { action: "SUSPEND", reason: reason.trim() }
             : { action: "REACTIVATE" }),
         });
-        if (!response.ok) throw Error(response.status===409
-          ? "This membership changed elsewhere. Refresh before retrying."
-          : "Action refused. Check your access and try again.");
-        setOpen(false); setReason(""); setError(""); router.refresh();
+        if (!response.ok) {
+          const details:unknown=await response.json().catch(()=>null);
+          const payload=details&&typeof details==="object"?details as Record<string,unknown>:{};
+          const safeReason=typeof payload.message==="string"&&payload.message.length<=200
+            ?payload.message:"";
+          const reason=response.status===409
+            ? "This membership changed elsewhere. Refresh before retrying."
+            : response.status===404?"Student membership not found. Refresh the directory."
+            : response.status===403?"You do not have permission to change this student."
+            : safeReason || "Action refused. Check your access and try again.";
+          throw Error("Failed to "+(suspend?"suspend":"reactivate")+" student: "+reason);
+        }
+        setOpen(false); setReason(""); setError("");
+        setSuccess(suspend?"Student suspended":"Student reactivated");
+        router.refresh();
       } catch (cause) { setError(cause instanceof Error ? cause.message : "Action refused"); }
       finally { pendingRef.current = false; }
     });
   }
   return <div className="min-w-0 space-y-[var(--lms-space-2)]">
     <Button variant="secondary" type="button" disabled={pending} loading={pending}
-      onClick={() => setOpen(true)} className="min-h-11 w-full sm:w-auto md:min-h-9">
+      onClick={() => {setSuccess("");setOpen(true);}} className="min-h-11 w-full sm:w-auto md:min-h-9">
       {suspend ? "Suspend" : "Reactivate"}
     </Button>
     {!open&&error?<Alert tone="error">{error}</Alert>:null}
+    {success&&!open?<Alert tone="success">{success}</Alert>:null}
     <ConfirmDialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}}
       title={(suspend?"Suspend ":"Reactivate ")+name+"?"}
-      description={suspend?"Provide a reason for restricting the student's college access.":"Restore this student's college access?"}
+      description={suspend
+        ? "Blocks access through this college membership immediately and revokes current sessions. This action is reversible; data and history are kept. Other active memberships are not ended. Provide a reason."
+        : "Restores login access through this college membership, subject to platform sign-in restrictions. Other active memberships remain usable."}
       confirmLabel={suspend?"Confirm suspension":"Confirm reactivation"}
       confirmVariant={suspend?"danger":"primary"} pending={pending}
       confirmDisabled={suspend&&reason.trim().length<3}

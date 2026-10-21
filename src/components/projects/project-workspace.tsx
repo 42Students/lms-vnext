@@ -641,7 +641,9 @@ export function ProjectWorkspace({
           total: readiness.execution.tasks.total + readiness.execution.sprints.total,
         }}
         estimatedTaskCount={workspace.tasks.filter(task =>
-          !task.deletedAt && task.estimatePoints !== null).length}/>:null}
+          !task.deletedAt && task.estimatePoints !== null).length}
+        hasMentor={workspace.members.some(member=>
+          member.role==="MENTOR"&&!member.endedAt)}/>:null}
       {show("summary") || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric

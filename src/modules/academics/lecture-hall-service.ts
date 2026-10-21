@@ -118,6 +118,7 @@ export const updateLectureHallSchema = z
 // read-only endpoint and explicit role gate outside this mutation service.
 export const listLectureHallsSchema = z.object({
   collegeId: z.string().uuid("Select a college to continue"),
+  id:z.string().uuid().optional(),
   q: z.string().trim().max(100).optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
@@ -210,6 +211,7 @@ export async function listLectureHalls(
   const prefixSearch = escapedSearch ? escapedSearch + "%" : null;
   const filters = [
     eq(lectureHalls.collegeId, college.id),
+    ...(query.id?[eq(lectureHalls.id,query.id)]:[]),
     ...(containsSearch ? [or(
       ilike(lectureHalls.name, containsSearch),
       ilike(lectureHalls.description, containsSearch),

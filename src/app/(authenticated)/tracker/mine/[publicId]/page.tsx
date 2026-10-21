@@ -5,7 +5,7 @@ import {PageBackLink} from "@/components/ui/page-back-link";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { Banner } from "@/components/ui/banner";
 import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
-import {getMyTrackerReport} from "@/modules/bug-tracker/reporter-service";
+import {getMyTrackerReport,listMyTrackerReportHistory,listMyTrackerReportScreenshots} from "@/modules/bug-tracker/reporter-service";
 import {TrackerAdminError} from "@/modules/bug-tracker/admin-errors";
 import {trackerPublicIdSchema} from "@/modules/bug-tracker/admin-validation";
 export const dynamic="force-dynamic";
@@ -28,6 +28,10 @@ export default async function MyTrackerReportDetail({
     throw error;
   }
   if(!report)notFound();
+  const [history,screenshots]=await Promise.all([
+    listMyTrackerReportHistory(context,publicId),
+    listMyTrackerReportScreenshots(context,publicId),
+  ]);
   return <article className="min-w-0 max-w-full space-y-4">
     <PageHeader title={report.publicId} description={report.issueType}
       actions={<PageBackLink href="/tracker/mine" label="Back to my reports"/>}/>
@@ -36,8 +40,35 @@ export default async function MyTrackerReportDetail({
         <div className="flex min-h-11 items-center gap-2 md:min-h-9"><dt className="font-semibold text-[var(--lms-muted-text)]">Status:</dt><dd><StatusBadge tone={report.status==="CLOSED"?"success":"info"}>{report.status}</StatusBadge></dd></div>
         <div className="flex min-h-11 items-center gap-2 md:min-h-9"><dt className="font-semibold text-[var(--lms-muted-text)]">Severity:</dt><dd><StatusBadge tone={report.severity==="BLOCKER"||report.severity==="CRITICAL"?"error":"warning"}>{report.severity}</StatusBadge></dd></div>
       </dl>
-      <p className="mt-3 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{report.description}</p>
+      <dl className="mt-3 grid grid-cols-1 gap-2 text-sm md:grid-cols-2">
+        <div><dt className="font-semibold text-muted-foreground">Page</dt><dd className="break-all">{report.page || "—"}</dd></div>
+        <div><dt className="font-semibold text-muted-foreground">Screen</dt><dd>{report.screen || "—"}</dd></div>
+        <div><dt className="font-semibold text-muted-foreground">Section</dt><dd>{report.section || "—"}</dd></div>
+        <div><dt className="font-semibold text-muted-foreground">Environment</dt><dd>{report.environment}</dd></div>
+      </dl>
+      <h2 className="mt-4 text-base font-semibold text-[var(--lms-heading)]">Description</h2>
+      <p className="mt-2 max-w-3xl whitespace-pre-wrap break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{report.description}</p>
+      {report.evidenceLink?.startsWith("https://") ? <p className="mt-3 text-sm">
+        <a href={report.evidenceLink} rel="noopener noreferrer" target="_blank" className="font-semibold text-link underline">Open linked evidence</a>
+      </p> : null}
       <p className="mt-3 text-xs text-muted-foreground">Reported: <time dateTime={report.createdAt.toISOString()}>{report.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</time></p>
+    </section>
+    <section className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Screenshots ({screenshots.length})</h2>
+      {screenshots.length===0 ? <p className="text-sm text-muted-foreground">No screenshots attached.</p> :
+        <ul className="space-y-2">{screenshots.map(file=><li key={file.id} className="text-sm">
+          <span className="break-words">{file.originalFilename}</span>
+          <span className="text-muted-foreground"> · {(Number(file.sizeBytes)/1024).toFixed(0)} KB</span>
+        </li>)}</ul>}
+      <p className="text-xs text-muted-foreground">Files are shown as metadata only until an authorized short-lived preview is available.</p>
+    </section>
+    <section className="space-y-3">
+      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Activity</h2>
+      {history.length===0?<p className="text-sm text-muted-foreground">No status changes yet.</p>:
+        <ol className="space-y-3">{history.map(row=><li key={row.id} className="border-b border-border pb-3 text-sm">
+          <span className="font-semibold">{row.type}</span>
+          <span className="ml-2 text-muted-foreground">{row.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})}</span>
+        </li>)}</ol>}
     </section>
   </article>;
 }

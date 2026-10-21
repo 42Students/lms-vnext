@@ -53,6 +53,8 @@ export const db10Skills = pgTable(
     uniqueIndex("db10_skills_name_uq").on(sql`lower(${t.name})`),
     uniqueIndex("db10_skills_legacy_id_uq")
       .on(t.legacySkillId).where(sql`${t.legacySkillId} is not null`),
+    index("db10_skills_active_display_idx")
+      .on(t.isActive,sql`lower(${t.displayName})`),
     index("db10_skills_active_category_name_idx")
       .on(t.isActive, t.category, t.displayName),
     index("db10_skills_popularity_idx")
@@ -82,6 +84,8 @@ export const db10SkillSynonyms = pgTable(
     // Legacy SkillRepository.findBySynonym uses DISTINCT and can return multiple
     // skills per term. This MUST NOT be globally unique.
     index("db10_skill_synonyms_search_idx").on(sql`lower(${t.synonym})`),
+    uniqueIndex("db10_skill_synonyms_skill_value_uq")
+      .on(t.skillId,sql`lower(${t.synonym})`),
     index("db10_skill_synonyms_skill_idx").on(t.skillId),
     check("db10_skill_synonyms_value_ck", sql`length(trim(${t.synonym})) > 0`),
   ],
@@ -105,3 +109,13 @@ export const db10SkillUsage = pgTable(
     check("db10_skill_usage_count_ck", sql`${t.usageCount} >= 0`),
   ],
 );
+
+/** A source synonym is unique per skill after case folding, but the same
+ * spelling may intentionally belong to multiple skill UUIDs. Import via
+ * idempotent per-skill upsert; never impose global synonym uniqueness. */
+export const SKILL_SYNONYM_IMPORT_POLICY={
+ perSkillCaseInsensitiveUniqueness:true,
+ allowManySkillsPerSynonym:true,
+ preserveLegacyIntegerIds:true,
+ importIsIdempotent:true,
+} as const;

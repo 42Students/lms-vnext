@@ -96,9 +96,7 @@ function sameMonth(value: string, selected: string) {
 
 function learnerName(learner: Learner) {
   return (
-    learner.displayName?.trim() ||
-    learner.email ||
-    `Learner ${learner.membershipId.slice(0, 8)}`
+    learner.displayName?.trim() || "Name not recorded"
   );
 }
 
@@ -300,9 +298,8 @@ export function FacultyAttendanceWorkspace({
     const term = search.trim().toLowerCase();
     if (!term) return workspace.roster;
     return workspace.roster.filter((learner) =>
-      `${learner.displayName ?? ""} ${learner.email}`
-        .toLowerCase()
-        .includes(term),
+      (learner.displayName ?? "").normalize("NFKC").toLocaleLowerCase("en-IN")
+        .includes(term.normalize("NFKC").toLocaleLowerCase("en-IN")),
     );
   }, [search, workspace.roster]);
 
@@ -395,7 +392,7 @@ export function FacultyAttendanceWorkspace({
     if (!attendanceConfirmation) {
       setError(selectedSession.attendanceStatus === "MARKED"
         ? "Change at least one recorded mark before submitting a correction."
-        : "Nothing to submit — mark at least one student present or absent."); return;
+        : "Nothing to record — provide at least one absent or present learner"); return;
     }
     setConfirmingAttendance(true);
   }
@@ -411,7 +408,7 @@ export function FacultyAttendanceWorkspace({
     if (!attendanceConfirmation) {
       setError(selectedSession.attendanceStatus === "MARKED"
         ? "Change at least one recorded mark before submitting a correction."
-        : "Nothing to submit — mark at least one student present or absent.");
+        : "Nothing to record — provide at least one absent or present learner");
       return;
     }
     submitLock.current = true;
@@ -545,7 +542,7 @@ export function FacultyAttendanceWorkspace({
           className="mt-4 w-full md:w-auto"
           label="Attendance view"
           value={mode}
-          options={[{value:"REPORT",label:"Monthly Attendance"},{value:"MARK",label:"Mark attendance"}]}
+          options={[{value:"REPORT",label:"Attendance report"},{value:"MARK",label:"Mark attendance"}]}
           onChange={(next) => {
             if (next === "REPORT" || next === "MARK") {
               confirmDiscardMarks(() => setMode(next));
@@ -617,7 +614,7 @@ export function FacultyAttendanceWorkspace({
           <section aria-label="Monthly class health" className="border-b border-border pb-4">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
-                <h2 className="text-sm font-semibold text-body">Monthly Attendance</h2>
+                <h2 className="text-sm font-semibold text-body">Monthly class health</h2>
                 <p className="mt-1 text-xs text-muted-foreground">
                   See each student&apos;s attendance day by day for this month.
                 </p>
@@ -719,11 +716,18 @@ export function FacultyAttendanceWorkspace({
           ) : (
             <section className="min-w-0">
               
+              <h2 className="mb-3 text-base font-semibold text-foreground">Monthly Attendance</h2>
+              <p className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" aria-label="Attendance legend">
+                <StatusBadge tone="success">P</StatusBadge> Present
+                <StatusBadge tone="error">A</StatusBadge> Absent
+                <StatusBadge tone="warning">—</StatusBadge> Not marked yet
+                <StatusBadge tone="neutral">✖</StatusBadge> No class
+              </p>
               <Table scrollLabel="Faculty attendance monthly grid" className="min-w-[48rem]">
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
                   <tr>
                     <th className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-3">
-                      Learner
+                      Student Name
                     </th>
                     {calendarDays.map((day) => (
                       <th
@@ -765,18 +769,7 @@ export function FacultyAttendanceWorkspace({
                         >
                           {learnerName(learner)}
                         </Button>
-                        <p className="mt-1 text-xs text-muted-foreground">
-                          {[
-                            learner.rollNumber
-                              ? `Roll ${learner.rollNumber}`
-                              : null,
-                            learner.email,
-                            learner.phoneE164,
-                          ]
-                            .filter(Boolean)
-                            .join(" · ") ||
-                            "Contact details unavailable"}
-                        </p>
+                        {learner.rollNumber ? <p className="mt-1 text-xs text-muted-foreground">Roll {learner.rollNumber}</p> : null}
                       </td>
                       {calendarDays.map((day) => {
                         if (day.sessions.length === 0) {
@@ -830,7 +823,7 @@ export function FacultyAttendanceWorkspace({
               </Table>
               
               <p className="mt-4 text-xs leading-5 text-muted-foreground">
-                P = Present · A = Absent · — = Not marked yet · ✖ = No class · S = future class · x/y = present sessions / all sessions that day.
+                Extra indicators: S = future class · x/y = present sessions / all sessions that day.
               </p>
             </section>
           )}
@@ -838,10 +831,11 @@ export function FacultyAttendanceWorkspace({
       ) : (
         <>
           {workspace.sessions.length === 0 ? (
-            <EmptyState
-              title="No class scheduled for this date"
-              description="Use Schedule Class to create a class session before marking attendance."
-            />
+            <div className="space-y-3">
+              <EmptyState title="No class scheduled for this date"
+                description="Use Schedule Class to create a class session before marking attendance." />
+              <Button type="button" variant="secondary" onClick={() => setScheduleOpen(true)}>Schedule Class</Button>
+            </div>
           ) : (
             <section className="border-b border-border pb-4">
               <div className="grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(16rem,24rem)_1fr]">
@@ -882,7 +876,8 @@ export function FacultyAttendanceWorkspace({
                 </div>
                 {selectedSession ? (
                   <div className="border-l-2 border-border pl-[var(--lms-space-3)] text-sm text-body">
-                    <p className="m-0 font-semibold text-foreground">
+                    <h2 className="m-0 font-semibold text-foreground">Attendance Session</h2>
+                    <p className="mt-1 font-medium text-foreground">
                       {selectedSession.title}
                     </p>
                     <div className="mt-2">
@@ -912,17 +907,19 @@ export function FacultyAttendanceWorkspace({
                   </div>
                 ) : null}
               </div>
-
+              {selectedSession ? <div role="group" aria-label="Attendance summary" className="mt-4 grid grid-cols-3 gap-3 border-y border-border py-3 text-center">
+                <p className="text-xs text-muted-foreground">Students <strong className="block text-lg tabular-nums text-foreground">{workspace.roster.length}</strong></p>
+                <p className="text-xs text-muted-foreground">Present <strong className="block text-lg tabular-nums text-foreground">{Math.max(0, workspace.roster.length - absent.size)}</strong></p>
+                <p className="text-xs text-muted-foreground">Absent <strong className="block text-lg tabular-nums text-foreground">{absent.size}</strong></p>
+              </div> : null}
               <div className="mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
-                <Input
-                  className="min-w-0 w-full md:max-w-sm"
-                  aria-label="Find a student by name"
-                  placeholder="Find a student by name"
-                  value={search}
-                  onChange={(event) =>
-                    setSearch(event.target.value)
-                  }
-                />
+                <div className="flex min-w-0 items-center gap-2 md:max-w-sm md:flex-1">
+                  <span aria-hidden="true" className="text-muted-foreground">⌕</span>
+                  <Input className="min-w-0 w-full" aria-label="Find a student by name"
+                    placeholder="Find a student by name" value={search}
+                    onChange={(event) => setSearch(event.target.value)} />
+                  {search ? <Button type="button" variant="secondary" size="sm" onClick={() => setSearch("")}>Clear</Button> : null}
+                </div>
                 <div className="grid grid-cols-2 gap-[var(--lms-space-2)] [&>button]:w-full md:flex md:flex-wrap md:[&>button]:w-auto">
                   <Button
                     size="md"
@@ -959,15 +956,18 @@ export function FacultyAttendanceWorkspace({
               </div>
 
               <div
-                className="mt-[var(--lms-space-4)] min-w-0 border-y border-border"
-                aria-label="Attendance roster"
+                className="mt-[var(--lms-space-4)] max-h-[420px] min-w-0 overflow-auto border-y border-border"
+                aria-label="Attendance roster" role="region" tabIndex={0}
               >
+                <div aria-hidden="true" className="sticky top-0 z-10 grid min-w-[500px] grid-cols-2 border-b border-border bg-surface px-3 py-2 text-xs font-semibold text-muted-foreground">
+                  <span>Student Name</span><span>Status</span>
+                </div>
                 {visibleRoster.length === 0 ? (
                   <p className="p-6 text-sm text-muted-foreground">
                     No learners match this search.
                   </p>
                 ) : (
-                  <ul className="divide-y divide-border">
+                  <ul className="min-w-[500px] divide-y divide-border">
                     {visibleRoster.map(
                       (learner) => {
                         const isAbsent = absent.has(
@@ -976,26 +976,15 @@ export function FacultyAttendanceWorkspace({
                         return (
                           <li
                             key={learner.membershipId}
-                            className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] py-[var(--lms-space-4)] md:flex-row md:items-center md:justify-between"
+                            className="grid min-w-0 grid-cols-2 items-center gap-3 px-3 py-3"
                           >
                             <div>
                               <p className="m-0 text-sm font-semibold text-foreground">
                                 {learnerName(learner)}
                               </p>
-                              <p className="mt-1 text-xs text-muted-foreground">
-                                {[
-                                  learner.rollNumber
-                                    ? `Roll ${learner.rollNumber}`
-                                    : null,
-                                  learner.email,
-                                  learner.phoneE164,
-                                ]
-                                  .filter(Boolean)
-                                  .join(" · ") ||
-                                  "Contact details unavailable"}
-                              </p>
+                              {learner.rollNumber ? <p className="mt-1 text-xs text-muted-foreground">Roll {learner.rollNumber}</p> : null}
                             </div>
-                            <div className="grid grid-cols-2 gap-[var(--lms-space-2)] [&>button]:w-full md:flex md:flex-wrap md:[&>button]:w-auto" role="group" aria-label={"Attendance for "+learnerName(learner)}>
+                            <div className="grid grid-cols-2 gap-2 [&>button]:w-full" role="group" aria-label={"Attendance for "+learnerName(learner)}>
                               <Button
                                 size="md"
                                 className="min-h-11 md:min-h-9"
@@ -1016,7 +1005,7 @@ export function FacultyAttendanceWorkspace({
                                   )
                                 }
                               >
-                                Present
+                                <span aria-hidden="true">✓ P</span><span className="sr-only">Present</span>
                               </Button>
                               <Button
                                 size="md"
@@ -1038,7 +1027,7 @@ export function FacultyAttendanceWorkspace({
                                   )
                                 }
                               >
-                                Absent
+                                <span aria-hidden="true">× A</span><span className="sr-only">Absent</span>
                               </Button>
                             </div>
                           </li>

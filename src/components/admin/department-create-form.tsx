@@ -81,8 +81,8 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
           maxLength={255} placeholder={DEPARTMENT_COPY.namePlaceholder}/>
         {fieldError?<p id="department-name-error" className="mt-1 text-xs text-error">{fieldError}</p>:null}
       </div>
-      <Button type="submit" className="min-h-11 w-full justify-center sm:w-fit md:min-h-9" disabled={pending}>
-        <span aria-hidden="true" className="mr-2">＋</span>{pending?"Creating…":DEPARTMENT_COPY.createButton}
+      <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={pending}>
+        {pending?"Creating…":<><span aria-hidden="true" className="mr-1">＋</span>{DEPARTMENT_COPY.createButton}</>}
       </Button>
       {notice?<p role="status" className="m-0 w-full min-w-0 break-words text-sm leading-[22px] text-success-text sm:col-span-2">{notice}</p>:null}
       {error?<Alert tone="error" title={DEPARTMENT_COPY.createFailed}>

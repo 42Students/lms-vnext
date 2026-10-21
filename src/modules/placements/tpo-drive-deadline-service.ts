@@ -1,5 +1,7 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,lt,asc,sql} from "drizzle-orm";
+import {z} from "zod";
+import {importedJobImportantDates,mirrorImportedDeadline} from "./job-important-date-adapter";
 import {getDb} from "@/db/client";
 import {placementJobs,placementSeasons} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -13,6 +15,7 @@ export async function getTpoDriveDeadlineState(context:RequestContext,rawJobId:u
   id:placementJobs.id,title:placementJobs.title,status:placementJobs.status,
   updatedAt:placementJobs.updatedAt,seasonId:placementJobs.seasonId,
   applicationDeadline:placementJobs.applicationDeadline,
+  legacyPostingDetails:placementJobs.legacyPostingDetails,
  }).from(placementJobs).where(and(eq(placementJobs.id,jobId),
   eq(placementJobs.collegeId,collegeId))).limit(1);
  if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
@@ -20,6 +23,9 @@ export async function getTpoDriveDeadlineState(context:RequestContext,rawJobId:u
  .where(and(eq(placementSeasons.id,job.seasonId),eq(placementSeasons.collegeId,collegeId))).limit(1);
  return {id:job.id,title:job.title,status:job.status,updatedAt:job.updatedAt.toISOString(),
   applicationDeadline:job.applicationDeadline?.toISOString()??null,
+  importedDates:importedJobImportantDates(job.id,job.legacyPostingDetails).map(item=>({
+    id:item.id,label:item.label,date:item.at.toISOString(),eventType:item.eventType,
+  })),
   extendable:job.status==="PUBLISHED"&&season?.status==="ACTIVE"};
 }
 export async function extendTpoDriveDeadline(context:RequestContext,rawJobId:unknown,raw:unknown){
@@ -43,6 +49,7 @@ export async function extendTpoDriveDeadline(context:RequestContext,rawJobId:unk
   }
   const [updated]=await tx.update(placementJobs).set({
    applicationDeadline:new Date(input.newDeadlineIso),
+   ...(job.legacyPostingDetails?{legacyPostingDetails:mirrorImportedDeadline(job.legacyPostingDetails,input.newDeadlineIso)}:{}),
    updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementJobs.updatedAt})+interval '1 millisecond')`,
   }).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId),
    eq(placementJobs.status,"PUBLISHED"),
@@ -80,3 +87,23 @@ export function isTpoDriveExpirySnapshotStillCurrent(
 
 /** Exact legacy fallback for the caller's retry/error toast. */
 export const TPO_DEADLINE_FAILURE_COPY="Failed to extend deadline";
+
+// The old scheduled expiry query used deadline < now (not <=) and only
+// published drives. This bounded read deliberately makes NO lifecycle writes:
+// expiration still needs the guarded writer and CAS on exact selected deadline.
+export async function listTpoExpiredDriveCandidates(context:RequestContext,raw:unknown={}){
+ const input=z.strictObject({
+  limit:z.number().int().min(1).max(100).default(50),
+  offset:z.number().int().min(0).max(100000).default(0),
+ }).parse(raw);
+ const collegeId=await requireTpoJobCollege(context),now=new Date();
+ return getDb().select({
+  jobId:placementJobs.id,title:placementJobs.title,
+  applicationDeadline:placementJobs.applicationDeadline,
+  status:placementJobs.status,updatedAt:placementJobs.updatedAt,
+ }).from(placementJobs).where(and(
+  eq(placementJobs.collegeId,collegeId),eq(placementJobs.status,"PUBLISHED"),
+  lt(placementJobs.applicationDeadline,now),
+ )).orderBy(asc(placementJobs.applicationDeadline),asc(placementJobs.id))
+  .limit(input.limit).offset(input.offset);
+}

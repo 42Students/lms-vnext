@@ -1,12 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Alert } from "@/components/ui/alert";
 import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmActionDialog} from "@/components/ui/confirm-action-dialog";
 import {splitHrRecruiterName} from "@/modules/placements/hr-recruiter-name-fields-model";
-import {hrProfileSaveErrorFeedback,hrProfileDetailsSaveReceiptSchema} from "@/modules/placements/recruiter-profile-details-model";
+import {hrProfileSaveErrorFeedback,hrProfileDetailsSaveReceiptSchema,recruiterProfileFieldErrors} from "@/modules/placements/recruiter-profile-details-model";
 export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialPhone,
  userUpdatedAt,profileUpdatedAt,contactReady}:{
  initialName:string|null;initialTitle:string|null;initialPhone:string|null;
@@ -20,6 +21,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  const [form,setForm]=useState(saved),[versions,setVersions]=useState({userUpdatedAt,profileUpdatedAt});
  const [busy,setBusy]=useState(false),busyRef=useRef(false);
  const [feedback,setFeedback]=useState("");
+ const [fieldErrors,setFieldErrors]=useState<Partial<Record<keyof typeof saved,string>>>({});
  const [leaveHref,setLeaveHref]=useState<string|null>(null);
  const dirty=Object.keys(saved).some(key=>{
   const field=key as keyof typeof saved;
@@ -44,10 +46,28 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   return ()=>{window.removeEventListener("beforeunload",warn);
    document.removeEventListener("click",intercept,true);};
  },[dirty]);
- function update(key:keyof typeof form,value:string){setForm(s=>({...s,[key]:value}));setFeedback("");}
+ useEffect(()=>{
+  if(feedback!=="Profile saved")return;
+  const timer=window.setTimeout(()=>setFeedback(""),3000);
+  return ()=>window.clearTimeout(timer);
+ },[feedback]);
+ function update(key:keyof typeof form,value:string){
+  setForm(s=>({...s,[key]:value}));setFeedback("");
+  setFieldErrors(previous=>({...previous,[key]:undefined}));
+ }
  async function save(e:FormEvent<HTMLFormElement>){
   e.preventDefault();
   if(!dirty||busyRef.current)return;
+  const errors=recruiterProfileFieldErrors(form);
+  if(Object.keys(errors).length){
+   setFieldErrors(errors);
+   const first=(["firstName","lastName","title","phone"] as const)
+     .find(key=>errors[key]);
+   if(first)e.currentTarget.querySelector<HTMLInputElement>(`[name="${first}"]`)?.focus();
+   setFeedback("Check the highlighted profile details.");
+   return;
+  }
+  setFieldErrors({});
   busyRef.current=true;setBusy(true);setFeedback("");
   const controller=new AbortController(),timeout=window.setTimeout(()=>controller.abort(),12000);
   try{
@@ -58,27 +78,46 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
      expectedProfileUpdatedAt:versions.profileUpdatedAt}),
    }));
    if(!response)throw new Error("PROFILE_REQUEST_UNCONFIRMED");
-   if(!response.ok){setFeedback(hrProfileSaveErrorFeedback(response.status));return;}
+   if(!response.ok){
+    const payload:unknown=await response.json().catch(()=>null);
+    const code=payload && typeof payload==="object" && "error" in payload &&
+      typeof payload.error==="string" ? payload.error : undefined;
+    const errors=recruiterProfileFieldErrors(form,code);
+    if(code==="INVALID_MOBILE")errors.phone="Check the mobile number.";
+    setFieldErrors(errors);
+    if(Object.keys(errors).length){
+     const first=(["firstName","lastName","title","phone"] as const).find(key=>errors[key]);
+     if(first)document.querySelector<HTMLInputElement>(`[name="${first}"]`)?.focus();
+    }
+    setFeedback(hrProfileSaveErrorFeedback(response.status));return;
+   }
    const responseBody:unknown=await response.json().catch(()=>null);
    const receipt=hrProfileDetailsSaveReceiptSchema.safeParse(responseBody);
    if(!receipt.success)throw new Error("NO_CONFIRMED_PROFILE");
    const confirmed=receipt.data.profile;
    const name=splitHrRecruiterName(confirmed.displayName);
    const next={...name,title:confirmed.title??"",phone:confirmed.phone};
-   setSaved(next);setForm(next);
+   setSaved(next);setForm(next);setFieldErrors({});
    setVersions({userUpdatedAt:confirmed.userUpdatedAt,profileUpdatedAt:confirmed.profileUpdatedAt});
    setFeedback("Profile saved");router.refresh();
   }catch{setFeedback("Could not save your profile. Your changes are still here; try again.");}
   finally{window.clearTimeout(timeout);busyRef.current=false;setBusy(false);}
  }
  return <form onSubmit={e=>void save(e)} className="min-w-0 space-y-4">
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+   <p className="font-semibold">Recruiter contact details</p>
+   {dirty?<span role="status" className="inline-flex w-fit items-center rounded-full border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-3 py-1 text-xs font-semibold text-warning-text">Unsaved changes</span>:null}
+  </div>
   <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
     <label key={key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
-      value={form[key]} disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
+      value={form[key]} required={key==="firstName"} pattern={key==="phone"?"(?:[0-9]{10}|\\+91[0-9]{10})?":undefined}
+      aria-invalid={Boolean(fieldErrors[key])} aria-describedby={fieldErrors[key]?`recruiter-profile-${key}-error`:undefined}
+      disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
       onChange={e=>update(key,e.target.value)}
       className="min-h-11 w-full min-[768px]:min-h-9"/>
+     {fieldErrors[key]?<span id={`recruiter-profile-${key}-error`} className="text-xs font-normal text-error">{fieldErrors[key]}</span>:null}
     </label>)}
   </div>
   {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
@@ -86,9 +125,10 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
     <Button type="submit" loading={busy} disabled={busy||!dirty}
       className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
       {busy?"Saving…":"Save changes"}</Button>
-    {dirty?<p role="status" className="text-sm font-semibold text-warning-text">Unsaved changes</p>:null}
   </div>
-  {feedback?<p role={feedback==="Profile saved"?"status":"alert"} className={feedback==="Profile saved"?"text-sm text-success":"text-sm text-error"}>{feedback}</p>:null}
+  {feedback==="Profile saved"
+    ? <div role="status" className="fixed right-6 top-20 z-50 rounded-lg border border-[var(--lms-success)] bg-white px-4 py-3 text-sm font-semibold text-success shadow-md">✓ Profile saved</div>
+    : feedback ? <Alert tone="error" title="Profile was not saved"><span aria-hidden="true">!</span> {feedback}</Alert> : null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"
    onCancel={()=>setLeaveHref(null)} onConfirm={()=>{

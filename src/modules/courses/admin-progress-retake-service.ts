@@ -62,10 +62,15 @@ async function readRetakeScope(tx:Tx,ctx:RequestContext,offeringId:string,member
   .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseLearningPaths.offeringId))
-  .where(and(eq(courseOfferings.courseId,offering.courseId),
+  .where(and(eq(courseOfferings.id,offeringId),
     eq(courseLearningPaths.status,"PUBLISHED"),
     eq(courseLessons.status,"ACTIVE"),
-    eq(lessonContents.status,"PUBLISHED")))
+    eq(courseLessons.visibleToStudents,true),
+    eq(lessonContents.status,"PUBLISHED"),
+    eq(lessonContents.visibleToStudents,true),
+    eq(lessonContents.deletedWithLesson,false),
+    sql`${courseLessons.deletedAt} IS NULL`,
+    sql`${lessonContents.deletedAt} IS NULL`))
   .limit(1001);
  if(rows.length>1000)throw new CourseProgressRetakeError("RETAKE_TOO_MANY_ITEMS");
  if(rows.length===0)throw new CourseProgressRetakeError("NO_COURSE_CONTENT");

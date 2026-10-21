@@ -23,6 +23,10 @@ export const placementDebarments = pgTable(
   "placement_debarments",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyDebarmentId: integer("legacy_debarment_id"),
+    legacyStudentId: integer("legacy_student_id"),
+    legacyCreatorId: integer("legacy_creator_id"),
+    legacyCreatorRole: varchar("legacy_creator_role",{length:32}),
     collegeId: uuid("college_id").notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
     membershipId: uuid("membership_id").notNull()
@@ -43,6 +47,8 @@ export const placementDebarments = pgTable(
   (t) => [
     index("placement_debarments_member_time_idx").on(t.membershipId, t.createdAt),
     index("placement_debarments_college_idx").on(t.collegeId, t.liftedAt),
+    uniqueIndex("placement_debarments_college_legacy_id_uq").on(t.collegeId,t.legacyDebarmentId)
+      .where(sql`${t.legacyDebarmentId} is not null`),
     check("placement_debarments_reason_ck", sql`length(trim(${t.reason})) > 0`),
     check("placement_debarments_until_drives_ck",
       sql`${t.untilDrives} is null or ${t.untilDrives} > 0`),

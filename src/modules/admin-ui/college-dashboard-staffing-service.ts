@@ -24,6 +24,7 @@ export async function getCollegeDashboardUnstaffedCourses(context: RequestContex
     courseName: courses.name,
     code: courses.code,
     sectionName: sections.name,
+    periodName: academicPeriods.name,
   }).from(courseSectionDeliveries)
     .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
@@ -46,10 +47,10 @@ export async function getCollegeDashboardUnstaffedCourses(context: RequestContex
   }>();
   for (const row of rows) {
     const existing = byCourse.get(row.courseId);
-    if (existing) existing.sections.push(row.sectionName);
+    if (existing) existing.sections.push(row.sectionName+" · "+row.periodName);
     else byCourse.set(row.courseId, {
       courseId: row.courseId, name: row.courseName, code: row.code,
-      offeringId: row.offeringId, sections: [row.sectionName],
+      offeringId: row.offeringId, sections: [row.sectionName+" · "+row.periodName],
     });
   }
   return [...byCourse.values()];

@@ -13,7 +13,7 @@ import {
   readCollegeStructureParams,
 } from "@/modules/academics/college-structure-directory-model";
 import { listCollegeClasses } from "@/modules/academics/college-structure-directory-service";
-import { classesExportHref, CLASSES_EXPORT_CAP } from "@/modules/academics/college-classes-export-model";
+import { classesExportHref } from "@/modules/academics/college-classes-export-model";
 import { listCollegeSectionOptions } from "@/modules/academics/college-section-mutation-service";
 import { listRecurringPreviewOptions } from "@/modules/academics/college-recurring-preview-service";
 
@@ -21,11 +21,17 @@ export default async function CollegeClassesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <div className="space-y-4">
+    <PageHeader title="Classes & Sections" />
+    <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
+      Select a College to view classes.{" "}
+      <Link href="/dashboard" className="font-semibold text-primary-text underline">Choose a college workspace</Link>
+    </div>
+  </div>;
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeClassQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="space-y-4">
-    <PageHeader title="Classes" />
+    <PageHeader title="Classes & Sections" />
     <ErrorState title="Invalid class filters"
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/classes" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
@@ -39,7 +45,7 @@ export default async function CollegeClassesPage({
   const options = optionResult.options;
   return <CollegeStructureDirectory data={classes} classOptions={optionResult.error ? undefined : options} prepend={
     <div className="min-w-0 space-y-[var(--lms-space-3)]">
-      {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-amber-300 bg-amber-50 p-3 text-sm">Could not load class options. <Link href="/college/classes" className="font-semibold underline">Retry options</Link></div> :
+      {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-amber-300 bg-amber-50 p-3 text-sm">Some setup options failed to load. <Link href="/college/classes" className="font-semibold underline">Retry options</Link></div> :
         <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />}
       <Disclosure title="More class tools" contentClassName="pt-[var(--lms-space-3)]">
         <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
@@ -55,7 +61,7 @@ export default async function CollegeClassesPage({
           </Link>
         </div>
         <p className="mt-[var(--lms-space-3)] max-w-[70ch] text-xs leading-5 text-muted-foreground">
-          Up to {CLASSES_EXPORT_CAP} classes; download includes a truncation notice when capped.
+          Export includes every class/section matching the current filters.
         </p>
       </Disclosure>
     </div>

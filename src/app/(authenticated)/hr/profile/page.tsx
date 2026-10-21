@@ -1,7 +1,8 @@
 import { DataTable } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { redirect } from "next/navigation";
+import Link from "next/link";
+import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { RecruiterProfileAccess } from "@/components/hr/recruiter-profile-access";
 import { RecruiterProfileDetailsEditor } from "@/components/hr/recruiter-profile-details-editor";
@@ -12,18 +13,32 @@ import { getRecruiterSelfGrantOverview } from "@/modules/placements/recruiter-se
 
 export default async function HrProfilePage() {
   const context = await getCurrentRequestContext();
-  if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id) redirect("/dashboard");
-  const profile = await getRecruiterSelfProfile(context);
-  const overview = await getRecruiterSelfGrantOverview(context);
+  if (!hasActiveRecruiter(context) || context.recruiter?.userId !== context.user.id)
+   return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
+    <ErrorState title="Recruiter profile access denied"
+      description="Your signed-in account has no active recruiter identity. Choose an authorized workspace or sign in with your recruiter work email."
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Choose workspace</Link>}/>
+   </div>;
+  const [profileResult,overviewResult]=await Promise.allSettled([
+    getRecruiterSelfProfile(context),getRecruiterSelfGrantOverview(context),
+  ]);
+  if(profileResult.status==="rejected"||overviewResult.status==="rejected")
+   return <div className="min-w-0 space-y-4"><PageHeader title="Your Profile"/>
+    <ErrorState title="We couldn't load your recruiter account"
+      description="Your recruiter profile or college access could not be verified. No other account details have been substituted."
+      action={<Link href="/hr/profile" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+   </div>;
+  const profile=profileResult.value,overview=overviewResult.value;
 
   return (
     <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <PageHeader
-        title="Profile"
-        description="Manage your recruiter details."
+        title="Your Profile"
+        description="Manage your recruiter details and review your college access."
       />
 
-      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
+      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.55fr)_minmax(18rem,1fr)]">
+       <div className="min-w-0">      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Your details</h2>
         <p className="mt-2 text-sm text-body">These details identify you to the placement cell.</p>
         <details className="mt-2 min-w-0">
@@ -40,57 +55,15 @@ export default async function HrProfilePage() {
         <dl className="mt-4 max-w-3xl border-t border-border pt-4">
           <div>
             <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Work email</dt>
-            <dd className="mt-1 break-all text-sm text-foreground">{profile.email ?? "Not provided"}</dd>
+            <dd className="mt-1 break-all text-sm text-foreground">{profile.email ?? "—"}</dd>
             <p className="mt-1 max-w-2xl break-words text-xs leading-5 text-muted-foreground">You sign in with this, so it can&apos;t be changed here. A different company means a new work email and a new account.</p>
           </div>
 
         </dl>
       </section>
-
-      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
-        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Account</h2>
-        <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
-            <dd className="mt-1 break-words text-sm text-foreground">{profile.companyName}</dd>
-            <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">Your company comes from your work email. Ask 42 if its name or logo is wrong.</p>
-          </div>
-        </dl>
-      </section>
-
-      <section
-        aria-labelledby="recruiter-account-status"
-        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6"
-      >
-        <h2
-          id="recruiter-account-status"
-          className="text-base font-semibold text-[var(--lms-heading)]"
-        >
-          Recruiter account status
-        </h2>
-        <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Profile status
-            </dt>
-            <dd className="mt-1"><StatusBadge tone={overview.profileStatus==="ACTIVE"?"success":"warning"}>{overview.profileStatus==="ACTIVE"?"Active":overview.profileStatus}</StatusBadge></dd>
-          </div>
-          <div>
-            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-              Currently active college grants
-            </dt>
-            <dd className="mt-1 text-sm font-semibold text-foreground">
-              {overview.grants.length}
-            </dd>
-          </div>
-        </dl>
-        <p className="mt-3 text-xs leading-5 text-muted-foreground">
-          Status is checked against your current
-          recruiter profile. Only your own active
-          college grants are shown below.
-        </p>
-      </section>
-
+       </div>
+       <aside aria-label="Recruiter account and college access" className="min-w-0 space-y-4">
+         
       <section
         aria-labelledby="recruiter-current-grants"
         className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6"
@@ -152,6 +125,58 @@ export default async function HrProfilePage() {
         </p>
 
       </section>
+         
+      <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6">
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Account</h2>
+        <dl className="mt-4 grid min-w-0 gap-4">
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">College</dt>
+            <dd className="mt-1 text-sm text-foreground">{overview.grants.length===1?overview.grants[0]!.collegeName:"—"}</dd>
+          </div>
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Company</dt>
+            <dd className="mt-1 break-words text-sm text-foreground">{profile.companyName||"—"}</dd>
+            <p className="mt-1 max-w-2xl text-xs leading-5 text-muted-foreground">Your company comes from your work email. Ask your placement cell if its name or logo is wrong.</p>
+          </div>
+        </dl>
+      </section>
+
+         
+      <section
+        aria-labelledby="recruiter-account-status"
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-6"
+      >
+        <h2
+          id="recruiter-account-status"
+          className="text-base font-semibold text-[var(--lms-heading)]"
+        >
+          Recruiter account status
+        </h2>
+        <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Profile status
+            </dt>
+            <dd className="mt-1"><StatusBadge tone={overview.profileStatus==="ACTIVE"?"success":"warning"}>{overview.profileStatus==="ACTIVE"?"Active":overview.profileStatus}</StatusBadge></dd>
+          </div>
+          <div>
+            <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Currently active college grants
+            </dt>
+            <dd className="mt-1 text-sm font-semibold text-foreground">
+              {overview.grants.length}
+            </dd>
+          </div>
+        </dl>
+        <p className="mt-3 text-xs leading-5 text-muted-foreground">
+          Status is checked against your current
+          recruiter profile. Only your own active
+          college grants are shown below.
+        </p>
+      </section>
+
+       </aside>
+      </div>
     </div>
   );
 }

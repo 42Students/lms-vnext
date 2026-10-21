@@ -414,8 +414,8 @@ export async function reassignProjectPrimaryMentor(
         currentPrimary?.membershipId ===
           mentorMembershipId &&
         (currentPrimary.roleLabel?.trim() ||
-          "Project Mentor") ===
-          normalizedRoleLabel
+          "Project Mentor").toLocaleLowerCase() ===
+          normalizedRoleLabel.toLocaleLowerCase()
       ) {
         return {
           projectId: project.id,

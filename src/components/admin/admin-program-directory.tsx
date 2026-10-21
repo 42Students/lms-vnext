@@ -3,7 +3,7 @@
 import { useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {deriveSuperAdminProgramCode,validLegacyProgramYears} from "@/modules/admin-ui/super-admin-program-input";
 import { ProgramActions } from "@/components/academics/academics-actions";
 import { createCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
@@ -42,7 +42,7 @@ function rememberSize(size: number) {
 
 const columns = (departments: readonly {id:string;name:string}[]): DataTableColumn<AdminProgramRow>[] => [
   {
-    key: "name", header: "Program", mobilePriority: "primary",
+    key: "name", header: "Program Name", mobilePriority: "primary",
     cell: (item) => (
       <div>
         <p className="m-0 min-w-0 break-words font-semibold text-foreground">{item.name}</p>
@@ -50,8 +50,8 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
       </div>
     ),
   },
-  { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName },
   { key: "duration", header: "Duration", mobilePriority: "secondary", cell: (item) => programDurationYearsLabel(item.durationTerms) },
+  { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName||"Name unavailable" },
   {
     key: "contents",
     header: "Contents",
@@ -99,7 +99,7 @@ export function AdminProgramDirectory({
   const [createError,setCreateError]=useState("");
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
-  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 10);
+  const pageSize = useSyncExternalStore(listenSize, storedSize, () => 25);
 
   const filtered = filterAdminPrograms(programs, search);
   const result = paginateAdminPrograms(filtered, page, pageSize);
@@ -144,7 +144,15 @@ export function AdminProgramDirectory({
       }catch(error){
         const message=error instanceof Error?error.message:"Failed to create program.";
         setCreateError(message);
-        if(/dept_id|departmentId|department/i.test(message))setFieldErrors({department:message});
+        if(error instanceof FriendlyFetchError){
+          if(error.code==="PROGRAM_NAME_CONFLICT"){
+            setFieldErrors({name:"Program name already exists in this department"});
+            setCreateError("Program name already exists in this department");
+          }else if(error.code==="PROGRAM_CODE_CONFLICT")setCreateError("Program code already exists in this department");
+          else if(error.fieldErrors.name)setFieldErrors({name:error.fieldErrors.name});
+          else if(error.fieldErrors.departmentId)setFieldErrors({department:error.fieldErrors.departmentId});
+          else if(error.fieldErrors.durationTerms)setFieldErrors({duration:error.fieldErrors.durationTerms});
+        }else if(/dept_id|departmentId|department/i.test(message))setFieldErrors({department:message});
         else if(/duration_years|durationTerms|durationYears/i.test(message))setFieldErrors({duration:message});
         else if(/(?:program )?name/i.test(message))setFieldErrors({name:message});
         showToast({tone:"error",title:"Program was not created",description:message});
@@ -222,7 +230,7 @@ export function AdminProgramDirectory({
             <label htmlFor="admin-program-search" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search programs or departments</label>
             <Input type="search" className="min-h-11 md:min-h-9" id="admin-program-search" value={search}
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
-              placeholder="Search program, code or department" />
+              placeholder="Search programs or departments" />
           </div>
           <Disclosure title="View options" className="min-w-0 sm:self-end" contentClassName="flex min-w-0 flex-col items-stretch gap-2 pb-3 pt-2 sm:flex-row sm:flex-wrap sm:items-end">
             <PageSizeSelect id="admin-program-page-size" label="Rows per page"
@@ -249,10 +257,10 @@ export function AdminProgramDirectory({
           getRowKey={(item) => item.id}
           empty={<p className="m-0 text-sm text-muted-foreground">
             {search
-              ? "No matching programs."
+              ? "No programs found."
               : departments.length === 0
-                ? "No programs yet. Create a department first."
-                : "No programs yet. Create the first program using the form above."}
+                ? "No programs found. Create a department first."
+                : "No programs found. Create a new program using the form beside this list."}
           </p>} />
         {result.total > 0 ? (
           <div className="flex min-w-0 flex-col gap-3 text-sm text-muted-foreground print:hidden md:flex-row md:items-center md:justify-between">

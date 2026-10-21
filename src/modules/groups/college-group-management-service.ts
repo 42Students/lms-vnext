@@ -4,7 +4,7 @@ import { and, eq, isNull, ne, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { colleges, lmsGroupMembers, lmsGroups } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import { hasMembershipRole } from "@/modules/identity/context";
+import { hasMembershipRole,isSuperAdmin } from "@/modules/identity/context";
 import { can, requirePermission, AuthorizationError } from "@/modules/permissions/policy";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -23,7 +23,20 @@ export class CollegeGroupManagementError extends Error {
   }
 }
 
-function ownCollege(context: RequestContext) {
+async function ownCollege(context: RequestContext) {
+  if(isSuperAdmin(context)){
+    const scope=context.adminScope;
+    if(!scope?.collegeId)throw new AuthorizationError("academics.manage");
+    const [college]=await getDb().select({
+      id:colleges.id,organizationId:colleges.organizationId,
+    }).from(colleges).where(eq(colleges.id,scope.collegeId)).limit(1);
+    if(!college||scope.organizationId&&college.organizationId!==scope.organizationId)
+      throw new AuthorizationError("academics.manage");
+    requirePermission(context,"academics.manage",{
+      collegeId:college.id,organizationId:college.organizationId,
+    });
+    return {collegeId:college.id,organizationId:college.organizationId};
+  }
   const member = context.membership;
   if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
     !can(context, "academics.manage", {
@@ -91,7 +104,7 @@ async function auditGroup(
 
 export async function createCollegeStudyGroup(context: RequestContext, raw: unknown) {
   const input = collegeStudyGroupCreateSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   return getDb().transaction(async (tx) => {
     await lockCollege(tx, context, member.collegeId, member.organizationId);
     await ensureUniqueName(tx, member.collegeId, input.name);
@@ -104,7 +117,7 @@ export async function createCollegeStudyGroup(context: RequestContext, raw: unkn
       capacity: input.capacity,
       status: "DRAFT",
       createdByUserId: context.user.id,
-      createdByType: "COLLEGE_ADMIN",
+      createdByType: isSuperAdmin(context) ? "SUPER_ADMIN" : "COLLEGE_ADMIN",
       configJson: {},
     }).returning();
     if (!created) throw new CollegeGroupManagementError("GROUP_NOT_FOUND");
@@ -118,7 +131,7 @@ export async function createCollegeStudyGroup(context: RequestContext, raw: unkn
 export async function changeCollegeStudyGroup(context: RequestContext, groupIdRaw: unknown, raw: unknown) {
   const groupId = collegeGroupIdSchema.parse(groupIdRaw);
   const input = collegeStudyGroupChangeSchema.parse(raw);
-  const member = ownCollege(context);
+  const member = await ownCollege(context);
   return getDb().transaction(async (tx) => {
     await lockCollege(tx, context, member.collegeId, member.organizationId);
     const [group] = await tx.select().from(lmsGroups)
@@ -183,4 +196,30 @@ export async function changeCollegeStudyGroup(context: RequestContext, groupIdRa
       });
     return updated;
   });
+}
+
+/** Non-mutating counter reconciliation diagnostic. Legacy reconcile would
+ * overwrite cached counts; vNext never silently repairs a live group behind
+ * pending membership writes. Review this discrepancy before any explicit
+ * versioned repair. ELECTIVE/PROJECT_TEAM remain owned by their modules. */
+export async function inspectCollegeStudyGroupCounts(context:RequestContext,groupIdRaw:unknown){
+ const groupId=collegeGroupIdSchema.parse(groupIdRaw);
+ const member=await ownCollege(context);
+ return getDb().transaction(async tx=>{
+  await lockCollege(tx,context,member.collegeId,member.organizationId);
+  const [group]=await tx.select({
+   id:lmsGroups.id,kind:lmsGroups.kind,ownerScope:lmsGroups.ownerScope,
+   activeCount:lmsGroups.activeCount,status:lmsGroups.status,version:lmsGroups.version,
+  }).from(lmsGroups).where(and(eq(lmsGroups.id,groupId),
+   eq(lmsGroups.collegeId,member.collegeId),isNull(lmsGroups.deletedAt))).limit(1);
+  if(!group||group.kind!=="STUDY_GROUP"||group.ownerScope!=="COLLEGE")
+   throw new CollegeGroupManagementError("GROUP_NOT_FOUND");
+  const [totals]=await tx.select({actual:sql<number>`count(*)::int`})
+   .from(lmsGroupMembers).where(and(eq(lmsGroupMembers.groupId,group.id),
+    eq(lmsGroupMembers.state,"ACTIVE")));
+  const actual=Number(totals?.actual??0);
+  return {groupId,status:group.status,version:group.version,
+    stored:group.activeCount,actual,hasDrift:group.activeCount!==actual,
+    nextAction:group.activeCount===actual?"NONE":"REVIEW_MEMBERSHIP_RECEIPTS"};
+ });
 }

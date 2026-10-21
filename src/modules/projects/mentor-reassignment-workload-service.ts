@@ -121,6 +121,7 @@ export async function listCollegeReassignmentWorkspaces(
     title: projectInstances.title,
     status: projectInstances.status,
     mentorMembershipId: projectMembers.membershipId,
+    roleLabel:projectMembers.roleLabel,
     mentorName: users.displayName,
   }).from(projectInstances).leftJoin(projectMembers, and(
     eq(projectMembers.projectId, projectInstances.id), activePrimaryMentor,
@@ -137,6 +138,7 @@ export async function listCollegeReassignmentWorkspaces(
   const matchingWorkspaces = await db.select({
     id: projectInstances.id,
     mentorMembershipId: projectMembers.membershipId,
+    roleLabel:projectMembers.roleLabel,
   }).from(projectInstances).leftJoin(projectMembers, and(
     eq(projectMembers.projectId, projectInstances.id), activePrimaryMentor,
   )).where(where).orderBy(asc(projectInstances.id))

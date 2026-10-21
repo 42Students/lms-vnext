@@ -34,10 +34,14 @@ export async function POST(request: Request) {
     const context = await getCurrentRequestContext();
     const body: unknown = await request.json();
     const semester = await createCollegeSemester(context, body);
-    return NextResponse.json({ status: "OK", message: "OK", data: semester, semester }, { status: 201 });
+    return NextResponse.json({ status: "OK", message: "Semester created successfully", data: semester, semester }, { status: 201 });
   } catch (error) {
     if (error instanceof SemesterMutationError) {
-      return NextResponse.json({ error: error.code }, {
+      return NextResponse.json({ error: error.code,
+        message: error.code === "SEMESTER_NUMBER_CONFLICT"
+          ? "A semester with this number already exists for this program"
+          : error.code === "PROGRAM_NOT_FOUND" ? "Program not found" : error.message,
+      }, {
         status: error.code === "PROGRAM_NOT_FOUND" ? 404 : 409,
       });
     }

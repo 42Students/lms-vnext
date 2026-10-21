@@ -24,7 +24,7 @@ const schema = z.strictObject({
   status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
   view: z.enum(["cards", "table"]).default("table"),
   page: positiveDecimal(1, 100000, 1),
-  pageSize: positiveDecimal(10, 100, 20),
+  pageSize: positiveDecimal(10, 100, 10),
 });
 
 function first(value: string | string[] | undefined) {
@@ -40,7 +40,7 @@ export function parseAdminProjectsQuery(
 ) {
   // Unknown keys must not be silently discarded when a stale or forged link
   // reaches the Super Admin projects view.
-  if (Object.keys(params).some(key => !["search","q","status","view","page","pageSize"].includes(key)))
+  if (Object.keys(params).some(key => !["search","q","status","view","page","pageSize","size"].includes(key)))
     return schema.safeParse(null);
   // Duplicate values are ambiguous for every filter, including legacy
   // `search` and modern `q`. Fail closed before querying tenant data.
@@ -59,9 +59,10 @@ export function parseAdminProjectsQuery(
   // silently be treated as all ACTIVE workspaces.
   const status=rawStatus==="NOT_STARTED"?"PLANNED":
     rawStatus==="IN_PROGRESS"?"ACTIVE":rawStatus==="DONE"?"COMPLETED":rawStatus;
+  if(params.pageSize!==undefined&&params.size!==undefined&&params.pageSize!==params.size)return schema.safeParse(null);
   const view = first(params.view);
   const page = first(params.page);
-  const pageSize = first(params.pageSize);
+  const pageSize = first(params.pageSize)??first(params.size);
   return schema.safeParse({
     ...(search !== undefined ? { q: search } : {}),
     ...(status ? { status } : {}),

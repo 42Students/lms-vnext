@@ -16,6 +16,10 @@ export const placementLearnerGeneralRequests=pgTable("placement_learner_general_
  legacyStatus:varchar("legacy_status",{length:24}),
  legacyDecisionActorId:integer("legacy_decision_actor_id"),
  legacyDecisionActorType:varchar("legacy_decision_actor_type",{length:32}),
+ legacyCreatedLocal:timestamp("legacy_created_local",{withTimezone:false}),
+ legacyDecidedLocal:timestamp("legacy_decided_local",{withTimezone:false}),
+ legacySourceTimeZone:varchar("legacy_source_time_zone",{length:80}),
+ legacyDecisionNote:text("legacy_decision_note"),
  escalateAt:timestamp("escalate_at",{withTimezone:true}),
  collegeId:uuid("college_id").notNull().references(()=>colleges.id,{onDelete:"restrict"}),
  membershipId:uuid("membership_id").notNull(),
@@ -37,6 +41,7 @@ export const placementLearnerGeneralRequests=pgTable("placement_learner_general_
  uniqueIndex("placement_general_request_one_pending_target_uq").on(t.membershipId,t.kind,t.targetKey)
   .where(sql`${t.status}='PENDING'`),
  index("placement_general_request_college_queue_idx").on(t.collegeId,t.status,t.requestedAt),
+ index("placement_general_request_history_idx").on(t.membershipId,t.requestedAt,t.id),
  index("placement_general_request_escalation_idx").on(t.collegeId,t.status,t.escalateAt),
  check("placement_general_request_legacy_status_ck",sql`${t.legacyStatus} is null or ${t.legacyStatus} in ('PENDING','APPROVED','REJECTED','AUTO_APPROVED')`),
  index("placement_general_request_member_idx").on(t.collegeId,t.membershipId,t.requestedAt),
@@ -54,6 +59,8 @@ export const placementLearnerGeneralRequestEvents=pgTable("placement_learner_gen
  nextStatus:varchar("next_status",{length:20}).notNull(),
  actorUserId:uuid("actor_user_id").notNull().references(()=>users.id,{onDelete:"restrict"}),
  note:text("note"),
+ legacyActorId:integer("legacy_actor_id"),
+ legacyActorType:varchar("legacy_actor_type",{length:32}),
  occurredAt:timestamp("occurred_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[index("placement_general_request_events_parent_idx").on(t.requestId,t.occurredAt),
  check("placement_general_request_events_status_ck",sql`${t.nextStatus} in ('PENDING','APPROVED','REJECTED','CANCELLED')`)]);

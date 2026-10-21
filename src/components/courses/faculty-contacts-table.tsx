@@ -10,20 +10,30 @@ export type FacultyContactRow={
   departmentName:string|null;roles:string[];
 };
 
-export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery=""}:{
+export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery="",search=""}:{
   items:readonly FacultyContactRow[];showRoles:boolean;detailBaseHref?:string;
   detailQuery?:string;
+  search?:string;
 }) {
-  if(items.length===0) return <EmptyState title="No public directory members found"
-    description="Try another name, department or contact tab. Private contact information is not displayed." />;
+  if(items.length===0) return <EmptyState title={search?'No contacts match “'+search+'”':"No contacts found"}
+    description={search?"Try another name or department, or clear the search.":"No college directory members are visible in this contact tab. Private contact information is not displayed."} />;
   const contactHref = (id:string) => detailBaseHref
     ? detailBaseHref+"/"+encodeURIComponent(id)+detailQuery : null;
+  const initials=(name:string)=>name==="—"?"?":name.split(/\s+/).slice(0,2).map(part=>part.slice(0,1).toUpperCase()).join("");
+  const palette=["bg-sky-100 text-sky-800","bg-amber-100 text-amber-800","bg-emerald-100 text-emerald-800",
+    "bg-indigo-100 text-indigo-800","bg-rose-100 text-rose-800","bg-orange-100 text-orange-800",
+    "bg-teal-100 text-teal-800","bg-violet-100 text-violet-800"];
+  const avatar=(item:FacultyContactRow,name:string)=>{
+   const seed=[...item.membershipId].reduce((hash,ch)=>(hash*31+ch.charCodeAt(0))>>>0,7);
+   return <span aria-hidden="true" className={"flex size-10 shrink-0 items-center justify-center rounded-full text-xs font-semibold "+palette[seed%palette.length]}>{initials(name)}</span>;
+  };
   return <>
-    <div aria-label="Contacts directory" className="min-w-0 divide-y divide-border border-y border-border sm:hidden">
+    <div aria-label="Contacts directory" className="min-w-0 divide-y divide-border border-y border-border min-[560px]:hidden">
       {items.map(item=>{
-        const name=item.displayName?.trim()||"Name not recorded";
+        const name=item.displayName?.trim()||"—";
         const href=contactHref(item.membershipId);
-        return <article key={item.membershipId} className="min-w-0 py-3">
+        return <article key={item.membershipId} className="min-w-0 rounded border-b border-border bg-surface px-3 py-4">
+          <div className="flex min-w-0 items-start gap-3">{avatar(item,name)}<div className="min-w-0 flex-1">
           <h2 className="text-sm font-semibold text-foreground">
             {href?<Link href={href}
               className="inline-flex min-h-11 max-w-full items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
@@ -34,26 +44,28 @@ export function FacultyContactsTable({items,showRoles,detailBaseHref,detailQuery
           {showRoles||item.roles.length>0?<ul aria-label="Current college roles" className="mt-2 flex flex-wrap gap-2">
             {item.roles.map(role=><li key={role}><StatusBadge tone="info">{facultyContactRoleLabel(role)}</StatusBadge></li>)}
           </ul>:null}
+          </div></div>
         </article>;
       })}
     </div>
-    <Table aria-label="Contacts directory" containerClassName="hidden sm:block">
+    <Table aria-label="Contacts directory" containerClassName="hidden min-[560px]:block [&>table]:min-w-[560px]">
       <thead><tr>
-        <th scope="col">Name</th><th scope="col">Email</th><th scope="col">Contact</th><th scope="col">Role</th>
+        <th scope="col">Name</th><th scope="col">Department</th><th scope="col">Email</th><th scope="col">Contact</th>{showRoles?<th scope="col">Role</th>:null}
       </tr></thead>
       <tbody>{items.map(item=>{
-        const name=item.displayName?.trim()||"Name not recorded";
+        const name=item.displayName?.trim()||"—";
         const href=contactHref(item.membershipId);
         return <tr key={item.membershipId}>
           <td className="min-w-40 font-semibold">
-            {href?<Link href={href} className="inline-flex min-h-9 items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
-            <span className="block text-xs font-normal text-muted-foreground">{item.departmentName??"Department not recorded"}</span>
+            <div className="flex min-w-0 items-center gap-2">{avatar(item,name)}<div className="min-w-0">{href?<Link href={href} className="inline-flex min-h-9 items-center break-words text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{name}</Link>:name}
+            </div></div>
           </td>
+          <td className="min-w-28 text-muted-foreground">{item.departmentName??"—"}</td>
           <td className="min-w-32 text-muted-foreground">Private</td>
           <td className="min-w-32 text-muted-foreground">Private</td>
-          <td><ul aria-label="Current college roles" className="flex min-w-0 flex-wrap gap-2">
+          {showRoles?<td><ul aria-label="Current college roles" className="flex min-w-0 flex-wrap gap-2">
             {(showRoles||item.roles.length>0)&&item.roles.map(role=><li key={role}><StatusBadge tone="info">{facultyContactRoleLabel(role)}</StatusBadge></li>)}
-          </ul></td>
+          </ul></td>:null}
         </tr>;
       })}</tbody>
     </Table>

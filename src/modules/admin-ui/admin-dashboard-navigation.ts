@@ -76,10 +76,14 @@ export const COLLEGE_ADMIN_SETUP_PHASES = [
 /** Legacy Super Admin dropped the big setup guide by deliberate decision. */
 /** SA-tenants-modules-04: four unscoped platform choices, not college-specific setup. */
 export const SUPER_ADMIN_GLOBAL_LINKS = [
-  { label: "Tenant Setup", href: "/admin/tenants", subtitle: "Create and manage organizations and colleges before choosing a scope." },
-  { label: "Recruiter accounts", href: "/admin/recruiters", subtitle: "Inspect recruiter access and account records across the platform." },
-  { label: "Feature Controls", href: "/admin/features", subtitle: "Review platform features and access controls." },
-  { label: "Activity Log", href: "/admin/audit", subtitle: "Review activity across the platform within your permissions." },
+ {label:"Tenant setup",href:"/admin/tenants",
+  subtitle:"Create and manage colleges, domains and tenant settings."},
+ {label:"Feature controls",href:"/admin/features",
+  subtitle:"Control platform capabilities and rollout state."},
+ {label:"Activity log",href:"/admin/audit",
+  subtitle:"Investigate important changes across the platform."},
+ {label:"Recruiter accounts",href:"/admin/recruiters",
+  subtitle:"Manage recruiter identities that can span colleges."},
 ] as const;
 
 export const SUPER_ADMIN_COLLEGE_QUICK_ACTIONS=[
@@ -98,7 +102,7 @@ export const SUPER_ADMIN_COLLEGE_QUICK_ACTIONS=[
 
 /** Dedicated college-scoped Super Admin shortcuts, not a restored setup guide. */
 export const SUPER_ADMIN_COLLEGE_LINKS = [
-  { label: "Tenant Setup", href: "/admin/tenants/setup?tab=setup" },
+  { label: "Tenant Setup", href: "/admin/tenants/setup?tab=structure" },
   { label: "Academic Setup", href: "/admin/academics" },
   { label: "Courses & Content", href: "/admin/courses" },
   { label: "People", href: "/admin/people" },

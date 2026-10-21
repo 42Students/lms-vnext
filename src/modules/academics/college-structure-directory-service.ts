@@ -71,6 +71,15 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     capacity: sections.capacity,
     minSize: sections.minSize,
     description: sections.description,
+    canDelete: sql<boolean>`NOT EXISTS (
+      SELECT 1 FROM ${sectionEnrollments} WHERE ${sectionEnrollments.sectionId} = ${sections.id}
+    ) AND NOT EXISTS (
+      SELECT 1 FROM ${sectionFacultyAssignments} WHERE ${sectionFacultyAssignments.sectionId} = ${sections.id}
+    ) AND NOT EXISTS (
+      SELECT 1 FROM ${sectionScheduleEvents} WHERE ${sectionScheduleEvents.sectionId} = ${sections.id}
+    ) AND NOT EXISTS (
+      SELECT 1 FROM ${courseSectionDeliveries} WHERE ${courseSectionDeliveries.sectionId} = ${sections.id}
+    )`.as("class_can_delete"),
     programId: sql<string | null>`${programs.id}`.as("class_program_id"),
     linkedProgramId: sql<string | null>`${cohorts.programId}`.as("linked_class_program_id"),
     programName: sql<string | null>`${programs.name}`.as("class_program_name"),

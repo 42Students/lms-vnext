@@ -8,7 +8,7 @@ import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import Link from "next/link";
 export type SummaryProject={
@@ -19,8 +19,11 @@ export type SummaryProject={
 };
 type Choice={id:string;name:string;code:string};
 const style="mt-1 w-full";
-export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimatedTaskCount=0}:{
- project:SummaryProject;taskProgress?:{done:number;total:number};estimatedTaskCount?:number;
+export function CollegeProjectSummaryEditorFull({
+ project:p,taskProgress,estimatedTaskCount=0,hasMentor=true,
+}:{
+ project:SummaryProject;taskProgress?:{done:number;total:number};
+ estimatedTaskCount?:number;hasMentor?:boolean;
 }){
  const router=useRouter();
  const pathname=usePathname();
@@ -36,9 +39,19 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
   estimationUnit:p.estimationUnit??"POINTS",
  };
  const [form,setForm]=useState(sourceForm);
- const dirty=JSON.stringify(form)!==JSON.stringify(sourceForm);
+ const [stale,setStale]=useState(false);
+ const baselineRef=useRef({version:new Date(p.updatedAt).toISOString(),form:sourceForm});
+ const dirty=JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
+ useEffect(()=>{
+  const incoming=new Date(p.updatedAt).toISOString();
+  if(incoming===baselineRef.current.version)return;
+  const wasDirty=JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
+  if(wasDirty){setStale(true);return;}
+  baselineRef.current={version:incoming,form:sourceForm};
+  setForm(sourceForm);setStale(false);setError("");
+ },[p.updatedAt]);
  const discard=useProjectEditorDiscardGuard(open,dirty,busy,()=>{
-  setForm(sourceForm);setOpen(false);setError("");
+  setForm(baselineRef.current.form);setOpen(false);setError("");setStale(false);
  });
  const hasTaskData=(taskProgress?.total??0)>0;
  const legacyStatus=(()=>{
@@ -60,8 +73,25 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
   return ()=>ctrl.abort();
  },[open,p.collegeId]);
  async function save(){
-  if(!form.title.trim()||busy)return;
-  if(form.startDate&&form.endDate&&form.endDate<form.startDate){setError("End date must be on or after start date.");return;}
+  if(busy)return;
+  if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
+  if(stale){setError("Workspace changed since this edit started. Refresh and reopen the summary.");return;}
+  if(!hasMentor&&p.status!=="ACTIVE"&&form.status==="ACTIVE"){
+    setError("Assign a mentor before activating this workspace.");return;
+  }
+  if(!form.title.trim()){setError("Title is required");return;}
+  if(form.title.trim().length>160){setError("Title must be 160 characters or fewer");return;}
+  if(form.startDate&&form.endDate&&form.endDate<form.startDate){
+    setError("End date must be on or after the start date");return;
+  }
+  if(form.estimationUnit!==sourceForm.estimationUnit&&estimatedTaskCount>0){
+    setError("Estimation unit cannot change while "+estimatedTaskCount+
+      " task"+(estimatedTaskCount===1?" has":"s have")+" an existing estimate.");
+    return;
+  }
+  if(form.sprintLengthWeeks&&Number(form.sprintLengthWeeks)>12){
+    setError("Sprint length must be between 1 and 12 weeks.");return;
+  }
   if(!(await askConfirm("Save workspace summary changes?")))return;
   setBusy(true);setError("");
   try {
@@ -149,6 +179,15 @@ export function CollegeProjectSummaryEditorFull({project:p,taskProgress,estimate
      Historical In progress, Ready and Blocked stages remain in the Phase field
      while vNext uses the Planned/Active lifecycle.
    </p>
+   {!hasMentor&&p.status!=="ACTIVE"&&form.status==="ACTIVE"?
+    <Banner tone="warning">Assign a mentor before changing the workspace status to Active.
+      <Link href={"/admin/projects/reassign-mentor?fromMentorId=UNASSIGNED"}
+       className="ml-1 font-semibold underline">Assign mentor</Link>
+    </Banner>:null}
+   {overviewHref!==pathname?<Link href={overviewHref}
+     className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+     Open Overview
+   </Link>:null}
    {dirty&&form.title.trim().length===0?<p role="alert" className="text-sm text-error">Title is required</p>:null}
    <Button type="button" disabled={busy} onClick={()=>void save()}
     >{busy?"Saving…":"Save changes"}</Button>

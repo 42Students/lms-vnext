@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {getOwnInterviewWithdrawalTargets} from "@/modules/placements/learner-interview-withdrawal-service";
-import { notFound } from "next/navigation";
+import { notFound,redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
@@ -17,15 +17,24 @@ export default async function LearnerPlacementInterviewsPage({ searchParams }: {
     q?: string | string[];
   }>;
 }) {
-  const context = await getCurrentRequestContext();
-  // Rows are membership-scoped in the placement service, not selected by a caller ID.
-  const workspace = await getLearnerPlacementRequestWorkspace(context);
-  const withdrawalTargets=await getOwnInterviewWithdrawalTargets(context);
-  const query = await searchParams;
+  const query=await searchParams;
+  // Old Interviews tab moved into Schedule. Resolve aliases and syntax before
+  // expensive scoped reads; keep record-specific links on the dedicated view.
+  const hasSpecificRecord=query.applicationId!==undefined||query.roundId!==undefined;
+  if(!hasSpecificRecord){
+    const target=query.view==="month"||query.view==="calendar"?"calendar":
+      query.view==="past"?"past":"coming";
+    redirect("/learn/my-placements/schedule?view="+target);
+  }
   const view=learnerInterviewScheduleViewSchema.safeParse(query.view??"all");
   const search=learnerRoundSearchQuerySchema.safeParse({q:query.q});
-  if(!search.success)notFound();
-  if(!view.success)notFound();
+  if(!search.success||!view.success)notFound();
+  const context=await getCurrentRequestContext();
+  // Rows and withdrawal controls are scoped by signed-in learner membership.
+  const [workspace,withdrawalTargets]=await Promise.all([
+    getLearnerPlacementRequestWorkspace(context),
+    getOwnInterviewWithdrawalTargets(context),
+  ]);
   const link = resolveOwnInterviewDeepLink(workspace.rounds, {
     applicationId:query.applicationId,roundId:query.roundId,
   });

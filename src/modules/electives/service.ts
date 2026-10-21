@@ -30,12 +30,15 @@ const offeringInput = z.object({
   courseId: uuid,
   groupId: uuid.optional(),
   backedDeliveryId: uuid,
-  capacity: z.number().int().min(1).max(100000),
+  // Legacy null capacity means unlimited seats. The group kernel supports null.
+  capacity: z.number().int().positive().nullable().default(null),
 });
 
 export class ElectivesServiceError extends Error {
-  constructor(public readonly code: string) {
-    super(code);
+  constructor(public readonly code: string, public readonly currentEnrolledCount?: number) {
+    super(code === "ELECTIVE_CAPACITY_BELOW_ENROLLMENT" && currentEnrolledCount !== undefined
+      ? `Capacity cannot go below the current enrolled count (${currentEnrolledCount})`
+      : code);
     this.name = "ElectivesServiceError";
   }
 }
@@ -92,6 +95,8 @@ export async function createElectiveOffering(context: RequestContext, raw: unkno
   const input = offeringInput.parse(raw);
   return getDb().transaction(async tx => {
     // Common slot lock serializes creation and elective membership policy.
+    // The guided offerings GET exposes eligible deliveries; an admin chooses
+    // one explicitly instead of silently inventing a course/class association.
     const [slot] = await tx.select().from(electiveSlots)
       .where(eq(electiveSlots.id, input.slotId)).for("update");
     if (!slot || slot.status !== "ACTIVE" || slot.deletedAt) {
@@ -231,7 +236,7 @@ export { moveElectiveMember as moveElectiveSelection } from "@/modules/groups/se
 const offeringEditInput = z.object({
   courseId: uuid,
   backedDeliveryId: uuid,
-  capacity: z.number().int().min(1).max(100000),
+  capacity: z.number().int().positive().nullable(),
   expectedVersion: z.number().int().min(0),
 });
 
@@ -261,8 +266,8 @@ export async function updateCollegeElectiveOffering(
       .where(eq(lmsGroups.id, offering.groupId)).for("update").limit(1);
     if (!group || group.collegeId !== slot.collegeId || group.deletedAt)
       throw new ElectivesServiceError("ELECTIVE_GROUP_SCOPE_MISMATCH");
-    if (input.capacity < group.activeCount)
-      throw new ElectivesServiceError("ELECTIVE_CAPACITY_BELOW_ENROLLMENT");
+    if (input.capacity !== null && input.capacity < group.activeCount)
+      throw new ElectivesServiceError("ELECTIVE_CAPACITY_BELOW_ENROLLMENT", group.activeCount);
     const courseChanged = offering.courseId !== input.courseId ||
       offering.backedDeliveryId !== input.backedDeliveryId;
     if (courseChanged) {

@@ -12,6 +12,9 @@ export type BrowseJobShape = {
     title: string;
     description: string;
     jobTypeLabel?:string|null;
+    responsibilities?:string|null;
+    targetDepartmentName?:string|null;
+    targetProgramName?:string|null;
     applicationDeadline: string | null;
     publishedAt?: string | null;
   };
@@ -64,6 +67,12 @@ export function learnerDriveAvailabilityCounts(items:readonly BrowseJobShape[]) 
   return counts;
 }
 
+const synonyms:Readonly<Record<string,readonly string[]>>={
+ "sde":["software engineer","software developer"],"wfh":["remote","work from home"],
+ "software engineer":["sde","developer"],"work from home":["wfh","remote"],
+ "remote":["wfh","work from home"],"intern":["internship","trainee"],
+ "internship":["intern","trainee"],"hybrid":["partly remote","hybrid work"],
+};
 function visibleJobType(row:BrowseJobShape){
  return row.job.jobTypeLabel?.trim()||row.roleOption.employmentType;
 }
@@ -93,7 +102,8 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   items: readonly T[], filters: LearnerJobBrowseFilters,
   snapshotNowMs: number = Number.NaN,
 ): T[] {
-  const search = filters.search.trim().toLocaleLowerCase();
+  const search=filters.search.trim().toLocaleLowerCase();
+  const terms=[search,...(synonyms[search]??[])];
   const rows = items.filter((row) => {
     if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
     // Eligibility may be true for a historical snapshot even after closure.
@@ -110,16 +120,16 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     }
     if (filters.employmentType !== "all" &&
         visibleJobType(row) !== filters.employmentType) return false;
-    if(filters.location!=="all"&&!row.roleOption.locations.some(place=>
+    if(filters.location!=="all"&&!(row.roleOption.locations??[]).some(place=>
       place.trim().toLocaleLowerCase()===filters.location.trim().toLocaleLowerCase()))return false;
     if (!search) return true;
-    return [
-      row.company.name,
-      row.roleOption.title,
-      row.job.title,
-      row.job.description,
-      ...row.roleOption.locations,
-    ].join(" ").toLocaleLowerCase().includes(search);
+    const indexed=[
+      row.company?.name,row.roleOption?.title,row.job?.title,row.job?.description,
+      row.job?.responsibilities,row.job?.targetDepartmentName,row.job?.targetProgramName,
+      row.job?.jobTypeLabel,row.roleOption?.employmentType,...(row.roleOption?.locations??[]),
+    ].filter((field):field is string=>typeof field==="string")
+     .join(" ").toLocaleLowerCase();
+    return terms.some(term=>indexed.includes(term));
   });
 
   return [...rows].sort((a,b) => {
@@ -136,7 +146,7 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
         a.roleOption.id.localeCompare(b.roleOption.id);
     }
     if (filters.sort === "title") {
-      return a.roleOption.title.localeCompare(b.roleOption.title) ||
+      return (a.roleOption.title??"").localeCompare(b.roleOption.title??"") ||
         a.roleOption.id.localeCompare(b.roleOption.id);
     }
     // A closed or malformed-deadline drive must not outrank actionable
@@ -147,7 +157,7 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       return Number.isFinite(instant)?instant:Number.MAX_SAFE_INTEGER;
     };
     return deadline(a) - deadline(b) ||
-      a.roleOption.title.localeCompare(b.roleOption.title) ||
+      (a.roleOption.title??"").localeCompare(b.roleOption.title??"") ||
       a.roleOption.id.localeCompare(b.roleOption.id);
   });
 }

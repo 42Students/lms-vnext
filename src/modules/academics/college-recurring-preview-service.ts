@@ -110,7 +110,7 @@ export async function previewCollegeRecurringSchedule(context: RequestContext, r
 export async function listRecurringPreviewOptions(context: RequestContext) {
   const member = await resolveActingCollege(context, "academics.read");
   const db = getDb();
-  const [classes, halls, faculty, deliveries] = await Promise.all([
+  const [classResult, hallResult, facultyResult, deliveryResult] = await Promise.allSettled([
     db.select({ id: sections.id, name: sections.name, updatedAt: sections.updatedAt, cohortName: cohorts.name,
       periodStart: academicPeriods.startDate, periodEnd: academicPeriods.endDate })
       .from(sections)
@@ -147,5 +147,14 @@ export async function listRecurringPreviewOptions(context: RequestContext) {
         eq(courses.status, "ACTIVE"), eq(courseOfferings.status, "ACTIVE")))
       .orderBy(asc(courses.name)).limit(1000),
   ]);
-  return { classes, halls, faculty, deliveries };
+  const classes = classResult.status === "fulfilled" ? classResult.value : [];
+  const halls = hallResult.status === "fulfilled" ? hallResult.value : [];
+  const faculty = facultyResult.status === "fulfilled" ? facultyResult.value : [];
+  const deliveries = deliveryResult.status === "fulfilled" ? deliveryResult.value : [];
+  return { classes, halls, faculty, deliveries, errors: {
+    classes: classResult.status === "rejected",
+    halls: hallResult.status === "rejected",
+    faculty: facultyResult.status === "rejected",
+    deliveries: deliveryResult.status === "rejected",
+  } };
 }

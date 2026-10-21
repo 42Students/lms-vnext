@@ -11,7 +11,7 @@ export async function GET(request: Request) {
     const result = await exportCollegeClasses(await getCurrentRequestContext(), filters);
     return new Response(result.csv, { headers: {
       "Content-Type": "text/csv; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="college-classes.csv"',
+      "Content-Disposition": 'attachment; filename="classes.csv"',
       "Cache-Control": "private, no-store",
       "X-Export-Truncated": String(result.truncated),
       "X-Export-Row-Cap": String(result.cap),

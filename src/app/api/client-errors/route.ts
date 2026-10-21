@@ -52,24 +52,27 @@ export async function POST(request: Request) {
   catch { return NextResponse.json({ message: "Please check this report." }, { status: 400 }); }
   const parsed = browserErrorSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ message: "Please check this report." }, { status: 400 });
-  const ip = request.headers.get("x-real-ip") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const session = request.headers.get("cookie") ?? "";
-  const ipHash = createHash("sha256").update(ip).digest("hex");
-  const sessionHash = createHash("sha256").update(ip + "|" + session).digest("hex");
-  const now = Date.now();
-  if (!acceptClientErrorRate("ip:" + ipHash, now, 20) ||
-      !acceptClientErrorRate("session:" + sessionHash, now, 10)) {
-    return NextResponse.json(
-      { message: "Too many reports. Please try again later." },
-      { status: 429, headers: { "Retry-After": "60" } },
-    );
-  }
-  // Legacy telemetry requires a signed-in principal. Do not allow an
-  // anonymous root error to become an unbounded log injection vector.
+  // Resolve the signed-in account before applying limits. A shared college
+  // NAT must not exhaust a very small IP-only bucket and suppress all learners.
   const context=await getCurrentRequestContext().catch(()=>null);
   if(!context)return NextResponse.json({error:"AUTHENTICATION_REQUIRED"},{status:401});
-  const identity={userId:context.user.id,collegeId:context.membership?.collegeId};
+  const ip=request.headers.get("x-real-ip")??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()??"unknown";
+  const ipHash=createHash("sha256").update(ip).digest("hex");
+  const userHash=createHash("sha256").update(context.user.id).digest("hex");
+  const now=Date.now();
+  // Limits are process-local best effort; distributed deployments also need a
+  // shared gateway limiter. Neither source trusts a browser-supplied user ID.
+  if(!acceptClientErrorRate("user:"+userHash,now,10)||
+     !acceptClientErrorRate("ip:"+ipHash,now,100)){
+    return NextResponse.json({message:"Too many reports. Please try again later."},
+      {status:429,headers:{"Retry-After":"60"}});
+  }
+  const roleCategory=context.membership?.roles.includes("COLLEGE_ADMIN")?"COLLEGE_ADMIN":
+    context.membership?.roles.includes("FACULTY")?"FACULTY":
+    context.membership?.roles.includes("LEARNER")?"LEARNER":
+    context.recruiter?"RECRUITER":"OTHER";
+  const identity={userId:context.user.id,collegeId:context.membership?.collegeId,roleCategory};
   const report = parsed.data;
   // Root error boundaries intentionally send only the category and reference.
   const safeMessage = report.message ??

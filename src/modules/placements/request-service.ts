@@ -1280,6 +1280,7 @@ export async function getLearnerPlacementRequestWorkspace(
           roundName: placementJobRounds.name,
           roundKind: placementJobRounds.kind,
           testUrl: placementJobRounds.testUrl,
+          whatToBring: placementJobRounds.whatToBring,
           assessmentDueAt:deadlineAvailable?sql<Date>`"placement_job_rounds"."assessment_due_at"`:sql<Date|null>`null`,
           sequence:
             placementJobRounds.sequence,

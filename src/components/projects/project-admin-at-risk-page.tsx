@@ -22,6 +22,18 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {ProjectsServiceError} from "@/modules/projects/errors";
 import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 import {FilterBar} from "@/components/ui/filter-bar";
+import {DataTable} from "@/components/ui/data-table";
+function riskHref(basePath:string,query:ProjectAdminCollectionQuery,bucket:string|null){
+ const params=new URLSearchParams();
+ if(query.q)params.set("q",query.q);
+ if(query.status)params.set("status",query.status);
+ if(query.riskSort)params.set("riskSort",query.riskSort);
+ if(query.pageSize)params.set("pageSize",String(query.pageSize));
+ if(bucket)params.set("riskBucket",bucket);
+ const qs=params.toString();
+ return basePath+"/at-risk"+(qs?"?"+qs:"");
+}
+
 
 
 
@@ -64,8 +76,8 @@ export async function ProjectAdminAtRiskPage({
         description="Workspaces with no recent activity, an active blocker, or a pending review."
         actions={<PageBackLink href={basePath} label="Project workspaces" />} />
       <ProjectAdminNav basePath={basePath} active="at-risk" />
-      <ErrorState title={denied?"At-risk workspaces access denied":"Report could not be loaded"}
-        description={denied?"Your current college membership does not authorize this report.": "Failed to load project workspaces. Your search and filters have not changed."}
+      <ErrorState title="Report could not be loaded"
+        description="Failed to load project workspaces. Your search and filters have not changed."
         action={<Link href={basePath+"/at-risk"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry risk queue</Link>} />
     </div>;
   }
@@ -89,92 +101,72 @@ export async function ProjectAdminAtRiskPage({
       ) : null}
       <nav aria-label="At-risk quick filters" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {([
-          ["Stalled",result.buckets.stalled,"STALLED","◷"],
-          ["Active blocker",result.buckets.blocker,"BLOCKER","!"],
-          ["Pending review",result.buckets.review,"REVIEW","✓"],
-        ] as const).map(([name,value,key,icon])=>{
-          const selected=query.riskBucket===key;
-          const qs=new URLSearchParams();
-          if(query.q)qs.set("q",query.q);
-          if(query.status)qs.set("status",query.status);
-          if(!selected)qs.set("riskBucket",key);
-          const target=basePath+"/at-risk"+(qs.size?"?"+qs.toString():"");
-          return <Link key={key} href={target} aria-current={selected?"true":undefined}
-            className={"group flex min-h-28 min-w-0 items-center gap-4 rounded-[var(--lms-canvas-radius)] border p-4 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary "+
-              (selected?"border-[var(--lms-primary)] bg-primary-subtle ring-1 ring-[var(--lms-primary)]":"border-border bg-surface hover:border-[var(--lms-primary)]")}>
-            <span aria-hidden="true" className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-muted text-lg font-bold text-foreground">{icon}</span>
-            <span className="min-w-0">
-              <span className="block text-2xl font-bold tabular-nums text-[var(--lms-heading)]">{value}</span>
-              <span className="block text-sm font-semibold text-body">{name}</span>
-            </span>
-            {selected?<span className="ml-auto text-xs text-link">Clear</span>:null}
-          </Link>;
-        })}
+          ["Stalled", result.buckets.stalled, "STALLED"],
+          ["Active blocker", result.buckets.blocker, "BLOCKER"],
+          ["Pending review", result.buckets.review, "REVIEW"],
+        ] as const).map(([title, value, key]) =>
+          <FilterChipLink key={key} href={riskHref(basePath,query,query.riskBucket===key?null:key)}
+            selected={query.riskBucket === key} tone={value > 0 ? "warning" : "neutral"}>
+            {title} <span className="tabular-nums">{value}</span>
+          </FilterChipLink>)}
       </nav>
       <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
       <ListToolbar label="At-risk workspaces" viewCount={result.total}
         exportAction={<ProjectAtRiskPageExport collegeId={collegeId}
           rows={result.items.map(project=>({
-            id:project.id,title:project.title,mentorName:project.mentorName,
+            id:project.id,title:project.title,status:project.status,
+            severity:project.riskSeverity,mentorName:project.mentorName,
             inactiveDays:project.inactiveDays,riskReasons:project.riskReasons,
             blockerReason:project.blockerReason,
             lastActivityAt:safeProjectAdminUtcIso(project.lastActivityAt),
           }))}/>} />
       
 
-      {!result.items.length?(
-        <EmptyState title="No at-risk projects" description={query.q||query.riskBucket||query.status
-          ?"No at-risk workspaces match this filter.":"No at-risk projects detected for this college."}
-          action={<Link href={basePath+"/at-risk"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Clear filters</Link>}/>
-      ):(
-        <div className="min-w-0 overflow-x-auto rounded-[var(--lms-canvas-radius)] border border-border">
-          <table className="w-full min-w-[1020px] table-auto border-collapse text-left text-sm">
-            <caption className="sr-only">{result.total} {result.total===1?"at-risk workspace":"at-risk workspaces"} in this college</caption>
-            <thead className="sticky top-0 z-10 bg-muted text-xs text-muted-foreground">
-              <tr className="border-b border-border">
-                <th scope="col" className="px-3 py-3 font-semibold">Workspace</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Mentor</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Status</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Risk</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Stalled</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Blocker</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Last activity</th>
-                <th scope="col" className="px-3 py-3 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border bg-surface">
-              {result.items.map(project=>{
-                const stalled=project.riskReasons.some(reason=>reason.startsWith("No activity in "));
-                const severity=project.riskReasons.length>=3?"High risk":
-                  project.riskReasons.length===2?"At risk":"Watch";
-                return <tr key={project.id} className="align-top hover:bg-muted/50">
-                  <td className="px-3 py-3 font-semibold">
-                    <Link href={basePath+"/"+project.id+"/summary"} className="text-link underline-offset-2 hover:underline">{project.title}</Link>
-                  </td>
-                  <td className="px-3 py-3">{project.mentorName||"—"}</td>
-                  <td className="px-3 py-3"><StatusBadge tone={project.status==="ACTIVE"?"success":"neutral"}>{project.status==="ACTIVE"?"Active":project.status==="PLANNED"?"Planned":project.status}</StatusBadge></td>
-                  <td className="px-3 py-3 space-y-1">
-                    <StatusBadge tone={severity==="Watch"?"neutral":"warning"}>{severity}</StatusBadge>
-                    <div className="flex max-w-48 flex-wrap gap-1">
-                      {project.riskReasons.map(reason=><StatusBadge key={reason} tone="warning">{reason}</StatusBadge>)}
-                    </div>
-                  </td>
-                  <td className="px-3 py-3">{stalled?(project.inactiveDays===0?"Today":project.inactiveDays+"d"):"—"}</td>
-                  <td className="max-w-60 break-words px-3 py-3">{project.blockerReason||"—"}</td>
-                  <td className="whitespace-nowrap px-3 py-3">{formatDate(project.lastActivityAt)}</td>
-                  <td className="px-3 py-3">
-                    <div className="flex flex-col gap-2">
-                      <Link href={basePath+"/"+project.id+"/summary?from=at-risk"} className="font-semibold text-link underline">Open</Link>
-                      <Link href={basePath+"/reassign-mentor?fromMentorId="+encodeURIComponent(project.mentorMembershipId??"UNASSIGNED")} className="font-semibold text-link underline">{project.mentorMembershipId?"Reassign mentor":"Assign mentor"}</Link>
-                      {project.riskReasons.includes("Pending review")?<Link href={basePath+"/"+project.id+"/delivery?from=at-risk&reason=pending-review"} className="font-semibold text-link underline">Review submission</Link>:null}
-                    </div>
-                  </td>
-                </tr>;
-              })}
-            </tbody>
-          </table>
-        </div>
-      )}
+      <DataTable caption="At-risk project workspaces" rows={result.items}
+        getRowKey={project=>project.id}
+        columns={[
+          {key:"workspace",header:"Workspace",mobilePriority:"primary",
+           cell:project=><Link href={basePath+"/"+project.id+"/summary?from=at-risk"}
+             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+             {project.title}</Link>},
+          {key:"mentor",header:"Mentor",mobilePriority:"secondary",
+           cell:project=>project.mentorName??"No primary mentor"},
+          {key:"status",header:"Status",mobilePriority:"secondary",
+           cell:project=><StatusBadge tone={project.status==="ACTIVE"?"success":"neutral"}>
+             {project.status}</StatusBadge>},
+          {key:"severity",header:"Severity",mobilePriority:"secondary",
+           cell:project=><StatusBadge tone={project.riskSeverity==="RISK"?"warning":"neutral"}>
+             {project.riskSeverity==="RISK"?"Risk":"Watch"}</StatusBadge>},
+          {key:"reasons",header:"Risk reasons",mobilePriority:"secondary",
+           cell:project=><div className="flex flex-wrap gap-1">
+             {project.riskReasons.map(reason=><StatusBadge key={reason} tone="warning">{reason}</StatusBadge>)}
+             {!project.riskReasons.length?<span>—</span>:null}
+           </div>},
+          {key:"inactive",header:"Inactive",mobilePriority:"secondary",
+           cell:project=><span title={"Last activity "+formatDate(project.lastActivityAt)}>
+             {project.inactiveDays} {project.inactiveDays===1?"day":"days"}</span>},
+          {key:"blocker",header:"Blocker",mobilePriority:"secondary",
+           cell:project=><span className="whitespace-pre-wrap break-words">
+             {project.blockerReason||"—"}</span>},
+          {key:"actions",header:"Actions",mobilePriority:"action",
+           cell:project=><div className="flex flex-col items-start gap-1">
+             <Link href={basePath+"/"+project.id+"/summary?from=at-risk"}
+              className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Open</Link>
+             <Link href={basePath+"/reassign-mentor?fromMentorId="+
+               encodeURIComponent(project.mentorMembershipId??"UNASSIGNED")}
+               className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+               {project.mentorMembershipId?"Reassign mentor":"Assign mentor"}</Link>
+             {project.riskReasons.includes("Pending review")?
+               <Link href={basePath+"/"+project.id+"/delivery?from=at-risk&reason=REVIEW"}
+                 className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
+                 Review submission</Link>:null}
+           </div>},
+        ]}
+        empty={<EmptyState title="No at-risk projects"
+          description="No at-risk project workspaces match these filters."
+          action={<Link href={riskHref(basePath,query,null)}
+            className="text-link underline">Clear risk filter</Link>}/>}
+      />
 
       <p className="text-xs text-muted-foreground leading-[20px]">CSV includes only the workspaces on this page.</p>
       <ProjectAdminPagination

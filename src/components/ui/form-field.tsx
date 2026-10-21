@@ -6,11 +6,13 @@ export type FormFieldProps = {
   required?: boolean;
   helper?: string;
   error?: string | null;
+  action?: ReactNode;
+  compact?: boolean;
   children: (field: { id: string; required: boolean | undefined; "aria-invalid": boolean | undefined; "aria-describedby": string | undefined; "aria-errormessage": string | undefined }) => ReactNode;
 };
 
 /** Owns visible labels and error descriptions for native Input/Select/Textarea. */
-export function FormField({ id, label, required = false, helper, error, children }: FormFieldProps) {
+export function FormField({ id, label, required = false, helper, error, action, compact = false, children }: FormFieldProps) {
   const describedBy = [helper ? `${id}-hint` : null, error ? `${id}-error` : null].filter(Boolean).join(" ") || undefined;
   const rendered = children({ id, required: required || undefined, "aria-invalid": error ? true : undefined, "aria-describedby": describedBy, "aria-errormessage": error ? `${id}-error` : undefined });
   // Apply the accessible relation at the container boundary even if a caller
@@ -28,11 +30,11 @@ export function FormField({ id, label, required = false, helper, error, children
         ].filter(Boolean))].join(" ") || undefined,
       })
     : rendered;
-  return <div data-slot="form-field" className="min-w-0 space-y-[6px] text-[13px]">
-    <label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+  return <div data-slot="form-field" className={compact ? "min-w-0 space-y-1 text-[13px]" : "min-w-0 space-y-[var(--lms-space-2)] text-[13px]"}>
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-2"><label htmlFor={id} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       {label}{required ? <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span> : null}
       {required ? <span className="sr-only"> required</span> : null}
-    </label>
+    </label>{action ? <div className="flex min-h-9 items-center">{action}</div> : null}</div>
     {associated}
     {helper ? <p id={`${id}-hint`} className="text-[13px] leading-5 text-[var(--lms-muted-text)]">{helper}</p> : null}
     {error ? <p id={`${id}-error`} role="alert" className="text-[12px] leading-5 text-[var(--lms-error)]">{error}</p> : null}

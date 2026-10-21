@@ -54,3 +54,26 @@ export function resolveLegacyAccountRole(
   if (role === "RECRUITER") return { kind: "RECRUITER_PROFILE", role: "RECRUITER" };
   return { kind: "UNMAPPED" };
 }
+
+/** UI labels are intentionally distinct from storage enum names.
+ * No text label is sufficient to authorize a role. */
+export const MEMBERSHIP_ROLE_LABELS:Readonly<Record<MembershipRole,string>>={
+ LEARNER:"Learner",FACULTY:"Faculty",COLLEGE_ADMIN:"College Admin",
+ MENTOR:"Mentor",TPO:"Placement Officer",
+};
+export const SYSTEM_ROLE_LABELS:Readonly<Record<SystemRole,string>>={
+ SUPER_ADMIN:"Super Admin",
+};
+export const MEMBERSHIP_ROLE_DISPLAY_ORDER:readonly MembershipRole[]=[
+ "LEARNER","FACULTY","MENTOR","TPO","COLLEGE_ADMIN",
+];
+export function canonicalMembershipRoles(raw:readonly string[]):MembershipRole[]|null{
+ const roles:MembershipRole[]=[];
+ for(const item of raw){
+  const role=item.trim().toUpperCase();
+  if(!MEMBERSHIP_ROLES.includes(role as MembershipRole)||roles.includes(role as MembershipRole))
+    return null;
+  roles.push(role as MembershipRole);
+ }
+ return roles.length?MEMBERSHIP_ROLE_DISPLAY_ORDER.filter(role=>roles.includes(role)):null;
+}

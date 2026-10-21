@@ -11,11 +11,13 @@ export type InputProps = ComponentPropsWithRef<"input"> & { error?: boolean };
  * invalid halo. Legacy: components___variables.scss:139,148 (44px phone tap).
  */
 export function Input({ className, error = false, ...props }: InputProps) {
+  const placeholder = props.placeholder ?? (props.type === "search" ? "Search..." : undefined);
   const invalid = error || props["aria-invalid"] === true || props["aria-invalid"] === "true";
   return (
     <input
       data-slot="input"
       {...props}
+      placeholder={placeholder}
       aria-invalid={invalid ? true : props["aria-invalid"]}
       className={cx(
         "min-h-[var(--lms-control-height)] max-[767px]:min-h-11 w-full min-w-0 font-[inherit]",

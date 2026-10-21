@@ -3,9 +3,12 @@ import { parseFacultyCourseListLocation } from "@/modules/courses/faculty-course
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { FacultyCourseList } from "@/components/courses/faculty-course-list";
 import { getFacultyCourseList } from "@/modules/courses/faculty-course-list-service";
+import {loadAuthorizedCourseDisplayContentsIfReady} from "@/modules/courses/course-display-service";
+import {ErrorState} from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { listFacultyCourseCardSummaries } from "@/modules/courses/faculty-course-card-summary-service";
+import { listFacultyCourseAssignmentDiagnostics } from "@/modules/courses/faculty-course-service";
 
 export default async function TeacherCoursesPage({searchParams}: {
   searchParams: Promise<Record<string,string|string[]|undefined>>;
@@ -22,18 +25,32 @@ export default async function TeacherCoursesPage({searchParams}: {
       </Link>
     </Alert>
   </div>;
-  const list = await getFacultyCourseList(context,query);
-  const summaries = await listFacultyCourseCardSummaries(list.items);
+  const listResult=await getFacultyCourseList(context,query).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
+  if(!listResult.ok)return <div className="min-w-0 space-y-4">
+   <PageHeader title="My Courses"/>
+   <ErrorState title="Could not load teaching courses"
+    description="Your authorized course list could not be loaded. No empty roster has been assumed."
+    action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry courses</Link>}/>
+  </div>;
+  const list=listResult.value;
+  const [summaries,display,diagnosticResult]=await Promise.all([
+   listFacultyCourseCardSummaries(list.items),
+   loadAuthorizedCourseDisplayContentsIfReady(list.items.map(course=>course.courseId))
+    .catch(()=>new Map<string,{thumbnailUrl:string|null}>()),
+   listFacultyCourseAssignmentDiagnostics(context).then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const})),
+  ]);
   const rows = list.items.flatMap((course) => {
     const workspace = summaries.get(course.deliveryId);
-    return workspace ? [{ course, workspace }] : [];
+    return workspace ? [{ course, workspace, thumbnailUrl:display.get(course.courseId)?.thumbnailUrl??null }] : [];
   });
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader
         title="My Courses"
       />
-      <FacultyCourseList rows={rows} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
+      <FacultyCourseList rows={rows} diagnostics={diagnosticResult.ok?diagnosticResult.value:[]}
+        diagnosticsUnavailable={!diagnosticResult.ok} query={list.query} pagination={list} scopeCount={list.scopeCount} periods={list.periods} sections={list.sections} assignmentChoices={list.assignmentChoices} />
     </div>
   );
 }

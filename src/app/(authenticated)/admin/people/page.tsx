@@ -12,6 +12,9 @@ import {
   type DataTableColumn,
 } from "@/components/ui/data-table";
 import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { Alert } from "@/components/ui/alert";
+import { Tabs } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { PageSizeSelect } from "@/components/ui/page-size-select";
@@ -48,7 +51,7 @@ const columns: DataTableColumn<PersonMembershipView>[] = [
     header: "Roles",
     cell: (person) => person.membership.roles.length ? (
       <div className="flex min-w-0 flex-wrap gap-[var(--lms-space-1)]">
-        {person.membership.roles.map(role => <Badge key={role} tone="neutral">{role}</Badge>)}
+        {person.membership.roles.map(role => <Badge key={role} tone="neutral">{role==="COLLEGE_ADMIN"?"Admin":role}</Badge>)}
       </div>
     ) : "—",
   },
@@ -96,7 +99,7 @@ export default async function SuperAdminPeoplePage({
   const one=(value:string|string[]|undefined)=>Array.isArray(value)?value[0]:value;
   const normalizedRole=one(rawRole),normalizedStatus=one(rawStatus);
   const q=(one(rawQ)??"").trim().slice(0,100);
-  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].includes(normalizedRole??"ALL")?normalizedRole??"ALL":"ALL";
+  const role=["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].includes(normalizedRole??"ALL")?normalizedRole??"ALL":"COLLEGE_ADMIN";
   const status=["ALL","ACTIVE","SUSPENDED","ENDED"].includes(normalizedStatus??"ALL")?normalizedStatus??"ALL":"ALL";
   const pageSize=parsePeoplePageSize(rawPageSize);
   const base=new URLSearchParams({...q?{q}:{},...role!=="ALL"?{role}:{},...status!=="ALL"?{status}:{},...(pageSize!==10?{pageSize:String(pageSize)}:{})});
@@ -110,14 +113,14 @@ export default async function SuperAdminPeoplePage({
     return (
       <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
         <PageHeader
-          title="People"
-          description="People administration requires a college safety scope."
+          title="People Directory"
+          description="Select an Organization + College in the header above to view the people directory."
         />
         <EmptyState
           title="Select a college to continue"
-          description="Choose a college in the header above to see its people directory."
+          description="Select an Organization + College in the header above to view people. Your chosen Admin/TPO filter is preserved."
         />
-        <Link href="/admin/people/directory"
+        <Link href={"/admin/people/directory"+(role!=="ALL"?"?role="+encodeURIComponent(role):"")}
           className="inline-flex min-h-11 items-center md:min-h-9 rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
           Browse all permitted Users &amp; Roles without selecting a college →
         </Link>
@@ -125,13 +128,19 @@ export default async function SuperAdminPeoplePage({
     );
   }
 
-  const people = await listCollegePeopleWithRuntime(context, {
-    collegeId,
-    limit: pageSize,
-    offset: (requestedPage - 1) * pageSize,
-    q,role,status,
-  });
-
+  const peopleResult=await listCollegePeopleWithRuntime(context,{
+    collegeId,limit:pageSize,offset:(requestedPage-1)*pageSize,q,role,status,
+  }).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}));
+  if(!peopleResult.ok)return <div className="min-w-0 space-y-4">
+   <PageHeader title="College Admin and TPO accounts"/>
+   <ErrorState title="Could not load administrator accounts"
+    description="The authorized membership directory is temporarily unavailable. No empty list has been assumed."
+    action={<Link href={href(requestedPage)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+  </div>;
+  const people=peopleResult.value;
+  const totals=await Promise.allSettled(["ALL","LEARNER","FACULTY","TPO"].map(memberRole=>
+    listCollegePeopleWithRuntime(context,{collegeId,limit:1,offset:0,q:"",role:memberRole,status:"ACTIVE"})));
+  const metrics=totals.map(row=>row.status==="fulfilled"?row.value.pagination.total:null);
   const pagination = peoplePageState(requestedPage, people.pagination.total,pageSize);
   if (requestedPage !== pagination.page) {
     redirect(href(pagination.page));
@@ -140,13 +149,35 @@ export default async function SuperAdminPeoplePage({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
       <PageHeader
-        title="People"
-        description="Canonical people and memberships inside the selected college safety scope."
-        actions={<div className="flex min-w-0 flex-col-reverse items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-start">
+        title="College Admin and TPO accounts"
+        description="Manage administrator and placement-cell access in the selected college."
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2">
+          <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">People Directory</Link>
           <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref({q,role,membershipStatus:status})} />
-          <PersonOnboardDialog collegeId={collegeId} />
+          <PersonOnboardDialog collegeId={collegeId} forcedRole="COLLEGE_ADMIN" />
+          <PersonOnboardDialog collegeId={collegeId} forcedRole="TPO" />
         </div>}
       />
+      <Tabs ariaLabel="People sections" value="management" renderPanel={false} items={[
+       {value:"directory",label:"People Directory",href:"/admin/people/directory"},
+       {value:"management",label:"College Admin and TPO",href:"/admin/people?role=COLLEGE_ADMIN"},
+       {value:"faculty",label:"Faculty",href:"/admin/people/directory?tab=FACULTY"},
+       {value:"students",label:"Students",href:"/admin/people/directory?tab=STUDENT"},
+      ]}/>
+      <nav aria-label="People directory shortcuts" className="flex flex-wrap gap-2">
+       {[
+        {href:"/admin/students",label:"Student accounts"},
+        {href:"/admin/faculty",label:"Faculty accounts"},
+        {href:"/admin/faculty-assignment",label:"Teaching assignments"},
+       ].map(item=><Link key={item.href} href={item.href} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">{item.label}</Link>)}
+      </nav>
+      <section aria-label="College people totals" className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-4">
+       {(["Active memberships","Students","Faculty","TPO"] as const).map((label,i)=><div key={label} className="rounded border border-border bg-surface p-3">
+        <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+        <p className="mt-2 text-xl font-semibold tabular-nums">{metrics[i]??"Unavailable"}</p>
+       </div>)}
+      </section>
+      {metrics.some(value=>value===null)?<Alert tone="warning" role="alert">Some college totals could not be verified. Retry the page before interpreting missing totals as zero.</Alert>:null}
       <form method="get" role="search" aria-label="Search people" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
        <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,12rem)_auto]">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search contacts
@@ -154,7 +185,7 @@ export default async function SuperAdminPeoplePage({
         </label>
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
          <Select name="role" defaultValue={role} className="min-h-11 w-full md:min-h-9">
-          {["ALL","LEARNER","FACULTY","MENTOR","TPO","HR","COLLEGE_ADMIN"].map(s=><option key={s} value={s}>{s}</option>)}
+          {["COLLEGE_ADMIN","TPO","ALL","LEARNER","FACULTY","MENTOR","HR"].map(s=><option key={s} value={s}>{s==="COLLEGE_ADMIN"?"Admin":s==="ALL"?"All roles":s}</option>)}
          </Select>
         </label>
         <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Search</Button>

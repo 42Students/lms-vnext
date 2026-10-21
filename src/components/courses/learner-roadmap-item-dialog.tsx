@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Dialog } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
@@ -28,6 +28,7 @@ export function LearnerRoadmapItemDialog({
  availability?:"SCHEDULED"|"ENDED"|"AVAILABLE";
 }){
  const router=useRouter();
+ const navigationId=useId();
  const [open,setOpen]=useState(()=>initiallyOpen&&
   (!focusKey||!dismissedFocusKeys.has(focusKey)));
  const [lockedNotice,setLockedNotice]=useState(false);
@@ -38,7 +39,8 @@ export function LearnerRoadmapItemDialog({
   }
   setOpen(openNow);
  }
- return <div className={highlighted?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-focus-ring)]":""}>
+ return <section aria-label={title} className={highlighted?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-focus-ring)]":""}>
+  <nav aria-label={"Lesson item: "+title} id={navigationId}>
   <Button type="button" variant="secondary" aria-haspopup="dialog"
    aria-expanded={open} aria-disabled={locked}
    onClick={()=>{
@@ -56,12 +58,15 @@ export function LearnerRoadmapItemDialog({
    </span>
    <span className="self-end shrink-0 text-sm font-semibold text-primary-text sm:self-auto">{locked?"Content locked":"Open ›"}</span>
   </Button>
+  </nav>
   {lockedNotice?<Alert tone="warning" role="status" className="mt-2">
    Content locked. This item is not available yet.
   </Alert>:null}
-  <Dialog open={open} onOpenChange={change} title={kind+": "+title}
-   description={caption??kind}>
+  <Dialog open={open} onOpenChange={change} title={title}
+   description={(caption??kind)+" · "+progress.replaceAll("_"," ")}
+   className="!max-w-[760px]"
+   footer={<Button type="button" variant="secondary" onClick={()=>change(false)}>Got it</Button>}>
    {open?<div className="min-w-0 break-words [overflow-wrap:anywhere]">{children}</div>:null}
   </Dialog>
- </div>;
+ </section>;
 }

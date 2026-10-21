@@ -7,7 +7,7 @@ import {useRef,useState,useTransition,type FormEvent} from "react";
 import {useToast} from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Select} from "@/components/ui/select";
@@ -38,7 +38,7 @@ function capacityInput(value: string): number | null {
 }
 
 export function CollegeClassCreate({ cohorts, periods,
- academicSetupHref = "/college/academics",alwaysOpen=false }: {
+ academicSetupHref = "/college/academics",alwaysOpen=true }: {
   cohorts: Cohort[]; periods: Period[]; academicSetupHref?: string;alwaysOpen?:boolean;
 }) {
   const router = useRouter();
@@ -48,9 +48,11 @@ export function CollegeClassCreate({ cohorts, periods,
   const [pending, startTransition] = useTransition();
   const [cohortId, setCohortId] = useState("");
   const [programId,setProgramId]=useState("");
-  const uniquePrograms=[...new Map(cohorts.map(cohort=>[cohort.programId,{id:cohort.programId,name:cohort.programName}])).values()];
+  const [programSearch,setProgramSearch]=useState("");
+  const uniquePrograms=[...new Map(cohorts.map(cohort=>[cohort.programId,{id:cohort.programId,name:cohort.programName}])).values()]
+    .filter(program=>program.name.toLowerCase().includes(programSearch.trim().toLowerCase()));
   const filteredCohorts=cohorts.filter(cohort=>!programId||cohort.programId===programId);
-  const [academicPeriodId, setAcademicPeriodId] = useState("");
+  const [academicPeriodId, setAcademicPeriodId] = useState(periods.length === 1 ? periods[0]!.id : "");
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [capacity, setCapacity] = useState("60");
@@ -63,6 +65,14 @@ export function CollegeClassCreate({ cohorts, periods,
     event.preventDefault();
     if(pending)return;
     setNotice("");setFieldErrors({});
+    if (!programId) {
+      setFieldErrors({programId:"Select program"});setNotice("Select program");
+      formRef.current?.querySelector<HTMLSelectElement>('[name="programId"]')?.focus();return;
+    }
+    if (!cohortId) {
+      setFieldErrors({cohortId:"Select batch"});setNotice("Select batch");
+      formRef.current?.querySelector<HTMLSelectElement>('[name="cohortId"]')?.focus();return;
+    }
     const result = createCollegeSectionSchema.safeParse({
       cohortId, academicPeriodId, name, code:derivedCode, capacity: Number(capacity),
       minSize: minSize === "" ? null : Number(minSize), description: description.trim() || null,
@@ -80,14 +90,20 @@ export function CollegeClassCreate({ cohorts, periods,
     startTransition(async () => {
       try {
         await requestWrite("POST", "/api/college/classes", result.data);
-        setName(""); setCode(""); setCapacity("60"); setDescription("");
+        setName(""); setCode(""); setDescription("");
+        formRef.current?.querySelector<HTMLInputElement>('[name="className"]')?.focus();
         const className=result.data.name;
         setNotice('Created class “'+className+'”. Next, register or move students into this section.');
         showToast({tone:"success",title:'Created class “'+className+'”.',
          description:"Next, register or move students into this section."});
         router.refresh();
       } catch (error) {
-        setNotice(academicSetupErrorMessage(error, "Class creation failed."));
+        const message = academicSetupErrorMessage(error, "Class creation failed.");
+        setNotice(message);
+        if (/capacity|maximum|minimum/i.test(message)) setFieldErrors({ capacity: message });
+        else if (/batch|cohort/i.test(message)) setFieldErrors({ cohortId: message });
+        else if (/period/i.test(message)) setFieldErrors({ academicPeriodId: message });
+        else if (/name|section/i.test(message)) setFieldErrors({ name: message });
       }
     });
   }
@@ -97,18 +113,20 @@ export function CollegeClassCreate({ cohorts, periods,
     {!cohorts.length || !periods.length
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
         {!cohorts.length
-          ? "No planned or active batches in this college. Create a batch first."
+          ? <>No planned or active batches in this college. <Link href="/college/academics" className="font-semibold underline">Set up programs and batches</Link> first.</>
           : <>No usable academic periods in this college. Create a period first.{" "}
             <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
-      : <form ref={formRef} onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+      : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+          <Input type="search" aria-label="Search programs" placeholder="Search programs" value={programSearch} onChange={event=>setProgramSearch(event.target.value)} className="min-h-9 w-full" />
           <Select required name="programId" aria-invalid={Boolean(fieldErrors.programId)} value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
            <option value="">Select program</option>
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
+          {fieldErrors.programId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.programId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required name="cohortId" disabled={!programId} aria-invalid={Boolean(fieldErrors.cohortId)} value={cohortId} onChange={event => setCohortId(event.target.value)}
@@ -118,6 +136,7 @@ export function CollegeClassCreate({ cohorts, periods,
               {c.programName} · {c.name} ({c.code})
             </option>)}
           </Select>
+          {fieldErrors.cohortId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.cohortId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
           <Select required name="academicPeriodId" aria-invalid={Boolean(fieldErrors.academicPeriodId)} value={academicPeriodId}
@@ -128,24 +147,28 @@ export function CollegeClassCreate({ cohorts, periods,
               {p.name} ({p.code})
             </option>)}
           </Select>
+          {fieldErrors.academicPeriodId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.academicPeriodId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
           <Input required name="className" placeholder="e.g. CSE-A or Section 1" maxLength={255} value={name}
            aria-invalid={Boolean(fieldErrors.name)} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
+          {fieldErrors.name ? <span role="alert" className="text-xs text-red-700">{fieldErrors.name}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
           <Input name="code" maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (required, 1–200)
-          <Input required type="number" min={1} max={200} step={1} value={capacity}
+          <Input required name="capacity" aria-invalid={Boolean(fieldErrors.capacity)} type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
+          {fieldErrors.capacity ? <span role="alert" className="text-xs text-red-700">{fieldErrors.capacity}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum students (0–200)
-          <Input type="number" min={0} max={200} step={1} value={minSize}
+          <Input name="minSize" aria-invalid={Boolean(fieldErrors.minSize)} type="number" min={0} max={200} step={1} value={minSize}
             onChange={event => setMinSize(event.target.value)} className="min-h-11 w-full md:min-h-9" />
+          {fieldErrors.minSize ? <span role="alert" className="text-xs text-red-700">{fieldErrors.minSize}</span> : null}
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
@@ -154,7 +177,7 @@ export function CollegeClassCreate({ cohorts, periods,
         <p className="text-xs text-muted-foreground md:col-span-2">Moving a student into a full section is refused.</p>
         <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending} type="submit" className="w-full md:w-auto">
-            {pending ? "Creating…" : "Create Class & Add Another"}
+            {pending ? "Creating…" : "+ Create Class & Add Another"}
           </Button>
         </div>
       </form>}
@@ -212,11 +235,11 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
       try {
         await requestWrite("PATCH", "/api/college/classes/" + encodeURIComponent(row.id), parsed.data);
         setEditing(false); setDiscardConfirm(false);
-        setNotice('Updated class “'+row.name+'”.');
-        showToast({tone:"success",title:'Updated class “'+row.name+'”.'});
+        setNotice('Updated class “'+name+'”.');
+        showToast({tone:"success",title:'Updated class “'+name+'”.'});
         router.refresh();
       } catch (error) {
-        setNotice(academicSetupErrorMessage(error, "Class update failed."));
+        setNotice(academicSetupErrorMessage(error, "Failed to update class."));
       }
     });
   }
@@ -224,11 +247,11 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
   return <div className="min-w-0">
     <Button variant="secondary" type="button" disabled={pending || row.status !== "ACTIVE"}
       onClick={() => { setEditing(true); setDiscardConfirm(false); setNotice(""); }}
-      className="min-h-11 w-full sm:w-auto md:min-h-9">
+      className="min-h-11 w-full sm:w-auto md:min-h-9" aria-label={"Edit class "+row.name}>
       Edit
     </Button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
-      title={'Edit class “'+row.name+'”'}>
+      title={'Edit class “'+row.name+'”'} className="max-w-[550px]" dismissible={false}>
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2">

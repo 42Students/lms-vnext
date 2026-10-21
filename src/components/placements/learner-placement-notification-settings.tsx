@@ -1,5 +1,6 @@
 "use client";
 import { Checkbox } from "@/components/ui/checkbox";
+import Link from "next/link";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -59,6 +60,11 @@ export function LearnerPlacementNotificationSettings({initial}:{
       These choices apply only to placement opportunity matching and application
       updates. Essential college, academic and security messages are not controlled here.
     </p>
+    <nav aria-label="Notification preference destinations" className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-sm">
+     <Link href="/learn/profile" className="font-semibold text-link underline">Your learner profile</Link>
+     <Link href="/learn/notifications" className="font-semibold text-link underline">All notifications</Link>
+    </nav>
+    <p className="mt-3 text-xs text-body">Legacy placement alerts are split into matching opportunities and application updates. Application updates include submitted, shortlisted, selected, rejected, waitlisted, offer issued and joining-status changes; academic and security notices remain independently enabled.</p>
     <div className="mt-4 divide-y divide-border border-t border-border">
       <label className={"flex min-h-12 cursor-pointer items-start gap-3 px-1 py-4 transition-colors duration-150 focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary-text)] has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50 "+(matching?"bg-primary-subtle":"hover:bg-surface-subtle")}>
         <Checkbox checked={matching} onChange={e=>setMatching(e.target.checked)}

@@ -4,8 +4,7 @@ import { ISSUE_TYPE_OPTIONS, LOCATION_OPTIONS, REPORTER_OPTIONS } from "./report
 
 /** SA-placements-projects-100: exact legacy report intake; server revalidates all fields. */
 export const trackerReportSchema = z.object({
-  reporterName: z.string().trim().min(1, "Select your name.").max(120)
-    .refine(value => REPORTER_OPTIONS.some(option => option.value === value), "Select your name."),
+  reporterName: z.string().trim().min(1, "Select your name.").max(120),
   accountRole: z.enum(BUG_ACCOUNT_ROLES, { error: "Select the account you were testing." }),
   environment: z.enum(BUG_ENVIRONMENTS, { error: "Select where you saw the issue." }),
   page: z.string().trim().min(1, "Select the page and area.").max(120),
@@ -29,7 +28,7 @@ export const trackerReportSchema = z.object({
     z.literal(""),
     z.null(),
   ]).optional(),
-  sourcePath: z.string().trim().max(500).nullable().optional(),
+  sourcePath: z.string().trim().max(500).refine(value=>!value.includes("?")&&!value.includes("#"),"Remove URL query parameters or fragments.").nullable().optional(),
   browser: z.string().trim().max(500).nullable().optional(),
   viewport: z.string().trim().max(64).nullable().optional(),
 }).strict().superRefine((value, ctx) => {

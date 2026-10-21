@@ -14,11 +14,12 @@ export const collegeStructureQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   programId: z.string().uuid().optional(),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
-  page: urlDecimalInt(1,1000).default(1),
-  pageSize: urlDecimalInt(10,100).refine(n => [10,20,25,50,100].includes(n)).default(10),
+  page: urlDecimalInt(1,100000).default(1),
+  pageSize: urlDecimalInt(10,100).refine(n => [10,20,25,50,100].includes(n)).default(COLLEGE_STRUCTURE_PAGE_SIZE),
 }).strict();
 export type CollegeStructureQuery = z.infer<typeof collegeStructureQuerySchema>;
 export const collegeClassBaseQuerySchema = collegeStructureQuerySchema.extend({
+  status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ALL"),
   departmentCode: z.string().trim().min(1).max(64).optional(),
   periodEndsOnOrBefore: z.iso.date().optional(),
   periodStartsOnOrAfter: z.iso.date().optional(),
@@ -51,6 +52,7 @@ export function withCollegeClassCapacityCheck<T extends z.ZodType<{minimumCapaci
 export const collegeClassQuerySchema=withCollegeClassCapacityCheck(collegeClassBaseQuerySchema);
 export type CollegeClassQuery = z.infer<typeof collegeClassQuerySchema>;
 export const collegeElectiveBaseQuerySchema = collegeStructureQuerySchema.extend({
+  status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
   periodEndsOnOrBefore: z.iso.date().optional(),
   periodStartsOnOrAfter: z.iso.date().optional(),
   descriptionPresence: z.enum(["ALL","RECORDED","MISSING"]).default("ALL"),
@@ -124,7 +126,7 @@ export function collegeStructureHref(kind: CollegeStructureKind, query: CollegeS
   const params = new URLSearchParams();
   if (query.q) params.set("q", query.q);
   if (query.programId) params.set("programId", query.programId);
-  if (query.status !== "ACTIVE") params.set("status", query.status);
+  if (query.status !== (kind === "CLASSES" ? "ALL" : "ACTIVE")) params.set("status", query.status);
   if (kind === "CLASSES" && "cohortCode" in query && query.cohortCode)
     params.set("cohortCode",query.cohortCode);
   if (kind === "CLASSES" && "capacityState" in query && query.capacityState !== "ALL")

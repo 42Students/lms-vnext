@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useEffect,useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -18,6 +18,7 @@ type Workspace = {
   status: string;
   mentorName: string | null;
   mentorMembershipId?: string | null;
+  roleLabel?:string|null;
 };
 
 type Mentor = {
@@ -36,7 +37,7 @@ export function ProjectMentorReassignment({
 }: {
   collegeId: string;
   initialProjectId?: string;
-  matchingWorkspaces: { id: string; mentorMembershipId: string | null }[];
+  matchingWorkspaces: { id: string; mentorMembershipId: string | null;roleLabel:string|null }[];
   matchingCapped?:boolean;
   workspaces: Workspace[];
   mentors: Mentor[];
@@ -57,6 +58,10 @@ export function ProjectMentorReassignment({
   const sendingRef=useRef(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [failureOpen,setFailureOpen]=useState(false);
+  const [remoteMentors,setRemoteMentors]=useState<Mentor[]>([]);
+  const [mentorLoading,setMentorLoading]=useState(false);
+  const [mentorError,setMentorError]=useState("");
+  const mentorRequest=useRef(0);
   const [result, setResult] = useState<{
     reassignedCount: number;
     skippedCount: number;
@@ -67,28 +72,52 @@ export function ProjectMentorReassignment({
     taskAssignmentClearingSupported: boolean;
   } | null>(null);
 
-  const selectedMentors = new Map(matchingWorkspaces.map(row => [row.id, row.mentorMembershipId]));
-  const skippedSelection = selected.filter(projectId =>
-    selectedMentors.get(projectId) === mentorMembershipId
-  );
+  const selectedMentors=new Map(matchingWorkspaces.map(row=>[row.id,row]));
+  const normalizedRole=(role:string|null|undefined)=>
+    (role?.trim()||"Project Mentor").toLocaleLowerCase();
+  const skippedSelection=selected.filter(projectId=>{
+    const previous=selectedMentors.get(projectId);
+    return previous?.mentorMembershipId===mentorMembershipId&&
+      normalizedRole(previous?.roleLabel)===normalizedRole(roleLabel);
+  });
   const actionableSelection = selected.filter(projectId => !skippedSelection.includes(projectId));
-  const selectedMentorName=mentors.find(row=>row.membershipId===mentorMembershipId)?.displayName??
-    mentors.find(row=>row.membershipId===mentorMembershipId)?.email??"this mentor";
-
-  const visibleMentors = useMemo(() => {
-    const q = search.trim().toLowerCase();
-    if (!q) return mentors;
-    return mentors.filter((mentor) =>
-      mentor.membershipId === mentorMembershipId ||
-      (
-        (mentor.displayName ?? "") +
-        " " +
-        (mentor.email ?? "")
-      )
-        .toLowerCase()
-        .includes(q),
-    );
-  }, [mentors, search, mentorMembershipId]);
+  useEffect(()=>{
+    const sequence=++mentorRequest.current;
+    const controller=new AbortController();
+    const query=search.trim();
+    if(!query){
+      setRemoteMentors([]);setMentorLoading(false);setMentorError("");
+      return()=>{controller.abort();};
+    }
+    setMentorLoading(true);setMentorError("");
+    const params=new URLSearchParams({collegeId,q:query,limit:"100"});
+    void fetch("/api/projects/mentor-candidates?"+params.toString(),{
+      credentials:"same-origin",cache:"no-store",signal:controller.signal,
+    }).then(async response=>{
+      if(!response.ok)throw new Error("Failed to search mentors. Try again.");
+      return response.json() as Promise<{mentors?:Mentor[]}>;
+    }).then(payload=>{
+      if(controller.signal.aborted||sequence!==mentorRequest.current)return;
+      setRemoteMentors(Array.isArray(payload.mentors)?payload.mentors:[]);
+    }).catch(()=>{
+      if(controller.signal.aborted||sequence!==mentorRequest.current)return;
+      setMentorError("Failed to search mentors. Try again.");
+      setRemoteMentors([]);
+    }).finally(()=>{
+      if(sequence===mentorRequest.current&&!controller.signal.aborted)setMentorLoading(false);
+    });
+    return()=>controller.abort();
+  },[collegeId,search]);
+  const visibleMentors=useMemo(()=>{
+    const pool=search.trim()?remoteMentors:mentors;
+    const selectedItem=[...remoteMentors,...mentors]
+      .find(row=>row.membershipId===mentorMembershipId);
+    if(selectedItem&&!pool.some(row=>row.membershipId===mentorMembershipId))
+      return [selectedItem,...pool];
+    return pool;
+  },[search,remoteMentors,mentors,mentorMembershipId]);
+  const selectedMentorName=visibleMentors.find(row=>row.membershipId===mentorMembershipId)?.displayName??
+    visibleMentors.find(row=>row.membershipId===mentorMembershipId)?.email??"this mentor";
 
   function toggle(projectId: string) {
     setSelected((current) =>
@@ -139,10 +168,11 @@ export function ProjectMentorReassignment({
           response.skippedCount += partial.skippedCount;
           response.failures.push(...partial.failures);
           response.taskAssignmentClearingSupported &&= partial.taskAssignmentClearingSupported;
-        } catch {
-          response.failures.push(...chunk.map(projectId => ({
-            projectId, code: "PROJECT_REASSIGNMENT_FAILED",
-          })));
+        } catch(caught) {
+          const code=caught instanceof Error?
+            (caught.message.includes("permission")?"PROJECT_ACCESS_DENIED":"PROJECT_REASSIGNMENT_FAILED"):
+            "PROJECT_REASSIGNMENT_FAILED";
+          response.failures.push(...chunk.map(projectId => ({projectId,code})));
         }
       }
       setResult(response);
@@ -172,7 +202,7 @@ export function ProjectMentorReassignment({
     } catch {
       showToast({
         tone: "error",
-        title: "Mentor reassignment failed",
+        title: "Reassignment failed",
         description:
           "The request could not be completed. Your selection is still available; please retry.",
       });
@@ -236,7 +266,8 @@ export function ProjectMentorReassignment({
                       "Unassigned"}
                   </span>
                 </span>
-                {mentorMembershipId && workspace.mentorMembershipId === mentorMembershipId ?
+                {mentorMembershipId&&workspace.mentorMembershipId===mentorMembershipId&&
+                  normalizedRole(workspace.roleLabel)===normalizedRole(roleLabel) ?
                   <StatusBadge tone="warning">Already this mentor — will skip</StatusBadge> : null}
                 <StatusBadge tone="neutral">
                   {workspace.status}
@@ -257,11 +288,12 @@ export function ProjectMentorReassignment({
             <Input
               type="search"
               disabled={pending}
+              maxLength={100}
               value={search}
               onChange={(event) =>
                 setSearch(event.target.value)
               }
-              placeholder="Name or email"
+              placeholder="Search by mentor name"
               className="w-full"
             />
           </label>
@@ -289,17 +321,28 @@ export function ProjectMentorReassignment({
               ))}
             </Select>
           </label>
+          {mentorLoading?<p role="status" className="text-xs text-body md:col-span-2">
+            Searching eligible mentors across the college…</p>:null}
+          {mentorError?<p role="alert" className="text-sm text-error md:col-span-2">
+            {mentorError}</p>:null}
+          {!mentorLoading&&search.trim()&&!visibleMentors.length?
+            <p className="text-xs text-body md:col-span-2">
+              No matching eligible mentors. Try another name or email.</p>:null}
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Role label
             <Input
               disabled={pending}
               value={roleLabel}
-              maxLength={120}
+              maxLength={80}
               onChange={(event) =>
                 setRoleLabel(event.target.value)
               }
               className="w-full"
             />
+            <span className="text-xs font-normal text-body">
+              Changing the role label updates this mentor even when the membership is unchanged.
+              Leave blank for Project Mentor.
+            </span>
           </label>
         </div>
 
@@ -343,9 +386,11 @@ export function ProjectMentorReassignment({
 
       {result ? (
         <section className="border-b border-border pb-5">
-          <h2 className="m-0 text-base font-semibold text-foreground">
-            Last result
-          </h2>
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <h2 className="m-0 text-base font-semibold text-foreground">Last result</h2>
+            <Button size="sm" variant="secondary" onClick={()=>setResult(null)}>
+              Dismiss results</Button>
+          </div>
           <p className="mt-2 text-sm text-body">
             {result.reassignedCount} reassigned ·{" "}
             {result.skippedCount} skipped ·{" "}
@@ -361,7 +406,8 @@ export function ProjectMentorReassignment({
                       failure.projectId,
                   )?.title ??
                     failure.projectId}
-                  : Could not reassign this workspace. Refresh and try again.
+                  : {failure.code.replace(/^PROJECT_/,"").replaceAll("_"," ").toLowerCase()}.
+                  Check this workspace's permissions or state, then retry.
                 </li>
               ))}
             </ul>
@@ -374,13 +420,15 @@ export function ProjectMentorReassignment({
         confirmLabel="Reassign workspaces" pending={pending}
         onConfirm={()=>void executeReassignment()}/>
       <Dialog open={failureOpen} onOpenChange={setFailureOpen}
-        title="Some workspaces were not reassigned"
+        title={(result?.failures.length??0)+" reassignment(s) failed"}
         description="The successful workspaces were saved. Review the failed workspaces and retry only those that failed.">
         <div className="min-w-0 space-y-[var(--lms-space-4)]">
           <p role="status" className="text-sm text-body">{result?.reassignedCount ?? 0} reassigned · {result?.failures.length ?? 0} failed</p>
           <ul className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] pl-[var(--lms-space-5)] text-sm text-body [&_li]:py-[var(--lms-space-2)]">
             {result?.failures.map(failure=><li key={failure.projectId}>
-              {workspaces.find(row=>row.id===failure.projectId)?.title ?? "Unavailable workspace"} — could not reassign. Review access or refresh before retrying.
+              {workspaces.find(row=>row.id===failure.projectId)?.title ?? failure.projectId}
+              {" — "}{failure.code.replaceAll("_"," ").toLowerCase()}.
+              Review access or refresh before retrying.
             </li>)}
           </ul>
           <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">

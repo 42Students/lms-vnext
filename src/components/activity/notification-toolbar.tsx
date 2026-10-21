@@ -20,6 +20,7 @@ export function NotificationToolbar({
   confirmMessage = "Mark all unread Mentor notifications in this college as read?",
   categories = [],
   selectedCategory,
+  categoryParam = "category",
 }: {
   view: "all" | "unread";
   unreadCount: number;
@@ -30,6 +31,7 @@ export function NotificationToolbar({
   confirmMessage?: string;
   categories?: readonly {id:string;label:string;unread:number}[];
   selectedCategory?: string;
+  categoryParam?: "category" | "tab";
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -54,8 +56,9 @@ export function NotificationToolbar({
   }
 
   return (
-    <div className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-      <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-2 min-[768px]:flex min-[768px]:w-auto min-[768px]:flex-wrap" role="group" aria-label="Notification filter">
+    <div className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+      <div className="flex min-w-0 flex-wrap gap-2" role="group" aria-label="Notification filter">
         <Link
           href={baseHref + "?view=all" + (selectedCategory?"&category="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "all" ? "page" : undefined}
@@ -80,20 +83,23 @@ export function NotificationToolbar({
       >
         {pending ? "Marking…" : "Mark all as read"}
       </Button>
+      </div>
       {categories.length?(
-        <nav aria-label="Notification categories" className="flex min-w-0 flex-wrap gap-2">
+        <nav aria-label="Notification categories" className="flex min-w-0 gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
           {categories.map(item=>{
-            const link=baseHref+"?"+new URLSearchParams({
-              view,...(item.id===selectedCategory?{}:{category:item.id}),
-            }).toString();
-            const active=item.id===selectedCategory;
-            return <Link key={item.id} href={link}
+            const query=new URLSearchParams({view});
+            if(item.id!=="all")query.set(categoryParam,item.id);
+            const link=baseHref+"?"+query.toString();
+            const active=item.id===(selectedCategory??"all");
+            return <Link key={item.id} href={link} scroll={false}
               aria-current={active?"page":undefined}
-              className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-2 text-sm font-semibold md:min-h-9 "+(
-                active?"border-primary text-primary-text":"border-transparent text-body hover:border-border"
+              aria-label={item.label+" ("+item.unread+" shown in loaded view)"}
+              className={"inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+(
+                active?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:border-primary"
               )}>
+              <span aria-hidden="true">{item.id==="all"?"◈":item.id==="college"?"▣":item.id==="department"?"◇":item.id==="faculty"?"▤":item.id==="personal"?"●":"•"}</span>
               {item.label}
-              <span className="tabular-nums text-xs text-muted-foreground">{item.unread}</span>
+              <span aria-hidden="true" className="tabular-nums text-xs text-muted-foreground">({item.unread})</span>
             </Link>;
           })}
         </nav>

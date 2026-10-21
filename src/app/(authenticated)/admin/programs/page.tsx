@@ -27,8 +27,8 @@ export default async function SuperAdminProgramsPage() {
       <div className="min-w-0 space-y-5">
         <PageHeader  title="Programs"
           description="Select a college first. Choose a college scope before managing programs." />
-        <EmptyState title="Select a college to continue"
-          description="Choose a college in the header above to see its programs." />
+        <EmptyState title="Select a college to manage Programs"
+          description="Choose a college in the header above to create or edit Programs." />
       </div>
     );
   }
@@ -41,7 +41,7 @@ export default async function SuperAdminProgramsPage() {
   ]);
   if(programRead.status==="rejected")return <div className="min-w-0 space-y-5">
     <PageHeader title="Programs"/>
-    <ErrorState title="Programs unavailable"
+    <ErrorState title="We could not load this page"
       description="The selected college's program directory could not be verified. No changes were made."
       action={<Link href="/admin/programs" className="lms-inline-link inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Retry loading programs</Link>}/>
   </div>;
@@ -60,7 +60,7 @@ export default async function SuperAdminProgramsPage() {
       Edits are paused to avoid incomplete selections.
       <Link href="/admin/programs" className="lms-inline-link font-semibold underline underline-offset-4">Retry loading details</Link>
     </Alert>
-    {programs.length===0?<EmptyState title="No programs yet" description="No programs are recorded in the selected college."/>:
+    {programs.length===0?<EmptyState title="No programs found. Create a department first." description="No programs are recorded in the selected college."/>:
       <section aria-label="Programs read-only">
         <h2 className="mb-2 text-base font-semibold text-body">Programs ({programs.length})</h2>
         <ul className="divide-y divide-border border-y border-border">
@@ -79,7 +79,7 @@ export default async function SuperAdminProgramsPage() {
       <div className="min-w-0">
         <PageBackLink href="/admin/academics" label="Academic Setup overview" />
         <PageHeader title="Programs"
-          description="Manage programs within the selected college safety scope." />
+          description="Create New Program and manage Existing Programs for this college." />
       </div>
       <AcademicSetupSteps step={2} />
       <AdminProgramDirectory

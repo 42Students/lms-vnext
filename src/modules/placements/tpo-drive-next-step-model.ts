@@ -107,5 +107,28 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       href: root + "/applicants-pipeline",
     });
   }
+  if(input.status==="PUBLISHED"){
+    const score=(action:TpoDriveAction)=>{
+      const name=action.label;
+      if(name.startsWith("Review ")&&name.includes("request"))return 0;
+      if(name.startsWith("Review and apply"))return 1;
+      if(name.startsWith("Verify and release"))return 2;
+      if(name==="Set deadline")return 3;
+      if(name.startsWith("Share"))return 4;
+      if(name.startsWith("Add students"))return 5;
+      if(name.startsWith("Remind"))return 6;
+      return name==="Close drive"?8:7;
+    };
+    actions.sort((a,b)=>score(a)-score(b));
+    const noAttention=actions.every(action=>
+      action.label==="Applicants"||action.label==="Close drive");
+    if(noAttention){
+      return {primary:{
+        label:"No action needed",
+        description:"Nothing needs your attention right now. Review the drive record if you need to make a change.",
+        href:root,
+      },more:actions.slice(0,3)};
+    }
+  }
   return { primary: actions[0]!, more: actions.slice(1, 4) };
 }

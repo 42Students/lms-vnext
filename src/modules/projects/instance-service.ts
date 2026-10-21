@@ -379,21 +379,21 @@ export async function createProjectInstance(
       const taskValues = [...blueprint.tasks]
         .sort((a, b) => a.sequence - b.sequence)
         .map((task) => {
-          const sprintId = sprintIds.get(
-            task.sprintKey,
-          );
-          if (!sprintId) {
-            throw new Error(
-              "Validated Project task lost its sprint during materialization",
-            );
+          const sprintId=task.sprintKey?sprintIds.get(task.sprintKey):null;
+          if(task.sprintKey&&!sprintId){
+            throw new Error("Validated Project task lost its sprint during materialization");
           }
 
           return {
             projectId: project.id,
             sprintId,
-            templateKey: task.key,
+            templateKey:task.key,
+            legacyTaskKey:task.legacyKey??null,
             title: task.title,
-            description: task.description ?? null,
+            description:task.description??null,
+            dueLabel:task.dueLabel??null,
+            taskType:task.taskType??null,
+            approach:task.approach??null,
             acceptanceCriteria:
               task.acceptanceCriteria ?? null,
             priority: task.priority,
