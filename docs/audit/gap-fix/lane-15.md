@@ -130,3 +130,13 @@
 - Old assignment_contents/submission_assets array→typed textContent, assignment_submission_links and assignment_submission_files, not embedded upload URLs. Old pointsPrevious→previousPoints; status AUTO_GRADED/MANUALLY_GRADED/PARTIALLY_GRADED→legacyGradingKind only, live gradingStatus NOT_GRADED/GRADED plus pointsAwarded, gradedAt/by and publication.
 - Existing unique assignment/member preserves vNext current-attempt aggregate; to reintroduce one submission per term requires a separate approved versioned per-term table or uniqueness migration plus service rewrite. Do not falsely claim semester attempt resets are working from a nullable column.
 - Faculty legacy create enabled/active maps to intentional vNext DRAFT until PUBLISH, unless owner approves reversing lifecycle; zero maxPoints is valid in DB (0..10000), so form must accept zero.
+
+## Packet 28 — assessments part 2/2
+- `src_db_schema_assessments.ts.part2of2.md` | Confirmed G2-4-012-089 default changed to WRITTEN_RESPONSE only in packet27 + migration 0158, not a blanket UPDATE of existing authored records. G2-4-012-092 legacy publishes on create, while vNext DRAFT→PUBLISHED remains a deliberate review-first workflow; only owner can reverse it. No extra schema/migration needed. | Faculty creation UI, resource/allowed methods, preexisting rows and publish/live-check handed to faculty owner.
+
+## Packet 29 — tenant domains
+- `src_db_schema_tenant-domains.ts.md` | Added lastFoundValues bounded diagnostic and deletedAt tombstone, active-only unique domain and primary indexes (0159) for G2-19-025-044/046, G2-19-015-003/008/050/052, G2-5-024-010/058/062 and related. Existing verified-only primary check intentionally retained as security hardening. | Historic numeric ID crosswalk, deletion service, redacted TXT logic, verified-only URL fallback, Cloudflare/HMAC and IST conversion are not fixed by schema. No legacy records imported. 0159 NOT EXECUTED.
+
+### Tenant domain safety contract
+- Legacy tenant_domain.id INT→UUID (if migration approved), college_id INT→verified college UUID, host→lowercase punycode DNS validation before insert, is_primary/is_verified→booleans, verified_at LocalDateTime interpreted with verified source zone (Asia/Kolkata only if known), last_found_values→redacted diagnostic max512, is_deleted→deletedAt without changing existing canonical college identity.
+- Domain lookup for outbound links must select VERIFIED active hosts only; if none verified use canonical configured public origin, never an unverified tenant domain. Deleted records must not resolve or display. Do not overwrite verification state during a legacy import without validating proofs.
