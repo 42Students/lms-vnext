@@ -31,7 +31,7 @@ export default async function CollegeClassProjectWorkspacePage() {
         action={<Link href="/college/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 lms-inline-link">Project templates</Link>}>
         No published Project template is assigned to this college.
       </Banner> :
-        <ClassTeamWorkspaceCreator collegeId={collegeId} basePath="/college/projects" templates={templates.map(t => ({ templateId:t.templateId, title:t.title, version:t.version, summary:t.summary }))} />}
+        <ClassTeamWorkspaceCreator collegeId={collegeId} userId={context.user.id} basePath="/college/projects" templates={templates.map(t => ({ templateId:t.templateId, title:t.title, version:t.version, summary:t.summary }))} />}
     </div>
   );
 }
