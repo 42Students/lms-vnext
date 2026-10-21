@@ -7,7 +7,12 @@ import type { RequestContext } from "@/modules/identity/context";
 import { getPlacementJob } from "./job-service";
 import { projectSuperAdminDrivePipeline } from "./super-admin-drive-pipeline-model";
 
-/** Selected-college authorization is checked before an individual job is queried. */
+/** Selected-college authorization is checked before an individual job is queried.
+ * The independently bounded attention aggregate lives in
+ * super-admin-drive-attention-service.ts. The owning page fetches it via
+ * Promise.allSettled, so warning failures never hide this pipeline snapshot
+ * and one drive never triggers an unbounded college-wide attention scan.
+ */
 export async function getSuperAdminDrivePipeline(context: RequestContext, jobId: string) {
   const job = await getPlacementJob(context, jobId);
   const stage = sql<string>`coalesce(${placementCollegeApplicationStages.stage},
