@@ -23,7 +23,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_more_error.tsx.md` (edit src/app/(authenticated)/tpo/more/error.tsx; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_calendar_error.tsx.md` (edit src/app/(authenticated)/tpo/calendar/error.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_reports_accreditation_page.tsx.md` (edit src/app/(authenticated)/tpo/reports/accreditation/page.tsx; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_tpo_public-placement_route.ts.md` (edit src/app/api/placements/tpo/public-placement/route.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_tpo_public-placement_route.ts.md` (edit src/app/api/placements/tpo/public-placement/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_college-dashboard-cards-model.ts.md` (edit src/modules/admin-ui/college-dashboard-cards-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_project-admin-audit-page.tsx.md` (edit src/components/projects/project-admin-audit-page.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_super-admin-template-plan-editor.tsx.md` (edit src/components/projects/super-admin-template-plan-editor.tsx; 2 findings; best P1)
