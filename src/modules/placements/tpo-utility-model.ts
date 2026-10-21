@@ -6,67 +6,26 @@
  * existing recruiter companies view: /tpo/companies
  * requires a selected name and otherwise redirects.
  */
+/** The eleven fixed legacy destinations. Every destination is an existing
+ * authenticated TPO page; authorisation is enforced by its route and APIs. */
 export const TPO_MORE_GROUPS = [
-  {
-    heading: "Students and operations",
-    description: "Daily placement oversight and follow-up.",
-    links: [
-      {
-        label: "Students",
-        href: "/tpo/students",
-        description:
-          "Review student placement journeys and branch intelligence.",
-      },
-      {
-        label: "Requests",
-        href: "/tpo/requests",
-        description:
-          "Triage pending student placement requests and review recorded decisions.",
-      },
-      {
-        label: "Calendar",
-        href: "/tpo/calendar",
-        description:
-          "Open placement interviews and scheduled events.",
-      },
-      {
-        label: "Reports",
-        href: "/tpo/reports",
-        description:
-          "Explore placement performance and exportable reports.",
-      },
-      {
-        label: "Notifications",
-        href: "/tpo/notifications",
-        description:
-          "Read, filter and acknowledge your own notifications.",
-      },
-      {
-        label: "Audit log",
-        href: "/tpo/audit",
-        description:
-          "Review recorded placement decisions and activity.",
-      },
-    ],
-  },
-  {
-    heading: "Relationships and account",
-    description: "Recruiter relationships and your account.",
-    links: [
-      {
-        label: "Companies",
-        href: "/tpo/recruiters?view=companies",
-        description:
-          "Open the existing recruiter companies view.",
-      },
-      {
-        label: "Profile",
-        href: "/tpo/profile",
-        description:
-          "View your own college membership and profile.",
-      },
-    ],
-  },
+ {heading:"Work",description:"Placement workspaces",links:[
+  {label:"Placement eligibility",href:"/tpo/batches",description:"Check student eligibility, batches and placement participation."},
+  {label:"Requests",href:"/tpo/requests",description:"What students asked you to decide: withdrawals, off-campus offers, registration changes"},
+  {label:"Calendar",href:"/tpo/calendar",description:"Talks, deadlines and rounds"},
+  {label:"Announcements",href:"/tpo/announcements",description:"Share placement updates with students"},
+  {label:"Messages",href:"/tpo/messages",description:"Your placement conversations"},
+  {label:"Placement team",href:"/tpo/team",description:"Manage your placement team"},
+ ]},
+ {heading:"Insights",description:"Placement reports",links:[
+  {label:"Reports",href:"/tpo/reports",description:"Placement summary, by branch, by company and more"},
+ ]},
+ {heading:"Account",description:"Your account and notifications",links:[
+  {label:"Notifications",href:"/tpo/notifications",description:"Everything that has notified you"},
+  {label:"Settings",href:"/tpo/settings",description:"Placement settings and preferences"},
+  {label:"Audit log",href:"/tpo/audit",description:"Who did what, and when"},
+  {label:"Profile",href:"/tpo/profile",description:"Your own account details"},
+ ]},
 ] as const;
 
 export function formatTpoProfileRole(

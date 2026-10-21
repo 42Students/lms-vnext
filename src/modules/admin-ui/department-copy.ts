@@ -9,6 +9,6 @@ export const DEPARTMENT_COPY = {
   editButton: "Edit",
   editTitle: "Edit Department",
   saveButton: "Save Changes",
-  updatedMessage: "Department updated successfully!",
+  updatedMessage: "Department updated successfully",
   updateFailed: "Department was not updated",
 } as const;

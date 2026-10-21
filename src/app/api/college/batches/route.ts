@@ -16,7 +16,7 @@ export async function POST(request: Request) {
     const context = await getCurrentRequestContext();
     const body: unknown = await request.json();
     const cohort = await createCollegeCohort(context, body);
-    return NextResponse.json({ cohort }, { status: 201 });
+    return NextResponse.json({ success: true, message: "Batch created successfully", cohort }, { status: 201 });
   } catch (error) {
     if (error instanceof CollegeCohortMutationError) {
       return NextResponse.json({ error: error.code }, {

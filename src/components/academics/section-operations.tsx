@@ -517,7 +517,7 @@ export function SectionOperations({
                     "PATCH",
                     { action: "CANCEL" },
                   ),
-                "Schedule event cancelled",
+                "Class schedule cancelled successfully",
               )
             }
           >

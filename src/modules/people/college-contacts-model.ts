@@ -124,6 +124,12 @@ export function collegeContactsWithoutMemberHref(filter:CollegeContactsQuery):st
 
 /** The public error explanation must not echo query values, memberships or internal stack traces. */
 export function collegeContactFilterMessage(error:unknown):string {
+ if(error instanceof z.ZodError){
+  if(error.issues.some(issue=>issue.path[0]==="programId"))
+   return "Program ID must be a valid identifier. No contacts were loaded.";
+  if(error.issues.some(issue=>issue.path[0]==="facultyDepartmentId"))
+   return "Department ID must be a valid identifier. No contacts were loaded.";
+ }
  switch(error instanceof Error?error.message:"") {
   case "INVALID_CONTACT_DATE_WINDOW":
    return "Joined start date must be on or before the end date. No contacts were loaded.";
