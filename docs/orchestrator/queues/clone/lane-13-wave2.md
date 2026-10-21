@@ -99,7 +99,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-2_attendance-bulk-controller.md.md` (new; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-2_client-error-report-controller.md.md` (new; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_groups_college-group-import-preview.tsx.md` (edit src/components/groups/college-group-import-preview.tsx; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-audience-preview-service.ts.md` (edit src/modules/announcements/tpo-audience-preview-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-audience-preview-service.ts.md` (edit src/modules/announcements/tpo-audience-preview-service.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_learner-profile-section-recovery-model.ts.md` (edit src/modules/people/learner-profile-section-recovery-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_log-alerts_validation.ts.md` (edit src/modules/log-alerts/validation.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_super-admin-legacy-tabs-model.ts.md` (edit src/modules/people/super-admin-legacy-tabs-model.ts; 1 findings; best P2)
