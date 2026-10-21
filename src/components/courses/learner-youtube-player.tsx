@@ -7,6 +7,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -113,15 +114,28 @@ export function LearnerYouTubePlayer({
   contentId,
   deliveryId,
   externalUrl,
+  legacyFileUrl,
+  contentTitle,
+  contentAddedAt,
+  onEdit,
+  onDelete,
+  onProgressUpdate,
   initialPositionSeconds,
   authoredDurationSeconds,
   completed,
   readOnly = false,
-  saveIntervalMs = 5000,
+  saveIntervalMs = 15000,
 }: {
   contentId: string;
   deliveryId: string;
   externalUrl: string;
+  /** Legacy contentDataDTO.link falls back to file_dto.cloud_storage_object. */
+  legacyFileUrl?: string | null;
+  contentTitle?: string | null;
+  contentAddedAt?: string | Date | null;
+  onEdit?: () => void;
+  onDelete?: () => void;
+  onProgressUpdate?: (progress: { status:"NOT_STARTED"|"IN_PROGRESS"|"COMPLETED";lastPositionSeconds:number }) => void;
   initialPositionSeconds: number;
   authoredDurationSeconds: number;
   completed: boolean;
@@ -137,6 +151,9 @@ export function LearnerYouTubePlayer({
     initialPositionSeconds,
   );
   const savingRef = useRef(false);
+  const lastAttemptAtRef=useRef(0);
+  const onProgressUpdateRef=useRef(onProgressUpdate);
+  onProgressUpdateRef.current=onProgressUpdate;
   const playingRef = useRef(false);
   const mountedRef = useRef(true);
   const completedRef = useRef(completed);
@@ -153,9 +170,12 @@ export function LearnerYouTubePlayer({
     useState(completed);
   const [observedDuration,setObservedDuration]=useState(0);
 
-  const videoId =
-    getYouTubeVideoId(externalUrl);
-  const missingResource=!externalUrl.trim();
+  const videoUrl=externalUrl.trim()||legacyFileUrl?.trim()||"";
+  const videoId=getYouTubeVideoId(videoUrl);
+  const missingResource=!videoUrl;
+  // Legacy lessonContentId -> UUID contentId; WATCHED -> COMPLETED.
+  // Teacher authoring lives in the faculty workspace, not in learner progress.
+  const saveThrottleMs=Math.max(5000,Math.min(120000,saveIntervalMs));
 
   useEffect(() => {
     mountedRef.current = true;
@@ -203,6 +223,7 @@ export function LearnerYouTubePlayer({
               height: "100%",
               playerVars: {
                 rel: 0,
+                modestbranding: 1,
                 playsinline: 1,
                 origin:
                   window.location.origin,
@@ -215,14 +236,14 @@ export function LearnerYouTubePlayer({
                   const resumeAt = Math.min(
                     Math.max(
                       0,
-                      completed ? 0 : initialPositionSeconds,
+                      completed || initialPositionSeconds<=5 ? 0 : initialPositionSeconds,
                     ),
                     duration > 1
                       ? duration - 1
                       : initialPositionSeconds,
                   );
 
-                  if (resumeAt > 0) {
+                  if (resumeAt > 5) {
                     event.target.seekTo(
                       resumeAt,
                       true,
@@ -266,7 +287,7 @@ export function LearnerYouTubePlayer({
         if (playingRef.current) {
           void persistProgress(false);
         }
-      }, saveIntervalMs);
+      }, 5000);
 
     function pageHide() {
       void persistProgress(true, true);
@@ -308,7 +329,11 @@ export function LearnerYouTubePlayer({
         0,
         Math.floor(current),
       );
-
+      // Poll at five seconds, persist only after the configured (default 15s)
+      // interval, except for pause/end/navigation checkpoints.
+      const now=Date.now();
+      if(!force&&now-lastAttemptAtRef.current<saveThrottleMs)return;
+      lastAttemptAtRef.current=now;
       savingRef.current = true;
       try {
         const response = await fetch(
@@ -351,6 +376,7 @@ export function LearnerYouTubePlayer({
         lastSavedRef.current =
           payload.progress
             .lastPositionSeconds;
+        onProgressUpdateRef.current?.(payload.progress);
 
         if (mountedRef.current) {
           setSavedSeconds(
@@ -438,6 +464,7 @@ export function LearnerYouTubePlayer({
     router,
     videoId,
     readOnly,
+    saveThrottleMs,
   ]);
 
   // An unpublished legacy content row with no URL has nothing to embed.
@@ -447,24 +474,36 @@ export function LearnerYouTubePlayer({
       <div className="mt-4 space-y-2">
         <Alert tone="error">Video unavailable. It may be region-blocked or removed.</Alert>
         <a
-          href={externalUrl}
+          href={videoUrl}
           
+          target="_blank"
           rel="noopener noreferrer"
           className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         >
-          Open on YouTube ↗
+          Open on YouTube
         </a>
       </div>
     );
   }
 
   return (
-    <div className="mt-4">
-      <div className="overflow-hidden rounded-xl border border-border bg-foreground">
+    <div className="ln-syllabus-video-wrap mt-4">
+      <header className="mb-3 flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold text-muted-foreground">YouTube Video</p>
+          <h3 className="break-words text-base font-semibold text-foreground">{contentTitle?.trim()||"Embedded YouTube video"}</h3>
+          {contentAddedAt?<p className="mt-1 text-xs text-muted-foreground">Added {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(contentAddedAt))}</p>:null}
+        </div>
+        {(onEdit||onDelete)?<div className="flex flex-wrap items-center gap-2">
+          {onEdit?<Button type="button" variant="secondary" onClick={onEdit}>Edit</Button>:null}
+          {onDelete?<Button type="button" variant="danger" onClick={onDelete}>Delete</Button>:null}
+        </div>:null}
+      </header>
+      <div className="overflow-hidden rounded-lg border border-border bg-foreground">
         <div
           ref={hostRef}
           className="aspect-video w-full"
-          aria-label="YouTube Course player"
+          aria-label={contentTitle?.trim()||"Embedded YouTube video"}
         />
       </div>
 
@@ -491,12 +530,13 @@ export function LearnerYouTubePlayer({
       ) : null}
       {loadFailed ? (
         <a
-          href={externalUrl}
+          href={videoUrl}
           
+          target="_blank"
           rel="noopener noreferrer"
           className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
         >
-          Open on YouTube ↗
+          Open on YouTube
         </a>
       ) : null}
 
