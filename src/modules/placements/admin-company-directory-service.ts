@@ -115,17 +115,26 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     .where(filters.length ? and(...filters) : undefined)
     .orderBy(...(query.sort === "RECENT"
       ? [desc(placementCompanyRelationships.updatedAt),asc(placementCompanyRelationships.id)]
-      : query.sort==="DRIVES"
-        ? [desc(sql`(select count(*) from placement_jobs j
-          where j.company_relationship_id=${placementCompanyRelationships.id}
-            and j.college_id=${colleges.id} and j.status!='ARCHIVED')`),
-          asc(placementCompanies.name),asc(placementCompanyRelationships.id)]
-        : query.sort==="LAST_ACTIVE"
-          ? [sql`(select max(j.updated_at) from placement_jobs j
-            where j.company_relationship_id=${placementCompanyRelationships.id}
-              and j.college_id=${colleges.id}) desc nulls last`,
+      : query.sort==="DRIVES"||query.sort==="DRIVES_ASC"
+        ? [query.sort==="DRIVES"
+           ? desc(sql`(select count(*) from placement_jobs j
+             where j.company_relationship_id=${placementCompanyRelationships.id}
+              and j.college_id=${colleges.id} and j.status!='ARCHIVED')`)
+           : asc(sql`(select count(*) from placement_jobs j
+             where j.company_relationship_id=${placementCompanyRelationships.id}
+              and j.college_id=${colleges.id} and j.status!='ARCHIVED')`),
+           asc(placementCompanies.name),asc(placementCompanyRelationships.id)]
+        : query.sort==="LAST_ACTIVE"||query.sort==="LAST_ACTIVE_ASC"
+          ? [query.sort==="LAST_ACTIVE"
+            ? sql`(select max(j.updated_at) from placement_jobs j
+                where j.company_relationship_id=${placementCompanyRelationships.id}
+                 and j.college_id=${colleges.id}) desc nulls last`
+            : sql`(select max(j.updated_at) from placement_jobs j
+                where j.company_relationship_id=${placementCompanyRelationships.id}
+                 and j.college_id=${colleges.id}) asc nulls last`,
              asc(placementCompanies.name),asc(placementCompanyRelationships.id)]
-          : [asc(placementCompanies.name),asc(colleges.name),asc(placementCompanyRelationships.id)]))
+          : [query.sort==="NAME_DESC"?desc(placementCompanies.name):asc(placementCompanies.name),
+             asc(colleges.name),asc(placementCompanyRelationships.id)]))
     .limit(10).offset((query.page-1)*10),
   ]);
   const total=totalRows[0]?.total ?? 0;
