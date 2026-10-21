@@ -101,7 +101,7 @@ export function SuperAdminVerificationPanel({collegeId,rows,counts,activeTab,ini
     MISSING_MARKSHEET:rows.filter(row=>row.section==="EDUCATION"&&row.missingMarksheet).length,
     VERIFIED_DETAILS_CHANGED:rows.filter(row=>row.status==="UPDATE_PENDING").length,
     WAITING_OVER_WEEK:rows.filter(row=>["SUBMITTED","UPDATE_PENDING"].includes(row.status)&&
-     (Date.now()-new Date(row.submittedAt).getTime())>7*24*60*60*1000).length,
+     (Date.now()-row.submittedAt.getTime())>7*24*60*60*1000).length,
    }}
    onApply={filters=>navigate({...filters,page:"1"})}/>
   <div className="flex flex-wrap items-center justify-between gap-3">
