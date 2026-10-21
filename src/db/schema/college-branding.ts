@@ -6,6 +6,7 @@
  */
 import { sql } from "drizzle-orm";
 import {
+  boolean,
   check,
   integer,
   pgTable,
@@ -30,6 +31,11 @@ export const collegeBranding = pgTable(
     collegeId: uuid("college_id")
       .primaryKey()
       .references(() => colleges.id, { onDelete: "restrict" }),
+    /** Historical branding ID and login preference are import-only snapshots. */
+    legacyBrandingId: integer("legacy_branding_id"),
+    legacyCollegeId: integer("legacy_college_id"),
+    legacyLoginMethods: varchar("legacy_login_methods", { length: 32 }),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     logoUrl: text("logo_url"),
     faviconUrl: text("favicon_url"),
     loginBackgroundUrl: text("login_background_url"),
