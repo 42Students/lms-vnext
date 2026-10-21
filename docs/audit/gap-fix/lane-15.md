@@ -146,3 +146,12 @@
 
 ## Packet 31 — discussions
 - `src_db_schema_discussions.ts.md` | Added nullable server-provided senderNameSnapshot, deletedAt and chronology CHECK (0160) covering G2-17-020-008/015/046, G2-2-033-076/077, G2-12-009-075. Existing delivery scoped membership/sender/pin invariants kept. | Existing lesson discussions staged DB05 is distinct from classroom delivery thread (G2-19-031-023/128, G2-17-027-047, G2-5-020-007/010/045); service hard deletes still need cutover to tombstones, exact `Message cannot be empty` belongs in UI and service. 0160 NOT EXECUTED.
+
+## Packet 32 — bug tracker schema
+- `src_db_schema_db10-bug-tracker.ts.md` | Reviewed existing source and 0076: hashed unique sessions, mutable active access, UUID bugReports/activity/attachment with CAS and scoped metadata; no unsafe name-based identity changes. G2-19-020-041/052/058, G2-16-002-086/088/089, G2-16-003-080, G2-3-021-041, G2-4-021-001/040/062/029 are primarily record identity/import and service/runtime readiness. | DB10 tracker marked draft in source, while prior migration exists; no extra unregistered columns or duplicate CREATE introduced. External reporter access intentionally remains disabled without approved authenticated access; ID/PII backfill not required for greenfield. Service handoff recorded; no migration applied.
+
+## Packet 33 — colleges
+- `src_db_schema_colleges.ts.md` | Added optional chairMembershipId/viceChairMembershipId with composite (membershipId,collegeId) FK enforcing same-college selection in DB (0161), G2-16-020-002/008/034/036/038, G2-4-014-012/016/077. Existing code/org/status/logo/address/postalCode fields retained. | G2-3-028-080, G2-4-014-015/079 DTO legacy integer/slug, full-text ranking and old logo path need service/API migrations; protected leadership permission and membership ACTIVE checks cannot be delegated to FK alone. 0161 NOT EXECUTED.
+
+### College DTO field crosswalk
+- Legacy College.id/organizationId/chairId/viceChairId INT → UUID college/org and nullable chair/vice membership UUID via audited college scoped maps; uniqueId→code; pinCode→postalCode; logo URL→authorized logoObjectPath; address1/2/landmark/city/state/country directly, soft-deleted→status ARCHIVED preserving history. Never assume all old faculty chairs are valid memberships or grant role automatically.
