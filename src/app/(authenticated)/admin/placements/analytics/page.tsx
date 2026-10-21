@@ -15,7 +15,7 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
-import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
+import {historicalHiringTotals,hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 import {SuperAdminHiringAcademicFilters} from "@/components/admin/super-admin-hiring-academic-filters";
 import {Pagination} from "@/components/ui/pagination";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
@@ -81,7 +81,8 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   offered:out.offered+row.offered,hired:out.hired+row.hired,rejected:out.rejected+row.rejected,
   withdrawn:out.withdrawn+row.withdrawn,waitlisted:out.waitlisted+row.waitlisted,
  }),{totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0});
- const funnel=hiringFunnel(totals);
+ const funnelTotals=historicalHiringTotals(data.funnelRows);
+ const funnel=hiringFunnel(funnelTotals);
  const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
  type Row=(typeof data.rows)[number];
  const columns:DataTableColumn<Row>[]=[
@@ -146,13 +147,13 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Hiring Funnel">
    <div className="flex flex-wrap items-start justify-between gap-3">
     <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Hiring Funnel</h2>
-    <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
+    <p className="text-sm text-muted-foreground">Historical milestones ever reached · conversion is relative to the previous milestone, including withdrawn or subsequently rejected applications.</p>
    </div>
-   <ol className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
+   <ol className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">{funnel.map((step,index)=>
     <li key={step.key} className={styles.step}>
      <span className={styles.label}>{step.label}</span>
      <strong className={styles.count}>{step.count.toLocaleString("en-IN")}</strong>
-     <p className={styles.percent}>{step.percentPrevious===null?"No preceding stage":step.percentPrevious+"% of previous"}</p>
+     <p className={styles.percent}>{step.percentPrevious===null?(index===0?"Starting milestone":"Conversion unavailable (no prior milestone)") :step.percentPrevious+"% of previous"}</p>
      <MetricBar className={styles.track+" mt-2"} role="img"
       label={step.label+": "+step.count+" applications"}
       value={step.widthPercent} maximum={100} unit="percent" />
@@ -181,6 +182,6 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
       </dl>
      </article>)}</div>
   </section>:null}
-  <p className="text-xs text-muted-foreground">Stage counts are current persisted application stages, not historical transitions. Hired stage is not a substitute for confirmed joining. This report does not infer match scores or private candidate contacts.</p>
+  <p className="text-xs text-muted-foreground">Company totals above show current application stages. The funnel uses cumulative stage history, including later rejected and withdrawn applicants. Confirmed joining requires accepted-offer evidence. No private candidate contacts are inferred.</p>
  </div>;
 }

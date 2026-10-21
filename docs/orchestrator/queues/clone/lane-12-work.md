@@ -52,7 +52,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_request-demo_page.tsx.md` (edit src/app/request-demo/page.tsx; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_students_page.tsx.md` (edit src/app/(authenticated)/tpo/students/page.tsx; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_super-admin-audit-route-query-model.ts.md` (edit src/modules/activity/super-admin-audit-route-query-model.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_admin-ui_super-admin-hiring-funnel-model.ts.md` (edit src/modules/admin-ui/super-admin-hiring-funnel-model.ts; 6 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_admin-ui_super-admin-hiring-funnel-model.ts.md` (edit src/modules/admin-ui/super-admin-hiring-funnel-model.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_bug-tracker_admin-service.ts.md` (edit src/modules/bug-tracker/admin-service.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_notifications_page.tsx.md` (edit src/app/(authenticated)/mentor/notifications/page.tsx; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_placements_jobs_jobId_applicants-pipeline_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx; 5 findings; best P1)
