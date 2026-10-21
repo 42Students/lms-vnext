@@ -21,6 +21,8 @@ import {TrackerAdminNav} from "@/components/tracker/tracker-admin-nav";
 import {AuditFindingFilterMemory} from "@/components/tracker/audit-finding-filter-memory";
 import {FINDING_STATUSES,FINDING_SEVERITIES,FINDING_KINDS,parseIndependentFindingFilters,independentFindingHref} from "@/modules/bug-tracker/independent-audit-findings-model";
 import {independentAuditFindingsReady,listIndependentAuditFindings,readIndependentFindingSyncState} from "@/modules/bug-tracker/independent-audit-findings-service";
+import {independentAuditImporterReady} from "@/modules/bug-tracker/independent-audit-inbox-importer";
+import {IndependentFindingSyncAction} from "@/components/tracker/independent-finding-sync-action";
 export const dynamic="force-dynamic";
 export const metadata={title:"Audit findings · 42 Tracker"};
 export default async function IndependentFindingsPage({searchParams}:{
@@ -80,12 +82,12 @@ export default async function IndependentFindingsPage({searchParams}:{
     {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
    </p>
    <div className="flex flex-wrap items-center gap-3">
-    <Button type="button" variant="secondary" disabled title="Credential-verified repository synchronization is not configured">Sync now</Button>
+    <IndependentFindingSyncAction ready={independentAuditImporterReady()}/>
     <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
    </div>
-   <Banner tone="warning">
-    Sync now is unavailable because an authenticated, credential-verified repository importer and durable job receipt have not been configured. No import is performed when this page loads.
-   </Banner>
+   {!independentAuditImporterReady()?<Banner tone="warning">
+    Sync now is unavailable until the credential-verified repository importer and durable file ledger have been configured. No import is performed when this page loads.
+   </Banner>:null}
    {syncResult.status==="rejected" ? <Banner tone="warning">
     Import history could not be refreshed. Findings remain available.
     {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4">Retry import status</Link>
