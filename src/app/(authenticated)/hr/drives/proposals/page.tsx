@@ -61,7 +61,7 @@ export default async function RecruiterDriveProposalHistory({
      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
      Export this page (summary CSV)
     </Link>:null}
-   <p role="status" className="max-w-2xl text-sm text-body leading-[22px]">
+   <p role="status" className="max-w-2xl text-sm text-body leading-[1.6]">
     {data.total.toLocaleString("en-IN")} recorded discussion proposals · Page {data.page} of {data.pages}.
     These are not submitted approval requests.
    </p>

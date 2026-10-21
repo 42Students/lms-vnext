@@ -246,20 +246,20 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/new/error.tsx`
 - [x] `src/app/(authenticated)/hr/drives/new/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/error.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
-- [ ] `src/app/(authenticated)/hr/home/error.tsx`
-- [ ] `src/app/(authenticated)/hr/home/page.tsx`
-- [ ] `src/app/(authenticated)/hr/messages/error.tsx`
-- [ ] `src/app/(authenticated)/hr/not-found.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/error.tsx`
-- [ ] `src/app/(authenticated)/hr/profile/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx`
+- [x] `src/app/(authenticated)/hr/home/error.tsx`
+- [x] `src/app/(authenticated)/hr/home/page.tsx`
+- [x] `src/app/(authenticated)/hr/messages/error.tsx`
+- [x] `src/app/(authenticated)/hr/not-found.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/profile/error.tsx`
+- [x] `src/app/(authenticated)/hr/profile/page.tsx`
 - [ ] `src/app/(authenticated)/hr/round-results/error.tsx`
 - [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
 - [ ] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
