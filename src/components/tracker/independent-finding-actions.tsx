@@ -10,16 +10,17 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import {FINDING_STATUSES,FINDING_SEVERITIES} from "@/modules/bug-tracker/independent-audit-findings-model";
+import {FINDING_COMMIT_REPOS} from "@/modules/bug-tracker/independent-finding-actions-model";
 import {canTransitionIndependentFinding,type IndependentFindingStatus} from "@/modules/bug-tracker/independent-finding-transition-model";
 type Action="STATUS"|"SEVERITY"|"ASSIGNEE"|"DUPLICATE"|"FIX_COMMIT"|"COMMENT";
-export function IndependentFindingActions({externalId,version,status,severity,candidates=[]}:{externalId:string;version:number;status:string;severity:string;candidates?:readonly {id:string;externalId:string;title:string}[]}){
+export function IndependentFindingActions({externalId,version,status,severity,currentAssignee,candidates=[]}:{externalId:string;version:number;status:string;severity:string;currentAssignee:string|null;candidates?:readonly {id:string;externalId:string;title:string}[]}){
  const router=useRouter(),lock=useRef(false);
  const [action,setAction]=useState<Action>("STATUS");
  const [nextStatus,setNextStatus]=useState(status);
  const [nextSeverity,setNextSeverity]=useState(severity);
- const [assignee,setAssignee]=useState("");
+ const [assignee,setAssignee]=useState(currentAssignee??"");
  const [duplicateOf,setDuplicateOf]=useState("");
- const [repo,setRepo]=useState("42Students/lms-vnext");
+ const [repo,setRepo]=useState<(typeof FINDING_COMMIT_REPOS)[number]>("lms2-fe");
  const [sha,setSha]=useState("");
  const [note,setNote]=useState("");
  const [pending,setPending]=useState(false);
@@ -38,9 +39,11 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
  }
  async function submit(confirmed=false){
   if(lock.current)return;
-  if((action==="COMMENT"||action==="STATUS"&&["WONT_FIX","CANT_REPRODUCE","NEEDS_INFO","VERIFIED"].includes(nextStatus))&&note.trim().length<4){
-   setError("Enter a reason of at least four characters.");return;
+  if(action==="COMMENT"&&!note.trim()){setError("Write a comment");return;}
+  if(action==="STATUS"&&["WONT_FIX","CANT_REPRODUCE","NEEDS_INFO","VERIFIED"].includes(nextStatus)&&note.trim().length<4){
+   setError("Say why (for \"verified\": what you re-tested)");return;
   }
+  if(action==="FIX_COMMIT"&&!/^[0-9a-f]{7,40}$/.test(sha.trim())){setError("That isn't a commit hash");return;}
   if(!confirmed){setError(null);setConfirmOpen(true);return;}
   lock.current=true;setPending(true);setError(null);
   try{
@@ -50,7 +53,7 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
    if(!result.ok||result.version<=version)throw new Error("The update could not be verified. Refresh and retry.");
    setConfirmOpen(false);
    router.refresh();
-  }catch{setError(friendlyApiError({}));}
+  }catch(reason){setError(reason instanceof Error?reason.message:friendlyApiError({}));}
   finally{lock.current=false;setPending(false);}
  }
  return <section className="min-w-0 max-w-3xl space-y-3 border-b border-border pb-4" aria-label="Finding actions">
@@ -72,34 +75,36 @@ export function IndependentFindingActions({externalId,version,status,severity,ca
    <Select value={nextSeverity} disabled={pending} onChange={e=>setNextSeverity(e.target.value)} className="min-h-11 text-sm md:min-h-9">
     {FINDING_SEVERITIES.map(value=><option key={value}>{value}</option>)}
    </Select></label>:null}
-  {action==="ASSIGNEE"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assignee
-   <Input value={assignee} disabled={pending} maxLength={150} onChange={e=>setAssignee(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
+  {action==="ASSIGNEE"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Assigned to
+   <Input value={assignee} disabled={pending} maxLength={100} placeholder="Name or agent" onChange={e=>setAssignee(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
    </label>:null}
-  {action==="DUPLICATE"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duplicate of finding UUID
+  {action==="DUPLICATE"?<label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duplicate of finding ID
    <Input value={duplicateOf} list="finding-duplicate-candidates" disabled={pending}
     onChange={e=>setDuplicateOf(e.target.value)}
     placeholder="Select a matching finding"
     className="min-h-11 text-sm md:min-h-9"/>
    <datalist id="finding-duplicate-candidates">{candidates.map(item=><option key={item.id}
-     value={item.id}>{item.externalId} · {item.title}</option>)}</datalist>
+     value={item.externalId}>{item.title}</option>)}</datalist>
    </label>:null}
   {action==="FIX_COMMIT"?<div className="grid min-w-0 gap-3 md:col-span-2 md:grid-cols-2">
    <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Repository
-    <Input value={repo} disabled={pending} onChange={e=>setRepo(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></label>
+    <Select value={repo} disabled={pending} onChange={e=>setRepo(e.target.value as (typeof FINDING_COMMIT_REPOS)[number])} className="min-h-11 text-sm md:min-h-9">
+     {FINDING_COMMIT_REPOS.map(value=><option key={value} value={value}>{value}</option>)}
+    </Select></label>
    <label className="grid min-w-0 w-full gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Commit SHA
     <Input value={sha} disabled={pending} maxLength={40} onChange={e=>setSha(e.target.value)} className="min-h-11 text-sm md:min-h-9"/></label>
    </div>:null}
-  {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Note or reason
-    <Textarea rows={3} maxLength={1000} value={note} disabled={pending} onChange={e=>setNote(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
+  {(action==="COMMENT"||action==="STATUS")?<label className="grid min-w-0 w-full gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{action==="COMMENT"?"Comment":"Note or reason"}
+    <Textarea rows={2} maxLength={4000} value={note} disabled={pending} placeholder={action==="COMMENT"?"Add to the history":"Say why"} onChange={e=>setNote(e.target.value)} className="min-h-11 text-sm md:min-h-9"/>
    </label>:null}
   </div>
   <div className="flex min-w-0 flex-col gap-2 md:items-end">
-  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto">{pending?"Saving…":"Save details"}</Button>
+  <Button variant="primary" type="button" onClick={()=>void submit()} loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||(action==="ASSIGNEE"&&assignee.trim()===(currentAssignee??""))||(action==="SEVERITY"&&nextSeverity===severity)||(action==="STATUS"&&nextStatus===status)}>{pending?"Saving…":action==="COMMENT"?"Add comment":action==="ASSIGNEE"?"Save":"Save details"}</Button>
   {error&&!confirmOpen?<p role="alert" className="min-w-0 break-words [overflow-wrap:anywhere] text-sm text-error">{error}</p>:null}
   </div>
   <ConfirmDialog open={confirmOpen} onOpenChange={setConfirmOpen}
     title="Save this finding update? An immutable audit event will be recorded."
-    confirmLabel="Save details" confirmVariant="primary" pending={pending}
+    confirmLabel={action==="COMMENT"?"Add comment":"Save details"} confirmVariant="primary" pending={pending}
     onConfirm={()=>void submit(true)}>
     {error?<InlineNotice tone="error" message={error}/>:null}
   </ConfirmDialog>

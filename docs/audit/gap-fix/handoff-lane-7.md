@@ -196,3 +196,54 @@ Source checked: `src/modules/courses/super-admin-course-bulk-visibility.ts` upda
 - G2-2-014-020 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Include per-course requested/updated counts in summary.
 - G2-2-014-021 | `src/components/courses/super-admin-course-bulk-visibility.tsx` | Show sanitized per-course failure details and partial-success warning.
 - G2-2-014-015 | `src/app/api/admin/courses/bulk-status/route.ts` | Surface exact empty selection message.
+
+## Super Admin independent audit findings — lane-7 wave-1 packets (2026-10-21)
+
+- G2-2-001-005 | `src/app/api/tracker/audit-findings/sync/route.ts`, `src/modules/bug-tracker/independent-finding-importer.ts` | Implement credential-verified privileged POST sync and outcome; UI button only after job actually exists; do not fake success.
+- G2-2-001-013 | `src/db/schema/db10-audit-findings.draft.ts` + migration + tracker detail | Add persisted roles, environment, reported agent/session, related IDs, source commit; show true provenance on detail.
+- G2-2-001-024 | `src/modules/bug-tracker/independent-audit-findings-service.ts` + tracker detail | Existing duplicate suggestions are first-page findings only; implement same-area 0.6-word overlap query, five suggestions with verified external IDs.
+- G2-2-001-025 | `src/modules/bug-tracker/independent-finding-transition-model.ts` | Owner decision: keep stricter staged release/CAS vs legacy direct fixed→verified; if changed, update transition-specific errors and all clients.
+- G2-2-001-038 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Persist typed old/new for assignee/severity/commits in event columns; present note summaries are not a lossless structured ledger.
+- G2-2-001-040 | `src/app/api/tracker/audit-findings/[publicId]/route.ts` | Verify no-store on all error/exception responses and audited impersonation actor label, without relaxing platform scope.
+- G2-2-001-048 | `src/db/schema/db10-audit-findings.draft.ts` + migration/importer | Persist per-file result REJECTED/TAMPERED/DELETED and checkedAt; UI currently has no reliable values to render.
+- G2-2-001-061 | `src/modules/bug-tracker/independent-finding-importer.ts` | Bounded 10s connect/20s read GitHub request, refuse truncated trees and record failure details; no importer exists today.
+- G2-2-001-066 | `src/db/schema/db10-audit-findings.draft.ts` + migration/importer | Add importer/agent/file changed/deleted event kinds with actorKind and source path.
+- G2-2-001-067 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Append-only per-file ledger, sync constraints/indexes.
+- G2-2-001-068 | `src/db/schema/db10-audit-findings.draft.ts` + migration/importer | Reported severity, roles, environment, source commit, session and related IDs with historical backfill.
+- G2-2-001-069 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Event type, from/to, commit payload, actorKind, sourceFile for human/importer events.
+- G2-2-001-070 | `src/db/schema/db10-audit-findings.draft.ts` + migration | Last commit, attempted/success timestamps, last error, file diagnostic results with transactionally consistent history.
+- G2-2-001-030 | `src/components/tracker/independent-finding-sync-action.tsx` | Synced / Sync didn't run / Sync failed toast variants only after approved guarded sync endpoint.
+
+Intentional divergences requiring owner signoff: G2-2-001-001/-041 no separate password door (platform RBAC is mandatory), G2-2-001-043 direct fixed→verified not permitted without recorded production release, G2-2-001-044 duplicate chains disallowed to preserve canonical target integrity. No migration, sync execution or deployment has been made by this lane.
+
+## Super Admin interview edit form — lane-7 wave-1 packets (2026-10-21)
+
+- G2-14-030-002 | `src/components/admin/super-admin-interview-operations.tsx + scoped edit route` | Expose edit trigger and scoped PUT/PATCH route in admin interview page or related detail.
+- G2-14-030-004 | `src/components/placements/college-interview-appointments.tsx` | Rebuild form with all legacy field groups and order; keep vNext reason/version requirements separately.
+- G2-14-030-010 | `src/db/schema/placement-college-interviews.ts + learner reschedule requests` | Store/project pending reason, note, windows or link to structured learner requests.
+- G2-14-030-011 | `src/components/placements/college-interview-appointments.tsx` | Normalize historical UTC edit time and timezone conversion; avoid fixed +05:30 outside India.
+- G2-14-030-012 | `src/db/schema/placement-college-interviews.ts + placements edit service` | Persist interviewType/roundDescription/notes and allow full edit projection.
+- G2-14-030-014 | `src/modules/placements/college-interview-action-service.ts` | Compute candidate/interviewer conflicts while form values change, scoped org without cross-tenant leak.
+- G2-14-030-015 | `src/components/placements/college-interview-appointments.tsx` | Restore type selection or map to per-round type with explicit lossless conversion.
+- G2-14-030-016 | `src/components/placements/college-interview-appointments.tsx` | Add round description with exact min/max, placeholder, counter.
+- G2-14-030-022 | `src/components/placements/college-interview-appointments.tsx` | Restore optional Notes distinct from mandatory change reason.
+- G2-14-030-025 | `src/modules/placements/college-interview-action-service.ts` | Permit untouched historical interview edit where safe; preserve exact meeting error.
+- G2-14-030-030 | `src/components/placements/college-interview-appointments.tsx` | Add dirty snapshot tracking and exact discard confirmation; prevent accidental data loss.
+- G2-14-030-033 | `src/modules/admin-ui/super-admin-interview-detail-service.ts + scoped action route` | Implement equivalent super-admin selected-college update, maintaining full payload fields.
+- G2-14-030-035 | `src/modules/admin-ui/super-admin-interview-detail-service.ts + scoped action route` | Use selected college/organization scope in SA edit route, fail closed on missing selection.
+- G2-14-030-036 | `src/modules/placements/college-interview-action-service.ts` | Preserve authorized global SA and pinned-college mutation scopes, avoid other colleges.
+- G2-14-030-037 | `src/modules/placements/college-interview-action-service.ts` | Restore soft warning at edit and evaluate cross-company candidate clashes and 15min buffer.
+- G2-14-030-038 | `src/db/schema/placement-college-interviews.ts + learner reschedule requests` | Map requested reschedule through learner request records and expose pending state without dropping reason/windows.
+- G2-14-030-039 | `src/modules/placements/college-interview-action-service.ts` | Match buffer and org/company candidate collisions, keep hard server check for overlapping allocations.
+- G2-14-030-049 | `src/components/placements/college-interview-appointments.tsx` | Add dirty-state comparison including whitespace and original timezone precision.
+- G2-14-030-051 | `src/components/placements/college-interview-appointments.tsx` | Resolve local timezone correctly and persist offset-aware ISO without hardcoded offset.
+- G2-14-030-053 | `src/db/schema/placement-college-interviews.ts + migration` | Write migration field map and add or relate missing interview content/previous slot/request history.
+- G2-14-030-054 | `src/db/schema/placement-college-interviews.ts + migration` | Represent CONFIRMED and pending reschedule separately or document status remapping.
+- G2-14-030-023 | `src/modules/placements/college-interview-action-model.ts` | Add field-level required message verbatim.
+- G2-14-030-024 | `src/modules/placements/college-interview-action-model.ts` | Add whitespace/min10 field errors and 500-char bound.
+- G2-14-030-026 | `src/components/placements/college-interview-appointments.tsx` | Restore separate required date/time messages and https meeting field error.
+- G2-14-030-027 | `src/components/placements/college-interview-appointments.tsx` | Wire server Zod field errors to fields, dismissible alert and accurate fallback.
+- G2-14-030-028 | `src/components/placements/college-interview-appointments.tsx` | Use exact conditional success messages based on reschedule status/date change.
+- G2-14-030-029 | `src/components/placements/college-interview-appointments.tsx` | Add legacy info notification on attempted busy cancel.
+
+Current model distinction: Super Admin interview *round* detail is read-only and college appointment edits are authorized for college placements admins, not globally. Do not wire a Super Admin button directly to the college endpoint or accept unscoped organization IDs. Schema/status and selected-college write access need coordinated owning-lane implementation. 27/27 findings **handed off, not fixed**.

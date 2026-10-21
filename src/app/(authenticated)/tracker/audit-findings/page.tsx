@@ -46,7 +46,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
   {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
     <span className="block min-w-0 break-all font-mono text-xs">{item.path||"Unknown file"}</span>},
-  {key:"reason",header:"Refusal reason",mobilePriority:"secondary",cell:item=>
+  {key:"reason",header:"Why",mobilePriority:"secondary",cell:item=>
     <span className="break-words">{item.reason||"Reason not recorded"}</span>},
  ];
  const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
@@ -78,7 +78,7 @@ export default async function IndependentFindingsPage({searchParams}:{
   <form role="search" aria-label="tracker audit findings filters" method="get" className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
    <Input type="hidden" name="view" value={parsed.view}/>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="ID, title or summary"/></label>
+    <Input name="q" defaultValue={parsed.q} maxLength={120} placeholder="Search title, summary, id, file"/></label>
    <div className="flex min-w-0 items-center gap-3 max-[767px]:[&>button]:flex-1">
     <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
     <Link href="/tracker/audit-findings?view=OPEN" className="inline-flex min-h-11 items-center font-semibold text-link md:min-h-9">Clear</Link>
@@ -88,7 +88,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
     <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Area
-    <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas"/></label>
+    <Input name="area" defaultValue={parsed.area} maxLength={80} placeholder="All areas (comma separated)"/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status (multiple)
     <Select name="status" multiple size={4} defaultValue={parsed.statuses}>
      {FINDING_STATUSES.map(v=><option key={v} value={v}>{v.replaceAll("_"," ")}</option>)}
@@ -121,7 +121,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    </p>
    {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
-   <p className="mt-1 text-xs text-muted-foreground">A manual sync is unavailable until the findings repository is accessible and import credentials are verified. No sync was performed by opening this page.</p>
+   <p className="mt-1 text-xs text-muted-foreground">Manual sync requires a verified importer, repository credentials and a guarded server job. Viewing this page never triggers a sync.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
     <DataTable columns={refusedColumns} rows={sync.refusedFiles}
