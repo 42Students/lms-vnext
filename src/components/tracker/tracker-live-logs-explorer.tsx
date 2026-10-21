@@ -373,6 +373,21 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           <div><dt className="font-semibold">Request ID</dt><dd className="break-all">{detailEntry.requestId??"Not recorded"}</dd></div>
           <div><dt className="font-semibold">Provider reference</dt><dd className="break-all">{detailEntry.id}</dd></div>
         </dl>
+        <details className="min-w-0 border-t border-border pt-3">
+          <summary className="cursor-pointer font-semibold">Sanitized raw log payload</summary>
+          <p className="mt-2 text-xs text-muted-foreground">Only the server-redacted fields visible above are included. Untrusted provider metadata and credentials are excluded.</p>
+          <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded border border-border bg-[var(--lms-neutral-50)] p-3 text-xs">{JSON.stringify({
+            id:detailEntry.id,time:detailEntry.time,event:detailEntry.event,
+            message:detailEntry.message,path:detailEntry.path,
+            requestId:detailEntry.requestId,component:detailEntry.component,
+          },null,2)}</pre>
+          <Button type="button" variant="secondary" className="mt-2"
+            onClick={()=>void copy(JSON.stringify({
+              id:detailEntry.id,time:detailEntry.time,event:detailEntry.event,
+              message:detailEntry.message,path:detailEntry.path,
+              requestId:detailEntry.requestId,component:detailEntry.component,
+            },null,2))}>Copy as JSON</Button>
+        </details>
       </div>:null}
     </Dialog>
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}
