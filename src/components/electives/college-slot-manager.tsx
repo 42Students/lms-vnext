@@ -8,6 +8,7 @@ import { useToast } from "@/components/ui/toast";
 
 
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useRouter } from "next/navigation";
 import { useRef, useState, useTransition, type FormEvent } from "react";
 
@@ -49,8 +50,9 @@ export function CollegeSlotManager({ options, row }: {
   const [open, setOpen] = useState(false);
   const [discardOpen, setDiscardOpen] = useState(false);
   const initialDraft = useRef("");
+  const formRef = useRef<HTMLFormElement>(null);
   const [pending, transition] = useTransition();
-  const [programId, setProgramId] = useState(row?.programId ?? options.programs[0]?.id ?? "");
+  const [programId, setProgramId] = useState(row?.programId ?? "");
   const [periodId, setPeriodId] = useState(row?.academicPeriodId ?? "");
   const [term, setTerm] = useState(String(row?.semesterNumber ?? 1));
   const [year, setYear] = useState(row?.academicYear ?? "");
@@ -85,7 +87,7 @@ export function CollegeSlotManager({ options, row }: {
   }
 
   function discard() {
-    setProgramId(row?.programId ?? options.programs[0]?.id ?? "");
+    setProgramId(row?.programId ?? "");
     setPeriodId(row?.academicPeriodId ?? "");
     setTerm(String(row?.semesterNumber ?? 1)); setYear(row?.academicYear ?? "");
     setName(row?.name ?? ""); setDescription(row?.description ?? "");
@@ -114,7 +116,7 @@ export function CollegeSlotManager({ options, row }: {
     event.preventDefault();
     if (pending) return;
     const fields: Record<string, string> = {};
-    if (!row && !programId) fields.programId = "Program is required";
+    if (!row && !programId) fields.programId = "Select a program";
     if ((!row || knownIdentity) && (!term || !Number.isInteger(Number(term)) || Number(term) < 1)) fields.term = "Semester is required";
     else if ((!row || knownIdentity) && Number(term) > Math.min(12, limit)) fields.term = `This program has only ${limit} semesters`;
     if (!name.trim()) fields.name = "Name is required";
@@ -139,7 +141,12 @@ export function CollegeSlotManager({ options, row }: {
     }
     if (Number(minPick) > Number(maxPick)) fields.maxPick = "Pick range is invalid";
     setFieldErrors(fields);
-    if (Object.keys(fields).length > 0) { setError("Please correct the highlighted fields."); return; }
+    if (Object.keys(fields).length > 0) {
+      setError("Please correct the highlighted fields.");
+      const first=Object.keys(fields)[0]!;
+      formRef.current?.querySelector<HTMLElement>(`[name="${first}"]`)?.focus();
+      return;
+    }
 
     const common = {
       name, description: description.trim() || null,
@@ -174,7 +181,11 @@ export function CollegeSlotManager({ options, row }: {
           for (const issue of (result?.issues ?? []) as { path?: (string | number)[]; message?: string }[]) {
             if (issue.path?.length) serverFields[String(issue.path[0])] = issue.message ?? "Please check this field";
           }
-          if (Object.keys(serverFields).length) setFieldErrors(serverFields);
+          if (Object.keys(serverFields).length) {
+             setFieldErrors(serverFields);
+             const field=Object.keys(serverFields)[0]!;
+             formRef.current?.querySelector<HTMLElement>(`[name="${field}"]`)?.focus();
+           }
           throw new Error(apiError(result));
         }
         setOpen(false);
@@ -192,51 +203,53 @@ export function CollegeSlotManager({ options, row }: {
   }
 
   return <div className="min-w-0">
-    <Button variant={editing ? "secondary" : "primary"} type="button" disabled={pending || row?.status === "ARCHIVED" || (!editing && options.programs.length === 0)}
+    <Button aria-label={editing ? `Edit elective slot ${row?.name ?? ""}` : "New slot"} variant={editing ? "secondary" : "primary"} type="button" disabled={pending || row?.status === "ARCHIVED" || (!editing && options.programs.length === 0)}
       onClick={openEditor}
       className="min-h-11 w-full sm:w-auto md:min-h-9">
-      {row ? "Edit slot" : "New elective slot"}
+      {row ? "Edit slot" : "New slot"}
     </Button>
     <Dialog open={open} onOpenChange={next => { if (!next) requestClose(); else openEditor(); }}
-      title={editing ? "Edit Elective Slot" : "Create Elective Slot"} dismissible={!pending}
+      title={editing ? "Edit Elective Slot" : "New Elective Slot"} dismissible={!pending}
       className="max-w-[640px]">
-    <form noValidate onSubmit={submit} className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+    <form ref={formRef} noValidate onSubmit={submit} className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
       {row ? <p role="note" className="md:col-span-2 text-xs text-muted-foreground">
         {locked
           ? "Enrollment history exists. Program, semester, academic year, credits and choice limits are locked; name and description remain editable."
           : "Before students make selections you can correct program, semester, academic year, credits and choice limits."}
       </p> : null}
       {knownIdentity ? <>
-        <Field label="Program" error={fieldErrors.programId}><Select disabled={locked} className={fieldClass} value={programId}
+        <Field label="Program" error={fieldErrors.programId}><Select required name="programId" aria-invalid={Boolean(fieldErrors.programId)} disabled={locked} className={fieldClass} value={programId}
           onChange={event => setProgramId(event.target.value)}>
+          <option value="">Select program</option>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Academic period (optional)"><Select disabled={locked} className={fieldClass} value={periodId}
+        <Field label="Academic period (optional)"><Select name="periodId" disabled={locked} className={fieldClass} value={periodId}
           onChange={event => setPeriodId(event.target.value)}>
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Semester number" error={fieldErrors.term}><Input disabled={locked} type="number" min={1} max={Math.min(12, limit)}
+        <Field label="Semester number" error={fieldErrors.term}><Input name="term" aria-invalid={Boolean(fieldErrors.term)} disabled={locked} type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
-        <Field label="Academic year (optional, YYYY-YY)" error={fieldErrors.year}><Input disabled={locked} maxLength={7}
+        <Field label="Academic year (optional, YYYY-YY)" error={fieldErrors.year}><Input name="year" aria-invalid={Boolean(fieldErrors.year)} disabled={locked} maxLength={7}
           placeholder="2026-27" className={fieldClass} value={year}
           onChange={event => setYear(event.target.value)} /></Field>
       </> : null}
-      <Field label="Slot name" error={fieldErrors.name}><Input maxLength={150} error={Boolean(fieldErrors.name)} className={fieldClass}
+      <Field label="Slot name" error={fieldErrors.name}><Input name="name" maxLength={150} error={Boolean(fieldErrors.name)} className={fieldClass}
         value={name} onChange={event => setName(event.target.value)} /></Field>
-      <Field label="Description"><Input maxLength={1000} className={fieldClass}
-        value={description} onChange={event => setDescription(event.target.value)} /></Field>
-      <Field label="Credits" error={fieldErrors.credits}><Input disabled={locked} type="number" min={0} max={30}
+      <Field label="Description"><Textarea name="description" rows={2} maxLength={1000}
+         placeholder="Enter slot description (optional)" className={fieldClass}
+         value={description} onChange={event => setDescription(event.target.value)} /></Field>
+      <Field label="Credits" error={fieldErrors.credits}><Input name="credits" aria-invalid={Boolean(fieldErrors.credits)} disabled={locked} type="number" min={0} max={30}
         className={fieldClass} value={credits} onChange={event => setCredits(event.target.value)} /></Field>
-      <Field label="Minimum choices" error={fieldErrors.minPick}><Input disabled={locked} type="number" min={0} max={10}
+      <Field label="Minimum choices" error={fieldErrors.minPick}><Input name="minPick" aria-invalid={Boolean(fieldErrors.minPick)} disabled={locked} type="number" min={0} max={10}
         className={fieldClass} value={minPick} onChange={event => setMinPick(event.target.value)} /></Field>
-      <Field label="Maximum choices" error={fieldErrors.maxPick}><Input disabled={locked} type="number" min={1} max={10} title="You can select up to 10 electives"
+      <Field label="Maximum choices" error={fieldErrors.maxPick}><Input name="maxPick" aria-invalid={Boolean(fieldErrors.maxPick)} disabled={locked} type="number" min={1} max={10} title="You can select up to 10 electives"
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
       {error ? <p role="alert" className="md:col-span-2 text-sm text-error">{error}</p> : null}
       <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
         <Button variant="primary" type="submit" disabled={pending}
           >
-          {pending ? "Saving…" : editing ? "Confirm update" : "Confirm create"}
+          {pending ? "Saving…" : editing ? "Save Changes" : "Create Slot"}
         </Button>
         <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}
           >
