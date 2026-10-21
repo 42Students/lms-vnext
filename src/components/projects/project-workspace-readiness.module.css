@@ -16,13 +16,13 @@
   align-items: center;
   justify-content: space-between;
   gap: 12px;
-  color: #6b7280;
+  color: var(--lms-neutral-500);
   font-size: 13px;
   font-weight: 600;
   line-height: 1.4;
 }
 .amount {
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 14px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
@@ -32,9 +32,9 @@
   min-width: 0;
   height: 8px;
   border-radius: 999px;
-  background: #9ee4e8;
+  background: var(--lms-primary-light);
 }
-.track > div { background: #26bac7; }
+.track > div { background: var(--lms-primary); }
 @media (max-width: 767px) {
   .progress { min-width: 0; width: 100%; }
   .label { flex-wrap: wrap; }
@@ -58,11 +58,11 @@
   flex: 0 0 72px;
   overflow: hidden;
   border-radius: 999px;
-  background: #f1f4f9;
+  background: var(--lms-neutral-100);
 }
-.inlineTrack > div { background: #26bac7; }
+.inlineTrack > div { background: var(--lms-primary); }
 .inlinePercent {
-  color: #6b7280;
+  color: var(--lms-neutral-500);
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
