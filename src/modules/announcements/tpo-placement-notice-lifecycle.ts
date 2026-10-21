@@ -34,6 +34,7 @@ export async function mutateTpoNotice(context:RequestContext,raw:unknown){
    id:db10Announcements.id,version:db10Announcements.version,
    deletedAt:db10Announcements.deletedAt,
    createdAt:db10Announcements.createdAt,
+   scheduledAt:db10Announcements.scheduledAt,
   }).from(db10Announcements).where(and(
    eq(db10Announcements.id,input.noticeId),
    eq(db10Announcements.collegeId,college.id),
@@ -47,8 +48,16 @@ export async function mutateTpoNotice(context:RequestContext,raw:unknown){
   if(deletingAction(input.action) && current.deletedAt || input.action==="RESTORE" && !current.deletedAt)
    throw new Error("ANNOUNCEMENT_STALE");
   const now=new Date();
-  if(input.action==="UNDO_SEND" && !canUndoTpoAnnouncementSend(current.createdAt,now))
-   throw new Error("ANNOUNCEMENT_UNDO_EXPIRED");
+  // A notice scheduled days ago must not lose its 30-second send undo window
+  // merely because its draft was authored earlier. Before scheduled delivery
+  // it can still be deleted normally, but it has not yet been "sent".
+  if(input.action==="UNDO_SEND"){
+   if(current.scheduledAt && current.scheduledAt>now)
+    throw new Error("ANNOUNCEMENT_NOT_SENT");
+   const sentAt=current.scheduledAt??current.createdAt;
+   if(!canUndoTpoAnnouncementSend(sentAt,now))
+    throw new Error("ANNOUNCEMENT_UNDO_EXPIRED");
+  }
   const deleting=input.action==="DELETE"||input.action==="UNDO_SEND";
   const [updated]=await tx.update(db10Announcements).set({
    version:current.version+1,updatedAt:now,

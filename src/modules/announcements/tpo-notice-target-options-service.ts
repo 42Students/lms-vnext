@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,isNull} from "drizzle-orm";
+import {and,asc,eq,inArray,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {cohorts,departments,placementJobs,programs} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
@@ -29,13 +29,16 @@ export async function listTpoNoticeTargetOptions(context:RequestContext){
     .where(and(eq(departments.collegeId,college.id),isNull(departments.archivedAt)))
     .orderBy(asc(departments.name),asc(departments.id)).limit(200),
    tx.select({id:placementJobs.id,name:placementJobs.title}).from(placementJobs)
-    .where(and(eq(placementJobs.collegeId,college.id),eq(placementJobs.status,"PUBLISHED")))
-    .orderBy(asc(placementJobs.title),asc(placementJobs.id)).limit(300),
+    .where(and(eq(placementJobs.collegeId,college.id),inArray(placementJobs.status,["PUBLISHED","CLOSED"])))
+    .orderBy(asc(placementJobs.title),asc(placementJobs.id)).limit(60),
   ]);
   return {
    batches:batches.map(row=>({id:row.id,label:row.name+" · "+row.program})),
    branches:branches.map(row=>({id:row.id,label:row.name})),
    drives:drives.map(row=>({id:row.id,label:row.name})),
+   // Legacy emailReady was false: this selector never claims external delivery.
+   emailReady:false as const,
+   deliveryChannels:{inApp:true as const,email:false as const,sms:false as const},
   };
  });
 }
