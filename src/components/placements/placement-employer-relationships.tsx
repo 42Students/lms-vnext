@@ -172,17 +172,17 @@ export function PlacementEmployerRelationships({
   return (
     <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
       <div className="border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-        <h2 className="sr-only">
+        <h2 className="sr-only text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] font-semibold text-[var(--lms-heading)]">
           Companies
         </h2>
-        <p className="mt-1 text-sm text-body">
+        <p className="mt-1 text-sm text-body leading-[22px]">
           Maintain each recruiting company once and reuse it across drives.
           {" "}A company is kept once across colleges by its website or company email domain: add at least one of them.
         </p>
       </div>
 
       {relationships.length === 0 ? (
-        <p className="m-0 py-6 text-sm text-muted-foreground">
+        <p className="m-0 py-6 text-sm text-muted-foreground leading-[22px]">
           No companies yet.
         </p>
       ) : (
@@ -224,11 +224,11 @@ export function PlacementEmployerRelationships({
                         : "Unverified"}
                     </StatusBadge>
                   </div>
-                  <p className="mt-1 text-sm text-body">
+                  <p className="mt-1 text-sm text-body leading-[22px]">
                     Domains: {item.primaryDomain??(item.websiteUrl?employerWebsiteHost(item.websiteUrl):"No domain registered")}
                     {item.industry?" · "+item.industry:""}
                   </p>
-                  {typeof item.drives==="number" ? <p className="mt-1 text-sm text-body">
+                  {typeof item.drives==="number" ? <p className="mt-1 text-sm text-body leading-[22px]">
                     Drives: {item.drives} · Last active: {item.lastActive
                       ? new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.lastActive)
                       : "Not recorded"}

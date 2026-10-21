@@ -362,7 +362,7 @@ export function PlacementCandidateEvidenceEditor({
             </div>
           </form>
         )}
-        {inlineError ? <p role="alert" className="text-sm text-destructive">{inlineError}</p> : null}
+        {inlineError ? <p role="alert" className="text-sm text-destructive leading-[22px]">{inlineError}</p> : null}
       </div>
     </Disclosure>
   );

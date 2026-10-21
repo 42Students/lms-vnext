@@ -103,7 +103,7 @@ export function PlacementBulkAddApplicants({
   return (
     <section className="space-y-4 border-b border-border pb-6">
       <div>
-        <h2 className="text-lg font-semibold text-foreground">Applicants · Bulk Add-to-Drive</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Applicants · Bulk Add-to-Drive</h2>
         <p className="mt-1 text-sm leading-6 text-body">
           Select up to 200 learners across these roster pages, choose the drive role
           and confirm. Eligibility, placement access and current application status
@@ -113,7 +113,7 @@ export function PlacementBulkAddApplicants({
       </div>
 
       {roles.length === 0 ? (
-        <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body">
+        <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body leading-[22px]">
           No active role options are available. Add an active role before using bulk addition.
         </p>
       ) : (
@@ -156,7 +156,7 @@ export function PlacementBulkAddApplicants({
           </div>
 
           {candidates.learners.length === 0 ? (
-            <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body">
+            <p className="rounded-[var(--lms-control-radius)] border border-border bg-muted p-4 text-sm text-body leading-[22px]">
               No active learners match this roster filter. Nothing has been selected or added.
             </p>
           ) : (
@@ -230,11 +230,11 @@ export function PlacementBulkAddApplicants({
         </>
       )}
 
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
 
       {results.length > 0 ? (
         <div aria-live="polite" className="space-y-2">
-          <h3 className="font-semibold text-foreground">Results for each selected learner</h3>
+          <h3 className="font-semibold text-[var(--lms-heading)]">Results for each selected learner</h3>
           <ul className="divide-y divide-border rounded-[var(--lms-control-radius)] border border-border">
             {results.map((row) => (
               <li key={row.membershipId} className="flex flex-wrap gap-2 px-3 py-2 text-sm">
