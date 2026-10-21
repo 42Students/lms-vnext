@@ -156,9 +156,9 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
       collegeId: college.id, companyId: companyId ?? null,
       companyDomain: domain, scope: input.scope,
       tokenHash: createHash("sha256").update(token).digest("hex"),
-      // The registered table requires an expiry; the legacy link has none.
-      // A schema follow-up is proposed before claiming exact lifecycle parity.
-      expiresAt: new Date("9999-12-31T00:00:00.000Z"),
+      // This vNext table requires an expiry. Use a real annual renewal period,
+      // never an arbitrary year-9999 sentinel presented as a permanent link.
+      expiresAt: new Date(Date.UTC(now.getUTCFullYear()+1,now.getUTCMonth(),now.getUTCDate(),0,0,0)),
       // Never grant direct posting merely by creating or rotating a URL.
       postWithoutApproval:false,
     }).returning({ id: placementPublicJoinLinks.id, createdAt: placementPublicJoinLinks.createdAt,opensCount:placementPublicJoinLinks.opensCount,joinsCount:placementPublicJoinLinks.joinsCount });
@@ -176,7 +176,7 @@ export async function changeTpoPublicJoinLink(context: RequestContext, raw: unkn
       path: publicJoinLinkPath(input.scope, token),
       // Caller adds trusted app origin before copying the shareable link.
       sharePath: publicJoinLinkPath(input.scope, token),
-      shareWarning: "Copy it now: for safety it is shown only once.",
+      shareWarning: "Copy it now: for safety it is shown only once. It expires after approximately one year; replace it to renew.",
       status: { ready: true, domain, link: { id:link.id,createdAt: link.createdAt.toISOString(),opensCount:link.opensCount,joinsCount:link.joinsCount,enabled:true } },
     };
   });

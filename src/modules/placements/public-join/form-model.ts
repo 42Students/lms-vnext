@@ -13,7 +13,7 @@ export const publicJoinMobileSchema=z.string().trim().max(14).refine(value=>{
 export const publicJoinFormSchema = z.strictObject({
   email: publicRecruiterWorkEmailSchema,
   name: z.string().trim().min(1).max(150),
-  designation: z.string().trim().max(100),
+  designation: z.string().trim().max(150),
   phone: publicJoinMobileSchema,
   companyName: z.string().trim().max(200),
 });
