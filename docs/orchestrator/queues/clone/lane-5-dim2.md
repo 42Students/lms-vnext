@@ -263,56 +263,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/courses/assignment-submission-links.tsx`
 - [x] `src/components/courses/college-archived-lesson-restore.tsx`
 - [x] `src/components/courses/college-assignment-actions.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-assignment-review.tsx`
-- [ ] `src/components/courses/college-course-missing-scope.tsx`
-- [ ] `src/components/courses/college-lesson-create-control.tsx`
-- [ ] `src/components/courses/college-lesson-drag-order.tsx`
-- [ ] `src/components/courses/college-lesson-reorder-actions.tsx`
-- [ ] `src/components/courses/college-lesson-visibility-controls.tsx`
-- [ ] `src/components/courses/college-quiz-actions.tsx`
-- [ ] `src/components/courses/college-quiz-attempts.tsx`
-- [ ] `src/components/courses/college-quiz-create.tsx`
-- [ ] `src/components/courses/college-quiz-questions-editor.tsx`
-- [ ] `src/components/courses/college-student-visibility-control.tsx`
-- [ ] `src/components/courses/faculty-assessment-create.tsx`
-- [ ] `src/components/courses/faculty-assessment-editor.tsx`
-- [ ] `src/components/courses/faculty-assessment-lifecycle.tsx`
-- [ ] `src/components/courses/faculty-assignment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-content-editor.tsx`
-- [ ] `src/components/courses/faculty-content-order-editor.tsx`
-- [ ] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-ist-quarter-hour-picker.tsx`
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-live-class-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-learner-preview.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/faculty-report-download.tsx`
-- [ ] `src/components/courses/faculty-submission-file-review.tsx`
-- [ ] `src/components/courses/faculty-video-preview.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/courses/learner-course-overview.tsx`
-- [ ] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/learner-video-player.tsx`
-- [ ] `src/components/courses/learner-youtube-player.tsx`
-- [ ] `src/components/courses/lesson-resource-materials-control.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/courses/resource-progress-control.tsx`
-- [ ] `src/components/courses/super-admin-content-actions.tsx`
-- [ ] `src/components/courses/super-admin-content-directory-page.tsx`
-- [ ] `src/components/courses/super-admin-course-bulk-visibility.tsx`
-- [ ] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
-- [ ] `src/components/courses/super-admin-lesson-create.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/college-assignment-review.tsx`
+- [x] `src/components/courses/college-course-missing-scope.tsx`
+- [x] `src/components/courses/college-lesson-create-control.tsx`
+- [x] `src/components/courses/college-lesson-drag-order.tsx`
+- [x] `src/components/courses/college-lesson-reorder-actions.tsx`
+- [x] `src/components/courses/college-lesson-visibility-controls.tsx`
+- [x] `src/components/courses/college-quiz-actions.tsx`
+- [x] `src/components/courses/college-quiz-attempts.tsx`
+- [x] `src/components/courses/college-quiz-create.tsx`
+- [x] `src/components/courses/college-quiz-questions-editor.tsx`
+- [x] `src/components/courses/college-student-visibility-control.tsx`
+- [x] `src/components/courses/faculty-assessment-create.tsx`
+- [x] `src/components/courses/faculty-assessment-editor.tsx`
+- [x] `src/components/courses/faculty-assessment-lifecycle.tsx`
+- [x] `src/components/courses/faculty-assignment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-material-links.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-content-editor.tsx`
+- [x] `src/components/courses/faculty-content-order-editor.tsx`
+- [x] `src/components/courses/faculty-course-home-signals.tsx`
+- [x] `src/components/courses/faculty-ist-quarter-hour-picker.tsx`
+- [x] `src/components/courses/faculty-lesson-authoring.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-live-class-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-learner-preview.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/faculty-report-download.tsx`
+- [x] `src/components/courses/faculty-submission-file-review.tsx`
+- [x] `src/components/courses/faculty-video-preview.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/courses/learner-course-overview.tsx`
+- [x] `src/components/courses/learner-course-workspace.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/learner-video-player.tsx`
+- [x] `src/components/courses/learner-youtube-player.tsx`
+- [x] `src/components/courses/lesson-resource-materials-control.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/resource-progress-control.tsx`
+- [x] `src/components/courses/super-admin-content-actions.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
+- [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
+- [x] `src/components/courses/super-admin-lesson-create.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
 - [ ] `src/components/groups/college-group-detail-writes.tsx`
 - [ ] `src/components/groups/college-group-import-preview.tsx`
 - [ ] `src/components/groups/college-study-member-actions.tsx`
