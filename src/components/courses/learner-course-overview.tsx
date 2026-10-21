@@ -13,7 +13,6 @@ import { selectPriorityLearnerActivity } from "@/modules/courses/learner-overvie
 import { learnerProgressAvailability } from "@/modules/courses/learner-progress-availability";
 import { learnerCoursePathPreview } from "@/modules/courses/learner-course-path-preview-model";
 import { learnerCourseAboutSource } from "@/modules/courses/learner-course-about-model";
-import { learnerRecentCourseActivity } from "@/modules/courses/learner-recent-course-activity-model";
 import { learnerCourseOverviewJumps } from "@/modules/courses/learner-course-overview-mobile-model";
 import type { getLearnerCourseWorkspace } from "@/modules/courses/learner-course-service";
 
@@ -36,6 +35,17 @@ type CourseMeta = {
   }>;
 };
 
+function NextActionIcon({kind}:{kind:"deadline"|"session"|"lesson"}){
+  return <svg aria-hidden="true" viewBox="0 0 24 24" width={18} height={18}
+    fill="none" stroke="currentColor" strokeWidth={1.9} strokeLinecap="round" strokeLinejoin="round">
+    {kind==="deadline"?<>
+      <circle cx={12} cy={12} r={9}/><path d="M12 7v5l3 2"/>
+    </>:kind==="session"?<>
+      <rect x={3} y={5} width={18} height={16} rx={2}/>
+      <path d="M7 3v4M17 3v4M3 10h18"/>
+    </>:<path d="m8 5 11 7-11 7z"/>}
+  </svg>;
+}
 function formatWhen(value: Date | null) {
   return formatLearnerCourseMoment(value);
 }
@@ -157,7 +167,11 @@ export function LearnerCourseOverview({
   // Keep the update feed time-ordered, but never allow its six-item display
   // cap to hide an assessment when picking the next action.
   const activity = allUpcomingActivity.slice(0, 6);
-  const recentLearnerActivity=learnerRecentCourseActivity(workspace.lessons,now).slice(0,2);
+  // The old home feed allocates 3 pending deadlines, 2 announcements and
+  // 2 live meetings, then displays at most six. Completed work belongs in
+  // the progress view, not in this feed.
+  const deadlineItems=allUpcomingActivity.filter(item=>item.type!=="Live Session").slice(0,3);
+  const upcomingMeetings=allUpcomingActivity.filter(item=>item.type==="Live Session").slice(0,2);
   // Match the locked server submission policy: assignments at or after the
   // deadline cannot be submitted, so never promote them as actionable links.
   const priorityActivity = readOnly
@@ -185,41 +199,36 @@ export function LearnerCourseOverview({
 
   const unifiedUpdates = [
     ...courseUpdates.slice(0,2).map((update) => ({
-      key: `announcement-${update.id}`,
-      title: update.title,
-      detail: `${update.senderName} · ${formatWhen(update.createdAt) ?? ""}`,
-      body: update.messageText,
-      href: "/learn/notifications",
-      priority: 0,
-      time: update.createdAt.getTime(),
+      key:`announcement-${update.id}`,
+      title:update.title||"Announcement",
+      detail:`${update.senderName} · ${formatWhen(update.createdAt)??""}`,
+      body:update.messageText,
+      href:"/learn/notifications",
+      priority:1,
+      time:update.createdAt.getTime(),
     })),
-    ...recentLearnerActivity.map((item) => ({
-      key:`recent-${item.label}-${item.id}`,
+    ...deadlineItems.map(item=>({
+      key:`deadline-${item.type}-${item.id}`,
       title:item.title,
-      detail:`${item.label} · ${formatWhen(item.when)??""}`,
+      detail:`${item.type} · ${formatWhen(item.when)??""}`,
       body:null,
-      href:`/learn/courses/${deliveryId}/roadmap?filter=${item.filter}&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
+      href:`/learn/courses/${deliveryId}/roadmap?filter=assessments&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
+      priority:0,
+      time:item.when?.getTime()??Number.MAX_SAFE_INTEGER,
+    })),
+    ...upcomingMeetings.map(item=>({
+      key:`session-${item.id}`,
+      title:item.title,
+      detail:`Live Session · ${formatWhen(item.when)??""}`,
+      body:null,
+      href:`/learn/courses/${deliveryId}/roadmap?filter=live-sessions&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
       priority:2,
-      time:item.when.getTime(),
+      time:item.when?.getTime()??Number.MAX_SAFE_INTEGER,
     })),
-    ...activity.slice(0,2).map((item) => ({
-      key: `activity-${item.type}-${item.id}`,
-      title: item.title,
-      detail: `${item.type}${item.when ? ` · ${formatWhen(item.when)}` : ""}`,
-      body: null,
-      href: `/learn/courses/${deliveryId}/roadmap?filter=${item.filter}&lesson=${encodeURIComponent(item.lessonId)}&content=${encodeURIComponent(item.id)}`,
-      priority: 3,
-      time: item.when?.getTime() ?? Number.MAX_SAFE_INTEGER,
-    })),
-  ]
-    .sort((left, right) =>
-      left.priority !== right.priority
-        ? left.priority - right.priority
-        : left.priority < 3
-          ? right.time - left.time
-          : left.time - right.time,
-    )
-    .slice(0, 6);
+  ].sort((left,right)=>
+    left.priority-right.priority||
+    (left.priority===1?right.time-left.time:left.time-right.time)
+  ).slice(0,6);
 
   const homeCompletion = learnerCourseHomeCompletion({
     itemsTotal:summary.itemsTotal,itemsCompleted:summary.itemsCompleted,itemsMissed:summary.itemsMissed,readOnly,
@@ -233,7 +242,7 @@ export function LearnerCourseOverview({
   return (
     <div className="space-y-5">
       <nav aria-label="Course overview sections"
-        className="sticky top-[68px] z-10 -mx-1 flex gap-2 overflow-x-auto border-b border-border bg-surface p-2 shadow-none md:hidden">
+        className="-mx-1 flex gap-2 overflow-x-auto border-b border-border bg-surface p-2 shadow-none md:hidden">
         {jumpLinks.map(item=>(
           <a key={item.id} href={"#"+item.id}
             className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-xs font-semibold text-primary-text transition-colors duration-[var(--lms-motion-fast)] hover:border-primary hover:bg-primary-subtle hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none">
@@ -248,7 +257,8 @@ export function LearnerCourseOverview({
         </p>
       </div>
 
-      {(aboutSource.hasDescription||meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-24 border-b border-border pb-5">
+      {(aboutSource.hasDescription||meta.introductionText?.trim()||learningTakeaways.length>0||
+        meta.credits!==null||meta.instructors.length>0)?<section id="course-overview-about" className="scroll-mt-24 rounded-[12px] border border-border bg-surface p-4 shadow-sm md:p-6">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
           <div className="max-w-4xl">
             <h3 className="m-0 text-lg font-semibold text-foreground">
@@ -288,8 +298,11 @@ export function LearnerCourseOverview({
                       key={takeaway}
                       className="flex items-start gap-2 text-sm text-body"
                     >
-                      <span aria-hidden="true" className="mt-0.5 text-primary-text">
-                        ✓
+                      <span aria-hidden="true" className="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full text-primary-text">
+                        <svg viewBox="0 0 20 20" width={18} height={18} fill="none">
+                          <circle cx={10} cy={10} r={8.5} stroke="currentColor" strokeWidth={1.5}/>
+                          <path d="m6 10 3 3 5-6" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>
+                        </svg>
                       </span>
                       <span>{takeaway}</span>
                     </li>
@@ -304,7 +317,7 @@ export function LearnerCourseOverview({
             </Badge>
             {meta.credits !== null ? (
               <Badge tone="neutral">
-                {meta.credits} Credits
+                <span aria-hidden="true">🏆</span> {meta.credits} Credits
               </Badge>
             ) : null}
             <Badge tone="neutral">
@@ -320,7 +333,7 @@ export function LearnerCourseOverview({
             ) : null}
             {meta.instructors.map((instructor) => (
               <Badge tone="neutral" key={instructor.membershipId}>
-                {instructor.name}
+                <span aria-hidden="true">♙</span> {instructor.name}
                 {instructor.role === "PRIMARY"
                   ? " · Faculty"
                   : ` · ${instructor.role.replaceAll("_", " ")}`}
@@ -369,7 +382,7 @@ export function LearnerCourseOverview({
       </section>
 
       <section id="course-overview-next"
-        className="scroll-mt-24 rounded-xl border border-primary bg-primary-subtle p-4 md:p-5"
+        className="scroll-mt-24 rounded-[12px] border border-border bg-surface p-4 shadow-sm md:p-6"
         aria-label="Next action"
       >
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
@@ -394,10 +407,11 @@ export function LearnerCourseOverview({
                 : homeCompletion.detail}
             </p>
           </div>
-          <Link
+          {deliveryId ? <Link
             href={nextAction?.href ?? `/learn/courses/${deliveryId}/roadmap`}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] md:min-h-9"
+            className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] transition hover:border-primary-hover hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
           >
+            <NextActionIcon kind={priorityActivity?.type==="Live Session"?"session":priorityActivity?"deadline":"lesson"}/>
             {readOnly
               ? "View Learning Path"
               : priorityActivity
@@ -405,7 +419,9 @@ export function LearnerCourseOverview({
                 : nextAction
                   ? "Continue"
                    : "Start learning"}
-          </Link>
+          </Link>:<span aria-disabled="true" title="Loading course…" className="inline-flex min-h-12 items-center rounded-[var(--lms-control-radius)] border border-border px-5 text-sm font-semibold text-muted-foreground">
+            Loading course…
+          </span>}
         </div>
       </section>
 
