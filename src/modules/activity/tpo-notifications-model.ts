@@ -6,6 +6,7 @@ export const TPO_NOTIFICATIONS_PATH = "/tpo/notifications";
 export const tpoInboxQuerySchema = z
   .object({
     view: z.enum(["all", "unread"]).default("all"),
+    limit:z.coerce.number().int().min(50).max(200).refine(value=>value%50===0).default(50),
     beforeCreatedAt: z.string().max(64).optional(),
     beforeId: z.string().max(64).optional(),
   })
@@ -25,8 +26,10 @@ export function resolveTpoInboxQuery(rawQuery: unknown) {
 export function tpoInboxPageHref(
   view: "all" | "unread",
   cursor?: { beforeCreatedAt: Date; beforeId: string },
+  limit?:number,
 ) {
   const params = new URLSearchParams({ view });
+  if(limit!==undefined&&limit>50)params.set("limit",String(limit));
   if (cursor) {
     params.set("beforeCreatedAt", cursor.beforeCreatedAt.toISOString());
     params.set("beforeId", cursor.beforeId);
