@@ -1,6 +1,5 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
 import { CollegeClassCreate } from "@/components/academics/college-section-management";
@@ -22,9 +21,9 @@ export default async function CollegeClassesPage({
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="space-y-4">
-    <PageHeader title="Classes & Sections" />
+    <PageHeader title="Classes & Sections" description="Create teaching sections within a batch, manage capacity and schedule recurring sessions from the same roster." />
     <div role="status" className="rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm">
-      Select a College to view classes.{" "}
+      Admin not assigned to a college. Contact your administrator to be assigned to a college.{" "}
       <Link href="/dashboard" className="font-semibold text-primary-text underline">Choose a college workspace</Link>
     </div>
   </div>;
@@ -47,12 +46,15 @@ export default async function CollegeClassesPage({
     <div className="min-w-0 space-y-[var(--lms-space-3)]">
       {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-amber-300 bg-amber-50 p-3 text-sm">Some setup options failed to load. <Link href="/college/classes" className="font-semibold underline">Retry options</Link></div> :
         <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />}
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <a href={classesExportHref(classes.query)} download="classes.csv"
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] md:min-h-9">
+          Export CSV
+        </a>
+        <p className="text-xs text-muted-foreground">Export matches current filters and includes all pages.</p>
+      </div>
       <Disclosure title="More class tools" contentClassName="pt-[var(--lms-space-3)]">
         <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
-          <a href={classesExportHref(classes.query)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
-            Export CSV
-          </a>
           {recurringResult ? <CollegeRecurringEntry options={{...recurringResult,
             classes: recurringResult.classes.map(row => ({...row, updatedAt: row.updatedAt.toISOString()}))}} /> : null}
           <Link href="/college/classes/recurring-preview"

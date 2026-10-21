@@ -131,7 +131,7 @@ export function CollegeClassCreate({ cohorts, periods,
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required name="cohortId" disabled={!programId} aria-invalid={Boolean(fieldErrors.cohortId)} value={cohortId} onChange={event => setCohortId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
-            <option value="">{programId?"Select batch":"Select a program first"}</option>
+            <option value="">{programId?"Select batch":"Select program first"}</option>
             {filteredCohorts.map(c => <option key={c.id} value={c.id}>
               {c.programName} · {c.name} ({c.code})
             </option>)}
@@ -149,7 +149,7 @@ export function CollegeClassCreate({ cohorts, periods,
           </Select>
           {fieldErrors.academicPeriodId ? <span role="alert" className="text-xs text-red-700">{fieldErrors.academicPeriodId}</span> : null}
         </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section Name
           <Input required name="className" placeholder="e.g. CSE-A or Section 1" maxLength={255} value={name}
            aria-invalid={Boolean(fieldErrors.name)} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
@@ -171,7 +171,7 @@ export function CollegeClassCreate({ cohorts, periods,
           {fieldErrors.minSize ? <span role="alert" className="text-xs text-red-700">{fieldErrors.minSize}</span> : null}
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
-          <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
+          <Textarea maxLength={2000} rows={2} placeholder="Optional description" value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-24 w-full" />
         </label>
         <p className="text-xs text-muted-foreground md:col-span-2">Moving a student into a full section is refused.</p>
@@ -183,7 +183,7 @@ export function CollegeClassCreate({ cohorts, periods,
       </form>}
     {notice ? <p role="status" className="mt-[var(--lms-space-3)] max-w-prose break-words text-sm text-body">{notice}</p> : null}
     <p className="mt-2 text-xs text-muted-foreground">
-      The server validates that the period belongs to the batch timeline and this college.
+      Class dates follow the batch/semester academic structure. Schedule actual teaching dates from the Schedule action.
     </p>
   </Disclosure>;
 }
@@ -236,11 +236,13 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
       try {
         await requestWrite("PATCH", "/api/college/classes/" + encodeURIComponent(row.id), parsed.data);
         setEditing(false); setDiscardConfirm(false);
-        setNotice("Class updated successfully");
-        showToast({tone:"success",title:"Class updated successfully"});
+        setNotice('Updated class “'+row.name+'”.');
+        showToast({tone:"success",title:'Updated class “'+row.name+'”.'});
         router.refresh();
       } catch (error) {
-        setNotice(academicSetupErrorMessage(error, "Failed to update class."));
+        const message=academicSetupErrorMessage(error, "Failed to update class.");
+        setNotice(message);
+        showToast({tone:"error",title:"Failed to update class.",description:message});
       }
     });
   }
@@ -271,8 +273,8 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
             </Select>
           </label>
           <label className="grid gap-2 text-[13px] font-semibold text-muted-foreground">Batch
-            <Select value={cohortId} onChange={event => setCohortId(event.target.value)} className="min-h-11 md:min-h-9">
-              <option value="">Select batch</option>
+            <Select value={cohortId} disabled={!programId} onChange={event => setCohortId(event.target.value)} className="min-h-11 md:min-h-9">
+              <option value="">{programId?"Select batch":"Select program first"}</option>
               {cohorts.filter(c => !programId || c.programId === programId).map(c =>
                 <option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
             </Select>
@@ -284,7 +286,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label> : null}
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section Name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
@@ -302,7 +304,7 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
             onChange={e => setMinSize(e.target.value)} className="min-h-11 w-full md:min-h-9" />
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Description
-          <Textarea rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
+          <Textarea placeholder="Optional description" rows={2} maxLength={2000} value={description} onChange={e => setDescription(e.target.value)}
             className="min-h-24 w-full" />
         </label>
         <p className="text-xs text-muted-foreground md:col-span-2">Active learner enrollments: {row.activeLearners === null ? "Unavailable" : row.activeLearners}.</p>
@@ -314,15 +316,15 @@ export function CollegeClassRowActions({ row, cohorts = [], periods = [] }: {
           </Button>
           <Button variant="primary" disabled={pending || !changed} type="submit"
             >
-            {pending ? "Saving…" : "Save changes"}
+            {pending ? "Saving…" : "Save Changes"}
           </Button>
         </div>
       </form>
     </Dialog> : null}
     <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
       title={'Discard edits to “'+row.name+'”?'}
-      description="Unsaved changes will be lost."
-      confirmLabel="Discard changes" pending={pending}
+      description="Your unsaved changes will be lost."
+      confirmLabel="Discard edits" pending={pending}
       onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");}}/>
     {!editing && notice ? <p role="status" className="mt-1 text-xs text-body">{notice}</p> : null}
   </div>;

@@ -85,6 +85,8 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     programName: sql<string | null>`${programs.name}`.as("class_program_name"),
     cohortName: sql<string | null>`${cohorts.name}`.as("class_cohort_name"),
     periodName: sql<string>`${academicPeriods.name}`.as("class_period_name"),
+    periodStart: academicPeriods.startDate,
+    periodEnd: academicPeriods.endDate,
   }).from(sections)
     // The college-owned academic period anchors damaged imported class links;
     // a broken cohort/program can still be shown, never a foreign college's class.

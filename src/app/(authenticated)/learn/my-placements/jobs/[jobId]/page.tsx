@@ -1,6 +1,7 @@
-import { notFound } from "next/navigation";
 import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { EmptyState } from "@/components/ui/empty-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { LearnerPlacementJobItem } from "@/components/placements/learner-placement-jobs";
 import { LearnerPlacementJobDetail } from "@/components/placements/learner-placement-job-detail";
@@ -70,10 +71,23 @@ export default async function LearnerPlacementJobDetailPage({
   const { jobId } = await params;
   const context = await getCurrentRequestContext();
   const query=await searchParams;
-  const back=learnerJobReturnToDrivesHref(query.back??query.returnTo);
+  // Legacy returnTo carries an internal pathname; the new back parameter
+  // only carries validated job-list filters. Reject arbitrary origins.
+  const legacyReturn=typeof query.returnTo==="string" &&
+    /^\/learn\/my-placements\/jobs(?:\?|$)/.test(query.returnTo) ? query.returnTo : "";
+  const back=legacyReturn || learnerJobReturnToDrivesHref(query.back??query.returnTo);
+  const shell=<>
+    <PageHeader title="My Placements" description="Opportunities and your application journey" />
+    <Tabs renderPanel={false} ariaLabel="My Placements" value="jobs" items={[
+      {value:"jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
+      {value:"applications",label:"Applications",href:"/learn/my-placements/applications"},
+      {value:"offers",label:"Offers",href:"/learn/my-placements/offers"},
+    ]}/>
+  </>;
   // Malformed and old integer URLs never reach a UUID database query.
   if(!placementJobIdSchema.safeParse(jobId).success){
    return <div className="space-y-4">
+    {shell}
     <PageHeader title="This job link isn't valid"
      description="The link may be outdated. Browse current drives or find your application in My applications."/>
     <div className="flex flex-wrap gap-4">
@@ -87,14 +101,20 @@ export default async function LearnerPlacementJobDetailPage({
   ]);
   const rows=feed.filter(row=>row.job.id===jobId);
   const journey=await getOwnLearnerDriveJourney(context,jobId);
-  if(rows.length===0&&!journey)notFound();
+  if(rows.length===0&&!journey)return <div className="min-w-0 space-y-4">
+    {shell}
+    <EmptyState title="Job unavailable" description="This drive was not found, is unpublished, or is not available to your selected college."
+      action={<Link href={back} className="inline-flex min-h-11 items-center font-semibold text-link underline">Back to jobs</Link>} />
+  </div>;
   return <div className="min-w-0 space-y-5">
+   {shell}
    {rows.length===0 && journey ? (
     <PageHeader title="Placement drive history" description="Your recorded application journey remains available."
       actions={<Link href={back} className="inline-flex min-h-11 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9">← Back to drives</Link>} />
    ) : null}
    {rows.length>0?<LearnerPlacementJobDetail items={rows.map(toItem)}
-    returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}/>:null}
-   {journey?<LearnerOwnDriveJourney journey={journey}/>:null}
+    returnHref={back} initialSaved={savedJobs.some(row=>row.jobId===jobId)}
+    journey={journey?<LearnerOwnDriveJourney journey={journey}/>:null}/>:null}
+   {rows.length===0&&journey?<LearnerOwnDriveJourney journey={journey}/>:null}
   </div>;
 }

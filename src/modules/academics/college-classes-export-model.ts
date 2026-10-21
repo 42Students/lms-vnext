@@ -7,7 +7,7 @@ export const collegeClassesExportSchema = withCollegeClassCapacityCheck(collegeC
 
 export type ClassExportRow = {
   id: string; name: string; linkedProgramId: string | null;
-  cohortId: string; minSize: number | null; capacity: number | null;
+  cohortId: string; periodStart?: string | null; periodEnd?: string | null; minSize: number | null; capacity: number | null;
 };
 
 export function classesExportHref(raw: { q: string; programId?: string; cohortCode?: string; classCode?: string; periodCode?: string; capacityState?:"ALL"|"CONFIGURED"|"UNSET"; minimumCapacity?: number; maximumCapacity?: number; periodLifecycle?:"ALL"|"PLANNED"|"ACTIVE"|"CLOSED"; programCode?:string; className?:string; cohortName?:string; schedulePresence?:"ALL"|"HAS_EVENTS"|"NO_EVENTS"; facultyCoverage?:"ALL"|"HAS_FACULTY"|"NO_FACULTY"; deliveryPresence?:"ALL"|"HAS_DELIVERIES"|"NO_DELIVERIES"; periodStartsOnOrAfter?:string; periodEndsOnOrBefore?:string; departmentCode?:string; status: "ALL" | "ACTIVE" | "ARCHIVED"; cohortStatus?: "ALL"|"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED"; programStatus?: "ALL"|"ACTIVE"|"ARCHIVED"; }) {
@@ -37,10 +37,11 @@ export function classesExportHref(raw: { q: string; programId?: string; cohortCo
 }
 
 export function renderCollegeClassesCsv(rows: readonly ClassExportRow[], _truncated = false) {
-  const headers = ["ID", "Class/Section Name", "Program ID", "Batch ID", "Minimum Students", "Maximum Students"];
+  const headers = ["ID", "Class/Section Name", "Program ID", "Batch ID", "Start Date", "End Date", "Minimum Students", "Maximum Students"];
   const lines = [headers.map(escapeActivityCsvCell).join(",")];
   for (const row of rows) lines.push([
     row.id, row.name, row.linkedProgramId ?? "", row.cohortId,
+    row.periodStart ?? "", row.periodEnd ?? "",
     row.minSize === null ? "" : String(row.minSize),
     row.capacity === null ? "" : String(row.capacity),
   ].map(escapeActivityCsvCell).join(","));
