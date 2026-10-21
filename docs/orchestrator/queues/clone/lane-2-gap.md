@@ -52,7 +52,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U011 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminClassScheduleController.java`
 - [x] U012 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeDashboardController.java`
 - [x] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCollegeSummaryController.java`
-- [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java`
+- [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseBulkController.java`
 - [ ] U015 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminCourseProgressController.java`
 - [ ] U016 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminJobController.java`
 - [ ] U017 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AdminLearnerProgressController.java`
