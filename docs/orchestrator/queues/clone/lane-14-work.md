@@ -46,7 +46,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-company-identities.ts.md` (edit src/db/schema/placement-company-identities.ts; 11 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_course-assignment-materials.ts.md` (edit src/db/schema/course-assignment-materials.ts; 10 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_lecture-halls.ts.md` (edit src/db/schema/lecture-halls.ts; 9 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_identity_context-service.ts.md` (edit src/modules/identity/context-service.ts; 7 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/src_modules_identity_context-service.ts.md` (edit src/modules/identity/context-service.ts; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_college-branding.ts.md` (edit src/db/schema/college-branding.ts; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-drive-change-requests.ts.md` (edit src/db/schema/placement-drive-change-requests.ts; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db10-general-notices.draft.ts.md` (edit src/db/schema/db10-general-notices.draft.ts; 6 findings; best P1)
