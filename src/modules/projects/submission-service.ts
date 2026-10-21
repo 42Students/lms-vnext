@@ -266,6 +266,16 @@ export async function updateProjectSubmissionDraft(
       );
     }
 
+    const unchanged=submission.summary===input.summary&&
+      (input.sourceUrl===undefined||submission.sourceUrl===input.sourceUrl)&&
+      (input.demoUrl===undefined||submission.demoUrl===input.demoUrl)&&
+      (input.notes===undefined||submission.notes===input.notes)&&
+      (input.attachments===undefined||
+        JSON.stringify(submission.attachments)===JSON.stringify(input.attachments));
+    // Browser retries of an already-acknowledged draft are read-only; do not
+    // emit spurious revision/audit events or erase sibling attachment edits.
+    if(unchanged)return submission;
+
     // The submission row is held FOR UPDATE, so a second device observes the
     // first writer's revision before applying a stale edit. Millisecond
     // precision matches the browser's ISO token and Drizzle Date values.
@@ -298,10 +308,10 @@ export async function updateProjectSubmissionDraft(
     const [updated] = await tx
       .update(projectSubmissions)
       .set({
-        summary: input.summary,
-        sourceUrl: input.sourceUrl ?? null,
-        demoUrl: input.demoUrl ?? null,
-        notes: input.notes ?? null,
+        summary:input.summary,
+        ...(input.sourceUrl!==undefined?{sourceUrl:input.sourceUrl??null}:{}),
+        ...(input.demoUrl!==undefined?{demoUrl:input.demoUrl??null}:{}),
+        ...(input.notes!==undefined?{notes:input.notes}:{}),
         ...(input.attachments!==undefined?{attachments:input.attachments}:{}),
         // Ensure a unique revision even if two saves arrive in one millisecond.
         updatedAt: nextProjectDraftUpdatedAt(submission.updatedAt),
@@ -363,7 +373,8 @@ export async function submitProjectSubmission(
     }
     const [releases,sprints,tasks]=await Promise.all([
       tx.select({status:projectReleases.status}).from(projectReleases)
-        .where(eq(projectReleases.projectId,scope.project.id)),
+        .where(and(eq(projectReleases.projectId,scope.project.id),
+          isNull(projectReleases.deletedAt))),
       tx.select({status:projectSprints.status}).from(projectSprints)
         .where(and(eq(projectSprints.projectId,scope.project.id),
           isNull(projectSprints.deletedAt))),
@@ -681,23 +692,28 @@ export async function listProjectSubmissions(
   type HistoryEntry={
     id:string;submissionId:string;version:number;kind:string;
     occurredAt:string;status:string|null;feedback:string|null;
+    actorName:string|null;actorType:string|null;legacyNotes:string|null;
+    legacyAttachmentUrl:string|null;
   };
   const byId=new Map(submissions.map(submission=>[submission.id,submission]));
   const history:HistoryEntry[]=[];
   for(const submission of submissions){
    history.push({id:"created:"+submission.id,submissionId:submission.id,
      version:submission.version,kind:"DRAFT_CREATED",
-     occurredAt:submission.createdAt.toISOString(),status:"DRAFT",feedback:null});
+     occurredAt:submission.createdAt.toISOString(),status:"DRAFT",feedback:null,
+     actorName:null,actorType:"LEARNER",legacyNotes:null,legacyAttachmentUrl:null});
    if(submission.submittedAt)history.push({id:"submitted:"+submission.id,
      submissionId:submission.id,version:submission.version,kind:"SUBMITTED",
-     occurredAt:submission.submittedAt.toISOString(),status:"SUBMITTED",feedback:null});
+     occurredAt:submission.submittedAt.toISOString(),status:"SUBMITTED",feedback:null,
+     actorName:null,actorType:"LEARNER",legacyNotes:null,legacyAttachmentUrl:null});
   }
   for(const review of reviews){
    const submission=byId.get(review.submissionId);
    if(!submission)continue;
    history.push({id:"review:"+review.id,submissionId:review.submissionId,
     version:submission.version,kind:"REVIEWED",occurredAt:review.reviewedAt.toISOString(),
-    status:review.decision,feedback:review.feedback});
+    status:review.decision,feedback:review.feedback,
+    actorName:null,actorType:"REVIEWER",legacyNotes:null,legacyAttachmentUrl:null});
   }
   for(const event of deliveryEvents){
    const submission=byId.get(event.submissionId);
@@ -705,9 +721,18 @@ export async function listProjectSubmissions(
    history.push({id:"event:"+event.id,submissionId:event.submissionId,
     version:submission.version,kind:event.eventType,
     occurredAt:event.occurredAt.toISOString(),status:event.legacyStatus??null,
-    feedback:event.legacyFeedback??null});
+    feedback:event.legacyFeedback??null,
+    actorName:event.legacyActorName??null,actorType:event.legacyActorType??null,
+    legacyNotes:event.legacyNotes??null,
+    legacyAttachmentUrl:event.legacyAttachmentUrl??null});
   }
   history.sort((a,b)=>a.occurredAt.localeCompare(b.occurredAt)||
     a.version-b.version||a.id.localeCompare(b.id));
-  return {submissions,reviews,deliveryEvents,history};
+  return {
+   submissions,reviews,deliveryEvents,history,
+   revisionCount:submissions.length,
+   reviewCount:reviews.length,
+   legacyRevisionCount:submissions.reduce((max,row)=>
+      Math.max(max,row.legacyRevisionCount??0),0),
+  };
 }

@@ -4,6 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import {
   type FormEvent,
   useEffect,
+  useRef,
   useState,
 } from "react";
 import { useRouter } from "next/navigation";
@@ -98,6 +99,7 @@ export function FacultyLessonAuthoring({
   enableAssignmentResources?: boolean;
 }) {
   const router = useRouter();
+  const titleRef = useRef<HTMLInputElement>(null);
   const [mode, setMode] =
     useState<Mode | null>(initialMode);
   const [title, setTitle] = useState("");
@@ -134,11 +136,13 @@ export function FacultyLessonAuthoring({
     contentId:string;lessonId:string;deliveryId:string|null;
   }|null>(null);
   const [discardConfirm,setDiscardConfirm]=useState(false);
+  const [externalLinkTitle,setExternalLinkTitle]=useState("");
 
   function reset() {
     setTitle("");
     setNotes("");
     setUrl("");
+    setExternalLinkTitle("");
     setDurationSeconds("");
     setContentPoints("1");
     setStartsAt("");
@@ -151,7 +155,7 @@ export function FacultyLessonAuthoring({
     setQuestions([initialQuestion()]);
   }
 
-  const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||startsAt||
+  const draftDirty=Boolean(title.trim()||notes.trim()||url.trim()||externalLinkTitle.trim()||startsAt||
     endsAt||dueAt||durationSeconds!==""||contentPoints!=="1"||maxPoints!==""||maxAttempts!=="1"||
     allowedAssignmentMethods.length!==1||allowedAssignmentMethods[0]!=="WRITTEN_RESPONSE"||
     assignmentResources.length>0||
@@ -281,6 +285,7 @@ export function FacultyLessonAuthoring({
       let createdContentId:string|null=null;
       const cleanTitle = title.trim();
       if (!cleanTitle || cleanTitle.length > 255) {
+        titleRef.current?.focus();
         throw new Error(
           mode === "RESOURCE"
             ? "Choose a course/lesson and enter a Resource title (1–255 characters)."
@@ -299,6 +304,7 @@ export function FacultyLessonAuthoring({
 
       if (mode === "RESOURCE") {
         const resourceLink = url.trim();
+        if(externalLinkTitle.trim() && !resourceLink)throw new Error("Enter a link for the titled resource.");
         if (!notes.trim() && !resourceLink) {
           throw new Error("Add notes or an HTTPS resource link.");
         }
@@ -332,6 +338,16 @@ export function FacultyLessonAuthoring({
         );
         createdContentId=receipt.content?.id??null;
         if(!createdContentId)throw new Error("The new content receipt is missing. Refresh before retrying.");
+        // Preserve a per-link title as a distinct child material record rather
+        // than rewriting the parent external URL or other existing materials.
+        if(resourceLink&&externalLinkTitle.trim()){
+          await apiFetch("/api/courses/lesson-contents/"+encodeURIComponent(createdContentId)+
+            "/materials"+(deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):""),{
+            method:"POST",headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({action:"ADD_LINK",title:externalLinkTitle.trim(),
+              externalUrl:resourceLink,notes:null}),
+          });
+        }
       }
 
       if (mode === "YOUTUBE") {
@@ -431,7 +447,7 @@ export function FacultyLessonAuthoring({
             "/api/courses/faculty/assignments/"+
               encodeURIComponent(deliveryId)+"/command",{
               ...payload,action:"CREATE",confirmed:true,resources:checked.data,
-              });
+            });
           if(!receipt.assignment?.id)throw new Error(
             "The assignment save receipt is missing. Refresh before retrying.");
         }else{
@@ -486,18 +502,21 @@ export function FacultyLessonAuthoring({
         mode==="RESOURCE"?"Resource saved":
         mode==="LIVE_CLASS"?"Live class created successfully":
         mode==="YOUTUBE"?"YouTube video created successfully":
-        mode==="ASSIGNMENT"?"Assignment draft created.":
+        mode==="ASSIGNMENT"?"Assignment created successfully":
         mode==="QUIZ"?"Quiz draft created.":"Server Notification: Successfully Saved",
       );
       reset();
       onSaved?.();
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not create the Course item.",
-      );
+      const message=caught instanceof Error?caught.message:"Could not create the Course item.";
+      setError(/FORBIDDEN|ACCESS_DENIED|403|PERMISSION/i.test(message)
+        ?"You do not have permission to create this item for the selected class. Confirm your active Faculty assignment."
+        : /UNAUTHORIZED|401|SESSION/i.test(message)
+        ?"Your session expired. Sign in again, then reopen this lesson."
+        : /VALIDATION|INVALID_REQUEST/i.test(message)
+        ?"Check the required fields, dates, and selected audience. "+message
+        : message);
     } finally {
       setSubmitting(false);
     }
@@ -733,12 +752,16 @@ export function FacultyLessonAuthoring({
           <fieldset disabled={submitting}>
             {error ? <Alert tone="error" className="mb-4">{error}</Alert> : null}
             {success ? <Alert tone="success" className="mb-4">{success}</Alert> : null}
+            {mode==="ASSIGNMENT"?<h3 className="text-base font-semibold md:col-span-2">Assignment Details</h3>:null}
             <div className="grid min-w-0 gap-4 md:grid-cols-2">
               <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 <FieldLabel>
-                  Title
+                  {mode==="ASSIGNMENT"?"Assignment Title":mode==="RESOURCE"?"Resource Title":"Content Title"}
                 </FieldLabel>
                 <Input
+                  ref={titleRef}
+                  aria-label={mode==="ASSIGNMENT"?"Assignment Title":"Content Title"}
+                  placeholder={mode==="ASSIGNMENT"?"Assignment title":"Enter a content title"}
                   value={title}
                   onChange={(event) =>
                     setTitle(
@@ -777,28 +800,10 @@ export function FacultyLessonAuthoring({
                 </label>
               ) : null}
 
-              {mode === "ASSIGNMENT" ? (
-                <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                  <FieldLabel>
-                    Maximum points
-                  </FieldLabel>
-                  <Input
-                    type="number"
-                    min={1}
-                    max={1000}
-                    value={maxPoints}
-                    onChange={(event) =>
-                      setMaxPoints(
-                        event.target.value,
-                      )
-                    }
-                  />
-                  <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
-                    Leave blank for zero points, or enter a whole number from 1 to 1000.
-                  </span>
-                </label>
-              ) : null}
-
+              {mode==="ASSIGNMENT"? <p className="text-xs text-muted-foreground md:col-span-2">
+                A new assignment is attached to the selected {audience==="OFFERING"?"Course Offering":"Section"}.
+                Only authorized Faculty can create and publish; learners cannot author lesson content.
+              </p>:null}
               {mode === "QUIZ" ? (
                 <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   <FieldLabel>
@@ -849,6 +854,11 @@ export function FacultyLessonAuthoring({
               </label>
             ) : null}
 
+            {mode==="RESOURCE"&&url.trim()?<label className="mt-3 block text-[13px] font-semibold">
+              Link title (optional)
+              <Input value={externalLinkTitle} maxLength={255} placeholder="Reading link"
+                onChange={event=>setExternalLinkTitle(event.target.value)}/>
+            </label>:null}
             {mode === "RESOURCE" ? (
               <p className="mt-3 text-xs leading-5 text-muted-foreground">
                 Private file attachments require the separate verified upload workflow;
@@ -878,6 +888,7 @@ export function FacultyLessonAuthoring({
 
             {mode === "ASSIGNMENT" ? (
               <div className="mt-4 min-w-0">
+                <h3 className="mb-2 font-semibold">How Learners Can Submit</h3>
                 <FacultyAssignmentMethodPicker
                   methods={allowedAssignmentMethods}
                   onChange={setAllowedAssignmentMethods}
@@ -886,30 +897,47 @@ export function FacultyLessonAuthoring({
               </div>
             ) : null}
 
+            {mode==="ASSIGNMENT"? <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
+  {mode === "ASSIGNMENT" ? (
+    <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <FieldLabel>
+        Maximum points
+      </FieldLabel>
+      <Input
+        type="number"
+        min={1}
+        max={1000}
+        value={maxPoints}
+        onChange={(event) =>
+          setMaxPoints(
+            event.target.value,
+          )
+        }
+      />
+      <span className="mt-1 block text-xs font-normal leading-5 text-muted-foreground">
+        Leave blank for zero points, or enter a whole number from 1 to 1000.
+      </span>
+    </label>
+  ) : null}
+
+
+              <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <FieldLabel>Due Date</FieldLabel>
+                <Input type="datetime-local" value={dueAt} onChange={event=>setDueAt(event.target.value)}/>
+                <span className="mt-1 block text-xs text-muted-foreground">Times are in IST. Leave blank when the assignment has no deadline.</span>
+              </label>
+             </div>:null}
+            {mode==="QUIZ"? <label className="mt-4 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              <FieldLabel>Due date (IST, required before publishing)</FieldLabel>
+              <Input type="datetime-local" value={dueAt} onChange={event=>setDueAt(event.target.value)}/>
+             </label>:null}
+
+            {mode==="ASSIGNMENT"?<h3 className="mt-4 font-semibold">Assignment Resources</h3>:null}
             {mode==="ASSIGNMENT"&&enableAssignmentResources&&deliveryId?
               <FacultyAssignmentResourceDraftFields deliveryId={deliveryId}
                 resources={assignmentResources} onChange={setAssignmentResources}
                 disabled={submitting} onPendingChange={setResourceUploading}/>
               :null}
-
-            {mode === "ASSIGNMENT" ||
-            mode === "QUIZ" ? (
-              <label className="mt-4 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                <FieldLabel>
-                  Due date (IST, required before publishing)
-                </FieldLabel>
-                <Input
-                  type="datetime-local"
-                  value={dueAt}
-                  onChange={(event) =>
-                    setDueAt(
-                      event.target.value,
-                    )
-                  }
-                />
-              </label>
-            ) : null}
-
             <details key={mode} open={mode === "RESOURCE" || Boolean(notes)}
               className="mt-4 min-w-0 border-y border-[var(--lms-canvas-border)] py-2">
               <summary className="flex min-h-11 cursor-pointer items-center py-2 text-[13px] font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">

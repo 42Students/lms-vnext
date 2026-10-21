@@ -7,6 +7,7 @@ import {useRouter} from "next/navigation";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {adminDeliveryToast,canAdminSettleDelivery,type AdminDeliveryAction} from "@/modules/projects/admin-submission-review-model";
 
 export function ProjectAdminSubmissionReview({projectId,submissionId,status,locked,projectStatus,workspaceTitle,allowLock}:{
@@ -30,6 +31,9 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  const [reviewVersion,setReviewVersion]=useState<number|null>(null);
  const [reviewUpdatedAt,setReviewUpdatedAt]=useState<string|null>(null);
  const [missing,setMissing]=useState(false);
+ const guard=useProjectEditorDiscardGuard(open,Boolean(feedback.trim()),pending,()=>{
+  setOpen(false);setFeedback("");setError("");
+ });
  const currentActionAvailable=isLatest&&!missing&&
    ["SUBMITTED","APPROVED"].includes(currentStatus)&&!currentLocked&&
    projectStatus==="ACTIVE";
@@ -103,10 +107,10 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    Review
   </Button>
   {message?<Banner tone="success">{message}</Banner>:null}
-  <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} title={"Review — "+(workspaceTitle??"project submission")}
+  <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title={"Review — "+(workspaceTitle??"project submission")}
    description="Review the selected final-delivery version and record feedback when available."
    footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:justify-end">
-    <Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
+    <Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending} onClick={guard.requestClose}
      >Cancel</Button>
     {currentActionAvailable&&canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"CHANGES_REQUESTED")?
      <Button className="w-full sm:w-auto" type="button" variant="secondary"
@@ -143,6 +147,11 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    {currentActionAvailable&&!feedback.trim()?<p className="mt-2 text-xs text-muted-foreground">
      Add feedback explaining what needs to change before requesting changes.</p>:null}
   </Dialog>
+  <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
+   title="Discard unsaved feedback?"
+   description="Your review feedback has not been submitted. Leave without saving it?"
+   confirmLabel="Discard changes" pending={pending}
+   onConfirm={guard.confirmDiscard}/>
   <ConfirmDialog open={confirmLock} onOpenChange={setConfirmLock} title="Lock this submission?"
    description="The learner will no longer be able to edit or resubmit it."
    confirmLabel="Lock submission" pending={pending} onConfirm={()=>{void decide("LOCK")}}/>

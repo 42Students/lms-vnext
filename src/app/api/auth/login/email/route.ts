@@ -10,9 +10,16 @@ import { sendEmailFallbackWithRuntime } from "@/modules/auth/runtime";
 
 export const runtime = "nodejs";
 
-// Historical clients can still POST the same field. Only a current UUID
-// challenge is accepted: old opaque IDs must restart the login flow.
-const schema = z.strictObject({ attemptId: z.string().trim() });
+/** Migration contract:
+ * Legacy POST /email-fallback/send with { attemptId } now calls
+ * POST /api/auth/login/email with { attemptId: "<current challenge UUID>" }.
+ * Its EMAIL_OTP_SENT response carries a maskedEmail and expiresInSeconds.
+ * Legacy /email-fallback/verify is POST /api/auth/login/verify with
+ * { attemptId, code } (not the old "otp" key). A successful verify sets an
+ * HttpOnly session cookie and may ask for college/role selection.
+ * Old opaque attempt IDs must restart at /api/auth/login/start.
+ */
+const schema = z.strictObject({ attemptId: z.string().trim().nullish() });
 const challengeIdSchema = z.string().uuid();
 
 export async function POST(request: Request) {
@@ -24,7 +31,7 @@ export async function POST(request: Request) {
     6,
   );
   if (!guarded.ok) return guarded.response;
-  const candidate=guarded.body.attemptId;
+  const candidate=guarded.body.attemptId ?? "";
   if (!candidate) {
     return privateAuthJson({
       error:"ATTEMPT_ID_REQUIRED",message:"attemptId required",
@@ -49,6 +56,9 @@ export async function POST(request: Request) {
       {elapsedMs:Date.now()-startedAt});
     return privateAuthResponse(NextResponse.json({
       ...result,mode:"EMAIL_OTP_SENT" as const,
+      nextStep:"VERIFY_CODE" as const,
+      verifyEndpoint:"/api/auth/login/verify",
+      verifyCodeField:"code" as const,
     }));
   } catch (error) {
     auditLogin("auth.email_fallback_failed",{route:"login-email",ip:guarded.ip},

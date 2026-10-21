@@ -44,6 +44,14 @@ export type OutboundTemplate = {
   senderName?: string;
   fromAddress?: string;
   replyTo?: string;
+  /** Optional human display label, never accepted as an arbitrary mailbox. */
+  replyToName?: string;
+  /** Explicit template-bound merge contract. Missing values never reach API. */
+  requiredVariables?: readonly string[];
+  /** At least one nonblank key in each group must be provided. */
+  oneOfVariables?: readonly (readonly string[])[];
+  /** Approved DLT SMS text is not necessarily the generic 1600-char limit. */
+  maxSmsLength?: number;
 };
 export type OutboundProviderConfig = {
   email: ZeptoMailConfig;
@@ -61,6 +69,81 @@ export type OutboundProviderWithOutcomes = OutboundProvider & {
 
 export function readOutboundProviderConfig(templates: OutboundProviderConfig["templates"]): OutboundProviderConfig {
   return { email: readZeptoMailConfig(), sms: readExotelConfig(), templates: registerLegacySmsTemplates(templates) };
+}
+
+/** Event-to-template contracts mirror registered ZeptoMail/DLT purposes.
+ * A template may tighten but never bypass the generic variable checks. */
+export const LEGACY_EVENT_MERGE_FIELDS: Partial<Readonly<Record<LegacyMailEvent,readonly string[]>>> = {
+ JOB_INTERVIEW_SCHEDULED:["learnerName","jobTitle","companyName","applicationId",
+  "roundDescription","interviewDate","interviewTime","interviewMode"],
+ INTERVIEW_REMINDER:["learnerName","jobTitle","companyName","applicationId",
+  "interviewDate","interviewTime"],
+ INTERVIEW_CONFIRMED:["learnerName","jobTitle","companyName","applicationId",
+  "interviewDate","interviewTime"],
+ SYSTEM_EMAIL_VERIFICATION:["learnerName"],
+ SYSTEM_APPLICATION_APPROVED:["learnerName"],
+ SYSTEM_APPLICATION_REJECTED:["learnerName"],
+};
+const RESERVED_TEMPLATE_VARIABLE=/^(?:__proto__|constructor|prototype|password|otp|apiKey|accessToken|secret)$/i;
+export type OutboundVariableValidation =
+ | {ok:true;clean:Record<string,string>}
+ | {ok:false;code:"TEMPLATE_MERGE_MISSING"|"TEMPLATE_MERGE_INVALID";missing?:string};
+export function validateOutboundTemplateVariables(
+ variables:Record<string,string>,template:OutboundTemplate,
+):OutboundVariableValidation{
+ const clean:Record<string,string>=Object.create(null) as Record<string,string>;
+ let total=0;
+ const keys=Object.entries(variables);
+ if(keys.length>25)return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+ for(const [key,value] of keys){
+  if(!/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)||
+   RESERVED_TEMPLATE_VARIABLE.test(key)||
+   typeof value!=="string"||value.length>4000||
+   /[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value))return {
+    ok:false,code:"TEMPLATE_MERGE_INVALID",
+   };
+  total+=key.length+value.length;
+  if(total>12000)return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+  clean[key]=value.trim();
+ }
+ const required=[...(template.legacyEvent?
+  LEGACY_EVENT_MERGE_FIELDS[template.legacyEvent]??[]:[]),
+  ...(template.requiredVariables??[])];
+ for(const key of required){
+  if(!/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)||
+   RESERVED_TEMPLATE_VARIABLE.test(key))return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+  if(!clean[key])return {ok:false,code:"TEMPLATE_MERGE_MISSING",missing:key};
+ }
+ for(const alternatives of template.oneOfVariables??[]){
+  if(alternatives.length<1||alternatives.some(key=>
+      !/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)||
+      RESERVED_TEMPLATE_VARIABLE.test(key)))return {ok:false,code:"TEMPLATE_MERGE_INVALID"};
+  if(!alternatives.some(key=>Boolean(clean[key])))
+   return {ok:false,code:"TEMPLATE_MERGE_MISSING",missing:alternatives.join("|")};
+ }
+ return {ok:true,clean};
+}
+/** An operator-safe summary suitable for previews; no addresses or credentials. */
+export function outboundTemplateReadiness(
+ templateKey:string,channel:"EMAIL"|"SMS",config:OutboundProviderConfig,
+):{ready:boolean;reason:"READY"|"UNREGISTERED_TEMPLATE"|"EVENT_CHANNEL_DISABLED"|
+ "EMAIL_TEMPLATE_NOT_PROVISIONED"|"SMS_TEMPLATE_NOT_PROVISIONED"}{
+ const entry=config.templates[templateKey];
+ if(!entry||!isCampaignTemplateKey(templateKey))
+  return {ready:false,reason:"UNREGISTERED_TEMPLATE"};
+ if(entry.legacyEvent&&!LEGACY_NOTIFICATION_CHANNELS[entry.legacyEvent].includes(channel))
+  return {ready:false,reason:"EVENT_CHANNEL_DISABLED"};
+ if(channel==="EMAIL"){
+  const valid=Boolean(entry.zeptoTemplateKey&&
+    isCampaignTemplateKey(entry.zeptoTemplateKey)&&
+    entry.zeptoTemplateKey!==config.email.otpTemplateKey);
+  return {ready:valid,reason:valid?"READY":"EMAIL_TEMPLATE_NOT_PROVISIONED"};
+ }
+ const valid=Boolean(entry.exotelDltTemplateId&&safeDltId(entry.exotelDltTemplateId)&&
+  entry.exotelDltTemplateId!==config.sms.otpDltTemplateId&&
+  safeSenderId(entry.exotelSenderId)&&entry.renderSms&&
+  config.sms.apiKey.trim()&&config.sms.apiToken.trim());
+ return {ready:valid,reason:valid?"READY":"SMS_TEMPLATE_NOT_PROVISIONED"};
 }
 
 /** Existing callers retain send():boolean; operators may inspect typed outcomes. */
@@ -85,6 +168,12 @@ export function createOutboundProvider(
     if (template.legacyEvent && !LEGACY_NOTIFICATION_CHANNELS[template.legacyEvent]?.includes(request.channel)) {
       return { status: "SUPPRESSED", reason: "EVENT_CHANNEL_DISABLED" };
     }
+    const validation=validateOutboundTemplateVariables(request.variables,template);
+    if(!validation.ok){
+      return {status:"SUPPRESSED",reason:validation.code+
+        (validation.missing?":"+validation.missing:"")};
+    }
+    const variables=validation.clean;
     if (request.channel === "EMAIL") {
       if (!template.zeptoTemplateKey || !isCampaignTemplateKey(template.zeptoTemplateKey) ||
         template.zeptoTemplateKey === config.email.otpTemplateKey) {
@@ -102,8 +191,8 @@ export function createOutboundProvider(
       const effectiveEnv = { ...env, ...override };
       const result = await sendZeptoMailTemplate({
         purpose, toEmail: request.recipient,
-        recipientName: request.variables.learnerName ?? request.variables.name ?? request.recipient,
-        mergeInfo: request.variables,
+        recipientName: variables.learnerName ?? variables.name ?? request.recipient,
+        mergeInfo: variables,
         senderName: template.senderName?.trim() || undefined,
         fromAddress: template.fromAddress?.trim() || undefined,
         replyTo: template.replyTo?.trim() || undefined,
@@ -132,8 +221,10 @@ export function createOutboundProvider(
         ? "JOB_DLT_TEMPLATE_ID_NOT_CONFIGURED" : "SMS_TEMPLATE_NOT_PROVISIONED" };
     }
     try {
-      const body = template.renderSms(request.variables);
-      if (!body.trim() || body.length > 1600) {
+      const body = template.renderSms(variables);
+      const approvedBound=template.maxSmsLength&&template.maxSmsLength>0?
+        Math.min(template.maxSmsLength,1600):1600;
+      if (!body.trim() || body.length > approvedBound) {
         return { status: "SUPPRESSED", reason: "SMS_BODY_INVALID" };
       }
       const form = new URLSearchParams({
@@ -225,6 +316,9 @@ export function legacyJobSmsTemplate(
   return {
     exotelDltTemplateId: dltId,
     exotelSenderId: senderId,
+    oneOfVariables:[["learnerName","recipientName"]],
+    requiredVariables:[],
+    maxSmsLength:1600,
     renderSms: (variables) => body.replace("{#var#}",
       dltSafeRecipientName(variables.learnerName ?? variables.recipientName)),
   };
@@ -301,6 +395,8 @@ export function registeredNoticeSmsTemplate(
     body.indexOf("{#var#}") !== body.lastIndexOf("{#var#}")) return null;
   return {
     exotelSenderId: senderId, exotelDltTemplateId: dltId,
+    oneOfVariables:[["recipientName","learnerName"]],
+    maxSmsLength:1600,
     renderSms: (variables) => body.replace("{#var#}",
       dltSafeRecipientName(variables.recipientName ?? variables.learnerName)),
   };
@@ -324,6 +420,8 @@ export function registeredAttendanceSmsTemplate(
  if(!safeDltId(dltId)||!safeSenderId(senderId)||body.length>1500 ||
     (body.match(/%s/g)??[]).length!==3)return null;
  return {exotelDltTemplateId:dltId,exotelSenderId:senderId,
+  requiredVariables:["courseName","startTime","endTime"],
+  maxSmsLength:1000,
   renderSms:variables=>{
    const cleaned=(raw:string|undefined)=>String(raw??"").replace(/[\\r\\n<>]/g," ").trim().slice(0,80);
    let index=0;

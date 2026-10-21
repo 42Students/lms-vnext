@@ -39,6 +39,45 @@ body {
 .page-layout h2 { color: #172033; font-size: 22px; line-height: 1.4; font-weight: 600; }
 .page-layout h3 { color: #172033; font-size: 18px; line-height: 1.4; font-weight: 600; }
 .page-layout > .header span { color: #6b7280; font-size: 13px; }
+/* Legacy privacy-policy hero: separate blue legal banner, not the application
+   sidebar. Keep the static HTML/read-only architecture and intact legal copy. */
+.page-layout > .header.accent {
+  margin: -40px -1px 28px;
+  padding: 32px clamp(20px,4vw,52px) 36px;
+  border: 0;
+  background: #266891;
+  color: #fff;
+  border-radius: 12px 12px 0 0;
+}
+.page-layout > .header.accent::before { display: none; }
+.page-layout > .header.accent h1 {
+  color: #fff;
+  font-size: 40px;
+  font-weight: 800;
+  line-height: 1.16;
+  letter-spacing: -.035em;
+}
+.page-layout > .header.accent span { color: rgba(255,255,255,.87); }
+.page-layout > .header.accent .brand-link {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  margin-bottom: 18px;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.page-layout > .header.accent .brand-link:hover { color: #d4f4f5; }
+.page-layout > .header.accent .brand-link:focus-visible {
+  outline-color: #fff;
+  outline-offset: 3px;
+}
+@media (max-width:640px) {
+  .page-layout > .header.accent { margin: -24px -1px 24px; padding: 24px 18px 30px; }
+  .page-layout > .header.accent h1 { font-size: clamp(28px,7vw,40px); }
+}
 .page-layout .content, .page-layout .center { min-width: 0; max-width: 100%; margin: 0; padding: 0; }
 .page-layout .content .content { display: block; }
 .page-layout p { margin: 12px 0 16px; }

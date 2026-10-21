@@ -45,7 +45,6 @@ function sameMonth(value: Date, month: Date) {
 
 function dateLabel(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
-    weekday: "short",
     day: "numeric",
     month: "short",
     year: "numeric",
@@ -176,6 +175,9 @@ export function LearnerCourseAttendance({
     router.replace(pathname+"?"+params.toString());
   }
 
+  const monthName=new Intl.DateTimeFormat("en-IN",{
+    month:"long",year:"numeric",timeZone:"Asia/Kolkata",
+  }).format(new Date(Date.UTC(month.getFullYear(),month.getMonth(),15,12)));
   const course = workspace.courses.find(
     (item) =>
       item.deliveryId === deliveryId,
@@ -275,16 +277,9 @@ export function LearnerCourseAttendance({
 
   return (
     <div className="space-y-5">
-      <div>
-        <h2 className="sr-only">
-          Attendance
-        </h2>
-        <p className="m-0 text-sm text-body">
-          See your attendance record and class-wise status in one place.
-        </p>
-      </div>
+      <h2 className="sr-only">Attendance</h2>
 
-      <section className="border-b border-border py-4">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
@@ -365,11 +360,20 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
-      <section aria-label="Student attendance summary" className="border-b border-border py-4 md:py-5">
-        <h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
-        <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
-        <p className="mt-2 text-xs font-semibold text-muted-foreground">Attendance threshold: {threshold}%</p>
-        <p className="mt-2 text-sm text-body">{summary.heldSessions===0?"No classes held yet in this period.":thresholdDetail}</p>
+      <section aria-label="Student attendance summary"
+        className={"rounded-[var(--lms-canvas-radius)] border p-4 md:p-5 "+
+          (summary.percentage===null?"border-border bg-surface":
+           summary.percentage>=threshold?"border-[var(--lms-success)] bg-[var(--lms-success-subtle)]":
+           "border-[var(--lms-error)] bg-[var(--lms-error-subtle)]")}>
+        <div className="grid grid-cols-2 gap-3">
+          <div><h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
+            <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
+          </div>
+          <div><h3 className="text-sm font-semibold text-foreground">Requirement</h3>
+            <p className="mt-2 text-3xl font-semibold text-foreground">{threshold}%</p>
+          </div>
+        </div>
+        <p className="mt-2 text-sm text-body">{summary.heldSessions===0?"No classes held yet this month.":thresholdDetail}</p>
         <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-3 text-sm md:gap-3">
           <div><dt className="text-muted-foreground">Present</dt><dd className="font-semibold">{summary.present}</dd></div>
           <div><dt className="text-muted-foreground">Absent</dt><dd className="font-semibold">{summary.absent}</dd></div>
@@ -377,40 +381,37 @@ export function LearnerCourseAttendance({
         </dl>
         {summary.unmarkedSessions>0?<Alert tone="warning" role="status" className="mt-3">{summary.unmarkedSessions} held class(es) are not marked yet and do not affect this percentage.</Alert>:null}
       </section>
-      <section aria-label="Attendance History" className="space-y-1">
+      {isRefreshing?<p role="status" aria-live="polite" className="flex items-center gap-2 text-sm text-muted-foreground">
+        <span aria-hidden="true">◌</span> Loading attendance for {monthName}…
+      </p>:null}
+      <section aria-label="Attendance History" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h3 className="text-lg font-semibold text-foreground">Attendance History</h3>
-        <p className="text-sm text-muted-foreground">Review each scheduled class and your status for it.</p>
+        <p className="mt-1 text-sm text-muted-foreground">{monthName}</p>
       </section>
       {records.length === 0 ? (
         <EmptyState
           title="No classes in this period"
-          description="Try selecting a different month."
         />
       ) : (
         <DataTable
           caption="Attendance History"
           rows={records}
           getRowKey={row=>row.id}
-          empty={<EmptyState title="No classes in this period" description="Try selecting a different month." />}
+          empty={<EmptyState title="No classes in this period" />}
+          mobileMode="cards"
           columns={[
             {key:"date",header:"Date",mobilePriority:"primary" as const,
-              cell:(row:AttendanceRecord)=><span className="block min-w-0">
-                <strong className="block text-foreground">{dateLabel(row.startsAt)}</strong>
-                <span className="block text-xs text-muted-foreground">{timeLabel(row.startsAt)}</span>
+              cell:(row:AttendanceRecord)=><span className="font-semibold text-foreground">
+                {dateLabel(row.startsAt)}
               </span>},
-            {key:"class",header:"Class",mobilePriority:"secondary" as const,
-              cell:(row:AttendanceRecord)=><span className="block min-w-0">
-                <strong className="block break-words text-foreground">{row.title}</strong>
-                <span className="block text-xs text-muted-foreground">{course.courseCode} · {course.sectionName}</span>
-              </span>},
-            {key:"status",header:"Status",mobilePriority:"secondary" as const,
+            {key:"day",header:"Day",mobilePriority:"secondary" as const,
+              cell:(row:AttendanceRecord)=>weekdayLabel(row.startsAt)},
+            {key:"time",header:"Time",mobilePriority:"secondary" as const,
+              cell:(row:AttendanceRecord)=>timeLabel(row.startsAt)},
+            {key:"status",header:"Status",mobilePriority:"action" as const,
               cell:(row:AttendanceRecord)=><StatusBadge tone={learnerCourseAttendanceTone(row.status)}>
                 {label(row.status)}
               </StatusBadge>},
-            {key:"faculty",header:"Faculty / location",mobilePriority:"secondary" as const,
-              cell:(row:AttendanceRecord)=>[row.facultyName,row.location].filter(Boolean).join(" · ")||"Not specified"},
-            {key:"day",header:"Day",mobilePriority:"secondary" as const,
-              cell:(row:AttendanceRecord)=>weekdayLabel(row.startsAt)},
           ]}
         />
       )}

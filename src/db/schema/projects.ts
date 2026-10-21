@@ -230,6 +230,10 @@ export const projectInstances = pgTable(
         onDelete: "restrict",
       }),
     teamGroupId: uuid("team_group_id").references(() => lmsGroups.id, { onDelete: "restrict" }),
+    /** Stable per-class learner bulk-create identity; never inferred from the team. */
+    bulkLearnerMembershipId: uuid("bulk_learner_membership_id"),
+    /** Historical integer learner id is only an import-scoped source key. */
+    legacyBulkLearnerId: integer("legacy_bulk_learner_id"),
     // Imported numeric identity and old five-state status, never permission scope.
     legacyProjectId: integer("legacy_project_id"),
     legacyStatus: varchar("legacy_status", { length: 32 }),
@@ -291,6 +295,21 @@ export const projectInstances = pgTable(
       sql`lower(${table.slug})`,
     ),
     uniqueIndex("project_instances_team_group_uq").on(table.teamGroupId),
+    foreignKey({
+      name: "project_instances_bulk_learner_college_fk",
+      columns: [table.bulkLearnerMembershipId, table.collegeId],
+      foreignColumns: [collegeMemberships.id, collegeMemberships.collegeId],
+    }).onDelete("restrict"),
+    check(
+      "project_instances_bulk_learner_section_ck",
+      sql`${table.bulkLearnerMembershipId} is null or ${table.sectionId} is not null`,
+    ),
+    uniqueIndex("project_instances_bulk_learner_class_uq")
+      .on(table.collegeId, table.sectionId, table.bulkLearnerMembershipId)
+      .where(sql`${table.sectionId} is not null and ${table.bulkLearnerMembershipId} is not null`),
+    uniqueIndex("project_instances_legacy_bulk_learner_class_uq")
+      .on(table.collegeId, table.legacyClassId, table.legacyBulkLearnerId)
+      .where(sql`${table.legacyClassId} is not null and ${table.legacyBulkLearnerId} is not null`),
     uniqueIndex("project_instances_college_legacy_id_uq")
       .on(table.collegeId, table.legacyProjectId)
       .where(sql`${table.legacyProjectId} is not null`),

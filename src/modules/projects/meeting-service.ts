@@ -3,6 +3,8 @@ import {
   asc,
   eq,
   inArray,
+  ilike,
+  isNull,
   ne,
   isNotNull,
   or,
@@ -95,6 +97,7 @@ async function loadMeeting(
       and(
         eq(projectMeetings.id, meetingId),
         eq(projectMeetings.projectId, projectId),
+        isNull(projectMeetings.deletedAt),
       ),
     )
     .limit(1);
@@ -106,6 +109,46 @@ async function loadMeeting(
   }
 
   return meeting;
+}
+
+/** Resolve legacy template links inside the authorized project only.
+ * UUID links continue to use validateMeetingLinks; never resolve across tenants. */
+export async function resolveLegacyMeetingLinksByKey(
+  context: RequestContext,
+  projectIdInput: string,
+  keys: { sprintKey?: string | null; taskKey?: string | null },
+) {
+  const scope = await requireProjectReadAccess(context, projectIdInput);
+  const sprintKey = keys.sprintKey?.trim() || null;
+  const taskKey = keys.taskKey?.trim() || null;
+  if ((sprintKey && sprintKey.length > 120) || (taskKey && taskKey.length > 120)) {
+    throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
+  }
+  const [sprints, tasks] = await Promise.all([
+    sprintKey
+      ? getDb().select({ id: projectSprints.id }).from(projectSprints)
+          .where(and(
+            eq(projectSprints.projectId, scope.project.id),
+            or(eq(projectSprints.templateKey, sprintKey), eq(projectSprints.legacySprintKey, sprintKey)),
+          )).limit(2)
+      : Promise.resolve([]),
+    taskKey
+      ? getDb().select({ id: projectTasks.id, sprintId: projectTasks.sprintId }).from(projectTasks)
+          .where(and(
+            eq(projectTasks.projectId, scope.project.id),
+            or(eq(projectTasks.templateKey, taskKey), eq(projectTasks.legacyTaskKey, taskKey)),
+          )).limit(2)
+      : Promise.resolve([]),
+  ]);
+  if ((sprintKey && sprints.length !== 1) || (taskKey && tasks.length !== 1)) {
+    throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
+  }
+  const linkedSprintId = sprints[0]?.id ?? null;
+  const linkedTaskId = tasks[0]?.id ?? null;
+  if (linkedSprintId && linkedTaskId && tasks[0]?.sprintId !== linkedSprintId) {
+    throw new ProjectsServiceError("PROJECT_MEETING_LINK_INVALID");
+  }
+  return { linkedSprintId, linkedTaskId };
 }
 
 async function validateMeetingLinks(
@@ -179,40 +222,65 @@ async function validateMeetingLinks(
   };
 }
 
+export type ProjectMeetingListOptions = {
+  q?: string;
+  state?: "ALL" | "DRAFT" | "REQUESTED" | "SCHEDULED" | "RESCHEDULED" | "COMPLETED" | "CANCELLED";
+  archive?: "ACTIVE" | "INACTIVE" | "ALL";
+  page?: number;
+  pageSize?: number;
+};
+
 export async function listProjectMeetings(
   context: RequestContext,
   projectIdInput: string,
+  options: ProjectMeetingListOptions = {},
 ) {
-  if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
+  if (!(await resolveOptionalModuleAccess(context)).projects.enabled) {
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
-  const scope =
-    await requireProjectReadAccess(
-      context,
-      projectIdInput,
-    );
-
-  const rows = await getDb()
-    .select()
-    .from(projectMeetings)
-    .where(
-      and(eq(projectMeetings.projectId,scope.project.id),
-        ...(scope.access!=="MENTOR" && scope.access!=="ADMIN" ? [
-          ne(projectMeetings.status,"DRAFT"),
-          // MEN-projects-meetings-27: cancelled private drafts were never announced.
-          // A cancelled learner request still has a requester and remains visible.
-          or(ne(projectMeetings.status,"CANCELLED"),
-            isNotNull(projectMeetings.requestedByMembershipId),
-            isNotNull(projectMeetings.scheduledByUserId))!,
-        ] : [])),
-    )
+  }
+  const scope = await requireProjectReadAccess(context, projectIdInput);
+  const moderator = scope.access === "MENTOR" || scope.access === "ADMIN";
+  const archive = options.archive ?? "ACTIVE";
+  if (!moderator && (archive !== "ACTIVE" || options.state === "DRAFT")) {
+    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
+  }
+  const search = (options.q ?? "").trim();
+  if (search.length > 120 ||
+      (options.page !== undefined && (!Number.isSafeInteger(options.page) || options.page < 1 || options.page > 100000)) ||
+      (options.pageSize !== undefined && (!Number.isSafeInteger(options.pageSize) || options.pageSize < 1 || options.pageSize > 100))) {
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  }
+  const escaped = search.replace(/[\\%_]/g, "\\$&");
+  const query = getDb().select().from(projectMeetings)
+    .where(and(
+      eq(projectMeetings.projectId, scope.project.id),
+      archive === "ACTIVE" ? isNull(projectMeetings.deletedAt) :
+        archive === "INACTIVE" ? isNotNull(projectMeetings.deletedAt) : undefined,
+      options.state && options.state !== "ALL"
+        ? eq(projectMeetings.status, options.state) : undefined,
+      search ? or(
+        ilike(projectMeetings.title, "%" + escaped + "%"),
+        ilike(projectMeetings.agenda, "%" + escaped + "%"),
+      ) : undefined,
+      ...(!moderator ? [
+        ne(projectMeetings.status, "DRAFT"),
+        or(
+          ne(projectMeetings.status, "CANCELLED"),
+          isNotNull(projectMeetings.requestedByMembershipId),
+          isNotNull(projectMeetings.scheduledByUserId),
+        )!,
+      ] : []),
+    ))
     .orderBy(
       asc(projectMeetings.startsAt),
       asc(projectMeetings.createdAt),
+      asc(projectMeetings.id),
     );
-  // MEN-projects-meetings-27: facilitator notes belong to managers, not the
-  // learner/observer workspace payload (even if the UI hides the panel).
-  return scope.access==="MENTOR" || scope.access==="ADMIN" ? rows :
-    rows.map(row=>({...row,facilitation:emptyMentorMeetingFacilitation}));
+  const rows = options.page !== undefined || options.pageSize !== undefined
+    ? await query.limit(options.pageSize ?? 25).offset(((options.page ?? 1) - 1) * (options.pageSize ?? 25))
+    : await query;
+  return moderator ? rows :
+    rows.map(row => ({ ...row, facilitation: emptyMentorMeetingFacilitation }));
 }
 
 export async function requestProjectMeeting(

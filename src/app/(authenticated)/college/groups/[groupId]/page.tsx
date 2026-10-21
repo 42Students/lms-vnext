@@ -235,13 +235,20 @@ export default async function CollegeGroupDetailPage({
               {
                 key: "change",
                 header: "Change",
-                cell: (row) =>
-                  `${row.fromState ? label(row.fromState) : "New"} → ${label(row.toState)}`,
+                cell: (row) => <div className="flex flex-wrap items-center gap-2">
+                  <span className="text-muted-foreground">{row.fromState ? label(row.fromState) : "New"}</span>
+                  <span aria-hidden="true" className="text-muted-foreground">→</span>
+                  <StatusBadge tone={STATE_TONE[row.toState as keyof typeof STATE_TONE] ?? "neutral"}>
+                    {label(row.toState)}
+                  </StatusBadge>
+                </div>,
               },
               {
                 key: "by",
                 header: "By",
-                cell: (row) => `${label(row.actorType)} (${label(row.source)})`,
+                cell: (row) => <span title={label(row.source)}>
+                  {label(row.actorType)} <span className="text-muted-foreground">({label(row.source)})</span>
+                </span>,
               },
               { key: "reason", header: "Reason", cell: (row) => row.reason ?? "—" },
             ]}

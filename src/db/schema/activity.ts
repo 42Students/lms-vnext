@@ -300,3 +300,47 @@ export const notificationDeliveryOutbox = pgTable(
       sql`${table.deliveryStatus} <> 'SENT' or ${table.deliveredAt} is not null`),
   ],
 );
+
+/**
+ * Prepared, single-winner claim for the delayed notification outbox.
+ * A producer or worker may execute this only after scope-checked recipient
+ * resolution is installed. Claiming never inserts inbox rows, so future
+ * notices cannot become visible simply because a schedule was saved.
+ * A failed send must set FAILED with a bounded next_retry_at; processing
+ * leases and terminal FAILED handling belong to the dispatcher.
+ */
+export function claimDueNotificationOutboxStatement(
+  now: Date,
+  maxAttempts = 5,
+) {
+  if (!Number.isFinite(now.getTime())) {
+    throw new Error("Invalid notification delivery time");
+  }
+  if (!Number.isSafeInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 20) {
+    throw new Error("Invalid notification delivery retry budget");
+  }
+  return sql`
+    WITH due AS (
+      SELECT id FROM notification_delivery_outbox
+       WHERE deleted_at IS NULL
+         AND delivery_status IN ('SCHEDULED', 'FAILED')
+         AND scheduled_at <= ${now}
+         AND (next_retry_at IS NULL OR next_retry_at <= ${now})
+         AND delivery_attempts < ${maxAttempts}
+       ORDER BY scheduled_at, id
+       FOR UPDATE SKIP LOCKED
+       LIMIT 1
+    )
+    UPDATE notification_delivery_outbox AS outbox
+       SET delivery_status = 'PROCESSING',
+           delivery_attempts = outbox.delivery_attempts + 1,
+           delivery_error = NULL,
+           updated_at = ${now}
+      FROM due
+     WHERE outbox.id = due.id
+       AND outbox.deleted_at IS NULL
+    RETURNING outbox.id, outbox.event_id, outbox.college_id,
+              outbox.organization_id, outbox.recipient_selection,
+              outbox.delivery_attempts
+  `;
+}

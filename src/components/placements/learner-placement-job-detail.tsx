@@ -88,7 +88,7 @@ export function LearnerPlacementJobDetail({
       ? "RULES" as const : null);
 
   return (
-    <div className="min-w-0 space-y-5" aria-label="Published placement drive">
+    <div className={"min-w-0 space-y-5 "+(summary.canApplyCount>0?"pb-24 lg:pb-0":"")} aria-label="Published placement drive">
       <Breadcrumbs items={[
         { label: "My Placements", href: "/learn/my-placements" },
         { label: "Drives", href: returnHref },
@@ -440,6 +440,14 @@ export function LearnerPlacementJobDetail({
       </section>
         </aside>
       </div>
-    </div>
+    {summary.appliedCount===0&&summary.canApplyCount>0?(
+         <nav aria-label="Apply to this drive" className="fixed inset-x-0 bottom-0 z-30 border-t border-border bg-surface px-4 pt-3 shadow-lg lg:hidden"
+           style={{paddingBottom:"max(0.75rem,env(safe-area-inset-bottom))"}}>
+           <a href="#job-role-options" className="flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+             View role options · Apply now
+           </a>
+         </nav>
+       ):null}
+       </div>
   );
 }

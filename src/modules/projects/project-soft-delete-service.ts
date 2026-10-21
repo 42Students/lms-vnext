@@ -1,11 +1,13 @@
 import "server-only";
 
-import { and, asc, eq, isNotNull } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray, isNotNull } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
-import { projectInstances } from "@/db/schema";
+import { collegeMemberships,projectInstances,projectMembers,users } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import { getProjectAdminCollegeId } from "./admin-college-scope";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { loadProjectCollegeScope } from "./scope";
@@ -28,6 +30,72 @@ export async function listSoftDeletedProjectWorkspaces(context: RequestContext, 
     eq(projectInstances.collegeId, college.id),
     isNotNull(projectInstances.deletedAt),
   )).orderBy(asc(projectInstances.title), asc(projectInstances.id)).limit(200);
+}
+
+/** Page-specific deleted workspace listing; 1-based presentation page maps to
+ * 0-based SQL offset, matching the old LMS deleted-collection contract.
+ * Unlike the compatibility 200-row read, this query has an exact count and
+ * former-mentor fallback on the authorized selected college.
+ */
+const deletedPageSchema=z.strictObject({
+ page:z.number().int().min(1).max(100000),
+ pageSize:z.union([z.literal(10),z.literal(20),z.literal(50),z.literal(100)]),
+});
+export async function listPaginatedDeletedProjectWorkspaces(
+ context:RequestContext,collegeId:string,raw:{page:number;pageSize:number},
+){
+ const query=deletedPageSchema.parse(raw);
+ if(getProjectAdminCollegeId(context)!==collegeId)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const college=await loadProjectCollegeScope(collegeId);
+ requirePermission(context,"projects.manage",{collegeId:college.id,organizationId:college.organizationId});
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  const where=and(eq(projectInstances.collegeId,college.id),isNotNull(projectInstances.deletedAt));
+  const [totalRows,projects]=await Promise.all([
+   tx.select({value:count()}).from(projectInstances).where(where),
+   tx.select({id:projectInstances.id,title:projectInstances.title,slug:projectInstances.slug,
+    updatedAt:projectInstances.updatedAt,deletedAt:projectInstances.deletedAt,
+    status:projectInstances.status})
+    .from(projectInstances).where(where)
+    .orderBy(asc(projectInstances.title),asc(projectInstances.id))
+    .limit(query.pageSize).offset((query.page-1)*query.pageSize),
+  ]);
+  const total=Number(totalRows[0]?.value??0);
+  const ids=projects.map(project=>project.id);
+  const mentors=ids.length?await tx.select({
+   projectId:projectMembers.projectId,
+   displayName:users.displayName,
+   primary:projectMembers.isPrimary,
+   endedAt:projectMembers.endedAt,
+  }).from(projectMembers)
+   .innerJoin(collegeMemberships,and(
+    eq(collegeMemberships.id,projectMembers.membershipId),
+    eq(collegeMemberships.collegeId,college.id),
+   ))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(and(inArray(projectMembers.projectId,ids),eq(projectMembers.role,"MENTOR")))
+   .orderBy(desc(projectMembers.isPrimary),asc(projectMembers.endedAt)):[]; 
+  const mentorByProject=new Map<string,{name:string;former:boolean}>();
+  for(const row of mentors){
+   if(mentorByProject.has(row.projectId))continue;
+   mentorByProject.set(row.projectId,{
+    name:row.displayName?.trim()||"—",former:Boolean(row.endedAt),
+   });
+  }
+  return {
+   items:projects.map(project=>({
+    ...project,
+    title:project.title?.trim()||project.slug?.trim()||"Workspace",
+    mentorName:mentorByProject.get(project.id)?.name??null,
+    mentorFormer:mentorByProject.get(project.id)?.former??true,
+   })),
+   total,page:query.page,pageSize:query.pageSize,
+   totalPages:Math.max(1,Math.ceil(total/query.pageSize)),
+  };
+ });
 }
 
 export async function changeProjectSoftDeleteState(

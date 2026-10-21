@@ -19,13 +19,18 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
   .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.id,taskId))).limit(1);
  if(!task)throw new ProjectsServiceError("PROJECT_TASK_NOT_FOUND");
  return getDb().select({
-   id:projectTaskComments.id,body:projectTaskComments.body,
+   id:projectTaskComments.id,
+   // Legacy nullable bodies were normalized during import; preserve their
+   // historical absence as a display-only null without accepting new nulls.
+   body:sql<string>`case when ${projectTaskComments.legacyBodyWasNull} is true
+     then '' else ${projectTaskComments.body} end`,
    commentKind:projectTaskComments.commentKind,
    authorMembershipId:projectTaskComments.authorMembershipId,
    createdAt:projectTaskComments.createdAt,
    // Prefer the immutable actor display captured when this particular comment
    // was posted. User profile name changes must not rewrite historical notes.
    authorName:sql<string|null>`coalesce(
+     nullif(${projectTaskComments.legacyCommenterName},''),
      (select nullif(ae.metadata ->> 'authorDisplayName','')
         from activity_events ae
        where ae.college_id=${scope.collegeId}
@@ -35,7 +40,18 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
          and ae.metadata ->> 'projectId'=${scope.project.id}
          and ae.metadata ->> 'commentId'=${projectTaskComments.id}::text
        order by ae.occurred_at desc,ae.id desc limit 1),
-     ${users.displayName}
+     nullif(${users.displayName},''),'Former project member'
+   )`,
+   authorRole:sql<string|null>`coalesce(
+     ${projectTaskComments.legacyCommenterType},
+     (select ae.metadata ->> 'authorRole'
+        from activity_events ae
+       where ae.college_id=${scope.collegeId}
+         and ae.subject_type='project_task'
+         and ae.subject_id=${taskId}
+         and ae.event_type=${ACTIVITY_EVENT_TYPES.PROJECTS_TASK_DETAILS_UPDATED}
+         and ae.metadata ->> 'commentId'=${projectTaskComments.id}::text
+       order by ae.occurred_at desc, ae.id desc limit 1)
    )`,
    taskStatusSnapshot:projectTaskComments.taskStatusSnapshot,
    progressValue:projectTaskComments.progressValue,
@@ -45,6 +61,8 @@ export async function listProjectTaskComments(context:RequestContext,projectId:s
  .where(and(
    eq(projectTaskComments.projectId,scope.project.id),eq(projectTaskComments.taskId,taskId),
    eq(collegeMemberships.collegeId,scope.collegeId),
+   isNull(projectTaskComments.deletedAt),
+   sql`${projectTaskComments.legacyWasDeleted} is distinct from true`,
  )).orderBy(asc(projectTaskComments.createdAt),asc(projectTaskComments.id));
 }
 export async function postProjectTaskComment(context:RequestContext,projectId:string,taskIdInput:string,raw:unknown){
@@ -105,6 +123,7 @@ export async function postProjectTaskComment(context:RequestContext,projectId:st
     summary:"Project task comment added",metadata:{projectId:scope.project.id,taskId,commentId:comment.id,
       commentKind:comment.commentKind,taskStatusAtComment:task.status,
       authorMembershipId,authorDisplayName:author?.displayName??null,
+      authorRole:scope.member?.role??"ADMIN",
       taskUpdatedAtAtComment:task.updatedAt.toISOString()},
     groupKey:"project:"+scope.project.id,
   });

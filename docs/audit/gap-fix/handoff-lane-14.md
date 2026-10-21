@@ -167,3 +167,7 @@
 - Wave3 P1 people/admin UI and identity owners: G2-18-031-085 — display `MEMBERSHIP_ADMIN_ACTION_EXPLANATIONS` in admin controls; audited membership END is not global deletion, separate approved import rollback, erasure review, and OTP unlock service remain required.
 
 - Wave3 DB05 P0: `src/modules/courses/lesson-content-discussion-service.ts` and gated lesson-content GET/POST route are introduced separately from classroom chat; registration/negative security and DB migration verification remain required before setting `DB05_LESSON_DISCUSSIONS_READY=DB05_VERIFIED`. Delivery enrollment is checked on reads; concurrent enrollment revocation must be race-tested before activation.
+
+- Wave3 DB07 bulk project owner G2-4-017-019/-048/-073: schema and 0303 provide class x learner uniqueness and active membership FKs; integrate class-scoped bulk creation to populate `projectInstances.bulkLearnerMembershipId` and register/replay SQL before enabling bulk generation.
+
+- Wave3 DB09 scoped TPO/recruiter quote events: `drizzle/0304_chat14_tpo_change_request_event_scope.sql` guards quoted request vs thread job and forbids reparenting a referenced thread; lane 15 must journal/replay/negative-test, TPO messaging service owner must persist kind=EVENT and request ID from authorized same-job decision context (G2-19-031-021). Unregistered trigger is not runtime protection yet.

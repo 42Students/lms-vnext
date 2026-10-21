@@ -16,6 +16,7 @@ import {
   projectTemplateCollegeAssignments,
   projectTemplates,
   projectTemplateVersions,
+  legacyIdMap,
   colleges,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -107,6 +108,35 @@ export async function listProjectTemplates(
     .select()
     .from(projectTemplates)
     .orderBy(asc(projectTemplates.title));
+}
+
+/** Historic slug/numeric links must resolve under a verified global
+ * template read grant. Tenant-specific mappings cannot leak global IDs.
+ */
+export async function resolveLegacyProjectTemplateBookmark(
+ context:RequestContext,raw:string,
+):Promise<string|null>{
+ requirePermission(context,"project-template.read");
+ const value=raw.trim();
+ if(!value||value.length>96)return null;
+ const uuid=projectTemplateIdSchema.safeParse(value);
+ if(uuid.success)return uuid.data;
+ if(/^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(value)&&!/^[0-9]+$/.test(value)){
+   const [row]=await getDb().select({id:projectTemplates.id})
+    .from(projectTemplates)
+    .where(sql`lower(${projectTemplates.slug}) = ${value.toLowerCase()}`)
+    .limit(1);
+   return row?.id??null;
+ }
+ if(!/^[1-9][0-9]{0,9}$/.test(value))return null;
+ const rows=await getDb().select({id:projectTemplates.id})
+   .from(legacyIdMap)
+   .innerJoin(projectTemplates,eq(projectTemplates.id,legacyIdMap.newId))
+   .where(and(isNull(legacyIdMap.collegeId),
+     inArray(legacyIdMap.legacyEntityType,["project_template","template"]),
+     inArray(legacyIdMap.newEntityType,["project_template","template"]),
+     eq(legacyIdMap.legacyId,value))).limit(2);
+ return rows.length===1?rows[0].id:null;
 }
 
 export async function getProjectTemplateDetail(

@@ -122,7 +122,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
   </section>
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>
-   {data.totalApplications>0 && data.companyRows.length===0 ? (
+   {data.companyReportUnavailable ? (
      <div role="alert" className="flex flex-wrap items-center justify-between gap-2 border border-error/30 bg-error/5 px-3 py-2 text-sm">
        <span>Could not load the company-wise hiring report. The headline metrics may still be available.</span>
        <Link className="font-semibold text-primary-text underline" href={collegeHiringAnalyticsHref({...raw})}>Retry company report</Link>

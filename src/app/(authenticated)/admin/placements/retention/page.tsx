@@ -71,10 +71,10 @@ async function RetentionReportContent({searchParams}:RetentionParams){
    description="Applications withdrawn or rejected with no recorded application updates for at least 180 days."
    actions={<PageBackLink href="/admin/placements" label="Placements" />}/>
   <Banner tone="warning">
-   This is a review-only report, not an automated deletion or proof of legal retention eligibility. Account for offers, disputes and local retention policy before removing anything.
+   This is a review-only report, not an automated deletion or proof of legal retention eligibility. Account for offers, disputes and local retention policy before removing anything. The collapsed quick preview is also available on the Drives landing page.
   </Banner>
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
-    <p role="status" className="font-semibold text-[var(--lms-heading)] tabular-nums">{report.rows.length} candidates for retention review{report.truncated?" (showing first 200)":""}</p>
+    <p role="status" className="font-semibold text-[var(--lms-heading)] tabular-nums">{report.truncated ? "More than 200" : report.rows.length} candidates for retention review{report.truncated ? " (showing first 200 — sample truncated)" : ""}</p>
     <p className="text-sm text-muted-foreground">Cutoff: <time dateTime={report.cutoff}>{fmt(new Date(report.cutoff))}</time></p>
   </div>
   <DataTable columns={columns} rows={report.rows} getRowKey={row=>row.id}

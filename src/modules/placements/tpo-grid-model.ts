@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type {ReactNode} from "react";
 
 export const tpoGridQuerySchema = z.object({
   search: z.string().trim().max(120).default(""),
@@ -13,6 +14,8 @@ export type TpoGridColumn<Row> = {
   /** Only numeric or date columns may sort in the legacy sheet. */
   sortKind?: "number" | "date";
   sortValue?: (row: Row) => number | null;
+  /** Optional accessible styled display while read(row) remains the export/search value. */
+  render?: (row: Row) => ReactNode;
   tooltip?: (row: Row) => string | undefined;
   filter?:{urlKey:string;options:readonly {value:string;label:string}[]};
 };

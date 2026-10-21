@@ -9,6 +9,7 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {templateResourceMaterializationFields} from "./template-resource-materialization";
+import {legacyWorkspaceProjection} from "./legacy-workspace-projection";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { notifyProjectMemberships, notifyActiveProjectMembers } from "./project-notification-service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -630,6 +631,28 @@ export async function archiveProjectInstance(
   });
 }
 
+/** Numeric legacy deep links are scoped to the selected college and
+ * re-authorized through the normal vNext project access check.
+ */
+export async function resolveLegacyProjectInstanceId(
+ context:RequestContext,rawLegacyId:string,
+):Promise<string|null>{
+ if(!/^[1-9][0-9]{0,9}$/.test(rawLegacyId))return null;
+ const legacyId=Number(rawLegacyId);
+ if(!Number.isSafeInteger(legacyId))return null;
+ const collegeId=context.membership?.collegeId??context.adminScope?.collegeId;
+ if(!collegeId)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const [row]=await getDb().select({id:projectInstances.id})
+  .from(projectInstances).where(and(
+   eq(projectInstances.collegeId,collegeId),
+   eq(projectInstances.legacyProjectId,legacyId),
+   isNull(projectInstances.deletedAt),
+  )).limit(1);
+ if(!row)return null;
+ await requireProjectReadAccess(context,row.id);
+ return row.id;
+}
+
 export async function getProjectInstanceWorkspace(
   context: RequestContext,
   projectIdInput: string,
@@ -691,5 +714,8 @@ export async function getProjectInstanceWorkspace(
     sprints,
     tasks,
     resources,
+    legacySnapshot:legacyWorkspaceProjection({
+      project,releases:releaseResult.rows,sprints,tasks,resources,
+    }),
   };
 }

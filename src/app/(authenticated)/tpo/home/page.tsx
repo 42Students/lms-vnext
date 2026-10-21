@@ -93,8 +93,8 @@ export default async function TpoHome(){
  const operations=operationsResult;
  const greeting=tpoHomeGreeting(calendarNow,profileRows[0]?.displayName);
  const pendingRequests=pendingRequestCount!==null?pendingTpoRequestsAction(pendingRequestCount):null;
- const optionalDataUnavailable=[batchResult,operationsResult,pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads,weekEvents].some(value=>value===null)||!crmReady;
  const crmCounts=crmReady?await getTpoHomeCrmCounts(ctx,collegeId).catch(()=>null):null;
+ const optionalDataUnavailable=[batchResult,operationsResult,pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads,weekEvents].some(value=>value===null)||!crmReady||(crmReady&&crmCounts===null);
  const weekNext=(weekEvents?.events??[]).filter(event=>event.startsAt>=calendarNow&&
   (event.kind==="ROUND"||event.kind==="APPLICATION_DEADLINE"))
    .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime())
@@ -167,8 +167,7 @@ export default async function TpoHome(){
   teamUnread,
   upcoming:weekNext,calendarAvailable:weekEvents!==null,
  });
- const next=buildTpoLegacyNextUp({
-  needsYou:[
+ const homeNeeds=[
    ...(inviteReady?[{type:"REGISTRATION_CLOSED",priority:0,
       title:"Invite the batch to register",count:candidateEligible!,
       link:"/tpo/batches/"+inviteCandidate!.id}]:[]),
@@ -182,7 +181,8 @@ export default async function TpoHome(){
 
    ...(pendingRequests?[{type:"REQUESTS",priority:1,title:pendingRequests.label,
       count:pendingRequestCount!,link:"/tpo/requests"}]:[]),
-  ],
+  ];
+ const next=buildTpoLegacyNextUp({needsYou:homeNeeds,
   batches:inviteReady?[{batchId:inviteCandidate!.id,name:inviteCandidate!.name,
    eligible:candidateEligible!,registered:candidateRegistered!,invitedAt:null}]:[],
   checklist:[
@@ -199,7 +199,8 @@ export default async function TpoHome(){
  <p className="text-sm font-semibold text-muted-foreground leading-[22px]">{greeting.date}</p>
  <PageHeader title={greeting.title}/>
  {optionalDataUnavailable ? <InlineNotice tone="info" message="Some Home indicators could not be loaded. Other placement information is still available; refresh to retry."/> : null}
- <p aria-live="polite" data-testid="home.need-line" className="text-sm leading-[22px] text-[var(--lms-body-text)]">{tpoHomeNeedsLine(rows)}</p>
+ <p aria-live="polite" data-testid="home.need-line" className="text-sm leading-[22px] text-[var(--lms-body-text)]">{tpoHomeNeedsLine(Array.from({length:Math.max(homeNeeds.length,
+   rows.filter(row=>row.needsAttention).length)},()=>({needsAttention:true})))}</p>
  <div className="grid min-w-0 gap-4 min-[992px]:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] min-[992px]:items-start md:gap-6">
  <section aria-label="Next up" data-testid="home.next-up" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 min-[768px]:p-6">
   <h2 className="text-xs font-bold uppercase leading-[18px] tracking-[.11em] text-[var(--lms-primary-text)]">Next up</h2>

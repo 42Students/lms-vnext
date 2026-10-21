@@ -26,7 +26,12 @@ function invalid(field?: string, message?: string) {
 
 /**
  * The legacy tracker allowed an anonymous searchable index. DB10 deliberately
- * binds reports to authenticated users. Reporters may search only their own
+ * binds reports to authenticated users. The old
+ * PublicTrackerLogsAccessController accepted POST {password} and returned
+ * shared AuthResponse tokens; that incompatible shared-password grant is
+ * deliberately removed, not hidden behind an equivalent token-minting route.
+ * Active membership/individual login is required instead, with a verified
+ * super-admin capability for full index reads. Reporters may search only their own
  * records; managers retain the cursor-based, scoped admin endpoint.
  */
 export async function GET(request: Request) {

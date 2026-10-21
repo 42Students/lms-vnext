@@ -155,13 +155,15 @@ export async function listTpoLeads(
       isNull(placementTpoFollowups.doneAt),
     )).groupBy(placementTpoFollowups.leadId),
     getTpoRecruiterLeadStages(context, collegeId),
-    db.select({
+    db.selectDistinctOn([placementTpoLeadActivities.leadId],{
       leadId:placementTpoLeadActivities.leadId,
-      lastActivityAt:max(placementTpoLeadActivities.createdAt),
+      lastActivityAt:placementTpoLeadActivities.createdAt,
+      lastActivityType:placementTpoLeadActivities.type,
     }).from(placementTpoLeadActivities).where(and(
       eq(placementTpoLeadActivities.collegeId,collegeId),
       inArray(placementTpoLeadActivities.leadId,ids),
-    )).groupBy(placementTpoLeadActivities.leadId),
+    )).orderBy(placementTpoLeadActivities.leadId,
+      desc(placementTpoLeadActivities.createdAt),desc(placementTpoLeadActivities.id)),
     db.select({membershipId:collegeMemberships.id,ownerName:users.displayName})
       .from(collegeMemberships)
       .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -171,13 +173,13 @@ export async function listTpoLeads(
   const contactByLead = new Map(contacts.map(row => [row.leadId, row.lastContactAt]));
   const nextByLead = new Map(followups.map(row => [row.leadId, row.nextFollowupAt]));
   const now = new Date();
-  const activityByLead=new Map(activities.map(row=>[row.leadId,row.lastActivityAt]));
+  const activityByLead=new Map(activities.map(row=>[row.leadId,row]));
   const ownerByMembership=new Map(owners.map(row=>[row.membershipId,row.ownerName]));
   return rows.map(row => ({
     ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
     lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
-    lastActivityAt:activityByLead.get(row.id)??null,
+    lastActivityAt:activityByLead.get(row.id)?.lastActivityAt??null,
     stage:stages.get(row.id),
     nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
     inviteBouncedAt: row.inviteBouncedAt,
@@ -187,7 +189,8 @@ export async function listTpoLeads(
     unsubscribedAt: row.unsubscribedAt,
   }, now), stages.get(row.id)),
     ownerName:row.ownerMembershipId?ownerByMembership.get(row.ownerMembershipId)??null:null,
-    lastActivityAt:activityByLead.get(row.id)?.toISOString()??null,
+    lastActivityAt:activityByLead.get(row.id)?.lastActivityAt.toISOString()??null,
+    lastActivityType:activityByLead.get(row.id)?.lastActivityType??null,
     nextFollowupAt:nextByLead.get(row.id)?.toISOString()??null,
     inviteStatus:row.recruiterUserId?"JOINED":row.inviteBouncedAt?"BOUNCED":
       row.inviteClickedAt?"OPENED":row.inviteSentAt?"SENT":"NOT_INVITED",
@@ -206,9 +209,14 @@ export async function createTpoLead(
   requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   const college=await requirePlacementManageScope(context, input.collegeId);
 
-  // Insert and durable staff-attributed audit either both commit, or
-  // both roll back. DB unique constraints remain the race-safe duplicate
-  // authority (not the optional preflight duplicate check in the UI).
+  // Legacy Engage created a lead then separately scheduled a follow-up.
+  // In vNext the optional follow-up, append-only activity, staff audit and
+  // recruiter notification share this transaction with the lead. A failed
+  // follow-up insertion rolls the whole creation back, so neither the
+  // prospect nor its required reminder is silently lost. The client must
+  // report a failure without claiming that part of the operation succeeded.
+  // DB unique constraints remain the race-safe duplicate authority, not
+  // the optional preflight duplicate check in the UI.
   try {
     const lead = await getDb().transaction(async (tx) => {
     const [created] = await tx

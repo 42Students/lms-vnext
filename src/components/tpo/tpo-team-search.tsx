@@ -32,11 +32,11 @@ export function TpoTeamSearch({value}:{value:string}){
     if(timer.current)clearTimeout(timer.current);
     timer.current=setTimeout(()=>{
      const params=new URLSearchParams(window.location.search);
-     params.set("tab","conversations");
+     params.set("tab","team");
      if(query.length>=2)params.set("q",query);
      else params.delete("q");
-     router.replace("/tpo/team?"+params.toString(),{scroll:false});
-    },200);
+     router.replace("/tpo/messages?"+params.toString(),{scroll:false});
+    },250);
    }}/>
  </label>;
 }

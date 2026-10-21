@@ -27,6 +27,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
  const [body,setBody]=useState(""),[segment,setSegment]=useState<(typeof SEGMENTS)[number]["value"]>("ALL_ELIGIBLE");
  const [templateKey,setTemplateKey]=useState(""),[busy,setBusy]=useState(false);
  const [error,setError]=useState(""),[done,setDone]=useState("");
+ const [savedDraftId,setSavedDraftId]=useState<string|null>(null);
  const [audience,setAudience]=useState<SelectedAudiencePreview|null>(null);
  const [audienceStatus,setAudienceStatus]=useState<"idle"|"loading"|"ready"|"error">(selectedLeadIds.length?"loading":"idle");
  const [audienceRetry,setAudienceRetry]=useState(0);
@@ -52,6 +53,10 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   return ()=>controller.abort();
  },[selectionKey,audienceRetry]);
  async function save(){
+  setError("");
+  if(!title.trim()){setError("Give this campaign a title");return;}
+  if(!subject.trim()){setError("Give it a subject");return;}
+  if(!body.trim()){setError("Write the email");return;}
   if(selectedLeadIds.length&&(!audience||audienceStatus!=="ready"||audience.unavailable>0||audience.eligible===0)){
    setError("Selected recruiters could not be confirmed as eligible. Review the audience before saving.");return;
   }
@@ -59,7 +64,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   if(!parsed.success){
    setError(parsed.error.issues[0]?.message??"Check your campaign fields.");return;
   }
-  setBusy(true);setError("");setDone("");
+  setBusy(true);setError("");setDone("");setSavedDraftId(null);
   try{
    const response=await fetch("/api/placements/tpo/campaigns/drafts",{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
@@ -71,13 +76,14 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     data.error==="INVALID_SELECTION"?"Some selected recruiters are no longer available in your college. Return to Engage and select again.":
     "Couldn't save your campaign draft. Please try again.");
    setDone("Draft saved for "+data.recipients+" eligible recruiter contacts. No email was sent.");
+   setSavedDraftId(data.campaignId??null);
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:CAMPAIGN_DRAFT_UNAVAILABLE);}
   finally{setBusy(false);}
  }
  return <section className="min-w-0 space-y-4 border-t border-border pt-4" aria-label="Campaign composer">
-  <h2 className="text-lg font-semibold text-foreground">Write a campaign</h2>
-  <p className="text-sm text-body">Save a draft for your placement cell. No message is sent until a separate, verified dispatch action is enabled.</p>
+  <h2 className="text-lg font-semibold text-foreground">{selectedLeadIds.length?"Email "+selectedLeadIds.length+" recruiters":"Write a campaign"}</h2>
+  <p className="text-sm text-body">Step 1 of 2 · Write the email and review its eligible recipients. Save a draft, then open it to confirm sending. Nothing is sent from this form.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Campaign name
     <Input value={title} maxLength={160} required className={field}
@@ -106,11 +112,11 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
    </label>
    {selectedLeadIds.length?<p className="text-xs text-muted-foreground">Audience is fixed to the selected leads from Engage. Return there to change the selection.</p>:null}
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Subject
-    <Input value={subject} maxLength={200} required className={field}
+    <Input value={subject} maxLength={200} aria-required="true" className={field}
      onChange={e=>setSubject(e.target.value)}/>
    </label>
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Message
-    <Textarea value={body} maxLength={10000} required rows={6}
+    <Textarea value={body} maxLength={10000} aria-required="true" rows={6}
      className={field} onChange={e=>setBody(e.target.value)}/>
    </label>
    <p className="text-xs text-muted-foreground" aria-live="polite">{body.length} / 10,000 characters</p>
@@ -144,7 +150,15 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
     {busy?"Saving…":"Save draft"}
    </Button>
   </form>
-  {done?<InlineNotice tone="success" message={done}/>:null}
+  {done?<div className="space-y-2">
+    <InlineNotice tone="success" message={done}/>
+    {savedDraftId?<Link href={"/tpo/recruiters/campaigns/drafts/"+encodeURIComponent(savedDraftId)}
+      className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      Step 2 · Review draft and confirm recipients
+    </Link>:<Link href="/tpo/recruiters/campaigns" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+      Open email campaigns
+    </Link>}
+  </div>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
  </section>;
 }

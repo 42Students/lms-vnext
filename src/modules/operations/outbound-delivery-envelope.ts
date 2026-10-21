@@ -60,12 +60,25 @@ export function legacyAssignmentReminderVariables(input:AssignmentReminderTempla
     learnerName:input.learnerName.trim(),
     assignmentName:input.assignmentName?.trim()||"Assignment",
     contentType:input.contentType?.trim().toUpperCase()==="QUIZ"?"QUIZ":"ASSIGNMENT",
+    contentLabel:input.contentType?.trim().toUpperCase()==="QUIZ"?"Quiz":"Assignment",
     ...(at?{dueDate:`${at.day} ${at.month} ${at.year}, ${at.hour}:${at.minute} ${at.period}`}:{}),
     assignmentId:input.assignmentId,
     ...(input.courseId?{courseId:input.courseId}:{}),
     ...(input.courseSlug?{courseSlug:input.courseSlug}:{}),
     ...(input.courseName?{courseName:input.courseName}:{}),
   };
+}
+/** The legacy interview notifications display the stage in title case with
+ * a final "Round" suffix, not the internal enum value. */
+export function legacyInterviewRoundLabel(raw:string|null|undefined):string {
+ const value=(raw??"").trim();
+ if(!value)return "Interview";
+ const key=value.replace(/[ _-]+/g," ").replace(/\s+round$/i,"").trim().toUpperCase();
+ const known:Record<string,string>={
+  SCREENING:"Screening Round",TECHNICAL:"Technical Round",HR:"HR Round",
+  MANAGERIAL:"Managerial Round",FINAL:"Final Round",
+ };
+ return known[key]??(/\s+round$/i.test(value)?value:value+" Round");
 }
 export type InterviewReminderTemplateInput={
   learnerName:string;jobTitle:string;companyName:string;
@@ -86,7 +99,7 @@ export function legacyInterviewReminderVariables(input:InterviewReminderTemplate
     learnerName:input.learnerName.trim(),jobTitle:input.jobTitle,
     companyName:input.companyName,applicationId:input.applicationId,
     interviewId:input.interviewId,
-    roundName:input.roundName?.trim()||"Interview",
+    roundName:legacyInterviewRoundLabel(input.roundName),
     roundDescription:input.roundDescription?.trim()||"",
     ...(applied?{applicationDate:`${applied.paddedDay} ${applied.month} ${applied.year}`}:{}),
     ...(date?{
