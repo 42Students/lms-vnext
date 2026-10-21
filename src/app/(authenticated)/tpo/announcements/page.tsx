@@ -305,7 +305,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
       </Button>
      </form>:null}
     </div>:null}
-    {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}/>:null}
+    {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}
+      status={row.scheduledAt&&new Date(row.scheduledAt)>new Date()?"SCHEDULED":
+       row.expiresAt&&new Date(row.expiresAt)<=new Date()?"ENDED":"SENT"}/>:null}
    </li>)}
   </ol>:<EmptyState title="No announcements from this sender yet"/>}
   {result.status==="READY"&&(result.page>1||result.hasMore)?<nav aria-label="Announcement pages"

@@ -14,7 +14,7 @@ const links = [
   {label:"Engage",href:"/tpo/recruiters",icon:"/assets/images/common/contact.svg"},
   {label:"Drives",href:"/tpo/placements",icon:"/assets/images/common/assignment.svg"},
   {label:"Students",href:"/tpo/students",icon:"/assets/images/common/myAccount.svg"},
-  {label:"More",href:"/tpo/settings",icon:"/assets/images/common/Menu-Icon.svg"},
+  {label:"More",href:"/tpo/more",icon:"/assets/images/common/Menu-Icon.svg"},
 ] as const;
 
 const moreLinks = [
@@ -38,7 +38,8 @@ export function TpoMobileFooter() {
     window.addEventListener("resize",closeOnTablet);
     return ()=>{media?.removeEventListener("change",closeOnTablet);window.removeEventListener("resize",closeOnTablet);};
   },[]);
-  const moreActive = moreLinks.some(([,href])=>pathname===href||pathname.startsWith(href+"/"));
+  const moreActive = pathname==="/tpo/more"||pathname.startsWith("/tpo/more/")||
+    moreLinks.some(([,href])=>pathname===href||pathname.startsWith(href+"/"));
   return <>
     <nav aria-label="TPO mobile footer" className="lms-tpo-mobile-footer fixed inset-x-0 bottom-0 z-40 grid min-w-0 grid-cols-5 md:hidden">
       {links.map(link=>{

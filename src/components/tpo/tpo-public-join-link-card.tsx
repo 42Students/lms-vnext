@@ -52,12 +52,12 @@ export function TpoPublicJoinLinkCard({
           throw new Error("The join link changed. Refresh and try again.");
         if(body?.error==="NOT_FOUND")
           throw new Error("The company relationship was not found in your college.");
-        throw new Error("Couldn't make the link. Check your access and try again.");
+        throw new Error("Couldn't make the link");
       }
       const data: { path: string; status: TpoPublicJoinLinkStatus } = await response.json();
       setStatus(data.status);
       setFreshUrl(window.location.origin + data.path);
-      setFeedback(action === "REPLACE" ? "New link made" : "Link made");
+      setFeedback(action === "REPLACE" ? "New link made. The old link stopped working." : "Link made");
       setReplaceOpen(false);
     } catch(error) {
       setFeedback(error instanceof Error?error.message:"Couldn't make the link");
@@ -96,7 +96,7 @@ export function TpoPublicJoinLinkCard({
        "That domain belongs to another company.":payload.error==="ALREADY_SET"?
        "A domain is already saved for this company.":"Couldn't add domain");
       setStatus(prev=>({...prev,domain:payload.domain??prev.domain}));
-      setFeedback("Email domain added");
+      setFeedback("Domain added");
     }catch(error){setFeedback(error instanceof Error?error.message:"Couldn't add domain");}
     finally{actionInFlight.current=false;setBusy(false);}
   }
