@@ -36,7 +36,8 @@ export async function getLectureHallDetail(ctx:RequestContext,rawId:unknown){
  const hallId=z.string().uuid().parse(rawId);
  const [hall]=await getDb().select().from(lectureHalls).where(eq(lectureHalls.id,hallId)).limit(1);
  if(!hall)throw new LectureHallError("HALL_NOT_FOUND");
- requirePermission(ctx,"academics.read",{collegeId:hall.collegeId});
+ const college = await loadCollege(hall.collegeId);
+ authorize(ctx, college, "academics.read");
  return hall;
 }
 export const ROOM_TYPES = [
@@ -91,7 +92,7 @@ const hallFields = {
   // choosing a newly supported value.
   capacity: z.coerce.number().int()
     .min(1, "Capacity must be at least 1")
-    .max(1000, "Capacity must be 1000 or less"),
+    .max(1000, "Capacity must be 1000 or less").default(50),
   roomType: z.enum(ROOM_TYPES),
   description: descriptionSchema,
   departmentId: z.union([z.string().uuid(), z.null()]).optional(),
@@ -159,6 +160,7 @@ async function loadCollege(collegeId: string) {
 function authorize(
   context: RequestContext,
   college: { id: string; organizationId: string },
+  permission: "academics.manage" | "academics.read" = "academics.manage",
 ) {
   // Security correction to legacy precedence: department filter never overrides
   // the selected college. A global/organization-only Super Admin must explicitly
@@ -166,9 +168,9 @@ function authorize(
   // A read-only global directory would require a distinct audited permission
   // and API, not bypassing this check for a caller-supplied collegeId.
   if (isSuperAdmin(context) && context.adminScope?.collegeId !== college.id) {
-    throw new AuthorizationError("academics.manage");
+    throw new AuthorizationError(permission);
   }
-  requirePermission(context, "academics.manage", {
+  requirePermission(context, permission, {
     organizationId: college.organizationId,
     collegeId: college.id,
   });
@@ -207,7 +209,7 @@ export async function listLectureHalls(
 ) {
   const query = listLectureHallsSchema.parse(rawQuery);
   const college = await loadCollege(query.collegeId);
-  authorize(context, college);
+  authorize(context, college, "academics.read");
 
   const scheduledFuture = sql<boolean>`exists (select 1 from ${sectionScheduleEvents} future where future.lecture_hall_id = ${lectureHalls.id} and future.status = 'SCHEDULED' and future.ends_at > now())`;
   // Match name and optional description after the college/department predicate.
@@ -224,6 +226,7 @@ export async function listLectureHalls(
       ilike(lectureHalls.name, containsSearch),
       ilike(lectureHalls.description, containsSearch),
       ilike(lectureHalls.roomType, containsSearch),
+      sql`replace(${lectureHalls.roomType}, '_', ' ') ilike ${containsSearch}`,
     )!] : []),
     ...(query.status ? [eq(lectureHalls.status, query.status)] : []),
     ...(query.roomType ? [eq(lectureHalls.roomType, query.roomType)] : []),
@@ -240,6 +243,12 @@ export async function listLectureHalls(
     db
       .select({
         id: lectureHalls.id,
+        legacyLectureHallId: lectureHalls.legacyLectureHallId,
+        legacyCollegeId: lectureHalls.legacyCollegeId,
+        legacyDepartmentId: lectureHalls.legacyDepartmentId,
+        legacyOriginalRoomType: lectureHalls.legacyOriginalRoomType,
+        legacyOriginalCapacity: lectureHalls.legacyOriginalCapacity,
+        legacyNameWasNull: lectureHalls.legacyNameWasNull,
         name: lectureHalls.name,
         capacity: lectureHalls.capacity,
         roomType: lectureHalls.roomType,

@@ -326,18 +326,25 @@ export function HrDriveDraftForm({
           Hire again · copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
         </p>
       ) : null}
-      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
+      {notice === "We restored your unsent draft" ? <Alert tone="info" title="We restored your unsent draft" className="mb-4">
+         <span>Your choices remain on this device until you send them for review.</span>
+         <Button type="button" variant="secondary" disabled={submitting}
+           onClick={() => setDraftDecision("CLEAR")}>Start over</Button>
+       </Alert> : null}
+       {fixRequestId && JSON.stringify(draft) !== JSON.stringify(initial) ?
+         <span role="status" className="inline-flex rounded-full border border-warning px-2 py-1 text-xs font-semibold text-warning">Unsaved changes</span> : null}
+       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
       <div className="min-w-0 space-y-5">
-      <section className="border-b border-border pb-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Role and work</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Role title
-            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)} placeholder="e.g. Software Engineer"
+            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)} placeholder="e.g. Software Engineer" aria-describedby={fieldErrors.title ? "hr-title-error" : undefined}
               value={draft.title} maxLength={200}
               onChange={(event) => { setFieldErrors(current => ({ ...current, title: "" }));
                 setDraft((current) => ({ ...current, title: event.target.value })); }} />
-            {fieldErrors.title ? <span role="alert" className="text-xs text-error">{fieldErrors.title}</span> : null}
+            {fieldErrors.title ? <span role="alert" id="hr-title-error" className="text-xs text-error">{fieldErrors.title}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Description (optional)
@@ -387,16 +394,16 @@ export function HrDriveDraftForm({
         </p>
       </section>
 
-      <section className="border-b border-border pb-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Pay</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             {draft.employmentType==="INTERNSHIP"?"CTC after the internship (LPA, optional)":"CTC (LPA)"}
             <Input className="w-full" data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors.ctcLpa)}
-              inputMode="decimal" value={draft.ctcLpa??""}
+              inputMode="decimal" value={draft.ctcLpa??""} aria-describedby={fieldErrors.ctcLpa ? "hr-ctc-error" : undefined}
               onChange={event=>{setFieldErrors(current=>({...current,ctcLpa:""}));
                 setDraft(current=>({...current,ctcLpa:event.target.value}));}}/>
-            {fieldErrors.ctcLpa ? <span role="alert" className="text-xs text-error">{fieldErrors.ctcLpa}</span> : null}
+            {fieldErrors.ctcLpa ? <span role="alert" id="hr-ctc-error" className="text-xs text-error">{fieldErrors.ctcLpa}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Fixed (optional)
@@ -423,8 +430,6 @@ export function HrDriveDraftForm({
             ["variableAnnualCtcInr", "Variable annual CTC (₹)"],
             ["bondMonths", "Bond months"],
             ["bondAmountInr", "Bond amount (₹)"],
-            ["minimumCgpa", "Minimum CGPA (0–10)"],
-            ["maximumActiveBacklogs", "Maximum active backlogs"],
           ] as const).map(([field, label]) => (
             <label key={field} className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
               {label}
@@ -436,35 +441,12 @@ export function HrDriveDraftForm({
             </label>
           ))}
         </div>
-        <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Branches
-            <Input className="w-full" list="recruiter-eligible-branches"
-              value={branchInput} placeholder="e.g. CSE, ECE, Mechanical"
-              onChange={event=>{setBranchInput(event.target.value);setDraft(current=>({...current,
-                branches:[...new Map(event.target.value.split(",").map(value=>value.trim()).filter(Boolean)
-                  .map(value=>[value.toLocaleLowerCase("en"),value] as const)).values()]}));}}/>
-            <datalist id="recruiter-eligible-branches">
-              {branchSuggestions.map(name=><option key={name} value={name}/>)}
-            </datalist>
-            <span className="text-xs text-muted-foreground">Separate multiple college branches with commas. The placement cell verifies the final eligibility.</span>
-          </label>
-          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
-            Passing year
-            <Input className="w-full" data-draft-field="passingYear" aria-invalid={Boolean(fieldErrors.passingYear)}
-              inputMode="numeric" maxLength={4}
-              value={draft.passingYear??""} placeholder="YYYY"
-              onChange={event=>{setFieldErrors(current=>({...current,passingYear:""}));
-                setDraft(current=>({...current,passingYear:event.target.value}));}}/>
-            {fieldErrors.passingYear ? <span role="alert" className="text-xs text-error">{fieldErrors.passingYear}</span> : null}
-          </label>
-        </div>
         <p className="mt-3 text-xs text-muted-foreground">
           Compensation and eligibility values are submitted as part of the formal request; the placement cell decides whether to approve.
         </p>
       </section>
 
-      <section className="border-b border-border pb-5">
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <h2 className="font-semibold text-foreground">Rounds</h2>
           <Button type="button" disabled={draft.rounds.length >= 12}
@@ -526,6 +508,64 @@ export function HrDriveDraftForm({
             </div>
           ))}
         </div>
+      </section>
+      <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+        <h2 className="font-semibold text-foreground">Eligibility</h2>
+        <p className="mt-2 text-sm text-body">Leave these blank to include every registered student.</p>
+        <div className="mt-3 grid min-w-0 gap-4 md:grid-cols-2">
+          <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            Minimum CGPA
+            <Input type="number" min={0} max={10} step={0.1} inputMode="decimal"
+              data-draft-field="minimumCgpa" aria-invalid={Boolean(fieldErrors.minimumCgpa)}
+              value={draft.minimumCgpa}
+              onChange={event=>{setFieldErrors(current=>({...current,minimumCgpa:""}));
+                setDraft(current=>({...current,minimumCgpa:event.target.value}));}}/>
+            {fieldErrors.minimumCgpa ? <span role="alert" className="text-xs text-error">{fieldErrors.minimumCgpa}</span> : null}
+          </label>
+          <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            Maximum active backlogs
+            <Input type="number" min={0} step={1} inputMode="numeric"
+              data-draft-field="maximumActiveBacklogs" value={draft.maximumActiveBacklogs}
+              aria-invalid={Boolean(fieldErrors.maximumActiveBacklogs)}
+              onChange={event=>{setFieldErrors(current=>({...current,maximumActiveBacklogs:""}));
+                setDraft(current=>({...current,maximumActiveBacklogs:event.target.value}));}}/>
+            {fieldErrors.maximumActiveBacklogs ? <span role="alert" className="text-xs text-error">{fieldErrors.maximumActiveBacklogs}</span> : null}
+          </label>
+        </div>
+        <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+            Branches
+            <Input className="w-full" list="recruiter-eligible-branches"
+              value={branchInput} placeholder="All branches"
+              onChange={event=>{setBranchInput(event.target.value);setDraft(current=>({...current,
+                branches:[...new Map(event.target.value.split(",").map(value=>value.trim()).filter(Boolean)
+                  .map(value=>[value.toLocaleLowerCase("en"),value] as const)).values()]}));}}/>
+            <datalist id="recruiter-eligible-branches">
+              {branchSuggestions.map(name=><option key={name} value={name}/>)}
+            </datalist>
+            <span className="text-xs text-muted-foreground">Separate multiple college branches with commas. The placement cell verifies the final eligibility.</span>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
+            Passing year
+            <Input className="w-full" data-draft-field="passingYear" aria-invalid={Boolean(fieldErrors.passingYear)}
+              inputMode="numeric" maxLength={4}
+              value={draft.passingYear??""} placeholder="Any year, e.g. 2027" list="recruiter-passing-years"
+              onChange={event=>{setFieldErrors(current=>({...current,passingYear:""}));
+                setDraft(current=>({...current,passingYear:event.target.value}));}}/>
+            <datalist id="recruiter-passing-years">
+               {Array.from({ length: 3 }, (_, index) => new Date().getFullYear() + index).map(year =>
+                 <option key={year} value={year} />)}
+             </datalist>
+             {fieldErrors.passingYear ? <span role="alert" className="text-xs text-error">{fieldErrors.passingYear}</span> : null}
+          </label>
+        </div>
+
+        <p className="mt-2 text-xs text-muted-foreground">
+          Student reach is estimated: the placement cell verifies branches, passing years and academic records before publication.
+        </p>
+        {branchSuggestions.length === 0 ? <Alert tone="warning" className="mt-3">
+          College branch suggestions are unavailable. Enter known branches or leave All branches for placement-cell review.
+        </Alert> : null}
       </section>
       </div>
       <aside aria-label="Drive preview and submit" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:sticky lg:top-6">
@@ -624,12 +664,21 @@ export function HrDriveDraftForm({
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
           </div>
-        {notice ? <InlineNotice tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"} message={notice}/> : null}
+        {notice && notice !== "We restored your unsent draft" ? <InlineNotice
+           tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"}
+           message={notice} /> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
         </p>
       </section>
       </aside>
+      </div>
+      <div className="flex justify-stretch border-t border-border pt-4 lg:hidden">
+        <Button type="button" className="w-full" disabled={!result.success || submitting}
+          loading={submitting} aria-busy={submitting}
+          onClick={() => void sendFormalDriveRequest()}>
+          {fixRequestId ? editMode === "EDIT" ? "Save changes" : "Fix and Resend" : "Send for review"}
+        </Button>
       </div>
     </div>
   );
