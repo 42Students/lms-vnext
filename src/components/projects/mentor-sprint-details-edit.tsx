@@ -115,7 +115,7 @@ export function MentorSprintDetailsEdit({
           <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
         
         <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-3">
-          {([{label:"Start date",value:start,set:setStart},
+          {([{label:"Start Date",value:start,set:setStart},
              {label:"End date",value:end,set:setEnd},
              {label:"Due date",value:due,set:setDue}]).map(row=>
               <label key={row.label} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{row.label}

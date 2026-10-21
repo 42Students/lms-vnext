@@ -99,7 +99,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
   <section className="min-w-0 space-y-4 border-b border-border pb-4">
    <h2 className="text-lg font-semibold">Company-wise Hiring Report</h2>
    <DataTable
-    caption="Company-wise hiring report"
+    caption="Company-wise Hiring Report"
     rows={data.companyRows}
     getRowKey={row=>row.jobId}
     columns={[

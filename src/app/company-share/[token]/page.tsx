@@ -22,9 +22,9 @@ export default async function CompanySharePage({
  const proof=(await cookies()).get("company_share_access")?.value??null;
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
  if(result===null)return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
-  <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try again."
+  <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try Again."
     action={<Link href={"/company-share/"+encodeURIComponent(token)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-[650] text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 text-sm">Try again</Link>}/>
+      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-[650] text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 text-sm">Try Again</Link>}/>
  </main>;
  if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:py-12`}>
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
