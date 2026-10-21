@@ -3,7 +3,8 @@ import { Input } from "@/components/ui/input";
 
 import { learnerCourseAttendanceMonthShortcutVisible } from "@/modules/attendance/learner-course-attendance-month-shortcut-model";
 import { learnerCourseAttendanceSameIstMonth } from "@/modules/attendance/learner-course-attendance-ist-model";
-import { useMemo } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
+import { learnerAttendanceStatus } from "@/modules/attendance/model";
 import {usePathname,useRouter} from "next/navigation";
 import { learnerCourseAttendanceTone } from "@/modules/attendance/learner-course-attendance-tone-model";
 import { learnerCourseAttendanceSummary, learnerCourseAttendanceThresholdReached } from "@/modules/attendance/learner-course-attendance-summary-model";
@@ -141,11 +142,14 @@ export function LearnerCourseAttendance({
   workspace,
   defaultMonth,
   currentMonth = defaultMonth,
+  loadError = false,
 }: {
   deliveryId: string;
   workspace: AttendanceWorkspace;
   defaultMonth: string;
   currentMonth?: string;
+  /** Read failures must be supplied explicitly by the server, not inferred from zero records. */
+  loadError?: boolean;
 }) {
   // Search-parameter navigation must update the visible month when the
   // server sends fresh props; state initializers run only on first mount.
@@ -155,6 +159,17 @@ export function LearnerCourseAttendance({
   }, [defaultMonth]);
 
   const router=useRouter(),pathname=usePathname();
+  const [isRefreshing,startRefresh]=useTransition();
+  const [clientNowMs,setClientNowMs]=useState<number|null>(null);
+  useEffect(()=>{
+    const refreshClock=()=>setClientNowMs(Date.now());
+    refreshClock();
+    const timer=window.setInterval(refreshClock,60_000);
+    return ()=>window.clearInterval(timer);
+  },[]);
+  function retryAttendance(){
+    startRefresh(()=>router.refresh());
+  }
   function navigateMonth(next:Date){
     const params=new URLSearchParams(window.location.search);
     params.set("month",monthKey(next));
@@ -178,6 +193,12 @@ export function LearnerCourseAttendance({
               month,
             ),
         )
+        .map(item => ({
+          ...item,
+          status: clientNowMs === null
+            ? item.status
+            : learnerAttendanceStatus(item,new Date(clientNowMs)),
+        }))
         .sort(
           (left, right) =>
             left.startsAt.getTime() -
@@ -187,6 +208,7 @@ export function LearnerCourseAttendance({
       workspace.records,
       deliveryId,
       month,
+      clientNowMs,
     ],
   );
 
@@ -195,18 +217,34 @@ export function LearnerCourseAttendance({
     [records],
   );
 
+  if (loadError) {
+    return <Alert tone="error" role="alert" title="Failed to load attendance.">
+      <span>Attendance records could not be refreshed. No absence or presence is assumed.</span>
+      <Button type="button" variant="secondary" className="mt-2 w-fit"
+        disabled={isRefreshing} onClick={retryAttendance}>
+        {isRefreshing ? "Retrying…" : "Retry"}
+      </Button>
+    </Alert>;
+  }
+
+  if (!deliveryId) {
+    return <EmptyState title="Select a Course"
+      description="Choose a Course to review its attendance history." />;
+  }
   if (!course) {
     return (
       <EmptyState
         title="No attendance data"
-        description="Attendance is unavailable for this Course."
+        description="This Course is unavailable in your current enrollment."
       />
     );
   }
 
-  const threshold =
-    workspace.policy
-      .eligibilityThresholdPercent;
+  const configuredThreshold = workspace.policy.eligibilityThresholdPercent;
+  const threshold = Number.isFinite(configuredThreshold) &&
+    configuredThreshold >= 0 && configuredThreshold <= 100
+      ? configuredThreshold
+      : 75;
   const headroom = attendanceHeadroom(
     summary.present,
     summary.markedSessions,
@@ -223,15 +261,15 @@ export function LearnerCourseAttendance({
       thresholdDetail = Number.isFinite(
         headroom.canMiss,
       )
-        ? `You need ${threshold}%. You can miss ${headroom.canMiss} more ${headroom.canMiss === 1 ? "class" : "classes"} and remain at or above the current threshold.`
+        ? `You need ${threshold}%. You can miss ${headroom.canMiss} more ${headroom.canMiss === 1 ? "class" : "classes"} this month.`
         : `You are at or above the ${threshold}% threshold.`;
     } else if (
       headroom.recoverable &&
       headroom.mustAttend > 0
     ) {
-      thresholdDetail = `Below the ${threshold}% threshold. Attend the next ${headroom.mustAttend} ${headroom.mustAttend === 1 ? "class" : "classes"} to recover.`;
+      thresholdDetail = `Below the ${threshold}% requirement. Attend the next ${headroom.mustAttend} ${headroom.mustAttend === 1 ? "class" : "classes"} to recover.`;
     } else {
-      thresholdDetail = `Below the ${threshold}% threshold. Talk to your Faculty or College team about the applicable policy.`;
+      thresholdDetail = `Below the ${threshold}% requirement. Talk to your faculty about it.`;
     }
   }
 
@@ -259,6 +297,11 @@ export function LearnerCourseAttendance({
           </div>
 
           <div className="flex w-full min-w-0 flex-wrap items-end gap-2 sm:w-auto">
+            <Button size="sm" type="button" variant="secondary"
+              className="min-h-11 md:min-h-9" disabled={isRefreshing}
+              onClick={retryAttendance}>
+              {isRefreshing ? "Refreshing…" : "Refresh attendance"}
+            </Button>
             <Button
               size="sm"
               className="min-h-11 min-w-11 md:min-h-9 md:min-w-9"
@@ -322,10 +365,10 @@ export function LearnerCourseAttendance({
         </div>
       </section>
 
-      <section aria-label="Attendance this month" className="border-b border-border py-4 md:py-5">
+      <section aria-label="Student attendance summary" className="border-b border-border py-4 md:py-5">
         <h3 className="text-sm font-semibold text-foreground">Attendance this month</h3>
         <p className="mt-2 text-3xl font-semibold text-foreground">{summary.percentage===null?"—":summary.percentage+"%"}</p>
-        <p className="mt-2 text-xs font-semibold text-muted-foreground">Attendance threshold</p>
+        <p className="mt-2 text-xs font-semibold text-muted-foreground">Attendance threshold: {threshold}%</p>
         <p className="mt-2 text-sm text-body">{summary.heldSessions===0?"No classes held yet in this period.":thresholdDetail}</p>
         <dl className="mt-4 grid grid-cols-3 gap-2 border-t border-border pt-3 text-sm md:gap-3">
           <div><dt className="text-muted-foreground">Present</dt><dd className="font-semibold">{summary.present}</dd></div>
