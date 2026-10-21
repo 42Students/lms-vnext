@@ -10,7 +10,7 @@
   padding: 9px 12px !important;
   border: 1px solid #e3e8ef !important;
   border-radius: 5px 13px 13px 13px !important;
-  background: #fff !important;
+  background: var(--lms-white) !important;
   color: #2e3c52 !important;
   line-height: 1.5;
   overflow-wrap: anywhere;
