@@ -41,8 +41,8 @@ Facets (all mandatory):
 One unit at a time: finish the unit file completely before opening the next. Tick [x] the unit here in the same push as its file. Push to chatgpt/chat-5-b with [chat-5] after every 2 units (git fetch and rebase right before). Units:
 - [x] U001 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/attendance.js`
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/calendar.js`
-- [ ] U003 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/classes.js`
-- [ ] U004 (FE page) `docs/legacy-source/frontend/src/pages/mentor/calendar.js`
+- [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/classes.js`
+- [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/mentor/calendar.js`
 - [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/calendar.js`
 - [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/attendance.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/calendar.js`
