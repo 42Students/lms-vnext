@@ -146,7 +146,7 @@ export async function ProjectAdminSubmissionsPage({
       {unsubmitted?<section className="min-w-0 space-y-3 border-b border-border pb-4">
         <FilterBar title="Filters"><ProjectAdminFilters query={query} filterView="NOT_SUBMITTED"/></FilterBar>
         <ListToolbar label="Unsubmitted workspaces" viewCount={unsubmitted.total} />
-        <h2 className="font-semibold text-foreground">Not submitted · {unsubmitted.total} workspaces</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Not submitted · {unsubmitted.total} workspaces</h2>
         <DataTable
           caption="Unsubmitted project workspaces"
           rows={unsubmitted.items}
@@ -177,7 +177,7 @@ export async function ProjectAdminSubmissionsPage({
         ] as const).map(([name, value, href]) => {
           return <Link key={name} href={href}
             className="block min-w-0 bg-surface px-3 py-3 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            <p className="text-xs font-semibold text-muted-foreground">{name}</p>
+            <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{name}</p>
             <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
           </Link>;
         })}
@@ -227,7 +227,7 @@ export async function ProjectAdminSubmissionsPage({
                   >
                     {submission.projectTitle}
                   </Link>
-                  <p className="mt-1 text-xs text-muted-foreground">
+                  <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                     Version {submission.version} ·{" "}
                     {formatDate(
                       submission.submittedAt,
@@ -253,7 +253,7 @@ export async function ProjectAdminSubmissionsPage({
                 <div><dt className="font-semibold">Reviewed by</dt>
                   <dd>{submission.reviewedBy ?? "—"}</dd></div>
               </dl>
-              <p className="mt-3 whitespace-pre-wrap break-words text-sm leading-6 text-body">{submission.summary}</p>
+              <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{submission.summary}</p>
               <div className="mt-3 flex flex-wrap gap-3 text-sm">
                 {([submission.sourceUrl, submission.demoUrl] as const).map((candidate, i) => {
                   const href = safeProjectExternalHref(candidate);

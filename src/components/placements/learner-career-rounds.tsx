@@ -109,7 +109,7 @@ export function LearnerCareerRounds({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text leading-[20px]">{round.companyName}</p>
-                <h2 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{round.roleTitle}</h2>
+                <h2 className="mt-1 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{round.roleTitle}</h2>
                 <p className="mt-1 text-sm font-semibold text-body leading-[22px]">Round {round.sequence} · {round.roundName}</p>
               </div>
               <div className="flex flex-wrap gap-2">

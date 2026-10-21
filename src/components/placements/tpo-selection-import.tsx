@@ -56,14 +56,14 @@ export function TpoSelectionImport({jobId,candidates}:{jobId:string;candidates:S
    ". Already recorded rows remain saved. Refresh before retrying.");}finally{importRef.current=false;setBusy(false);setConfirmOpen(false);}
  }
  return <section className="min-w-0 space-y-3 border-b border-border pb-4">
-  <h2 className="text-base font-semibold leading-6 text-foreground">Import the company&apos;s selection list</h2>
-  <p className="text-sm text-body">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
+  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Import the company&apos;s selection list</h2>
+  <p className="text-sm text-body leading-[22px]">Use CSV with Application ID, Email or Student name. Optional Role and Package LPA columns.
    Rows are matched to this drive&apos;s eligible applicants. Unmatched and duplicate entries are never recorded.</p>
   <FileUpload className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Selection list (CSV)" accept=".csv,text/csv" maxBytes={2_000_000}
      disabled={busy||reading} onFiles={files=>void read(files?.[0]??null)}/>
-  {reading?<p role="status" className="text-sm text-body">Reading selection CSV…</p>:null}
+  {reading?<p role="status" className="text-sm text-body leading-[22px]">Reading selection CSV…</p>:null}
   {entries.length?<div className="space-y-2">
-   <p role="status" className="text-sm">{entries.length} matched · {unmatched.length} unmatched</p>
+   <p role="status" className="text-sm leading-[22px]">{entries.length} matched · {unmatched.length} unmatched</p>
    <div className="max-h-80 min-w-0 overflow-auto border-y border-border print:max-h-none print:overflow-visible">
     <DataTable<SelectionImportEntry> caption="Selection import preview" rows={entries}
      getRowKey={item=>item.applicationId} empty={<EmptyState title="No matched selections yet."/>}

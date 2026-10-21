@@ -176,7 +176,7 @@ export function FacultyAssessmentOverview({
                       {item.authoredDeliveryId ? "This Section" : "Shared Offering"}
                     </StatusBadge>
                   </div>
-                  <h2 className="mt-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.title}</h2>
+                  <h2 className="mt-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{item.title}</h2>
                   <p className="mt-1 break-words text-sm text-body leading-[22px]">
                     {item.courseName} · {item.sectionName} · {item.lessonName}
                   </p>
