@@ -15,8 +15,16 @@ export async function POST(request:Request,{params}:{params:Promise<{companyId:s
   return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
  }catch(error){
   if(error instanceof ZodError)return NextResponse.json({error:"INVALID_DOMAIN"},{status:422});
-  if(error instanceof CompanyDomainError)return NextResponse.json({error:error.code},{
-   status:error.code==="COMPANY_NOT_FOUND"?404:409});
+  if(error instanceof CompanyDomainError){
+   // Global domain uniqueness must not expose another college's private employer list.
+   const message=error.code==="DOMAIN_IN_USE"?
+    "This email domain belongs to another company. Ask 42Students support to review the domain owner.":
+    error.code==="ALREADY_SET"?
+    "This company already has an email domain. Ask 42Students support to review changes.":
+    "This company is no longer available in your placement directory.";
+   return NextResponse.json({error:error.code,message},{
+    status:error.code==="COMPANY_NOT_FOUND"?404:409,headers:{"Cache-Control":"no-store"}});
+  }
   return apiErrorResponse(error);
  }
 }

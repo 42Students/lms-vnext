@@ -4,9 +4,9 @@ Packets moved to you from other lanes. Work them AFTER your own queue (lane-6-wo
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-team-ask-panel.tsx.md` (edit src/components/tpo/tpo-team-ask-panel.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-job-apply-blockers-model.ts.md` (edit src/modules/placements/learner-job-apply-blockers-model.ts; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_app_api_projects_class-team-workspaces_route.ts.md` (edit src/app/api/projects/class-team-workspaces/route.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-team-ask-panel.tsx.md` (edit src/components/tpo/tpo-team-ask-panel.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-job-apply-blockers-model.ts.md` (edit src/modules/placements/learner-job-apply-blockers-model.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_app_api_projects_class-team-workspaces_route.ts.md` (edit src/app/api/projects/class-team-workspaces/route.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-13/src_app_api_people_onboard_route.ts.md` (edit src/app/api/people/onboard/route.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_tpo-notifications-model.ts.md` (edit src/modules/activity/tpo-notifications-model.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_super-admin-drive-quick-search.tsx.md` (edit src/components/placements/super-admin-drive-quick-search.tsx; 3 findings; best P1)

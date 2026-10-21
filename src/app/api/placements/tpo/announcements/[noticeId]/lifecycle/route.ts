@@ -28,8 +28,14 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
   if(error instanceof z.ZodError)return noticePostError(request,"INVALID_BODY",400);
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_NOT_FOUND")
    return noticePostError(request,"NOT_FOUND",404);
-  if(error instanceof Error&&error.message==="ANNOUNCEMENT_UNDO_EXPIRED")
-   return noticePostError(request,"UNDO_WINDOW_EXPIRED",409);
+  if(error instanceof Error&&error.message==="ANNOUNCEMENT_UNDO_EXPIRED"){
+   if(request.headers.get("accept")?.includes("text/html"))
+    return noticePostError(request,"UNDO_WINDOW_EXPIRED",409);
+   return NextResponse.json({
+    error:"UNDO_WINDOW_EXPIRED",
+    message:"The 30-second Undo window has ended. Refresh announcements to see the current state.",
+   },{status:409,headers:{"Cache-Control":"no-store"}});
+  }
   if(error instanceof Error&&error.message==="ANNOUNCEMENT_STALE")
    return noticePostError(request,"STALE_VERSION",409);
   if(error instanceof Error&&error.message==="ANNOUNCEMENTS_NOT_REGISTERED")

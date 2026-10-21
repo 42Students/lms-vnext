@@ -43,11 +43,12 @@ export function LearnerPlacementJobDetail({
   // A positive eligibility score is not an application authorization.
   // Display the persisted apply denial before generic availability guidance.
   const blockers=[...new Set(items.flatMap(role=>role.applicationBlockers??[]))];
-  const primaryDenial=blockers[0]??null;
-  const denialAction=blockers.some(reason=>/register for placements|registration does not include/i.test(reason))
+  const gate=items.find(role=>!role.canApply)?.applicationGate;
+  const primaryDenial=gate?.reason??blockers[0]??null;
+  const denialAction=gate?.action??(blockers.some(reason=>/register for placements|registration does not include/i.test(reason))
     ? "REGISTER" as const
     : blockers.some(reason=>/eligib|rule/i.test(reason))
-      ? "RULES" as const : null;
+      ? "RULES" as const : null);
 
   return (
     <div className="min-w-0 space-y-5" aria-label="Published placement drive">
