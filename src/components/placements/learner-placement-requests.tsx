@@ -8,7 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select } from "@/components/ui/select";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { useToast } from "@/components/ui/toast";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch,FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
 
 /** Legacy seven-option vocabulary. Keep specialized vNext request payload
@@ -78,7 +78,7 @@ type OfferOption = {
   expiresAt: string | null;
 };
 
-function legacyRequestStatus(value:RequestItem["status"]):string{
+export function legacyLearnerRequestStatus(value:RequestItem["status"]):string{
  return value==="PENDING"?"Waiting for the placement cell":
   value==="REJECTED"?"Not approved":value==="APPROVED"?"Approved":"Cancelled";
 }
@@ -174,9 +174,9 @@ export function LearnerPlacementRequests({
     offers.find(
       (offer) => offer.expiresAt,
     ) ?? null;
-  const [offerId, setOfferId] = useState(
-    firstOfferWithDeadline?.offerId ?? "",
-  );
+  const [offerId, setOfferId] = useState(firstOfferWithDeadline?.offerId ?? "");
+  // Each eligible vNext offer has its own persisted deadline, unlike the
+  // historical RELEASED job-level grouping. One row per offer, never per job.
   const selectedOffer = useMemo(
     () =>
       offers.find(
@@ -239,13 +239,16 @@ export function LearnerPlacementRequests({
   }
 
   function failure(error: unknown) {
-    showToast({
-      tone: "error",
-      title: "Request not submitted",
-      description: error instanceof Error
-          ? error.message
-          : friendlyApiError({ network: true }),
-    });
+    const known:Record<string,string>={
+      OFFER_NOT_FOUND:"This offer no longer exists. Reload your offers.",
+      REQUEST_ALREADY_PENDING:"You already have a request waiting for the placement cell.",
+      INVALID_REQUEST:"Check the request details and try again.",
+      PLACEMENT_REQUEST_DUPLICATE:"You already sent this request.",
+    };
+    const description=error instanceof FriendlyFetchError
+      ?(known[error.code??""]??error.message):error instanceof Error
+      ?error.message:friendlyApiError({network:true});
+    showToast({tone:"error",title:"Request not submitted",description});
   }
 
   async function submitRound() {
@@ -673,7 +676,7 @@ export function LearnerPlacementRequests({
                               : "neutral"
                       }
                     >
-                      {legacyRequestStatus(item.status)}
+                      {legacyLearnerRequestStatus(item.status)}
                     </StatusBadge>
                     {item.status ===
                     "PENDING" ? (
