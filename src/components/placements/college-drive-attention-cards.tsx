@@ -11,6 +11,7 @@ type Attention=Awaited<ReturnType<typeof getCollegeDriveAttention>>;
 const labels={
  STALE_APPLIED:"Applications with no action in a week",
  INTERVIEW_UNSCHEDULED:"Marked Interview, nothing scheduled",
+ MISSING_OFFER_LETTER:"Offered, no offer letter attached",
  LOW_CONVERSION:"Closing soon, low conversion",
 } as const;
 export function CollegeDriveAttentionCards({data}:{data:Attention}){
@@ -53,10 +54,13 @@ export function CollegeDriveAttentionCards({data}:{data:Attention}){
   </section>
   <section className="min-w-0 border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
    <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-    <h2 className="text-lg font-semibold">Active drives ({data.jobs.length})</h2>
+    <h2 className="text-lg font-semibold">Active drives ({data.activeDriveCount})</h2>
     <Link href="/college/placements/drives?status=ALL"
      className="font-semibold text-primary-text underline">All drives</Link>
    </div>
+   <p className="mb-3 text-xs text-muted-foreground">
+    All drives: {data.allDriveCount} · Inactive: {data.inactiveDriveCount}
+   </p>
    <label className="mb-3 grid max-w-xl gap-1 text-sm font-semibold text-body">
     Search drives
     <Input type="search" value={search} maxLength={100}
