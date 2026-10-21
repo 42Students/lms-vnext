@@ -60,7 +60,7 @@ export async function PATCH(
       body,
     );
 
-    return NextResponse.json(result);
+    return NextResponse.json({...result,message:"Project template updated"});
   } catch (error) {
     return apiErrorResponse(error);
   }

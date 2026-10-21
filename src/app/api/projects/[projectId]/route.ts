@@ -45,6 +45,7 @@ export async function PATCH(request:Request,{params}:RouteContext){
       key=>Object.prototype.hasOwnProperty.call(input,key)))
    return NextResponse.json({error:"USE_VERSIONED_SECTION_ENDPOINTS"},{status:400});
   const updated=await updateCollegeProjectSummary(await getCurrentRequestContext(),projectId,input);
-  return NextResponse.json({project:updated},{headers:{"Cache-Control":"private, no-store"}});
+  return NextResponse.json({project:updated,message:"Project updated"},
+   {headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }

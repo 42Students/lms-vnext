@@ -4,6 +4,7 @@ import {isSameOriginRequest} from "@/auth/origin";
 import {apiErrorResponse} from "@/lib/api-error";
 import {z} from "zod";
 import {overrideProjectReadiness} from "@/modules/projects/readiness-override-service";
+import {getProjectAdminCollegeId} from "@/modules/projects/admin-college-scope";
 export const runtime="nodejs";
 type RouteContext={params:Promise<{projectId:string}>};
 const legacyReadinessBody=z.object({
@@ -18,6 +19,9 @@ export async function POST(request:Request,{params}:RouteContext){
     const {projectId}=await params;
     const raw:unknown=await request.json();
     const legacy=legacyReadinessBody.safeParse(raw);
+    if(legacy.success&&legacy.data.collegeId&&
+      legacy.data.collegeId!==getProjectAdminCollegeId(context))
+      return NextResponse.json({error:"PROJECT_ACCESS_DENIED"},{status:403});
     // Old collegeId is only a deprecated hint: the project access service
     // derives the authorized college from the persisted project and membership.
     const payload=legacy.success
@@ -26,6 +30,7 @@ export async function POST(request:Request,{params}:RouteContext){
           note:legacy.data.note}
       :raw;
     const override=await overrideProjectReadiness(context,projectId,payload);
-    return NextResponse.json({override});
+    return NextResponse.json({override,message:"Readiness updated"},
+      {headers:{"Cache-Control":"private, no-store"}});
   }catch(error){return apiErrorResponse(error);}
 }
