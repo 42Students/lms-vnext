@@ -13,9 +13,10 @@ import {requirePermission,AuthorizationError} from "@/modules/permissions/policy
  * consent. vNext intentionally narrows that metric to shared SHORTLISTED,
  * active SUBMITTED candidates; never label it "all applicants".
  *
- * Only counts records which have already been shared by a TPO shortlist.
- * The caller supplies job IDs from listOwnRecruiterPlacementJobs and a granted
- * college; private applications and screening decisions never enter this count. */
+ * Shared-applicant counts require an active TPO shortlist. Released offers
+ * are a separate ledger: a later screening-stage change must not make an
+ * ISSUED or ACCEPTED offer disappear from the offer count. The caller supplies
+ * job IDs from listOwnRecruiterPlacementJobs and a granted college. */
 export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  collegeId:string,authorizedJobIds:readonly string[]){
  const recruiter=context.recruiter;
@@ -41,7 +42,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
    .filter(grant=>grant.collegeId===collegeId&&grant.companyRelationshipId.trim())
    .map(grant=>grant.companyRelationshipId))];
  const db=getDb();
- const scope=and(inArray(placementApplications.jobId,ids),
+ const baseScope=and(inArray(placementApplications.jobId,ids),
   recruiterOwnJobPredicate(context.user.id),
   eq(placementJobs.collegeId,collegeId),
   inArray(placementJobs.companyRelationshipId,relationshipIds),
@@ -49,9 +50,9 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
   isNull(placementJobs.archivedAt),
   eq(collegeMemberships.collegeId,collegeId),
   eq(collegeMemberships.status,"ACTIVE"),
-  eq(users.platformStatus,"ACTIVE"),
-  // Withdrawn/deactivated applications cannot remain in employer-visible totals
-  // merely because an old shortlist or offer row was retained for audit.
+  eq(users.platformStatus,"ACTIVE"));
+ // TPO-shared applicant totals are live, rather than a historical ledger.
+ const sharedScope=and(baseScope,
   eq(placementApplications.status,"SUBMITTED"),
   eq(placementApplicationScreenings.status,"SHORTLISTED"));
  // Every job is re-scoped against the same college grant in the parent call.
@@ -89,7 +90,7 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
-   .where(scope).groupBy(placementApplications.jobId),
+   .where(sharedScope).groupBy(placementApplications.jobId),
   db.select({jobId:placementApplications.jobId,n:sql<number>`count(distinct ${placementOffers.applicationId})::integer`})
    .from(placementOffers).innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
    .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
@@ -117,10 +118,11 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
     gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
     sql<boolean>`'DRIVES' = ANY(${placementRecruiterCollegeGrants.capabilities})`))
-   .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
-   .where(and(scope,inArray(placementOffers.status,["ISSUED","ACCEPTED"])))
+   // Offer release is an explicit employer-visible event, even if the
+   // application later advances beyond SHORTLISTED or is withdrawn.
+   .where(and(baseScope,inArray(placementOffers.status,["ISSUED","ACCEPTED"])))
    .groupBy(placementApplications.jobId),
  ]);
  const counts:Record<string,{sharedApplicants:number;offers:number}>={};

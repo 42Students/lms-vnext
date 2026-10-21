@@ -1,13 +1,15 @@
 import type { getSuperAdminDrivePipeline } from "@/modules/placements/super-admin-drive-pipeline-service";
+import { Banner } from "@/components/ui/banner";
 
 type Pipeline = Awaited<ReturnType<typeof getSuperAdminDrivePipeline>>;
 
 /** Six buckets describe present application states, not transitions. */
 export function SuperAdminDrivePipeline({rows}: {rows: Pipeline | null}) {
-  if(!rows)return <section className="space-y-2 border-b border-border pb-4" role="alert">
+  if(!rows)return <section className="space-y-2 border-b border-border pb-4" aria-label="Pipeline">
     <h2 className="font-semibold">Pipeline</h2>
-    <p>Could not load pipeline metrics</p>
-    <p className="text-sm text-body">Drive details and actions remain available. Reload this drive to retry.</p>
+    <Banner tone="warning" role="alert">
+      Could not load pipeline metrics. Drive details and actions remain available. Reload this drive to retry.
+    </Banner>
   </section>;
   return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]"
     aria-label="Drive pipeline snapshot">
