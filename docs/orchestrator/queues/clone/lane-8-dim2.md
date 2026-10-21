@@ -11,30 +11,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/app/(authenticated)/college/page.tsx`
 - [x] `src/app/(authenticated)/college/people/manage/page.tsx`
 - [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/academics/academics-actions.tsx`
-- [ ] `src/components/academics/college-cohort-management.tsx`
-- [ ] `src/components/academics/college-promotion-confirmation.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-lifecycle-action.tsx`
-- [ ] `src/components/academics/college-section-management.tsx`
-- [ ] `src/components/academics/college-semester-management.tsx`
-- [ ] `src/components/academics/college-term-mapping-manager.tsx`
-- [ ] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/admin-revoke-sessions.tsx`
-- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-feature-rule-editor.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/app/(authenticated)/learn/projects/[projectId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/academics/academics-actions.tsx`
+- [x] `src/components/academics/college-cohort-management.tsx`
+- [x] `src/components/academics/college-promotion-confirmation.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-lifecycle-action.tsx`
+- [x] `src/components/academics/college-section-management.tsx`
+- [x] `src/components/academics/college-semester-management.tsx`
+- [x] `src/components/academics/college-term-mapping-manager.tsx`
+- [x] `src/components/activity/learner-notifications-inbox.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/admin/admin-revoke-sessions.tsx`
+- [x] `src/components/admin/college-admin-lifecycle-action.tsx`
+- [x] `src/components/admin/college-archive-button.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/college-feature-rule-editor.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
 - [ ] `src/components/admin/department-actions.tsx`
 - [ ] `src/components/admin/inbound-mail-list.tsx`
 - [ ] `src/components/admin/learner-module-access-drawer.tsx`
