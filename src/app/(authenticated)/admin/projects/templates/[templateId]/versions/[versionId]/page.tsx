@@ -50,7 +50,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
         <div className="grid min-w-0 gap-4 lg:grid-cols-2">
           {[{ label: "Current", value: change.current }, { label: "Selected version", value: change.selected }].map(value =>
             <div key={value.label} className="min-w-0"><h3 className="font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{value.label}</h3>
-              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 min-w-0 overflow-y-auto overscroll-contain whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-3)] text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{value.value}</pre></div>)}
+              <pre role="region" aria-label={`${change.label} ${value.label} version content`} tabIndex={0} className="max-h-80 min-w-0 overflow-y-auto overscroll-contain whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-3)] text-xs text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{value.value}</pre></div>)}
         </div>
       </article>)}
     </section> : <EmptyState title="No content differences" description="No content differences from the current version."/>}

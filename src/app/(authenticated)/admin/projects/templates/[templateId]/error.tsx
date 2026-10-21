@@ -38,7 +38,7 @@ export default function SuperAdminTemplateDetailError({
 
             <Link
               href="/admin/projects/templates"
-              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-[650] text-body hover:bg-muted md:min-h-9 hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="inline-flex min-h-11 items-center justify-center rounded-md border border-border bg-surface px-4 text-sm font-[650] text-body hover:bg-muted md:min-h-9 hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Template catalogue
             </Link>
