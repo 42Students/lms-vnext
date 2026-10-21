@@ -1,5 +1,5 @@
 export type HrBellNotification={id:string;label:string;unread:boolean;at:string;href:string};
-export type HrBellResponse={status:string;unread:number;items:HrBellNotification[]};
+export type HrBellResponse={status:string;unread:number;hiddenUnread:number;items:HrBellNotification[]};
 export function relativeHrBellTime(at:string,now:number):string{
  const time=new Date(at).getTime();
  if(!Number.isFinite(time))return "Recently";
@@ -27,14 +27,16 @@ export function createHrBellMutationGate(){
 }
 
 /** Treat JSON returned to a persistent notification bell as untrusted.
- * Never navigate to a URL other than a recruiter-scoped hiring job. */
+ * Never navigate to a URL other than a recruiter-scoped hiring job.
+ * 40 visible rows match the old drawer; the hidden unread counter does not
+ * authorize marking notifications outside the list as read. */
 export function parseHrBellResponse(raw:unknown):HrBellResponse|null{
  if(!raw||typeof raw!=="object")return null;
  const candidate=raw as Record<string,unknown>;
  const status=candidate.status;
  if(status!=="READY"&&status!=="CHOOSE_COLLEGE"&&status!=="NO_ACCESS")return null;
  if(typeof candidate.unread!=="number"||!Number.isSafeInteger(candidate.unread)||
-    candidate.unread<0||!Array.isArray(candidate.items)||candidate.items.length>10)return null;
+    candidate.unread<0||!Array.isArray(candidate.items)||candidate.items.length>40)return null;
  const items:HrBellNotification[]=[];
  for(const unknownItem of candidate.items){
   if(!unknownItem||typeof unknownItem!=="object")return null;
@@ -48,6 +50,11 @@ export function parseHrBellResponse(raw:unknown):HrBellResponse|null{
   }
   items.push({id:item.id,label:item.label,unread:item.unread,at:item.at,href:item.href});
  }
- if(status!=="READY"&&(items.length!==0||candidate.unread!==0))return null;
- return {status,unread:candidate.unread,items};
+ const hiddenUnread = candidate.hiddenUnread === undefined
+  ? Math.max(0,candidate.unread-items.filter(item=>item.unread).length)
+  : candidate.hiddenUnread;
+ if(typeof hiddenUnread!=="number"||!Number.isSafeInteger(hiddenUnread)||hiddenUnread<0||
+   hiddenUnread>candidate.unread)return null;
+ if(status!=="READY"&&(items.length!==0||candidate.unread!==0||hiddenUnread!==0))return null;
+ return {status,unread:candidate.unread,hiddenUnread,items};
 }
