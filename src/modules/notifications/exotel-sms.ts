@@ -72,7 +72,21 @@ export function normalizeSmsPhoneForIndia(input: string): string | null {
 
 /** Provider acceptance is not handset delivery; this audit stores neither SMS
  * body, OTP, recipient address nor provider credentials. */
-export const SMS_PROVIDER_ACCEPTANCE_NOTE = "SENT means the SMS operator accepted the request, not that the handset received the message.";
+export const SMS_PROVIDER_ACCEPTANCE_NOTE = "Provider accepted means the SMS operator accepted the request, not that the handset received the message.";
+
+/** Safe support copy. Never interpolate provider HTTP bodies, phone numbers or OTP. */
+export const SMS_FAILURE_LABELS: Readonly<Record<string,string>> = {
+ INVALID_OTP_FORMAT: "OTP code format is invalid.",
+ RECIPIENT_INVALID: "Recipient number is invalid.",
+ OTP_DLT_NOT_CONFIGURED: "Approved DLT registration is missing.",
+ OTP_PROVIDER_NOT_CONFIGURED: "SMS provider credentials or account configuration is missing.",
+ PROVIDER_HTTP_REJECTED: "SMS provider rejected the request.",
+ PROVIDER_NOT_ACCEPTED: "SMS provider did not accept the request.",
+ PROVIDER_UNAVAILABLE: "SMS provider was unavailable.",
+};
+export function normalizeSmsSupportSuffix(input: string | undefined): string {
+ return (input??"").replace(/[^0-9]/g,"").slice(-4);
+}
 export type SmsAttemptPurpose = "otp" | "job.update" | "notification" | "attendance.absence" | "attendance.correction";
 export type SmsAttemptInput = {
   purpose: SmsAttemptPurpose;
@@ -91,7 +105,7 @@ const smsUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-
  * No external send is triggered here. The schema lane owns the migration.
  */
 export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<"RECORDED" | "STORAGE_PENDING" | "FAILED"> {
-  const suffix = input.recipient.replace(/[^0-9]/g, "").slice(-4) || null;
+  const suffix = normalizeSmsSupportSuffix(input.recipient) || null;
   const code = input.failureCode ?? null;
   const sid = input.providerSid ?? null;
   const pairIsPresent = Boolean(input.collegeId) === Boolean(input.organizationId);
@@ -149,7 +163,7 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     page:z.number().int().min(1).max(100000).default(1),
     size:z.number().int().min(1).max(100).default(25),
   }).parse(raw);
-  const suffix=(query.suffix ?? "").replace(/[^0-9]/g, "").slice(-4);
+  const suffix=normalizeSmsSupportSuffix(query.suffix);
   const predicate = sql.join([
     sql`true`,
     ...(suffix ? [sql`recipient_suffix = ${suffix}`] : []),
@@ -157,8 +171,9 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     ...(query.outcome ? [sql`outcome = ${query.outcome}`] : []),
   ],sql` and `);
   const ready=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.sms_delivery_attempts') is not null as ready`);
-  if (!ready.rows[0]?.ready) return {ready:false,entries:[],totalElements:0,totalPages:0,page:query.page,
-    note:SMS_PROVIDER_ACCEPTANCE_NOTE};
+  if (!ready.rows[0]?.ready) return {ready:false,entries:[],content:[],totalElements:0,totalPages:0,
+    page:query.page,number:query.page-1,size:query.size,retryable:true,
+    readError:"SMS_LEDGER_UNAVAILABLE",note:SMS_PROVIDER_ACCEPTANCE_NOTE};
   const [{total}] = (await getDb().execute(sql<{total:number}>`
     select count(*)::int as total from sms_delivery_attempts where ${predicate}`)).rows;
   const offset=(query.page-1)*query.size;
@@ -172,8 +187,14 @@ export async function listSmsDeliveryAttemptsForSupport(context: RequestContext,
     from sms_delivery_attempts where ${predicate}
     order by created_at desc,id desc limit ${query.size} offset ${offset}
   `);
-  return {ready:true,entries:records.rows,totalElements:total??0,
-    totalPages:Math.ceil((total??0)/query.size),page:query.page,note:SMS_PROVIDER_ACCEPTANCE_NOTE};
+  const content=records.rows.map(row=>({
+    ...row, statusLabel:row.outcome==="PROVIDER_ACCEPTED"?"Provider accepted":"Failed",
+    failureSummary:row.safeFailureCode?SMS_FAILURE_LABELS[row.safeFailureCode]??"SMS attempt failed.":null,
+  }));
+  return {ready:true,entries:content,content,totalElements:total??0,
+    totalPages:Math.ceil((total??0)/query.size),page:query.page,
+    number:query.page-1,size:query.size,retryable:false,readError:null,
+    note:SMS_PROVIDER_ACCEPTANCE_NOTE};
 }
 function configured(config: ExotelConfig) {
   return Boolean(
@@ -201,16 +222,14 @@ export function createExotelSmsProvider(
         return false;
       }
 
-      if (
-        !configured(config) ||
-        !/^[A-Za-z0-9_-]+$/.test(config.accountSid) ||
-        !canonicalPhone
-      ) {
-        writeStructuredLog("WARNING", "sms.otp_not_sent", {
-          reason: "configuration_or_recipient_invalid",
-        });
-        await bestEffortOtpAttempt(canonicalPhone ?? "", "FAILED", null,
-          canonicalPhone ? "OTP_PROVIDER_NOT_CONFIGURED" : "RECIPIENT_INVALID");
+      const configFailure = !canonicalPhone?"RECIPIENT_INVALID":
+        !config.dltEntityId.trim()||!config.otpDltTemplateId.trim()||!config.otpSenderId.trim()
+          ?"OTP_DLT_NOT_CONFIGURED":
+        !configured(config)||!/^[A-Za-z0-9_-]+$/.test(config.accountSid)
+          ?"OTP_PROVIDER_NOT_CONFIGURED":null;
+      if(configFailure){
+        writeStructuredLog("WARNING","sms.otp_not_sent",{reason:configFailure});
+        await bestEffortOtpAttempt(canonicalPhone ?? "", "FAILED", null, configFailure);
         return false;
       }
 
@@ -268,7 +287,6 @@ export function createExotelSmsProvider(
         // Provider acceptance is not proof of handset delivery.
         writeStructuredLog("INFO", "sms.otp_accepted", {
           providerStatus: status,
-          recipientSuffix: canonicalPhone!.slice(-4),
         });
         await bestEffortOtpAttempt(canonicalPhone!, "PROVIDER_ACCEPTED",
           body.SMSMessage?.Sid ?? null, null);
@@ -276,8 +294,8 @@ export function createExotelSmsProvider(
       } catch (error) {
         // Never log the URL, credentials, phone, code or response body.
         writeStructuredLog("WARNING", "sms.otp_request_failed", {
-          errorType:
-            error instanceof Error ? error.name : "UnknownError",
+          errorType:error instanceof Error && ["TypeError","AbortError","TimeoutError","SyntaxError"].includes(error.name)
+            ? error.name : "ProviderError",
         });
         await bestEffortOtpAttempt(canonicalPhone ?? "", "FAILED", null, "PROVIDER_UNAVAILABLE");
         return false;
