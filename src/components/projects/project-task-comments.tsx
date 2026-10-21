@@ -6,9 +6,10 @@ import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
 import {projectMutation} from "./project-api";
 import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
- type ProjectTaskCommentKind} from "@/modules/projects/task-comment-kind-staged";
-type Comment={id:string;body:string;commentKind:ProjectTaskCommentKind;createdAt:string;
- authorMembershipId:string;authorName:string|null};
+ type ProjectTaskCommentKind,projectTaskActivityLabel} from "@/modules/projects/task-comment-kind-staged";
+type Comment={id:string;body:string;commentKind:string;createdAt:string;
+ authorMembershipId:string;authorName:string|null;progressValue:number|null;
+ taskStatusSnapshot:string|null};
 export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  projectId:string;taskId:string;updatedAt:string;canPost:boolean;
 }){
@@ -69,10 +70,16 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
         }).format(new Date(row.createdAt))}
       </p>
       <p className="mb-1 text-xs font-semibold text-body leading-[20px]">
-        <span aria-hidden="true">{row.commentKind==="PROGRESS_UPDATE"?"Progress:":row.commentKind==="FLAG_FOR_MENTOR"?"Flag:":"Note:"}</span>{" "}
-        {PROJECT_TASK_COMMENT_KIND_LABELS[row.commentKind]??"Note"}
+        <span aria-hidden="true">{row.commentKind==="PROGRESS_UPDATE"?"Progress:":
+          row.commentKind==="FLAG_FOR_MENTOR"?"Flag:":"Activity:"}</span>{" "}
+        {projectTaskActivityLabel(row.commentKind)}
       </p>
       <p className="whitespace-pre-wrap">{row.body}</p>
+      {row.taskStatusSnapshot||row.progressValue!==null?
+        <p className="mt-1 text-xs text-muted-foreground">
+         {row.taskStatusSnapshot?"Task state: "+row.taskStatusSnapshot.replaceAll("_"," "):""}
+         {row.progressValue!==null?" · Progress "+row.progressValue+"%":""}
+        </p>:null}
    </article>)}
      {canPost?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
        <Select value={kind} disabled={busy}
