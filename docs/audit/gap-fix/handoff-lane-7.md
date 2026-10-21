@@ -963,3 +963,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 - G2-18-011-070 | `src/db/schema/placements.ts + legacy placement import` | Migrate integer org-wide job IDs, college, program/cohort/section targeting to scoped UUID relations; posting parser now retains date classification, but no DB crosswalk imported.
 
 - G2-19-022-103 | `src/app/api/placements/tpo/bulk-actions/preview/route.ts + mutation service` | Enforce NEW/CONTACTED/NOT_NOW and mandatory NOT_NOW reason server-side; page filter cannot enforce write policy.
+
+- G2-7-012-059 | `src/modules/projects/readiness-service.ts + legacy history adapter` | Project flat-count DTO→nested execution/finalSubmission migration remains, release gate now informational.
+- G2-13-001-028/-050 | `src/modules/placements/recruiter-company-reports-service.ts + employer grants policy` | Confirm creator-owned vs college-approved recruiter relationship portfolio and stage funnel semantics before narrowing tenant grants; not safe to filter createdByUserId blindly.

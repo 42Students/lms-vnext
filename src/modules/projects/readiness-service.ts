@@ -98,10 +98,9 @@ export async function getProjectReadiness(
   ).length;
 
   const executionComplete =
-    releases.length > 0 &&
+    // Legacy releases are informational; do not require SHIPPED for submission.
     sprints.length > 0 &&
     tasks.length > 0 &&
-    shippedReleases === releases.length &&
     completedSprints === sprints.length &&
     doneTasks === tasks.length &&
     (scope.project.status === "ACTIVE" || scope.project.status === "COMPLETED");
