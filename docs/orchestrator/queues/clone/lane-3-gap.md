@@ -43,8 +43,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/mentor/allQuizzes.js`
 - [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/quiz.js`
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/quizzes.js`
-- [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Quizzes.js`
-- [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/teacher/allQuizzes.js`
+- [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Quizzes.js`
+- [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/teacher/allQuizzes.js`
 - [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/teacher/report/quiz/[quizId].js`
 - [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/courses.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Sudent/student.js`
