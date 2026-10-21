@@ -209,9 +209,14 @@ export async function createTpoLead(
   requirePermission(context, "placements.manage", { collegeId: input.collegeId });
   const college=await requirePlacementManageScope(context, input.collegeId);
 
-  // Insert and durable staff-attributed audit either both commit, or
-  // both roll back. DB unique constraints remain the race-safe duplicate
-  // authority (not the optional preflight duplicate check in the UI).
+  // Legacy Engage created a lead then separately scheduled a follow-up.
+  // In vNext the optional follow-up, append-only activity, staff audit and
+  // recruiter notification share this transaction with the lead. A failed
+  // follow-up insertion rolls the whole creation back, so neither the
+  // prospect nor its required reminder is silently lost. The client must
+  // report a failure without claiming that part of the operation succeeded.
+  // DB unique constraints remain the race-safe duplicate authority, not
+  // the optional preflight duplicate check in the UI.
   try {
     const lead = await getDb().transaction(async (tx) => {
     const [created] = await tx
