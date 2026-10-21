@@ -1,0 +1,8 @@
+# chat-10 TypeScript error proof
+
+- [x] `src/app/api/projects/[projectId]/mentor-delivery-review-export/route.ts(22,13)` TS2339: removed stale first.enabled check because overview service enforces module membership and project scope by throwing PROJECT_ACCESS_DENIED, translated to 403 by apiErrorResponse; authorized CSV unchanged. Reviewed imports and syntax; no CI.
+- [x] `src/app/api/projects/[projectId]/mentor-delivery-review-export/route.ts(29,28)` TS2339: removed stale per-page enabled check; Promise.all queries each reauthorize and throw on revocation, so no partial CSV is emitted. Kept cache and CSV behavior; reviewed imports and syntax; no CI.
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx(247,66)` TS2322: wrapped cancelDraft in a zero-argument click callback, preventing MouseEvent being treated as confirmed=true. Cancel dialog behavior and markup unchanged; verified tags and props; no CI.
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx(261,21)` TS18048: made null check explicit before reading review.prompts.length, leaving Confirm/Continue labels and review transitions unchanged; verified tags and props; no CI.
+- [x] `src/components/shell/route-transition.tsx(21,4)` TS2322: useRef<number|null> matches numeric window.setTimeout handle and existing window.clearTimeout; 3-second learner transition unchanged; reviewed JSX/imports; no CI.
+- [x] `src/components/verification/CollegeVerificationPanel.tsx(204,111)` TS17001: removed the duplicate hideHeader JSX attribute while retaining one hideHeader=true and all workspace props; visual hierarchy unchanged. Reviewed tags/imports; no CI.

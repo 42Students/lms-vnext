@@ -12,7 +12,7 @@ export function RouteTransition({children}:{children:ReactNode}) {
  const learnerRoute=pathname==="/learn"||pathname.startsWith("/learn/");
  const facultyRoute=pathname==="/teacher"||pathname.startsWith("/teacher/");
  const [leaving,setLeaving]=useState(false);
- const recoveryTimer=useRef<ReturnType<typeof setTimeout>|null>(null);
+ const recoveryTimer=useRef<number|null>(null);
  useEffect(()=>{
   if(!learnerRoute)return;
   const beginLeaving=()=>{

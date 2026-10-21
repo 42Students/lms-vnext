@@ -201,7 +201,7 @@ export function CollegeVerificationPanel({rows,counts,activeTab,initialKind,page
     <Button variant="secondary" type="button" disabled={bulkBusy} onClick={()=>{setAcknowledged(false);setBulkAction(null);}} >Cancel preview</Button>
    </div>}
   </section>}
-  <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy hideHeader hideHeader
+  <VerificationWorkspace key={activeTab+initialKind} rows={rows} counts={counts} legacyCollegeCopy hideHeader
    selectedKeys={new Set(selectedRows.map(verificationSelectionKey))} onSelectionChange={choose} selectionDisabled={bulkBusy} disableLocalSearch preserveServerOrder allowCollegeStudentLinks allowCollegeContactLinks
    initialTab={activeTab} initialKind={initialKind} sort={query.sort==="NAME"?"NAME":query.sort==="NEWEST"?"NEWEST":"OLDEST"}
    onTabChange={tab=>navigate({tab,page:"1",waitingState:tab==="WAITING"?query.waitingState??"ALL":"",ageBand:tab==="WAITING"?query.ageBand??"ANY":"",attention:tab!=="WAITING"&&["VERIFIED_DETAILS_CHANGED","WAITING_OVER_WEEK"].includes(query.attention)?"ALL":query.attention??"ALL"})}
