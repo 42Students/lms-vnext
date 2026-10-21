@@ -932,3 +932,18 @@ Choose an auditable migration/system principal for legacy null actor; do not sil
 - G2-2-005-012 | `src/modules/notifications/exotel-sms.ts` | Retain non-PII error class observability but do not mention expired bypass.
 
 Legacy temporary testing fallback is intentionally removed. Never restore OTP bypass on provider failure; retain bounded retries, typed unavailable UX and no-PII error classes.
+
+## API permission and company copy mapping — wave-1 handoff (2026-10-21)
+
+- G2-2-036-020 | `src/modules/placements/recruiter-drive-request-service.ts + scoped HR entity routes` | Emit privacy-safe NOT_FOUND for cross-college recruiter object IDs while keeping explicit role-denied as generic FORBIDDEN. Do not infer resource visibility from generic AuthorizationError.
+- G2-2-037-022 | `feature API routes + UI error boundaries` | Map exact old error copy only when the specific action and field are known, not all Zod name errors globally. Keep safe generic request failures and correlation ID otherwise.
+- G2-20-027-008 | `src/modules/placements/company-service.ts + company form action UX` | Map field error Maintain one scoped typed error contract, no brand-name guessing from global field errors.
+- G2-20-027-010 | `src/modules/placements/company-service.ts + company form action UX` | Map toast wording Maintain one scoped typed error contract, no brand-name guessing from global field errors.
+
+## Recruiter invite typed rejection parity (2026-10-21)
+
+- G2-3-026-027 | `src/modules/placements/tpo-recruiter-invite-service.ts + public-recruiter-invite-accept-service.ts + invite UI` | Expand typed reject reasons for field-specific EMAIL_REQUIRED/verification errors, then render safe per-field messages; keep token invalid collapsed to 404. Adapter now emits 400 for known NOT_ALLOWED and preserves safe generic descriptions.
+
+## Admin scope selection copy — lane-7 follow-up (2026-10-21)
+
+- G2-1-002-029 | `src/app/api/auth/admin-scope/route.ts + src/lib/friendly-error.ts + scope selector UI` | Map known ADMIN_SCOPE_NOT_FOUND to non-revealing invalid-selection help. Schema intentionally selects one organization OR one college at a time; no mismatched two-ID payload is accepted. Preserve request-ID and private response headers.

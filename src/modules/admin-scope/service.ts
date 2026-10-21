@@ -42,7 +42,8 @@ export class AdminScopeServiceError extends Error {
   constructor(
     public readonly code: "ADMIN_SCOPE_NOT_FOUND",
   ) {
-    super(code);
+    // Safe for UI: neither confirms a foreign tenant nor exposes a raw ID.
+    super("Invalid college or organization selection. Choose an active scope and try again.");
     this.name = "AdminScopeServiceError";
   }
 }
