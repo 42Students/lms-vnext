@@ -72,18 +72,17 @@ export async function ProjectAdminReassignMentorPage({
       offset:(mentorPage-1)*100}),
     listCollegeProjectMentorWorkload(context,collegeId),
   ]);
-  if(projectsRead.status==="rejected"||
-     mentorsRead.status==="rejected"||workloadRead.status==="rejected")
+  if(projectsRead.status==="rejected"||workloadRead.status==="rejected")
     return <div className="min-w-0 space-y-[16px]">
       <PageHeader title="Bulk mentor reassignment" actions={<PageBackLink href={basePath} label="Project workspaces" />}/>
       <ProjectAdminNav basePath={basePath} active="workspaces"/>
-      <ErrorState title={projectsRead.status==="rejected"?"Failed to load project workspaces":mentorsRead.status==="rejected"?"Mentor options could not be loaded":"Mentor workload could not be loaded"}
+      <ErrorState title={projectsRead.status==="rejected"?"Failed to load project workspaces":"Mentor workload could not be loaded"}
         description="The workspace, mentor or workload details could not be verified. No reassignment action is available."
         action={<Link href={projectAdminReassignMentorHref(basePath,parsed.data)}
-          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">{mentorsRead.status==="rejected"?"Retry mentors":"Retry loading mentor reassignment"}</Link>}/>
+          className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Retry loading mentor reassignment</Link>}/>
     </div>;
   const projects=projectsRead.value;
-  const mentors=mentorsRead.value;
+  const mentors=mentorsRead.status==="fulfilled"?mentorsRead.value:[];
   const workload=workloadRead.value;
 
   const sortedWorkload = [...workload].sort((left, right) =>
@@ -99,47 +98,27 @@ export async function ProjectAdminReassignMentorPage({
           description="Move multiple active workspaces to a new mentor at once" />
       </div>
       <ProjectAdminNav basePath={basePath} active="workspaces" />
-      <Disclosure title="Mentor workload" defaultOpen className="border-b border-border pb-4" contentClassName="pt-2">
-        <p className="mb-2 text-xs text-muted-foreground">
-          Active workspaces shows current assignments. At-risk counts workspaces needing attention.
-          A mentor is Overloaded when their active count is unusually high.
-        </p>
-        {sortedWorkload.length === 0 ? (
-          <p className="py-4 text-sm text-muted-foreground">No project workspaces available for this college</p>
-        ) : (
-          <div className="min-w-0 overflow-x-auto">
-            <table className="w-full min-w-[440px] border-collapse text-left text-sm">
-              <caption className="sr-only">Mentor workload sorted by active workspaces, highest first</caption>
-              <thead>
-                <tr className="border-b border-border">
-                  <th scope="col" className="px-3 py-2 font-semibold">Mentor</th>
-                  <th scope="col" className="px-3 py-2 text-right font-semibold" title="Active workspaces currently assigned">Active workspaces</th>
-                  <th scope="col" className="px-3 py-2 text-right font-semibold" title="Workspaces at risk">At-risk</th>
-                </tr>
-              </thead>
-              <tbody>
-                {sortedWorkload.map(row => {
-                  const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
-                  const filter = row.mentorMembershipId ?? "UNASSIGNED";
-                  return (
-                    <tr key={filter} className="border-b border-border hover:bg-primary-subtle">
-                      <td className="px-3 py-3">
-                        <Link href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
-                          className="font-semibold text-[var(--lms-link-text)] underline-offset-2 hover:underline">
-                          {row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId ? "Mentor" : "Unassigned")}
-                        </Link>
-                        {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
-                          <span className="ml-2 inline-flex"><StatusBadge tone="warning">Overloaded</StatusBadge></span> : null}
-                      </td>
-                      <td className="px-3 py-3 text-right tabular-nums">{row.activeWorkspaces}</td>
-                      <td className="px-3 py-3 text-right tabular-nums">{row.atRisk}</td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+      {mentorsRead.status==="rejected"?<ErrorState
+        title="Mentor options could not be loaded"
+        description="The workspace list and workload are available, but reassignment is disabled until current mentor permissions can be verified."
+        action={<Link className="font-semibold text-link underline"
+          href={projectAdminReassignMentorHref(basePath,parsed.data)}>Retry mentors</Link>}/>:null}
+      <Disclosure title="Mentor workload" className="border-b border-border pb-4" contentClassName="pt-2">
+        <div className="mt-2 grid min-w-0 gap-x-4 gap-y-0 md:grid-cols-2">
+          {workload.map(row => {
+            const mentor = mentors.find(person => person.membershipId === row.mentorMembershipId);
+            const filter = row.mentorMembershipId ?? "UNASSIGNED";
+            return <Link key={filter}
+              href={basePath + "/reassign-mentor?fromMentorId=" + encodeURIComponent(filter)}
+              className="block min-h-11 min-w-0 border-b border-border px-2 py-3 break-words hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+              <p className="font-semibold">{row.mentorName ?? mentor?.displayName ?? mentor?.email ?? (row.mentorMembershipId?"Mentor":"Unassigned")}</p>
+              <p className="text-sm leading-[22px]">{row.activeWorkspaces} active workspaces</p>
+              <p className="text-sm leading-[22px]">{row.atRisk} at risk</p>
+              {row.mentorMembershipId && isProjectMentorOverloaded(row.activeWorkspaces, mentorCounts) ?
+                <StatusBadge tone="warning">Overloaded</StatusBadge> : null}
+            </Link>;
+          })}
+        </div>
       </Disclosure>
       <Disclosure title="Filter by current mentor" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]"
@@ -188,7 +167,7 @@ export async function ProjectAdminReassignMentorPage({
         {fromMentorId ? <Link href={basePath + "/reassign-mentor"} className="text-sm font-semibold underline">Clear current mentor</Link> : null}
       </form>
       </Disclosure>
-      <ProjectMentorReassignment
+      {mentorsRead.status==="fulfilled"?<ProjectMentorReassignment
         collegeId={collegeId}
         initialProjectId={initialProjectId}
         matchingWorkspaces={projects.matchingWorkspaces}
@@ -207,7 +186,9 @@ export async function ProjectAdminReassignMentorPage({
             roleLabel:project.roleLabel,
           }))}
         mentors={mentors}
-      />
+      />:<p role="alert" className="border-t border-border py-3 text-sm text-body">
+        Mentor assignments are read-only until the eligible mentor directory loads.
+      </p>}
       <ProjectAdminPagination
         basePath={basePath + "/reassign-mentor"}
         query={query}
