@@ -4,6 +4,7 @@ export type TpoHomeSummary={
  batch:{name:string;invited:boolean;eligible:number|null;registered:number|null;placed:number|null}|null;
  moreBatches:number;hasUninvitedBatch?:boolean;liveDrives:number;driveAttention:number;
  driveDetail?:string|null;driveHref?:string;
+ driveNeeds?:readonly {code:string;count:number;title?:string}[];
  registered:number|null;placedUnique:number|null;
  recruiterLeads:number|null;followUps:number|null;recruiterAccess:number|null;
  pendingRequests:number|null;messages:number|null;
@@ -30,8 +31,23 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  const batchStatus=batch?(batch.eligible!==null&&batch.registered!==null
   ? `${batch.name} · ${batch.registered} of ${batch.eligible} registered${batch.placed===null?"":`, ${batch.placed} placed`}${d.moreBatches?` · +${d.moreBatches} more`:""}`
   :batch.name):"No batch in placements yet";
+ const urgent=["DRIVE_REQUESTS","RESULTS_AWAITING_APPLY","RESULTS_READY",
+  "SELECTIONS_TO_VERIFY","DEADLINE_TODAY","SHARE_APPLICANTS","SCREENING_PENDING",
+  "OFFERS_AWAITING_RESPONSE","JOINING_OUTCOME_PENDING","DRIVE_NOT_SCHEDULED"];
+ const names:Record<string,string>={
+  DRIVE_REQUESTS:"drive requests",RESULTS_AWAITING_APPLY:"results waiting",
+  RESULTS_READY:"results ready",SELECTIONS_TO_VERIFY:"selections to verify",
+  DEADLINE_TODAY:"deadline today",SHARE_APPLICANTS:"applicants to share",
+  SCREENING_PENDING:"applications to review",OFFERS_AWAITING_RESPONSE:"offers waiting",
+  JOINING_OUTCOME_PENDING:"joining outcomes waiting",DRIVE_NOT_SCHEDULED:"rounds to schedule",
+ };
+ const actionable=(d.driveNeeds??[]).filter(row=>row.count>0).sort((a,b)=>
+  (urgent.includes(a.code)?urgent.indexOf(a.code):999)-
+  (urgent.includes(b.code)?urgent.indexOf(b.code):999));
+ const first=actionable[0];
+ const detail=first?first.count+" "+(names[first.code]??first.title??"actions requiring attention"):d.driveDetail;
  const drives=(d.liveDrives?d.liveDrives+" live":"No live drives")+
-  (d.driveDetail?" · "+d.driveDetail:"");
+  (detail?" · "+detail:"");
  const requests=d.pendingRequests,messages=d.messages;
  const inboxParts=[
   requests===null?"Requests unavailable":requests?plural(requests,"request"):null,
@@ -53,7 +69,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
   {key:"batches",title:"Placement eligibility",status:batchStatus,href:"/tpo/batches",
    needsAttention:!batch||(d.hasUninvitedBatch??!batch.invited)},
   {key:"drives",title:"Drives",status:drives,href:d.driveHref??"/tpo/placements",
-   needsAttention:d.driveAttention>0},
+   needsAttention:d.driveAttention>0||actionable.length>0},
   {key:"students",title:"Students",status:d.registered===null?"":
    d.registered?d.registered+" registered · "+(d.placedUnique??0)+" placed":"Nobody registered yet",
    href:"/tpo/students",needsAttention:false},

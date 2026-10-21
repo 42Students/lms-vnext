@@ -23,6 +23,12 @@ export const SEMESTER_COPY = {
   deleteFailed: "Semester was not deleted",
 } as const;
 
+/** UI lifecycle uses toast notifications for create/update/delete, matching
+ * the legacy message placement. Inline forms keep validation errors; a
+ * second success notice should not duplicate an already shown toast.
+ */
+export const SEMESTER_SUCCESS_FEEDBACK="TOAST" as const;
+
 /** Legacy table shorthand for a numbered semester, for example `Sem 3`. */
 export function semesterShortLabel(termNumber: number) {
   return `Sem ${termNumber}`;

@@ -54,7 +54,7 @@ export default async function TpoJoiningStatusReportPage({
       <PageHeader
         eyebrow="TPO · Reports"
         title="Joining outcomes"
-        description="Recorded joining results for currently accepted offers, grouped by drive and company."
+        description="Recorded joining results for currently accepted offers. Company figures count each learner once; drive figures count accepted offers."
         actions={<div className="flex w-full flex-wrap items-center gap-2 sm:w-auto">
           <Link href="/tpo/reports/joining-followups" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-link underline sm:w-auto md:min-h-9">Review joining follow-ups →</Link>
           <ReportCsvLink workspace={workspace} kind="joining-status" />
@@ -84,7 +84,7 @@ export default async function TpoJoiningStatusReportPage({
       </section>
 
       <ReportScopeNote note={workspace.detailScopeNote} />
-      <ReportBarChart title="Joined by company" units="joined offers"
+      <ReportBarChart title="Joined by company" units="distinct joined learners"
        rows={byCompany.map(row=>({label:row.label,value:row.joined}))}/>
 
       <ReportTable

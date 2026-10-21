@@ -474,6 +474,7 @@ export function LessonActions({
     name: string;
     description: string | null;
     sequence: number;
+    updatedAt: Date | string;
   };
 }) {
   const [editOpen, setEditOpen] =
@@ -549,6 +550,7 @@ export function LessonActions({
                           null,
                         sequence:
                           Number(sequence),
+                        expectedUpdatedAt:new Date(lesson.updatedAt).toISOString(),
                       },
                     ),
                   "Lesson updated",

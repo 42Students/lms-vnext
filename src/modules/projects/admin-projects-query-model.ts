@@ -7,6 +7,18 @@ const positiveDecimal = (min: number, max: number, fallback: number) =>
     z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(min).max(max)),
   ]).default(fallback);
 
+/** Legacy status values were not identical to the new lifecycle. Status
+ * labels are mapped only where semantics agree; BLOCKED remains an
+ * independent blocker rather than a fabricated fifth persisted status. */
+export function legacyAdminProjectStatus(status:string,blocker:string|null|undefined){
+ if(status==="ARCHIVED")return "Archived";
+ if(status==="COMPLETED"||status==="DONE")return "Completed";
+ if(blocker?.trim()||status==="BLOCKED")return "Blocked";
+ if(status==="ACTIVE"||status==="IN_PROGRESS")return "In progress";
+ if(status==="PLANNED"||status==="NOT_STARTED")return "Not started";
+ return status.toLowerCase().replaceAll("_"," ");
+}
+
 const schema = z.strictObject({
   q: z.string().trim().max(120).optional(),
   status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
@@ -41,7 +53,12 @@ export function parseAdminProjectsQuery(
   if(legacySearch!==undefined&&currentSearch!==undefined&&
      legacySearch.trim()!==currentSearch.trim())return schema.safeParse(null);
   const search = legacySearch ?? currentSearch;
-  const status = first(params.status);
+  const rawStatus=first(params.status);
+  // Only semantically equivalent old filters may become vNext filters.
+  // BLOCKED needs a separate persisted blocker predicate and cannot
+  // silently be treated as all ACTIVE workspaces.
+  const status=rawStatus==="NOT_STARTED"?"PLANNED":
+    rawStatus==="IN_PROGRESS"?"ACTIVE":rawStatus==="DONE"?"COMPLETED":rawStatus;
   const view = first(params.view);
   const page = first(params.page);
   const pageSize = first(params.pageSize);

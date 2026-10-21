@@ -280,12 +280,11 @@ export const updateCourseLessonInputSchema =
         .min(0)
         .max(10000)
         .optional(),
+      expectedUpdatedAt: z.iso.datetime({ offset: true }),
     })
     .refine(
       (value) =>
-        Object.values(value).some(
-          (item) => item !== undefined,
-        ),
+        value.name !== undefined || value.description !== undefined || value.sequence !== undefined,
       "At least one lesson field is required",
     ).strict();
 

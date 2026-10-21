@@ -130,6 +130,7 @@ export default async function TpoHome(){
   hasUninvitedBatch:batches.batches.some(batch=>!batch.invitedAt),
   moreBatches:Math.max(0,batches.batches.length-1),
   liveDrives:operations.summary.publishedJobs,driveAttention:operations.summary.jobsNeedingAttention,
+  driveNeeds:operations.workQueue.map(item=>({code:item.code,count:item.count,title:item.jobTitle})),
   driveDetail:(()=>{
    const attention=operations.workQueue.find(item=>item.count>0);
    if(!attention)return null;
