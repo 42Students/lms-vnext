@@ -177,16 +177,16 @@ export function FacultyCourseRoster({
           </Button>
           </div>
         </div>
-        <p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
+        {search.trim()?<p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
           Showing {rows.length} of {filtered.length} students
           {filtered.length!==learners.length?" · "+learners.length+" in class":""}
-        </p>
+        </p>:null}
       </section>
 
       {filtered.length === 0 ? (
         <EmptyState
           title="No students match this search"
-          description="Try another name, roll number, phone number or email."
+          description="Try searching by name, roll number, or contact number."
         />
       ) : (
         <>
@@ -194,7 +194,7 @@ export function FacultyCourseRoster({
             caption="Students in this class"
             rows={rows}
             getRowKey={learner=>learner.membershipId}
-            empty={<EmptyState title="No students match this search" description="Try another name, roll number, phone number or email." />}
+            empty={<EmptyState title="No students match this search" description="Try searching by name, roll number, or contact number." />}
             columns={[
               {key:"student",header:"Student",mobilePriority:"primary" as const,
                 cell:(learner)=><div className="flex min-w-0 items-center gap-3">
