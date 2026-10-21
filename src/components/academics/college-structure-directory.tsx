@@ -11,6 +11,7 @@ import { CollegeElectiveLifecycleAction } from "@/components/electives/college-e
 import { StatusBadge } from "@/components/ui/status-badge";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
+import { CollegeDirectoryPageSize, CollegeDirectoryRefresh } from "./college-directory-page-size";
 import {
   classCapacityLabel,
   collegeStructureHref,
@@ -50,7 +51,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
       {prepend ? <div data-slot="page-tools" className="min-w-0">{prepend}</div> : null}
       <FilterBar title="Filters"
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          {classes ? "Class, batch or program" : "Elective or program"}
+          {classes ? "Class, batch or program" : "Elective, program or description"}
           <Input form="college-structure-directory-filters" type="search" name="q" maxLength={100} defaultValue={data.query.q}
             className="min-h-11 min-w-0 md:min-h-9" placeholder="Search registered records" />
         </label>}
@@ -78,6 +79,17 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
               <option value="ALL">All</option>
             </Select>
           </label>
+          {data.kind === "ELECTIVES" ? (
+            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Semester
+              <Select name="semesterNumber" defaultValue={String(data.query.semesterNumber ?? "")}
+                className="min-h-11 min-w-0 md:min-h-9">
+                <option value="">All semesters</option>
+                {Array.from({length: 12}, (_, i) => i + 1).map(number =>
+                  <option key={number} value={number}>Semester {number}</option>)}
+              </Select>
+            </label>
+          ) : null}
           <Disclosure title={"More filters"} className="col-span-full border-t border-border pt-3">
             <div className="mt-3 grid gap-3 md:grid-cols-2 lg:grid-cols-4">
           {data.kind === "ELECTIVES" ? (
@@ -94,14 +106,6 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
               <Input name="maximumCredits" type="number" min={1} max={500} step={1}
                 defaultValue={data.query.maximumCredits ?? ""} placeholder="No upper bound"
                 className="min-h-11 min-w-0 md:min-h-9"/>
-            </label>
-          ) : null}
-          {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Semester number
-              <Input name="semesterNumber" type="number" min={1} max={24} step={1}
-                defaultValue={data.query.semesterNumber ?? ""} placeholder="All semesters"
-                className="min-h-11 min-w-0 md:min-h-9" />
             </label>
           ) : null}
           {data.kind === "CLASSES" ? (
@@ -362,9 +366,10 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
         </form>
       </section></FilterBar>
       <section aria-label={title + " results"} role="region" tabIndex={0} className="min-w-0 max-w-full border-b border-[var(--lms-canvas-border)]">
-        <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
-          {data.total.toLocaleString("en-IN")} matching {classes ? "classes" : "elective slots"}
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-2 border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)]">
+          <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching {classes ? "classes" : "elective slots"}</p>
+          <CollegeDirectoryRefresh />
+        </div>
         {data.items.length === 0 ? (
           <div role="status" className="space-y-2 p-6 text-sm text-body">
            <p>
@@ -388,10 +393,11 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
                   <p className="mt-1 text-xs text-muted-foreground">{item.code}</p>
                 </>},
                 {key:"program",header:"Program / batch",mobilePriority:"secondary",cell:item=>
-                  <span>{item.programName} · {item.cohortName}</span>},
+                  <span>{item.programName ?? `Name unavailable (ID ${item.linkedProgramId ?? "unknown"})`} · {item.cohortName ?? `Name unavailable (ID ${item.cohortId})`}</span>},
                 {key:"period",header:"Academic period",mobilePriority:"secondary",cell:item=>item.periodName},
                 {key:"capacity",header:"Capacity",mobilePriority:"secondary",cell:item=>classCapacityLabel(item.capacity)},
-                {key:"enrollment",header:"Active enrollments",mobilePriority:"secondary",cell:item=>item.activeLearners},
+                {key:"enrollment",header:"Active enrollments",mobilePriority:"secondary",cell:item=>item.activeLearners === null
+                  ? <span role="status" className="text-amber-700">Unavailable</span> : item.activeLearners},
                 {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><StatusBadge tone={item.status === "ACTIVE" ? "success" : "neutral"}>{item.status}</StatusBadge>},
                 {key:"manage",header:"Manage",mobilePriority:"action",cell:item=>
                   <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)]">
@@ -446,7 +452,13 @@ export function CollegeStructureDirectory({ data, electiveOptions, prepend }: {
         )}
       </section>
       <nav aria-label={title + " pagination"} className="flex flex-wrap items-center justify-between gap-3 text-sm">
-        <p className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</p>
+<div className="flex flex-wrap items-center gap-3">
+          <p className="text-muted-foreground">
+            {data.total === 0 ? "0" : ((data.query.page - 1) * data.query.pageSize + 1).toLocaleString("en-IN")}–{Math.min(data.query.page * data.query.pageSize, data.total).toLocaleString("en-IN")}
+            {" of "}{data.total.toLocaleString("en-IN")} · Page {data.query.page} of {data.totalPages}
+          </p>
+          <CollegeDirectoryPageSize current={data.query.pageSize} />
+        </div>
         <div className="flex gap-2">
           {data.query.page > 1 ? (
             <Link href={collegeStructureHref(data.kind, { ...data.query, page: data.query.page - 1 })}
