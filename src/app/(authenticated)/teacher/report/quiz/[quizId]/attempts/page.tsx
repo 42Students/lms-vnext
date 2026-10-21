@@ -53,7 +53,7 @@ export default async function FacultyQuizAttemptPage({
           : "Results are private to authorized Faculty; this page does not publish them."}
       </p>
       <p className="mt-2 text-sm text-body leading-[22px]">
-        {data.total} recorded attempt{data.total===1?"":"s"} in this teaching Section.
+        {data.total.toLocaleString("en-IN")} recorded attempt{data.total===1?"":"s"} in this teaching Section.
         Question accuracy below uses each learner&apos;s latest attempt, not every retake.
       </p>
     </section>
