@@ -50,13 +50,7 @@ export const courseAssignments = pgTable(
     allowedSubmissionMethods: jsonb("allowed_submission_methods")
       .$type<string[]>()
       .notNull()
-      .default([
-        "WRITTEN_RESPONSE",
-        "PDF_UPLOAD",
-        "FILE_UPLOAD",
-        "REPOSITORY_LINK",
-        "EXTERNAL_LINK",
-      ]),
+      .default(["WRITTEN_RESPONSE"]),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -167,6 +161,11 @@ export const assignmentSubmissions = pgTable(
     pointsAwarded: integer("points_awarded"),
     // Legacy fidelity (migration 0098): resubmission counter and prior grade.
     attemptNumber: integer("attempt_number").notNull().default(1),
+    /** Legacy semester snapshot; use the existing row as the active attempt aggregate. */
+    semesterNumber: integer("semester_number"),
+    /** Import display provenance; live names come from authorized joins. */
+    legacySubmissionSnapshot: jsonb("legacy_submission_snapshot")
+      .$type<Record<string, unknown>>(),
     previousPoints: integer("previous_points"),
     feedback: text("feedback"),
     gradingStatus:
@@ -175,6 +174,8 @@ export const assignmentSubmissions = pgTable(
       )
         .notNull()
         .default("NOT_GRADED"),
+    /** Legacy source kind preserves AUTO/MANUAL/PARTIAL without enabling AI grading. */
+    legacyGradingKind: text("legacy_grading_kind"),
     gradePublished: boolean("grade_published")
       .notNull()
       .default(false),
@@ -239,6 +240,18 @@ export const assignmentSubmissions = pgTable(
     // FILE submissions carry their files in assignment_submission_files; a
     // deferred constraint trigger (migration 0080) requires at least one
     // READY file at commit time.
+    check(
+      "assignment_submissions_semester_ck",
+      sql`${table.semesterNumber} is null or ${table.semesterNumber} > 0`,
+    ),
+    check(
+      "assignment_submissions_legacy_grade_kind_ck",
+      sql`${table.legacyGradingKind} is null or ${table.legacyGradingKind} in ('NOT_GRADED', 'AUTO_GRADED', 'MANUALLY_GRADED', 'PARTIALLY_GRADED')`,
+    ),
+    check(
+      "assignment_submissions_legacy_snapshot_ck",
+      sql`${table.legacySubmissionSnapshot} is null or jsonb_typeof(${table.legacySubmissionSnapshot}) = 'object'`,
+    ),
     check(
       "assignment_submissions_attempt_ck",
       sql`${table.attemptNumber} >= 1 and (${table.previousPoints} is null or ${table.previousPoints} >= 0)`,
