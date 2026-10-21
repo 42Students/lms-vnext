@@ -23,7 +23,7 @@ export default async function CollegePlacementsPage({searchParams}:{
   const context = await getCurrentRequestContext();
   if (!context.membership) return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Placement Drives"/>
-    <EmptyState title="Admin not assigned to a college" description="Contact your college administrator to request access to placement drives."/>
+    <EmptyState title="Admin not assigned to a college" description="You must be assigned to a college to view and manage jobs. Contact your administrator."/>
   </div>;
   if (!hasMembershipRole(context,"COLLEGE_ADMIN")) redirect("/dashboard");
   const incoming=await searchParams;
@@ -35,6 +35,13 @@ export default async function CollegePlacementsPage({searchParams}:{
         className="font-semibold text-link underline">Clear search</Link></Alert>
     </div>;
   const q=typeof rawSearch==="string"?rawSearch.trim():"";
+  const rawReturnTo=incoming.returnTo;
+  const returnTo=typeof rawReturnTo==="string"&&
+    rawReturnTo.startsWith("/college/")&&!rawReturnTo.startsWith("//")
+    ?rawReturnTo:"";
+  const filteredHref="/college/placements/drives?status=PUBLISHED"+
+    (q?"&q="+encodeURIComponent(q):"")+
+    (returnTo?"&returnTo="+encodeURIComponent(returnTo):"");
   const [attentionResult,allResult,activeResult,draftResult,closedResult,filteredResult] =
     await Promise.allSettled([
       getCollegeDriveAttention(context),
@@ -58,14 +65,24 @@ export default async function CollegePlacementsPage({searchParams}:{
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title="Placement Drives"
-        description="Placement operations inside your active college membership."
+        description="Run active hiring drives from one operational view. Attention items surface decisions that need action; closed and draft drives remain available in the full archive."
         actions={
-          <Link
+          <div className="flex flex-wrap items-center gap-2">
+           <Link
             href="/college/placements/new"
             className="inline-flex min-h-11 w-full items-center justify-center md:min-h-[var(--lms-control-height)] md:w-auto rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary motion-safe:transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           >
-            New drive
-          </Link>
+            <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
+             fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+             <path d="M12 5v14M5 12h14"/>
+            </svg>
+            <span className="ml-1">New drive</span>
+           </Link>
+           <Link href="/college/placements/drives"
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text md:min-h-9">
+            All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)
+           </Link>
+          </div>
         }
       />
       <section aria-label="Placement drive totals" className="grid min-w-0 grid-cols-2 gap-3 md:grid-cols-4">
@@ -78,20 +95,37 @@ export default async function CollegePlacementsPage({searchParams}:{
         Couldn&apos;t load drives. Check your connection and retry.
         <Link href="/college/placements" className="ml-2 font-semibold text-link underline">Retry</Link>
       </Alert>:null}
+
       {!attention?<Alert tone="warning">
         Couldn&apos;t check for anything that needs attention.
         <Link href="/college/placements" className="ml-2 font-semibold text-link underline">Retry</Link>
       </Alert>:null}
+      <section aria-label="Needs attention" className="min-w-0 space-y-2">
+       <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Needs attention</h2>
+       {attention?<div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[#eadca2] bg-[#fffaf0] p-3">
+        <CollegeDriveAttentionCards data={attention}/>
+       </div>:null}
+      </section>
       <section aria-label="Active drives" className="min-w-0 space-y-3">
         <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Active drives</h2>
         <form method="get" role="search" aria-label="Search active drives"
-          className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end">
-          <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold">
-            Search by drive or company
-            <Input type="search" name="q" maxLength={100} defaultValue={q}/>
+          className="flex min-w-0 flex-wrap items-end gap-2 sm:justify-between">
+          <label className="grid min-w-0 w-full gap-1 text-sm font-semibold sm:w-[240px]">
+            <span className="sr-only">Search by drive or company</span>
+            <Input type="search" name="q" maxLength={100} defaultValue={q}
+             placeholder="Search by drive or company"/>
           </label>
+          {returnTo?<input type="hidden" name="returnTo" value={returnTo}/>:null}
           <Button type="submit" className="min-h-11 md:min-h-9">Search</Button>
-          {q?<Link href="/college/placements" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>:null}
+          {q?<Link href={"/college/placements"+(returnTo?"?returnTo="+encodeURIComponent(returnTo):"")}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear</Link>:null}
+          <Link href="/college/placements/new"
+           className="ml-auto inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-3 text-sm font-semibold text-on-primary md:min-h-9">
+           <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+            <path d="M12 5v14M5 12h14"/>
+           </svg><span className="ml-1">New Drive</span>
+          </Link>
         </form>
         {filtered?<DataTable caption="Active college drives" rows={activeRows} getRowKey={row=>row.id}
           columns={[
@@ -108,18 +142,15 @@ export default async function CollegePlacementsPage({searchParams}:{
           ]}/>:null}
         {filtered?<p className="text-xs text-muted-foreground">
           Showing up to {activeRows.length} of {filtered.total} matching active drives.
-          <Link href={"/college/placements/drives"+(q?"?status=PUBLISHED&q="+encodeURIComponent(q):"?status=PUBLISHED")}
+          <Link href={filteredHref}
             className="ml-2 font-semibold text-link underline">View all</Link>
         </p>:null}
       </section>
       <nav aria-label="Placement workspaces" className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
       <Link href="/college/placements/interviews" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Interviews</Link>
-      <Link href="/college/placements/drives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All drives</Link>
+      <Link href="/college/placements/drives" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link sm:w-auto md:min-h-[var(--lms-control-height)] hover:bg-[rgba(38,186,199,0.07)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All drives ({draft&&closed?draft.total+closed.total:"—"} closed / draft)</Link>
       </nav>
-      {attention?<Disclosure title={"Drive attention and quick view ("+attention.total+")"}
-        defaultOpen={attention.total>0} className="min-w-0">
-        <CollegeDriveAttentionCards data={attention}/>
-      </Disclosure>:null}
+
       <Disclosure title="Data retention report" className="min-w-0">
         <div className="min-w-0 space-y-2 py-3">
           <Alert tone="info">
