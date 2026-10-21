@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {activityEvents,attendanceParentContacts,attendanceParentSmsOutbox,attendanceRecords,collegeMemberships,membershipRoles,users} from "@/db/schema";
+import {activityEvents,colleges,attendanceParentContacts,attendanceParentSmsOutbox,attendanceRecords,collegeMemberships,membershipRoles,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireAttendanceCollege} from "./admin-service";
 import {attendanceParentContactInputSchema,attendanceParentSmsBody,canNotifyVerifiedParent,type AttendanceParentSmsKind} from "./parent-sms-model";
@@ -139,8 +139,13 @@ export async function dispatchQueuedAttendanceParentSms(rawId:string){
  }).where(and(eq(attendanceParentSmsOutbox.id,id),
   eq(attendanceParentSmsOutbox.status,"QUEUED"))).returning({id:attendanceParentSmsOutbox.id});
  if(!leased)return {status:"ALREADY_HANDLED" as const};
+ const [college]=await db.select({organizationId:colleges.organizationId})
+  .from(colleges).where(eq(colleges.id,entry.collegeId)).limit(1);
+ // Support ledger entries are scoped to the persisted college rather than
+ // relying on the request-context tenant or an unverified phone-to-college map.
  const result=await sendAttendanceParentSms({
   phoneE164:contact.phoneE164,kind:entry.kind as AttendanceParentSmsKind,
+  collegeId:entry.collegeId,organizationId:college?.organizationId??null,
   body:attendanceParentSmsBody(entry.kind as AttendanceParentSmsKind,entry.courseName,
    entry.startsAt,entry.endsAt),
  });
@@ -175,4 +180,40 @@ export async function retryQueuedAttendanceParentSmsForCollege(ctx:RequestContex
   else unavailable++;
  }
  return {ready:true,accepted,skipped,unavailable};
+}
+
+/** Privacy-safe migration gate from legacy learner-mobile absence SMS.
+ * Never reuse an unverified learner number as a guardian opt-in.
+ */
+export async function getAttendanceParentSmsReadiness(
+ context:RequestContext,raw:unknown,
+) {
+ const input=z.strictObject({collegeId:z.string().uuid(),membershipId:z.string().uuid()}).parse(raw);
+ const college=await requireAttendanceCollege(context,input.collegeId);
+ const ready=await getDb().transaction(async tx=>parentTablesReady(tx));
+ if(!ready)return {ready:false,canNotify:false,reason:"PARENT_SMS_SCHEMA_NOT_REGISTERED"};
+ const [member]=await getDb().select({id:collegeMemberships.id})
+  .from(collegeMemberships)
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER"),
+  ))
+  .where(and(eq(collegeMemberships.id,input.membershipId),
+   eq(collegeMemberships.collegeId,college.id),
+   eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+ if(!member)return {ready:true,canNotify:false,reason:"LEARNER_NOT_ACTIVE"};
+ const [contact]=await getDb().select({
+  smsOptIn:attendanceParentContacts.smsOptIn,
+  verifiedAt:attendanceParentContacts.verifiedAt,
+  consentAt:attendanceParentContacts.consentAt,
+  consentEvidenceReference:attendanceParentContacts.consentEvidenceReference,
+  phoneE164:attendanceParentContacts.phoneE164,
+ }).from(attendanceParentContacts).where(and(
+  eq(attendanceParentContacts.collegeId,college.id),
+  eq(attendanceParentContacts.membershipId,input.membershipId))).limit(1);
+ if(!contact)return {ready:true,canNotify:false,reason:"VERIFIED_PARENT_CONTACT_REQUIRED"};
+ if(!canNotifyVerifiedParent(contact))return {
+  ready:true,canNotify:false,reason:"PARENT_SMS_CONSENT_REQUIRED",
+ };
+ return {ready:true,canNotify:true,reason:null};
 }
