@@ -94,3 +94,15 @@
 - G2-6-013-013/014 | Super Admin academic search/API contract owner | Legacy semester search programId required except privileged GLOBAL mode and envelope 'Semesters retrieved'; current /college/semesters is intentionally membership-scoped and doesn't accept GLOBAL bypass. Preserve compatibility only in dedicated authorized superadmin search endpoint, not by adding bypass to college page.
 
 - src/proxy.ts — G2-15-007-040: legacy `/college-admin/student-groups/[id]` detail redirect currently targets `/college/contacts`; lane 13 should use `/college/people` and add the index alias if middleware precedence requires it. New `/college-admin/student-groups` page alias points to People.
+
+- G2-5-027-047/031 | College student detail/lifecycle owner | The college directory already maps invalid filters, forbidden scope and unavailable read to safe states; implement numeric legacy learner-id lookup, update/transfer/delete audit and safe invalid-ID error on the detail service instead of adding destructive side effects to the list.
+
+- G2-16-002-015 | DB10 tracker schema/migration owner (lane 14/15) | Add an atomic independent monotonic public ID sequence for LMS-%04d without exposing database keys; current collision-resistant numeric public IDs must continue resolving after rollout.
+
+- G2-16-003-039/056 | Tracker screenshot storage and attestation owner | Reporter issue activity and attachments are separately retryable and user-owned; attachments remain metadata-only. Bind approved clean private object storage and grant short-lived authorized GET URLs; never expose unverified keys or unsafe public objects.
+
+- G2-13-013-018 | Super Admin lesson search/API owner | CollegeLessonsPage is membership-scoped. Implement optional global college/course filters on an explicitly global-authorized SA lesson search endpoint, without adding a bypass to college views.
+
+- G2-17-002-062/G2-9-008-031 | College lesson/metrics client cache owner | Error boundaries now display exact legacy retry warnings. Last-good filtered data across a failed server refresh requires an authenticated scope-keyed in-memory cache on the successful page, not browser persistence or invented stale data.
+
+- G2-12-024-040/G2-15-018-029 | DB10 deployment/migrations owner | Known Errors now reports schema-not-ready and precise environment validation. Migrations must be applied/verified by DB operators before setting DB10_LOG_ALERTS_READY; route must fail closed meanwhile.

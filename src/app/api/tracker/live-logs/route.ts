@@ -85,11 +85,44 @@ export async function POST(request:Request){
     return NextResponse.json({message:"Environment is not available in this workspace."},{status:400});
   if(parsed.data.action==="DEPLOY_HEALTH"&&!parsed.data.at)
     return NextResponse.json({message:"Deployment timestamp is required."},{status:400});
-  // Deployment markers are not persisted in vNext. Never report a healthy
-  // deploy or a regression inferred from an unrelated error log page.
-  return NextResponse.json({environment,configured:false,available:false,
-    ...(parsed.data.action==="DEPLOYS"?{deploys:[]}:{
-      at:parsed.data.at,healthy:null,regressions:null}),
-    message:"Deployment health history is not configured for this environment."},
-    {headers:{"Cache-Control":"private, no-store"}});
+  if(parsed.data.action==="DEPLOYS"){
+    // No authoritative release catalogue exists; log timestamps are not releases.
+    return NextResponse.json({environment,configured:false,available:false,deploys:[],
+      message:"Deployment history is not configured for this environment."},
+      {headers:{"Cache-Control":"private, no-store"}});
+  }
+  const at=parsed.data.at!;
+  const deployedAt=new Date(at).getTime();
+  const now=Date.now();
+  if(deployedAt>now-10*60_000 || deployedAt<now-24*60*60_000){
+    return NextResponse.json({message:"Choose a deployment time from ten minutes to one day ago."},{status:400});
+  }
+  try{
+    // Separate ten-minute pre/post windows. Do not confuse an incomplete
+    // first provider page with a complete baseline or a healthy release.
+    const [before,after]=await Promise.all([
+      readTrackerLiveLogs(context,{windowMinutes:10,
+        anchorAt:new Date(deployedAt-5*60_000).toISOString()}),
+      readTrackerLiveLogs(context,{windowMinutes:10,
+        anchorAt:new Date(deployedAt+5*60_000).toISOString()}),
+    ]);
+    const complete=before.configured&&after.configured&&
+      !before.nextPageToken&&!after.nextPageToken;
+    const fingerprint=(item:{event:string;message:string;path:string})=>
+      [item.event,item.message,item.path].join("|");
+    const baseline=new Set(before.items.map(fingerprint));
+    const newSignatures=new Set(after.items.map(fingerprint).filter(key=>!baseline.has(key)));
+    return NextResponse.json({environment,at,
+      configured:before.configured&&after.configured,comparisonComplete:complete,
+      sampledBefore:before.items.length,sampledAfter:after.items.length,
+      newErrorSignatures:complete?newSignatures.size:null,
+      healthy:null,regressions:null,
+      message:!before.configured||!after.configured?
+        "Cloud Logging is not configured for deployment comparisons.":
+        !complete?"Log samples were paginated; deployment health is unknown.":
+        "Log sample comparison completed. Release health remains unverified without a deployment marker."},
+      {headers:{"Cache-Control":"private, no-store"}});
+  }catch{
+    return NextResponse.json({message:"Deployment log comparison could not be loaded. Try again."},{status:503});
+  }
 }
