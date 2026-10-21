@@ -412,3 +412,15 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/tpo/calendar/export/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
 - `src/app/(authenticated)/tpo/calendar/interviews/page.tsx` | instances H1/B0/T0/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
 - `src/app/(authenticated)/tpo/calendar/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/calendar/rounds/page.tsx` | instances H1/B0/T0/F1/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: filter gap 12/16→8px ×1
+- `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/companies/[companyId]/manage/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/companies/[companyId]/team/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/companies/archived/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/companies/page.tsx` | instances H2/B0/T0/F1/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: filter gap 12/16→8px ×1
+- `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/drive-day/page.tsx` | instances H6/B0/T0/F1/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: filter gap 12/16→8px ×1
+- `src/app/(authenticated)/tpo/find/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
