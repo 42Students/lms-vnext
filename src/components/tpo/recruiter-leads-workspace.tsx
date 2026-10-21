@@ -723,7 +723,7 @@ export function RecruiterLeadsWorkspace({
             </div>:null}
             {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
              needCounts.unassigned===0?<p role="status" className="text-sm leading-[22px]">Nothing right now.</p>:null}
-            <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+            <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
               href="/tpo/settings/recruiters">
               {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
             </Link>
@@ -1000,7 +1000,7 @@ export function RecruiterLeadsWorkspace({
                       </Select>
                       {company.people.length?company.people.map(person=>
                         <Link key={person.id}
-                          className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                          className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline"
                           href={"/tpo/recruiters/"+encodeURIComponent(person.id)}>{person.name}</Link>
                       ):<Button variant="secondary" type="button" className="min-h-11"
                         onClick={()=>{setForm({...EMPTY,companyName:company.name});setAdding(true);}}>Add a contact</Button>}
@@ -1084,7 +1084,7 @@ export function RecruiterLeadsWorkspace({
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">
+                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline">
                         <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
                          {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>

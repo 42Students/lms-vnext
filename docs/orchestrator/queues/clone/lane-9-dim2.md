@@ -241,18 +241,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/tpo/recruiter-inline-owner.tsx`
 - [x] `src/components/tpo/recruiter-inline-stage.tsx`
 - [x] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
-- [ ] `src/components/tpo/tpo-after-college-editor.tsx`
-- [ ] `src/components/tpo/tpo-audit-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-batch-facet-filters.tsx`
-- [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
-- [ ] `src/components/tpo/tpo-batch-invitation-control.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/recruiter-saved-view-controls.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`
+- [x] `src/components/tpo/tpo-audit-saved-views.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-batch-facet-filters.tsx`
+- [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
+- [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
 - [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
 - [ ] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
 - [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
