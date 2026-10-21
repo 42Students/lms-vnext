@@ -11,9 +11,9 @@ export async function GET(request:Request){
  try{
   const q=new URL(request.url).searchParams;
   const scope=q.get("scope");
-  if(scope==="ORG")return NextResponse.json(await listOrganizationTenantSettings(
+  if(scope==="ORG"||scope==="ORGANIZATION")return NextResponse.json(await listOrganizationTenantSettings(
    await getCurrentRequestContext(),q.get("organizationId")??""),
-   {headers:{"Cache-Control":"private, no-store"}});
+   {headers:{"Cache-Control":"private, no-store","X-Legacy-Org-Settings":"read-only-compat"}});
   if(scope!=="GLOBAL"&&scope!=="COLLEGE")
    return NextResponse.json({error:"INVALID_SCOPE",message:scope==="ORG"||scope==="ORGANIZATION"
     ?"Organization overrides are not writable in the registered GLOBAL/COLLEGE settings schema. Select a college or global scope.":"Select a global or college scope."},{status:400});
