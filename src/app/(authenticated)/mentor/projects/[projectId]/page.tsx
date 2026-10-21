@@ -27,6 +27,16 @@ export default async function MentorProjectPage({
   const { projectId } = await params;
   const { tab } = await searchParams;
   const selectedTab = tab === "tasks" ? "board" : tab === "meetings" ? "team" : tab;
+  const subtitles:Record<string,string> = {
+    overview:"Current status, scope, and project summary.",
+    team:"People, roles, and scheduled meetings.",
+    sprints:"Sprints, goals, and what ships when.",
+    board:"Active work, task movement, and ownership.",
+    performance:"Assign work and rebalance the team\u0027s load.",
+    resources:"Files, links, and shared reference material.",
+    activity:"Recent updates and history.",
+    delivery:"Submission package, versions and review decisions.",
+  };
   const breadcrumbTab: Record<string, string> = {
     overview: "Overview", team: "People & Meetings", sprints: "Releases and Sprints",
     board: "Board", performance: "Task Allocation", resources: "Resources", delivery: "Overview",
@@ -53,6 +63,9 @@ export default async function MentorProjectPage({
     redirect("/mentor/projects");
   }
 
+  if(tab==="tasks"||tab==="meetings")
+    redirect("/mentor/projects/"+encodeURIComponent(projectId)+"?tab="+selectedTab);
+
   const workspace =
     await getProjectWorkspaceView(
       context,
@@ -64,6 +77,18 @@ export default async function MentorProjectPage({
       <Breadcrumbs items={[{label:"Projects",href:"/mentor/projects"},{label:breadcrumbTab[selectedTab ?? "overview"] ?? "Overview"}]} />
       <ProjectWorkspaceHeader workspace={workspace} mode="MENTOR" />
       <MentorProjectTabs projectId={projectId}/>
+      {tab && !(selectedTab in subtitles)
+        ? <p role="status" className="border-b border-border py-3 text-sm text-muted-foreground">
+            No project content available for this section.
+            <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=overview"}
+              className="ml-2 font-semibold text-link underline">Overview</Link>
+          </p>
+        : <section aria-label="Current project section" className="min-w-0 space-y-1">
+            <h2 className="sr-only">{breadcrumbTab[selectedTab??"overview"]??"Overview"}</h2>
+            <p className="text-sm leading-[22px] text-muted-foreground">
+              {subtitles[selectedTab??"overview"]}
+            </p>
+          </section>}
       {/* The delivery deep link keeps its section mounted so the one-time review dialog can open. */}
       {selectedTab==="board"?<div className="min-w-0 space-y-4 md:space-y-6">
         <MentorProductBacklog projectId={projectId} tasks={workspace.tasks}

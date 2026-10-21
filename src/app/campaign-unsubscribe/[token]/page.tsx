@@ -1,5 +1,3 @@
-import authStyles from "@/components/public/public-auth-skin.module.css";
-import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import {CampaignUnsubscribeConfirm} from "@/components/placements/campaign-unsubscribe-confirm";
 
@@ -10,14 +8,18 @@ export default async function CampaignUnsubscribe({
   // A GET is deliberately not a token-validity oracle. The signed token is
   // checked only when the user explicitly submits the suppression request.
   return (
-    <main className={`${authStyles.page} mx-auto flex min-h-dvh w-full max-w-xl min-w-0 flex-col justify-center gap-4 px-4 pb-8 pt-24 min-[768px]:gap-6 min-[768px]:py-12`}>
-      <PageHeader eyebrow="42Students" title="Stop these emails?" />
-      <Card as="section">
-        <p className="mt-2 max-w-prose break-words text-sm leading-6 text-body">
-          Confirm below to unsubscribe from these emails. Opening the link does not change your preferences.
-        </p>
-        <CampaignUnsubscribeConfirm token={token} cell={true}/>
-      </Card>
+    <main className="flex min-h-dvh w-full min-w-0 items-center justify-center bg-[#f5f7f9] p-4">
+      <div className="w-full max-w-[440px]">
+        <Card as="section" className="rounded-[8px] border border-[#e5e5e5] bg-white shadow-[0_1px_2px_rgba(0,0,0,0.03)]">
+          <h1 className="m-0 text-[20px] font-semibold leading-[28px] text-[var(--lms-heading)]">
+            Stop these emails?
+          </h1>
+          <p className="mt-3 break-words text-sm leading-[22px] text-[var(--lms-muted-text)]">
+            The placement cell that wrote to you will not email you again.
+          </p>
+          <CampaignUnsubscribeConfirm token={token} cell={true}/>
+        </Card>
+      </div>
     </main>
   );
 }
