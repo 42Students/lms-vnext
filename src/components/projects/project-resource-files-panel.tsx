@@ -183,7 +183,7 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
       setDeleteTarget(null);setFeedbackTone("success");setFeedback("Resource removed.");
     }catch(error){problem(error);}finally{setBusy(false);}
   }
-  return <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
+  return <section className="min-w-0 space-y-4 border-b border-border pb-[var(--lms-space-4)] [overflow-wrap:anywhere]">
     <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Attached</h3>
     {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
       <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>

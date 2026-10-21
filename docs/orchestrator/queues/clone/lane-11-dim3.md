@@ -21,14 +21,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/placements/placement-calendar-workspace.tsx`
 - [x] `src/components/projects/project-admin-at-risk-page.tsx`
 - [x] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/placements/tpo-request-decision-control.tsx`
-- [ ] `src/components/placements/tpo-settings-nav.tsx`
-- [ ] `src/components/projects/learner-board-task-index.tsx`
-- [ ] `src/components/projects/mentor-meeting-history.tsx`
-- [ ] `src/components/projects/project-admin-readiness-page.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/placements/tpo-request-decision-control.tsx`
+- [x] `src/components/placements/tpo-settings-nav.tsx`
+- [x] `src/components/projects/learner-board-task-index.tsx`
+- [x] `src/components/projects/mentor-meeting-history.tsx`
+- [x] `src/components/projects/project-admin-readiness-page.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
 - [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
 - [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
 - [ ] `src/components/ui/breadcrumbs.tsx`
