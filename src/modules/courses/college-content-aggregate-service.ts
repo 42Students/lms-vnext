@@ -45,9 +45,11 @@ export async function listCollegeContentAggregate(
   rawQuery: unknown,
 ) {
   const live = kind === "LIVE_CLASS" ? collegeLiveClassQuerySchema.parse(rawQuery) : null;
+  const defaultPageSize=kind==="RESOURCE"?15:kind==="VIDEO"?10:25;
   const query = collegeContentQuerySchema.parse(live ? {
     q:live.q,courseCode:live.courseCode,status:live.status,scope:live.scope,deliveryId:live.deliveryId,page:live.page,format:"ALL",visibility:"ALL",
   } : rawQuery);
+  const pageSize=query.pageSize??defaultPageSize;
   const membership = context.membership;
   if (!membership || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
       !can(context, "courses.read", {
@@ -91,6 +93,8 @@ export async function listCollegeContentAggregate(
     status: aliasedColumn(lessonContents.status, "content_status"),
     sequence: aliasedColumn(lessonContents.sequence, "content_sequence"),
     durationSeconds: aliasedColumn(lessonContents.durationSeconds, "content_duration_seconds"),
+    points: aliasedColumn(lessonContents.points,"content_points"),
+    dueAt: aliasedColumn(lessonContents.endsAt,"content_due_at"),
     deliveryId: aliasedColumn(lessonContents.deliveryId, "content_delivery_id"),
     visibleToStudents: aliasedColumn(lessonContents.visibleToStudents, "content_visible_to_students"),
     updatedAt: aliasedColumn(lessonContents.updatedAt, "content_updated_at"),
@@ -159,8 +163,8 @@ export async function listCollegeContentAggregate(
     db.select({ total: count() }).from(scoped),
     db.select().from(scoped)
       .orderBy(asc(scoped.courseName), asc(scoped.lessonName), asc(scoped.sequence), asc(scoped.id))
-      .limit(COLLEGE_CONTENT_PAGE_SIZE)
-      .offset((query.page - 1) * COLLEGE_CONTENT_PAGE_SIZE),
+      .limit(pageSize)
+      .offset((query.page-1)*pageSize),
   ]);
   const total = counts[0]?.total ?? 0;
   const materialsReady=kind==="RESOURCE"&&resourceMaterialsRuntimeEnabled();
@@ -204,6 +208,7 @@ export async function listCollegeContentAggregate(
   });
   return {
     kind, query, sectionOptions, materialCountsReady:materialsReady, view:live?.view??"ALL", from:live?.from, to:live?.to, items:annotated, total,
-    totalPages: collegeContentPageCount(total),
+    pageSize,
+    totalPages: collegeContentPageCount(total,pageSize),
   };
 }
