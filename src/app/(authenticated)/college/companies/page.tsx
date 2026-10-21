@@ -29,7 +29,7 @@ export default async function CollegeCompaniesPage({
   const parsed=parseCollegeCompaniesQuery(await searchParams);
   if(!parsed.success) return <div className="min-w-0 space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
-      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear company filters</Link>}/>
+      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear company filters</Link>}/>
   </div>;
   const query=parsed.data;
   const collegeId=context.membership.collegeId;
