@@ -12,9 +12,43 @@ import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
 
 /** Legacy drive operations map to these separate authorized vNext contracts. */
-export const HR_DRIVE_ACTIONS={DRIVE:"recruiter-workspace",ROUNDS:"recruiter-workspace",
+/**
+ * Legacy RecruiterDriveController split: all readers below require an active
+ * college/company relationship and recruiter grant. A legacy integer job id is
+ * resolved only inside getHrJobRead, then checked again by the workspace fence.
+ * The UI uses the canonical UUID route, never an unscoped numeric endpoint.
+ * GET /today, /calendar -> recruiter-today/recruiter-calendar services
+ * GET /company, /team, /reports -> recruiter company/team/report readers
+ * GET /drives, /drives/:id/rounds -> recruiter-workspace service
+ * GET /drives/:id/applicants, /pipeline -> this service (paged rows/stageCounts)
+ * GET /drives/:id/offers -> this service's offers tab (offerSummary/offers)
+ * GET /drives/:id/notes, PUT /notes/:applicant -> applicant-notes service
+ * POST /drives/:id/resumes -> authorized recruiter-resume export route
+ * POST /rounds/:id/results -> round-results service
+ * GET/POST /rounds/:id/slots -> round-candidate-slots service
+ * POST /drives/:id/selections -> recruiter-selection service
+ * GET /messages/threads, /pulse, /threads/:id, POST /messages
+ *     -> recruiter-conversation inbox/read/reply/open services
+ *
+ * The legacy raw arrays / {ok,added,recorded} acknowledgements are adapted at
+ * their API/UI boundaries; do not return private applicant fields from here.
+ */
+export const HR_DRIVE_ACTIONS={
+ DRIVE:"recruiter-workspace",ROUNDS:"recruiter-workspace",
  APPLICANTS:"hr-job-read",PIPELINE:"hr-job-read",RESULTS:"round-results",
- SLOTS:"round-candidate-slots",SELECTIONS:"drive-selection",OFFERS:"hr-offer-read",ZIP:"authorized-export"} as const;
+ SLOTS:"round-candidate-slots",SELECTIONS:"drive-selection",OFFERS:"hr-job-read",
+ NOTES:"applicant-notes",COMPANY:"recruiter-company",TEAM:"recruiter-team",
+ REPORTS:"recruiter-reports",TODAY:"recruiter-today",CALENDAR:"recruiter-calendar",
+ MESSAGES:"recruiter-conversations",ZIP:"authorized-recruiter-resume-export",
+} as const;
+export const HR_DRIVE_READ_ENVELOPE={
+ applicants:"applicants.rows / applicants.counts / applicantsPage",
+ pipeline:"stageCounts (scoped to the same shared, shortlisted audience)",
+ offers:"offers / offersPage / offerSummary / offersUnavailable",
+ selections:"selectionRows / selectionPage / selectionTotal / selectionsUnavailable",
+ rounds:"workspace.rounds / roundSlotCounts / roundSlotsUnavailable",
+ notes:"applicant-notes-service (per authorized applicant, fetched on demand)",
+} as const;
 export async function getHrJobRead(context: RequestContext, rawJobId: string, rawFilters: unknown) {
   const filters = hrApplicantFilterSchema.parse(rawFilters);
   // This pre-read enforces the exact active company relationship and college grant.
@@ -204,14 +238,19 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     (loadOfferRows&&offersResult.status!=="fulfilled");
   // REC-home-drives-46: only placement-cell recorded candidate slots
   // with confirmedAt count as confirmed; internal recruiter BOOKED does not.
-  const slotRows=(filters.tab==="rounds"||filters.tab==="overview")
+  const readRoundSlots=filters.tab==="rounds"||filters.tab==="overview";
+  const slotResult=readRoundSlots
     ?await db.select({roundId:placementRoundCandidateSlots.roundId,
       total:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`,
       confirmed:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.confirmedAt} is not null and ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`})
      .from(placementRoundCandidateSlots)
      .where(eq(placementRoundCandidateSlots.jobId,workspace.job.id))
-     .groupBy(placementRoundCandidateSlots.roundId).catch(()=>[]):[];
-  const roundSlotCounts=Object.fromEntries(slotRows.map(row=>[row.roundId,
+     .groupBy(placementRoundCandidateSlots.roundId).then(
+      rows=>({rows,unavailable:false as const}),
+      ()=>({rows:[] as Array<{roundId:string;total:number;confirmed:number}>,unavailable:true as const}),
+     )
+    :{rows:[] as Array<{roundId:string;total:number;confirmed:number}>,unavailable:false as const};
+  const roundSlotCounts=Object.fromEntries(slotResult.rows.map(row=>[row.roundId,
    {confirmed:Number(row.confirmed),total:Number(row.total)}])) as Record<string,{confirmed:number;total:number}>;
   // REC-home-drives-52: formal selection ledger is not an issued offer.
   // Share the same shortlisted/active-college boundary as the offer reader,
@@ -219,7 +258,9 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const selectionStatus=filters.offerState==="SELECTED"?"SELECTED":
    filters.offerState==="PENDING_VERIFICATION"?"VERIFIED":
    filters.offerState==="REVOKED"?"CANCELLED":null;
-  const readSelections=filters.offerState==="ALL"||selectionStatus!==null;
+  // The legacy drive fetched selections/offers when their tab opened.
+  // An Overview/Applicants/Rounds request must not fail on an unrelated read.
+  const readSelections=loadOfferRows&&(filters.offerState==="ALL"||selectionStatus!==null);
   const selectionWhere=and(where,
    eq(placementDriveSelections.jobId,workspace.job.id),
    selectionStatus?eq(placementDriveSelections.status,selectionStatus):
@@ -335,7 +376,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const selectedTotal = stageCounts[filters.stage];
   return {
     workspace, filters, roundSlotCounts, selectionRows, selectionPage, selectionTotal, stageCounts,
-    offersUnavailable,selectionsUnavailable,legacyActionContract:HR_DRIVE_ACTIONS,
+    offersUnavailable,selectionsUnavailable,roundSlotsUnavailable:slotResult.unavailable,
+    offersLoaded:loadOfferRows,legacyActionContract:HR_DRIVE_ACTIONS,
     selectedCandidateIds:selectionRows.map(row=>row.applicationId),
     applicants: { rows: projected.rows, counts: applicantCounts },
     applicantsPage: hrApplicantPageBounds(filters.page, selectedTotal),
