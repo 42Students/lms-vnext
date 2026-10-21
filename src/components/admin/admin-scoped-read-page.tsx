@@ -55,8 +55,14 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   {heading("Super Admin")}
-  <Alert tone="warning" title={title==="Registered Faculty"?"Select a College to manage Faculty":title==="Registered Students"?"Select a College to manage Learners":"Select a college to continue"}>
-   {title==="Faculty Assignments"?"Choose a college in the header above to see its faculty assignments.":title==="Registered Faculty"?"Choose a college in the header above to see its faculty.":title==="Registered Students"?"Choose a college in the header above to see its students.":"Choose a college in the header above to continue."}
+  <Alert tone="warning">
+   <div className="flex items-start gap-3">
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" className="mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>
+    <div className="min-w-0 space-y-1">
+     <strong className="block font-semibold">Select a college to continue</strong>
+     <p>{title==="Faculty Assignments"?"Choose a college in the header above to see its faculty assignments.":title==="Registered Faculty"?"Choose a college in the header above to see its faculty.":title==="Registered Students"?"Choose a college in the header above to see its students.":"Choose a college in the header above to continue."}</p>
+    </div>
+   </div>
   </Alert>
  </div>;
  const directory=await loader(parsed.data)
@@ -225,7 +231,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     </label>
     </div>
    </details>:null}
-   {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
+   {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(directoryKind||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
