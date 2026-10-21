@@ -51,6 +51,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
     return <div className="min-w-0 space-y-4">
       <PageHeader title="Jobs" actions={<CollegeDrivesRefreshButton/>}/>
       <p role="status" className="border-l-2 border-[var(--lms-warning)] bg-[var(--lms-warning-subtle)] p-3 text-sm text-body">Couldn't refresh drives. Search and filters are preserved; no stale rows are shown from an unverified college or filter scope.</p>
+      <form method="get" role="search" aria-label="Drive filters" className="flex min-w-0 flex-wrap items-end gap-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+       <CollegeDrivesQuickFilters q={query.q} status={query.status}/>
+       <Button type="submit">Filter</Button>
+      </form>
       <ErrorState title="Failed to load jobs. Please try again."
         description="The drive list could not be loaded. No changes were made."
         action={<Link href={driveListHref(query)}
@@ -211,6 +215,10 @@ export default async function CollegeDrivesPage({ searchParams }: {
          <Link href={"/college/placements/jobs/"+encodeURIComponent(item.id)+"/settings?returnTo="+encodeURIComponent(driveListHref(query))}
           aria-label={"Edit "+item.title} className="min-h-11 text-sm font-semibold text-link underline">Edit</Link>
          <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
+         {item.status!=="ARCHIVED"?<details className="min-w-0 w-full">
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-error)]">Delete / archive drive</summary>
+          <CollegeDriveArchiveAction jobId={item.id}/>
+         </details>:null}
          {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id} title={item.title}
           currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
         </div>
