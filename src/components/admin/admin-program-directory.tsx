@@ -148,7 +148,7 @@ export function AdminProgramDirectory({
         </p>
         {departments.length === 0 ? (
           <p role="status" className="mt-3 text-sm text-muted-foreground">
-            No departments in this college yet. <Link href="/admin/departments" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
+            No departments in this college yet. <Link href="/admin/departments" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
           </p>
         ) : null}
         <div className="mt-4 grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
@@ -206,7 +206,7 @@ export function AdminProgramDirectory({
             {filtered.length ? (
               <a
                 href={csvHref} download="programs.csv"
-                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[var(--lms-font-base)] font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:min-h-9 sm:flex-none"
+                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[var(--lms-font-base)] font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:min-h-9 sm:flex-none md:min-h-9 text-sm"
               >Export CSV</a>
             ) : <Button variant="secondary" disabled>Export CSV</Button>}
             <Button variant="secondary" className="min-h-11 flex-1 sm:min-h-9 sm:flex-none" onClick={() => router.refresh()}>Refresh</Button>
