@@ -251,11 +251,12 @@ export function FacultyLessonVideoManager({
     <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
     <div className="flex flex-wrap items-center justify-between gap-2">
      <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("lesson-video")}</p>
+     <p role="note" className="text-xs text-muted-foreground">For videos hosted elsewhere, download an authorized copy and upload it locally. This workspace does not fetch arbitrary external URLs.</p>
      <Button variant="secondary" type="button" disabled={busy} onClick={()=>setUploadDrawerOpen(true)}
       className="min-h-11 md:min-h-9">Upload New Video</Button>
     </div>
     <Drawer open={uploadDrawerOpen} onOpenChange={open=>{if(!busy)setUploadDrawerOpen(open);}}
-     title="Upload New Video" description="Choose an approved lesson video file." dismissible={!busy}
+     title="Upload New Video" description="Choose an approved local video file. External video URL imports are retired." dismissible={!busy}
      className="w-full sm:w-[min(600px,100vw)]">
     <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2">
       <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Video Title

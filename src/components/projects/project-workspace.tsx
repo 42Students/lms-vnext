@@ -40,6 +40,7 @@ import { ProjectRosterTable } from "./project-roster-table";
 import {CollegeAdminWorkspaceTeamOverview} from "./college-admin-workspace-team-overview";
 import { ProjectTeamRosterReconcile } from "./project-team-roster-reconcile";
 import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
+import { ProjectSprintRowList } from "./project-sprint-row-list";
 import { ProjectTaskPlanEditor } from "./project-task-plan-editor";
 import { projectTaskPlanToken } from "@/modules/projects/project-task-plan-token";
 import type { ProjectTaskPlanRow } from "@/modules/projects/project-task-plan-model";
@@ -445,7 +446,9 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel,sectio
                  workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName??
                  workspace.members.find(member=>member.role==="MENTOR")?.displayName??null]
                 .filter(Boolean).join(" · ")||"Project workspace"
-              : mode==="ADMIN"&&section==="readiness"?
+              : mode==="ADMIN"&&section==="sprints"?
+                "Plan sprint outcomes, release alignment and delivery cadence for this workspace.":
+                mode==="ADMIN"&&section==="readiness"?
                 "Understand submission readiness, proof coverage and any manual override at a glance.":
                 mode==="ADMIN"&&section==="summary"?
                   "Health, setup and operating details for this workspace.":
@@ -1177,18 +1180,18 @@ export function ProjectWorkspace({
           {workspace.releasesLoadError ? (
             <div role="alert" className="flex flex-wrap items-center justify-between gap-3 border-l-[3px] border-error bg-error-subtle px-3 py-3 text-sm">
               <div>
-                <p className="font-semibold text-foreground">Could not load project releases.</p>
+                <p className="font-semibold text-foreground">Project releases could not be loaded</p>
                 <p className="mt-1 text-body">Tasks, Team and other loaded workspace sections remain available.</p>
               </div>
               <Link href={"?retry=1"} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-                Retry releases
+                Retry
               </Link>
             </div>
           ) : null}
           {mode!=="MENTOR"&&!workspace.releasesLoadError&&workspace.releases.length===0?
             <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
               description={mode==="ADMIN"?
-                "No sprints yet. Add the first sprint when a release is ready.":
+                "A sprint must belong to a release. Create or seed a project release before adding a new sprint.":
                 "Add the sprints this project should be measured against."}/>:null}
           {mode==="ADMIN"&&!workspace.releasesLoadError&&workspace.releases.length>0&&
             workspace.sprints.length===0?<p role="status" className="border-y border-border py-3 text-sm text-body">
@@ -1345,7 +1348,7 @@ export function ProjectWorkspace({
                     linkedSprints={(sprintsByRelease.get(release.id)??[]).length}/>:null}
                   {mode !== "LEARNER" && !readOnly && release.status !== "SHIPPED" ? (
                     <MentorSprintCreate projectId={workspace.project.id}
-                      releaseId={release.id}
+                      inline={mode==="ADMIN"} releaseId={release.id}
                       releases={workspace.releases.map(item=>({
                         id:item.id,title:item.title,status:item.status,
                       }))} />
@@ -1378,7 +1381,10 @@ export function ProjectWorkspace({
                 </div>
               ) : null}
 
-              <div className="mt-4 space-y-3">
+              <ProjectSprintRowList rows={(sprintsByRelease.get(release.id)??[]).map(sprint=>({
+                id:sprint.id,title:sprint.title,status:sprint.status,
+                description:sprint.description,goal:sprint.goal,dueLabel:sprint.dueLabel,
+              }))}>
                 {(sprintsByRelease.get(release.id) ??
                   []).map((sprint) => (
                   <section
@@ -1688,7 +1694,7 @@ export function ProjectWorkspace({
                     </div>
                   </section>
                 ))}
-              </div>
+              </ProjectSprintRowList>
             </article>
           ))}
         </div>

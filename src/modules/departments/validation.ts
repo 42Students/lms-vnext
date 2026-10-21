@@ -1,8 +1,9 @@
 import { z } from "zod";
 
 export const departmentIdSchema = z.string().uuid();
-export const collegeIdSchema = z.string().uuid();
+export const collegeIdSchema = z.string().uuid("Select a valid college");
 
+/** DepartmentDTO name/college validation remains field-addressable for forms. */
 export const departmentNameSchema = z
   .string()
   .trim()
@@ -12,7 +13,7 @@ export const departmentNameSchema = z
 export const createDepartmentInputSchema = z.object({
   collegeId: collegeIdSchema,
   name: departmentNameSchema,
-});
+}).strict();
 
 export const renameDepartmentInputSchema = z.object({
   name: departmentNameSchema,

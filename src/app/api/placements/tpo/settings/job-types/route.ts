@@ -20,7 +20,13 @@ export async function PUT(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const result=await saveTpoJobTypes(await getCurrentRequestContext(),await request.json());
-  return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
+  return NextResponse.json({
+    ...result,
+    message:"Job types saved",
+    contract:"ATOMIC_COLLEGE_LIST_REPLACEMENT",
+    legacyEndpoint:"PUT /api/v1/tpo/settings/job-types",
+    editorHref:"/tpo/settings?tab=job-types",
+  },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   if(error instanceof TpoConfigError)return NextResponse.json({error:error.code,detail:error.detail},{
    status:error.code==="TPO_JOB_TYPE_IN_USE"||error.code==="TPO_SETTINGS_STALE"||

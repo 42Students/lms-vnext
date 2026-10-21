@@ -371,7 +371,6 @@ export default async function TpoStudentsPage({
     columns:first(raw.columns)?.slice(0,800),
     journeyState: query.journeyState,
     everyone:query.everyone,
-    everyone:query.everyone,
     branchId: query.branchId,
     programId:query.programId,
     afterCollege:query.afterCollege,
@@ -447,7 +446,7 @@ export default async function TpoStudentsPage({
        </nav>
       </Dropdown>
 
-      <Disclosure title="Advanced student filters" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
+      <Disclosure title="Filter students" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
       <form role="search" aria-label="tpo students filters" action="/tpo/students" method="get"
         className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4 xl:items-end">
         {/* Program and Class are selected in the single grid filter panel.
@@ -595,7 +594,7 @@ export default async function TpoStudentsPage({
         <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select name="batchId" defaultValue={query.batchId??""}
             className="mt-[6px] block min-h-11 md:min-h-9">
-            <option value="">Current students</option>
+            <option value="">All active batches</option>
             {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
           </Select>
         </label>
@@ -648,6 +647,301 @@ export default async function TpoStudentsPage({
         Registration is not open for {data.uninvitedCount} students: their batch has not been invited, so they cannot register.
         <Link href="/tpo/batches" className="lms-inline-link ml-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open Placement eligibility</Link>
       </Alert>:null}
+      <section aria-label="Student cohort and journey" className="space-y-4 rounded-[13px] border border-border bg-surface px-3 py-4 md:px-4">
+        <form aria-label="Student cohort selectors" method="get" action="/tpo/students"
+          className="flex min-w-0 flex-wrap items-end gap-3">
+          {query.search?<input type="hidden" name="search" value={query.search}/>:null}
+          <label className="grid w-full max-w-[360px] gap-1 text-xs font-semibold text-muted-foreground">Batch
+            <Select name="batchId" defaultValue={query.batchId??""} className="min-h-11 md:min-h-9">
+              <option value="">All active batches</option>
+              {batchDirectory.batches.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+            </Select>
+          </label>
+          <label className="grid w-full max-w-[220px] gap-1 text-xs font-semibold text-muted-foreground">Program
+            <Select name="programId" defaultValue={query.programId??""} className="min-h-11 md:min-h-9">
+              <option value="">All programs</option>
+              {programChoices.map(([id,name])=><option key={id} value={id}>{name}</option>)}
+            </Select>
+          </label>
+          <label className="grid w-full max-w-[240px] gap-1 text-xs font-semibold text-muted-foreground">Department
+            <Select name="branchId" defaultValue={query.branchId??""} className="min-h-11 md:min-h-9">
+              <option value="">All departments</option>
+              {data.branches.map(item=><option key={item.branchId} value={item.branchId}>{item.branchName}</option>)}
+            </Select>
+          </label>
+          <label className="grid w-full max-w-[220px] gap-1 text-xs font-semibold text-muted-foreground">Class
+            <Select name="classId" defaultValue={query.classId??""} className="min-h-11 md:min-h-9">
+              <option value="">All classes</option>
+              {data.classChoices.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}
+            </Select>
+          </label>
+          <Button variant="secondary" type="submit" className="min-h-11 md:min-h-9">Show students</Button>
+        </form>
+        <div role="group" aria-label="Student placement journey"
+          className="grid min-w-0 grid-cols-2 gap-2 min-[992px]:grid-cols-4">
+          {tpoStudentJourneySteps(summary).map((step,index)=>{
+            const selected=index===0?!query.journeyState&&!query.legacyStage:index===1?query.legacyStage==="REGISTERED":index===2?query.journeyState==="APPLYING":query.journeyState==="PLACED";
+            const href=index===1?scopedHref({...currentFilters,legacyStage:"REGISTERED",journeyState:undefined,page:1}):
+              scopedHref({...currentFilters,legacyStage:undefined,journeyState:index===2?"APPLYING":index===3?"PLACED":undefined,page:1});
+            return <Link role="button" aria-pressed={selected} key={step.label} href={href}
+              className={"relative flex min-h-20 min-w-0 flex-col justify-center rounded-[9px] border px-3 py-2 "+(selected?"border-primary bg-primary-subtle":"border-border bg-white hover:bg-primary-subtle")}>
+              <span className="text-xs font-semibold text-muted-foreground">{step.label}{index<3?" →":""}</span>
+              <strong className="mt-1 text-xl tabular-nums">{step.count}</strong>
+              <span className="text-xs text-muted-foreground">{step.percent}%</span>
+            </Link>;
+          })}
+        </div>
+        <div role="group" aria-label="Journey attention filters" className="flex flex-wrap gap-2">
+          {tpoStudentJourneyGaps(summary).map(gap=><FilterChipLink key={gap.state}
+            href={scopedHref({...currentFilters,journeyState:gap.state,page:1})}
+            tone="warning" selected={query.journeyState===gap.state}>{gap.label} · {gap.count}</FilterChipLink>)}
+          {(data.exportRows??roster.items).filter(row=>row.verification.status==="NOT_VERIFIED").length>0?
+            <FilterChipLink href={scopedHref({...currentFilters,profileStatus:"NOT_VERIFIED",page:1})}
+              tone="warning" selected={query.profileStatus==="NOT_VERIFIED"}>
+              Unverified profile · {(data.exportRows??roster.items).filter(row=>row.verification.status==="NOT_VERIFIED").length}
+            </FilterChipLink>:null}
+          {(data.exportRows??roster.items).filter(row=>row.profileFacts?.resume===false).length>0?
+            <FilterChipLink href={scopedHref({...currentFilters,hasResume:false,page:1})}
+              tone="warning" selected={query.hasResume===false}>
+              No resume · {(data.exportRows??roster.items).filter(row=>row.profileFacts?.resume===false).length}
+            </FilterChipLink>:null}
+          {(data.exportRows??roster.items).filter(row=>row.offersAwaitingAnswer>0).length>0?
+            <FilterChipLink href={scopedHref({...currentFilters,offerWaiting:true,page:1})}
+              tone="warning" selected={query.offerWaiting===true}>
+              Offer waiting · {(data.exportRows??roster.items).filter(row=>row.offersAwaitingAnswer>0).length}
+            </FilterChipLink>:null}
+          {(data.debarredCount??0)>0?<FilterChipLink href={scopedHref({...currentFilters,debarred:true,page:1})}
+             tone="warning" selected={query.debarred===true}>Debarred · {data.debarredCount}</FilterChipLink>:null}
+        </div>
+        {query.journeyState?<p className="border-t border-border pt-3 text-sm">
+          Suggested: review the students in this journey gap.
+          <Link href={scopedHref({...currentFilters,journeyState:query.journeyState,page:1})}
+            className="ml-2 inline-flex min-h-9 items-center font-semibold text-link underline">Do it</Link>
+        </p>:null}
+      </section>
+      <section className="min-w-0 space-y-4">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">
+              Students roster
+            </h2>
+            <p className="mt-1 text-sm text-body" aria-live="polite">
+              {roster.total} students in this view · showing {firstItem}–{lastItem}
+            </p>
+          </div>
+          <Link
+            href={tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
+            className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          >
+            Clear filters
+          </Link>
+        </div>
+
+        <form role="search" aria-label="tpo students filters"
+          action="/tpo/students"
+          method="get"
+          className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2 lg:grid-cols-4"
+        >
+          {first(raw.columns)&&<Input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Journey
+            <Select
+              name="journeyState"
+              defaultValue={query.journeyState ?? ""}
+              className="min-h-11 md:min-h-9"
+            >
+              <option value="">All journeys</option>
+              {TPO_STUDENT_JOURNEY_STATES.map((state) => (
+                <option key={state} value={state}>
+                  {JOURNEY_LABELS[state]}
+                </option>
+              ))}
+            </Select>
+          </label>
+
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Branch
+            <Select
+              name="branchId"
+              defaultValue={query.branchId ?? ""}
+              className="min-h-11 md:min-h-9"
+            >
+              <option value="">All branches</option>
+              {data.branches.map((branch) => (
+                <option key={branch.branchId} value={branch.branchId}>
+                  {branch.branchName}
+                </option>
+              ))}
+            </Select>
+          </label>
+
+          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
+            Search
+            <TpoDebouncedStudentSearch initial={query.search??""} />
+          </label>
+
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Roster
+            <Select name="everyone" defaultValue={query.everyone?"YES":"NO"} className="min-h-11 md:min-h-9">
+              <option value="NO">In placements</option>
+              <option value="YES">Everyone at this college</option>
+            </Select>
+          </label>
+
+          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Page size
+            <Select
+              name="pageSize"
+              defaultValue={String(query.pageSize)}
+              className="min-h-11 md:min-h-9"
+            >
+              <option value="25">25 students</option>
+              <option value="50">50 students</option>
+              <option value="100">100 students</option>
+            </Select>
+          </label>
+
+          <div className="md:col-span-2 lg:col-span-4">
+            <Button variant="primary"
+              type="submit"
+              className="min-h-11 w-full px-6 md:w-auto md:min-h-9"
+            >
+              Apply filters
+            </Button>
+          </div>
+        </form>
+
+        {roster.items.length === 0 ? (
+          <div className="border-y border-border py-8 text-sm text-body">
+            {roster.total > 0
+              ? "This page is outside the matching result range. Return to the first page."
+              : Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")
+                ? "No students match these filters."
+                : "Nobody is in placements yet."}
+            {roster.total===0&&!(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!==""))?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
+            <div className="mt-3">
+              <Link
+                href={roster.total>0?scopedHref({
+                  ...currentFilters,
+                  page: 1,
+                }):(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"/tpo/students":"/tpo/batches")}
+                className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+              >
+                {roster.total>0?"First matching page":(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"Clear search and filters":"Open Placement eligibility")}
+              </Link>
+            </div>
+          </div>
+        ) : null}
+        <TpoStudentsSelectionProvider
+         key={"selection:"+context.membership.id+":"+JSON.stringify({...currentFilters,page:undefined,pageSize:undefined,columns:undefined})}
+         scopeKey={context.membership.id+":"+JSON.stringify({...currentFilters,page:undefined,pageSize:undefined,columns:undefined})}
+         allowedIds={roster.total<=5000?(data.exportRows??[]).map(item=>item.membershipId):roster.items.map(item=>item.membershipId)}
+         totalCount={roster.total}>
+        <div role="group" aria-label="Act on selected students" className="mb-3 border-b border-border pb-2">
+        <Disclosure title="Act" className="min-w-0 border-t border-border py-3" contentClassName="min-w-0 space-y-4 pt-3">
+        {manageAllowed?<TpoStudentNudgePanel
+          key={"nudge:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.search}
+          rows={roster.items.map(student=>({
+            id:student.membershipId,
+            label:student.displayName+" · "+(student.rollNumber??student.branchName),
+            registered:student.registeredForPlacements,
+          }))} />:null}
+        <TpoStudentsSelectedNote allowedIds={roster.total<=5000?(data.exportRows??[]).map(student=>student.membershipId):roster.items.map(student=>student.membershipId)}/>
+        <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
+          target="STUDENTS"
+          rows={roster.items.map(student=>({id:student.membershipId,
+            label:student.displayName+" · "+student.branchName}))}
+          viewCount={roster.total}
+          allRows={roster.total<=5000?data.exportRows?.map(student=>({
+            id:student.membershipId,label:student.displayName+" · "+student.branchName
+          }))??undefined:undefined}/>
+
+        {manageAllowed?<TpoStudentsDriveVisibility
+          learners={(roster.total<=5000?data.exportRows??roster.items:roster.items).map(student=>({
+           id:student.membershipId,name:student.displayName,
+          }))}
+          drives={managedJobs.filter(item=>["DRAFT","PUBLISHED"].includes(item.job.status)).map(item=>({
+           id:item.job.id,name:item.company.name+" · "+item.job.title,status:item.job.status,
+          }))}/>:null}
+        {manageAllowed&&(await placementTableExists("placement_tpo_prep_assignments"))?<TpoStudentsAssignPrep/>:null}
+        {manageAllowed?<TpoStudentsBulkDebar learners={
+          (roster.total<=5000?data.exportRows??roster.items:roster.items).map(student=>({
+           id:student.membershipId,name:student.displayName,debarred:student.debarred===true,
+          }))
+        }/>:null}
+        {manageAllowed ? (
+          <TpoStudentsBulkAdd
+            key={"bulk-add:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
+            learners={roster.items.map((student) => ({
+              membershipId: student.membershipId,
+              displayName: student.displayName,
+              branchName: student.branchName,
+              readinessSignal: student.readinessSignal,
+            }))}
+            allLearners={roster.total<=5000?data.exportRows?.map(student=>({
+              membershipId:student.membershipId,
+              displayName:student.displayName,
+              branchName:student.branchName,
+              readinessSignal:student.readinessSignal,
+            }))??undefined:undefined}
+            drives={bulkDriveChoices}
+          />
+        ) : null}
+
+        </Disclosure>
+        </div>
+        <Suspense fallback={<Skeleton label="Loading spreadsheet grid…" variant="row" count={8}/>}>
+          <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
+            afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}
+            canManageViews={manageAllowed}/>
+        </Suspense>
+        <TpoStudentsSelectionSummary visibleIds={roster.items.map(student=>student.membershipId)} totalCount={roster.total}/>
+
+        {rosterVerifications?.enabled&&rosterVerifications.permitted&&waitingRosterRows.length>0?
+          <TpoRosterVerificationBulk rows={waitingRosterRows}/>:null}
+
+        </TpoStudentsSelectionProvider>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-body">
+            Page {roster.page} of {Math.max(1, roster.totalPages)}
+          </p>
+
+          <nav
+            aria-label="Students roster pagination"
+            className="flex flex-wrap items-center gap-2"
+          >
+            {roster.page > 1 ? (
+              <Link
+                href={scopedHref({
+                  ...currentFilters,
+                  page: roster.page - 1,
+                })}
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+              >
+                Previous
+              </Link>
+            ) : null}
+
+            {roster.page < roster.totalPages ? (
+              <Link
+                href={scopedHref({
+                  ...currentFilters,
+                  page: roster.page + 1,
+                })}
+                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+              >
+                Next
+              </Link>
+            ) : null}
+          </nav>
+        </div>
+
+        <p className="text-xs leading-5 text-muted-foreground">
+          CSV exports all students matching the active roster filters,
+          not just the visible page. The export uses the same authorized
+          college read and CSV formula-escaping helper.
+        </p>
+      </section>
       <Disclosure title="Placement intelligence" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
       <section className="min-w-0">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -857,226 +1151,6 @@ export default async function TpoStudentsPage({
       </section>
       </Disclosure>
 
-      <section className="min-w-0 space-y-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h2 className="text-lg font-semibold text-foreground">
-              Students roster
-            </h2>
-            <p className="mt-1 text-sm text-body" aria-live="polite">
-              {roster.total} students in this view · showing {firstItem}–{lastItem}
-            </p>
-          </div>
-          <Link
-            href={tpoStudentRosterClearHref(query.pageSize,first(raw.columns))}
-            className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-          >
-            Clear filters
-          </Link>
-        </div>
-
-        <form role="search" aria-label="tpo students filters"
-          action="/tpo/students"
-          method="get"
-          className="grid min-w-0 gap-3 border-y border-border py-4 md:grid-cols-2 lg:grid-cols-4"
-        >
-          {first(raw.columns)&&<Input type="hidden" name="columns" value={first(raw.columns)?.slice(0,800)}/>}
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Journey
-            <Select
-              name="journeyState"
-              defaultValue={query.journeyState ?? ""}
-              className="min-h-11 md:min-h-9"
-            >
-              <option value="">All journeys</option>
-              {TPO_STUDENT_JOURNEY_STATES.map((state) => (
-                <option key={state} value={state}>
-                  {JOURNEY_LABELS[state]}
-                </option>
-              ))}
-            </Select>
-          </label>
-
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Branch
-            <Select
-              name="branchId"
-              defaultValue={query.branchId ?? ""}
-              className="min-h-11 md:min-h-9"
-            >
-              <option value="">All branches</option>
-              {data.branches.map((branch) => (
-                <option key={branch.branchId} value={branch.branchId}>
-                  {branch.branchName}
-                </option>
-              ))}
-            </Select>
-          </label>
-
-          <label className="flex flex-col gap-1 text-sm font-semibold text-body">
-            Search
-            <TpoDebouncedStudentSearch initial={query.search??""} />
-          </label>
-
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Roster
-            <Select name="everyone" defaultValue={query.everyone?"YES":"NO"} className="min-h-11 md:min-h-9">
-              <option value="NO">In placements</option>
-              <option value="YES">Everyone at this college</option>
-            </Select>
-          </label>
-
-          <label className="flex flex-col gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Page size
-            <Select
-              name="pageSize"
-              defaultValue={String(query.pageSize)}
-              className="min-h-11 md:min-h-9"
-            >
-              <option value="25">25 students</option>
-              <option value="50">50 students</option>
-              <option value="100">100 students</option>
-            </Select>
-          </label>
-
-          <div className="md:col-span-2 lg:col-span-4">
-            <Button variant="primary"
-              type="submit"
-              className="min-h-11 w-full px-6 md:w-auto md:min-h-9"
-            >
-              Apply filters
-            </Button>
-          </div>
-        </form>
-
-        {roster.items.length === 0 ? (
-          <div className="border-y border-border py-8 text-sm text-body">
-            {roster.total > 0
-              ? "This page is outside the matching result range. Return to the first page."
-              : Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")
-                ? "No students match these filters."
-                : "Nobody is in placements yet."}
-            {roster.total===0&&!(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!==""))?<p className="mt-2">Decide who is in on Placement eligibility; they show up here.</p>:null}
-            <div className="mt-3">
-              <Link
-                href={roster.total>0?scopedHref({
-                  ...currentFilters,
-                  page: 1,
-                }):(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"/tpo/students":"/tpo/batches")}
-                className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              >
-                {roster.total>0?"First matching page":(Object.entries(currentFilters).some(([key,value])=>!["columns","page","pageSize"].includes(key)&&value!==undefined&&value!==null&&value!=="")?"Clear search and filters":"Open Placement eligibility")}
-              </Link>
-            </div>
-          </div>
-        ) : null}
-        <TpoStudentsSelectionProvider
-         key={"selection:"+context.membership.id+":"+JSON.stringify({...currentFilters,page:undefined,pageSize:undefined,columns:undefined})}
-         scopeKey={context.membership.id+":"+JSON.stringify({...currentFilters,page:undefined,pageSize:undefined,columns:undefined})}
-         allowedIds={roster.total<=5000?(data.exportRows??[]).map(item=>item.membershipId):roster.items.map(item=>item.membershipId)}
-         totalCount={roster.total}>
-        <Suspense fallback={<Skeleton label="Loading spreadsheet grid…" variant="row" count={5}/>}>
-          <TpoStudentsSpreadsheet rows={roster.items} programs={programChoices.map(([id,name])=>({id,name}))} classes={data.classChoices}
-            afterCollege={afterCollege.entries} afterCollegeAvailable={afterCollege.available && manageAllowed}
-            canManageViews={manageAllowed}/>
-        </Suspense>
-        <TpoStudentsSelectionSummary visibleIds={roster.items.map(student=>student.membershipId)} totalCount={roster.total}/>
-
-        {rosterVerifications?.enabled&&rosterVerifications.permitted&&waitingRosterRows.length>0?
-          <TpoRosterVerificationBulk rows={waitingRosterRows}/>:null}
-        <Disclosure title="Bulk student actions" className="min-w-0 border-t border-border py-3" contentClassName="min-w-0 space-y-4 pt-3">
-        {manageAllowed?<TpoStudentNudgePanel
-          key={"nudge:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.search}
-          rows={roster.items.map(student=>({
-            id:student.membershipId,
-            label:student.displayName+" · "+(student.rollNumber??student.branchName),
-            registered:student.registeredForPlacements,
-          }))} />:null}
-        <TpoStudentsSelectedNote allowedIds={roster.total<=5000?(data.exportRows??[]).map(student=>student.membershipId):roster.items.map(student=>student.membershipId)}/>
-        <TpoBulkActionPanel key={"students:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
-          target="STUDENTS"
-          rows={roster.items.map(student=>({id:student.membershipId,
-            label:student.displayName+" · "+student.branchName}))}
-          viewCount={roster.total}
-          allRows={roster.total<=5000?data.exportRows?.map(student=>({
-            id:student.membershipId,label:student.displayName+" · "+student.branchName
-          }))??undefined:undefined}/>
-
-        {manageAllowed?<TpoStudentsDriveVisibility
-          learners={(roster.total<=5000?data.exportRows??roster.items:roster.items).map(student=>({
-           id:student.membershipId,name:student.displayName,
-          }))}
-          drives={managedJobs.filter(item=>["DRAFT","PUBLISHED"].includes(item.job.status)).map(item=>({
-           id:item.job.id,name:item.company.name+" · "+item.job.title,status:item.job.status,
-          }))}/>:null}
-        {manageAllowed&&(await placementTableExists("placement_tpo_prep_assignments"))?<TpoStudentsAssignPrep/>:null}
-        {manageAllowed?<TpoStudentsBulkDebar learners={
-          (roster.total<=5000?data.exportRows??roster.items:roster.items).map(student=>({
-           id:student.membershipId,name:student.displayName,debarred:student.debarred===true,
-          }))
-        }/>:null}
-        {manageAllowed ? (
-          <TpoStudentsBulkAdd
-            key={"bulk-add:"+query.batchId+":"+query.branchId+":"+roster.page+":"+query.pageSize+":"+query.search+":"+query.journeyState}
-            learners={roster.items.map((student) => ({
-              membershipId: student.membershipId,
-              displayName: student.displayName,
-              branchName: student.branchName,
-              readinessSignal: student.readinessSignal,
-            }))}
-            allLearners={roster.total<=5000?data.exportRows?.map(student=>({
-              membershipId:student.membershipId,
-              displayName:student.displayName,
-              branchName:student.branchName,
-              readinessSignal:student.readinessSignal,
-            }))??undefined:undefined}
-            drives={bulkDriveChoices}
-          />
-        ) : null}
-
-        </Disclosure>
-        </TpoStudentsSelectionProvider>
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <p className="text-sm text-body">
-            Page {roster.page} of {Math.max(1, roster.totalPages)}
-          </p>
-
-          <nav
-            aria-label="Students roster pagination"
-            className="flex flex-wrap items-center gap-2"
-          >
-            {roster.page > 1 ? (
-              <Link
-                href={scopedHref({
-                  ...currentFilters,
-                  page: roster.page - 1,
-                })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              >
-                Previous
-              </Link>
-            ) : null}
-
-            {roster.page < roster.totalPages ? (
-              <Link
-                href={scopedHref({
-                  ...currentFilters,
-                  page: roster.page + 1,
-                })}
-                className="lms-inline-link inline-flex min-h-11 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link underline hover:text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              >
-                Next
-              </Link>
-            ) : null}
-          </nav>
-        </div>
-
-        <p className="text-xs leading-5 text-muted-foreground">
-          CSV exports all students matching the active roster filters,
-          not just the visible page. The export uses the same authorized
-          college read and CSV formula-escaping helper.
-        </p>
-      </section>
     </div>
   );
 }

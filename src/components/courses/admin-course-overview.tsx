@@ -192,7 +192,8 @@ export function AdminCourseOverview({
       className: "text-right",
       cell: (course) => (
         <CourseActions
-          allowMetadata={courseBasePath.startsWith("/admin/")}
+          allowMetadata
+          allowCode={!courseBasePath.startsWith("/admin/")}
           duplicateHref={courseBasePath+"?duplicate="+encodeURIComponent(course.id)}
           activeOfferingCount={activeOfferingCountByCourse.get(course.id)??0}
           linkedLessonCount={lessonCountByCourse?.[course.id]??0}
@@ -584,6 +585,7 @@ export function AdminCourseOverview({
           courses={(catalogue?catalogue.items:workspace.courses).map(course=>({id:course.id,name:course.name}))}/> : null}
         {!courseBasePath.startsWith("/admin/")?<CollegeCourseBulkVisibility
          key={workspace.collegeId}
+         collegeId={workspace.collegeId}
          courses={(catalogue?catalogue.items:workspace.courses).map(course=>({
           id:course.id,name:course.name,enabled:course.enabled&&course.legacyAllowedForDisplay!==0,
           updatedAt:course.updatedAt.toISOString(),

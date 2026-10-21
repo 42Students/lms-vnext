@@ -159,6 +159,7 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
           expectedEndPeriodId: created.expectedEndPeriodId,
           academicYear:created.academicYear,startDate:created.startDate,endDate:created.endDate,
           initialTermNumber:1,initialStatus:created.status,
+          legacyAuditOperation:"BATCH_CREATE", legacyEntityIdKind:"cohort_uuid",
         },
       });
       return created;
@@ -244,6 +245,7 @@ export async function updateCollegeCohort(
         metadata: {
           programId: updated.programId, fromName: current.name, fromCode: current.code,
           toCode: updated.code, expectedEndPeriodId: updated.expectedEndPeriodId,
+          legacyAuditOperation:"BATCH_UPDATE", legacyEntityIdKind:"cohort_uuid",
           academicYear:updated.academicYear,startDate:updated.startDate,endDate:updated.endDate,
         },
       });

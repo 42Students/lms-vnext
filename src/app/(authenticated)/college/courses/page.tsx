@@ -1,4 +1,5 @@
 import { CollegeCourseMissingScope } from "@/components/courses/college-course-missing-scope";
+import { CollegeCourseVisibilityRefresh } from "@/components/college/college-course-visibility-refresh";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {CollegeCoursesLastGood} from "@/components/college/college-courses-last-good";
 import { PageHeader } from "@/components/ui/page-header";
@@ -29,8 +30,12 @@ export default async function CollegeCoursesPage({searchParams}:{searchParams:Pr
   const duplicateCourseId=requestedDuplicate&&workspace?.courses.some(course=>course.id===requestedDuplicate)
     ?requestedDuplicate:undefined;
   return (
-    <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
-      <PageHeader title="Courses"/>
+    <div data-module="college-courses" className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
+      <PageHeader title="Courses" actions={<CollegeCourseVisibilityRefresh/>}/>
+      <p className="text-xs text-muted-foreground" role="note">
+        Course directory · Name A–Z is the default sort. Use the course table
+        headers and filters to change the order.
+      </p>
       <CollegeCoursesLastGood
         key={context.user.id+":"+membership.id+":"+JSON.stringify(catalogueQuery)+":"+(duplicateCourseId??"")}
         workspace={workspace}

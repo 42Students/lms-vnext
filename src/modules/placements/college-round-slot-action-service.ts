@@ -19,16 +19,16 @@ async function scope(ctx:RequestContext,raw:unknown){
  if(!job)throw Error("Placement drive not found");
  return {collegeId,job};
 }
-function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null){
+function viewSlot(s:typeof slots.$inferSelect,outcome?:string,feedback?:string|null,editNotes?:string|null){
  const virtual=s.room.startsWith("https://");
  return {id:s.id,jobId:s.jobId,roundId:s.roundId,applicationId:s.applicationId??"",
-  status:s.status==="CANCELLED"?"CANCELLED":outcome??"SCHEDULED",
+  status:s.status==="CANCELLED"?"CANCELLED":outcome??(s.legacyInterviewStatus==="RESCHEDULE_REQUESTED"?"RESCHEDULE_REQUESTED":"SCHEDULED"),
   scheduledAt:s.startsAt.toISOString(),
   durationMinutes:Math.round((s.endsAt.getTime()-s.startsAt.getTime())/60000),
   mode:virtual?"VIRTUAL":"ON_CAMPUS",venue:virtual?null:s.room,
   meetingUrl:virtual?s.room:null,interviewer:s.panel,outcomeNote:feedback??null,
   version:s.version,interviewType:s.legacyInterviewType,
-  roundDescription:s.legacyRoundDescription};
+  roundDescription:s.legacyRoundDescription,editNotes:editNotes??null};
 }
 export type CollegeRoundSlotAppointmentFilters = {
  appointmentPage?:number;
@@ -146,21 +146,26 @@ export async function getCollegeRoundSlotAppointments(
    eq(activityEvents.subjectType,"placement_round_candidate_slot"),
    inArray(activityEvents.subjectId,ids),
    inArray(activityEvents.eventType,["PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED",
-    "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW","PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK"])))
+    "PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW","PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK",
+    "PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED"])))
   .orderBy(asc(activityEvents.occurredAt),asc(activityEvents.id)):[];
  const outcomes=new Map<string,string>();
  const feedbackBySlot=new Map<string,string>();
+ const editNotesBySlot=new Map<string,string>();
  for(const event of events){
   if(!event.subjectId)continue;
   if(event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_FEEDBACK"){
    const metadata=event.metadata as Record<string,unknown>|null;
    if(typeof metadata?.feedback==="string")feedbackBySlot.set(event.subjectId,metadata.feedback);
+  }else if(event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_RESCHEDULED"){
+   const metadata=event.metadata as Record<string,unknown>|null;
+   if(typeof metadata?.notes==="string")editNotesBySlot.set(event.subjectId,metadata.notes);
   }else outcomes.set(event.subjectId,
    event.eventType==="PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED"?"COMPLETED":"NO_SHOW");
  }
  return {job,storageReady:true,rounds,candidates,
   candidateTotal,appointmentTotal,appointmentPage,appointmentPageSize,appointmentPages,
-  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id)))};
+  interviews:bookings.map(row=>viewSlot(row,outcomes.get(row.id),feedbackBySlot.get(row.id),editNotesBySlot.get(row.id)))};
 }
 
 export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobId:unknown,raw:unknown){
@@ -329,7 +334,8 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
    module:"PLACEMENTS",eventType,
    subjectType:"placement_round_candidate_slot",subjectId:booked.id,
    summary:message,metadata:{jobId:job.id,applicationId:learnerApplicationId,
-    roundId:booked.roundId,room:booked.room,version:booked.version},
+    roundId:booked.roundId,room:booked.room,version:booked.version,
+    ...(cmd.action==="EDIT"?{notes:cmd.notes??null}: {})},
   }).returning({id:activityEvents.id});
   await tx.insert(inAppNotifications).values({
    userId:learner.userId,eventId:audit.id,title:"Interview update",

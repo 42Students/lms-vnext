@@ -14,16 +14,35 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
-    const collegeId =
-      new URL(request.url).searchParams.get(
-        "collegeId",
-      ) ?? "";
-    const projects = await listProjectInstances(
-      context,
-      collegeId,
-    );
-
-    return NextResponse.json({ projects });
+    const query=new URL(request.url).searchParams;
+    const collegeId=query.get("collegeId")??"";
+    const pageRaw=query.get("page");
+    const limitRaw=query.get("limit");
+    const page=pageRaw===null?1:
+      /^[1-9][0-9]{0,3}$/.test(pageRaw)?Number(pageRaw):null;
+    const limit=limitRaw===null?25:
+      /^[1-9][0-9]{0,2}$/.test(limitRaw)?Math.min(200,Number(limitRaw)):null;
+    if(page===null||limit===null)return NextResponse.json({
+      error:"INVALID_PROJECT_PAGE",message:"Use a positive page and limit (1–200).",
+    },{status:400,headers:{"Cache-Control":"no-store"}});
+    // Existing clients receive the full college-scoped list. Legacy paged
+    // directory callers opt into the numbered response via ?paged=1.
+    // All rows are still scoped and authorized by the service first.
+    const projects=await listProjectInstances(context,collegeId);
+    if(query.get("paged")==="1"){
+      const slice=projects.slice((page-1)*limit,page*limit);
+      return NextResponse.json({
+        projects:slice,items:slice,total:projects.length,page,pageSize:limit,
+        totalPages:Math.max(1,Math.ceil(projects.length/limit)),
+        message:"Projects retrieved",status:"success",
+        nextPage:page*limit<projects.length?page+1:null,
+      },{headers:{"Cache-Control":"no-store"}});
+    }
+    return NextResponse.json({
+      projects,message:"Projects retrieved",status:"success",
+      legacyEndpoints:{list:"GET /api/v1/admin/projects",
+        paged:"GET /api/v1/admin/projects?page={page}&limit={limit}"},
+    },{headers:{"Cache-Control":"no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -88,7 +107,9 @@ export async function POST(request: Request) {
 
     return NextResponse.json(
       { project,status:"success",message:"Project created",
-        href:"/admin/projects/"+project.id },
+        data:project,legacyResponse:{status:"success",message:"Project created",data:project},
+        href:"/admin/projects/"+project.id,
+        templateLink:"/admin/project-templates/"+encodeURIComponent(legacy.data.templateId) },
       {status:201,headers:{"Cache-Control":"no-store"}},
     );
   } catch (error) {

@@ -35,7 +35,7 @@ export const metadata: Metadata = { title: "Logs · 42 Tracker" };
 export default async function TrackerLogsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ environment?: string; query?: string; insertId?: string; logName?: string }>;
+  searchParams: Promise<{ environment?: string; query?: string; insertId?: string; logName?: string; detail?: string }>;
 }) {
   // Logs are platform-wide and can contain operational identifiers. A named,
   // unscoped Super Admin session is required; never recreate the old shared
@@ -130,7 +130,7 @@ export default async function TrackerLogsPage({
         <a href="#known-errors" className="font-semibold text-primary-text underline">Known errors</a>
         <a href="#telegram-alert-tools" className="font-semibold text-primary-text underline">Alert digest</a>
       </nav>
-      <TrackerLiveLogsExplorer initialQuery={liveQuery} />
+      <TrackerLiveLogsExplorer initialQuery={liveQuery} initialDetailId={typeof search.detail==="string"?search.detail.slice(0,1024):""} />
       {!pollingReady ? (
         <Alert tone="warning">Cloud Logging polling is not configured for this deployment. The live source may be unavailable; this is not a healthy-log result.</Alert>
       ) : null}

@@ -48,20 +48,26 @@ export async function PATCH(
       body as { name: string },
     );
 
-    return NextResponse.json({ department, message: "Department updated successfully" });
+    return NextResponse.json({ status: "OK", department, data: department, message: "Department updated successfully" });
   } catch (error) {
     // The source controller treated update failures as 400; keep its
     // validation feedback without changing vNext access/tenant protections.
     if(error instanceof ZodError)
       return NextResponse.json({error:"INVALID_REQUEST",
-        message:error.issues[0]?.message??"Please check the department name."},{status:400});
+        message:error.issues[0]?.message??"Please check the department name.",
+        fieldErrors:Object.fromEntries(error.issues.map(issue=>[String(issue.path[0]??"name"),issue.message]))},{status:400});
     if(error instanceof DepartmentServiceError&&error.code==="DEPARTMENT_NAME_CONFLICT")
       return NextResponse.json({error:error.code,
         message:"A department with this name already exists."},{status:409});
-    return apiErrorResponse(error);
+    const response = apiErrorResponse(error);
+    if (response.status >= 500) return NextResponse.json({ error: "DEPARTMENT_UPDATE_FAILED",
+      message: "Please try again or contact support" }, { status: response.status });
+    return response;
   }
 }
 
+/** Legacy PUT maps to the same tenant-scoped UUID update as PATCH. */
+export const PUT = PATCH;
 
 export async function DELETE(
   request: Request,

@@ -170,7 +170,14 @@ export async function moveCollegeStudentSection(
       summary: isSuperAdmin(context)?"Super Admin moved learner between classes":"College Admin moved learner between classes",
       metadata: { membershipId, fromSectionId: placement.sectionId,
         toSectionId: target.id, oldPlacementId: moved.id,
-        newPlacementId: created.id, action: "SECTION_MOVE" },
+        newPlacementId: created.id, action: "SECTION_MOVE",
+        learnerProgramEnrollmentId: enrollment.id,
+        legacyCurrentClassId: placement.sectionId,
+        legacyNextClassId: target.id,
+        academicPeriodId: target.periodId,
+        // Identity/profile updates and closure belong to the membership
+        // lifecycle; move preserves the historical enrollment record.
+      },
     });
     return { placement: created, previousPlacementId: moved.id };
   });

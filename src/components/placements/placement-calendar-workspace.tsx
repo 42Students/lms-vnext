@@ -9,6 +9,7 @@ import calendarStyles from "./legacy-calendar-theme.module.css";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
+import {CalendarCompanySelect} from "./calendar-company-select";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -646,21 +647,37 @@ export async function PlacementCalendarWorkspace({
       now,
     );
 
+  const bookedInterviews=bookings?.events??[];
+  const bookedTimes=audience==="SUPER_ADMIN"?bookedInterviews.map(event=>({
+   event,start:Date.parse(event.startsAt),end:Date.parse(event.endsAt),
+   room:(event.venue??event.meetingUrl??"").trim().toLowerCase(),
+   interviewer:(event.interviewer??"").trim().toLowerCase(),
+  })):[];
+  const bookedConflictCount=bookedTimes.filter((item,index)=>
+   bookedTimes.some((other,i)=>i!==index&&
+    item.start<other.end&&other.start<item.end&&
+    (item.event.candidateMembershipId===other.event.candidateMembershipId||
+     Boolean(item.room&&item.room===other.room)||
+     Boolean(item.interviewer&&item.interviewer===other.interviewer)))).length;
+  const adminMetricKnown=Boolean(bookings&&(!bookings.failed||bookings.stale));
+  const adminMetrics=[
+   ["Scheduled",bookedInterviews.length],
+   ["Today",bookedInterviews.filter(event=>placementCalendarDayKey(new Date(event.startsAt))===today).length],
+   ["Companies",new Set(bookedInterviews.map(event=>event.companyName)).size],
+   ["Conflicts",bookedConflictCount],
+  ] as const;
+
   const previous =
     shiftCareerCalendarDay(
       state.anchor,
-      state.view === "week"
-        ? "week"
-        : "month",
+      state.view,
       -1,
     );
 
   const next =
     shiftCareerCalendarDay(
       state.anchor,
-      state.view === "week"
-        ? "week"
-        : "month",
+      state.view,
       1,
     );
 
@@ -725,8 +742,8 @@ export async function PlacementCalendarWorkspace({
         }
       />
 
-      {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
-        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {mainSnapshot.stale ? "This refresh failed. Showing the last successful calendar events for this account and filter (up to 15 minutes old)." : needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
+      {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry summary</Link>}>
+        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. {needsSnapshot.stale ? "Showing the last successful follow-up summary (up to 15 minutes old)." : loadedResponse ? "The successful events remain visible." : "Calendar events are unavailable; other successful sources remain visible."} Missing counts are not zero. Retry summary.</p>
       </Banner>:null}
 
       {calendarFollowupsWritable ? (
@@ -745,11 +762,21 @@ export async function PlacementCalendarWorkspace({
       {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-4">
        <h2 className="text-base font-semibold">Today</h2>
        {needsKnown?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
-         <span className="font-semibold">{eventTime(event.startsAt)}</span>{" · "}{event.title}
-         {event.status==="DONE"?<span className="ml-2 text-success-text">Done</span>:null}
+         {eventHref(event,audience)?<Link href={eventHref(event,audience)!}
+          aria-label={"Open "+event.title+", "+eventTime(event.startsAt)+" IST"}
+          className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+           <span>{eventTime(event.startsAt)}</span><span>· {event.kind==="APPLICATION_DEADLINE"?"Today: ":""}{event.title}</span>
+           {event.status==="DONE"?<span className="text-success-text">· Done</span>:null}
+         </Link>:<>
+           <span className="font-semibold">{eventTime(event.startsAt)}</span>
+           {" · "}{event.title}{event.status==="DONE"?" · Done":""}
+         </>}
         </li>)}</ul>:<p className="mt-2 text-sm text-body">Nothing scheduled today</p>:
          <p role="status" className="mt-2 text-sm text-warning-text">Today&apos;s schedule is unavailable.</p>}
-       {needsKnown?<p className="mt-3 text-sm text-body">Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}</p>:null}
+       {needsKnown?<p className="mt-3 text-sm text-body">
+        Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}
+        {nextSeven.length>0?" · "+nextSeven[0].title+" · "+dateLabel(placementCalendarDayKey(nextSeven[0].startsAt)):""}
+       </p>:null}
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-4">
        <h2 className="text-base font-semibold">Needs doing</h2>
@@ -803,7 +830,7 @@ export async function PlacementCalendarWorkspace({
                 ["Follow-ups", summary.followups],
                 ["All events", summary.total],
               ]
-            : [
+            : audience==="SUPER_ADMIN"?adminMetrics:[
                 ["College rounds", summary.rounds],
                 ["Matching events", summary.total],
               ]
@@ -816,7 +843,8 @@ export async function PlacementCalendarWorkspace({
               {label}
             </p>
             <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">
-              {loadedResponse ? count : "Unavailable"}
+              {audience==="SUPER_ADMIN"?(adminMetricKnown?count:"Unavailable"):
+                loadedResponse?count:"Unavailable"}
             </p>
           </div>
         ))}
@@ -840,6 +868,11 @@ export async function PlacementCalendarWorkspace({
             <p className="mt-1 text-sm text-muted-foreground">
               Showing {dateLabel(window.from)} –{" "}
               {dateLabel(window.to)} · IST
+              <span className="ml-2 font-semibold text-foreground">
+               {loadedResponse?visibleEvents.length+" item"+(visibleEvents.length===1?"":"s")+
+                 " in this "+(state.view==="week"?"week":state.view==="month"?"month":"period"):
+                 "Item count unavailable"}
+              </span>
             </p>
           </div>
           <div
@@ -884,7 +917,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Previous calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            ←
+            ← Previous
           </Link>
           <Link
             href={calendarHref(
@@ -907,7 +940,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Next calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            →
+            Next →
           </Link>
           <span className="order-first col-span-3 min-w-0 break-words text-sm font-semibold text-foreground sm:order-none sm:ml-2">
             {state.view === "week"
@@ -949,14 +982,11 @@ export async function PlacementCalendarWorkspace({
 
           <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Company
-            <Input
-              type="search"
-              list="tpo-calendar-company-choices"
-              name="company"
-              maxLength={150}
-              defaultValue={state.company}
-              placeholder="Search company name"
-              className="w-full"
+            <CalendarCompanySelect
+              href={calendarHref(basePath,audience,state,{company:""})}
+              selected={state.company}
+              companies={[...new Set(countSourceEvents.map(event=>event.companyName).filter(
+                (name):name is string=>Boolean(name)))].sort((a,b)=>a.localeCompare(b,"en-IN"))}
             />
           </label>
 
@@ -971,10 +1001,9 @@ export async function PlacementCalendarWorkspace({
     {state.company?<Link href={calendarHref(basePath,audience,state,{company:""})}
        className="inline-flex min-h-11 items-center text-xs text-[var(--lms-link-text)] underline">All companies</Link>:null}
    </div></details>:null}
-   {isTpo?<datalist id="tpo-calendar-company-choices">
-           {[...new Set(countSourceEvents.map(event=>event.companyName).filter(Boolean))]
-             .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
-          </datalist>:null}
+   {isTpo&&countSourceEvents.length>200?<p className="text-xs text-muted-foreground sm:col-span-2">
+     Company choices reflect this visible period; the source may have additional matches outside it.
+    </p>:null}
           {isTpo ? (
             <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
               Event type
@@ -1066,6 +1095,9 @@ export async function PlacementCalendarWorkspace({
   const nextKinds=toggleTpoCalendarChip(currently,filter.value);
   return <FilterChipLink key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
     selected={active}
+    title={(active?"Hide ":"Show ")+filter.label+
+      (state.kinds.length>0||state.kind?" too":" only")+
+      " · "+count+" matching event"+(count===1?"":"s")}
     aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}>
     <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-[var(--lms-radius-pill)] "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
     {filter.label} ({count})
@@ -1125,6 +1157,9 @@ export async function PlacementCalendarWorkspace({
           {event.note?<p className="text-xs">{event.note}</p>:null}
          </li>)}</ul>
        </section>:null}
+      {isTpo&&state.view==="week"?<p className="text-xs text-muted-foreground" role="note">
+       Select an empty time slot to add a follow-up, drag a follow-up to move it, or open a round in its placement drive to change its schedule.
+      </p>:null}
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        blockedDates={blockedDays?.rows.map(row=>row.day)??[]} blockedDatesAvailable={blockedDays?.ready??false}
@@ -1136,9 +1171,9 @@ export async function PlacementCalendarWorkspace({
        }))}/>:state.view !== "agenda" ? (
         <section
           aria-label={`${state.view} placement calendar`} tabIndex={0}
-          className={"hidden min-w-0 overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[992px]:block "+(isTpo?calendarStyles.tpoMonthFrame:"")}
+          className={"min-w-0 overflow-x-auto overscroll-x-contain rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] "+(isTpo?calendarStyles.tpoMonthFrame:"")}
         >
-          <CalendarGrid variant="hairline" className={"min-w-[56rem] "+calendarStyles.calendarHairline}>
+          <CalendarGrid variant="hairline" className={"min-w-[42rem] min-[992px]:min-w-[56rem] "+calendarStyles.calendarHairline}>
             {[
               "Mon",
               "Tue",
@@ -1167,7 +1202,7 @@ export async function PlacementCalendarWorkspace({
 
               const shown = dayEvents.slice(
                 0,
-                state.view === "month" ? 2 : 4,
+                state.view === "month" ? 3 : 4,
               );
 
               return (
@@ -1197,36 +1232,27 @@ export async function PlacementCalendarWorkspace({
                   </p>
 
                   <div className="mt-2 space-y-1">
-                    {shown.map((event) => {
-                      const href = eventHref(
-                        event,
-                        audience,
-                      );
-
-                      return href ? (
-                        <Link
-                          key={event.id}
-                          href={href}
-                          title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                          className="block min-h-9 rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"
-                        >
-                          <span className="block truncate">
-                            {eventTime(
-                              event.startsAt,
-                            )}
-                          </span>
-                          <span className="block truncate">
-                            {event.title}
-                          </span>
-                        </Link>
-                      ) : (
-                        <div
-                          key={event.id}
-                          className="rounded-[var(--lms-control-radius)] bg-muted px-2 py-1 text-xs text-body"
-                        >
-                          {event.title}
-                        </div>
-                      );
+                    {shown.map(event=>{
+                      const href=eventHref(event,audience);
+                      const eventLabel=[eventTime(event.startsAt),event.companyName,
+                        event.title].filter(Boolean).join(" · ");
+                      return <details key={event.id} className="group min-w-0 rounded-[var(--lms-control-radius)] bg-primary-subtle text-xs text-primary-text">
+                       <summary title={eventLabel+" (open event details)"}
+                        aria-label={eventLabel+"; press Enter to view details"}
+                        className="min-h-11 cursor-pointer list-none rounded-[var(--lms-control-radius)] px-2 py-1 font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
+                        <span className="block truncate">{eventTime(event.startsAt)}{event.status==="DONE"?" · Done":""}</span>
+                        <span className="block truncate">{event.title}</span>
+                       </summary>
+                       <div className="relative z-10 min-w-0 space-y-1 rounded-b-[var(--lms-control-radius)] border border-primary/20 bg-surface px-2 py-2 text-xs text-body">
+                        <strong className="block break-words">{event.title}</strong>
+                        <p className="break-words">{event.companyName} · {eventDateTime(event.startsAt)} IST</p>
+                        {event.venue?<p className="break-words">Venue: {event.venue}</p>:null}
+                        {event.note?<p className="whitespace-pre-wrap break-words">Notes: {event.note}</p>:null}
+                        {href?<Link href={href} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                          Open event →
+                        </Link>:null}
+                       </div>
+                      </details>;
                     })}
 
                     {dayEvents.length > shown.length ? (
@@ -1250,7 +1276,7 @@ export async function PlacementCalendarWorkspace({
 
       <section
         aria-label="Calendar agenda"
-        className="min-w-0 space-y-4"
+        className={state.view==="agenda"?"min-w-0 space-y-4":"hidden"}
       >
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-end sm:justify-between">
           <div>
@@ -1272,7 +1298,9 @@ export async function PlacementCalendarWorkspace({
           </p>
         </div>
 
-        {state.view!=="agenda"?<p className="text-xs text-muted-foreground min-[992px]:hidden">Calendar events are listed below for a better fit on small screens.</p>:null}
+        {state.view==="agenda"?<p className="text-xs text-muted-foreground">
+          Select an event to view its company, schedule and location.
+        </p>:null}
         {!loadedResponse ? (
           <div role="status" className="border-y border-border py-8 text-sm text-warning-text">
             Calendar events could not be loaded. Use Retry above to refresh.
@@ -1289,7 +1317,7 @@ export async function PlacementCalendarWorkspace({
               className="space-y-3"
             >
               <h3 className="m-0 border-b border-border pb-2 text-sm font-semibold text-foreground">
-                {dateLabel(group.day)}
+                {new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"long",year:"numeric",timeZone:"UTC"}).format(new Date(group.day+"T12:00:00Z"))}
                 {group.day === today
                   ? " · Today"
                   : ""}

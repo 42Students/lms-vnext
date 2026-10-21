@@ -9,6 +9,10 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
 import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+type Screenshot = {id:string;file:File;preview:string;state:"PENDING"|"UPLOADING"|"UPLOADED"|"FAILED";
+ storageKey?:string;uploadToken?:string;putComplete?:boolean;error?:string};
+const SCREENSHOT_LIMIT=8*1024*1024;
+
 import { useFormDraft } from "@/hooks/use-form-draft";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
@@ -45,7 +49,82 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   const [similarSearched,setSimilarSearched]=useState(false);
   const similarRequest=useRef(0);
   const [recentContext,setRecentContext]=useState({reporterName:"",accountRole:"",environment:""});
-  const [screenshotStatus,setScreenshotStatus]=useState("Screenshot upload is unavailable until private object scanning and signed storage are enabled.");
+
+  const [screenshotStatus,setScreenshotStatus]=useState("");
+  const [screenshots,setScreenshots]=useState<Screenshot[]>([]);
+  const screenshotsRef=useRef<Screenshot[]>([]);
+  const screenshotInputRef=useRef<HTMLInputElement>(null);
+  const uploadLock=useRef(false);
+  const [uploading,setUploading]=useState(false);
+  useEffect(()=>()=>{for(const row of screenshotsRef.current)URL.revokeObjectURL(row.preview);},[]);
+  function updateScreenshot(id:string,change:Partial<Screenshot>){
+    screenshotsRef.current=screenshotsRef.current.map(row=>row.id===id?{...row,...change}:row);
+    setScreenshots(screenshotsRef.current);
+  }
+  function addScreenshots(files:readonly File[]){
+    const next=[...screenshotsRef.current];
+    let message="";
+    for(const file of files){
+      if(next.length>=3){message="A report accepts up to 3 screenshots.";break;}
+      if(!["image/png","image/jpeg","image/webp"].includes(file.type)){
+        message="Screenshots must be PNG, JPEG or WebP.";continue;
+      }
+      if(!file.size||file.size>SCREENSHOT_LIMIT||file.name.length>255){
+        message="Choose images of at most 8 MB with valid filenames.";continue;
+      }
+      next.push({id:crypto.randomUUID(),file,preview:URL.createObjectURL(file),state:"PENDING"});
+    }
+    screenshotsRef.current=next;setScreenshots(next);
+    setScreenshotStatus(message||"Screenshots are uploaded privately after the report is saved.");
+  }
+  function removeScreenshot(id:string){
+    if(uploadLock.current)return;
+    const row=screenshotsRef.current.find(item=>item.id===id);
+    if(row)URL.revokeObjectURL(row.preview);
+    screenshotsRef.current=screenshotsRef.current.filter(item=>item.id!==id);
+    setScreenshots(screenshotsRef.current);
+  }
+  function clearScreenshots(){
+    for(const row of screenshotsRef.current)URL.revokeObjectURL(row.preview);
+    screenshotsRef.current=[];setScreenshots([]);setScreenshotStatus("");
+  }
+  async function uploadScreenshots(publicId:string){
+    if(uploadLock.current)return;
+    uploadLock.current=true;setUploading(true);
+    const endpoint="/api/bug-tracker/reports/"+encodeURIComponent(publicId)+"/attachments";
+    for(const row of screenshotsRef.current){
+      if(row.state==="UPLOADED")continue;
+      updateScreenshot(row.id,{state:"UPLOADING",error:undefined});
+      try{
+        let storageKey=row.storageKey,uploadToken=row.uploadToken;
+        if(!row.putComplete||!storageKey||!uploadToken){
+          const grant=await apiFetch<{
+            storageKey:string;uploadToken:string;uploadUrl:string;
+            requiredHeaders:Record<string,string>;
+          }>(endpoint,{method:"POST",headers:{"content-type":"application/json"},
+            body:JSON.stringify({action:"INITIATE",fileName:row.file.name,
+              contentType:row.file.type,sizeBytes:row.file.size})});
+          const put=await fetch(grant.uploadUrl,{method:"PUT",headers:grant.requiredHeaders,body:row.file});
+          if(!put.ok)throw Error("Private upload failed. Retry this image.");
+          storageKey=grant.storageKey;uploadToken=grant.uploadToken;
+          // Keep only the storage identity for idempotent confirmation retry.
+          // Never store a presigned URL or secret in the autosaved form draft.
+          updateScreenshot(row.id,{storageKey,uploadToken,putComplete:true});
+        }
+        await apiFetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},
+          body:JSON.stringify({action:"CONFIRM",storageKey,fileName:row.file.name,uploadToken})});
+        updateScreenshot(row.id,{state:"UPLOADED",error:undefined});
+      }catch(caught){
+        const message=caught instanceof FriendlyFetchError&&caught.status===503
+          ?"Storage unavailable. The issue was saved; retry the screenshot later."
+          :caught instanceof Error&&caught.message.startsWith("Private upload")?caught.message
+          :"The screenshot could not be attached. Retry it without recreating the issue.";
+        updateScreenshot(row.id,{state:"FAILED",error:message});
+      }
+    }
+    uploadLock.current=false;setUploading(false);
+  }
+
   const selectedPage = LOCATION_OPTIONS.find(item => item.value === page);
   const selectedScreen = selectedPage?.children?.find(item => item.value === screen);
 
@@ -118,6 +197,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       setRecentContext({reporterName:draft.reporterName,
         accountRole:draft.accountRole,environment:draft.environment});
       setCreated(payload.issue.publicId);
+      // A failure to attach one image must not recreate or lose the report.
+      void uploadScreenshots(payload.issue.publicId);
       await linkCreatedIssue(payload.issue.publicId);
     } catch (caught) {
       setError(caught instanceof FriendlyFetchError ? caught.message :
@@ -191,7 +272,18 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       </div>
       <h1 className="font-semibold text-2xl leading-8 text-[var(--lms-heading)]">{created}</h1>
       <p className="text-sm text-body leading-[22px]">The issue is saved. You can continue testing immediately.</p>
-      <p className="text-sm text-muted-foreground">Screenshots: 0 uploaded. Private screenshot uploads are not yet enabled.</p>
+      <p className="text-sm text-muted-foreground" role="status">Screenshots: {screenshots.filter(row=>row.state==="UPLOADED").length}
+        {" "}of {screenshots.length} attached{uploading?" · Uploading…":""}.</p>
+      {screenshots.length?<ul className="space-y-2" aria-label="Screenshot upload receipts">
+        {screenshots.map(row=><li key={row.id} className="flex flex-wrap items-center gap-2 text-sm">
+          <span className="min-w-0 break-all">{row.file.name}</span>
+          <StatusBadge tone={row.state==="UPLOADED"?"success":row.state==="FAILED"?"warning":"neutral"}>{row.state}</StatusBadge>
+          {row.error?<span role="alert" className="text-error">{row.error}</span>:null}
+        </li>)}
+      </ul>:null}
+      {screenshots.some(row=>row.state==="FAILED")?
+        <Button type="button" variant="secondary" disabled={uploading}
+          onClick={()=>void uploadScreenshots(created)}>Retry failed screenshot uploads</Button>:null}
       {linkIssueError?<InlineNotice tone="error" message={linkIssueError}/>:null}
       {knownErrorId&&linkIssueError?<Button type="button"
         variant="secondary"
@@ -199,8 +291,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
 
       <div className="flex flex-wrap gap-3">
         <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
-        <Button 
-          onClick={() => {setCreated("");setDraft({...initial,...recentContext});clearDraft();setError("");setScreenshotStatus("Screenshot upload is unavailable until private object scanning and signed storage are enabled.");}}
+        <Button disabled={uploading}
+          onClick={() => {setCreated("");setDraft({...initial,...recentContext});clearDraft();setError("");clearScreenshots();}}
           type="button" className="min-h-11 md:min-h-9">Report another</Button>
       </div>
     </section>
@@ -297,13 +389,28 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       </label>
       <section className="min-w-0 space-y-2 border-b border-border pb-4" aria-label="Screenshots and optional evidence">
         <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Screenshots</h2>
-        <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border bg-[var(--lms-neutral-50)] p-4 text-sm text-muted-foreground">
-          <label className="flex min-w-0 items-center gap-2">
-            <input aria-label="Screenshot picker currently unavailable" type="file"
-              accept="image/png,image/jpeg,image/webp" disabled
-              className="min-w-0 max-w-full"/>
-            <span>Private upload unavailable</span>
-          </label>
+        <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border bg-[var(--lms-neutral-50)] p-4 text-sm text-muted-foreground"
+          onDragOver={event=>event.preventDefault()}
+          onDrop={event=>{event.preventDefault();addScreenshots(Array.from(event.dataTransfer.files));}}
+          onPaste={event=>{const files=Array.from(event.clipboardData.files);
+            if(files.length){event.preventDefault();addScreenshots(files);}}}>
+          <input ref={screenshotInputRef} type="file" multiple aria-label="Choose screenshots"
+            accept="image/png,image/jpeg,image/webp" className="sr-only"
+            onChange={event=>{addScreenshots(Array.from(event.target.files??[]));event.target.value="";}} />
+          <div className="flex flex-wrap items-center gap-3">
+            <Button type="button" variant="secondary" disabled={screenshots.length>=3||pending}
+              onClick={()=>screenshotInputRef.current?.click()}>Choose screenshots</Button>
+            <span>Drag, paste or choose up to 3 screenshots (PNG/JPEG/WebP, 8 MB each).</span>
+          </div>
+          {screenshots.length?<ul className="mt-3 grid gap-3 sm:grid-cols-2" aria-label="Selected screenshots">
+            {screenshots.map(row=><li key={row.id} className="min-w-0 space-y-2 rounded border border-border bg-white p-2">
+              <img src={row.preview} alt={"Screenshot preview: "+row.file.name}
+                className="h-28 w-full rounded object-contain"/>
+              <p className="truncate text-xs" title={row.file.name}>{row.file.name}</p>
+              <Button type="button" variant="ghost" disabled={pending}
+                onClick={()=>removeScreenshot(row.id)}>Remove screenshot</Button>
+            </li>)}
+          </ul>:null}
           <p role="status" className="mt-2">{screenshotStatus}</p>
         </div>
         <label className={label + " mt-2"}>Evidence link

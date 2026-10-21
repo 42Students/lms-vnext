@@ -21,6 +21,17 @@ export function learnerProjectTabHref(
   return "/learn/projects/"+encodeURIComponent(projectId)+"?"+params.toString();
 }
 
+/** Keep the selected task editor mounted when the query switches tabs.
+ * Client tab controls should remember the opener element and restore focus
+ * there after closing the task modal; the model retains taskId on navigation.
+ */
+export function learnerProjectTaskFocusOnTabChange(input:{
+ activeTaskId:string|null;targetTab:string;dirty:boolean;
+}):{keepOpen:boolean;requiresConfirmation:boolean;restoreFocusTo:string|null}{
+ return {keepOpen:Boolean(input.activeTaskId),
+  requiresConfirmation:Boolean(input.activeTaskId&&input.dirty),
+  restoreFocusTo:input.activeTaskId?"[data-task-id='"+input.activeTaskId.replace(/[^a-zA-Z0-9-]/g,"")+"']":null};
+}
 /** Use with an interactive tab control before navigation when a task form is dirty. */
 export function learnerProjectTabSwitchAllowed(input:{
  currentProjectId:string;targetProjectId:string;dirty:boolean;confirmedDiscard:boolean;

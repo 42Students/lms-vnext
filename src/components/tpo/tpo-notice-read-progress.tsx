@@ -66,7 +66,11 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
    {isSent&&data.delivered>data.read?<Button variant="ghost" type="button"
     className="min-h-11 text-link underline md:min-h-9" onClick={()=>setUnreadOpen(true)}>Who hasn&apos;t read ({data.delivered-data.read})</Button>:null}
    <Drawer open={unreadOpen} onOpenChange={setUnreadOpen} title="Who hasn't read"
+     className="md:!w-[min(420px,100vw)] md:!max-w-[420px]"
      description={data.delivered-data.read+" students have not read this notice."}>
+    <p className="mb-3 text-xs text-muted-foreground">You can remind students who have not read this notice once per hour.</p>
+    {busy?<p role="status" className="mb-3 text-sm">Loading unread recipients…</p>:null}
+    {error?<div role="alert" className="mb-3 text-sm text-error">{error} <Button type="button" variant="secondary" onClick={()=>void load()}>Retry</Button></div>:null}
     {data.unread.length===0?<p className="text-sm text-body">Everyone has read it</p>:
      <ul className="divide-y divide-border">{data.unread.slice(0,500).map((recipient,index)=>{
        const name=typeof recipient==="string"?recipient:recipient.name;

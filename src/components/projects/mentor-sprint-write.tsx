@@ -18,38 +18,41 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 export const MENTOR_SPRINT_PLAN_SAVE_POLICY="PER_SPRINT_VERSIONED" as const;
 
 export function MentorSprintCreate({
-  projectId, releaseId,releases=[],
-}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[]}) {
+  projectId, releaseId,releases=[],inline=false,
+}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[];inline?:boolean}) {
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
   const [busy,setBusy]=useState(false);
   const [title,setTitle]=useState("");
   const [description,setDescription]=useState("");
+  const [key,setKey]=useState(""),[dueLabel,setDueLabel]=useState("");
   const [goal,setGoal]=useState(""),[done,setDone]=useState("");
   const [startDate,setStartDate]=useState(""),[endDate,setEndDate]=useState(""),[dueDate,setDueDate]=useState("");
-  const initialReleaseId=releases.find(item=>item.id===releaseId&&item.status!=="SHIPPED")?.id??
-    releases.find(item=>item.status!=="SHIPPED")?.id??releaseId;
+  const initialReleaseId=releases.length===1&&releases[0]?.id===releaseId&&
+    releases[0]?.status!=="SHIPPED"?releaseId:"";
   const [chosenReleaseId,setChosenReleaseId]=useState(initialReleaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
   const sprintKeyPreview=title.trim().toLowerCase().normalize("NFKD")
     .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,64);
-  const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==initialReleaseId);
+  const dirty=Boolean(title||key||dueLabel||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==initialReleaseId);
   function discardDraft(){
-    setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
+    setOpen(false);setTitle("");setKey("");setDueLabel("");setDescription("");setGoal("");setDone("");
     setStartDate("");setEndDate("");setDueDate("");setChosenReleaseId(initialReleaseId);
   }
   const guard=useProjectEditorDiscardGuard(open,dirty,busy,discardDraft);
   const datesValid=(!startDate||!endDate||endDate>=startDate)&&
     (!dueDate||!startDate||dueDate>=startDate);
   async function create() {
-    if(!title.trim() || title.trim().length>200 || description.length>4000||
+    if(!title.trim() || title.trim().length>200 || key.length>120 ||
+      dueLabel.length>160 || description.length>4000||
       goal.length>4000||done.length>4000||!datesValid||!chosenReleaseId||
       chosenRelease?.status==="SHIPPED") return;
     setBusy(true);
     try {
       await projectMutation("/api/projects/"+projectId+"/sprints","POST",{
-        releaseId:chosenReleaseId,title:title.trim(),description:description.trim()||null,
+        releaseId:chosenReleaseId,title:title.trim(),key:key.trim(),
+        dueLabel:dueLabel.trim()||null,description:description.trim()||null,
         goal:goal.trim()||null,definitionOfDone:done.trim()||null,
         startDate:startDate||null,endDate:endDate||null,dueDate:dueDate||null,
       });
@@ -62,44 +65,55 @@ export function MentorSprintCreate({
     } finally {setBusy(false);}
   }
 
-  return <>
-    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)} className="min-h-11 md:min-h-9">
-      Add sprint
-    </Button>
-    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Create sprint"
-      description="Add a sprint to your plan. Its title is kept when its generated key is assigned. Individual sprints save separately so other planned work is not overwritten."
-      footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+  const sprintActions=<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
         <Button className="w-full sm:w-auto" variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
         <Button className="w-full sm:w-auto" loading={busy} disabled={busy||!title.trim()||title.trim().length>200||
-          description.length>4000||!datesValid||!chosenReleaseId||
+          key.length>120||dueLabel.length>160||description.length>4000||
+          !datesValid||!chosenReleaseId||
           chosenRelease?.status==="SHIPPED"} onClick={()=>void create()}>
           {busy?"Creating…":"Confirm create"}
         </Button>
-      </div>}>
-      <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ships in release
-          <Select value={chosenReleaseId} disabled={busy}
+      </div>;
+  const sprintForm=(<div className="grid min-w-0 gap-[var(--lms-space-4)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Release
+          <Select value={chosenReleaseId} disabled={busy} required aria-invalid={!chosenReleaseId}
             onChange={event=>setChosenReleaseId(event.target.value)}
             className="min-h-11 w-full min-[768px]:min-h-9">
-            {releases.some(release=>release.status!=="SHIPPED")?releases.filter(release=>release.status!=="SHIPPED").map(release=>
-              <option key={release.id} value={release.id}>{release.title}</option>):
-              <option value={releaseId}>Current release</option>}
+            <option value="" disabled>Pick the release this sprint ships in</option>
+            {releases.filter(release=>release.status!=="SHIPPED").map(release=>
+              <option key={release.id} value={release.id}>{release.title}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint title
-          <Input maxLength={200} value={title}
-            onChange={e=>setTitle(e.target.value)} required />
+        {!chosenReleaseId?<p role="alert" className="text-xs text-error">Select a release before saving.</p>:null}
+        <div className="grid min-w-0 gap-3 md:grid-cols-2">
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Key (optional)
+            <Input maxLength={120} placeholder="Auto-generated from title if left blank"
+              value={key} onChange={e=>setKey(e.target.value)}/>
+          </label>
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due (optional)
+            <Input maxLength={160} placeholder="e.g. Week 2"
+              value={dueLabel} onChange={e=>setDueLabel(e.target.value)}/>
+          </label>
+        </div>
+        {!key.trim()&&title.trim()?<p className="text-xs text-muted-foreground">
+          Will be saved as: {sprintKeyPreview||"sprint"}
+        </p>:null}
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+          <Input maxLength={200} placeholder="e.g. Kickoff & planning" aria-invalid={!title.trim()}
+            value={title} onChange={e=>setTitle(e.target.value)} required />
+          {!title.trim()?<span role="alert" className="text-xs text-error">Title is required</span>:null}
         </label>
-        {title.trim()?<p className="text-xs text-muted-foreground">Sprint key preview: {sprintKeyPreview||"Not available"} · Assigned to {chosenRelease?.title??"the selected release"}.</p>:null}
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
           <Textarea value={description} maxLength={4000}
             onChange={e=>setDescription(e.target.value)}
             placeholder="Optional description" />
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal
-          <Textarea maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}/></label>
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sprint goal (optional)
+          <Input maxLength={4000} value={goal} onChange={e=>setGoal(e.target.value)}
+            placeholder="One sentence: what this sprint is trying to achieve"/></label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">What does done look like?
-          <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}/></label>
+          <Textarea maxLength={4000} value={done} onChange={e=>setDone(e.target.value)}
+            placeholder="Acceptance criteria — e.g. API returns paginated results and integration tests pass"/></label>
         <div className="grid min-w-0 gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] min-[768px]:grid-cols-3">
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start date
             <Input type="date" value={startDate} onChange={e=>setStartDate(e.target.value)}/></label>
@@ -111,11 +125,30 @@ export function MentorSprintCreate({
         {!datesValid?<p role="alert" className="text-sm font-semibold text-error">
           Sprint end and due dates must not come before the start date.
         </p>:null}
-      </div>
-    </Dialog>
+      </div>);
+  return <>
+    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)} className="min-h-11 md:min-h-9">
+      Add sprint
+    </Button>
+    {inline ? (open ? <section aria-label="Create sprint"
+      className="mt-3 min-w-0 space-y-4 border-y border-[var(--lms-canvas-border)] py-4">
+      <h4 className="text-base font-semibold text-foreground">Create sprint</h4>
+      <p className="text-sm text-body">
+        Choose a release and enter an outcome-focused sprint plan.
+      </p>
+      {sprintForm}
+      {sprintActions}
+      <p className="text-xs text-body">Only this workspace’s sprint plan is updated.</p>
+    </section> : null) :
+      <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
+        title="Create sprint"
+        description="Add a sprint to your plan. Its title is kept when its generated key is assigned. Individual sprints save separately so other planned work is not overwritten."
+        footer={sprintActions}>
+        {sprintForm}
+      </Dialog>}
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard sprint changes?"
-      description="You have unsaved project changes. Leave this page and discard them?"
+      description="You have unsaved changes. Leave without saving them?"
       confirmLabel="Discard changes" pending={busy}
       onConfirm={guard.confirmDiscard}/>
   </>;

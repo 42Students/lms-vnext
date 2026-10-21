@@ -8,7 +8,39 @@ import {createTpoNotice} from "@/modules/announcements/tpo-placement-write-servi
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const form=await request.formData().catch(()=>null);
+ const isJson=request.headers.get("content-type")?.toLowerCase().includes("application/json")??false;
+ let form:FormData|null=null;
+ if(isJson){
+  const raw=await request.text().catch(()=>"");
+  if(raw.length>24000)return noticePostError(request,"INVALID_BODY",413);
+  let body:unknown;
+  try{body=JSON.parse(raw);}catch{return noticePostError(request,"INVALID_BODY",400);}
+  if(!body||typeof body!=="object"||Array.isArray(body))
+   return noticePostError(request,"INVALID_BODY",400);
+  const fields=body as Record<string,unknown>;
+  // Old POST /api/v1/tpo/announcements accepts JSON but the authenticated
+  // vNext write service still owns all audience and schedule validation.
+  form=new FormData();
+  for(const name of ["title","message","body","buttonLabel","buttonUrl","linkLabel","linkUrl",
+    "sendAt","showUntil","when","audience","kind","targetId"]){
+   if(typeof fields[name]==="string")form.set(name,fields[name]);
+  }
+  if(fields.pinned===true)form.set("pinned","on");
+  if(Array.isArray(fields.targetIds)){
+   for(const id of fields.targetIds.slice(0,51)){
+    if(typeof id!=="string")return noticePostError(request,"INVALID_BODY",400);
+    form.append("targetIds",id);
+   }
+  }
+  // Email delivery, read receipts and tell-again have their own delivery
+  // contracts. Do not silently pretend these old write flags were processed.
+  if(fields.email===true||fields.notifyByEmail===true||fields.tellAgain===true)
+   return NextResponse.json({error:"UNSUPPORTED_LEGACY_DELIVERY",
+    message:"This action cannot send email or tell-again notifications. Create an in-app notice instead."},
+    {status:422});
+ }else{
+  form=await request.formData().catch(()=>null);
+ }
  if(!form)return noticePostError(request,"INVALID_BODY",400);
  // Legacy composer fields: body -> message, linkLabel/Url -> buttonLabel/Url,
  // when=NOW/LATER -> sendAt, audience.kind -> audience. Read-only mapping:
@@ -30,7 +62,8 @@ export async function POST(request:Request){
   targetId:z.string().uuid().optional(),
   targetIds:z.array(z.string().uuid()).max(50).optional(),
  }).strict().safeParse({
-  title:form.get("title"),message:form.get("message")??form.get("body"),pinned:form.get("pinned")==="on",
+  title:form.get("title"),message:form.get("message")??form.get("body"),
+  pinned:form.get("pinned")==="on",
   buttonLabel:String(form.get("buttonLabel")??form.get("linkLabel")??"").trim()||undefined,
   buttonUrl:String(form.get("buttonUrl")??form.get("linkUrl")??"").trim()||undefined,
   sendAt:when==="LATER"?sendAt||undefined:(sendAt||undefined),
@@ -48,6 +81,12 @@ export async function POST(request:Request){
  try{
   const context=await getCurrentRequestContext();
   const notice=await createTpoNotice(context,parsed.data);
+  if(isJson)return NextResponse.json({
+    status:"success",message:"Announcement created",announcement:notice,
+    data:notice,recipientSnapshot:"FROZEN_AT_CREATION",
+    lifecycle:{edit:"/api/placements/tpo/announcements/"+notice.id+"/edit",
+      undo:"/api/placements/tpo/announcements/"+notice.id+"/lifecycle"},
+  },{status:201,headers:{"Cache-Control":"no-store"}});
   const returnUrl=new URL("/tpo/announcements?tab=yours",request.url);
   returnUrl.searchParams.set("sentNotice",notice.id);
   return NextResponse.redirect(returnUrl,303);

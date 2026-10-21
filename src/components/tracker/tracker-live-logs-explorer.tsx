@@ -72,7 +72,18 @@ export function trackerLogNdjson(
  ].join("\n")+"\n";
 }
 
-export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}){
+/** Group template-equivalent redacted errors without collapsing separate
+ * routes, components or event kinds. Deployment-like events stay individual. */
+function normalizedLogMessage(message:string){
+ return message.toLowerCase()
+  .replace(/\b[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}\b/gi,"<id>")
+  .replace(/\b0x[0-9a-f]{8,}\b/gi,"<address>")
+  .replace(/\b[0-9]{10,}\b/g,"<number>")
+  .replace(/\s+/g," ").trim();
+}
+export function TrackerLiveLogsExplorer({initialQuery="",initialDetailId=""}:{
+ initialQuery?:string;initialDetailId?:string;
+}){
   const [windowMinutes,setWindowMinutes]=useState("60");
   const [minimumSeverity,setMinimumSeverity]=useState<"ERROR"|"WARNING">("WARNING");
   const [groupSimilar,setGroupSimilar]=useState(true);
@@ -90,6 +101,9 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   const [notice,setNotice]=useState("");
   const [reportOpen,setReportOpen]=useState(false);
   const [detailEntry,setDetailEntry]=useState<Entry|null>(null);
+  const [detailLoading,setDetailLoading]=useState(false);
+  const [detailError,setDetailError]=useState("");
+  const detailRequest=useRef(0);
   const [initialLoading,setInitialLoading]=useState(true);
   const [exporting,setExporting]=useState(false);
   const [muteTarget,setMuteTarget]=useState<{id:string;muted:boolean}|null>(null);
@@ -104,7 +118,9 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     if(!groupSimilar)return items.map(item=>({item,count:1}));
     const groups=new Map<string,{item:Entry;count:number}>();
     for(const item of items){
-      const key=[item.event,item.path,item.component??"",item.message].join("|");
+      const deploymentLike=/^(?:DEPLOY|DEPLOYMENT|RELEASE)[.:_-]/i.test(item.event);
+      const key=deploymentLike?item.id:
+        [item.event,item.path,item.component??"",normalizedLogMessage(item.message)].join("|");
       const existing=groups.get(key);
       if(existing)existing.count+=1;
       else groups.set(key,{item,count:1});
@@ -166,6 +182,11 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         const r=await apiFetch<Page>("/api/tracker/live-logs?"+initialParams.toString(),{signal:abort.signal});
         if(abort.signal.aborted||currentFiltersRef.current!=="60|WARNING|"+initialQuery.trim())return;
         setItems(r.items);setNextPage(r.nextPageToken);setConfigured(r.configured);
+        if(initialDetailId){
+          const selected=r.items.find(item=>item.id===initialDetailId);
+          if(selected)void showDetails(selected);
+          else setNotice("The linked log is not in the first page. Search its reference or load older records.");
+        }
         setStale(false);setLastSuccessfulAt(new Date());
         setAppliedFilters("60|WARNING|"+initialQuery.trim());
       }catch{
@@ -176,7 +197,30 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     };
     void initial();
     return ()=>abort.abort();
-  },[initialQuery]);
+  },[initialQuery,initialDetailId]);
+  async function showDetails(item:Entry){
+    const generation=++detailRequest.current;
+    setDetailEntry(item);setDetailLoading(true);setDetailError("");
+    try{
+      // The server rechecks named unscoped SA access and returns only its
+      // redacted provider whitelist, never arbitrary raw Cloud Logging JSON.
+      const response=await apiFetch<{entry:Entry}>("/api/tracker/live-logs",{
+        method:"POST",headers:{"content-type":"application/json"},
+        body:JSON.stringify({action:"DETAIL",id:item.id,filters:{
+          anchorAt:item.time,windowMinutes:2,minimumSeverity,
+        }}),
+      });
+      if(generation!==detailRequest.current)return;
+      if(!response.entry||response.entry.id!==item.id)
+        throw Error("LOG_ENTRY_CHANGED");
+      setDetailEntry({...item,...response.entry});
+    }catch{
+      if(generation===detailRequest.current)
+        setDetailError("This provider entry could not be fetched again. Showing the redacted list snapshot; the original log may have expired.");
+    }finally{
+      if(generation===detailRequest.current)setDetailLoading(false);
+    }
+  }
   async function copy(text:string){
     try{await navigator.clipboard.writeText(text);setNotice("Copied.");}
     catch{setNotice("Copy is unavailable. Select the text manually.");}
@@ -335,7 +379,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
              >Copy for Claude</Button>
             {item.id.includes(":")?<><Button variant="ghost" type="button"
               className="min-h-11 w-full sm:w-auto md:min-h-9"
-              onClick={()=>setDetailEntry(item)}>Full details</Button>
+              onClick={()=>void showDetails(item)}>Full details</Button>
               <Button variant="ghost" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
                 onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event)+"&detail="+encodeURIComponent(item.id))}>Copy permalink</Button></>:
               <span className="text-xs text-muted-foreground">Full detail is unavailable without a provider reference.</span>}
@@ -360,12 +404,14 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     {nextPage&&currentFilters===appliedFilters?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting} className="min-h-11 w-full sm:w-auto md:min-h-9">
       {items.length?"Load older":"Continue search"}
     </Button>:null}
-    <Dialog open={detailEntry!==null} onOpenChange={open=>{if(!open)setDetailEntry(null);}}
+    <Dialog open={detailEntry!==null} onOpenChange={open=>{if(!open){detailRequest.current++;setDetailEntry(null);setDetailError("");}}}
       title={detailEntry?displayTime(detailEntry.time)+" · "+detailEntry.event:"Log details"}
       description="Redacted Cloud Logging details"
       className="!left-auto !right-0 !top-0 !h-[var(--lms-visual-height)] !max-h-[var(--lms-visual-height)] !w-[min(100vw,760px)] !max-w-[760px] !translate-x-0 !translate-y-0 !rounded-none"
       footer={<Button type="button" variant="secondary" onClick={()=>setDetailEntry(null)}>Close</Button>}>
       {detailEntry?<div className="space-y-3 text-sm">
+        {detailLoading?<p role="status" className="text-xs text-muted-foreground">Verifying the provider entry…</p>:null}
+        {detailError?<Alert tone="warning">{detailError}</Alert>:null}
         <p className="break-words font-semibold">{detailEntry.path}</p>
         <p className="whitespace-pre-wrap break-words">{detailEntry.message}</p>
         <dl className="grid gap-2">
@@ -373,6 +419,21 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           <div><dt className="font-semibold">Request ID</dt><dd className="break-all">{detailEntry.requestId??"Not recorded"}</dd></div>
           <div><dt className="font-semibold">Provider reference</dt><dd className="break-all">{detailEntry.id}</dd></div>
         </dl>
+        <details className="min-w-0 border-t border-border pt-3">
+          <summary className="cursor-pointer font-semibold">Sanitized raw log payload</summary>
+          <p className="mt-2 text-xs text-muted-foreground">Only the server-redacted fields visible above are included. Untrusted provider metadata and credentials are excluded.</p>
+          <pre className="mt-2 max-h-64 overflow-auto whitespace-pre-wrap break-all rounded border border-border bg-[var(--lms-neutral-50)] p-3 text-xs">{JSON.stringify({
+            id:detailEntry.id,time:detailEntry.time,event:detailEntry.event,
+            message:detailEntry.message,path:detailEntry.path,
+            requestId:detailEntry.requestId,component:detailEntry.component,
+          },null,2)}</pre>
+          <Button type="button" variant="secondary" className="mt-2"
+            onClick={()=>void copy(JSON.stringify({
+              id:detailEntry.id,time:detailEntry.time,event:detailEntry.event,
+              message:detailEntry.message,path:detailEntry.path,
+              requestId:detailEntry.requestId,component:detailEntry.component,
+            },null,2))}>Copy as JSON</Button>
+        </details>
       </div>:null}
     </Dialog>
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}

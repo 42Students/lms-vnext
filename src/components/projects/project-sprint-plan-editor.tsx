@@ -47,8 +47,13 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
   const [pending, setPending] = useState(false);
   const saving = useRef(false);
   const [draft, setDraft] = useState<Draft[]>(() => sprints.map(draftFrom));
+  const [search, setSearch] = useState("");
+  const [expanded, setExpanded] = useState<string[]>([]);
   const baseline = sprints.map(draftFrom);
   const dirty = JSON.stringify(draft) !== JSON.stringify(baseline);
+  const matchingRows = draft.map((row,index)=>({row,index})).filter(({row,index})=>
+    !search.trim()||[row.title,row.key,row.description,row.goal,"Sprint "+(index+1)]
+      .some(value=>(value??"").toLowerCase().includes(search.trim().toLowerCase())));
   const editable = sprints.length > 0 && sprints.length <= 500 &&
     sprints.every(sprint => sprint.status === "PLANNED");
   const datesValid = draft.every(sprint =>
@@ -64,6 +69,7 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
 
   function reset() {
     setDraft(sprints.map(draftFrom));
+    setSearch("");setExpanded([]);
     setOpen(false);
   }
   const guard = useProjectEditorDiscardGuard(open, dirty, pending, reset);
@@ -139,22 +145,43 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
         Edit planned sprints, move rows Up or Down, then Save sprint plan once.
         Only this release is updated; tasks, meetings and resources are unchanged.
       </p>
-      {draft.map((row, index) => {
+      {draft.length>12?<div className="space-y-1">
+        <label className="block text-xs font-semibold text-body" htmlFor={"sprint-plan-search-"+releaseId}>
+          Find an item in this section
+        </label>
+        <Input id={"sprint-plan-search-"+releaseId} value={search}
+          placeholder="Find an item by title or content"
+          onChange={event=>setSearch(event.target.value)}/>
+        <p role="status" className="text-xs text-body">
+          Showing {matchingRows.length} of {draft.length} items. Expand only the items you need to edit.
+        </p>
+      </div>:null}
+      {matchingRows.map(({row,index}) => {
         const original = baseline.find(sprint => sprint.id === row.id);
+        const rowOpen=draft.length<=12||expanded.includes(row.id);
         return <fieldset key={row.id} disabled={pending}
           className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 last:border-b-0">
           <legend className="text-sm font-semibold text-foreground">
             Sprint {index + 1}
           </legend>
           <div className="flex flex-wrap items-center gap-2">
+            <Button size="sm" variant="ghost" aria-expanded={rowOpen}
+              aria-controls={"sprint-plan-fields-"+row.id}
+              onClick={()=>setExpanded(current=>current.includes(row.id)?
+                current.filter(id=>id!==row.id):[...current,row.id])}>
+              {row.title||"Sprint "+(index+1)} · {rowOpen?"Collapse":"Expand"}
+            </Button>
             <Button size="sm" variant="secondary" disabled={pending || index === 0}
+              aria-label={"Move "+(row.title||"Sprint "+(index+1))+" up"}
               onClick={() => move(index, -1)}>Up</Button>
             <Button size="sm" variant="secondary" disabled={pending || index === draft.length - 1}
+              aria-label={"Move "+(row.title||"Sprint "+(index+1))+" down"}
               onClick={() => move(index, 1)}>Down</Button>
             <Button size="sm" variant="ghost" disabled={pending ||
               (original ? JSON.stringify(original) === JSON.stringify(row) : false)}
               onClick={() => restore(row.id)}>Undo row</Button>
           </div>
+          {rowOpen?<div id={"sprint-plan-fields-"+row.id} className="space-y-3">
           <label className="block text-[13px] font-semibold text-body">Sprint title
             <Input className="mt-1" required maxLength={200}
               aria-invalid={!row.title.trim()}
@@ -164,11 +191,15 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
             </span>:null}
           </label>
           <div className="grid gap-3 md:grid-cols-2">
-            <label className="text-[13px] font-semibold text-body">Sprint key
+            <label className="text-[13px] font-semibold text-body">Key (optional)
               <Input className="mt-1" maxLength={120} value={row.key}
+                aria-invalid={!row.key.trim()}
                 onChange={event=>change(row.id,"key",event.target.value)}/>
+              {!row.key.trim()?<span role="alert" className="text-xs text-error">
+                Item {index+1}: Sprint key required
+              </span>:null}
             </label>
-            <label className="text-[13px] font-semibold text-body">Due label
+            <label className="text-[13px] font-semibold text-body">Due (optional)
               <Input className="mt-1" maxLength={160} value={row.dueLabel??""}
                 onChange={event=>change(row.id,"dueLabel",event.target.value)}/>
             </label>
@@ -177,8 +208,11 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
             {(["description", "goal", "definitionOfDone"] as const).map(field =>
               <label key={field} className="block text-[13px] font-semibold text-body">
                 {field === "description" ? "Description" :
-                  field === "goal" ? "Sprint goal" : "What does done look like?"}
+                  field === "goal" ? "Sprint goal (optional)" : "What does done look like?"}
                 <Textarea className="mt-1" maxLength={4000}
+                  placeholder={field==="definitionOfDone"?
+                    "Acceptance criteria — e.g. API returns paginated results and integration tests pass":
+                    field==="goal"?"One sentence: what this sprint is trying to achieve":undefined}
                   value={row[field] ?? ""}
                   onChange={event => change(row.id, field, event.target.value)} />
               </label>)}
@@ -192,6 +226,7 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
                   onChange={event => change(row.id, field, event.target.value)} />
               </label>)}
           </div>
+          </div>:null}
         </fieldset>;
       })}
       {!datesValid ? <p role="alert" className="text-sm font-semibold text-error">
@@ -200,6 +235,7 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
       <div className="flex flex-wrap gap-2">
         <Button loading={pending} disabled={pending || !datesValid || !textValid}
           onClick={() => void save()}>{pending ? "Saving…" : "Save sprint plan"}</Button>
+        <span className="self-center text-xs text-body">Only this workspace’s sprint plan is updated.</span>
         <Button variant="secondary" disabled={pending} onClick={() => setDraft(baseline)}>
           Undo all changes
         </Button>
@@ -208,7 +244,7 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
     </div> : null}
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard sprint plan changes?"
-      description="You have unsaved project changes. Leave this page and discard them?"
+      description="You have unsaved changes. Leave without saving them?"
       confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard} />
   </section>;
 }

@@ -8,9 +8,20 @@ export const outboundSendSchema = z.strictObject({
   templateKey: z.string().trim().min(1).max(160).regex(/^[A-Za-z0-9][A-Za-z0-9._:/-]*$/),
   variables: z.record(z.string(), z.string().max(10000)).superRefine((values, ctx) => {
     const entries = Object.entries(values);
-    if (entries.length > 25 || entries.some(([key]) => !/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)) ||
-        entries.reduce((size, [key, value]) => size + key.length + value.length, 0) > 12000) {
-      ctx.addIssue({ code: "custom", message: "INVALID_TEMPLATE_VARIABLES" });
+    const reserved = /^(?:__proto__|constructor|prototype|password|otp|apiKey|accessToken|secret)$/i;
+    if (entries.length > 25) {
+      ctx.addIssue({ code: "custom", message: "TEMPLATE_VARIABLE_COUNT_EXCEEDED" });
+    }
+    for (const [key, value] of entries) {
+      if (!/^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key) || reserved.test(key)) {
+        ctx.addIssue({ code: "custom", path: [key], message: "INVALID_TEMPLATE_KEY" });
+      }
+      if (/[\u0000-\u0008\u000b\u000c\u000e-\u001f\u007f]/.test(value)) {
+        ctx.addIssue({ code: "custom", path: [key], message: "INVALID_TEMPLATE_VALUE" });
+      }
+    }
+    if (entries.reduce((size, [key, value]) => size + key.length + value.length, 0) > 12000) {
+      ctx.addIssue({ code: "custom", message: "TEMPLATE_VARIABLE_BUDGET_EXCEEDED" });
     }
   }),
   purpose: z.string().trim().min(1).max(160)
@@ -39,11 +50,22 @@ export type DeliveryPolicy = {
   recentRecipientSends: number;
   recipientWindowCap: number;
 };
+/** Canonicalize legacy Indian local, 91-prefixed, and international numbers
+ * before allowlisting, deduplication, policy checks, and provider delivery.
+ * Do not guess a country for a number of a different length. */
+export function normalizeSmsRecipient(input: string): string {
+  const compact = input.trim().replace(/[\s().-]/g, "");
+  if (/^[6-9][0-9]{9}$/.test(compact)) return "+91" + compact;
+  if (/^91[6-9][0-9]{9}$/.test(compact)) return "+" + compact;
+  if (/^0091[6-9][0-9]{9}$/.test(compact)) return "+" + compact.slice(2);
+  if (/^00[1-9][0-9]{7,14}$/.test(compact)) return "+" + compact.slice(2);
+  return compact;
+}
 export function normalizeRecipient(channel: "EMAIL" | "SMS", recipient: string): string {
-  return channel === "EMAIL" ? recipient.trim().toLowerCase() : recipient.trim();
+  return channel === "EMAIL" ? recipient.trim().toLowerCase() : normalizeSmsRecipient(recipient);
 }
 export function isValidRecipient(channel: "EMAIL" | "SMS", recipient: string): boolean {
-  if(channel === "SMS")return /^\+[1-9][0-9]{7,14}$/.test(recipient);
+  if(channel === "SMS")return /^\+[1-9][0-9]{7,14}$/.test(normalizeSmsRecipient(recipient));
   // Invisible format/BiDi controls are not valid mailbox characters and can
  // spoof recipient comparisons or displayed contact addresses.
  if(recipient.length>254||/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]/u.test(recipient))return false;
@@ -96,8 +118,69 @@ export function previewAudience(requests: readonly OutboundSendRequest[], policy
 /** Exact Exotel job-update name normalization: DLT placeholders in a
  * recruiter-provided display name must never be interpolated as template text. */
 export function sanitizeLegacyDltRecipientName(value:string|null|undefined):string{
- const cleaned=(value??"").trim().replace(/\{#[^}]*#\}/g,"").trim();
- return (cleaned||"User").slice(0,30);
+ const cleaned=(value??"").replace(/\{#.*?#\}/g,"")
+  .replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu," ")
+  .replace(/\s+/gu," ").trim();
+ return Array.from(cleaned||"User").slice(0,30).join("").trim()||"User";
+}
+
+/** Legacy NotificationDispatcher truncated only overlong merge *values* at
+ * 8192 characters (not the whole rendered message). Modern generic outbound
+ * variables remain stricter; only a trusted event assembler uses this adapter. */
+export function legacyEventMergeValue(value: string): string {
+ return value.length>8192?value.slice(0,8189)+"...":value;
+}
+
+/** Actionable template diagnostics never expose merge values, credentials,
+ * recipient addresses, or an untrusted provider response body. */
+export function requiredTemplateVariableDiagnostics(
+ variables:Readonly<Record<string,string>>,
+ requiredKeys:readonly string[],
+):readonly {code:"REQUIRED_TEMPLATE_VARIABLE_MISSING";key:string}[]{
+ return requiredKeys.filter(key=>
+  /^[A-Za-z][A-Za-z0-9_]{0,79}$/.test(key)&&
+  !/^(?:password|otp|apiKey|accessToken|secret)$/i.test(key)&&
+  !variables[key]?.trim()
+ ).map(key=>({code:"REQUIRED_TEMPLATE_VARIABLE_MISSING" as const,key}));
+}
+
+/** Never apply outbound recipient validation to the admin SMS-log search.
+ * A pasted international number filters on its last four digits only. */
+export function normalizeSmsSupportSearch(input:string|null|undefined):string{
+ return (input??"").replace(/[^0-9]/g,"").slice(-4);
+}
+
+/** Registered template/sender defaults belong to the tenant's trusted
+ * provider registry; this adapter maps legacy invocations into the scoped
+ * vNext transport model without accepting arbitrary From/Reply-To headers. */
+export function legacyTpoOutboundRequest(input:{
+ recipient:string;templateKey:string;purpose:string;
+ variables:Readonly<Record<string,string>>;
+}):OutboundSendRequest{
+ return outboundSendSchema.parse({
+  channel:"EMAIL",recipient:input.recipient,templateKey:input.templateKey,
+  variables:Object.fromEntries(Object.entries(input.variables).map(
+   ([key,value])=>[key,legacyEventMergeValue(value)])),
+  purpose:input.purpose,
+ });
+}
+
+/** Only restricted, append-only provider audit stores an Exotel SID.
+ * This is not part of an audience preview or an operator-facing delivery row. */
+export type RestrictedProviderReceipt={
+ channel:"SMS";provider:"EXOTEL";providerMessageId:string|null;
+ accepted:boolean;failureCode:string|null;
+};
+export function restrictedExotelReceipt(input:{
+ providerMessageId?:string|null;accepted:boolean;failureCode?:string|null;
+}):RestrictedProviderReceipt{
+ const sid=input.providerMessageId?.trim()||null;
+ if(sid&&!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(sid))
+  throw new Error("INVALID_PROVIDER_MESSAGE_ID");
+ if(input.accepted!==Boolean(sid)||(!input.accepted&&!input.failureCode))
+  throw new Error("INVALID_PROVIDER_RECEIPT");
+ return {channel:"SMS",provider:"EXOTEL",providerMessageId:sid,
+  accepted:input.accepted,failureCode:input.accepted?null:input.failureCode??null};
 }
 /** A preview must use the college's live suppression set, not another
  * tenant's unsubscribes or a stale client-provided allowlist. */

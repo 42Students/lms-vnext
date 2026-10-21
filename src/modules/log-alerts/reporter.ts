@@ -21,6 +21,10 @@ export type ReportableError = {
   path?: string;
   status?: number;
   component?: string;
+  /** Trusted, normalized client metadata; never send full UA/IP/device ID. */
+  browserFamily?: string;
+  viewport?: {width:number;height:number};
+  buildId?: string;
   userId?: string;
   collegeId?: string;
   /** Cloud Logging insertId scoped to logName; never forwarded to Telegram. */
@@ -34,6 +38,7 @@ export function formatAlert(input: {
   kind: string; environment: string; time: Date; event: string;
   path: string; message: string; requestId?: string; status?: number;
   count?: number; affectedAccounts?: number|null; component?: string;
+  browserFamily?:string;viewport?:{width:number;height:number};buildId?:string;
 }): string {
   return [
     "vNext " + input.kind,
@@ -45,8 +50,14 @@ export function formatAlert(input: {
     "Status: " + (input.status ?? "-"),
     "Request ID: " + (input.requestId && /^(?:[0-9a-f]{8}|[0-9a-f]{8}-[0-9a-f-]{27,})$/i.test(input.requestId) ? input.requestId : "-"),
     "Count: " + (input.count ?? 1),
-    "Affected accounts: " + (input.affectedAccounts===null||input.affectedAccounts===undefined?
+    "Affected tenant accounts: " + (input.affectedAccounts===null||input.affectedAccounts===undefined?
       "unknown":input.affectedAccounts),
+    "Browser: " + (input.browserFamily?safeAlertLabel(input.browserFamily.slice(0,40)):"-"),
+    "Viewport: " + (input.viewport&&Number.isSafeInteger(input.viewport.width)&&
+       Number.isSafeInteger(input.viewport.height)&&input.viewport.width>0&&
+       input.viewport.height>0&&input.viewport.width<10000&&input.viewport.height<10000
+       ? input.viewport.width+"x"+input.viewport.height:"-"),
+    "Build: " + (input.buildId&&/^[a-zA-Z0-9._-]{1,60}$/.test(input.buildId)?input.buildId:"-"),
     ...(input.affectedAccounts===null||input.affectedAccounts===undefined
       ? ["Blast radius: account identity unavailable; no verified HMAC/account marker."] : []),
     "Message: " + redactAlertText(input.message),
@@ -69,6 +80,12 @@ export function observedEventHash(
   ).digest("hex");
 }
 
+/** Blast radius intentionally counts distinct (college, user) access
+ * contexts, not distinct humans across colleges. The keyed hash is
+ * non-reversible and never included in provider-facing message metadata.
+ * Operational prerequisites: LOG_ALERT_ACCOUNT_HASH_KEY, DB10 migrations,
+ * Telegram credentials, and Cloud Logging reader IAM for the polling job.
+ */
 function trustedAccountHash(input: ReportableError): string | null {
   const key = process.env.LOG_ALERT_ACCOUNT_HASH_KEY;
   if (!key || !input.userId || !/^[a-f0-9-]{20,64}$/i.test(input.userId)) return null;
@@ -107,6 +124,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
     kind: "new error", environment, time: now,
     event: input.event, path, message, requestId: input.requestId,
     status: input.status, component: input.component,
+    browserFamily:input.browserFamily,viewport:input.viewport,buildId:input.buildId,
   });
 
   if (!logAlertsRuntimeEnabled()) {
@@ -198,6 +216,7 @@ export async function reportErrorForAlert(input: ReportableError): Promise<boole
       const delivered = await sendTelegramAlert(formatAlert({
         kind, environment, time: now, event: input.event, path, message,
         requestId: input.requestId, status: input.status, component: input.component,
+        browserFamily:input.browserFamily,viewport:input.viewport,buildId:input.buildId,
         count: current ? Number(current.occurrenceCount) + 1 : 1,
         affectedAccounts:Number(radius?.total??0)>0
           ? Number(radius!.total) : accountHash?1:null,

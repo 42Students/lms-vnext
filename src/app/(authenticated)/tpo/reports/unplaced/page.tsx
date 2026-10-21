@@ -1,5 +1,6 @@
 import { Input } from "@/components/ui/input";
 import { SummaryStrip } from "@/components/ui/summary-strip";
+import { TpoReportPresentation } from "@/components/placements/tpo-report-presentation";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import {tpoReportHasAmbiguousFilters} from "@/modules/placements/tpo-report-url-guard";
@@ -97,13 +98,18 @@ export default async function TpoUnplacedReportPage({
   return (
     <div data-tpo-presentation-report className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="TPO · Reports"
         title="Unplaced students"
-        description="Current registered placement-pool learners with no accepted offer in the selected reporting scope."
-        actions={permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link lms-inline-link">Download filtered CSV</a>:null}
+        description="Students looking for a job with no offer that counts as placed: their marks, resume, applications and whether they are still in a drive"
+        actions={<div className="flex flex-wrap items-center gap-2 print:hidden">
+          <TpoReportPresentation/>
+          <Link href="/tpo/reports" className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">All reports</Link>
+          <Link href={tpoUnplacedStudentsHref({batchId,branchId})} className="inline-flex min-h-11 items-center rounded border border-primary px-3 text-sm font-semibold text-link md:min-h-9">Act on them on Students</Link>
+          {permittedBatch&&permittedBranch?<a href={filteredExportHref} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-link md:min-h-9">Download filtered CSV</a>:null}
+        </div>}
       />
 
-      <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+      <p role="status" className="text-sm text-muted-foreground">For these filters: {reportNumber(workspace.report.metrics.studentsPlaced)} students placed · {reportNumber(workspace.report.metrics.offers)} offers · {workspace.report.metrics.placementRatePercent??"—"}% placed · {reportNumber(workspace.report.metrics.acceptedOffers)} accepted offers</p>
+      <form method="get" aria-label="Filter unplaced report" className="grid min-w-0 grid-cols-1 items-end gap-3 rounded-[12px] border border-border bg-surface p-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
        {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
        {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
        <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
@@ -135,17 +141,7 @@ export default async function TpoUnplacedReportPage({
           note:"See Placement Summary for the overall registered denominator."},
       ]}/>
 
-      <div className="border-b border-border py-4">
-       <Link href={tpoUnplacedStudentsHref({batchId,branchId})}
-        className="inline-flex min-h-11 min-[768px]:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline">
-        Act on them on Students
-       </Link>
-       <p className="mt-2 text-xs text-muted-foreground">
-        The Students view shows readiness and applications. This shortcut targets ready students
-        who have not applied; it is not an exhaustive filter of every unplaced student.
-       </p>
-      </div>
-
+      <section id="report-table" aria-label="Unplaced report table" className="min-w-0 rounded-[12px] border border-border bg-surface p-4">
       <ReportTable
         title="Registered learners without an accepted offer"
         headings={["Student","Roll no.","Batch","Branch","Lowest %","UG %","Marks verified","Resume","Applications","Still in a drive","Last applied"]}
@@ -155,16 +151,17 @@ export default async function TpoUnplacedReportPage({
           learner.departmentName,
           formatUnplacedPercentage(academic.get(learner.membershipId)?.lowestRecordedPercent??null),
           formatUnplacedPercentage(academic.get(learner.membershipId)?.undergraduatePercent??null),
-          academic.get(learner.membershipId)?.verification??"Not recorded",
+          academic.get(learner.membershipId)?.verification??"No marks yet",
           row?.profileFacts?.resume===true?"Uploaded":
            row?.profileFacts?.resume===false?"Missing":"Not confirmed",
           lastApplications.get(learner.membershipId)?.applications??0,
           lastApplications.get(learner.membershipId)?.stillInDrive?"Yes":"No",
-          lastApplications.get(learner.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Not recorded"];
+          lastApplications.get(learner.membershipId)?.lastSubmittedAt?.toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"})??"Never"];
         })}
         emptyDescription="No unplaced learners match this reporting scope. This does not prove that all learners have been placed across all seasons."
         compactControls
       />
+      </section>
       <Disclosure title="Report filters and information" className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pt-[var(--lms-space-2)]">
         <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports/unplaced" />
       <p className="text-xs text-muted-foreground">The download uses the selected season, drive, batch and branch. Changing the season/drive control below may reset the batch/branch filter; reapply it before downloading if needed.</p>
@@ -178,8 +175,8 @@ export default async function TpoUnplacedReportPage({
   );
   }catch{
    return <div className="min-w-0 space-y-4">
-    <PageHeader eyebrow="TPO · Reports" title="Unplaced students"
-      description="Review the current college-scoped unplaced report."/>
+    <PageHeader title="Unplaced students" description="Students looking for a job with no offer that counts as placed"/>
+    <Link href="/tpo/reports" className="text-sm font-semibold text-link underline">All reports</Link>
     <Alert tone="error">
      <strong>Could not load the report</strong>
      <p className="mt-2 text-sm">The previous report data has not been replaced with a false zero or an empty result.</p>

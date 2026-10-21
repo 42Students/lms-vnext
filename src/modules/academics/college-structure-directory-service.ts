@@ -189,7 +189,21 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
 
 /** Registered elective slot directory. Not a learner-selection or feature-enablement claim. */
 export async function listCollegeElectives(context: RequestContext, raw: unknown) {
-  const query = collegeElectiveQuerySchema.parse(raw);
+  // Legacy GET /slots maps semester -> semesterNumber and includeArchived
+  // -> inclusive ALL status. Keep UUID program scoping and deterministic paging.
+  let normalized: unknown = raw;
+  if (raw && typeof raw === "object" && !Array.isArray(raw)) {
+    const { semester, includeArchived, ...rest } = raw as Record<string, unknown>;
+    normalized = (includeArchived !== undefined && ![true, false, "true", "false"].includes(includeArchived as string | boolean))
+      ? { ...rest, includeArchived }
+      : {
+        ...rest,
+        pageSize: rest.pageSize ?? 20,
+        semesterNumber: rest.semesterNumber ?? semester,
+        status: rest.status ?? (includeArchived === true || includeArchived === "true" ? "ALL" : "ACTIVE"),
+      };
+  }
+  const query = collegeElectiveQuerySchema.parse(normalized);
   const collegeId = await ownCollege(context);
   const db = getDb();
   const scoped = db.select({
