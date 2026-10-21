@@ -6,6 +6,7 @@ import {AdminAttendanceParentContactEditor} from "./admin-attendance-parent-cont
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {
+  useEffect,
   useMemo,
   useState,
   useTransition,
@@ -199,14 +200,18 @@ export function AdminAttendanceWorkspace({
     [data.grid?.sessions,data.month],
   );
 
-  function navigate(month = data.month) {
+  function navigate(
+    month = data.month, nextSectionId = sectionId, nextCourseId = courseId,
+    nextDeliveryId = deliveryId, nextShowAllCourses = showAllCourses,
+  ) {
     const params = new URLSearchParams({ month });
-    if (sectionId) params.set("sectionId", sectionId);
-    if (courseId) params.set("courseId", courseId);
-    const selected=termDeliveries.find(row=>row.deliveryId===deliveryId)??termDeliveries[0];
+    if (nextSectionId) params.set("sectionId", nextSectionId);
+    if (nextCourseId) params.set("courseId", nextCourseId);
+    const choices=data.deliveries.filter(row=>row.sectionId===nextSectionId && row.courseId===nextCourseId);
+    const selected=choices.find(row=>row.deliveryId===nextDeliveryId)??choices[0];
     if(selected)params.set("deliveryId",selected.deliveryId);
-    if (showAllCourses) params.set("allCourses", "1");
-    router.push(basePath + "?" + params.toString());
+    if (nextShowAllCourses) params.set("allCourses", "1");
+    startRefresh(()=>router.push(basePath + "?" + params.toString()));
   }
 
   const recordMap = useMemo(
@@ -222,8 +227,12 @@ export function AdminAttendanceWorkspace({
     [data.grid?.records],
   );
 
-  // Captured once per mount: "held" only needs to be accurate to the page load.
-  const [loadedAt] = useState(() => Date.now());
+  // Held status must update if a scheduled class begins while this page is open.
+  const [loadedAt,setLoadedAt] = useState(() => Date.now());
+  useEffect(()=>{
+    const timer=window.setInterval(()=>setLoadedAt(Date.now()),60_000);
+    return ()=>window.clearInterval(timer);
+  },[]);
   const heldSessions = useMemo(
     () =>
       (data.grid?.sessions ?? []).filter(
@@ -347,6 +356,31 @@ export function AdminAttendanceWorkspace({
       {notice?<Alert tone="info">{notice}</Alert>:null}
       {refreshing?<p role="status" className="text-sm text-body">Refreshing attendance…</p>:null}
 
+      <section aria-label="Attendance policy" className="min-w-0 border-b border-border pb-4">
+      <h2 className="mb-3 text-base font-semibold text-foreground">Attendance policy</h2>
+      <section className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+        <div className="border-b border-border pb-4">
+          <p className="mt-2 text-2xl font-semibold text-foreground">
+            {data.policy.correctionWindowHours} hours
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Read-only Faculty marking window. College Admin corrections may also be made outside this window.
+          </p>
+        </div>
+        <div className="border-b border-border pb-4">
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            Minimum attendance
+          </p>
+          <p className="mt-2 text-2xl font-semibold text-foreground">
+            {data.policy.eligibilityThresholdPercent}%
+          </p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Learners below this marked-session percentage are highlighted.
+          </p>
+        </div>
+      </section>
+
+      </section>
       <form
         onSubmit={(event) => {
           event.preventDefault();
@@ -360,6 +394,7 @@ export function AdminAttendanceWorkspace({
             onChange={(event) => {
               setSectionId(event.target.value);
               setCourseId("");setDeliveryId("");
+              navigate(data.month,event.target.value,"","");
             }}>
             <option value="">Select class</option>
             {classes.map((item) => (
@@ -373,7 +408,8 @@ export function AdminAttendanceWorkspace({
           Course
           <Select className="w-full" value={courseId}
             disabled={!sectionId}
-            onChange={(event) => {setCourseId(event.target.value);setDeliveryId("");}}>
+            onChange={(event) => {setCourseId(event.target.value);setDeliveryId("");
+              navigate(data.month,sectionId,event.target.value,"");}}>
             <option value="">Select course</option>
             {visibleCourses.map((course) => (
               <option key={course.id} value={course.id}>
@@ -389,24 +425,21 @@ export function AdminAttendanceWorkspace({
         {termDeliveries.length>1?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic term
           <Select className="w-full" value={deliveryId||termDeliveries[0]?.deliveryId||""}
-            onChange={event=>setDeliveryId(event.target.value)}>
+            onChange={event=>{setDeliveryId(event.target.value);navigate(data.month,sectionId,courseId,event.target.value);}}>
             {termDeliveries.map(item=><option key={item.deliveryId} value={item.deliveryId}>
               {item.academicPeriodName} · {item.sectionName}{item.isPast?" · past":""}{item.offeringType==="ELECTIVE"?" (elective)":""}
             </option>)}
           </Select>
         </label>:null}
-        <Button className="w-full self-end md:w-auto" type="submit" disabled={!sectionId || !courseId || refreshing}>
-          View attendance
-        </Button>
         <label className="flex items-center gap-2 text-sm text-body md:col-span-2 xl:col-span-3">
           <Checkbox
             
             checked={showAllCourses}
             onChange={(event) => {
               setShowAllCourses(event.target.checked);
-              if (!event.target.checked && !offeredCourses.some((item) => item.id === courseId)) {
-                setCourseId("");
-              }
+              const validCourse=event.target.checked || offeredCourses.some((item) => item.id === courseId);
+              if (!validCourse) setCourseId("");
+              navigate(data.month,sectionId,validCourse?courseId:"",validCourse?deliveryId:"",event.target.checked);
             }}
           />
           Show all college courses (including courses not taught to this class)
@@ -416,13 +449,13 @@ export function AdminAttendanceWorkspace({
             <Button size="sm" variant="secondary"
               aria-label="Previous month"
               type="button" onClick={() => navigate(shiftAttendanceMonth(data.month, -1))}>
-              Previous
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
             </Button>
             <span className="min-w-0 text-center text-sm font-semibold text-body" aria-live="polite">{attendanceMonthLabel(data.month)}</span>
             <Button size="sm" variant="secondary"
               aria-label="Next month"
               type="button" onClick={() => navigate(shiftAttendanceMonth(data.month, 1))}>
-              Next
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
             </Button>
           </div>
           <Input className="min-w-0 w-full md:max-w-40" type="month" aria-label="Attendance month"
@@ -431,6 +464,8 @@ export function AdminAttendanceWorkspace({
               if (event.target.value) navigate(event.target.value);
             }} />
         </div>
+        <Button size="sm" variant="secondary" type="button" disabled={!data.grid||refreshing}
+          onClick={exportCsv}>Export CSV</Button>
       </form>
       <div className="flex flex-wrap items-center justify-end gap-2">
         <Button size="sm" variant="secondary" disabled={refreshing} onClick={()=>startRefresh(()=>router.refresh())}>
@@ -492,16 +527,14 @@ export function AdminAttendanceWorkspace({
                 </dl>
                 <p className="mt-2 text-xs text-body">{presentMarks} present records across {heldSessions.length} held sessions</p>
               </div>
-              <Button
-                variant="secondary"
-                onClick={exportCsv}
-              >
-                Export CSV
-              </Button>
             </div>
           </section>
 
           <section className="min-w-0">
+          <p className="mb-3 text-xs leading-5 text-muted-foreground">
+            P = Present · A = Absent · E = Excused · M = Medical · L = Late · N = not marked · X = no class · S = future.
+            Multiple sessions on a day open a session chooser.
+          </p>
             <Table scrollLabel="College attendance monthly grid">
               <caption className="sr-only">College attendance for every calendar day of the selected month. Cross means no scheduled class.</caption>
               <thead>
@@ -512,7 +545,7 @@ export function AdminAttendanceWorkspace({
                   {sessionDays.map(({ day, sessions, weekday, isSunday }) => (
                     <th key={day} scope="col" className={"min-w-16 px-2 text-center "+(isSunday?"bg-surface-subtle":"")}
                       title={sessions.length?String(sessions.length) + " session(s)":"No class scheduled"}>
-                      <span className="block">{day.slice(8)}</span><span className="block text-xs font-normal">{weekday}</span>
+                      <span className="block text-xs font-normal">{weekday}</span><span className="block">{day.slice(8)}</span>
                       {sessions.length > 1 ? (
                         <span className="sr-only">{sessions.length} sessions</span>
                       ) : null}
@@ -536,7 +569,7 @@ export function AdminAttendanceWorkspace({
                           learner.membershipId
                         }
                       >
-                        <td className="sticky left-0 z-10 bg-surface px-4 py-3">
+                        <th scope="row" className="sticky left-0 z-10 bg-surface px-4 py-3">
                           <p className="m-0 font-semibold text-foreground">
                             {learnerName(
                               learner,
@@ -548,7 +581,7 @@ export function AdminAttendanceWorkspace({
                               : learner.email ??
                                 "Roll unavailable"}
                           </p>
-                        </td>
+                        </th>
                         {sessionDays.map(({ day, sessions, isSunday }) => {
                           if(!sessions.length)return <td key={day} className={"px-2 py-3 text-center "+(isSunday?"bg-surface-subtle":"")}><span aria-label="No class scheduled" className="text-muted-foreground">✖</span></td>;
                           const first = sessions[0]!;
@@ -617,35 +650,11 @@ export function AdminAttendanceWorkspace({
           </section>
 
           <p className="text-xs leading-5 text-muted-foreground">
-            P = Present · A = Absent · E = Excused · M = Medical · L = Late · — = not marked · S = future. Multiple sessions on a day open a session chooser. College Admin may correct sessions after the Faculty window closes.
+            N = not marked · X = no class. College Admin may correct sessions after the Faculty window closes.
           </p>
         </>
       )}
 
-      <Disclosure title="Retroactive marking window" className="min-w-0" contentClassName="min-w-0 pb-[var(--lms-space-4)]">
-      <section className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-        <div className="border-b border-border pb-4">
-          <p className="mt-2 text-2xl font-semibold text-foreground">
-            {data.policy.correctionWindowHours} hours
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Read-only Faculty marking window. College Admin corrections may also be made outside this window.
-          </p>
-        </div>
-        <div className="border-b border-border pb-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-            Minimum attendance
-          </p>
-          <p className="mt-2 text-2xl font-semibold text-foreground">
-            {data.policy.eligibilityThresholdPercent}%
-          </p>
-          <p className="mt-1 text-xs text-muted-foreground">
-            Learners below this marked-session percentage are highlighted.
-          </p>
-        </div>
-      </section>
-
-      </Disclosure>
       <AdminAttendanceParentContactEditor collegeId={data.collegeId} learners={data.grid?.roster??[]}/>
 
       <Drawer
