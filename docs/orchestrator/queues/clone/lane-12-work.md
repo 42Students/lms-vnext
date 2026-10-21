@@ -42,7 +42,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_messages_page.tsx.md` (edit src/app/(authenticated)/tpo/messages/page.tsx; 9 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-6_l11-u017-tpo-more.md.md` (new; 9 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/src_modules_activity_service.ts.md` (edit src/modules/activity/service.ts; 9 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_projects_page.tsx.md` (edit src/app/(authenticated)/mentor/projects/page.tsx; 9 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_projects_page.tsx.md` (edit src/app/(authenticated)/mentor/projects/page.tsx; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-public-join-link-card.tsx.md` (edit src/components/tpo/tpo-public-join-link-card.tsx; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_profile_page.tsx.md` (edit src/app/(authenticated)/tpo/profile/page.tsx; 7 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-company-memory-workspace.tsx.md` (edit src/components/tpo/tpo-company-memory-workspace.tsx; 7 findings; best P1)

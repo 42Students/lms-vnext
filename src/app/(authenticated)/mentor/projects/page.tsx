@@ -101,23 +101,33 @@ async function MentorProjectsContent({
       action={retryLink}/>
   </div>;
   const canPageInSql=canPageMentorProjectList(query);
-  const pagedResult = canPageInSql
-    ? await Promise.allSettled([listPagedMentorProjects(context,query)])
-    : null;
-  if(pagedResult?.[0].status==="rejected")return readFailure();
-  const paged=pagedResult?.[0].status==="fulfilled"?pagedResult[0].value:null;
-  const allResult=paged ? null : await Promise.allSettled([listMyProjectInstances(context)]);
-  if(allResult?.[0].status==="rejected")return readFailure();
-  const allRows=paged?.items??(allResult?.[0].status==="fulfilled"?allResult[0].value:[]);
-  const dependent=await Promise.allSettled([
-    listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
-    getMentorProjectWorkCounts(context,paged?allRows:undefined),
-    getMentorProjectTeamSizes(context,paged?allRows:undefined),
-  ]);
-  if(dependent.some(row=>row.status==="rejected"))return readFailure();
-  const attentionRows=dependent[0].status==="fulfilled"?dependent[0].value:[];
-  const workCounts=dependent[1].status==="fulfilled"?dependent[1].value:new Map();
-  const teamSizes=dependent[2].status==="fulfilled"?dependent[2].value:new Map();
+  // A list failure belongs next to this page, not to a route-level error that
+  // loses the current filter controls. Never infer an empty list from a failed read.
+  const loaded=await (async()=>{
+    const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
+    const allRows=paged?.items??await listMyProjectInstances(context);
+    if(!Array.isArray(allRows))throw new Error("INVALID_PROJECT_RECORDS");
+    const [attentionRows,workCounts,teamSizes]=await Promise.all([
+      listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
+      getMentorProjectWorkCounts(context,paged?allRows:undefined),
+      getMentorProjectTeamSizes(context,paged?allRows:undefined),
+    ]);
+    return {paged,allRows,attentionRows,workCounts,teamSizes};
+  })().catch(error=>({
+    failure:error instanceof Error&&error.message==="INVALID_PROJECT_RECORDS"
+      ?"The projects page did not return a valid records array."
+      :"Projects could not be loaded",
+  }));
+  if("failure" in loaded)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Projects" description="Choose a project to open its workspace."/>
+    <ErrorState title={loaded.failure}
+      description="Check your connection, then try again. Your project data has not been changed."
+      action={<Link href={"/mentor/projects?"+new URLSearchParams(
+        Object.entries(params).filter((item):item is [string,string]=>
+          typeof item[1]==="string"&&item[1].length<=120)
+      ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+  </div>;
+  const {paged,allRows,attentionRows,workCounts,teamSizes}=loaded;
   const alerts = new Map<
     string,
     Set<string>
@@ -315,16 +325,10 @@ async function MentorProjectsContent({
             phase:row.project.phase,
             phaseLabel:row.project.phase?.trim() || "In progress",
             dueLabel:row.project.dueLabel || row.project.endDate,
-            dueState:(()=>{
-              const raw=row.project.endDate;
-              if(!raw)return "No due date";
-              const parsed=Date.parse(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(raw)?raw+"T23:59:59+05:30":raw);
-              if(!Number.isFinite(parsed))return "Due";
-              const days=Math.ceil((parsed-Date.now())/86_400_000);
-              return days<0?"Overdue":days<=7?"Due soon":"Due";
-            })(),
-            actionLine:projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
-            blockedHref:row.project.blocker?.trim()
+            actionLine:row.project.status==="ARCHIVED"?undefined:
+              projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() ||
+              (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
+            blockedHref:row.project.status!=="ARCHIVED"&&row.project.blocker?.trim()
               ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
             participation:
               row.isPrimaryMentor
