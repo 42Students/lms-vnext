@@ -202,3 +202,10 @@
 
 ## Packet 47 — department ID/archive crosswalk
 - `src_db_schema_departments.ts.md` | G2-18-027-010/052, G2-9-024-066: documented legacy numeric college/department → verified UUID and isDeleted→archivedAt mapping. Existing UUID FK, soft archive and timestamps already preserve current vNext model. | No historic department records by greenfield policy; an actual data migration requires tenant-verified crosswalk and original timezone. No new schema DDL or migration.
+
+
+## Packet 48 — recruiter drive request/group identity
+- `src_db_schema_placement-drive-requests.ts.md` | Documented G2-12-025-009/029/050: submissionId identifies an idempotent per-college request and can correlate authorized same-recruiter group responses; requestId is not a jobId, approvedJobId exists only after approval, all college copies retain separate authorization/status. | Legacy numeric drive_group and immediate Job request are intentionally NOT transplanted into vNext request-first model. No historic data to import. Response compatibility groupId/colleges array and client downstream mapping handed to service owners; no schema migration needed.
+
+## Packet 49 — immutable round results migration
+- `drizzle_0024_placements_p6c_results.sql.md` | G2-12-022-009/059: reviewed old Long ID/result double→vNext round/result UUID, outcome status, source, score_percent integral 0..100, reason/comment privacy. Historic source score must be finite and in [0,100] before explicit half-up whole-percent rounding; preserve original score and actor/source in restricted provenance or quarantine. TPO/HR/IMPORT mapping must be explicit, public candidate_message separated from private internal_comment. | Existing migration 0024 NOT MODIFIED. No historic imports under greenfield plan; old Double precision, actor and nullable category cannot be inferred from current schema. Import/status service handoff; no SQL executed.
