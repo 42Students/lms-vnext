@@ -200,7 +200,7 @@ export default async function ElectiveRoster({
         <label className="grid min-w-0 gap-[var(--lms-space-2)] max-[767px]:w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role
           <Select name="role" className="w-full max-w-full">
             <option value="PRIMARY">Primary</option>
-            <option value="CO_TEACHER">Co-teacher</option>
+            <option value="CO_TEACHER">Co-Teacher</option>
           </Select>
         </label>
         <Button type="submit" disabled={faculty.length === 0} className="min-h-11 w-full md:min-h-9 md:w-auto">
