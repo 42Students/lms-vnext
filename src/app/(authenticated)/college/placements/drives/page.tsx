@@ -11,6 +11,7 @@ import { listCollegeDrives } from "@/modules/placements/college-drive-read-servi
 import {CollegeDriveBulkActions} from "@/components/placements/college-drive-bulk-actions";
 import {CollegeDriveDeadlineAction} from "@/components/placements/college-drive-deadline-action";
 import {CollegeDriveRowLifecycleAction} from "@/components/placements/college-drive-row-lifecycle-action";
+import {CollegeDriveArchiveAction} from "@/components/placements/college-drive-archive-action";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -72,13 +73,16 @@ export default async function CollegeDrivesPage({ searchParams }: {
       <Link href={`/college/placements/jobs/${item.id}/applications`}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View applications</Link>
       <Link href={`/college/placements/jobs/${item.id}/settings`}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit</Link>
+        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit Job</Link>
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
-      {item.status!=="PUBLISHED"&&item.status!=="ARCHIVED"?
-        <Link href={`/college/placements/jobs/${item.id}/settings#drive-archive-heading`}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-          Review archive
-        </Link>:null}
+      {item.status!=="ARCHIVED"?<details className="min-w-0 w-full">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-[var(--lms-error)] md:min-h-9">
+          Delete / archive drive
+        </summary>
+        <div className="mt-2 max-w-md">
+          <CollegeDriveArchiveAction jobId={item.id}/>
+        </div>
+      </details>:null}
       {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
         title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
     </div>},
@@ -90,7 +94,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
       actions={<div className="flex flex-wrap items-center gap-3">
         <Link href="/college/placements/new"
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)]">
-          New drive
+          + Create Job
         </Link>
         <Link href="/college/placements"
           className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">

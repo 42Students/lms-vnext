@@ -12,13 +12,13 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 Packets:
 
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_admin_projects_templates_templateId_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/[templateId]/page.tsx; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_NEW_docs_audit_gap2_lane-2_superadmin-audit-findings-controller.md.md` (new; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_NEW_docs_audit_gap2_lane-2_superadmin-audit-findings-controller.md.md` (new; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_NEW_docs_audit_gap2_lane-7_l15-u025-recruiter-college-controller.md.md` (new; 5 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_teacher_profile_page.tsx.md` (edit src/app/(authenticated)/teacher/profile/page.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_teacher_profile_page.tsx.md` (edit src/app/(authenticated)/teacher/profile/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_teacher_notifications_page.tsx.md` (edit src/app/(authenticated)/teacher/notifications/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_admin_placements_jobs_jobId_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/page.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_college_placements_drives_page.tsx.md` (edit src/app/(authenticated)/college/placements/drives/page.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_college_placements_drives_page.tsx.md` (edit src/app/(authenticated)/college/placements/drives/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_modules_placements_tpo-recruiter-thread-detail-service.ts.md` (edit src/modules/placements/tpo-recruiter-thread-detail-service.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_app_authenticated_learn_courses_deliveryId_...courseTab_page.tsx.md` (edit src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_components_projects_template-metadata-edit-control.tsx.md` (edit src/components/projects/template-metadata-edit-control.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_components_admin_super-admin-faculty-schedule-reassign-action.tsx.md` (edit src/components/admin/super-admin-faculty-schedule-reassign-action.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-17/W3_src_components_admin_super-admin-faculty-schedule-reassign-action.tsx.md` (edit src/components/admin/super-admin-faculty-schedule-reassign-action.tsx; 1 findings; best P1)
