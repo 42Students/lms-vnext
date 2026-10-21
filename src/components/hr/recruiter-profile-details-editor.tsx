@@ -23,14 +23,16 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  const [feedback,setFeedback]=useState("");
  const [fieldErrors,setFieldErrors]=useState<Partial<Record<keyof typeof saved,string>>>({});
  const [leaveHref,setLeaveHref]=useState<string|null>(null);
+ const bypassNavigate=useRef(false);
  const dirty=Object.keys(saved).some(key=>{
   const field=key as keyof typeof saved;
   return saved[field]!==form[field];
  });
  useEffect(()=>{
   if(!dirty)return;
-  const warn=(e:BeforeUnloadEvent)=>{e.preventDefault();e.returnValue="";};
+  const warn=(e:BeforeUnloadEvent)=>{if(bypassNavigate.current)return;e.preventDefault();e.returnValue="";};
   const intercept=(event:MouseEvent)=>{
+   if(bypassNavigate.current)return;
    const target=event.target;
    if(!(target instanceof Element))return;
    const anchor=target.closest("a[href]");
@@ -52,7 +54,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   };
   const navigation=(window as Window & {navigation?:NavigationLike}).navigation;
   const preventNavigation=(event:NavigateEventLike)=>{
-   if(!event.cancelable||!event.destination?.url)return;
+   if(bypassNavigate.current||!event.cancelable||!event.destination?.url)return;
    const url=new URL(event.destination.url,window.location.href);
    if(url.origin!==window.location.origin)return;
    if(url.pathname===window.location.pathname&&
@@ -158,7 +160,8 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
     : feedback ? <Alert tone="error" title="Profile was not saved"><span aria-hidden="true">!</span> {feedback}</Alert> : null}
   <ConfirmActionDialog open={leaveHref!==null} title="Discard your unsaved profile changes?"
    consequence="Your changes have not been saved." confirmLabel="Discard"
-   onCancel={()=>setLeaveHref(null)} onConfirm={()=>{
+   onCancel={()=>{bypassNavigate.current=false;setLeaveHref(null);}} onConfirm={()=>{
+    bypassNavigate.current=true;
     const href=leaveHref;setLeaveHref(null);setForm(saved);
     if(href)router.push(href);
    }}/>

@@ -43,7 +43,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_academics_college-promotion-confirmation.tsx.md` (edit src/components/academics/college-promotion-confirmation.tsx; 14 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_college-batch-promotion-model.ts.md` (edit src/modules/academics/college-batch-promotion-model.ts; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_hr_recruiter-profile-details-editor.tsx.md` (edit src/components/hr/recruiter-profile-details-editor.tsx; 12 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_hr_recruiter-round-inline-editor.tsx.md` (edit src/components/hr/recruiter-round-inline-editor.tsx; 12 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_components_hr_recruiter-round-inline-editor.tsx.md` (edit src/components/hr/recruiter-round-inline-editor.tsx; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_modules_academics_learner-schedule-service.ts.md` (edit src/modules/academics/learner-schedule-service.ts; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_app_e2e_superadmin-login_page.tsx.md` (edit src/app/e2e/superadmin-login/page.tsx; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-8/W2_src_app_not-found.tsx.md` (edit src/app/not-found.tsx; 10 findings; best P2)

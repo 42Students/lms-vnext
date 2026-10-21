@@ -14,7 +14,7 @@ type Kind="TALK"|"TEST"|"VENDOR_TEST"|"GD"|"INTERVIEW";
 type Row={id:string;name:string;kind:string;mode:string|null;status:string;
  createdByYou:boolean;updatedAt:string;inUse?:boolean};
 const kinds:readonly [Kind,string][]=[
- ["TALK","Company talk"],["TEST","Online test"],["VENDOR_TEST","Vendor test"],
+ ["TALK","Company talk"],["TEST","Test"],["VENDOR_TEST","Vendor test"],
  ["GD","Group discussion"],["INTERVIEW","Interview"],
 ];
 
@@ -90,17 +90,25 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
    Add a round</Button>:null}
   {notice?<InlineNotice tone="success" message={notice}/>:null}
   {error&&!open?<InlineNotice tone="error" message={error}/>:null}
-  {!readOnly&&rows.some(canEdit)?<details className="min-w-0 border-t border-border pt-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Change / Remove</summary><div className="mt-2 flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:flex-wrap">{rows.filter(canEdit).map(row=>
-   <Button key={row.id} type="button" onClick={()=>edit(row)}
-    variant="secondary" className="min-h-11 w-full min-w-0 break-words md:w-auto md:min-h-9">
-    Change / Remove: {row.name}
-   </Button>)}</div></details>:null}
+  {!readOnly&&rows.some(canEdit)?<div className="min-w-0 border-t border-border pt-2">
+   <p className="mb-2 text-sm font-semibold text-body">Round actions</p>
+   <div className="space-y-2">{rows.filter(canEdit).map(row=>
+     <div key={row.id} className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-2">
+       <span className="min-w-0 flex-1 break-words text-sm">{row.name}</span>
+       <div className="flex gap-2">
+         <Button type="button" variant="secondary" onClick={()=>edit(row)}>Change</Button>
+         <Button type="button" variant="secondary" onClick={()=>{
+           edit(row);setConfirmRemove(true);
+         }}>Remove</Button>
+       </div>
+     </div>)}</div>
+   </div>:null}
   <Dialog open={open} onOpenChange={next=>{if(!next)requestClose();}}
-    dismissible={!pending} title={active?"Change round":"Add a round"}>
+    dismissible={!pending} title={active?"Change round":"Add a round at the end"}>
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
-     className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
+     className="grid min-w-0 grid-cols-1 gap-3">
      <label className="grid min-w-0 gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
-      <Input required maxLength={100} value={name} aria-invalid={Boolean(nameError)}
+      <Input required maxLength={100} placeholder="For example: Managerial round" value={name} aria-invalid={Boolean(nameError)}
        aria-describedby={nameError?"round-name-error":undefined}
        onChange={e=>{setName(e.target.value);setNameError("");}} className="w-full"/>
       {nameError?<span id="round-name-error" role="alert" className="text-xs font-normal text-error">{nameError}</span>:null}
@@ -111,10 +119,14 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
       </Select></label>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where
       <Select value={mode} onChange={e=>setMode(e.target.value)} className="w-full">
-       <option value="">Date to be decided</option>
+       <option value="">Decide later</option>
        <option value="ON_CAMPUS">On campus</option>
        <option value="VIRTUAL">Online</option>
-      </Select></label>
+      </Select>
+      <span className="text-xs font-normal text-muted-foreground">
+       The placement cell will set the date and venue for this round.
+      </span>
+     </label>
      {error?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
      {active?<details className="min-w-0 border-t border-border pt-3 md:col-span-2"><summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Remove</summary><Button type="button" disabled={pending} onClick={()=>setConfirmRemove(true)}
        variant="secondary" className="mt-2 min-h-11 w-full border-error text-error md:w-auto md:min-h-9">Remove</Button></details>:null}
@@ -126,8 +138,8 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
        {pending?"Saving…":active?"Save changes":"Add round"}</Button>
      </div>
     </form>
-    <ConfirmActionDialog open={confirmDiscard} title="Discard unsaved round changes?"
-     consequence="Your changes to this round will not be saved."
+    <ConfirmActionDialog open={confirmDiscard} title="Discard these round changes?"
+     consequence="Your round changes will be lost."
      confirmLabel="Discard" pending={pending}
      onCancel={()=>setConfirmDiscard(false)} onConfirm={reset}/>
     <ConfirmActionDialog open={confirmRemove} title="Remove this round?"
