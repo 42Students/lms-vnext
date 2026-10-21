@@ -1,6 +1,6 @@
 # Notice for lane 10 (read and apply FIRST)
 
-The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+The packets below were MOVED to other lanes (whole files). Do NOT work on them: leave them unticked and skip them.
 
 - src_components_public_offline-banner.tsx.md
 - src_app_api_college_departments_route.ts.md
@@ -17,3 +17,8 @@ The packets below were MOVED to other lanes (whole files, to balance the work). 
 - src_app_api_college_batches_route.ts.md
 - src_app_authenticated_college_lessons_error.tsx.md
 - src_app_authenticated_college_announcements_page.tsx.md
+- src_app_api_public_recruit-from-us_recruit_route.ts.md
+- src_app_api_public_recruiter-invite_token_send-code_route.ts.md
+- src_modules_module-access_admin-student-rule-write.ts.md
+- src_app_authenticated_college_contacts_error.tsx.md
+- src_app_authenticated_college_course-progress_error.tsx.md

@@ -1,6 +1,6 @@
 # Notice for lane 1 (read and apply FIRST)
 
-The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+The packets below were MOVED to other lanes (whole files). Do NOT work on them: leave them unticked and skip them.
 
 - src_modules_projects_readiness-override-copy.ts.md
 - src_app_api_projects_projectId_meetings_route.ts.md
@@ -67,3 +67,45 @@ The packets below were MOVED to other lanes (whole files, to balance the work). 
 - src_components_projects_project-admin-collection-controls.tsx.md
 - src_modules_projects_admin-projects-query-model.ts.md
 - src_app_api_projects_projectId_resources_route.ts.md
+- src_modules_projects_college-readiness-releases-service.ts.md
+- src_components_projects_project-admin-reassign-mentor-page.tsx.md
+- src_modules_projects_mentor-reassignment-workload-service.ts.md
+- NEW_docs_audit_gap2_lane-7_u012-college-admin-workspace-readiness.md.md
+- NEW_docs_audit_gap2_lane-7_u006-college-admin-project-templates.md.md
+- src_components_projects_project-workspace-readiness.tsx.md
+- NEW_docs_audit_gap2_lane-6_l12-u026-project-workspace-controller.md.md
+- src_modules_projects_activity-service.ts.md
+- src_modules_projects_template-version-history-service.ts.md
+- src_modules_projects_admin-insights-service.ts.md
+- src_app_api_projects_class-team-workspaces_route.ts.md
+- src_modules_projects_task-comment-service.ts.md
+- src_components_projects_project-task-comments.tsx.md
+- src_modules_projects_college-project-roster-model.ts.md
+- src_components_projects_project-readiness-override-form.tsx.md
+- src_modules_projects_admin-submissions-query-model.ts.md
+- src_app_api_projects_route.ts.md
+- src_modules_projects_learner-project-tab-href-model.ts.md
+- src_modules_projects_mentor-sprint-write-service.ts.md
+- src_modules_projects_mentor-sprint-delete-service.ts.md
+- src_modules_projects_pr-s2-04-task-fields-model.ts.md
+- src_components_projects_college-project-mentor-dialog.tsx.md
+- NEW_docs_audit_gap2_lane-7_u033-superadmin-template-colleges.md.md
+- src_components_projects_project-meeting-controls.tsx.md
+- src_components_projects_project-activity-filtered-list.tsx.md
+- src_components_projects_mentor-product-backlog.tsx.md
+- src_modules_projects_admin-submission-review-service.ts.md
+- src_components_projects_project-resource-controls.tsx.md
+- src_modules_projects_workspace-brief-model.ts.md
+- src_modules_projects_mentor-task-delete-service.ts.md
+- src_components_projects_super-admin-template-subview-page.tsx.md
+- src_components_projects_college-project-student-roster-dialog.tsx.md
+- src_components_projects_super-admin-template-college-bulk.tsx.md
+- src_components_projects_project-admin-readiness-page.tsx.md
+- src_components_projects_project-admin-at-risk-page.tsx.md
+- src_modules_projects_college-project-summary-model.ts.md
+- src_modules_projects_workspace-view-service.ts.md
+- src_app_api_projects_templates_templateId_assignments_route.ts.md
+- src_modules_projects_instance-restore-service.ts.md
+- src_components_projects_super-admin-template-resource-editor.tsx.md
+- src_components_projects_template-metadata-edit-control.tsx.md
+- NEW_docs_audit_gap2_lane-7_u008-college-admin-workspace-delivery.md.md

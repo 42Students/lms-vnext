@@ -1,6 +1,6 @@
 # Notice for lane 12 (read and apply FIRST)
 
-The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+The packets below were MOVED to other lanes (whole files). Do NOT work on them: leave them unticked and skip them.
 
 - src_app_api_placements_offers_offerId_actions_route.ts.md
 - src_modules_placements_tpo-import-csv-parser.ts.md
@@ -71,3 +71,45 @@ The packets below were MOVED to other lanes (whole files, to balance the work). 
 - src_app_authenticated_tpo_reports_ctc_page.tsx.md
 - src_app_authenticated_tpo_companies_page.tsx.md
 - src_app_authenticated_tpo_settings_job-types_page.tsx.md
+- src_components_tpo_tpo-custom-job-type-rename.tsx.md
+- src_components_tpo_tpo-custom-job-type-placed.tsx.md
+- src_app_authenticated_tpo_recruiters_page.tsx.md
+- src_app_authenticated_tpo_settings_public-page_page.tsx.md
+- src_components_tpo_tpo-company-team-conversation.tsx.md
+- src_app_authenticated_tpo_audit_page.tsx.md
+- src_components_tpo_tpo-audit-grid.tsx.md
+- NEW_docs_audit_gap2_lane-1_recruiter-invite-token.md.md
+- src_components_tpo_tpo-team-ask-panel.tsx.md
+- src_modules_bug-tracker_readiness.ts.md
+- src_modules_activity_college-activity-model.ts.md
+- src_modules_activity_tpo-notifications-model.ts.md
+- src_app_authenticated_tpo_settings_recruiters_page.tsx.md
+- src_app_authenticated_tpo_reports_slug_page.tsx.md
+- src_app_authenticated_tpo_placements_jobs_jobId_change-requests_page.tsx.md
+- src_components_tpo_tpo-draft-drive-step-one-form.tsx.md
+- src_components_tpo_tpo-bulk-action-panel.tsx.md
+- src_components_tpo_tpo-team-forms.tsx.md
+- src_app_authenticated_tpo_messages_threadId_page.tsx.md
+- src_app_authenticated_tpo_placements_jobs_jobId_rounds_roundId_results_page.tsx.md
+- src_app_authenticated_mentor_projects_projectId_page.tsx.md
+- NEW_docs_audit_gap2_lane-5_u004-mentor-calendar.md.md
+- src_app_authenticated_mentor_courses_page.tsx.md
+- src_modules_bug-tracker_independent-finding-actions-model.ts.md
+- src_modules_admin-ui_super-admin-screening-detail-service.ts.md
+- src_components_activity_notification-toolbar.tsx.md
+- src_modules_activity_tpo-notifications-service.ts.md
+- src_components_activity_notification-list.tsx.md
+- src_app_authenticated_tpo_settings_rules_page.tsx.md
+- src_components_tpo_tpo-roster-verification-bulk.tsx.md
+- src_app_authenticated_tpo_placements_jobs_jobId_page.tsx.md
+- src_app_authenticated_tpo_placements_jobs_jobId_edit_page.tsx.md
+- src_app_authenticated_tpo_audit_error.tsx.md
+- src_components_tpo_tpo-notice-audience-picker.tsx.md
+- src_app_api_client-errors_route.ts.md
+- src_modules_admin-ui_super-admin-placement-interviews-service.ts.md
+- src_modules_activity_college-activity-service.ts.md
+- src_modules_activity_learner-notification-read-service.ts.md
+- src_modules_activity_learner-notification-inbox-model.ts.md
+- src_components_tpo_tpo-company-create-form.tsx.md
+- src_components_tpo_tpo-students-spreadsheet.tsx.md
+- src_components_tpo_tpo-academic-import-workspace.tsx.md

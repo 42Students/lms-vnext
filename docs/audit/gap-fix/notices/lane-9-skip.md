@@ -1,6 +1,6 @@
 # Notice for lane 9 (read and apply FIRST)
 
-The packets below were MOVED to other lanes (whole files, to balance the work). Do NOT work on them: leave them unticked in your queue and skip them. Your remaining packets stay yours.
+The packets below were MOVED to other lanes (whole files). Do NOT work on them: leave them unticked and skip them.
 
 - src_modules_organizations_validation.ts.md
 - src_app_api_courses_faculty_attendance_deliveryId_schedule_route.ts.md
@@ -59,3 +59,5 @@ The packets below were MOVED to other lanes (whole files, to balance the work). 
 - src_modules_courses_assignment-service.ts.md
 - src_app_api_courses_lessons_lessonId_route.ts.md
 - src_app_home_page.tsx.md
+- NEW_docs_audit_gap2_lane-10_superadmin-verification.md.md
+- src_modules_messaging_runtime-safety.ts.md
