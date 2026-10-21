@@ -6,6 +6,7 @@ import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 
@@ -18,6 +19,7 @@ type Rules = {
 };
 export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [form, setForm] = useState({
     countsAsPlacedAt: rules.countsAsPlacedAt,
     maxHeldOffers: String(rules.maxHeldOffers),
@@ -63,9 +65,20 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       upliftPct: Number(form.upliftPct),
       minResponseHours: Number(form.minResponseHours),
     };
+    if(!["OFFER_RELEASED","OFFER_ACCEPTED"].includes(values.countsAsPlacedAt)){
+      setError("Counts as placed must be when the offer is released or accepted");return;
+    }
+    if(!Number.isSafeInteger(values.maxHeldOffers)||values.maxHeldOffers<1||values.maxHeldOffers>5){
+      setError("Offers a student can hold must be 1 to 5");return;
+    }
+    if(!Number.isSafeInteger(values.upliftPct)||values.upliftPct<0||values.upliftPct>200){
+      setError("The uplift must be 0 to 200%");return;
+    }
+    if(!Number.isSafeInteger(values.minResponseHours)||values.minResponseHours<12||values.minResponseHours>168){
+      setError("Time to respond must be 12 to 168 hours");return;
+    }
     if(!tpoRuleBoundsValid(values)){
-      setError("Held offers: 1–5; uplift: 0–200%; response hours: 12–168.");
-      return;
+      setError("Check placement rules and retry.");return;
     }
     if (!confirmSave) { setConfirmSave(true); return; }
     setConfirmSave(false);
@@ -79,7 +92,8 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       });
       if (!response.ok) throw new Error("Rules were changed elsewhere or could not be saved. Refresh and review.");
       setSaved({...form});
-      setNotice("Placement rules saved.");
+      setNotice("Placement rules saved");
+      showToast({tone:"success",title:"Placement rules saved"});
       router.refresh();
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Could not save rules.");

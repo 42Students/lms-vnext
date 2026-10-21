@@ -11,6 +11,7 @@ export const JOIN_ERROR_COPY={
  RATE_LIMITED:"Too many tries from this network. Please try again in an hour.",
  OTHER_COMPANY_EMAIL:"Use your company work email address.",
  COMPANY_EXISTS:"That company already exists. Ask the placement cell to help you join.",
+ COMPANY_REQUIRED:"Add your company's name",
  ACCESS_REMOVED:"The placement cell removed your access. Please contact them.",
  ACCOUNT_UNAVAILABLE:"This account can't be used. Please contact the placement cell.",
  SERVICE_NOT_READY:"Recruiter verification is temporarily unavailable. Ask the placement cell to check the email service and network verification settings.",
