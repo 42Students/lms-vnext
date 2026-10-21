@@ -3,7 +3,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { useState, useTransition, type FormEvent } from "react";
+import {useRef,useState,useTransition,type FormEvent} from "react";
+import {useToast} from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { apiFetch } from "@/lib/api-fetch";
@@ -35,10 +36,14 @@ function capacityInput(value: string): number | null {
   return value.trim() === "" ? null : Number(value);
 }
 
-export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/college/academics" }: {
-  cohorts: Cohort[]; periods: Period[]; academicSetupHref?: string;
+export function CollegeClassCreate({ cohorts, periods,
+ academicSetupHref = "/college/academics",alwaysOpen=false }: {
+  cohorts: Cohort[]; periods: Period[]; academicSetupHref?: string;alwaysOpen?:boolean;
 }) {
   const router = useRouter();
+  const {showToast}=useToast();
+  const formRef=useRef<HTMLFormElement>(null);
+  const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
   const [pending, startTransition] = useTransition();
   const [cohortId, setCohortId] = useState("");
   const [programId,setProgramId]=useState("");
@@ -55,19 +60,28 @@ export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/col
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if(pending)return;
-    setNotice("");
+    setNotice("");setFieldErrors({});
     const result = createCollegeSectionSchema.safeParse({
       cohortId, academicPeriodId, name, code:derivedCode, capacity: Number(capacity), description: description.trim() || null,
     });
     if (!result.success) {
+      const fields=Object.fromEntries(result.error.issues.map(issue=>[String(issue.path[0]),issue.message]));
+      setFieldErrors(fields);
       setNotice(result.error.issues[0]?.message ?? "Enter valid class details.");
+      const name=String(result.error.issues[0]?.path[0]??"");
+      formRef.current?.querySelector<HTMLInputElement>(
+        '[name="'+(name==="name"?"className":name)+'"]'
+      )?.focus();
       return;
     }
     startTransition(async () => {
       try {
         await requestWrite("POST", "/api/college/classes", result.data);
         setName(""); setCode(""); setCapacity("60"); setDescription("");
-        setNotice("Class created.");
+        const className=result.data.name;
+        setNotice('Created class “'+className+'”. Next, register or move students into this section.');
+        showToast({tone:"success",title:'Created class “'+className+'”.',
+         description:"Next, register or move students into this section."});
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Class creation failed."));
@@ -75,7 +89,7 @@ export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/col
     });
   }
 
-  return <Disclosure ariaLabel="Create class" title={<h2 className="m-0 text-lg font-semibold text-foreground">Create class</h2>}
+  return <Disclosure ariaLabel="Create class" defaultOpen={alwaysOpen} title={<h2 className="m-0 text-lg font-semibold text-foreground">Create New Class/Section</h2>}
     className="min-w-0" contentClassName="pt-[var(--lms-space-3)] pb-[var(--lms-space-4)]">
     {!cohorts.length || !periods.length
       ? <p role="status" className="mt-2 text-sm text-muted-foreground">
@@ -85,25 +99,25 @@ export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/col
             <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
-      : <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[920px] grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+      : <form ref={formRef} onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
-          <Select required value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
+          <Select required name="programId" aria-invalid={Boolean(fieldErrors.programId)} value={programId} onChange={event=>{setProgramId(event.target.value);setCohortId("");}}
            className="min-h-11 w-full md:min-h-9">
            <option value="">Select program</option>
            {uniquePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
-          <Select required value={cohortId} onChange={event => setCohortId(event.target.value)}
+          <Select required name="cohortId" disabled={!programId} aria-invalid={Boolean(fieldErrors.cohortId)} value={cohortId} onChange={event => setCohortId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
-            <option value="">Select batch</option>
+            <option value="">{programId?"Select batch":"Select a program first"}</option>
             {filteredCohorts.map(c => <option key={c.id} value={c.id}>
               {c.programName} · {c.name} ({c.code})
             </option>)}
           </Select>
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
-          <Select required value={academicPeriodId}
+          <Select required name="academicPeriodId" aria-invalid={Boolean(fieldErrors.academicPeriodId)} value={academicPeriodId}
             onChange={event => setAcademicPeriodId(event.target.value)}
             className="min-h-11 w-full md:min-h-9">
             <option value="">Select period</option>
@@ -113,11 +127,12 @@ export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/col
           </Select>
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class name
-          <Input required maxLength={255} value={name} onChange={event => setName(event.target.value)}
+          <Input required name="className" placeholder="e.g. CSE-A or Section 1" maxLength={255} value={name}
+           aria-invalid={Boolean(fieldErrors.name)} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
-          <Input maxLength={64} value={code} onChange={event => setCode(event.target.value)}
+          <Input name="code" maxLength={64} value={code} onChange={event => setCode(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity (required, 1–200)
@@ -132,7 +147,7 @@ export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/col
         <p className="text-xs text-muted-foreground md:col-span-2">Moving a student into a full section is refused.</p>
         <div className="flex justify-stretch border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] md:col-span-2 md:justify-end">
           <Button variant="primary" disabled={pending} type="submit" className="w-full md:w-auto">
-            {pending ? "Creating…" : "Create class"}
+            {pending ? "Creating…" : "Create Class & Add Another"}
           </Button>
         </div>
       </form>}
@@ -145,6 +160,7 @@ export function CollegeClassCreate({ cohorts, periods, academicSetupHref = "/col
 
 export function CollegeClassRowActions({ row }: { row: ClassRow }) {
   const router = useRouter();
+  const {showToast}=useToast();
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [discardConfirm, setDiscardConfirm] = useState(false);
@@ -174,7 +190,9 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
     startTransition(async () => {
       try {
         await requestWrite("PATCH", "/api/college/classes/" + encodeURIComponent(row.id), parsed.data);
-        setEditing(false); setDiscardConfirm(false); setNotice("Class updated.");
+        setEditing(false); setDiscardConfirm(false);
+        setNotice('Updated class “'+row.name+'”.');
+        showToast({tone:"success",title:'Updated class “'+row.name+'”.'});
         router.refresh();
       } catch (error) {
         setNotice(academicSetupErrorMessage(error, "Class update failed."));
@@ -189,7 +207,7 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
       Edit
     </Button>
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)cancel();}}
-      title={"Edit class " + row.name}>
+      title={'Edit class “'+row.name+'”'}>
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2">
@@ -227,8 +245,8 @@ export function CollegeClassRowActions({ row }: { row: ClassRow }) {
       </form>
     </Dialog> : null}
     <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
-      title="Discard unsaved class changes?"
-      description="The changes to this class will be lost."
+      title={'Discard edits to “'+row.name+'”?'}
+      description="Unsaved changes will be lost."
       confirmLabel="Discard changes" pending={pending}
       onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");}}/>
     {!editing && notice ? <p role="status" className="mt-1 text-xs text-body">{notice}</p> : null}
