@@ -8,7 +8,7 @@ import {companyDriveCsv} from "@/modules/placements/tpo-company-drive-export-mod
 import {GridWorkspace} from "./grid/grid-workspace";
 
 export type CompanyMemoryDriveRow={
- id:string;jobTitle:string;status:string;createdAt:string;applied:number;offers:number;
+ id:string;jobTitle:string;status:string;createdAt:string;applied:number|null;offers:number|null;
 };
 const statusLabel=(status:string)=>({
  PUBLISHED:"Live",CLOSED:"Completed",DRAFT:"Draft",REQUEST:"Sent for review",
@@ -31,7 +31,7 @@ const columns:readonly TpoGridColumn<CompanyMemoryDriveRow>[]=[
  {key:"status",label:"Status",read:row=>statusLabel(row.status)},
  {key:"year",label:"Year",read:row=>year(row.createdAt),sortKind:"date",sortValue:row=>{const instant=Date.parse(row.createdAt);return Number.isFinite(instant)?instant:null;}},
  {key:"applied",label:"Applied",sortKind:"number",sortValue:row=>row.applied,
-  read:row=>row.applied+" · "+row.offers+" offers"},
+  read:row=>(row.applied===null?"Unavailable":String(row.applied))+" · "+(row.offers===null?"Unavailable":String(row.offers))+" offers"},
  {key:"created",label:"Created",read:row=>date(row.createdAt),sortKind:"date",sortValue:row=>{const instant=Date.parse(row.createdAt);return Number.isFinite(instant)?instant:null;}},
 ];
 /** Quartz sheet mounts in the browser; rows remain the server-scoped company's drives. */
