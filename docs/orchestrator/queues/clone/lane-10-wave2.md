@@ -19,7 +19,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_app_universities_page.tsx.md` (edit src/app/universities/page.tsx; 22 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-student-csv-import.tsx.md` (edit src/components/college/college-student-csv-import.tsx; 21 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-admin-profile-editor.tsx.md` (edit src/components/college/college-admin-profile-editor.tsx; 20 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-faculty-assignment-actions.tsx.md` (edit src/components/college/college-faculty-assignment-actions.tsx; 18 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-faculty-assignment-actions.tsx.md` (edit src/components/college/college-faculty-assignment-actions.tsx; 18 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_modules_inbound-mail_admin-service.ts.md` (edit src/modules/inbound-mail/admin-service.ts; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_modules_operations_scheduled-job-runner.ts.md` (edit src/modules/operations/scheduled-job-runner.ts; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_modules_module-access_admin-read-service.ts.md` (edit src/modules/module-access/admin-read-service.ts; 14 findings; best P2)
