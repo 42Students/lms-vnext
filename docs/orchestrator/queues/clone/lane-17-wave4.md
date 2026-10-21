@@ -28,7 +28,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-outcome-labels-editor.tsx.md` (edit src/components/tpo/tpo-outcome-labels-editor.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_components_academics_college-section-lifecycle-action.tsx.md` (edit src/components/academics/college-section-lifecycle-action.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_recruiter_access_grantId_route.ts.md` (edit src/app/api/placements/recruiter/access/[grantId]/route.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_components_placements_college-hiring-funnel.tsx.md` (edit src/components/placements/college-hiring-funnel.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_src_components_placements_college-hiring-funnel.tsx.md` (edit src/components/placements/college-hiring-funnel.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_modules_projects_super-admin-template-directory-model.ts.md` (edit src/modules/projects/super-admin-template-directory-model.ts; 1 findings; best P3)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_courses_teaching-assignment-batch-service.ts.md` (edit src/modules/courses/teaching-assignment-batch-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-2/W3_NEW_docs_audit_gap2_lane-7_u016-college-admin-workspace-tasks.md.md` (new; 1 findings; best P1)

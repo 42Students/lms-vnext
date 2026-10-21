@@ -145,6 +145,32 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
       <Link href={collegeHiringAnalyticsHref({})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>
     </div>}
    />}
+   {!data.companyReportUnavailable&&data.normalizedCompanySubtotals.length>0 ?
+    <div aria-label="Company summary rows" className="sticky bottom-0 z-10 border border-border bg-surface shadow-[0_-4px_12px_rgba(15,23,42,0.08)]">
+      <div className="border-b border-border px-3 py-2 text-sm font-semibold text-foreground">Company totals · all matching drives</div>
+      <div className="max-h-52 overflow-auto overscroll-contain" role="region" tabIndex={0} aria-label="Company summary table">
+        <table className="w-full min-w-[920px] border-collapse text-left text-xs tabular-nums">
+          <caption className="sr-only">Company-wise totals by current application stage</caption>
+          <thead className="sticky top-0 bg-surface-subtle text-foreground">
+            <tr><th scope="col" className="px-3 py-2">Company</th><th scope="col" className="px-2 py-2">Total</th>
+              {order.map(stage=><th scope="col" key={stage} className="px-2 py-2">{label(stage)}</th>)}
+            </tr>
+          </thead>
+          <tbody>{data.normalizedCompanySubtotals.map(company=><tr key={company.company} className="border-t border-border">
+            <th scope="row" className="px-3 py-2 font-semibold">{company.company}</th>
+            <td className="px-2 py-2">{company.total}</td>
+            {order.map(stage=><td key={stage} className="px-2 py-2">{company.byStage[stage]??0}</td>)}
+          </tr>)}</tbody>
+          <tfoot className="sticky bottom-0 border-t border-border bg-surface-subtle font-bold">
+            <tr><th scope="row" className="px-3 py-2">All companies</th>
+              <td className="px-2 py-2">{data.normalizedCompanySubtotals.reduce((total,row)=>total+row.total,0)}</td>
+              {order.map(stage=><td key={stage} className="px-2 py-2">{data.normalizedCompanySubtotals.reduce((total,row)=>total+(row.byStage[stage]??0),0)}</td>)}
+            </tr>
+          </tfoot>
+        </table>
+      </div>
+      <p className="px-3 py-1 text-xs text-muted-foreground">Summary groups company aliases case-insensitively and uses the same filters as the report above.</p>
+    </div> : null}
    {data.companyRows.length>0?
     <details aria-label="Company-wise report totals" className="min-w-0 border-t border-border pt-2">
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">All drives · Totals</summary>
