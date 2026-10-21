@@ -498,7 +498,7 @@ export const saveLearnerContentProgressInputSchema =
     .refine(
       (value) =>
         value.positionSeconds !== undefined ||
-        value.completed === true,
+        value.completed !== undefined,
       "Provide a position update or mark the content complete",
     );
 
