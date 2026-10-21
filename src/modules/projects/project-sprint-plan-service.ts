@@ -57,21 +57,26 @@ export async function saveProjectSprintPlan(
       throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     const original = new Map(current.map(sprint => [sprint.id, sprint]));
-    for (const next of input.sprints) {
-      const previous = original.get(next.id);
-      if (!previous || previous.updatedAt.getTime() !== Date.parse(next.expectedUpdatedAt)) {
-        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
-      }
+    if (input.sprints.some(sprint => !original.has(sprint.id))) {
+      throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
     }
     const reordered = input.sprints.some((sprint, index) => sprint.id !== current[index]?.id);
     const changedIds = input.sprints.filter(row =>
       projectSprintPlanFieldsChanged(original.get(row.id)!, row)).map(row => row.id);
+    // Retrying a request that reached its desired state is an authorized no-op,
+    // even when its prior response was lost and the submitted tokens are now stale.
     if (!reordered && changedIds.length === 0) {
       return { changed: false, sprints: current };
     }
+    for (const next of input.sprints) {
+      const previous = original.get(next.id)!;
+      if (previous.updatedAt.getTime() !== Date.parse(next.expectedUpdatedAt)) {
+        throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
+      }
+    }
     const now = new Date(Math.max(Date.now(),
       ...current.map(sprint => sprint.updatedAt.getTime())) + 1);
-    const saved = [];
+    const saved: typeof current = [];
 
     if (reordered) {
       // All existing sequences are <= maxSequence; use fresh positive temporary
