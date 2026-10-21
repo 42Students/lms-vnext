@@ -2,9 +2,9 @@
 
 import { Select } from "@/components/ui/select";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
-import {useState,useTransition} from "react";
-import {useRouter} from "next/navigation";
-import {StatusBadge} from "@/components/ui/status-badge";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Disclosure } from "@/components/ui/disclosure";
 import { DepartmentActions } from "@/components/admin/department-actions";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,11 +27,45 @@ function usageChip(label:string,value:number|null|undefined){
  </span>;
 }
 
+const columns: DataTableColumn<DepartmentDirectoryRow>[] = [
+  {
+    key: "name",
+    header: "Department Name",
+    mobileLabel: "Department Name",
+    mobilePriority: "primary",
+    cell: (row) => <span className="font-semibold text-foreground">{row.name}</span>,
+  },
+  {
+    key: "usage",
+    header: "Contents",
+    mobilePriority: "secondary",
+    cell: (row) => (
+      <span className="flex flex-wrap gap-1.5" title={row.usage?
+       "Active linked records; resolve all dependencies before deleting this department.":
+       "Usage counts unavailable; delete remains blocked until dependencies can be checked."}>
+        {([["Programs",row.usage?.programs],["Courses",row.usage?.courses],
+          ["Faculty",row.usage?.faculty]] as const).map(([label,count])=>
+          <span key={label} className="inline-flex rounded border border-info bg-info-subtle px-2 py-0.5 text-xs font-medium text-info-text">
+            {countText(count)} {label}
+          </span>)}
+      </span>
+    ),
+  },
+  {
+    key: "actions",
+    header: <span className="sr-only">Actions</span>,
+    mobilePriority: "action",
+    className: "text-right",
+    cell: (row) => <DepartmentActions departmentId={row.id} name={row.name} usage={row.usage} />,
+  },
+];
+
 export function DepartmentDirectory({
   rows,
 }: {
   rows: readonly DepartmentDirectoryRow[];
 }) {
+  const router=useRouter();
   const [search, setSearch] = useState("");
   const router=useRouter();
   const [refreshing,startRefresh]=useTransition();
@@ -67,6 +101,32 @@ export function DepartmentDirectory({
             <span aria-hidden="true">↻</span> {refreshing?"Refreshing…":"Refresh"}
           </Button>
         </div>
+        {search.trim() ? <Button size="sm" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+          onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
+        <div className="flex flex-wrap gap-2 sm:col-span-2">
+          {filtered.length ? <a href={exportHref} download="departments.csv"
+            className="inline-flex min-h-11 items-center rounded border border-border bg-surface px-3 text-sm font-semibold text-link md:min-h-9">Export CSV</a>:
+            <Button variant="secondary" disabled>Export CSV</Button>}
+          <Button type="button" variant="secondary" onClick={()=>router.refresh()} className="min-h-11 md:min-h-9">Refresh</Button>
+        </div>
+        <Disclosure title="View options" className="min-w-0 sm:col-span-2"
+          contentClassName="flex min-w-0 flex-col gap-3 pb-3 pt-2 sm:min-w-48">
+          <label htmlFor="department-directory-page-size"
+            className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Rows per page
+            <Select id="department-directory-page-size" value={pageSize}
+              onChange={(event) => { setPageSize(Number(event.target.value)); setPage(1); }}
+              className="min-h-11 w-full md:min-h-9">
+              {[10, 25, 50, 100].map(size => <option key={size} value={size}>{size}</option>)}
+            </Select>
+          </label>
+          {filtered.length ? (
+            <a href={exportHref} download="departments.csv"
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+              Export CSV
+            </a>
+          ) : <Button size="sm" variant="secondary" disabled>Export CSV</Button>}
+        </Disclosure>
       </div>
       <p role="status" aria-live="polite" className="text-sm leading-[22px] text-muted-foreground">
         Departments retrieved · {result.total} of {rows.length} {rows.length === 1 ? "result" : "results"}

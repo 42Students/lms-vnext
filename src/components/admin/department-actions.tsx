@@ -167,6 +167,18 @@ export function DepartmentActions({
         onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>
         <span aria-hidden="true">⌫</span> Archive
       </Button>
+      <Dropdown label="Department actions" trigger="More" align="end" mobileSheet triggerClassName="md:!min-h-9">
+        <Menu className="w-full min-w-0">
+          <MenuItem disabled={pending || hasDependencies}
+            title={hasDependencies ? "Move or resolve its programs, courses and faculty assignments before archiving." : "Archive this department"}
+            onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>
+            Delete Department
+          </MenuItem>
+        </Menu>
+      </Dropdown>
+      <Button size="sm" type="button" variant="danger" disabled={pending||hasDependencies}
+        title={hasDependencies?"Delete requires no active programs, courses or faculty assignments":"Delete (soft archive) department"}
+        onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>Delete</Button>
       </div>
       {archiveError&&!archiveOpen?<Alert tone="error" title="Department was not archived" className="mt-2">
         <p>{archiveError}</p>
@@ -235,8 +247,8 @@ export function DepartmentActions({
         open={archiveOpen}
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         dismissible={!pending}
-        title="Archive department"
-        description={`Archive ${name}? This is allowed only when it has no linked programs, faculty assignments or courses.`}
+        title="Delete department"
+        description={`Delete ${name}? This is a soft delete. It can be done only after moving all linked programs, courses and faculty assignments.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
@@ -255,7 +267,7 @@ export function DepartmentActions({
             >
               {pending
                 ? "Archiving…"
-                : "Archive department"}
+                : "Yes, delete"}
             </Button>
           </div>
         }
@@ -268,7 +280,7 @@ export function DepartmentActions({
           </Alert>
         ) : null}
         <p className="m-0 max-w-prose text-sm text-body">
-          Archiving removes the department from active selections without deleting historical records.
+          Delete means soft archive: this removes the department from active selections without deleting historical records.
           All linked programs, courses and faculty assignments must be resolved first; dependencies
           are rechecked immediately before the archive. Reactivation is not available here.
         </p>
