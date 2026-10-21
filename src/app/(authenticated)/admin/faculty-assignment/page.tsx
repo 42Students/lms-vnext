@@ -2,6 +2,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {redirect} from "next/navigation";
 import {isSuperAdmin} from "@/modules/identity/context";
 import Link from "next/link";
+import {Alert} from "@/components/ui/alert";
 import { Disclosure } from "@/components/ui/disclosure";
 import {AdminScopedReadPage} from "@/components/admin/admin-scoped-read-page";
 import {TeachingAssignmentActions} from "@/components/courses/admin-course-actions";
@@ -16,11 +17,21 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
  const context=await getCurrentRequestContext();
  if(!isSuperAdmin(context))redirect("/dashboard");
  const collegeId=context.adminScope?.collegeId??null;
- const [classes,workspace]=await Promise.all([
+ const [classesResult,workspaceResult]=await Promise.allSettled([
   collegeId?getSuperAdminFacultyAssignmentClasses(context):Promise.resolve([]),
   collegeId?getAdminCourseWorkspace(context,collegeId):Promise.resolve(null),
  ]);
+ const classes=classesResult.status==="fulfilled"?classesResult.value:[];
+ const workspace=workspaceResult.status==="fulfilled"?workspaceResult.value:null;
  return <div className="min-w-0 space-y-4 md:space-y-6">
+  {collegeId&&classesResult.status==="rejected"?<Alert tone="warning" title="Some selection options are unavailable">
+   Classes could not be loaded. Current faculty assignments remain available.
+   {" "}<Link href="/admin/faculty-assignment" className="font-semibold underline">Retry options</Link>.
+  </Alert>:null}
+  {collegeId&&workspaceResult.status==="rejected"?<Alert tone="warning" title="Teaching assignment options are unavailable">
+   Creation is temporarily disabled until the selected college's faculty and course choices can be verified.
+   {" "}<Link href="/admin/faculty-assignment" className="font-semibold underline">Retry options</Link>.
+  </Alert>:null}
   <AdminScopedReadPage
   intro={workspace?<section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
    <SuperAdminFacultyAssignmentCreate deliveries={workspace.deliveries} faculty={workspace.faculty} truncated={workspace.facultyTruncated}/>

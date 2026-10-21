@@ -103,15 +103,10 @@ export function LectureHallManager({
   const originalEditRef = useRef<string | null>(null);
   const [archiving, setArchiving] = useState<HallRow | null>(null);
   const [search,setSearch]=useState("");
-  const [page,setPage]=useState(1);
-  const [pageSize,setPageSize]=useState(10);
   const normalizedSearch=search.trim().toLocaleLowerCase("en");
   const visibleHalls=normalizedSearch?halls.filter(hall=>
     [hall.name,hall.roomType,ROOM_TYPE_LABELS[hall.roomType],hall.departmentName??"",hall.description??""]
       .some(value=>value.toLocaleLowerCase("en").includes(normalizedSearch))):halls;
-  const totalPages=Math.max(1,Math.ceil(visibleHalls.length/pageSize));
-  const currentPage=Math.min(page,totalPages);
-  const pageRows=visibleHalls.slice((currentPage-1)*pageSize,currentPage*pageSize);
   function exportCsv(){
     const escape=(value:string|number|null|undefined)=>{
       const text=String(value??"");
@@ -263,7 +258,10 @@ export function LectureHallManager({
           <form className="space-y-[var(--lms-space-4)]" onSubmit={(event) => { event.preventDefault(); save(true); }}>
             {createError ? <Banner tone="error">{createError}</Banner> : null}
             <div>
-              <label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+              <div className="flex items-center justify-between gap-2">
+                <label className={field} htmlFor="create-hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+                {createDraft.departmentId?<Button type="button" size="sm" variant="ghost" disabled={pending} onClick={()=>setCreateDraft({...createDraft,departmentId:""})}>Clear</Button>:null}
+              </div>
               <Select id="create-hall-dept" className="min-h-11 w-full md:min-h-9" value={createDraft.departmentId}
                 onChange={(event) => setCreateDraft({ ...createDraft, departmentId: event.target.value })}>
                 <option value="">{LECTURE_HALL_COPY.departmentPlaceholder}</option>
@@ -276,7 +274,8 @@ export function LectureHallManager({
                 aria-invalid={Boolean(createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must"))}
                 aria-describedby={createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ? "create-hall-name-error" : undefined}
                 placeholder={LECTURE_HALL_COPY.namePlaceholder} value={createDraft.name}
-                onChange={(event) => setCreateDraft({ ...createDraft, name: event.target.value })}/>
+                onChange={(event) => {setCreateDraft({ ...createDraft, name: event.target.value });if(createError?.startsWith("Please enter room name"))setCreateError(null);}}
+                onBlur={()=>{if(!createDraft.name.trim())setCreateError("Please enter room name");}}/>
               {createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ?
                 <p id="create-hall-name-error" role="alert" className="mt-1 text-xs text-error">{createError}</p> : null}
             </div>
@@ -301,25 +300,24 @@ export function LectureHallManager({
                 placeholder={LECTURE_HALL_COPY.descriptionPlaceholder} value={createDraft.description}
                 onChange={(event) => setCreateDraft({ ...createDraft, description: event.target.value })}/>
             </div>
-            <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending}>
-              <HallPlusIcon /> {LECTURE_HALL_COPY.createButton}
-            </Button>
+            <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
+              <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" loading={pending} disabled={pending}>
+                <HallPlusIcon /> {LECTURE_HALL_COPY.createButton}
+              </Button>
+              <Button type="button" variant="secondary" disabled={pending} className="min-h-11 w-full md:min-h-9 md:w-auto"
+                onClick={()=>{setCreateDraft(EMPTY);setCreateError(null);}}>Clear</Button>
+            </div>
           </form>
         </section>
         <section aria-label="Existing Lecture Halls / Rooms" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
           <h2 className="mb-[var(--lms-space-3)] text-base font-semibold text-foreground">Existing Lecture Halls / Rooms</h2>
           <div className="flex min-w-0 flex-wrap gap-2 print:hidden">
             <label htmlFor="hall-search" className="sr-only">Search halls</label>
-            <Input id="hall-search" type="search" value={search} onChange={event=>{setSearch(event.target.value);setPage(1);}} placeholder="Search halls" className="min-h-9 w-44"/>
-            <Button type="button" size="sm" variant="secondary" disabled={pending} onClick={()=>router.refresh()}>Refresh</Button>
+            <Input id="hall-search" type="search" value={search} onChange={event=>setSearch(event.target.value)} placeholder="Search halls" className="min-h-9 w-44"/>
+            <Button type="button" size="sm" variant="secondary" disabled={pending} loading={pending} onClick={()=>startTransition(()=>router.refresh())}>Refresh</Button>
             <Button type="button" size="sm" variant="secondary" disabled={pending||visibleHalls.length===0} onClick={exportCsv}>Export CSV</Button>
-            <label className="inline-flex items-center gap-2 text-xs text-muted-foreground">Rows per page
-              <Select aria-label="Lecture halls rows per page" className="min-h-9 w-20" value={String(pageSize)}
-                onChange={event=>{setPageSize(Number(event.target.value));setPage(1);}}>
-                {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
-              </Select>
-            </label>
           </div>
+          {pending?<p role="status" aria-live="polite" className="text-xs text-muted-foreground">Refreshing lecture halls…</p>:null}
       {visibleHalls.length === 0 ? (
         <EmptyState
           title={search?"No lecture halls match these filters.":emptyState?.title ?? "No lecture halls found."}
@@ -356,18 +354,10 @@ export function LectureHallManager({
               ),
             },
           ]}
-          rows={pageRows}
+          rows={visibleHalls}
           getRowKey={(hall) => hall.id}
         />
       )}
-       {visibleHalls.length>0?<nav className="flex min-w-0 flex-wrap items-center justify-between gap-2 text-xs text-muted-foreground" aria-label="Lecture halls pagination">
-        <span role="status">{(currentPage-1)*pageSize+1}–{Math.min(currentPage*pageSize,visibleHalls.length)} of {visibleHalls.length}</span>
-        <div className="flex items-center gap-2">
-         <Button type="button" size="sm" variant="secondary" disabled={pending||currentPage<=1} onClick={()=>setPage(currentPage-1)}>Previous</Button>
-         <span>Page {currentPage} of {totalPages}</span>
-         <Button type="button" size="sm" variant="secondary" disabled={pending||currentPage>=totalPages} onClick={()=>setPage(currentPage+1)}>Next</Button>
-        </div>
-       </nav>:null}
         </section>
       </div>
 
@@ -401,16 +391,12 @@ export function LectureHallManager({
               aria-invalid={Boolean(formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must"))}
               aria-describedby={formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ? "edit-hall-name-error" : undefined}
               placeholder={LECTURE_HALL_COPY.namePlaceholder}
-              onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+              onChange={(e) => {setDraft({ ...draft, name: e.target.value });if(formError?.startsWith("Please enter room name"))setFormError(null);}}
+              onBlur={()=>{if(!draft.name.trim())setFormError("Please enter room name");}} />
             {formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ?
               <p id="edit-hall-name-error" role="alert" className="mt-1 text-xs text-error">{formError}</p> : null}
           </div>
           <div className="grid min-w-0 grid-cols-2 gap-3">
-            <div>
-              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
-              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} required value={draft.capacity}
-                onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
-            </div>
             <div>
               <label className={field} htmlFor="hall-type">{LECTURE_HALL_COPY.typeLabel}</label>
               <Select className="min-h-11 md:min-h-9" id="hall-type" required value={draft.roomType}
@@ -421,9 +407,17 @@ export function LectureHallManager({
                 ))}
               </Select>
             </div>
+            <div>
+              <label className={field} htmlFor="hall-capacity">{LECTURE_HALL_COPY.capacityLabel}</label>
+              <Input className="min-h-11 md:min-h-9" id="hall-capacity" type="number" min={1} max={1000} required value={draft.capacity}
+                onChange={(e) => setDraft({ ...draft, capacity: e.target.value })} />
+            </div>
           </div>
           <div>
-            <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+            <div className="flex items-center justify-between gap-2">
+              <label className={field} htmlFor="hall-dept">{LECTURE_HALL_COPY.departmentLabel}</label>
+              {draft.departmentId?<Button type="button" size="sm" variant="ghost" disabled={pending} onClick={()=>setDraft({...draft,departmentId:""})}>Clear</Button>:null}
+            </div>
             <Select className="min-h-11 md:min-h-9" id="hall-dept" value={draft.departmentId}
               onChange={(e) => setDraft({ ...draft, departmentId: e.target.value })}>
               <option value="">{LECTURE_HALL_COPY.departmentPlaceholder}</option>

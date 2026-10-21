@@ -1,6 +1,6 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import {useEffect,useState} from "react";
+import {useEffect,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 
 /** Only the selected-college server may supply suggestions; do not persist
@@ -10,6 +10,7 @@ export function AdminScopedLiveSearch({initial,path,placeholder="Search director
  initial:string;path:string;placeholder?:string;recentSuggestions?:readonly string[];popularSuggestions?:readonly string[];
 }){
  const router=useRouter(),[value,setValue]=useState(initial);
+ const [isPending,startTransition]=useTransition();
  const [active,setActive]=useState(-1);
  const [prevInitial,setPrevInitial]=useState(initial);
  const [focused,setFocused]=useState(false);
@@ -30,7 +31,7 @@ export function AdminScopedLiveSearch({initial,path,placeholder="Search director
   const params=new URLSearchParams(window.location.search);
   next.trim()?params.set("q",next.trim()):params.delete("q");
   params.delete("page");
-  router.replace(path+(params.size?"?"+params.toString():""),{scroll:false});
+  startTransition(()=>router.replace(path+(params.size?"?"+params.toString():""),{scroll:false}));
  }
  useEffect(()=>{
   if(value===initial)return;
@@ -49,7 +50,7 @@ export function AdminScopedLiveSearch({initial,path,placeholder="Search director
     if(event.key==="Enter"&&focused&&active>=0&&active<all.length){event.preventDefault();setValue(all[active]);setFocused(false);setActive(-1);navigate(all[active]);}
    }}
    aria-label="Search directory" placeholder={placeholder}
-   role="combobox" aria-expanded={focused&&all.length>0}
+   role="combobox" aria-busy={isPending} aria-expanded={focused&&all.length>0}
    aria-controls="admin-scoped-search-suggestions"
    aria-autocomplete="list" aria-activedescendant={focused&&active>=0?"admin-scoped-suggestion-"+active:undefined}
    className="min-h-11 w-full md:min-h-9"/>
@@ -67,6 +68,6 @@ export function AdminScopedLiveSearch({initial,path,placeholder="Search director
         className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</button>)}
     </div>:null}
   </div>:null}
-  <p className="text-xs text-muted-foreground">Results refresh automatically as you search.</p>
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{isPending?"Refreshing directory…":"Results refresh automatically as you search."}</p>
  </div>;
 }
