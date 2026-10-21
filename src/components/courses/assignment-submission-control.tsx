@@ -327,9 +327,9 @@ export function AssignmentSubmissionControl({
           </span>
         </div> : null}
       </fieldset>
-      <ConfirmDialog open={finalConfirmOpen} onOpenChange={next=>{if(!next)settleFinal(false);}}
+      {submissionType !== "FILE" ? <ConfirmDialog open={finalConfirmOpen} onOpenChange={next=>{if(!next)settleFinal(false);}}
         title="Submit assignment?" description={learnerAssignmentFinalConfirmation(submissionType)}
-        confirmVariant="primary" confirmLabel="Submit" onConfirm={()=>settleFinal(true)}/>
+        confirmVariant="primary" confirmLabel="Submit" onConfirm={()=>settleFinal(true)}/> : null}
       <Dialog open={discardHref!==null} onOpenChange={open=>{if(!open)setDiscardHref(null);}}
         title="Discard this submission?" description="Your unsent answer will be lost."
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">

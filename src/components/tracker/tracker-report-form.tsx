@@ -207,7 +207,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
       </label>
-      <details className="min-w-0 border-b border-border pb-4" defaultOpen={Boolean(draft.evidenceLink)}>
+      <details className="min-w-0 border-b border-border pb-4" open={Boolean(draft.evidenceLink)}>
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Optional evidence link</summary>
         <label className={label + " mt-2"}>Evidence link
           <Input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
@@ -217,7 +217,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </label>
       </details>
       {canSearchSimilar ? <>
-      <details aria-label="Similar issues" className="min-w-0 border-y border-border py-4" defaultOpen={Boolean(similarQuery.trim())}>
+      <details aria-label="Similar issues" className="min-w-0 border-y border-border py-4" open={Boolean(similarQuery.trim())}>
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Similar issues</summary>
         <p className="mt-1 text-xs text-muted-foreground">Search previously reported issues by a short phrase. Only reports you are allowed to read appear here.</p>
         <div className="mt-3 flex min-w-0 flex-wrap items-end gap-2">

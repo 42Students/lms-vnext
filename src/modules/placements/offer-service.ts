@@ -64,7 +64,6 @@ import {
   placementOfferActionSchema,
   placementOfferIdSchema,
   placementJobIdSchema,
-  type IssuePlacementOfferInput,
   type PlacementJoiningOutcomeInput,
   type PlacementOfferActionInput,
 } from "./validation";
@@ -268,7 +267,7 @@ function sameOfferPayload(
 export async function issuePlacementOffer(
   context: RequestContext,
   applicationIdInput: string,
-  rawInput: IssuePlacementOfferInput,
+  rawInput: unknown,
 ) {
   const applicationId =
     placementApplicationIdSchema.parse(
