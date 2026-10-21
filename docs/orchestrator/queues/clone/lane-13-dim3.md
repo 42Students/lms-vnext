@@ -14,16 +14,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/placements/placement-job-create-workspace.tsx`
 - [x] `src/components/projects/project-admin-readiness-page.tsx`
 - [x] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.module.css`
-- [ ] `src/components/projects/learner-project-board-search.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/project-admin-workspace-list.tsx`
-- [ ] `src/components/projects/project-task-comments.tsx`
-- [ ] `src/components/public/public-screen.module.css`
-- [ ] `src/components/tpo/legacy-tpo-notification-feed.module.css`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.module.css`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/project-admin-workspace-list.tsx`
+- [x] `src/components/projects/project-task-comments.tsx`
+- [x] `src/components/public/public-screen.module.css`
+- [x] `src/components/tpo/legacy-tpo-notification-feed.module.css`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
 - [ ] `src/components/ui/card.tsx`
 - [ ] `src/components/ui/error-state.tsx`
 - [ ] `src/components/ui/legacy-overlays.css`

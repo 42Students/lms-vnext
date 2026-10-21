@@ -255,9 +255,9 @@ export function TpoStudentsBulkAdd({
              />
           </label>:null}
           </Disclosure>
-          <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex min-w-0 flex-col items-stretch gap-2 md:flex-row md:items-center md:justify-between">
             <span className="min-w-0 break-words text-sm text-body">{pageSelected.length} learner(s) selected</span>
-            <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
+            <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy || !roleOptionId || pageSelected.length === 0 || pageSelected.length>200 ||
                 includeIneligible&&overrideReason.trim().length<3}
               onClick={() => void preview()}
               >
@@ -274,9 +274,9 @@ export function TpoStudentsBulkAdd({
           "? Eligibility and participation are checked individually by the server. "+
           (includeIneligible?"The inclusion reason will be audited; college, cohort, debarment and proof guards still apply.":
           "Ineligible learners will not be added.")+" Existing applications are preserved."}
-        footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-          <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={busy||guardedPending} disabled={!pageSelected.length||pageSelected.length>200||!roleOptionId||
+        footer={<div className="flex w-full flex-col-reverse gap-2 md:flex-row md:justify-end">
+          <Button variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||guardedPending} onClick={()=>setConfirmOpen(false)}>Cancel</Button>
+          <Button className="min-h-11 w-full md:w-auto md:min-h-9" loading={busy||guardedPending} disabled={!pageSelected.length||pageSelected.length>200||!roleOptionId||
             includeIneligible&&overrideReason.trim().length<3||reviewedSelection!==selectionFingerprint} onClick={()=>void submit()}>
             {busy?"Checking learners…":"Confirm add selected"}
           </Button>

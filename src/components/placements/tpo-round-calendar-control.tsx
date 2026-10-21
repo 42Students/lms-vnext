@@ -113,7 +113,7 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
     {round ? <div className="min-w-0 space-y-4">
       <p className="break-words text-sm text-body leading-[22px]">Status: {round.status}. Kind: {round.kind}. Duration: {round.durationMinutes ?? "Unknown"} minutes.</p>
       <p className="text-xs text-muted-foreground leading-[20px]">On-campus rounds need a recorded duration for venue collision checking.</p>
-      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+      <div className="grid min-w-0 gap-3 md:grid-cols-2">
       <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date/time (IST)
         <Input type="datetime-local" className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9"
           value={dateInput} onChange={(event) => setDateInput(event.target.value)} />
@@ -141,13 +141,13 @@ export function TpoRoundCalendarControl({ choices,blockedDates,blockedDatesAvail
           className="mt-2 min-h-24 w-full min-w-0" />
       </div>
       </details>
-      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
+      <div className="flex min-w-0 flex-col gap-2 md:flex-row md:flex-wrap">
         <Button variant="primary" disabled={pending} type="button" onClick={() => review("SCHEDULE")}
-          className="min-h-11 w-full px-4 sm:w-auto min-[768px]:min-h-9">
+          className="min-h-11 w-full px-4 md:w-auto min-[768px]:min-h-9">
           {round.status === "PENDING" ? "Confirm schedule" : "Confirm reschedule"}
         </Button>
         <Button variant="secondary" disabled={pending} type="button" onClick={() => review("CANCEL")}
-          className="min-h-11 w-full px-4 sm:w-auto min-[768px]:min-h-9">
+          className="min-h-11 w-full px-4 md:w-auto min-[768px]:min-h-9">
           Confirm cancellation
         </Button>
       </div>
