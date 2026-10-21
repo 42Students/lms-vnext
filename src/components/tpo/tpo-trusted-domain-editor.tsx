@@ -37,7 +37,7 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
   <h2 className="text-lg font-semibold">Explicit trusted email domains</h2>
   <p className="text-xs text-muted-foreground">Free-mail addresses cannot be trusted. Trust never replaces verification or recruiter access checks.</p>
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] sm:items-end">
-  <label className="grid min-w-0 gap-1 text-sm font-semibold">Domain
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Domain
    <Input value={domain} onChange={event=>{setDomain(event.target.value);setStatus("");}} maxLength={253} placeholder="company.example"
     className="min-h-11 w-full md:min-h-9"/></label>
   <Button type="button" disabled={busy||domain.trim().length<4}
