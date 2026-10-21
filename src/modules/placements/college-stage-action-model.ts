@@ -11,6 +11,11 @@ export const collegeStageCommandSchema=z.object({
  stage:z.enum(COLLEGE_APPLICATION_STAGES).optional(),
  reason:z.string().trim().min(3).max(1000),
  notifyByEmail:z.boolean().default(false),
+ // Only a deliberate Move to Assessment may attach a real HTTPS link.
+ assessmentUrl:z.string().trim().url().max(2048)
+  .refine(url=>url.startsWith("https://"),"Enter a secure HTTPS assessment URL.")
+  .optional(),
+ saveAssessmentUrlToJob:z.boolean().default(false),
  confirmed:z.literal(true),
 }).strict().superRefine((v,ctx)=>{
  if((v.matchingFilter && v.applicationIds.length) || (!v.matchingFilter && v.applicationIds.length===0))
@@ -19,6 +24,13 @@ export const collegeStageCommandSchema=z.object({
  if(v.action==="CORRECT"&&v.reason.trim().length<10)
   ctx.addIssue({code:"custom",path:["reason"],message:"Explain the exceptional correction in at least 10 characters"});
  if(v.action==="REINSTATE"&&v.stage)ctx.addIssue({code:"custom",path:["stage"],message:"Reinstate uses the previous stage"});
+ if((v.assessmentUrl!==undefined||v.saveAssessmentUrlToJob) &&
+    (v.action!=="MOVE"||v.stage!=="ASSESSMENT"))
+  ctx.addIssue({code:"custom",path:["assessmentUrl"],
+   message:"Assessment links can be set only while moving to Assessment."});
+ if(v.saveAssessmentUrlToJob&&!v.assessmentUrl)
+  ctx.addIssue({code:"custom",path:["saveAssessmentUrlToJob"],
+   message:"Enter an assessment URL before saving it to the job."});
 });
 export type CollegeStageCommand=z.infer<typeof collegeStageCommandSchema>;
 
