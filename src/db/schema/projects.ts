@@ -36,6 +36,7 @@ export const projectTemplates = pgTable(
     currentVersion: integer("current_version")
       .notNull()
       .default(1),
+    legacyTaskFields: jsonb("legacy_task_fields").$type<Record<string, unknown>>(),
     publishedVersion: integer("published_version"),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
@@ -189,6 +190,9 @@ export const projectInstances = pgTable(
         onDelete: "restrict",
       }),
     teamGroupId: uuid("team_group_id").references(() => lmsGroups.id, { onDelete: "restrict" }),
+    // Imported numeric identity and old five-state status, never permission scope.
+    legacyProjectId: integer("legacy_project_id"),
+    legacyStatus: varchar("legacy_status", { length: 32 }),
     slug: varchar("slug", { length: 96 }).notNull(),
     title: text("title").notNull(),
     summary: text("summary"),
@@ -237,6 +241,9 @@ export const projectInstances = pgTable(
       sql`lower(${table.slug})`,
     ),
     uniqueIndex("project_instances_team_group_uq").on(table.teamGroupId),
+    uniqueIndex("project_instances_college_legacy_id_uq")
+      .on(table.collegeId, table.legacyProjectId)
+      .where(sql`${table.legacyProjectId} is not null`),
     // Parent key for tenant-scoped composite FKs (project_resource_files).
     uniqueIndex("project_instances_id_college_uq").on(table.id, table.collegeId),
     index("project_instances_college_status_idx").on(
@@ -345,6 +352,8 @@ export const projectSprints = pgTable(
     title: text("title").notNull(),
     description: text("description"),
     goal: text("goal"),
+    legacyReleaseKey: varchar("legacy_release_key", { length: 120 }),
+    dueLabel: varchar("due_label", { length: 160 }),
     definitionOfDone: text("definition_of_done"),
     startDate: date("start_date"),
     endDate: date("end_date"),
@@ -415,8 +424,12 @@ export const projectTasks = pgTable(
     templateKey: varchar("template_key", {
       length: 64,
     }).notNull(),
+    // Overlength source keys are preserved; runtime key remains strict 64.
+    legacyTaskKey: varchar("legacy_task_key", { length: 120 }),
     title: text("title").notNull(),
     description: text("description"),
+    dueLabel: varchar("due_label", { length: 160 }),
+    legacySprintLabel: varchar("legacy_sprint_label", { length: 160 }),
     acceptanceCriteria: text("acceptance_criteria"),
     approach: text("approach"),
     priority: varchar("priority", { length: 16 })
@@ -433,6 +446,15 @@ export const projectTasks = pgTable(
     ),
     /** PR-S2-04: required when status is BLOCKED (enforced in the service). */
     blockerReason: text("blocker_reason"),
+    // Historical display only: actual authorization uses active membership.
+    legacyAssigneeType: varchar("legacy_assignee_type", { length: 32 }),
+    legacyAssigneeName: text("legacy_assignee_name"),
+    createdByMembershipId: uuid("created_by_membership_id")
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    updatedByMembershipId: uuid("updated_by_membership_id")
+      .references(() => collegeMemberships.id, { onDelete: "restrict" }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    deletedByWorkspace: boolean("deleted_by_workspace").notNull().default(false),
     dueDate: date("due_date", { mode: "string" }),
     estimatePoints: integer("estimate_points"),
     taskType: varchar("task_type", { length: 16 }),
@@ -517,6 +539,9 @@ export const projectTaskComments = pgTable(
     commentKind: varchar("comment_kind", { length: 24 })
       .notNull()
       .default("NOTE"),
+    progressValue: integer("progress_value"),
+    taskStatusSnapshot: varchar("task_status_snapshot", { length: 30 }),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -544,8 +569,10 @@ export const projectTaskComments = pgTable(
     ),
     check(
       "project_task_comments_kind_ck",
-      sql`${table.commentKind} in ('NOTE','PROGRESS_UPDATE','FLAG_FOR_MENTOR')`,
+      sql`${table.commentKind} in ('NOTE','PROGRESS_UPDATE','FLAG_FOR_MENTOR','PROGRESS','NEEDS_HELP','REVIEW','BLOCKED','STATUS_UPDATE')`,
     ),
+    check("project_task_comments_progress_value_ck",
+      sql`${table.progressValue} is null or ${table.progressValue} between 0 and 100`),
     index("project_task_comments_kind_idx").on(
       table.projectId,
       table.taskId,
