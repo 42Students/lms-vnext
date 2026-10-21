@@ -71,7 +71,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-6_job-application-repository.md.md` (new; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_authenticated_tracker_audit-findings_page.tsx.md` (edit src/app/(authenticated)/tracker/audit-findings/page.tsx; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_super-admin-lesson-bulk-visibility.ts.md` (edit src/modules/courses/super-admin-lesson-bulk-visibility.ts; 4 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_tpo-batch-directory-counts-service.ts.md` (edit src/modules/placements/tpo-batch-directory-counts-service.ts; 4 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_tpo-batch-directory-counts-service.ts.md` (edit src/modules/placements/tpo-batch-directory-counts-service.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_recruiter-college-branch-service.ts.md` (edit src/modules/placements/recruiter-college-branch-service.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_tpo-recruiter-lead-policy.ts.md` (edit src/modules/placements/tpo-recruiter-lead-policy.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_app_api_placements_journey_me_route.ts.md` (edit src/app/api/placements/journey/me/route.ts; 3 findings; best P2)
