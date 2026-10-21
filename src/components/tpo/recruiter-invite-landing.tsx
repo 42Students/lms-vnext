@@ -20,8 +20,22 @@ type Invite = {
   contactEmail:string|null;
   designation: string | null;
   expiresAt: string;
+  reviewDrive?: string | null;
 };
-type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined";
+type State = "loading" | "ready" | "invalid" | "load_error" | "declined" | "joined" | "pending";
+type Field = "email" | "name" | "mobile" | "code";
+
+const UNCONFIRMED = "We could not confirm that the invitation was accepted. Your form is still here; please retry.";
+const fieldErrorMessages:Record<string,{field:Field;message:string}> = {
+ INVALID_MOBILE:{field:"mobile",message:"Enter a valid 10-digit mobile number, or leave it blank."},
+ FIRST_NAME_REQUIRED:{field:"name",message:"Enter your name."},
+ COMPANY_EMAIL_REQUIRED:{field:"email",message:"Enter your work email"},
+ EMAIL_REQUIRED:{field:"email",message:"Enter your work email"},
+ WRONG_CODE:{field:"code",message:"That code did not work. Check the latest email or send a new code."},
+ CODE_REQUIRED:{field:"code",message:"Enter the 6-digit code"},
+ CODE_EXPIRED:{field:"code",message:"That code has expired. Send a new code."},
+ CODE_LOCKED:{field:"code",message:"Too many attempts. Ask for a new code."},
+};
 
 const actionLink="lms-inline-link inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 py-2 text-[14px] font-[650] text-[var(--lms-on-primary)] transition-colors duration-[150ms] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 motion-reduce:transition-none";
 
@@ -33,6 +47,35 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   const busyRef=useRef(false);
   const errorRef=useRef<HTMLDivElement>(null);
   const [actionError, setActionError] = useState("");
+  const [fieldErrors,setFieldErrors] = useState<Partial<Record<Field,string>>>({});
+  const [joinedEmail,setJoinedEmail] = useState("");
+  const errorFor=(field:Field)=>fieldErrors[field];
+  const clearField=(field:Field)=>setFieldErrors(previous=>({...previous,[field]:undefined}));
+  const showError=(error:unknown,fallback:string)=>{
+    if(error instanceof FriendlyFetchError && (error.status===404 || error.status===410)){
+      setState("invalid");
+      return;
+    }
+    if(error instanceof FriendlyFetchError){
+      const mapped=error.code?fieldErrorMessages[error.code]:undefined;
+      if(mapped){
+        setFieldErrors(previous=>({...previous,[mapped.field]:mapped.message}));
+        return;
+      }
+      const fields=error.fieldErrors;
+      const candidates:[string,Field][]=[
+        ["firstName","name"],["name","name"],["phone","mobile"],
+        ["mobile","mobile"],["email","email"],["code","code"],
+      ];
+      for(const [serverField,field] of candidates){
+        if(fields[serverField]){
+          setFieldErrors(previous=>({...previous,[field]:fields[serverField]}));
+          return;
+        }
+      }
+    }
+    setActionError(error instanceof Error?error.message:fallback);
+  };
   useEffect(()=>{if(actionError)errorRef.current?.focus();},[actionError]);
   const [codeSent,setCodeSent]=useState(false);
   const [code,setCode]=useState("");
@@ -51,6 +94,8 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       setInvite(data.invite??null);
       setName(data.invite?.contactName??"");
       setDesignation(data.invite?.designation??"");
+      setFieldErrors({});
+      setJoinedEmail("");
       setState("ready");
       void apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/opened",{
         method:"POST",credentials:"same-origin",signal:controller.signal,
@@ -74,8 +119,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
       );
       setState("declined");
     } catch(error) {
-      if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
-      else setActionError(error instanceof Error?error.message:"That did not work. Please try again.");
+      showError(error,"That did not work. Please try again.");
     } finally {
       busyRef.current=false;
       setBusy(false);
@@ -84,26 +128,48 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
 
   async function acceptCode(){
     if(busyRef.current)return;
-    if(!name.trim()){setActionError("Enter your name");return;}
-    if(!code.trim()){setActionError("Enter the 6-digit code");return;}
-    if(!/^[0-9]{6}$/.test(code)){setActionError("The code has 6 digits");return;}
+    const problems:Partial<Record<Field,string>>={};
+    if(!name.trim())problems.name="Enter your name.";
+    if(!code.trim())problems.code="Enter the 6-digit code";
+    else if(!/^[0-9]{6}$/.test(code))problems.code="The code has 6 digits";
     const digits=mobile.replace(/\D/g,"");
     if(digits && digits.length!==10 && !(digits.length===12&&digits.startsWith("91"))){
-      setActionError("Enter a valid 10-digit mobile number, or leave it blank.");return;
+      problems.mobile="Enter a valid 10-digit mobile number, or leave it blank.";
+    }
+    if(!invite?.contactEmail?.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(invite.contactEmail)){
+      // Current server binds the invite to a TPO-verified mailbox; accepting a
+      // typed replacement would silently fail its email-ownership contract.
+      problems.email="Ask the placement cell to add your work email to the invitation.";
+    }
+    if(Object.keys(problems).length){
+      setFieldErrors(problems);
+      setActionError("");
+      return;
     }
     busyRef.current=true;
-    setBusy(true);setActionError("");
+    setBusy(true);
+    setActionError("");
+    setFieldErrors({});
     try{
-      await apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
+      const outcome=await apiFetch<unknown>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/accept",{
         method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({code,name,designation,mobile}),
+        body:JSON.stringify({code,name:name.trim(),designation,mobile}),
       });
-      setState("joined");
+      if(!outcome || typeof outcome!=="object" || Array.isArray(outcome)){
+        setActionError(UNCONFIRMED);
+        return;
+      }
+      const result=outcome as Record<string,unknown>;
+      if(result.accepted!==true ||
+         (result.outcome!=="JOINED" && result.outcome!=="PENDING_HR") ||
+         typeof result.signInEmail!=="string" || !result.signInEmail.trim()){
+        setActionError(UNCONFIRMED);
+        return;
+      }
+      setJoinedEmail(result.signInEmail);
+      setState(result.outcome==="PENDING_HR"?"pending":"joined");
     }catch(error){
-      if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
-      else setActionError(error instanceof FriendlyFetchError && error.status===400
-        ?"That code did not work. Check the latest email or send a new code."
-        :error instanceof Error?error.message:"Couldn't join. Please try again.");
+      showError(error,"Something went wrong. Please try again.");
     }
     finally{busyRef.current=false;setBusy(false);}
   }
@@ -112,14 +178,23 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     busyRef.current=true;
     setBusy(true);setActionError("");
     try{
-      await apiFetch<void>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
+      if(!invite?.contactEmail?.trim()){
+        setFieldErrors({email:"Ask the placement cell to add your work email to the invitation."});
+        return;
+      }
+      const delivery=await apiFetch<unknown>("/api/public/recruiter-invite/"+encodeURIComponent(token)+"/send-code",{
         method:"POST",credentials:"same-origin",
       });
+      if(!delivery || typeof delivery!=="object" || Array.isArray(delivery) ||
+         (delivery as Record<string,unknown>).sent!==true){
+        setActionError("We couldn't confirm that the code was sent. Please retry.");
+        return;
+      }
       setCodeSent(true);
       setCode("");
+      setFieldErrors({});
     }catch(error){
-      if(error instanceof FriendlyFetchError && error.status===404)setState("invalid");
-      else setActionError(error instanceof Error?error.message:"We couldn't send the code. Please try again.");
+      showError(error,"We couldn't send the code. Please try again.");
     }finally{busyRef.current=false;setBusy(false);}
   }
 
@@ -158,10 +233,19 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     );
   }
 
+  if(state==="pending"){
+    return shell(<div className="text-center space-y-3">
+      <span aria-hidden="true" className="mx-auto flex size-12 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-2xl text-[var(--lms-primary)]">i</span>
+      <PageHeader title="One more step" />
+      <p className="text-sm text-muted-foreground leading-[22px]">You already have a 42LMS account. Sign in on {invite.collegeName}&apos;s placement address with your work email to accept the invitation.</p>
+      <Link className={actionLink} href="/login">Sign in</Link>
+    </div>);
+  }
   if(state==="joined"){
     return shell(<div className="text-center space-y-3">
+      <span aria-hidden="true" className="mx-auto flex size-12 items-center justify-center rounded-full border border-[var(--lms-canvas-border)] text-2xl text-[var(--lms-primary)]">✓</span>
       <PageHeader title={"You now have access to "+invite.collegeName} />
-      <p className="text-sm text-muted-foreground leading-[22px]">Sign in with your work email, {invite.contactEmail}. We&apos;ll email you a code each time.</p>
+      <p className="text-sm text-muted-foreground leading-[22px]">Sign in with your work email, {joinedEmail}. We&apos;ll email you a code each time.</p>
       <Link className={actionLink} href="/login">Sign in</Link>
     </div>);
   }
@@ -180,6 +264,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     <>
       <PageHeader title={invite.collegeName+" would like you to hire from their students"} />
       <p className="mt-3 text-sm text-muted-foreground leading-[22px]">
+        {invite.reviewDrive ? "They posted a drive, " + invite.reviewDrive + ", and would like you to review it. " : ""}
         {invite.companyName ? "You are joining as " + invite.companyName + ". " : ""}
         You can request placement drives and review the students who apply.
         Contact details are shared only as the placement cell allows.
@@ -194,15 +279,19 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Work email
           <Input type="email" readOnly value={invite.contactEmail??""} autoComplete="email"
+            aria-invalid={Boolean(errorFor("email"))} aria-describedby={errorFor("email")?"invite-email-error":undefined}
             className="mt-[6px] min-h-11 w-full md:min-h-9"/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
-            {"From your invitation. You'll sign in with it."}
+            {invite.contactEmail?"From your invitation. You'll sign in with it.":"Ask the placement cell to add your work email before you join."}
           </span>
+          {errorFor("email")?<span id="invite-email-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("email")}</span>:null}
         </label>
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Your name
          <Input required maxLength={150} autoComplete="name" value={name}
-           onChange={event=>setName(event.target.value)}
+           aria-invalid={Boolean(errorFor("name"))} aria-describedby={errorFor("name")?"invite-name-error":undefined}
+           onChange={event=>{setName(event.target.value);clearField("name");}}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
+         {errorFor("name")?<span id="invite-name-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("name")}</span>:null}
         </label>
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Designation (optional)
          <Input maxLength={100} value={designation} onChange={event=>setDesignation(event.target.value)}
@@ -210,9 +299,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         </label>
         <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Mobile (optional)
          <Input type="tel" autoComplete="tel" maxLength={30} value={mobile}
-           onChange={event=>setMobile(event.target.value)}
+           aria-invalid={Boolean(errorFor("mobile"))} aria-describedby={errorFor("mobile")?"invite-mobile-error":undefined}
+           onChange={event=>{setMobile(event.target.value);clearField("mobile");}}
            className="mt-1 min-h-11 w-full md:min-h-9"/>
          <span className="mt-1 block text-xs font-normal text-muted-foreground">Only for the placement cell to call you. You never sign in with it.</span>
+         {errorFor("mobile")?<span id="invite-mobile-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("mobile")}</span>:null}
         </label>
         {!codeSent?(
           <Button type="button" className="min-h-11 w-full md:min-h-9" loading={busy} onClick={()=>void sendCode()}>
@@ -223,8 +314,11 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
             <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Code sent to {invite.contactEmail}
               <Input type="text" inputMode="numeric" autoComplete="one-time-code"
-                pattern="[0-9]{6}" maxLength={6} value={code} onChange={event=>setCode(event.target.value)}
+                pattern="[0-9]{6}" maxLength={6} value={code}
+                aria-invalid={Boolean(errorFor("code"))} aria-describedby={errorFor("code")?"invite-code-error":undefined}
+                onChange={event=>{setCode(event.target.value);clearField("code");}}
                 className="mt-2 min-h-11 w-full md:min-h-9"/>
+              {errorFor("code")?<span id="invite-code-error" role="alert" className="mt-1 block text-xs font-normal text-[var(--lms-error)]">{errorFor("code")}</span>:null}
             </label>
             <Button className="min-h-11 w-full md:min-h-9" type="button" loading={busy}
               onClick={()=>void acceptCode()}>{busy?"Joining…":"Join "+invite.collegeName+" placements"}</Button>
