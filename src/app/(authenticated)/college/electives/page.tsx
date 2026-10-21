@@ -1,6 +1,6 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import {isSuperAdmin} from "@/modules/identity/context";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { resolveOptionalModuleAccess } from "@/modules/module-access/service";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
@@ -19,7 +19,13 @@ export default async function CollegeElectivesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <section className="min-w-0 space-y-4" role="alert">
+    <PageHeader title="Electives"/>
+    <ErrorState title={isSuperAdmin(context)?"Select a college first":"Admin not assigned to a college"}
+      description={isSuperAdmin(context)?"Select a college in the college and role switcher before managing electives.":
+        "Contact your administrator to assign a college before managing electives."}
+      action={<Link href="/dashboard" className="font-semibold text-link underline">Back to dashboard</Link>}/>
+  </section>;
   const moduleAccess=await resolveOptionalModuleAccess(context);
   if(!moduleAccess.electives.enabled)return <section role="status" className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Electives is turned off for this college" />
@@ -36,14 +42,25 @@ export default async function CollegeElectivesPage({
       description={collegeDirectoryValidationMessage(parsed.error)}
       action={<Link href="/college/electives" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear filters</Link>} />
   </div>;
-  const [data, options] = await Promise.all([
+  const [dataResult, optionsResult] = await Promise.allSettled([
     listCollegeElectives(context, parsed.data),
     listCollegeElectiveSlotOptions(context),
   ]);
+  if(dataResult.status==="rejected")return <section className="space-y-4">
+    <PageHeader title="Electives"/>
+    <ErrorState title="Couldn't load elective slots"
+      description="The elective slots could not be loaded. The previous results have not been changed."
+      action={<Link href="/college/electives" className="font-semibold text-link underline">Retry slots</Link>}/>
+  </section>;
+  const data=dataResult.value;
+  const options=optionsResult.status==="fulfilled"?optionsResult.value:undefined;
   return <CollegeStructureDirectory data={data} electiveOptions={options}
     prepend={<div className="min-w-0 space-y-[var(--lms-space-3)]">
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap sm:items-center">
-        <CollegeSlotManager options={options} />
+        {options?<CollegeSlotManager options={options} />:
+          <ErrorState title="Couldn't load elective slot options"
+            description="Program and period choices could not be refreshed. Existing slots are still available below."
+            action={<Link href="/college/electives" className="font-semibold text-link underline">Retry slots</Link>}/>}
         <Link prefetch={false} download href={electiveCsvHref(data.query)}
           className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Export filtered electives CSV

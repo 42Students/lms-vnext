@@ -116,14 +116,14 @@ export async function PATCH(request:Request,{params}:Params){
         live.filter(item=>item.id!==old.id));
       if(conflict)return {error:conflict,status:409};
       if(old.membershipId!==input.membershipId||old.deliveryId!==input.deliveryId){
-        const future=await tx.select({startsAt:sectionScheduleEvents.startsAt,endsAt:sectionScheduleEvents.endsAt})
+        const future=await tx.select({id:sectionScheduleEvents.id,startsAt:sectionScheduleEvents.startsAt,endsAt:sectionScheduleEvents.endsAt})
           .from(sectionScheduleEvents)
           .innerJoin(sectionScheduleEventCourses,
             eq(sectionScheduleEventCourses.scheduleEventId,sectionScheduleEvents.id))
           .where(and(eq(sectionScheduleEventCourses.deliveryId,target.id),
             eq(sectionScheduleEvents.status,"SCHEDULED"),gt(sectionScheduleEvents.endsAt,now)))
           .limit(2001);
-        const busy=await tx.select({startsAt:sectionScheduleEvents.startsAt,endsAt:sectionScheduleEvents.endsAt})
+        const busy=await tx.select({id:sectionScheduleEvents.id,startsAt:sectionScheduleEvents.startsAt,endsAt:sectionScheduleEvents.endsAt})
           .from(sectionScheduleEvents)
           .where(and(eq(sectionScheduleEvents.facultyMembershipId,faculty.id),
             eq(sectionScheduleEvents.status,"SCHEDULED"),gt(sectionScheduleEvents.endsAt,now)))
