@@ -9,7 +9,7 @@ import {
 
 export const runtime = "nodejs";
 /** Scoped legacy TPO season route mapping:
- * GET /api/v1/tpo/season → GET /api/placements/seasons?collegeId={uuid}
+ * GET /api/v1/tpo/season → GET /api/placements/seasons (optional selected collegeId)
  * GET /api/v1/tpo/season/current → /tpo/settings/season
  * POST /api/v1/tpo/season → POST /api/placements/seasons
  * Legacy /{seasonId}/open-registration is intentionally not translated to
@@ -30,10 +30,13 @@ export async function GET(request: Request) {
     const collegeId = new URL(
       request.url,
     ).searchParams.get("collegeId");
+    // The active college x role switcher remains authoritative. Legacy TPO
+    // callers may omit collegeId, but never select a foreign tenant by URL.
+    const activeCollegeId=context.membership?.collegeId??context.adminScope?.collegeId;
     const seasons =
       await listPlacementSeasons(
         context,
-        collegeId ?? "",
+        collegeId ?? activeCollegeId ?? "",
       );
     return NextResponse.json({ seasons });
   } catch (error) {
