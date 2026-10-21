@@ -7,6 +7,7 @@ import { TrackerThemeToggle } from "./tracker-theme-toggle";
 const pages = [
   {value: "issues", label: "Issues", href: "/tracker/issues"},
   {value: "report", label: "Report Issue", href: "/tracker"},
+  {value: "mine", label: "My reports", href: "/tracker/mine"},
   {value: "logs", label: "Logs", href: "/tracker/logs"},
   {value: "audit", label: "Audit findings", href: "/tracker/audit-findings"},
 ] as const;
@@ -22,6 +23,7 @@ export function TrackerAdminNav() {
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
       <Tabs renderPanel={false} ariaLabel="42 Tracker" className="min-w-0 flex-1"
         value={pathname.startsWith("/tracker/issues")?"issues":pathname==="/tracker"?"report":
+          pathname.startsWith("/tracker/mine")?"mine":
           pathname.startsWith("/tracker/logs")?"logs":pathname.startsWith("/tracker/audit-findings")?"audit":""}
         items={pages}/>
       <TrackerThemeToggle />

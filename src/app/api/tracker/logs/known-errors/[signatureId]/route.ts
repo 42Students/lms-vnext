@@ -14,7 +14,8 @@ export async function PATCH(
   { params }: { params: Promise<{ signatureId: string }> },
 ) {
   if (!logAlertsRuntimeEnabled()) {
-    return NextResponse.json({ error: "DB10_LOG_ALERTS_MIGRATIONS_PENDING" }, { status: 503 });
+    return NextResponse.json({error:"DB10_LOG_ALERTS_MIGRATIONS_PENDING",message:"Known Errors are unavailable until the log-alert schema is verified."},
+      {status:503,headers:{"Cache-Control":"private, no-store"}});
   }
   if (!isSameOriginRequest(request)) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
@@ -34,7 +35,7 @@ export async function PATCH(
       const fields={...(body as Record<string,unknown>)};
       if("environment" in fields){
         const env=z.enum(["PRODUCTION","UAT","DEVELOPMENT"]).safeParse(fields.environment);
-        if(!env.success)return NextResponse.json({error:"INVALID_REQUEST",message:"environment is required"},{status:400});
+        if(!env.success)return NextResponse.json({error:"INVALID_REQUEST",field:"environment",message:"environment is required"},{status:400});
         if(env.data!==alertEnvironment())return NextResponse.json({error:"INVALID_REQUEST",message:"Environment is not available in this workspace."},{status:400});
         delete fields.environment;
         body=fields;

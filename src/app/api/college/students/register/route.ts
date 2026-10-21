@@ -11,6 +11,11 @@ export async function POST(request: Request) {
   try {
     const context = await getCurrentRequestContext();
     const result = await registerCollegeStudent(context,await request.json());
-    return NextResponse.json(result,{status:result.status==="REGISTERED"?201:207});
+    const partial=result.status==="PARTIAL";
+    // A partial identity has already been provisioned; never imply that
+    // resubmitting a create call will repair a failed enrollment.
+    return NextResponse.json({...result,requiresFollowUp:partial,
+      message:partial?"Student account created. Complete the outstanding enrollment or profile steps; do not register the student again.":"Student registered."},
+      {status:partial?207:201,headers:{"Cache-Control":"private, no-store"}});
   } catch (error) { return apiErrorResponse(error); }
 }
