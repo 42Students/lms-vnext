@@ -215,6 +215,75 @@ function formatApplicationReceiptTime(value:string){
  }).format(at):"Date unavailable";
 }
 
+type SignedOwnResume = {url:string;isPdf:boolean};
+/** Read grants are issued per active, authorized application and never cached. */
+function parseSignedOwnResume(value:unknown):SignedOwnResume|null{
+ if(!value||typeof value!=="object")return null;
+ const response=value as Record<string,unknown>;
+ if(response.ready!==true||typeof response.readUrl!=="string"||
+    typeof response.contentType!=="string"||typeof response.expiresAt!=="string")return null;
+ try{
+  const parsed=new URL(response.readUrl);
+  const expires=Date.parse(response.expiresAt);
+  if(parsed.protocol!=="https:"||parsed.username||parsed.password||
+     !Number.isFinite(expires)||expires<=Date.now())return null;
+  return {url:parsed.href,isPdf:response.contentType==="application/pdf"};
+ }catch{return null;}
+}
+function OwnResumePreview({applicationId}:{applicationId:string}){
+ const [pending,setPending]=useState(false);
+ const [grant,setGrant]=useState<SignedOwnResume|null>(null);
+ const [message,setMessage]=useState<string|null>(null);
+ const [open,setOpen]=useState(false);
+ async function openResume(){
+  if(pending)return;
+  setPending(true);setMessage(null);setGrant(null);
+  try{
+   const result=await fetch("/api/placements/learner/applications/"+
+     encodeURIComponent(applicationId)+"/resume",{
+      credentials:"same-origin",cache:"no-store",
+   });
+   if(!result.ok)throw new Error("Resume preview is currently unavailable.");
+   const payload:unknown=await result.json();
+   if(payload&&typeof payload==="object"&&"ready" in payload&&payload.ready===false){
+    setMessage("No resume has been attached to this application.");
+   }else{
+    const signed=parseSignedOwnResume(payload);
+    if(signed){setGrant(signed);setOpen(true);}
+    else setMessage("The resume read link is unavailable or expired. Try again.");
+   }
+  }catch{
+   setMessage("Resume preview could not be loaded. Try again.");
+  }finally{setPending(false);}
+ }
+ return <div className="mt-2 space-y-2">
+   <Button type="button" size="sm" variant="secondary"
+     disabled={pending} onClick={()=>void openResume()}>
+     {pending?"Opening resume…":"Preview resume"}
+   </Button>
+   {message?<p role="status" className="text-xs text-body">{message}</p>:null}
+   <Dialog open={open&&grant!==null} title="Resume preview"
+     description="This private file link is temporary and belongs to your application."
+     className="max-w-[860px]" bodyClassName="p-0"
+     onOpenChange={next=>{setOpen(next);if(!next)setGrant(null);}}
+     footer={<Button type="button" variant="secondary"
+       onClick={()=>{setOpen(false);setGrant(null);}}>Close preview</Button>}>
+     {grant?.isPdf?
+       <iframe title="Application resume PDF preview"
+         src={grant.url} referrerPolicy="no-referrer"
+         className="block h-[min(70dvh,620px)] min-h-64 w-full border-0"/>:
+       <p className="p-5 text-sm text-body">
+         A preview is not available for this file format. Open the authorized document instead.
+       </p>}
+     {grant?<a href={grant.url} target="_blank" rel="noopener noreferrer"
+       referrerPolicy="no-referrer"
+       className="inline-flex min-h-11 items-center px-5 text-sm font-semibold text-primary-text underline">
+       Open secure resume in a new tab →
+     </a>:null}
+   </Dialog>
+ </div>;
+}
+
 function JobActions({
   item,
 }: {
@@ -395,7 +464,8 @@ function JobActions({
             <p className="mt-1 break-all text-body">Application reference (APP): {receipt.id}</p>
             <p className="mt-1 text-body">Recorded: {formatApplicationReceiptTime(receipt.submittedAt)}</p>
             <p className="mt-1 text-body">Resume: No resume is attached to this application.</p>
-            <p className="mt-1 text-xs text-muted-foreground">The application record does not include a downloadable resume; no unsupported preview link is shown.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Only a separately attached and authorized application resume can be previewed.</p>
+            <OwnResumePreview applicationId={receipt.id} />
             <Link href="/learn/my-placements/applications"
               className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
               View applications →
