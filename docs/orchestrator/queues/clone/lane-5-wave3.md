@@ -21,5 +21,5 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_components_admin_super-admin-hr-accounts.tsx.md` (edit src/components/admin/super-admin-hr-accounts.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_components_admin_super-admin-faculty-assignment-create.tsx.md` (edit src/components/admin/super-admin-faculty-assignment-create.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_components_admin_admin-scoped-read-page.tsx.md` (edit src/components/admin/admin-scoped-read-page.tsx; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_app_authenticated_admin_placements_interviews_page.tsx.md` (edit src/app/(authenticated)/admin/placements/interviews/page.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_app_authenticated_admin_placements_interviews_page.tsx.md` (edit src/app/(authenticated)/admin/placements/interviews/page.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-5/W3_src_app_authenticated_admin_course-progress_students_page.tsx.md` (edit src/app/(authenticated)/admin/course-progress/students/page.tsx; 1 findings; best P1)
