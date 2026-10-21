@@ -1,8 +1,9 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
-import { searchCollegeBatchAutocomplete } from "@/modules/academics/college-academic-directory-service";
+import { searchCollegeBatchAutocomplete,recordCollegeBatchSearchSelection } from "@/modules/academics/college-academic-directory-service";
 
 export const runtime = "nodejs";
 const schema = z.object({
@@ -23,4 +24,19 @@ export async function GET(request: Request) {
   } catch (error) {
     return apiErrorResponse(error);
   }
+}
+
+/** Selection analytics never trust a client college ID, and are recorded only
+ * for a cohort within the requester's persisted selected college. */
+export async function POST(request:Request){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const raw:unknown=await request.json().catch(()=>null);
+  const parsed=z.strictObject({batchId:z.string().uuid()}).safeParse(raw);
+  if(!parsed.success)return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+  return NextResponse.json(await recordCollegeBatchSearchSelection(
+    await getCurrentRequestContext(),parsed.data.batchId),{
+      headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){return apiErrorResponse(error);}
 }

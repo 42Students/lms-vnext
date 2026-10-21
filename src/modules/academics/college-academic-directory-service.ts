@@ -1,11 +1,13 @@
 import "server-only";
 
 import { and, asc, count, eq, gte, ilike, inArray, isNotNull, isNull, lte, or, sql } from "drizzle-orm";
+import { z } from "zod";
 import { exists, not } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { aliasedColumn } from "@/db/aliased-column";
 import {
   academicPeriods,
+  activityEvents,
   cohortProgressionState,
   cohorts,
   collegeMemberships,
@@ -291,7 +293,40 @@ export async function searchCollegeBatchAutocomplete(
       ilike(programs.name, likePattern(q)), ilike(cohorts.academicYear, likePattern(q)),
       sql<boolean>`${cohortProgressionState.currentTermNumber}::text ilike ${likePattern(q)}`,
     ) : undefined)
-    .orderBy(asc(programs.name), asc(cohorts.name)).limit(bounded);
+    .orderBy(
+      q ? asc(programs.name) : sql`(select count(*) from ${activityEvents}
+        where ${activityEvents.subjectType}='cohort'
+          and ${activityEvents.eventType}='academics.batch.selected'
+          and ${activityEvents.subjectId}=${cohorts.id}::text
+          and ${activityEvents.collegeId}=${collegeId}::uuid) desc`,
+      asc(programs.name), asc(cohorts.name), asc(cohorts.id),
+    ).limit(bounded);
+}
+
+/** Legacy /batches/:id/select equivalent. It records a non-identifying
+ * selection event only after checking the selected college and batch UUID.
+ * This feeds popular autocomplete ordering; it never changes batch data. */
+export async function recordCollegeBatchSearchSelection(
+  context:RequestContext,rawId:unknown,
+){
+ const cohortId=z.string().uuid().parse(rawId);
+ const actor=await resolveActingCollege(context,"academics.read");
+ const [batch]=await getDb().select({
+  id:cohorts.id,name:cohorts.name,
+ }).from(cohorts)
+   .innerJoin(programs,eq(programs.id,cohorts.programId))
+   .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+     eq(departments.collegeId,actor.collegeId)))
+   .where(eq(cohorts.id,cohortId)).limit(1);
+ if(!batch)throw new Error("BATCH_NOT_FOUND");
+ await getDb().insert(activityEvents).values({
+  organizationId:actor.organizationId,collegeId:actor.collegeId,
+  module:"ACADEMICS",eventType:"academics.batch.selected",
+  subjectType:"cohort",subjectId:batch.id,
+  subjectLabel:batch.name,summary:"Batch selected from search",
+  metadata:{origin:"COLLEGE_BATCH_AUTOCOMPLETE"},
+ });
+ return {recorded:true as const};
 }
 
 export async function searchCollegeSemesterAutocomplete(
