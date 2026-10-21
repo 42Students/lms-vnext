@@ -26,7 +26,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const requestedDelivery=typeof raw.deliveryId==="string"&&
   /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(raw.deliveryId)
    ?raw.deliveryId:null;
- const invalidDelivery=raw.deliveryId!==undefined&&!requestedDelivery;
+ const invalidDelivery=raw.deliveryId!==undefined&&raw.deliveryId!==""&&!requestedDelivery;
  const pageSize=typeof raw.pageSize==="string"&&["20","50","100"].includes(raw.pageSize)
   ?Number(raw.pageSize):20;
  const requestedPage=typeof raw.page==="string"&&/^[1-9][0-9]{0,6}$/.test(raw.page)
@@ -185,6 +185,7 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
     <p className="text-sm text-body">Showing {allRows.length===0?0:(page-1)*pageSize+1}–{Math.min(page*pageSize,allRows.length)} of {allRows.length}{report.truncated?" returned":""} students</p>
     <form method="get" action="/admin/course-progress/students" className="flex flex-wrap items-end gap-2">
       <input type="hidden" name="offeringId" value={offeringId}/>
+      {requestedDelivery?<input type="hidden" name="deliveryId" value={requestedDelivery}/>:null}
       <input type="hidden" name="sort" value={sort}/>
       <label className="grid gap-1 text-sm font-semibold">Rows per page
         <Select name="pageSize" defaultValue={String(pageSize)} className="min-h-11 md:min-h-9">
