@@ -11,8 +11,8 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_notifications_page.tsx.md` (edit src/app/(authenticated)/learn/notifications/page.tsx; 18 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_modules_colleges_service.ts.md` (edit src/modules/colleges/service.ts; 18 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_notifications_page.tsx.md` (edit src/app/(authenticated)/learn/notifications/page.tsx; 18 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_modules_colleges_service.ts.md` (edit src/modules/colleges/service.ts; 18 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_courses_deliveryId_...courseTab_page.tsx.md` (edit src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx; 15 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_my-placements_schedule_page.tsx.md` (edit src/app/(authenticated)/learn/my-placements/schedule/page.tsx; 15 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_modules_tenant-domains_service.ts.md` (edit src/modules/tenant-domains/service.ts; 13 findings; best P1)
