@@ -184,13 +184,17 @@ function scoreSubmission(
     questions.map((question) => question.id),
   );
 
-  for (const submitted of input.answers) {
-    if (!questionIds.has(submitted.questionId)) {
-      throw new CoursesServiceError(
-        "QUIZ_ANSWER_INVALID",
-      );
-    }
-  }
+  // Legacy requires one answer per authored question. An unanswered item
+  // is not silently scored zero, and a swapped question set is a stale
+  // attempt rather than an invitation to grade somebody else's quiz.
+  if(input.shownQuestionIds&&
+     (input.shownQuestionIds.length!==questions.length||
+      input.shownQuestionIds.some(id=>!questionIds.has(id))))
+   throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
+  if(input.answers.some(answer=>!questionIds.has(answer.questionId)))
+   throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
+  if(input.answers.length!==questions.length)
+   throw new CoursesServiceError("QUIZ_ANSWER_INVALID");
 
   let score = 0;
   const answerRows = questions.map(
@@ -206,21 +210,19 @@ function scoreSubmission(
 
       for (const optionId of selectedSet) {
         if (!validIds.has(optionId)) {
-          throw new CoursesServiceError(
-            "QUIZ_ANSWER_INVALID",
-          );
+          // An option was deleted/replaced after the learner opened the
+          // assessment, or was never part of this question.
+          throw new CoursesServiceError("QUIZ_ANSWER_INVALID");
         }
       }
-
-      if (
-        question.questionType ===
-          "SINGLE_CHOICE" &&
-        selected.length > 1
-      ) {
-        throw new CoursesServiceError(
-          "QUIZ_ANSWER_INVALID",
-        );
+      if (selected.length === 0 ||
+          (question.questionType === "SINGLE_CHOICE" && selected.length !== 1)) {
+        throw new CoursesServiceError("QUIZ_ANSWER_INVALID");
       }
+      // Store selected UUIDs in authored sequence order, rather than
+      // browser click order (legacy integer options were sorted).
+      const orderedSelected=question.options
+        .filter(option=>selectedSet.has(option.id)).map(option=>option.id);
 
       const correctIds = new Set(
         question.options
@@ -246,7 +248,7 @@ function scoreSubmission(
           question.questionType,
         promptSnapshot: question.prompt,
         pointsPossible: question.points,
-        selectedOptionIds: selected,
+        selectedOptionIds: orderedSelected,
         optionsSnapshot:
           question.options.map((option) => ({
             id: option.id,
@@ -341,9 +343,21 @@ export async function submitCourseQuiz(
           throw new CoursesServiceError("QUIZ_DELIVERY_MISMATCH");
         }
         if (!lockedQuiz.dueAt) throw new CoursesServiceError("QUIZ_DEADLINE_NOT_CONFIGURED");
+        // dueAt is an offset-aware instant; IST local wall time is
+        // converted at input validation and never reinterpreted as UTC.
         if (lockedQuiz.dueAt.getTime() <= Date.now()) {
           throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
         }
+        // The exact authored question IDs must still match under the
+        // shared quiz lock. The client snapshot may have come from a
+        // superseded publication even when the quiz ID is unchanged.
+        const lockedQuestionIds=await tx.select({id:quizQuestions.id})
+          .from(quizQuestions).where(eq(quizQuestions.quizId,quizId));
+        const presented=input.shownQuestionIds??input.answers.map(a=>a.questionId);
+        const presentedSet=new Set(presented);
+        if(presentedSet.size!==lockedQuestionIds.length||
+           lockedQuestionIds.some(row=>!presentedSet.has(row.id)))
+         throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
 
         // Recheck actor against persisted membership, not just request JWT
         // claims. A role revocation or transfer must fail closed.
@@ -694,10 +708,15 @@ export async function listQuizAttempts(
     byAttempt.set(answer.attemptId, bucket);
   }
 
+  const contactPermitted=can(context,"courses.manage",{
+    organizationId:quiz.organizationId,collegeId:quiz.collegeId,
+  });
   return attempts.map((attempt) => ({
     ...attempt,
-    answers:
-      byAttempt.get(attempt.id) ?? [],
+    // Faculty graders may review names, but learner contact stays masked
+    // unless college/course administration access has been established.
+    learnerEmail:contactPermitted?attempt.learnerEmail:null,
+    answers:byAttempt.get(attempt.id) ?? [],
   }));
 }
 
@@ -758,4 +777,43 @@ export async function listOwnQuizAttemptHistoryIndex(context:RequestContext){
   submittedAt:row.submittedAt?.toISOString()??null,
   createdAt:row.createdAt.toISOString(),
  })),hasMore:rows.length>200};
+}
+
+
+/** Quiz-wide manager summary without forcing clients to load every Section.
+ * Keep listQuizAttempts scoped and paged to protect learner PII. */
+export async function getQuizAttemptReviewTotals(context:RequestContext,quizIdInput:string){
+ const quizId=courseQuizIdSchema.parse(quizIdInput);
+ const quiz=await loadCourseQuizScope(quizId,true);
+ if(!can(context,"courses.manage",{
+   organizationId:quiz.organizationId,collegeId:quiz.collegeId,
+ }))throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+ const [result]=await getDb().select({
+  total:sql<number>`count(*)::int`,
+  learners:sql<number>`count(distinct ${quizAttempts.membershipId})::int`,
+  deliveries:sql<number>`count(distinct ${quizAttempts.deliveryId})::int`,
+ }).from(quizAttempts)
+  .innerJoin(collegeMemberships,and(
+   eq(collegeMemberships.id,quizAttempts.membershipId),
+   eq(collegeMemberships.collegeId,quiz.collegeId),
+  ))
+  .where(eq(quizAttempts.quizId,quizId));
+ return {quizId,total:result?.total??0,learners:result?.learners??0,
+  deliveries:result?.deliveries??0,pageSize:25};
+}
+
+/** Staff-only preview of the authored answer key; never callable with
+ * merely a learner membership. */
+export async function previewCourseQuizQuestions(
+ context:RequestContext,quizIdInput:string,deliveryIdInput:string,
+){
+ const quizId=courseQuizIdSchema.parse(quizIdInput);
+ const deliveryId=courseSectionDeliveryIdSchema.parse(deliveryIdInput);
+ const quiz=await loadCourseQuizScope(quizId,true);
+ if(!quizAudienceMatches(quiz,deliveryId))
+  throw new CoursesServiceError("QUIZ_DELIVERY_MISMATCH");
+ if(!can(context,"courses.manage",{
+   organizationId:quiz.organizationId,collegeId:quiz.collegeId,
+ }))await requireDeliveryContentMutation(context,deliveryId);
+ return loadQuizQuestions(quizId);
 }
