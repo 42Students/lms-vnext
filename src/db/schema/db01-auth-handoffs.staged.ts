@@ -70,6 +70,8 @@ export const identityAuthHandoffsStaged = pgTable(
       table.targetDomainId,
       table.expiresAt,
     ),
+    index("identity_auth_handoffs_maintenance_idx")
+      .on(table.expiresAt,table.consumedAt,table.id),
     check(
       "identity_auth_handoffs_lifetime_ck",
       sql`${table.expiresAt} > ${table.createdAt}
@@ -86,3 +88,17 @@ export const identityAuthHandoffsStaged = pgTable(
     ),
   ],
 );
+
+/**
+ * RETIRED SOURCE: Do not import legacy raw-token AuthController handoff rows.
+ * This staged MAC-only candidate is NOT a live login table. If DB01 promotion
+ * is approved, consume with one UPDATE...WHERE consumed_at IS NULL AND
+ * expires_at > now() RETURNING id under verified membership/domain scope.
+ * Cleanup must hard-delete expired/consumed MAC rows only after the approved
+ * audit retention period, and must not log or retain raw tokens.
+ */
+export const HANDOFF_MAC_CLEANUP_RETENTION_DAYS = 7;
+export function authHandoffCleanupCutoff(now: Date, retentionDays = HANDOFF_MAC_CLEANUP_RETENTION_DAYS): Date {
+  const days = Number.isSafeInteger(retentionDays) && retentionDays >= 1 ? retentionDays : HANDOFF_MAC_CLEANUP_RETENTION_DAYS;
+  return new Date(now.getTime() - days * 24 * 60 * 60 * 1000);
+}
