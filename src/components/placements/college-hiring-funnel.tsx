@@ -94,12 +94,14 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
      className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Clear filters</Link>
    </div>:<div className="space-y-3">
     {order.map((stage,index)=><div key={stage} className={reportStyles.chartRow}>
-      <span className={reportStyles.label}>{label(stage)}</span>
-      <span className="text-xs tabular-nums text-body" title="Current stage count relative to the preceding stage, not a historical conversion rate">
-        {index===0?"100% of applied":(data.totals[order[index-1]!]??0)>0
-          ? Math.round(100*(data.totals[stage]??0)/(data.totals[order[index-1]!]??1))+"% vs "+label(order[index-1]!)
-          : "—"}
-      </span>
+      <div className="min-w-0 space-y-1">
+        <span className={reportStyles.label}>{label(stage)}</span>
+        <span className="block text-xs tabular-nums text-body" title="Current stage count relative to the preceding stage, not a historical conversion rate">
+          {index===0?"100% of applied":(data.totals[order[index-1]!]??0)>0
+            ? Math.round(100*(data.totals[stage]??0)/(data.totals[order[index-1]!]??1))+"% vs "+label(order[index-1]!)
+            : "—"}
+        </span>
+      </div>
       <MetricBar label={label(stage)} size="default" className={reportStyles.track}
        value={data.totals[stage]??0} maximum={total} unit="applications" />
       <span className={reportStyles.value+" tabular-nums"}>{data.totals[stage]??0}</span>
