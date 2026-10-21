@@ -22,11 +22,11 @@ export async function PUT(request:Request){
   const result=await saveTpoJobTypes(await getCurrentRequestContext(),await request.json());
   return NextResponse.json(result,{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
-  if(error instanceof TpoConfigError)return NextResponse.json({error:error.code},{
+  if(error instanceof TpoConfigError)return NextResponse.json({error:error.code,detail:error.detail},{
    status:error.code==="TPO_JOB_TYPE_IN_USE"||error.code==="TPO_SETTINGS_STALE"||
     error.code==="TPO_JOB_TYPE_EXISTS"||error.code==="TPO_JOB_TYPE_BUILTIN"||
     error.code==="TPO_JOB_TYPE_LAST_ACTIVE"?409:
-    error.code==="TPO_JOB_TYPE_LIMIT"?422:error.code==="TPO_SETTINGS_PENDING"?503:404});
+    error.code==="TPO_JOB_TYPE_LIMIT"||error.code==="TPO_JOB_TYPE_INVALID_LIST"?422:error.code==="TPO_SETTINGS_PENDING"?503:404});
   return apiErrorResponse(error);
  }
 }
