@@ -31,7 +31,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
  if(!query.success)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Templates" />
   <ErrorState title="Invalid template filters" description="Check search, status and page."
-   action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+   action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
  </div>;
  const context=await getCurrentRequestContext();
  if(!can(context,"project-template.read"))
@@ -51,7 +51,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
    <ProjectAdminNav basePath="/admin/projects" active="templates"/>
    <ErrorState title="Project templates unavailable"
     description="The template catalogue could not be loaded. Your search and status filters are unchanged; try again."
-    action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading templates</Link>}/>
+    action={<Link href={templateDirectoryHref(query.data)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading templates</Link>}/>
   </div>;
  }
  return <div className="min-w-0 space-y-4 md:space-y-6">
@@ -81,7 +81,7 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
     columns={[
       {key:"template",header:"Template",mobilePriority:"primary",cell:item=><>
         <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)}
-          className="inline-flex items-center min-h-11 md:min-h-9 break-words font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)]">{item.title}</Link>
+          className="inline-flex items-center min-h-11 md:min-h-9 break-words font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">{item.title}</Link>
         <span className="mt-1 block break-all text-xs text-muted-foreground">{item.slug}</span>
         {item.summary?<p className="mt-2 break-words text-sm text-body">{item.summary}</p>:null}
       </>},
@@ -101,13 +101,13 @@ export default async function SuperAdminProjectTemplatesPage({searchParams}:{
       {key:"action",header:"Action",mobilePriority:"action",cell:item=>
         <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
           <Link href={"/admin/projects/templates/"+encodeURIComponent(item.id)}
-            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary)]">Inspect template →</Link>
+            className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Inspect template →</Link>
           {can(context,"project-template.manage")?<SuperAdminTemplateArchiveControl
             templateId={item.id} title={item.title} status={item.status}/>:null}
         </div>},
     ]}
     empty={<EmptyState title="No matching templates" description="No global template metadata matches these filters."
-      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>}
+      action={<Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>}
   />
   <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateDirectoryHref({...data.query,page})} label="Template pages" />
  </div>;
