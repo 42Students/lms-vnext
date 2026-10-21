@@ -137,7 +137,7 @@ export default async function TpoActorAuditPage({
     </form>
     <section className="min-w-0 space-y-4">
       <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">
-        {data.total} matching canonical record(s)
+        {data.total.toLocaleString("en-IN")} matching canonical record(s)
       </h2>
       <DataTable
         caption="Matching canonical placement audit records"
