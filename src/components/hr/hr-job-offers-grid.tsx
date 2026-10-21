@@ -24,8 +24,8 @@ const columns:readonly TpoGridColumn<HrOfferSheetRow>[] = [
     sortKind:"number",sortValue:row=>row.ctcSort},
   {key:"status",label:"Status",read:row=>row.status},
   {key:"deadline",label:"Reply by",read:row=>row.deadline},
-  {key:"joining",label:"Joining",read:row=>
-    row.joining+" · "+row.joiningDate},
+  {key:"joining",label:"Joining status",read:row=>
+    row.joining.trim() || row.joiningDate || "-"},
 ];
 
 export function HrJobOffersGrid({rows,scopeKey}:{

@@ -144,11 +144,6 @@ export default async function SuperAdminLectureHallsPage({
                 <option value="CONFERENCE_ROOM">Conference Room</option>
               </Select>
             </label>
-            <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
-              <Select name="pageSize" defaultValue={query.pageSize} className="min-h-11 w-full md:min-h-9">
-                {[10,25,50,100].map(size => <option key={size} value={size}>{size}</option>)}
-              </Select>
-            </label>
             <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum seats
               <Input type="number" name="minimumCapacity" min={1} max={5000} step={1} defaultValue={query.minimumCapacity ?? ""} placeholder="Any capacity" className="min-h-11 w-full md:min-h-9" />
             </label>
@@ -187,7 +182,20 @@ export default async function SuperAdminLectureHallsPage({
 
     </section>
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
-      <p className="text-sm text-muted-foreground">Page {query.page} of {pages} · Showing {first}–{last} of {total}</p>
+      <div className="flex flex-wrap items-center gap-3">
+        <p className="text-sm text-muted-foreground">Showing {first}–{last} of {total}</p>
+        <form method="get" action="/admin/lecture-halls" aria-label="Lecture hall rows per page"
+          className="flex flex-wrap items-center gap-2 text-sm">
+          {Object.entries(query).filter(([key,value]) =>
+            key !== "page" && key !== "pageSize" && value !== undefined && value !== "").map(([key,value]) =>
+            <Input key={key} type="hidden" name={key} value={String(value)} />)}
+          <label htmlFor="admin-hall-page-size">Rows per page</label>
+          <Select id="admin-hall-page-size" name="pageSize" defaultValue={query.pageSize} className="min-h-9 w-20">
+            {[10,25,50,100].map(size=><option key={size} value={size}>{size}</option>)}
+          </Select>
+          <Button type="submit" size="sm" variant="secondary">Apply</Button>
+        </form>
+      </div>
       <Pagination label="Lecture hall pages" page={query.page} pageCount={pages}
         hrefForPage={page=>superAdminLectureHallHref({...query,page})}/>
     </div>
