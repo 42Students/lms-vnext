@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, gte, ilike, isNull, lte, sql } from "drizzle-orm";
+import { and, asc, eq, gt, gte, ilike, isNull, lte, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -18,6 +18,17 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
  * Lecture halls (rooms) of a college. Managed by College Admin and scoped
  * Super Admin (`academics.manage`). The college always comes from the stored
  * row for an existing hall, never from the request.
+ *
+ * Legacy migration contract (not a data import): old integer hall/college/dept IDs
+ * are NOT interchangeable with vNext UUIDs. A legacy deptId=0 means the nullable
+ * vNext departmentId; old rooms had no status and are ACTIVE if explicitly
+ * recreated/imported. Existing scheduled history must keep the new hall UUID.
+ * This installation has no legacy data migration requirement.
+ *
+ * Lifecycle deliberately differs from legacy DELETE: ARCHIVED retains the
+ * row, its booking references and the ability to restore; active/upcoming
+ * scheduled events still block archival. Past bookings do not block archival
+ * because their historical foreign keys remain intact, unlike physical DELETE.
  */
 
 export const ROOM_TYPES = [
@@ -48,7 +59,11 @@ export class LectureHallError extends Error {
   }
 }
 
-const nameSchema = z.string().trim().min(1, "Name is required").max(255);
+// The old backend says "Room name is required"; the old form uses
+// "Please enter room name". The shared client already shows the form copy.
+const nameSchema = z.string().trim()
+  .min(1, "Room name is required")
+  .max(255, "Room name must be 255 characters or less");
 const descriptionSchema = z
   .union([z.string(), z.null()])
   .optional()
@@ -56,11 +71,19 @@ const descriptionSchema = z
     const trimmed = typeof value === "string" ? value.trim() : value;
     return trimmed === "" || trimmed === undefined ? null : trimmed;
   })
-  .pipe(z.string().max(255).nullable());
+  // The vNext column is varchar(255); reject excessive text rather than
+  // silently truncating a legacy unlimited description.
+  .pipe(z.string().max(255, "Description cannot exceed 255 characters").nullable());
 
 const hallFields = {
   name: nameSchema,
-  capacity: z.coerce.number().int().min(1).max(5000),
+  // Old LMS admin form caps edits at 1000 seats; its old backend accepted 5000.
+  // Enforce the visible admin contract server-side too. Historical 1001–5000
+  // seat rooms remain readable/filterable; changing their capacity requires
+  // choosing a newly supported value.
+  capacity: z.coerce.number().int()
+    .min(1, "Capacity must be at least 1")
+    .max(1000, "Capacity must be 1000 or less"),
   roomType: z.enum(ROOM_TYPES),
   description: descriptionSchema,
   departmentId: z.union([z.string().uuid(), z.null()]).optional(),
@@ -83,15 +106,18 @@ export const updateLectureHallSchema = z
         const trimmed = typeof value === "string" ? value.trim() : value;
         return trimmed === "" ? null : trimmed;
       })
-      .pipe(z.string().max(255).nullable().optional()),
+      .pipe(z.string().max(255, "Description cannot exceed 255 characters").nullable().optional()),
     departmentId: hallFields.departmentId,
     status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   })
   .strict()
   .refine((value) => Object.keys(value).length > 0, "Nothing to update");
 
+// Missing college scope is a validation error, never a signal to query other
+// colleges. Global SA / organization-wide discovery would need an approved
+// read-only endpoint and explicit role gate outside this mutation service.
 export const listLectureHallsSchema = z.object({
-  collegeId: z.string().uuid(),
+  collegeId: z.string().uuid("Select a college to continue"),
   q: z.string().trim().max(100).optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
@@ -125,9 +151,11 @@ function authorize(
   context: RequestContext,
   college: { id: string; organizationId: string },
 ) {
-  // Lecture halls are a college-level operation, even for Super Admin.
-  // Global or organization-only scope must not authorize a client-supplied
-  // collegeId; the exact selected college is required for reads and writes.
+  // Security correction to legacy precedence: department filter never overrides
+  // the selected college. A global/organization-only Super Admin must explicitly
+  // select a college via the workspace switcher; no unrestricted tenant scan.
+  // A read-only global directory would require a distinct audited permission
+  // and API, not bypassing this check for a caller-supplied collegeId.
   if (isSuperAdmin(context) && context.adminScope?.collegeId !== college.id) {
     throw new AuthorizationError("academics.manage");
   }
@@ -173,12 +201,19 @@ export async function listLectureHalls(
   authorize(context, college);
 
   const scheduledFuture = sql<boolean>`exists (select 1 from ${sectionScheduleEvents} future where future.lecture_hall_id = ${lectureHalls.id} and future.status = 'SCHEDULED' and future.ends_at > now())`;
+  // Match name and optional description after the college/department predicate.
+  // Exact and prefix name matches sort above other substrings. This improves
+  // relevance without an unapproved pg_trgm/fuzzystrmatch extension.
+  // The legacy typo-distance=2 matcher is not available in this DB contract.
+  const escapedSearch = query.q?.replace(/[\\%_]/g, "\\$&") ?? "";
+  const containsSearch = escapedSearch ? "%" + escapedSearch + "%" : null;
+  const prefixSearch = escapedSearch ? escapedSearch + "%" : null;
   const filters = [
     eq(lectureHalls.collegeId, college.id),
-    ...(query.q ? [ilike(
-      lectureHalls.name,
-      "%" + query.q.replace(/[\\%_]/g, "\\$&") + "%",
-    )] : []),
+    ...(containsSearch ? [or(
+      ilike(lectureHalls.name, containsSearch),
+      ilike(lectureHalls.description, containsSearch),
+    )!] : []),
     ...(query.status ? [eq(lectureHalls.status, query.status)] : []),
     ...(query.roomType ? [eq(lectureHalls.roomType, query.roomType)] : []),
     ...(query.minimumCapacity !== undefined ? [gte(lectureHalls.capacity, query.minimumCapacity)] : []),
@@ -211,6 +246,13 @@ export async function listLectureHalls(
       .where(and(...filters))
       .orderBy(
         asc(sql`case ${lectureHalls.status} when 'ACTIVE' then 0 else 1 end`),
+        ...(query.q && prefixSearch && containsSearch ? [
+          asc(sql`case
+            when lower(${lectureHalls.name}) = lower(${query.q}) then 0
+            when ${lectureHalls.name} ilike ${prefixSearch} then 1
+            when ${lectureHalls.name} ilike ${containsSearch} then 2
+            else 3 end`),
+        ] : []),
         asc(sql`lower(${lectureHalls.name})`),
         asc(lectureHalls.id),
       )
@@ -222,6 +264,9 @@ export async function listLectureHalls(
       .where(and(...filters)),
   ]);
 
+  // This response is a paginated directory, not the old /stats endpoint.
+  // Its pagination.total is the authoritative count; do not claim an
+  // unimplemented global "Stats retrieved" API wrapper.
   return {
     collegeId: college.id,
     collegeName: college.name,
