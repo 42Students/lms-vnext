@@ -72,6 +72,13 @@ export async function getLearnerAttendanceWorkspace(
   ) {
     throw new AuthorizationError("academics.read");
   }
+  // A half-open IST calendar window assigns a class to the month it STARTS,
+  // even if it crosses midnight; reject inverted/invalid bounds before reads.
+  if (options.window && (
+    !Number.isFinite(options.window.from.getTime()) ||
+    !Number.isFinite(options.window.to.getTime()) ||
+    options.window.from >= options.window.to
+  )) throw new RangeError("INVALID_LEARNER_ATTENDANCE_WINDOW");
   // A forged college/membership pair must be denied, not rendered as an
   // empty attendance workspace.
   const [persisted] = await getDb()
@@ -115,6 +122,7 @@ export async function getLearnerAttendanceWorkspace(
     .limit(1);
 
   if (deliveries.length === 0) {
+    if (options.deliveryId) throw new AuthorizationError("courses.read");
     return {
       policy: policy ?? DEFAULT_POLICY,
       courses: [],
@@ -129,6 +137,9 @@ export async function getLearnerAttendanceWorkspace(
     deliveries.filter(delivery=>delivery.deliveryId===options.deliveryId):deliveries;
   if(options.deliveryId&&authorizedDeliveries.length===0)
     throw new AuthorizationError("courses.read");
+  // Legacy numeric courseId is insufficient when a course spans sections/terms;
+  // read only this learner's authorized UUID deliveries. Historical completed
+  // enrollments are included only when includeHistorical is requested.
   const deliveryIds = authorizedDeliveries.map(
     (delivery) => delivery.deliveryId,
   );
@@ -171,9 +182,9 @@ export async function getLearnerAttendanceWorkspace(
     )
     .innerJoin(
       courseSectionDeliveries,
-      eq(
-        courseSectionDeliveries.id,
-        sectionScheduleEventCourses.deliveryId,
+      and(
+        eq(courseSectionDeliveries.id, sectionScheduleEventCourses.deliveryId),
+        eq(courseSectionDeliveries.sectionId, sectionScheduleEvents.sectionId),
       ),
     )
     .innerJoin(
@@ -192,9 +203,10 @@ export async function getLearnerAttendanceWorkspace(
     )
     .innerJoin(
       sections,
-      eq(
-        sections.id,
-        sectionScheduleEvents.sectionId,
+      and(
+        eq(sections.id, sectionScheduleEvents.sectionId),
+        eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
+        eq(sections.cohortId, courseOfferings.cohortId),
       ),
     )
     .leftJoin(
@@ -235,8 +247,8 @@ export async function getLearnerAttendanceWorkspace(
       and(
         inArray(sectionScheduleEventCourses.deliveryId, deliveryIds),
         ...(options.window ? [
+          gte(sectionScheduleEvents.startsAt, options.window.from),
           lt(sectionScheduleEvents.startsAt, options.window.to),
-          gte(sectionScheduleEvents.endsAt, options.window.from),
         ] : []),
       ),
     )
@@ -244,6 +256,13 @@ export async function getLearnerAttendanceWorkspace(
       asc(sectionScheduleEvents.startsAt),
     );
 
+  // Legacy {classes, absentids}: classScheduleId -> scheduleEventId;
+  // class/term/course -> authorized delivery UUID; attendanceTaken ->
+  // attendanceSessions MARKED; legacy active absence (null status) -> ABSENT;
+  // EXCUSED/MEDICAL/LATE remain explicit; a missing exception in a MARKED
+  // session means PRESENT, an unmarked class is NOT_MARKED, future SCHEDULED.
+  // Soft-deleted absences and markedBy history require trusted offline lineage;
+  // no legacy numeric-ID migration has been approved.
   const records: LearnerAttendanceRow[] =
     rows.map((row) => ({
       ...row,
