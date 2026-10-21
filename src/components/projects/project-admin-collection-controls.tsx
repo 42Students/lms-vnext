@@ -74,14 +74,14 @@ export function ProjectAdminFilters({
   includeSubmissionStatus = false,
   includeRiskSort = false,
   legacyWorkspaces = false,
-  fixedRiskPageSize = false,
+  atRiskHref = "/admin/projects/at-risk",
   filterView,
 }: {
   query: ProjectAdminCollectionQuery;
   includeSubmissionStatus?: boolean;
   includeRiskSort?: boolean;
   legacyWorkspaces?: boolean;
-  fixedRiskPageSize?: boolean;
+  atRiskHref?:string;
   filterView?: "NOT_SUBMITTED";
 }) {
   const router=useRouter();
@@ -128,7 +128,9 @@ export function ProjectAdminFilters({
         >
           <option value="">All statuses</option>
           {(legacyWorkspaces?
-            (["ACTIVE","IN_PROGRESS","READY","BLOCKED","ARCHIVED"] as const):
+            (["ACTIVE","IN_PROGRESS","READY","BLOCKED","ARCHIVED",
+              ...(query.status==="PLANNED"?["PLANNED" as const]:[]),
+              ...(query.status==="COMPLETED"?["COMPLETED" as const]:[])] as const):
             PROJECT_STATUSES).map((status) => (
             <option key={status} value={status}>
               {label(status)}
@@ -138,7 +140,7 @@ export function ProjectAdminFilters({
       </label>
       {legacyWorkspaces?<p className="text-xs text-muted-foreground">
         Ready and Blocked use saved workspace phase and blocker signals.
-        <Link href="/admin/projects/at-risk" className="ml-1 font-semibold text-primary-text underline">
+        <Link href={atRiskHref} className="ml-1 font-semibold text-primary-text underline">
           View all risk signals</Link>
       </p>:null}
       {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
@@ -186,7 +188,7 @@ export function ProjectAdminFilters({
           onChange={event=>updateUrl("pageSize",event.target.value)}
           className="w-full"
         >
-          {[10, 20, 25, 50, 100].filter((size) => !legacyWorkspaces || size !== 25).map((size) => (
+          {[10, 20, 25, 50, 100].map((size) => (
             <option key={size} value={size}>
               {size}
             </option>

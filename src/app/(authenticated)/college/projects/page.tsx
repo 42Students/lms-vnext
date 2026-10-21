@@ -145,7 +145,7 @@ export default async function CollegeProjectsPage({
         </Link>
       </div>
       {!templatesResult.ok && <Banner tone="warning">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</Banner>}
-      <FilterBar title="Filters"><ProjectAdminFilters query={query} /></FilterBar>
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} legacyWorkspaces atRiskHref="/college/projects/at-risk" /></FilterBar>
       <ListToolbar label="College project workspaces" viewCount={result.total}
         exportAction={<ProjectAdminWorkspacePageExport items={items}/>} />
 
