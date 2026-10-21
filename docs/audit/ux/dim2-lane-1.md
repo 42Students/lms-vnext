@@ -192,3 +192,13 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
 - `src/app/(authenticated)/hr/home/page.tsx` | instances H3/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
 - `src/app/(authenticated)/hr/messages/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/not-found.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/notifications/page.tsx` | instances H2/B0/T1/F1/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | instances H2/B0/T5/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/profile/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/profile/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/round-results/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/round-results/page.tsx` | instances H3/B0/T2/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
