@@ -155,17 +155,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
 - [x] `src/components/admin/student-rule-editor.tsx`
 - [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
-- [ ] `src/components/admin/super-admin-batch-roster-manager.tsx`
-- [ ] `src/components/admin/super-admin-company-edit.tsx`
-- [ ] `src/components/admin/super-admin-company-identities.tsx`
-- [ ] `src/components/admin/super-admin-company-merge.tsx`
-- [ ] `src/components/admin/super-admin-faculty-bulk-import.tsx`
-- [ ] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
-- [ ] `src/components/admin/super-admin-student-bulk-access.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
-- [ ] `src/components/admin/tenant-settings-other-keys.tsx`
-- [ ] `src/components/announcements/super-admin-college-broadcast-form.tsx`
-- [ ] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
+- [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
+- [x] `src/components/admin/super-admin-company-edit.tsx`
+- [x] `src/components/admin/super-admin-company-identities.tsx`
+- [x] `src/components/admin/super-admin-company-merge.tsx`
+- [x] `src/components/admin/super-admin-faculty-bulk-import.tsx`
+- [x] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`
+- [x] `src/components/admin/super-admin-student-bulk-access.tsx`
+- [x] `src/components/admin/tenant-settings-editor.tsx`
+- [x] `src/components/admin/tenant-settings-other-keys.tsx`
+- [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
+- [x] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
 - [ ] `src/components/attendance/admin-attendance-workspace.tsx`
 - [ ] `src/components/attendance/college-attendance-policy-form.tsx`
 - [ ] `src/components/college/college-faculty-assignment-actions.tsx`

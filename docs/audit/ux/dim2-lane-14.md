@@ -153,3 +153,14 @@ src/components/admin/person-membership-actions.tsx | 13 responsive instances | 3
 src/components/admin/scoped-membership-lifecycle-actions.tsx | 15 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
 src/components/admin/student-rule-editor.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 375 min width zero ↔ min-w-0; 375 wraps ↔ flex-wrap | none
 src/components/admin/super-admin-attendance-settings-editor.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/super-admin-batch-roster-manager.tsx | 25 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | none
+src/components/admin/super-admin-company-edit.tsx | 19 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 sidebar hidden ↔ shell @max767 | none
+src/components/admin/super-admin-company-identities.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | phone flex wrap
+src/components/admin/super-admin-company-merge.tsx | 11 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/super-admin-faculty-bulk-import.tsx | 15 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | none
+src/components/admin/super-admin-faculty-schedule-reassign-action.tsx | 12 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/super-admin-student-bulk-access.tsx | 19 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/tenant-settings-editor.tsx | 30 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/tenant-settings-other-keys.tsx | 23 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/announcements/super-admin-college-broadcast-form.tsx | 33 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/attendance/admin-attendance-parent-contact-editor.tsx | 19 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
