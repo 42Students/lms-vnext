@@ -33,9 +33,6 @@ import {
 } from "@/modules/placements/tpo-audit-service";
 
 
-/** Wall-clock read kept out of render bodies (React purity rule). */
-function currentTimeMs(){return Date.now();}
-
 type SearchParams = {
   kind?: string | string[];
   f_about?:string|string[];

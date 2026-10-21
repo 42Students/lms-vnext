@@ -2,7 +2,6 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { PageHeader } from "@/components/ui/page-header";
 import { Badge } from "@/components/ui/badge";
-import {Avatar} from "@/components/ui/avatar";
 import {Button} from "@/components/ui/button";
 import {ErrorState} from "@/components/ui/error-state";
 import {GracefulPageLoading} from "@/components/ui/graceful-page-loading";
