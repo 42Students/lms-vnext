@@ -104,3 +104,31 @@ export const systemRoles = pgTable(
     index("system_roles_role_idx").on(table.role),
   ],
 );
+
+/** Legacy Role rows were global definitions, not membership assignments.
+ * Original role.name/description/id/createdAt/updatedAt/isDeleted are
+ * source-only audit fields. Only active, verified assignments map into a
+ * persisted, same-college collegeMemberships/membershipRoles pair. */
+export const LEGACY_ROLE_DEFINITION_CROSSWALK={
+ STUDENT:"LEARNER",LEARNER:"LEARNER",
+ FACULTY:"FACULTY",TEACHER:"FACULTY",
+ COLLEGE_ADMIN:"COLLEGE_ADMIN",ADMIN:"COLLEGE_ADMIN",
+ TPO:"TPO",MENTOR:"MENTOR",RECRUITER:"RECRUITER",
+} as const;
+export function legacyRoleAssignmentCandidate(input:{
+ legacyRoleId:number;name:string;description:string|null;
+ isDeleted:boolean;membershipCollegeId:string;targetCollegeId:string;
+}){
+ if(!Number.isSafeInteger(input.legacyRoleId)||input.legacyRoleId<1)
+  throw new Error("Legacy role key needs source review");
+ if(input.isDeleted)return null;
+ if(input.membershipCollegeId!==input.targetCollegeId)
+  throw new Error("Legacy role assignment must remain in its college");
+ const key=input.name.trim().toUpperCase().replaceAll(" ","_");
+ const role=LEGACY_ROLE_DEFINITION_CROSSWALK[
+   key as keyof typeof LEGACY_ROLE_DEFINITION_CROSSWALK];
+ if(!role)throw new Error("Unrecognized old role definition");
+ return {legacyRoleId:input.legacyRoleId,role,
+  descriptionForAudit:input.description?.trim().slice(0,500)??null,
+  persistedRoleAuthority:false as const};
+}
