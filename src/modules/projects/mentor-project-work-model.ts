@@ -14,11 +14,21 @@ export function matchesMentorProjectWork(filter:MentorProjectWorkFilter|undefine
   return false;
 }
 
-/** Registered task completion only; no tasks means unknown, not zero progress. */
-export function mentorTaskProgress(counts:{total:number;open:number}|undefined){
-  if(!counts||!Number.isSafeInteger(counts.total)||counts.total<=0||
-    !Number.isSafeInteger(counts.open)||counts.open<0||counts.open>counts.total)
-    return null;
-  const complete=Math.max(0,Math.min(counts.total,counts.total-counts.open));
-  return {percent:projectCompletionPercent(complete,counts.total),label:complete+" of "+counts.total+" recorded tasks done"};
+/** Legacy project card shows x/y completed tasks, falling back to an
+ * explicitly recorded manual estimate only when there are no task rows.
+ * 0 is the database default and cannot prove a manual estimate exists. */
+export function mentorTaskProgress(
+ counts:{total:number;open:number}|undefined,manualEstimate?:number|null,
+){
+ if(counts&&(!Number.isSafeInteger(counts.total)||counts.total<0||
+    !Number.isSafeInteger(counts.open)||counts.open<0||counts.open>counts.total))
+   return null;
+ if(!counts||counts.total===0){
+   if(manualEstimate===null||manualEstimate===undefined||
+     !Number.isSafeInteger(manualEstimate)||manualEstimate<=0||manualEstimate>100)
+     return null;
+   return {percent:manualEstimate,label:"Manual estimate"};
+ }
+ const complete=counts.total-counts.open;
+ return {percent:projectCompletionPercent(complete,counts.total),label:complete+" of "+counts.total+" recorded tasks done"};
 }
