@@ -1,6 +1,8 @@
 "use client";
 
 import Link from "next/link";
+import {useRouter} from "next/navigation";
+import type {MouseEvent} from "react";
 
 import { TpoGrid } from "@/components/tpo/grid/tpo-grid";
 import type { TpoGridColumn } from "@/modules/placements/tpo-grid-model";
@@ -85,7 +87,22 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
   rows:readonly HrCompanyReportSheetRow[];
   scopeKey:string;
 }) {
-  return <TpoGrid rows={rows} rowKey={row=>row.id} columns={columns}
+  const router=useRouter();
+  function openFromRow(event:MouseEvent<HTMLDivElement>) {
+    if(event.defaultPrevented || event.button!==0 ||
+       event.ctrlKey || event.altKey || event.shiftKey || event.metaKey) return;
+    const target=event.target;
+    if(!(target instanceof Element))return;
+    // Native links and grid selection controls keep their own semantics.
+    if(target.closest("a,button,input,select,textarea,[role=button],[role=checkbox]"))return;
+    const rowElement=target.closest<HTMLElement>(".ag-row[row-id]");
+    const id=rowElement?.getAttribute("row-id");
+    const selected=id ? rows.find(row=>row.id===id) : null;
+    if(selected)router.push(driveHref(selected));
+  }
+  return <div className="min-w-0 [&_.ag-row]:cursor-pointer"
+    onClick={openFromRow} aria-label="Company hiring report">
+    <TpoGrid rows={rows} rowKey={row=>row.id} columns={columns}
     storageKey={"hr-company-report:"+scopeKey}
     defaultVisibleKeys={["drive","status","published","applied","offered","accepted"]}
     mobilePrimaryKeys={["drive","status","published","applied","offered","accepted"]}
@@ -94,5 +111,6 @@ export function HrCompanyReportsGrid({rows,scopeKey}:{
         className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Open drive
       </Link>
-    </div>}/>;
+    </div>}/>
+  </div>;
 }
