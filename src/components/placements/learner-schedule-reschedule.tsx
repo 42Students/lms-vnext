@@ -7,6 +7,7 @@ import {useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meetingUrl}:{applicationId:string;roundId:string;mode:"ON_CAMPUS"|"VIRTUAL";venue:string|null;meetingUrl:string|null}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -18,26 +19,33 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
  // request API has a separate approved preferredTimes field.
  const requestReason=reason.trim()+(preferredTimes.trim()?"\nTimes that work for you: "+preferredTimes.trim():"");
  async function save(){
-  if(busy||reason.trim().length<3||requestReason.length>900||!date){
-   setError("Enter a reason of at least 3 characters and keep all notes within 900 characters.");return;
+  if(busy)return;
+  if(reason.trim().length<3){
+   setError("Enter a reason of at least 3 characters.");return;
+  }
+  if(requestReason.length>900){
+   setError("Reason and preferred times must stay within 900 characters.");return;
+  }
+  if(!date){
+   setError("Choose a future preferred time. You can add flexible windows as notes, but a proposed date is required for approval.");return;
   }
   const when=new Date(date);
   if(!Number.isFinite(when.getTime())||when.getTime()<=Date.now()){setError("Choose a future preferred time.");return;}
   setBusy(true);setError("");setSuccess("");
   try{
-   const response=await fetch("/api/placements/requests",{
+   await apiFetch("/api/placements/requests",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({requestType:"ROUND_RESCHEDULE",applicationId,roundId,
      reason:requestReason,scheduledAt:when.toISOString(),timezone:"Asia/Kolkata",mode:nextMode,
      venue:nextMode==="ON_CAMPUS"?nextVenue.trim()||null:null,
      meetingUrl:nextMode==="VIRTUAL"?nextUrl.trim()||null:null}),
    });
-   if(!response.ok)throw Error("Request not sent. Check the time and contact details.");
    setOpen(false);setSuccess("Reschedule request sent. Your booking is unchanged until approved.");
    showToast({tone:"success",title:"Sent. The placement cell will reply.",
     description:"Your current booking remains unchanged until approved."});router.refresh();
   }catch(e){
-   const message=e instanceof Error?e.message:"Could not send request.";
+   const message=e instanceof FriendlyFetchError?e.message:
+    e instanceof Error?e.message:"Could not send request.";
    setError(message);showToast({tone:"error",title:"Could not send",description:message});
   }
   finally{setBusy(false);}
@@ -48,7 +56,7 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
   {success?<p role="status" className="text-sm text-success">{success}</p>:null}
   {open?<div className="grid gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
    <h4 className="font-semibold">Ask to reschedule</h4>
-   <p className="text-sm text-body">The placement cell must approve your suggested time.</p>
+   <p className="text-sm text-body">The placement cell must approve your suggested time. You can add flexible times as notes, but the current approval process also needs an exact future date and a contact location or meeting link.</p>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason (3–900 characters)
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"/></label>
