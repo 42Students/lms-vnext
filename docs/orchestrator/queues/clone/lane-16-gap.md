@@ -45,8 +45,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U004 (FE page) `docs/legacy-source/frontend/src/pages/tracker/issues/index.js`
 - [x] U005 (FE page) `docs/legacy-source/frontend/src/pages/tracker/logs.js`
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/courses/[courseId]/index.js`
-- [ ] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/semester-courses.js`
-- [ ] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/syllabus.js`
+- [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/semester-courses.js`
+- [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/syllabus.js`
 - [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/StudentAttendanceView.jsx`
 - [ ] U010 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/skills/SkillsSearchController.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/NotificationSchedulerService.java`
