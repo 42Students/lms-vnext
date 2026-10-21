@@ -35,6 +35,15 @@ function dnsName(host: string) {
 function dnsValue(token: string) {
   return `lms-vnext-verification=${token}`;
 }
+/** Diagnostics are deliberately bounded to outcome codes, not observed TXT
+ * values: another tenant's TXT record or a live challenge must not leak. */
+function dnsObservationSummary(result:string|null){
+ if(result==="TXT_VALUE_MISMATCH")return "TXT records were found, but none matched this domain's current verification token.";
+ if(result==="TXT_RECORD_MISSING")return "No ownership TXT record was found at the checked names.";
+ if(result==="DNS_LOOKUP_FAILED")return "DNS lookup timed out or failed; propagation may still be in progress.";
+ if(result==="VERIFIED")return "The expected ownership TXT record was verified.";
+ return null;
+}
 
 function formatCheckedAt(value: string | null) {
   if (!value) return "Never checked";
@@ -113,7 +122,7 @@ export function TenantDomainManager({
 
   async function runAction(
     domain: TenantDomainClientRow,
-    action: "verify" | "primary" | "delete" | "edit",
+    action: "verify" | "primary" | "delete" | "edit" | "ensure-token",
   ) {
     if (actionInFlightRef.current) return;
     actionInFlightRef.current = true;
@@ -123,7 +132,9 @@ export function TenantDomainManager({
 
     try {
       const request =
-        action === "verify"
+        action === "ensure-token"
+          ? fetch(`/api/tenant-domains/${domain.id}/ensure-token`,{method:"POST"})
+          : action === "verify"
           ? fetch(
               `/api/tenant-domains/${domain.id}/verify`,
               { method: "POST" },
@@ -165,10 +176,11 @@ export function TenantDomainManager({
                 : payload?.error==="MANAGED_HOST_EDIT_UNSUPPORTED"
                   ? "Manage wildcard college addresses in the dedicated managed subdomain section."
                   : "The domain action could not be completed.";
-        if (action !== "verify") setModalError(failure);
+        if (action !== "verify" && action !== "ensure-token") setModalError(failure);
         showToast({
           tone: "error",
           title: action === "verify" ? "Verification failed"
+            : action === "ensure-token" ? "DNS record could not be prepared"
             : action === "primary" ? "Primary domain not changed"
             : action === "edit" ? "Domain not changed" : "Domain not deleted",
           description: failure,
@@ -191,7 +203,9 @@ export function TenantDomainManager({
       showToast({
         tone: "success",
         title:
-          action === "verify"
+          action === "ensure-token"
+            ? payload?.domain?.verificationToken ? "DNS record ready" : "Verified domain preserved"
+            : action === "verify"
             ? payload?.domain?.isVerified
               ? "Domain verified"
               : "DNS record not found yet"
@@ -213,6 +227,7 @@ export function TenantDomainManager({
       showToast({
         tone: "error",
         title: action === "verify" ? "Verification failed" :
+          action === "ensure-token" ? "DNS record could not be prepared" :
           action === "primary" ? "Primary domain not changed" :
           action === "edit" ? "Domain not changed" : "Domain not deleted",
         description: "The domain action could not be completed.",
@@ -312,15 +327,18 @@ export function TenantDomainManager({
                         ? ` · ${domain.lastCheckResult}`
                         : ""}
                     </p>
-                    {domain.lastCheckResult==="TXT_RECORD_MISSING"?<p className="mt-1 text-xs text-warning-text">
-                      Required ownership TXT was not found. Check the record name and value below, then verify again.
-                    </p>:domain.lastCheckResult==="DNS_LOOKUP_FAILED"?<p className="mt-1 text-xs text-warning-text">
-                      DNS lookup failed. Check propagation and try another verification. Raw TXT values and challenge secrets are never shown in diagnostics.
+                    {dnsObservationSummary(domain.lastCheckResult)?<p role="status" className="mt-1 max-w-[65ch] text-xs text-warning-text">
+                      {dnsObservationSummary(domain.lastCheckResult)} Review the current TXT instructions below, allow DNS propagation, then retry verification.
                     </p>:null}
                   </div>
 
                   <div className="flex min-w-0 w-full flex-col items-stretch gap-[var(--lms-space-2)] print:hidden sm:w-auto sm:flex-row sm:flex-wrap md:justify-end">
-                    {!domain.isVerified ? (
+                    {!domain.verificationToken?<Button type="button" variant="secondary" size="sm"
+                       className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}
+                       onClick={()=>void runAction(domain,"ensure-token")}>
+                       {pendingAction===`${domain.id}:ensure-token`?"Preparing…":"Generate DNS record"}
+                      </Button>:null}
+                    {!domain.isVerified && domain.verificationToken ? (
                       <Button
                         variant="secondary"
                         size="sm"
@@ -384,6 +402,7 @@ export function TenantDomainManager({
                       record until this new challenge verifies; the old root
                       record cannot validate the vNext host.
                     </p>
+                    <p className="text-xs text-muted-foreground">Expected protocol: TXT name <code>{dnsName(domain.host)}</code>, value prefixed with <code>lms-vnext-verification=</code>. Historical records are accepted only with the current token.</p>
                     <dl className="mt-4 grid gap-3">
                       <div>
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
@@ -397,18 +416,18 @@ export function TenantDomainManager({
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Name
                         </dt>
-                        <dd className="mt-1 break-words [overflow-wrap:anywhere] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
-                          {dnsName(domain.host)}
+                        <dd className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+                         <code className="min-w-0 break-all rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm">{dnsName(domain.host)}</code>
+                         <Button type="button" size="sm" variant="secondary" onClick={()=>void navigator.clipboard.writeText(dnsName(domain.host)).then(()=>showToast({tone:"success",title:"TXT name copied"})).catch(()=>showToast({tone:"error",title:"Copy failed. Select the DNS name above."}))}>Copy name</Button>
                         </dd>
                       </div>
                       <div>
                         <dt className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                           Value
                         </dt>
-                        <dd className="mt-1 break-words [overflow-wrap:anywhere] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-mono text-sm text-foreground">
-                          {dnsValue(
-                            domain.verificationToken,
-                          )}
+                        <dd className="mt-1 flex min-w-0 flex-wrap items-center gap-2">
+                         <code className="min-w-0 break-all rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm">{dnsValue(domain.verificationToken)}</code>
+                         <Button type="button" size="sm" variant="secondary" onClick={()=>void navigator.clipboard.writeText(dnsValue(domain.verificationToken!)).then(()=>showToast({tone:"success",title:"TXT value copied"})).catch(()=>showToast({tone:"error",title:"Copy failed. Select the TXT value above."}))}>Copy value</Button>
                         </dd>
                       </div>
                     </dl>

@@ -46,6 +46,13 @@ export async function GET(request:Request){
   for(const [label,key] of funnelLabels){
    rows.push([label,data.funnelRows.reduce((sum,row)=>sum+row[key],0)]);
   }
+  // Preserve the legacy exported status totals even when no funnel stage
+  // contains terminal applications. Reporting is read-only and server-side.
+  rows.push(
+   ["Rejected",data.rows.reduce((sum,row)=>sum+row.rejected,0)],
+   ["Withdrawn",data.rows.reduce((sum,row)=>sum+row.withdrawn,0)],
+   ["Waitlisted",data.rows.reduce((sum,row)=>sum+row.waitlisted,0)],
+  );
   rows.push([],
    ["Company-wise Report (per-job rows only; see Company Totals section below for rollups)"],
    ["Company","Job","Applied","Shortlisted","Assessment","Interview","Offered","Hired","Rejected","Total Applications","Withdrawn","Waitlisted"]);
