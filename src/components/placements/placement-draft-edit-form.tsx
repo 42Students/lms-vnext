@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
 
 type ApplicationMode =
   | "INTERNAL"
@@ -136,6 +137,7 @@ export function PlacementDraftEditForm({
   jobTypes?:readonly {label:string}[];
 }) {
   const router = useRouter();
+  const availableJobTypes=jobTypes?.length?jobTypes:TPO_BUILTIN_JOB_TYPES;
   const { showToast } = useToast();
   const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
   const {pending,run}=useGuardedAction();
@@ -406,10 +408,9 @@ export function PlacementDraftEditForm({
                 (value.job.employmentType==="INTERNSHIP"?"Internship":
                  value.job.employmentType==="CONTRACT"?"Contract":"Full-time")}
             >
-              {(jobTypes?.length?jobTypes:[{label:"Full-time"},{label:"Internship"},
-                {label:"Internship + full-time"},{label:"Contract"},{label:"Apprenticeship"}])
+              {availableJobTypes
                 .map(type=><option key={type.label} value={type.label}>{type.label}</option>)}
-              {value.job.jobTypeLabel&&!jobTypes?.some(type=>type.label===value.job.jobTypeLabel)?
+              {value.job.jobTypeLabel&&!availableJobTypes.some(type=>type.label===value.job.jobTypeLabel)?
                 <option value={value.job.jobTypeLabel}>{value.job.jobTypeLabel} (historic)</option>:null}
             </Select>
           </label>
