@@ -5,11 +5,11 @@ import {getOwnFacultyContactAvailability} from "@/modules/people/faculty-contact
 
 export default async function FacultyOwnContactPage(){
  const data=await getOwnFacultyContactAvailability(await getCurrentRequestContext(),{});
- return <div className="min-w-0 max-w-full space-y-5">
+ return <div className="min-w-0 max-w-full space-y-6">
  <PageHeader title="Contact details"
   description="Your college-managed sign-in details and the status of optional contact fields."
   actions={<Link href="/teacher/profile" className="inline-flex min-h-11 w-full items-center justify-center sm:w-auto md:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Profile</Link>}/>
- <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+ <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-6">
   <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Registered identity contact</h2>
   <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
    <div><dt className="text-xs text-muted-foreground">Login email</dt>
@@ -19,7 +19,7 @@ export default async function FacultyOwnContactPage(){
   </dl>
   <p className="mt-3 text-xs text-muted-foreground leading-5">These identity fields are managed by your college and are not editable here.</p>
  </section>
- <section role="status" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-5">
+ <section role="status" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-4">
   <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Alternate contact editing unavailable</h2>
   <p className="mt-2 text-sm text-body leading-[22px]">{data.reason}</p>
   <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">

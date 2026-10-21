@@ -46,7 +46,7 @@ export default async function FacultyQuizReportPage({
   } = report;
 
   return (
-    <div className="min-w-0 max-w-full space-y-5">
+    <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title={quiz.title}
         description={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
         actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
