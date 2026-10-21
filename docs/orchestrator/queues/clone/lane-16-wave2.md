@@ -96,6 +96,6 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_module-access_admin-student-rule-write.ts.md` (edit src/modules/module-access/admin-student-rule-write.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_projects_admin-submission-review-model.ts.md` (edit src/modules/projects/admin-submission-review-model.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_placements_tpo-bulk-students-undo-service.ts.md` (edit src/modules/placements/tpo-bulk-students-undo-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_placements_placement-calendar-service.ts.md` (edit src/modules/placements/placement-calendar-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_placements_placement-calendar-service.ts.md` (edit src/modules/placements/placement-calendar-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_activity_faculty-notifications-access.ts.md` (edit src/modules/activity/faculty-notifications-access.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-16/W2_src_modules_placements_public-join_preview-service.ts.md` (edit src/modules/placements/public-join/preview-service.ts; 1 findings; best P2)
