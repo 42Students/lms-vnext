@@ -67,9 +67,9 @@ export function TpoStudentsAssignPrep(){
   <Dialog open={confirm} onOpenChange={v=>{if(!pending)setConfirm(v);}}
    title="Assign preparation course?"
    description={"Assign this course to the first "+Math.min(100,picked.length)+" selected students, skipping existing assignments? Learners will be notified."}
-   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
-    <Button variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
-    <Button className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending||loading||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>void submit()}>{pending?"Saving…":"Confirm assignments"}</Button>
+   footer={<div className="flex w-full flex-col-reverse gap-2 md:flex-row md:justify-end">
+    <Button variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={pending} onClick={()=>setConfirm(false)}>Cancel</Button>
+    <Button className="min-h-11 w-full md:w-auto md:min-h-9" loading={pending} disabled={pending||loading||!picked.length||!offeringId||Boolean(dueAt&&!tpoPrepDueAtUtc(dueAt))} onClick={()=>void submit()}>{pending?"Saving…":"Confirm assignments"}</Button>
    </div>}>
    <div className="min-w-0 space-y-2 text-sm"><p className="break-words">Course: {courses.find(course=>course.id===offeringId)?.name??"Choose a course"}</p>
     <p className="break-words">Due date: {dueAt?dueAt+" IST":"No due date"}. Review the learner roster and course before confirming.</p>
