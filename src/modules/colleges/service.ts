@@ -667,8 +667,43 @@ export async function restoreCollege(context:RequestContext,rawId:unknown){
    collegeId:restored.id,organizationId:restored.organizationId,
    subjectType:"college",subjectId:restored.id,subjectLabel:restored.name,
    summary:"Archived college restored",
-   metadata:{code:restored.code,fromStatus:"ARCHIVED",toStatus:"ACTIVE"},
+   metadata:{code:restored.code,fromStatus:"ARCHIVED",toStatus:"ACTIVE",restoreType:"COLLEGE_RESTORE",entityName:restored.name,cascadeRestored:false,restoredDescendants:0},
   });
-  return restored;
+  // Only the selected college returns to ACTIVE; never cascade into members or child data.
+  return {...restored,restoreType:"COLLEGE_RESTORE" as const,
+    cascadeRestored:false as const,restoredDescendants:0,
+    message:"College restored successfully."};
  });
+}
+
+/**
+ * Safe college-search adapter. The model deliberately keeps UUID IDs rather
+ * than fabricating legacy numeric IDs. Never cache records across role/scope
+ * changes; each call performs listColleges' persisted permission checks.
+ * A logo object path is not a public URL; callers need authorized signing.
+ */
+export async function listAuthorizedCollegeSearchOptions(
+ context:RequestContext,
+ options:{organizationId?:string|null;q?:string;limit?:number}={},
+){
+ const q=(options.q??"").trim();
+ if(q.length>200)throw new RangeError("College search must be 200 characters or fewer");
+ const cap=Math.max(1,Math.min(options.limit??(q?15:10),50));
+ const rows=await listColleges(context,options.organizationId);
+ const needle=q.toLocaleLowerCase("en-IN");
+ const matches=q?rows.filter(row=>[row.name,row.code,row.city??"",row.state??""]
+  .some(value=>value.toLocaleLowerCase("en-IN").includes(needle))):rows;
+ return matches.slice(0,cap).map(row=>({
+  id:row.id,
+  organizationId:row.organizationId,
+  name:row.name,
+  code:row.code,
+  uniqueId:row.code,
+  address:row.addressLine1??"",
+  city:row.city??"",
+  state:row.state??"",
+  zip:row.postalCode??"",
+  logo:null as string|null,
+  logoObjectPath:row.logoObjectPath,
+ }));
 }

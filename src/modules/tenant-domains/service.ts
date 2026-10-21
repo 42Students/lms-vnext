@@ -64,6 +64,11 @@ export interface TenantDomainRepository {
   ensureToken?(input:{
     domainId:string;expectedHost:string;token:string;context:RequestContext;
   }):Promise<TenantDomainView>;
+  /** Migration-only recovery: insert a missing challenge without revoking a
+   * verified binding; no change to isVerified/verifiedAt/primary. */
+  ensureVerifiedToken?(input:{
+    domainId:string;expectedHost:string;token:string;context:RequestContext;
+  }):Promise<TenantDomainView>;
   editDomainHost(input:{
     domainId:string;
     expectedHost:string;
@@ -155,6 +160,29 @@ export function verificationDnsValue(token: string) {
   return `lms-vnext-verification=${token}`;
 }
 
+/** Read-only crosswalk for imported legacy support history. Do not equate
+ * mismatched TXT values with missing records when explaining DNS failures. */
+export function legacyDnsCheckResult(result:string|null){
+ switch(result){
+  case "VERIFIED":return "VERIFIED" as const;
+  case "TXT_RECORD_MISSING":case "NO_RECORD":return "NO_RECORD" as const;
+  case "TXT_VALUE_MISMATCH":case "WRONG_VALUE":return "WRONG_VALUE" as const;
+  case "DNS_LOOKUP_FAILED":case "TIMEOUT_OR_ERROR":return "TIMEOUT_OR_ERROR" as const;
+  default:return null;
+ }
+}
+
+/** Historical TXT challenges cannot verify a new vNext token. Show both
+ * protocols during migration, but instruct users to publish CURRENT only. */
+export function tenantDomainDnsInstructions(host:string,token:string){
+ const validated=tenantDomainHostSchema.parse(host);
+ return {
+  current:{name:verificationDnsName(validated),value:verificationDnsValue(token)},
+  historical:{name:"_42lms-verify."+validated,value:"42lms-verification="+token},
+  guidance:"Create the current TXT record, wait for DNS propagation, and verify again. Historical _42lms-verify records are not interchangeable. Custom hosts also require deployed DNS routing and TLS; managed wildcard domains require infrastructure readiness.",
+ };
+}
+
 export async function listTenantDomains(
   context: RequestContext,
   collegeIdInput: string,
@@ -219,7 +247,14 @@ export async function ensureTenantDomainVerificationToken(
  tokenFactory:()=>string=verificationToken,
 ){
  const domain=await loadAuthorizedDomain(context,domainId,repository);
- if(domain.isVerified||domain.verificationToken)return domain;
+ if(domain.verificationToken)return domain;
+ if(domain.isVerified){
+  // Keep a verified host resolvable while migrating nullable old tokens.
+  // Reissuing a DNS token is optional until the repository supports it safely.
+  if(!repository.ensureVerifiedToken)return domain;
+  return repository.ensureVerifiedToken({domainId:domain.id,expectedHost:domain.host,
+   token:tokenFactory(),context});
+ }
  if(!repository.ensureToken)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
  return repository.ensureToken({domainId:domain.id,expectedHost:domain.host,
   token:tokenFactory(),context});

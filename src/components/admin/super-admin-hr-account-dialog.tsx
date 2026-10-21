@@ -4,6 +4,7 @@ import { useId, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import type {
@@ -39,6 +40,7 @@ export function SuperAdminHrAccountDialog({
   onSubmit: (values: HrAccountFormValues) => void;
 }) {
   const id = useId();
+  const [discardOpen,setDiscardOpen]=useState(false);
   const formId = `${id}-form`;
   const creating = account === null;
 
@@ -81,6 +83,20 @@ export function SuperAdminHrAccountDialog({
     (!creating || phoneE164.trim().length > 0) &&
     (!creating || (createCompany ? newCompanyName.trim().length>=2&&Boolean(newCompanyCollegeId) : Boolean(companyRelationshipId)));
 
+  const dirty=creating
+    ?Boolean(firstName||lastName||phoneE164||email||title||createCompany||
+      newCompanyName||newCompanyDomain||additionalRelationshipIds.length)
+    :firstName!==(account?.displayName?.trim().split(/\s+/)[0]??"")||
+      lastName!==(account?.displayName?.trim().split(/\s+/).slice(1).join(" ")??"")||
+      phoneE164!==(account?.phoneE164??"")||
+      email!==(account?.email??"")||title!==(account?.title??"")||
+      status!==(account?.status==="ARCHIVED"?"ARCHIVED":"ACTIVE");
+  function requestClose(){
+    if(pending)return;
+    if(dirty)setDiscardOpen(true);
+    else onClose();
+  }
+
   function submit(
     event: React.FormEvent<HTMLFormElement>,
   ) {
@@ -109,12 +125,13 @@ export function SuperAdminHrAccountDialog({
   }
 
   return (
+    <>
     <Dialog
       open
       dismissible={!pending}
       onOpenChange={(open) => {
         if (!open && !pending) {
-          onClose();
+          requestClose();
         }
       }}
       title={
@@ -132,7 +149,7 @@ export function SuperAdminHrAccountDialog({
           <Button className="min-h-11 md:min-h-9"
             variant="secondary"
             disabled={pending}
-            onClick={onClose}
+            onClick={requestClose}
           >
             Cancel
           </Button>
@@ -157,8 +174,8 @@ export function SuperAdminHrAccountDialog({
         onSubmit={submit}
         className="space-y-4"
       >
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">First Name
+        <div className="grid min-w-0 gap-[var(--lms-space-3)]">
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">First name
             <Input className="min-h-11 md:min-h-9" id={`${id}-first-name`} autoComplete="given-name" value={firstName}
               minLength={1} maxLength={100} required disabled={pending}
               aria-invalid={fieldError?.field==="firstName"}
@@ -166,20 +183,20 @@ export function SuperAdminHrAccountDialog({
               onBlur={()=>{if(!firstName.trim())setFieldError({field:"firstName",message:"First name is required"});}}/>
             {fieldError?.field==="firstName"?<span role="alert" className="text-xs text-error">{fieldError.message}</span>:null}
           </label>
-          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Last Name
+          <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Last name
             <Input className="min-h-11 md:min-h-9" id={`${id}-last-name`} autoComplete="family-name" value={lastName}
               maxLength={100} disabled={pending}
               onChange={event=>setLastName(event.target.value)}/>
           </label>
         </div>
 
-        <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
+        <div className="grid min-w-0 gap-[var(--lms-space-3)]">
           <div>
             <label
               htmlFor={`${id}-phone`}
               className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
             >
-              Mobile number
+              Mobile (login)
             </label>
             <Input className="min-h-11 md:min-h-9"
               id={`${id}-phone`}
@@ -188,7 +205,7 @@ export function SuperAdminHrAccountDialog({
               autoComplete="tel"
               value={phoneE164}
               required={creating || Boolean(account?.phoneE164)}
-              maxLength={32}
+              maxLength={16}
               placeholder="+919876543210"
               disabled={pending}
               aria-invalid={fieldError?.field==="phone"}
@@ -196,6 +213,8 @@ export function SuperAdminHrAccountDialog({
               onBlur={()=>{if(creating&&!phoneE164.trim())setFieldError({field:"phone",message:"Mobile is required"});}}
             />
             {fieldError?.field==="phone"?<p role="alert" className="mt-1 text-xs text-error">{fieldError.message}</p>:null}
+            {!creating&&phoneE164!==(account?.phoneE164??"")?<p role="status" className="mt-1 text-xs text-warning-text">Changing the mobile signs the recruiter out everywhere.</p>:null}
+            <p className="mt-1 text-xs text-muted-foreground">Use international format (+ and up to 15 digits); the original legacy 15-character limit cannot hold every E.164 number.</p>
           </div>
 
           <div>
@@ -203,14 +222,14 @@ export function SuperAdminHrAccountDialog({
               htmlFor={`${id}-email`}
               className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
             >
-              Email · optional
+              Email
             </label>
             <Input className="min-h-11 md:min-h-9"
               id={`${id}-email`}
               type="email"
               autoComplete="email"
               value={email}
-              maxLength={320}
+              maxLength={255}
               placeholder="name@company.com"
               disabled={pending}
               aria-invalid={fieldError?.field==="email"}
@@ -253,7 +272,7 @@ export function SuperAdminHrAccountDialog({
               htmlFor={`${id}-relationship`}
               className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
             >
-              Company and first college
+              Company
             </label>
 
             <Select className="min-h-11 md:min-h-9"
@@ -269,7 +288,7 @@ export function SuperAdminHrAccountDialog({
               <option value="">
                 {selectedCollegeId?"Select a company relationship in this college":"Select an active relationship"}
               </option>
-              {[...relationships].sort((a,b)=>Number(b.collegeId===selectedCollegeId)-Number(a.collegeId===selectedCollegeId)).map((relationship) => (
+              {(selectedCollegeId?scopedRelationships:relationships).map((relationship) => (
                 <option
                   key={relationship.companyRelationshipId}
                   value={relationship.companyRelationshipId}
@@ -362,12 +381,12 @@ export function SuperAdminHrAccountDialog({
             htmlFor={`${id}-title`}
             className="mb-[var(--lms-space-2)] block text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]"
           >
-            Designation · optional
+            Designation
           </label>
           <Input className="min-h-11 md:min-h-9"
             id={`${id}-title`}
             value={title}
-            maxLength={160}
+            maxLength={150}
             placeholder="Talent Acquisition Manager"
             disabled={pending}
             onChange={(event) =>
@@ -437,5 +456,11 @@ export function SuperAdminHrAccountDialog({
         ) : null}
       </form>
     </Dialog>
+    <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+      title="Discard recruiter changes?"
+      description="Your unsaved recruiter changes will be lost."
+      confirmLabel="Discard" confirmVariant="danger" cancelLabel="Keep editing"
+      onConfirm={()=>{setDiscardOpen(false);onClose();}}/>
+    </>
   );
 }
