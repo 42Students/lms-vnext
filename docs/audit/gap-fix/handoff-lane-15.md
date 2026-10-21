@@ -317,3 +317,45 @@
 - G2-13-019-006 — src/modules/placements job, application and company read/write projections: Responsibilities, string location and CTC range become legacyPostingDetails, locations text[] and min/max INR.
 - G2-13-019-008 — src/modules/placements job, application and company read/write projections: Legacy four target department/program/batch/class FKs replaced by other eligibility scopes.
 - G2-13-019-009 — src/modules/placements job, application and company read/write projections: postedDate + importantDates case-insensitive application deadline reconciliation differs from publishedAt/deadline and typed JSON.
+
+## Wave2 placements part4 cross-file implementations
+- G2-13-019-010 — placement service/authorized page owner: Legacy nullable season and owner faculty FKs vs mandatory UUID season/optional ownerMembership.
+- G2-13-019-019 — placement service/authorized page owner: POOL drive mode, REGULAR/DREAM/SUPER_DREAM and override reason collapsed into other flags/policies.
+- G2-13-019-025 — placement service/authorized page owner: Legacy screeningVersion v1 invariant not present on placementJobs table.
+- G2-13-019-026 — placement service/authorized page owner: Legacy resultsAutoApply and cancelledAt represented by independent lifecycle/event fields, not same scalar flags.
+- G2-13-019-029 — placement service/authorized page owner: Company logo direct 500-char URL moved into global company/object path branding.
+- G2-13-019-032 — placement service/authorized page owner: Last-saved actor/time legacy fields require equivalent audit projections.
+- G2-13-019-036 — placement service/authorized page owner: Potential assessment URL visibility regression from nested legacyPostingDetails in vNext DTO.
+- G2-13-019-038 — placement service/authorized page owner: Legacy ON_CAMPUS/POOL/OFF_CAMPUS, Regular/Dream/Super Dream wording not direct new labels.
+- G2-13-019-039 — placement service/authorized page owner: Legacy denormalized companyName/logo avoid join; normalized company requires indexed relationship join.
+- G2-13-019-043 — placement service/authorized page owner: MySQL JPA JSON model vs PostgreSQL Drizzle normalized placement job, changed migrations/deployment dependencies.
+- G2-13-019-044 — placement service/authorized page owner: Legacy jdUrl requires storage provider mapping to signed asset APIs.
+- G2-13-019-046 — placement service/authorized page owner: Legacy candidatePreferences keys (skills, graduation year, preferredCity) vs vNext typed subset, possible data loss.
+- G2-13-019-049 — placement service/authorized page owner: POOL and SUPER_DREAM/categoryOverrideReason not direct mapped in job entity.
+- G2-3-031-069 — placement service/authorized page owner: Legacy activeCollegeCount and Status SUSPENDED/DELETED vs vNext grant count and ARCHIVED/DISABLED; explicit status transform.
+- G2-4-015-017 — placement service/authorized page owner: Define cross-college preference duplication and identity mapping.
+- G2-4-015-018 — placement service/authorized page owner: Define preference archive/restoration when membership ends.
+- G2-4-015-041 — placement service/authorized page owner: Backfill legacy null as true, false remains false.
+- G2-4-015-058 — placement service/authorized page owner: Explicitly migrate null to enabled.
+- G2-12-015-004 — placement service/authorized page owner: Restore legacy visual field order in package editor.
+- G2-12-015-007 — placement service/authorized page owner: Default missing legacy package name while resolving same-name collisions.
+- G2-12-015-013 — placement service/authorized page owner: Add stable position ordering and import existing array order.
+- G2-12-015-037 — placement service/authorized page owner: Flag duplicate source roles and resolve losslessly during migration.
+- G2-13-020-009 — placement service/authorized page owner: Enforce legacy max100 and report oversized imported values.
+- G2-13-020-010 — placement service/authorized page owner: Map description→about and 2000 max.
+- G2-13-020-013 — placement service/authorized page owner: Document migrated created-by and legacy provenance separately.
+- G2-13-020-014 — placement service/authorized page owner: Map true/false from timestamp+user, preserve old verifier attribution.
+- G2-13-020-036 — placement service/authorized page owner: Map deleted vs archived state and merged redirects across both layers.
+- G2-13-020-048 — placement service/authorized page owner: Add precise constraints and import violations report.
+- G2-13-030-008 — placement service/authorized page owner: Join scoped learner identity and show same fallback.
+- G2-13-030-010 — placement service/authorized page owner: Map timezone/format, star rating, recommendation and privacy-protected notes.
+- G2-4-023-015 — placement service/authorized page owner: Map verified bool and deleted state without reviving archived/merged records.
+- G2-4-023-070 — placement service/authorized page owner: Use legacy-ID to UUID map and backfill link identities without exposing raw hashes.
+- G2-13-021-008 — placement service/authorized page owner: Map legacy ID to application UUID and keep uniqueness.
+- G2-13-021-015 — placement service/authorized page owner: Keep separate auto status lifecycle if reintroducing scores.
+- G2-13-021-050 — placement service/authorized page owner: Document soft delete and retention policy.
+- G2-5-013-008 — placement service/authorized page owner: Create field crosswalk including null placeholders/currency precision/optional dates
+- G2-5-013-020 — placement service/authorized page owner: Map attachment to offer document record and keep old URL validation behavior
+- G2-5-013-049 — placement service/authorized page owner: Report terminal rejection using screening stage and withdrawal separately
+- G2-5-013-060 — placement service/authorized page owner: Map visibility vs application channel to avoid off-platform leaks
+- G2-5-013-068 — placement service/authorized page owner: Map signed file/document link to normalized offer attachment feature

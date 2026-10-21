@@ -82,6 +82,8 @@ export const placementCompanies = pgTable(
       and (${table.websiteUrl} is null or length(${table.websiteUrl}) <= 500)
       and (${table.logoPublicUrl} is null or length(${table.logoPublicUrl}) <= 500)
       and (${table.industry} is null or length(${table.industry}) <= 100)`),
+    check("placement_companies_legacy_about_ck",sql`
+      ${table.about} is null or length(${table.about})<=2000`),
     check("placement_companies_legacy_deleted_ck",sql`
       ${table.legacyWasDeleted} is distinct from true or ${table.status} = 'ARCHIVED'`),
     index("placement_companies_verified_idx").on(table.verifiedAt),
@@ -566,6 +568,13 @@ export const placementJobs = pgTable(
     legacyIsActive: boolean("legacy_is_active"),
     legacyVisibilityType: varchar("legacy_visibility_type",{length:24}),
     legacyTargeting: jsonb("legacy_targeting").$type<Record<string,unknown>>(),
+    legacyDriveMode: varchar("legacy_drive_mode",{length:24}),
+    legacyJobCategory: varchar("legacy_job_category",{length:24}),
+    legacyCategoryOverrideReason: varchar("legacy_category_override_reason",{length:500}),
+    legacyResultsAutoApply: boolean("legacy_results_auto_apply"),
+    legacyScreeningVersion: integer("legacy_screening_version"),
+    legacyCandidatePreferences: jsonb("legacy_candidate_preferences")
+      .$type<Record<string,unknown>>(),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -668,6 +677,12 @@ export const placementJobs = pgTable(
       .where(sql`${table.legacySlug} is not null`),
     check("placement_jobs_legacy_targeting_ck",sql`
       ${table.legacyTargeting} is null or jsonb_typeof(${table.legacyTargeting}) = 'object'`),
+    check("placement_jobs_legacy_preferences_ck",sql`
+      ${table.legacyCandidatePreferences} is null or
+      jsonb_typeof(${table.legacyCandidatePreferences})='object'`),
+    check("placement_jobs_legacy_category_ck",sql`
+      ${table.legacyCategoryOverrideReason} is null or
+      length(${table.legacyCategoryOverrideReason})<=500`),
     check("placement_jobs_legacy_deleted_ck",sql`
       ${table.legacyWasDeleted} is distinct from true or ${table.status} = 'ARCHIVED'`),
     check("placement_jobs_version_ck", sql`${table.version} > 0`),
@@ -840,6 +855,8 @@ export const placementJobRoleOptions = pgTable(
     index(
       "placement_job_role_options_job_status_idx",
     ).on(table.jobId, table.status),
+    check("placement_job_role_options_legacy_title_ck",sql`
+      length(trim(${table.title})) between 1 and 100`),
     check(
       "placement_job_role_options_status_ck",
       sql`${table.status} in ('ACTIVE', 'ARCHIVED')`,
