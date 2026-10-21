@@ -15,6 +15,22 @@ import {requireOwnLearnerProfileAccess} from "./learner-profile-access-service";
  */
 
 export const LEARNER_PROFILE_SHARE_PAGE_SIZE=25;
+/** Disclosure is keyed to the applicant's *membership* on a shared list.
+ * There is no recipient-email column in the current share schema, and the CSV
+ * event applies to the whole share rather than one learner row. Do not invent
+ * or reveal a recipient address or mislabel aggregate exports as downloads of
+ * this learner's profile.
+ */
+export type LearnerProfileShareDisclosure={
+ shareId:string;
+ company:string;
+ role:string;
+ sharedWithEmail:string|null;
+ sharedAt:Date;
+ downloadedAt:Date|null;
+ recipientRecorded:false;
+ downloadEventScope:"SHARE_NOT_INDIVIDUAL_ROW";
+};
 
 /** Page share records (not raw activity rows) so one heavily accessed link
  * cannot crowd other shares out of the learner's history. Access events are
@@ -88,8 +104,18 @@ export async function getOwnLearnerProfileSharePage(
    eventType:"COMPANY_SHARE_CREATED",
   }];
  });
+ const disclosures:LearnerProfileShareDisclosure[]=shares.map(share=>({
+  shareId:share.shareId,
+  company:share.companyName,
+  role:share.jobTitle,
+  sharedWithEmail:null,
+  sharedAt:share.sharedAt,
+  downloadedAt:events.get(share.shareId+":"+share.collegeId)?.exportedAt??null,
+  recipientRecorded:false,
+  downloadEventScope:"SHARE_NOT_INDIVIDUAL_ROW",
+ }));
  // This is a read-only history. Do not dispatch email or create notifications.
- return {page,pageSize:LEARNER_PROFILE_SHARE_PAGE_SIZE,hasMore,rows};
+ return {page,pageSize:LEARNER_PROFILE_SHARE_PAGE_SIZE,hasMore,rows,disclosures};
 }
 
 /** Backwards-compatible first page for existing learner profile callers. */
