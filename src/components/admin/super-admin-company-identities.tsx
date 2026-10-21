@@ -5,10 +5,14 @@ import {apiFetch} from "@/lib/api-fetch";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {useToast} from "@/components/ui/toast";
+import {companyDomainSchema} from "@/modules/placements/company-curation-domain-model";
+import {displayCompanyAlias} from "@/modules/placements/company-curation-alias-model";
 export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
  companyId:string;name:string;domains:readonly string[];aliases:readonly string[];
 }){
  const router=useRouter();
+ const {showToast}=useToast();
  const [error,setError]=useState("");
  const {pending,run}=useGuardedAction();
  async function mutate(kind:"domains"|"aliases",action:"ADD"|"REMOVE",value:string){
@@ -19,8 +23,19 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
      headers:{"content-type":"application/json"},
      body:JSON.stringify({companyId,action,[kind==="domains"?"domain":"alias"]:value}),
     });
+    showToast({tone:"success",title:kind==="domains"?
+      (action==="ADD"?"Domain added":"Domain removed"):
+      (action==="ADD"?"Name added. The company search finds it now.":"Name removed")});
     router.refresh();
-   }catch(e){setError(e instanceof Error?e.message:"Company identity change failed. Retry.");}
+   }catch(e){
+    const original=e instanceof Error?e.message:"";
+    setError(original.includes("conflicts with another company")||
+     original.includes("registered to another company")
+      ?"This name belongs to another company. Merge them instead.":
+      original.includes("Keep at least one company domain")
+      ?"Keep at least one company domain.":original||
+       "Company identity change failed. Retry.");
+   }
   });
  }
  async function add(event:FormEvent<HTMLFormElement>,kind:"domains"|"aliases"){
@@ -29,7 +44,17 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
   if(!(field instanceof HTMLInputElement))return;
   const value=field.value.trim();
   if(!value)return;
-  await mutate(kind,"ADD",value);
+  if(kind==="domains"){
+   const parsed=companyDomainSchema.safeParse(value);
+   if(!parsed.success){setError("Enter a valid company domain or work email.");return;}
+   await mutate(kind,"ADD",parsed.data);
+  }else{
+   const alias=displayCompanyAlias(value);
+   if(alias.length<2||alias.length>150){
+    setError("An alias needs 2 to 150 characters");return;
+   }
+   await mutate(kind,"ADD",alias);
+  }
  }
  return <section aria-label={"Domains and other names for "+name}
   className="mt-3 space-y-3 border-b border-border pb-5 text-sm print:hidden">
@@ -39,7 +64,7 @@ export function SuperAdminCompanyIdentities({companyId,name,domains,aliases}:{
     <h3 className="font-semibold text-foreground">{kind==="domains"?"Domains":"Other names"}</h3>
     <form className="flex flex-wrap gap-2" onSubmit={e=>void add(e,kind)}>
      <Input name="value" aria-label={kind==="domains"?"Company domain or email":"Company other name"}
-      maxLength={kind==="domains"?253:160} required disabled={pending}
+      maxLength={kind==="domains"?253:150} required disabled={pending}
       placeholder={kind==="domains"?"company.com or name@company.com":"e.g. TCS"}
       className="min-h-11 min-w-0 flex-1 md:min-h-9"/>
      <Button type="submit" loading={pending} disabled={pending}
