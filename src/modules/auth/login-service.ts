@@ -163,6 +163,8 @@ export type AttemptRecord = {
   smsCodeExpiresAt: Date | null;
   emailCodeMac: string | null;
   emailCodeExpiresAt: Date | null;
+  emailCodeSentAt?: Date | null;
+  resendAttempts?: number;
   verificationAttempts: number;
   expiresAt: Date;
   usedAt: Date | null;
@@ -225,6 +227,8 @@ export interface LoginRepository {
     gapSeconds: number,
     maxResends?: number,
   ): Promise<boolean>;
+  /** Only use after an explicit provider rejection, never an ambiguous timeout. */
+  releaseUndeliveredEmailCode?(id:string,mac:string):Promise<void>;
   /** Atomic: increments tries only while < 5, unused and unexpired. */
   reserveVerification(id: string): Promise<boolean>;
   /**
@@ -404,18 +408,20 @@ export async function startLogin(
   }
 
   if (sms && phoneContact && !sms.isTest) {
-    if (!(await deps.sms.sendOtp(phoneContact, sms.code))) {
-      throw new LoginError("OTP_DELIVERY_FAILED");
-    }
+    let accepted=false;
+    try {accepted=await deps.sms.sendOtp(phoneContact,sms.code);}
+    catch {/* Do not leak gateway errors or phone numbers. */}
+    if(!accepted)throw new LoginError("OTP_DELIVERY_FAILED");
   }
   if (mail && emailContact && !mail.isTest) {
-    const accepted = await deps.email.sendOtpEmail({
-      toEmail: emailContact,
-      displayName: user.displayName ?? "there",
-      code: mail.code,
-      phoneE164: user.phoneE164,
-    });
-    if (!accepted) throw new LoginError("OTP_DELIVERY_FAILED");
+    let accepted=false;
+    try{
+      accepted=await deps.email.sendOtpEmail({
+        toEmail:emailContact,displayName:user.displayName??"there",
+        code:mail.code,phoneE164:user.phoneE164,
+      });
+    }catch{/* Gateway may have accepted the send; enforce normal cooldown. */}
+    if(!accepted)throw new LoginError("OTP_DELIVERY_FAILED");
   }
 
   return {
@@ -475,24 +481,39 @@ export async function sendEmailFallback(
       ? deps.config.testOtp
       : generateCode();
 
+  const emailMac=codeMac(deps.config.secret,"email",attempt.id,code);
   const stored = await deps.repository.setEmailCode(
-    attempt.id,
-    codeMac(deps.config.secret, "email", attempt.id, code),
-    EMAIL_RESEND_GAP_SECONDS,
-    MAX_EMAIL_RESENDS,
+    attempt.id,emailMac,EMAIL_RESEND_GAP_SECONDS,MAX_EMAIL_RESENDS,
   );
   if (!stored) {
-    throw new LoginError("TOO_SOON", EMAIL_RESEND_GAP_SECONDS);
+    const latest=await deps.repository.loadAttempt(attempt.id);
+    if((latest?.resendAttempts??0)>=MAX_EMAIL_RESENDS){
+      throw new LoginError("TOO_MANY_REQUESTS",SEND_WINDOW_MINUTES*60);
+    }
+    const remaining=latest?.emailCodeSentAt
+      ?Math.max(1,Math.ceil((latest!.emailCodeSentAt!.getTime()
+        +EMAIL_RESEND_GAP_SECONDS*1000-(latest?.dbNow??deps.now()).getTime())/1000))
+      :EMAIL_RESEND_GAP_SECONDS;
+    throw new LoginError("TOO_SOON",Math.min(EMAIL_RESEND_GAP_SECONDS,remaining));
   }
 
   if (!isTestContact) {
-    const accepted = await deps.email.sendOtpEmail({
-      toEmail: user.email,
-      displayName: user.displayName ?? "there",
-      code,
-      phoneE164: user.phoneE164,
-    });
-    if (!accepted) throw new LoginError("OTP_DELIVERY_FAILED");
+    let accepted:boolean;
+    try {
+      accepted=await deps.email.sendOtpEmail({
+        toEmail:user.email,displayName:user.displayName??"there",
+        code,phoneE164:user.phoneE164,
+      });
+    } catch {
+      // The provider may have accepted a timed-out send: do not release it
+      // for an immediate duplicate. Retry only after the cooldown.
+      throw new LoginError("OTP_DELIVERY_FAILED");
+    }
+    if(!accepted){
+      try{await deps.repository.releaseUndeliveredEmailCode?.(attempt.id,emailMac);}
+      catch{/* Fail closed: remaining code expires normally. */}
+      throw new LoginError("OTP_DELIVERY_FAILED");
+    }
   }
 
   // A fallback cannot outlive its parent challenge: report the real remaining
@@ -639,7 +660,12 @@ export async function verifyLogin(
   );
   if (!consumed) throw new LoginError("INVALID_ATTEMPT");
 
-  const memberships = await deps.repository.listMemberships(user.id);
+  // A user may hold several role and college memberships. Preserve the
+  // separate selected-college actor while keeping the chooser order stable.
+  const memberships = [...(await deps.repository.listMemberships(user.id))].sort((a,b)=>
+    (a.status==="ACTIVE"?0:a.status==="SUSPENDED"?1:2)-
+    (b.status==="ACTIVE"?0:b.status==="SUSPENDED"?1:2)||
+    a.collegeId.localeCompare(b.collegeId)||a.id.localeCompare(b.id));
   const tenantMembership = input.tenantCollegeId
     ? memberships.find(
         (membership) =>

@@ -216,6 +216,8 @@ export const drizzleLoginRepository: LoginRepository = {
         smsCodeExpiresAt: identityAuthAttempts.smsCodeExpiresAt,
         emailCodeMac: identityAuthAttempts.emailCodeMac,
         emailCodeExpiresAt: identityAuthAttempts.emailCodeExpiresAt,
+        emailCodeSentAt: identityAuthAttempts.emailCodeSentAt,
+        resendAttempts: identityAuthAttempts.resendAttempts,
         verificationAttempts:
           identityAuthAttempts.verificationAttempts,
         expiresAt: identityAuthAttempts.expiresAt,
@@ -246,6 +248,19 @@ export const drizzleLoginRepository: LoginRepository = {
       RETURNING id
     `);
     return rowsOf(result).length === 1;
+  },
+
+  async releaseUndeliveredEmailCode(id, mac) {
+    await getDb().execute(sql`
+      UPDATE identity_auth_attempts
+      SET email_code_mac = NULL,
+          email_code_expires_at = NULL,
+          email_code_sent_at = NULL,
+          resend_attempts = greatest(0,resend_attempts-1),
+          version = version + 1
+      WHERE id = ${id} AND email_code_mac = ${mac}
+        AND used_at IS NULL AND expires_at > now()
+    `);
   },
 
   async reserveVerification(id) {
