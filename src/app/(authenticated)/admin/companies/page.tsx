@@ -31,7 +31,7 @@ export default async function SuperAdminCompaniesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
-      action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 underline-offset-4">Clear filters</Link>} />
+      action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, availableColleges] = await Promise.all([
