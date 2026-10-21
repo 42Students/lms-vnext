@@ -33,6 +33,11 @@ import {
 
 type Submission = FacultySubmissionReviewRow;
 const SUBMISSION_FILTERS = ["ALL","UNGRADED","GRADED","LATE"] as const;
+/** Old rows may have a numeric score without a populated gradingStatus. */
+function isSubmissionGraded(row:Submission){
+ return row.gradingStatus==="GRADED"||
+  (typeof row.pointsAwarded==="number"&&Number.isFinite(row.pointsAwarded)&&row.pointsAwarded>=0);
+}
 
 function learnerLabel(
   submission: Submission,
@@ -62,6 +67,7 @@ function SubmissionGradeCard({
   maxPoints,
   onUpdated,
   onRefresh,
+  onBusyChange,
   filesEnabled,
 }: {
   submission: Submission;
@@ -69,6 +75,7 @@ function SubmissionGradeCard({
   filesEnabled: boolean;
   onUpdated: (submission: Submission) => void;
   onRefresh: () => void;
+  onBusyChange: (busy:boolean) => void;
 }) {
   const content = facultySubmissionContentView({
     id:submission.id,submissionType:submission.submissionType,
@@ -76,7 +83,7 @@ function SubmissionGradeCard({
   },filesEnabled);
   const actions =
     assignmentSubmissionActions({
-      gradingStatus:submission.gradingStatus,gradePublished:submission.gradePublished,
+      gradingStatus:isSubmissionGraded(submission)?"GRADED":"NOT_GRADED",gradePublished:submission.gradePublished,
     });
   const [points, setPoints] = useState(
     submission.pointsAwarded?.toString() ??
@@ -105,11 +112,11 @@ function SubmissionGradeCard({
     setError(null);
     setSuccess(null);setNeedsRefresh(false);
 
+    if(!submission.id){setError("Could not resolve this submission");return;}
+    if(!points.trim()){setError("Enter a score before submitting");return;}
     const parsed = draftState.points;
     if (parsed === null) {
-      setError(
-        `Enter whole-number points between 0 and ${maxPoints}.`,
-      );
+      setError(`Enter whole-number points between 0 and ${maxPoints}.`);
       return;
     }
 
@@ -126,7 +133,7 @@ function SubmissionGradeCard({
 
   async function saveGradeConfirmed(parsed: number) {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setSaving(true);
+    setSaving(true);onBusyChange(true);
     try {
       const response = await fetch(
         `/api/courses/assignment-submissions/${submission.id}/grade`,
@@ -157,7 +164,7 @@ function SubmissionGradeCard({
       const saved = facultyManualGradeReceipt(await response.json(),submission,"GRADE",maxPoints,{
         points:parsed,feedback:feedback.trim()||null,
       });
-      setSuccess(facultyManualGradeSuccessMessage("GRADE",saved.version));
+      setSuccess("Grade saved privately. Learner cannot see the score until published.");
       onUpdated({
         ...submission,
         ...saved,
@@ -167,9 +174,9 @@ function SubmissionGradeCard({
           submission.learnerEmail,
       });
     } catch {
-      setError(facultyManualGradeUncertainMessage("GRADE"));
+      setError("Failed to submit grade. "+facultyManualGradeUncertainMessage("GRADE"));
     } finally {
-      operationInFlight.current=false;
+      operationInFlight.current=false;onBusyChange(false);
       setSaving(false);
       setConfirmAction(null);
     }
@@ -179,6 +186,8 @@ function SubmissionGradeCard({
   async function saveAndPublish(){
     setError(null);setSuccess(null);setNeedsRefresh(false);
     const parsed=draftState.points;
+    if(!submission.id){setError("Could not resolve this submission");return;}
+    if(!points.trim()){setError("Enter a score before submitting");return;}
     if(parsed===null){
       setError("Enter whole-number points between 0 and "+maxPoints+".");
       return;
@@ -192,7 +201,7 @@ function SubmissionGradeCard({
 
   async function saveAndPublishConfirmed(parsed: number) {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setSaving(true);
+    setSaving(true);onBusyChange(true);
     try{
       const changed=await fetch(
         "/api/courses/assignment-submissions/"+encodeURIComponent(submission.id)+"/grade",{
@@ -223,13 +232,13 @@ function SubmissionGradeCard({
       const published=facultyManualGradeReceipt(await released.json(),current,"PUBLISH",maxPoints,{
         points:parsed,feedback:feedback.trim()||null,
       });
-      setSuccess("Grade saved and published to the learner.");
+      setSuccess("Grade submitted. The learner can now see the score.");
       onUpdated({...current,...published});
     }catch{
       setNeedsRefresh(true);
       setError("The grade or publication outcome is uncertain. Reload before retrying.");
     }finally{
-      operationInFlight.current=false;setSaving(false);setConfirmAction(null);
+      operationInFlight.current=false;onBusyChange(false);setSaving(false);setConfirmAction(null);
     }
   }
 
@@ -245,7 +254,7 @@ function SubmissionGradeCard({
 
   async function publishGradeConfirmed() {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setPublishing(true);
+    setPublishing(true);onBusyChange(true);
 
     try {
       const response = await fetch(
@@ -284,9 +293,9 @@ function SubmissionGradeCard({
           submission.learnerEmail,
       });
     } catch {
-      setError(facultyManualGradeUncertainMessage("PUBLISH"));
+      setError("Failed to submit grade. "+facultyManualGradeUncertainMessage("PUBLISH"));
     } finally {
-      operationInFlight.current=false;
+      operationInFlight.current=false;onBusyChange(false);
       setPublishing(false);
       setConfirmAction(null);
     }
@@ -296,7 +305,7 @@ function SubmissionGradeCard({
   async function hidePublishedGrade(){
     if(!submission.gradePublished||submission.pointsAwarded===null)return;
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setSaving(true);setError(null);setSuccess(null);setNeedsRefresh(false);
+    setSaving(true);onBusyChange(true);setError(null);setSuccess(null);setNeedsRefresh(false);
     try{
       const response=await fetch(
         "/api/courses/assignment-submissions/"+encodeURIComponent(submission.id)+"/grade",{
@@ -322,7 +331,7 @@ function SubmissionGradeCard({
       setNeedsRefresh(true);
       setError("The grade visibility outcome is uncertain. Reload before retrying.");
     }finally{
-      operationInFlight.current=false;
+      operationInFlight.current=false;onBusyChange(false);
       setSaving(false);setConfirmAction(null);
     }
   }
@@ -350,15 +359,14 @@ function SubmissionGradeCard({
           tone={
             submission.gradePublished
               ? "success"
-              : submission.gradingStatus ===
-                  "GRADED"
+              : isSubmissionGraded(submission)
                 ? "warning"
                 : "neutral"
           }
         >
           {submission.gradePublished
             ? "Graded: "+(submission.pointsAwarded??0)+" pts"
-            : submission.gradingStatus==="GRADED"
+            : isSubmissionGraded(submission)
               ? "Graded: "+(submission.pointsAwarded??0)+" pts · not published"
               : "Grade pending"}
         </StatusBadge>
@@ -404,7 +412,6 @@ function SubmissionGradeCard({
             onChange={(event) =>
               setPoints(event.target.value)
             }
-            required
           />
           <span className="mt-1 block text-xs font-normal text-muted-foreground">Max is {maxPoints}</span>
         </label>
@@ -434,7 +441,7 @@ function SubmissionGradeCard({
             <Button size="md" type="button" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||draftState.points===null}
               onClick={()=>void saveAndPublish()}>
-              {saving?"Submitting…":submission.gradingStatus==="GRADED"?"Edit grade":"Submit grade"}
+              {saving?"Submitting…":isSubmissionGraded(submission)?"Edit grade":"Submit grade"}
             </Button>
           ):null}
           {actions.canGrade ? (
@@ -546,6 +553,46 @@ export function FacultyAssignmentReview({
   const [pagination,setPagination] = useState<FacultySubmissionReviewResponse|null>(null);
   const loadSequence = useRef(0);
   const [selectedSubmissionId,setSelectedSubmissionId]=useState<string|null>(null);
+  const [mutationBusy,setMutationBusy]=useState(false);
+  const mutationInFlight=useRef(false);
+  const onBusyChange=(busy:boolean)=>{mutationInFlight.current=busy;setMutationBusy(busy);};
+  const [bulkBusy,setBulkBusy]=useState(false);
+  const [bulkConfirm,setBulkConfirm]=useState(false);
+  const [bulkOnlyFailed,setBulkOnlyFailed]=useState(false);
+  const [bulkFailedIds,setBulkFailedIds]=useState<string[]>([]);
+  const [bulkReceipt,setBulkReceipt]=useState("");
+  const [bulkWarning,setBulkWarning]=useState(false);
+  async function publishGradedBatch(){
+   if(bulkBusy||mutationInFlight.current)return;
+   setBulkBusy(true);setBulkReceipt("");setBulkWarning(false);
+   try{
+    const result=await fetch("/api/courses/assignments/"+encodeURIComponent(assignmentId)+"/publish-grades",{
+     method:"POST",headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({requestId:crypto.randomUUID(),deliveryId,
+      ...(bulkOnlyFailed&&bulkFailedIds.length?{submissionIds:bulkFailedIds}:{}),
+     }),
+    });
+    if(!result.ok)throw Error(await courseApiError(result));
+    const body:unknown=await result.json();
+    if(!body||typeof body!=="object"||
+       !("published" in body)||typeof body.published!=="number"||
+       !("remaining" in body)||typeof body.remaining!=="number"||
+       !("failed" in body)||typeof body.failed!=="number"||
+       !("failedIds" in body)||!Array.isArray(body.failedIds))
+     throw Error("Publication result could not be verified. Refresh before retrying.");
+    const failed=body.failedIds.filter((id):id is string=>typeof id==="string");
+    setBulkFailedIds(failed);
+    setBulkReceipt(body.published+" grade(s) published; "+body.failed+" failed. "+
+     (body.remaining?"Remaining graded submissions: "+body.remaining+".":"All graded submissions in this Section are published.")+
+     " Ungraded and already published work is skipped.");
+    setBulkWarning(body.remaining>0||body.failed>0);
+    void load();router.refresh();
+   }catch(reason){
+    setBulkWarning(true);
+    setBulkReceipt("Failed to publish grades. "+(reason instanceof Error?reason.message:"Refresh and retry."));
+   }finally{setBulkBusy(false);setBulkConfirm(false);}
+  }
+
 
   const ReviewOverlay=reviewScope==="COLLEGE"?Dialog:Drawer;
   if(status==="ARCHIVED")return null;
@@ -561,7 +608,9 @@ export function FacultyAssignmentReview({
 
   async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
     const sequence = ++loadSequence.current;
-    setOpen(true);setError(null);setLoading(true);setSubmissions(null);setPagination(null);
+    setOpen(true);setError(null);setLoading(true);
+    // Preserve the last successful page when an in-place refresh fails.
+    if(next.filter!==filter||next.page!==page){setSubmissions(null);setPagination(null);}
     setFilter(next.filter);
     try {
       const facultyUrl=facultySubmissionReviewApiHref({
@@ -581,8 +630,9 @@ export function FacultyAssignmentReview({
       setSubmissions(payload.items);setPagination(payload);setPage(payload.page);
       setSelectedSubmissionId(current=>payload.items.some(item=>item.id===current)?current:payload.items[0]?.id??null);
     } catch (caught) {
-      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setError(caught instanceof Error ? caught.message :
-        "Could not load Assignment submissions. Check your connection and try again.");
+      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setError(
+       "Failed to load submissions. "+(caught instanceof Error?caught.message:"Check your connection and try again.")+
+       (submissions?.length?" Showing the last loaded submissions.":""));
     } finally {
       if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setLoading(false);
     }
@@ -600,6 +650,7 @@ export function FacultyAssignmentReview({
         className={reviewScope==="COLLEGE"?"max-w-[760px]":undefined}
         open={open}
         onOpenChange={(nextOpen)=>{
+          if(!nextOpen&&mutationInFlight.current)return;
           if(!nextOpen){loadSequence.current+=1;setLoading(false);}
           setOpen(nextOpen);
         }}
@@ -612,23 +663,32 @@ export function FacultyAssignmentReview({
             size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
-            disabled={loading}
+            disabled={loading||mutationBusy||bulkBusy}
             onClick={()=>void load()}
           >
             Refresh
           </Button>
         </div>
 
+      {reviewScope==="COLLEGE"&&status==="PUBLISHED"?<div className="space-y-2">
+       <Button type="button" variant="secondary" disabled={bulkBusy||mutationBusy}
+        onClick={()=>{setBulkOnlyFailed(false);setBulkConfirm(true);}}>
+        {bulkBusy?"Publishing…":"Publish graded submissions"}
+       </Button>
+       {bulkReceipt?<Alert tone={bulkWarning?"warning":"success"} role="status">{bulkReceipt}</Alert>:null}
+       {bulkFailedIds.length&&!bulkBusy?<Button type="button" variant="secondary"
+        onClick={()=>{setBulkOnlyFailed(true);setBulkConfirm(true);}}>Retry failed publications</Button>:null}
+      </div>:null}
       <Tabs
         ariaLabel="Submission grading filters"
         value={filter}
         renderPanel={false}
         controlledOnly
-        onValueChange={value => void load({filter:value as FacultySubmissionFilter,page:1})}
+        onValueChange={value => {if(!mutationInFlight.current&&!bulkBusy)void load({filter:value as FacultySubmissionFilter,page:1});}}
         items={SUBMISSION_FILTERS.map(value => ({
           value,
           label: value==="ALL"?"All":value==="UNGRADED"?"Pending":value==="GRADED"?"Graded":"Late",
-          disabled: loading,
+          disabled: loading||mutationBusy||bulkBusy,
         }))}
       />
       {pagination ? <p role="status" className="text-xs text-muted-foreground">
@@ -638,7 +698,8 @@ export function FacultyAssignmentReview({
       {loading ? <LoadingState label="Loading submissions…" /> : null}
 
       {error ? (
-        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
+        <div className="space-y-2"><Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
+         <Button type="button" variant="secondary" disabled={mutationBusy||bulkBusy} onClick={()=>void load()}>Retry</Button></div>
       ) : null}
 
       {!loading && submissions && submissions.length === 0 ? (
@@ -648,17 +709,18 @@ export function FacultyAssignmentReview({
       {!loading && submissions && submissions.length>0 ? (
         <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex md:flex-wrap">
           <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-[13px] font-semibold leading-4 md:min-w-48 text-[var(--lms-neutral-400)]">
-            Students ({submissions.filter(item=>item.gradingStatus==="GRADED").length}/{submissions.length} graded on this page)
+            Students ({submissions.filter(isSubmissionGraded).length}/{submissions.length} graded on this page)
             <Select className="min-h-11 text-[var(--lms-font-base)] md:min-h-[var(--lms-control-height)] md:text-sm"
               value={selectedSubmissionId??submissions[0].id}
-              onChange={event=>setSelectedSubmissionId(event.target.value)}>
+              disabled={mutationBusy||bulkBusy}
+              onChange={event=>{if(!mutationInFlight.current)setSelectedSubmissionId(event.target.value);}}>
               {submissions.map(item=><option key={item.id} value={item.id}>
-                {learnerLabel(item)} · {item.gradingStatus==="GRADED"?"Graded":"Pending"}
+                {learnerLabel(item)} · {isSubmissionGraded(item)?"Graded":"Pending"}
               </option>)}
             </Select>
           </label>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
-            disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
+            disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
             Previous student
           </Button>
@@ -666,7 +728,7 @@ export function FacultyAssignmentReview({
             {Math.max(1,submissions.findIndex(item=>item.id===selectedSubmissionId)+1)} / {submissions.length}
           </span>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
-            disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
+            disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
             Next student
           </Button>
@@ -682,7 +744,8 @@ export function FacultyAssignmentReview({
                 submission={submission}
                 maxPoints={maxPoints}
                 filesEnabled={filesEnabled}
-                onRefresh={() => { void load(); }}
+                onRefresh={() => { if(!mutationInFlight.current)void load(); }}
+                onBusyChange={onBusyChange}
                 onUpdated={() => {
                   // Re-query filters/counts so a newly graded row leaves Needs grading.
                   void load();router.refresh();
@@ -693,13 +756,18 @@ export function FacultyAssignmentReview({
         </div>
       ) : null}
       {pagination ? <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
-        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page<=1}
+        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||mutationBusy||bulkBusy||pagination.page<=1}
           onClick={()=>void load({filter,page:pagination.page-1})}>Previous</Button>
-        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page>=pagination.totalPages}
+        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||mutationBusy||bulkBusy||pagination.page>=pagination.totalPages}
           onClick={()=>void load({filter,page:pagination.page+1})}>Next</Button>
       </nav> : null}
       </div>
       </ReviewOverlay>
+      <ConfirmDialog open={bulkConfirm} onOpenChange={open=>{if(!bulkBusy)setBulkConfirm(open);}}
+       title="Publish graded submissions?" pending={bulkBusy}
+       description="Only graded unpublished submissions in this Section will be released to learners. Confirm to continue; failed rows can be retried."
+       confirmLabel={bulkOnlyFailed?"Retry failed grades":"Publish grades"}
+       onConfirm={()=>void publishGradedBatch()}/>
     </>
   );
 }
