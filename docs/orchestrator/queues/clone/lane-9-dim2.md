@@ -124,7 +124,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
 - [x] `src/components/electives/college-elective-offering-manager.tsx`
 - [x] `src/components/electives/college-slot-manager.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
 - [ ] `src/components/groups/college-study-member-actions.tsx`
 - [ ] `src/components/hr/hr-drive-draft-form.tsx`
 - [ ] `src/components/hr/hr-recruiter-bell.tsx`
