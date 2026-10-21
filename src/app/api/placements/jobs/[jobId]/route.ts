@@ -7,6 +7,7 @@ import {
   getPlacementJob,
   updatePlacementJob,
 } from "@/modules/placements/job-service";
+import {updatePlacementJobInputSchema} from "@/modules/placements/validation";
 
 export const runtime = "nodejs";
 
@@ -100,7 +101,8 @@ export async function PUT(request:Request,{params}:RouteContext){
   return NextResponse.json({error:"EMPTY_BODY"},{status:400});
  try{
   const {jobId}=await params;
-  const job=await updatePlacementJob(await getCurrentRequestContext(),jobId,next);
+  const validated=updatePlacementJobInputSchema.parse(next);
+  const job=await updatePlacementJob(await getCurrentRequestContext(),jobId,validated);
   return NextResponse.json({job},{
    headers:{"Cache-Control":"private, no-store","Deprecation":"true"},
   });
