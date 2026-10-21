@@ -52,17 +52,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/courses/learner-course-list.tsx`
 - [x] `src/components/hr/recruiter-profile-access.tsx`
 - [x] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
+- [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
 - [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/project-admin-workspace-list.tsx`
-- [ ] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
-- [ ] `src/components/ui/skeleton.tsx`
-- [ ] `src/components/tpo/tpo-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-team-decision-toggle.tsx`
-- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
-- [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/project-admin-workspace-list.tsx`
+- [x] `src/components/tpo/recruiter-invite-landing.tsx`
+- [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
+- [x] `src/components/ui/skeleton.tsx`
+- [x] `src/components/tpo/tpo-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-team-decision-toggle.tsx`
+- [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
+- [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
 - [ ] `src/components/ui/toast.tsx`
 - [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`

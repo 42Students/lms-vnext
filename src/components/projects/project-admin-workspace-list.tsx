@@ -116,14 +116,14 @@ export function ProjectAdminWorkspaceList({
             <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">{item.title}</Link>
             <StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>
           </div>
-          <p className="mt-1 break-words text-sm text-body">{item.summary ?? "Project workspace."}</p>
-          <p className="mt-2 break-words text-xs text-muted-foreground">{item.templateTitle ? "Template: "+item.templateTitle : "No template — attach one"}</p>
+          <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.summary ?? "Project workspace."}</p>
+          <p className="mt-2 break-words text-xs text-muted-foreground leading-[20px]">{item.templateTitle ? "Template: "+item.templateTitle : "No template — attach one"}</p>
           <dl className="mt-2 grid min-w-0 gap-x-4 gap-y-2 text-xs md:grid-cols-3">
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Mentor</dt><dd className="break-words text-foreground">{item.mentorName??"Unassigned"}</dd></div>
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Members</dt><dd className="text-foreground">{item.memberCount}</dd></div>
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Progress</dt><dd className="text-foreground">{safeProjectProgressPercent(item.progressPercent)===null?"Unavailable":safeProjectProgressPercent(item.progressPercent)+"%"}</dd></div>
           </dl>
-          <p className="mt-2 text-xs text-muted-foreground">Updated {formatProjectAdminUpdatedDateIst(item.updatedAt)}</p>
+          <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Updated {formatProjectAdminUpdatedDateIst(item.updatedAt)}</p>
         </div>
         <div className="flex min-w-0 flex-wrap items-center gap-2 min-[768px]:justify-end">
           <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Open workspace</Link>
@@ -141,10 +141,10 @@ export function ProjectAdminWorkspaceList({
         >
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
-              <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text">
+              <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text leading-[20px]">
                 {item.templateTitle ? "Template: " + item.templateTitle : "No template — attach one"}
               </p>
-              <h2 className="mt-2 line-clamp-2 text-lg font-semibold text-foreground">
+              <h2 className="mt-2 line-clamp-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
                 <Link href={basePath+"/"+encodeURIComponent(item.id)}
                   className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
                   {item.title}
@@ -158,7 +158,7 @@ export function ProjectAdminWorkspaceList({
             </StatusBadge>
           </div>
 
-          <p className="mt-3 line-clamp-2 text-sm leading-6 text-body">
+          <p className="mt-3 line-clamp-2 text-sm text-body leading-[22px]">
             {item.summary ??
               "Project workspace."}
           </p>
@@ -187,7 +187,7 @@ export function ProjectAdminWorkspaceList({
             />
           </div>
 
-          <p className="mb-0 mt-3 text-xs text-muted-foreground">
+          <p className="mb-0 mt-3 text-xs text-muted-foreground leading-[20px]">
             Updated{" "}
             {formatProjectAdminUpdatedDateIst(item.updatedAt)}
           </p>

@@ -84,9 +84,9 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
    <div><Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
     className="text-sm font-semibold text-link underline focus-visible:underline">Back to project</Link>
     <PageHeader title="Task Allocation" />
-    <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} matching tasks</p>
-    <p className="mt-1 text-xs text-muted-foreground">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
-    {previousAssignees.length>0?<p role="status" className="mt-1 text-xs text-warning-text">
+    <p className="mt-1 text-sm text-body leading-[22px]">{unassigned} needs assigning · {filtered.length} matching tasks</p>
+    <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
+    {previousAssignees.length>0?<p role="status" className="mt-1 text-xs text-warning-text leading-[20px]">
       {previousAssignees.length} former assignee(s) have tasks that need review.
     </p>:null}
    </div>
@@ -158,14 +158,14 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
     ["release","sprint","priority","status","assignment"].forEach(key=>remember(key,""));
    }} className="min-h-11">Clear all</Button>
   </div>:null}
-  {activeFilterCount>0?<p role="status" className="text-xs text-body">
+  {activeFilterCount>0?<p role="status" className="text-xs text-body leading-[20px]">
     {activeFilterCount} active {activeFilterCount===1?"filter":"filters"} ·
     {" "}{filtered.length} matching {filtered.length===1?"task":"tasks"}
   </p>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {notice?<Alert tone="success">{notice}</Alert>:null}
   <section className="rounded-xl border border-border p-3" aria-labelledby="mentor-allocation-workload">
-    <h2 id="mentor-allocation-workload" className="mb-2 text-sm font-semibold">Workload by learner</h2>
+    <h2 id="mentor-allocation-workload" className="mb-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Workload by learner</h2>
     <DataTable
       caption="Workload by learner"
       rows={groups.map(group=>{
@@ -192,7 +192,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       empty={<EmptyState title="No learners to summarize" description="No learners to summarize yet." />}
     />
   </section>
-  {filtered.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body">
+  {filtered.length===0?<p role="status" className="rounded-[var(--lms-control-radius)] border border-border p-4 text-sm text-body leading-[22px]">
     {tasks.length===0?"No tasks to allocate yet.":"No tasks match these filters. Use Clear all to see every task."}
   </p>:null}
   <div role="region" aria-label="Task allocation cards; scroll sideways for more learners" tabIndex={0} data-dragging={dragging}
@@ -205,7 +205,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       onDragOver={e=>e.preventDefault()} onDrop={e=>drop(e,group.membershipId)}>
      <h2 className={styles.header}>
       <span>{group.displayName??"Learner"}</span><span>{cards.length}</span></h2>
-     <p className="mt-1 text-xs text-muted-foreground">
+     <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
       {cards.filter(task=>task.status==="DONE").length} done ·
       {" "}{cards.filter(task=>task.status==="BLOCKED").length} blocked ·
       {" "}{cards.reduce((sum,task)=>sum+(task.estimatePoints??0),0)} pts
@@ -216,18 +216,18 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
         onDragEnd={()=>setDragging(false)}
        className={"border p-3 text-sm "+styles.card}>
        <p className="break-words font-semibold">{task.title}</p>
-       <p className="mt-1 text-xs text-body">{task.priority} · {task.status}</p>
-       <p className="mt-1 text-xs text-body">
+       <p className="mt-1 text-xs text-body leading-[20px]">{task.priority} · {task.status}</p>
+       <p className="mt-1 text-xs text-body leading-[20px]">
          {task.estimatePoints===null?"Unsized":task.estimatePoints+" points"}
        </p>
-       {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:
-         <p className="mt-1 text-xs text-body">Sprint: {
+       {task.sprintId===null?<p className="mt-1 text-xs font-semibold text-warning-text leading-[20px]">Product backlog{task.carriedFromSprintId?" · Carried over":""}</p>:
+         <p className="mt-1 text-xs text-body leading-[20px]">Sprint: {
            sprints.find(item=>item.id===task.sprintId)?.title??"Unknown sprint"
          }</p>}
        {group.membershipId===null&&task.status!=="DONE"&&task.status!=="IN_REVIEW"?
-         <p className="mt-1 text-xs font-semibold text-warning-text">Needs assigning</p>:null}
+         <p className="mt-1 text-xs font-semibold text-warning-text leading-[20px]">Needs assigning</p>:null}
        {group.membershipId!==null&&!activeMemberIds.has(group.membershipId)?
-         <p className="mt-1 text-xs font-semibold text-warning-text">
+         <p className="mt-1 text-xs font-semibold text-warning-text leading-[20px]">
            Reassign from former member
          </p>:null}
        {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assign to

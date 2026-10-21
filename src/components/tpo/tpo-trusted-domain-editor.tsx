@@ -34,8 +34,8 @@ export function TpoTrustedDomainEditor({domains}:{domains:readonly string[]}){
   finally{setBusy(false);}
  }
  return <section aria-label="Manage trusted email domains" className="min-w-0 space-y-3 border-t border-border pt-4">
-  <h2 className="text-lg font-semibold">Explicit trusted email domains</h2>
-  <p className="text-xs text-muted-foreground">Free-mail addresses cannot be trusted. Trust never replaces verification or recruiter access checks.</p>
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Explicit trusted email domains</h2>
+  <p className="text-xs text-muted-foreground leading-[20px]">Free-mail addresses cannot be trusted. Trust never replaces verification or recruiter access checks.</p>
   <div className="grid min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_minmax(0,12rem)] sm:items-end">
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Domain
    <Input value={domain} onChange={event=>{setDomain(event.target.value);setStatus("");}} maxLength={253} placeholder="company.example"
