@@ -296,7 +296,7 @@ export function LearnerAssessmentOverview({
             ) : <p className="mt-2 text-xs font-normal">No quizzes submitted yet.</p>}
           </Disclosure>
         </section>
-      ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div className={styles.metricGrid} aria-label="Assessment totals">
+      ) : (<Disclosure title="Assessment totals" className="border-b border-border" contentClassName="pb-4"><div role="group" className={styles.metricGrid} aria-label="Assessment totals">
         <StatTile className={styles.tile}
           label={
             kind === "ASSIGNMENT"
@@ -422,7 +422,7 @@ export function LearnerAssessmentOverview({
       ) : (
         <>
         {kind==="QUIZ" ? (
-          <div className="space-y-3" aria-label="Quiz list">
+          <div role="region" className="space-y-3" aria-label="Quiz list">
             {paged.filter((item): item is LearnerQuizOverviewItem=>item.kind==="QUIZ").map(item=>{
               const state=quizOverviewActionState(item,currentNowMs);
               const grade=item.attemptsUsed===0?"-":!item.resultsPublished?"Not released":
@@ -469,7 +469,7 @@ export function LearnerAssessmentOverview({
           </div>
         ) : null}
         {kind==="ASSIGNMENT" ? (
-        <div className="space-y-3" aria-label="Assignment list">
+        <div role="region" className="space-y-3" aria-label="Assignment list">
           {paged.map((item) => {
             const state =
               item.kind === "ASSIGNMENT"
