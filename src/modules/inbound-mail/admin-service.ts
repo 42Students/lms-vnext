@@ -8,6 +8,7 @@ import {z} from "zod";
 import {inboundMailMessagesStaged} from "./staged-schema";
 import {inboundMailStatusTransitionAllowed} from "./triage-transition-model";
 import {safeInboundPreview} from "./message-model";
+import {activityEvents} from "@/db/schema";
 
 export type InboundMailItem={
  id:string;receivedAt:Date;fromAddress:string;toAddress:string;
@@ -89,14 +90,27 @@ export async function changeInboundMailStatusForAdmin(
   throw new Error("Unsupported inbound mail transition");
  if(!await drizzleInboundMailAdminRepository.tableExists())
   return {kind:"UNAVAILABLE" as const};
- const [updated]=await getDb().update(inboundMailMessagesStaged)
-  .set({status:input.status,version:sql`${inboundMailMessagesStaged.version}+1`})
-  .where(and(eq(inboundMailMessagesStaged.id,input.id),
-   eq(inboundMailMessagesStaged.status,input.expectedStatus),
-   eq(inboundMailMessagesStaged.version,input.expectedVersion)))
-  .returning({id:inboundMailMessagesStaged.id,status:inboundMailMessagesStaged.status,
-   version:inboundMailMessagesStaged.version});
- return updated?{kind:"UPDATED" as const,...updated}:{kind:"STALE" as const};
+ return getDb().transaction(async tx=>{
+  const [updated]=await tx.update(inboundMailMessagesStaged)
+   .set({status:input.status,version:sql`${inboundMailMessagesStaged.version}+1`})
+   .where(and(eq(inboundMailMessagesStaged.id,input.id),
+    eq(inboundMailMessagesStaged.status,input.expectedStatus),
+    eq(inboundMailMessagesStaged.version,input.expectedVersion)))
+   .returning({id:inboundMailMessagesStaged.id,status:inboundMailMessagesStaged.status,
+    version:inboundMailMessagesStaged.version});
+  if(!updated)return {kind:"STALE" as const};
+  // An immutable actor event survives triage/reopen even though the present
+  // inbox schema has no handled_at/by columns. The activity insert and status
+  // change commit atomically, so neither can exist without the other.
+  await tx.insert(activityEvents).values({
+   actorUserId:context.user.id,module:"PLATFORM",
+   eventType:"platform.inbound_mail.status_changed",importance:"NORMAL",
+   subjectType:"INBOUND_MAIL",subjectId:updated.id,
+   summary:"Super Admin updated inbound mail triage",
+   metadata:{from:input.expectedStatus,to:input.status,version:updated.version},
+  });
+  return {kind:"UPDATED" as const,...updated};
+ });
 }
 
 /**
