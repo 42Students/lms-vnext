@@ -76,13 +76,19 @@ export type ZeptoMailConfig = {
   fromName: string;
 };
 
+/** Only strip a balanced quote pair; unpaired quotes are invalid credentials. */
+function pairedUnquote(value:string){
+ return value.length>=2&&value.startsWith('"')&&value.endsWith('"')
+  ? value.slice(1,-1):value;
+}
+
 export function readZeptoMailConfig(
   env: Record<string, string | undefined> = process.env,
 ): ZeptoMailConfig {
   return {
     apiUrl: env.ZEPTOMAIL_API_URL ?? "https://api.zeptomail.in/v1.1/email/template",
     // Never restore the embedded credential from the old LMS, including in dev.
-    token: (env.ZEPTOMAIL_TOKEN ?? "").trim().replace(/^"|"$/g, ""),
+    token: pairedUnquote((env.ZEPTOMAIL_TOKEN ?? "").trim()),
     otpTemplateKey: (env.ZEPTOMAIL_OTP_TEMPLATE_KEY ??
       "2518b.4c361928d9526a75.k1.aea6cef0-4e4a-11f1-97e6-e256a66a52e4.19e1e1f015f").trim(),
     fromAddress: env.ZEPTOMAIL_FROM_ADDRESS ?? "hello@42lms.com",
@@ -109,9 +115,21 @@ export function safeOtpEmailDisplayName(value: string): string {
     .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
 }
 
+/** Legacy TPO from-name suffix, bounded for RFC header safety. No caller-
+ * supplied campus name is permitted to inject a header or change the domain.
+ * The generic fallback is used when the tenant brand is unavailable.
+ */
+export function campusRecruitmentSenderName(collegeName?:string|null):string {
+ const cleaned=safeHeaderName(collegeName??"");
+ const suffix=" Campus Recruitment";
+ // Reserve suffix width before truncating the college prefix.
+ const prefix=Array.from(cleaned).slice(0,Math.max(0,80-Array.from(suffix).length)).join("");
+ return prefix?prefix+suffix:"Campus Recruitment";
+}
+
 function safeHeaderName(value: string): string {
   return Array.from(value.replace(/[\p{Cc}\p{Cf}\p{Zl}\p{Zp}]+/gu, " ")
-    .replace(/\s+/gu, " ").trim()).slice(0, 160).join("");
+    .replace(/\s+/gu, " ").trim()).slice(0, 80).join("");
 }
 
 function isTemplateId(value: string): boolean {
@@ -135,11 +153,33 @@ export type ZeptoMailTemplateMessage = {
   mergeInfo?: Record<string, string | null | undefined> | null;
   /** Optional college branding; does not change the verified sending address. */
   senderName?: string;
+  /** Scoped, resolved college branding for TPO-only messages. */
+  collegeName?: string | null;
+  /** Caller-owned stable outbox deduplication token. Retry requires explicit
+   * provider idempotency support; never reuse it for a fresh send. */
+  idempotencyKey?: string;
   /** Must be provisioned in ZEPTOMAIL_VERIFIED_FROM_ADDRESSES. */
   fromAddress?: string;
   /** Only a verified sending-domain address or explicit allowed reply address. */
   replyTo?: string;
 };
+
+export function zeptoMailFailureCopy(code:ZeptoMailFailureCode):string {
+ switch(code){
+  case "RECIPIENT_REQUIRED":return "Recipient email is required";
+  case "RECIPIENT_INVALID":return "Enter a valid recipient email address";
+  case "TEMPLATE_NOT_CONFIGURED":return "ZeptoMail template ID is required";
+  case "REQUIRED_VARIABLE_MISSING":return "Required email template information is missing";
+  case "TOKEN_NOT_CONFIGURED":case "CREDENTIAL_ROTATION_UNVERIFIED":
+  case "ENDPOINT_INVALID":case "SENDER_UNVERIFIED":case "REPLY_TO_UNVERIFIED":
+   return "Email is not configured for this sender. Contact your administrator.";
+  case "PROVIDER_UNAVAILABLE":return "Email provider is unavailable. Check delivery status before retrying.";
+  case "PROVIDER_REJECTED":return "Email provider rejected the message.";
+  case "DEV_RECIPIENT_NOT_ALLOWED":return "This recipient is not allowed in this environment.";
+  case "EVENT_EMAIL_DISABLED":return "Email is not enabled for this notification.";
+  case "MERGE_INFO_INVALID":return "Email template values are invalid.";
+ }
+}
 
 export type ZeptoMailFailureCode =
   | "TOKEN_NOT_CONFIGURED"
@@ -188,6 +228,28 @@ export function resolveZeptoMailTemplateId(
   const key = (value ?? "").trim();
   if (!isTemplateId(key) || (purpose.kind !== "OTP" && key === config.otpTemplateKey)) return null;
   return key;
+}
+
+/** Stable, nonsecret readiness/provisioning table for operator dashboards.
+ * Keep optional event templates out of required send readiness and avoid
+ * recording opaque IDs or provider credentials in the response/logs. */
+export function zeptoMailProvisioning(
+ env:Record<string,string|undefined>=process.env,
+){
+ const config=readZeptoMailConfig(env);
+ const eventTemplates=Object.keys(LEGACY_NOTIFICATION_TEMPLATE_KEYS).map(event=>{
+  const typed=event as LegacyMailEvent;
+  return {event:typed,enabled:LEGACY_EMAIL_EVENTS.has(typed),
+   configured:Boolean(resolveZeptoMailTemplateId({kind:"EVENT",event:typed},env,config))};
+ });
+ const senderValid=isValidRecipient("EMAIL",normalizeRecipient("EMAIL",config.fromAddress));
+ const tokenConfigured=Boolean(config.token.trim());
+ const endpointValid=isSecureMailProviderEndpoint(config.apiUrl);
+ const otpTemplateConfigured=Boolean(resolveZeptoMailTemplateId({kind:"OTP"},env,config));
+ const missingRequiredEvents=eventTemplates.filter(item=>item.enabled&&!item.configured).map(item=>item.event);
+ return {configured:tokenConfigured&&endpointValid&&senderValid&&otpTemplateConfigured&&
+   missingRequiredEvents.length===0,tokenConfigured,endpointValid,senderValid,
+   otpTemplateConfigured,missingRequiredEvents,eventTemplates};
 }
 
 function verifiedFrom(
@@ -273,9 +335,10 @@ async function safeProviderCode(response: Response): Promise<string | undefined>
 }
 
 /**
- * One attempt only: ZeptoMail template POST has no confirmed idempotency key.
- * Upstream jobs may retry only after recording a provider-safe outbox state;
- * a timeout is ambiguous, not evidence that the recipient did not get email.
+ * OTP and unspecified POSTs are attempted once. A non-OTP outbox with a
+ * stable deduplication key may opt into three retries only when the provider's
+ * idempotency handling has been independently verified by operations.
+ * Timeout without that guarantee is ambiguous, not proof of non-delivery.
  */
 export async function sendZeptoMailTemplate(
   message: ZeptoMailTemplateMessage,
@@ -322,6 +385,12 @@ export async function sendZeptoMailTemplate(
       return notSent(purpose, "REQUIRED_VARIABLE_MISSING");
     }
   }
+  // Retry a non-OTP POST only if the provider is explicitly attested to
+  // honor Idempotency-Key AND the caller supplies its durable outbox key.
+  const canRetry=purpose.kind!=="OTP"&&
+   env.ZEPTOMAIL_IDEMPOTENCY_SUPPORTED==="confirmed"&&
+   typeof message.idempotencyKey==="string"&&
+   /^[a-zA-Z0-9._:-]{16,128}$/.test(message.idempotencyKey);
   try {
     const response = await outboundFetch(config.apiUrl, {
       method: "POST",
@@ -335,7 +404,7 @@ export async function sendZeptoMailTemplate(
         template_key: templateKey,
         from: {
           address: fromAddress,
-          name: safeHeaderName(message.senderName ?? config.fromName),
+          name: safeHeaderName(message.senderName ?? (purpose.kind==="TPO"?campusRecruitmentSenderName(message.collegeName):config.fromName)),
         },
         to: [{
           email_address: {
@@ -347,7 +416,9 @@ export async function sendZeptoMailTemplate(
         merge_info: mergeInfo,
       }),
       timeoutMs: 10_000,
-      maxAttempts: 1,
+      maxAttempts: canRetry?3:1,
+      baseDelayMs: 500,
+      ...(canRetry?{idempotencyKey:message.idempotencyKey}:{}),
       fetchImpl,
     });
     if (!response.ok) {
@@ -360,6 +431,7 @@ export async function sendZeptoMailTemplate(
     writeStructuredLog("INFO", "email.template_accepted", { purpose: purposeLabel(purpose) });
     return { accepted: true };
   } catch {
+    // Provider timeouts are delivery-ambiguous, not evidence of no delivery.
     return notSent(purpose, "PROVIDER_UNAVAILABLE");
   }
 }
