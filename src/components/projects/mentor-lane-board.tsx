@@ -248,7 +248,7 @@ export function MentorLaneBoard({projectId,initialTasks,sprints,releases,members
         <div key={item.id} className="mt-1 text-xs">
           <span>{item.status} · version {item.version}</span>
           {safeProjectExternalHref(item.submissionUrl)?<a href={safeProjectExternalHref(item.submissionUrl)!} target="_blank"
-            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary focus-visible:underline">Open submission link</a>:null}
+            rel="noreferrer noopener" className="ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open submission link</a>:null}
         </div>
        )}
        {!taskSubmissions.some(s=>s.taskId===task.id)?<p className="text-xs text-muted-foreground">No submission yet.</p>:null}
