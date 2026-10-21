@@ -59,7 +59,7 @@ export default async function TpoCalendarExportPage({
     {!parsed.success ? <Alert tone="error">
       Invalid date range. Select real IST dates with a maximum inclusive span of 93 days.
     </Alert> : result ? <section className="space-y-4">
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         {result.rows.length} upcoming scheduled rounds within {result.from} to {result.to} (IST).
         {result.truncated
           ? " More than 500 matched: this export is truncated, narrow the range."

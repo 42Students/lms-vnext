@@ -107,7 +107,7 @@ export default async function TpoCompanyContactLogPage({
               Filter
             </Button>
           </form>
-          <p className="text-sm text-body">
+          <p className="text-sm text-body leading-[22px]">
             {log.total} recorded interaction(s). Most recent first; 25 per page.
           </p>
           <DataTable

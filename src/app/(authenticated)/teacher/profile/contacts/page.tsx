@@ -17,11 +17,11 @@ export default async function FacultyOwnContactPage(){
    <div><dt className="text-xs text-muted-foreground">Login phone</dt>
     <dd className="mt-1 break-all text-sm leading-6 text-body">{data.loginPhone??"Not provided"}</dd></div>
   </dl>
-  <p className="mt-3 text-xs text-muted-foreground">These identity fields are managed by your college and are not editable here.</p>
+  <p className="mt-3 text-xs text-muted-foreground leading-5">These identity fields are managed by your college and are not editable here.</p>
  </section>
  <section role="status" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] py-5">
   <h2 className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">Alternate contact editing unavailable</h2>
-  <p className="mt-2 text-sm text-body">{data.reason}</p>
+  <p className="mt-2 text-sm text-body leading-[22px]">{data.reason}</p>
   <dl className="grid min-w-0 gap-x-6 gap-y-4 sm:grid-cols-2">
    <div><dt className="text-xs text-muted-foreground">Alternate phone</dt>
     <dd className="text-sm text-body">Storage not registered</dd></div>

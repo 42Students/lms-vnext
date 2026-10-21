@@ -63,13 +63,13 @@ export default async function LearnerNotificationHistoryPage({
           Unread only
         </Link>
       </nav>
-      <p className="max-w-2xl text-sm leading-6 text-body">
+      <p className="max-w-2xl text-sm leading-[22px] text-body">
         Showing {items.length} notifications on this page, newest first.
         Counts are page-local; this is not a complete-inbox count.
       </p>
       {emptyMessage ? (
         <section role="status" className="border-y border-[var(--lms-canvas-border)] px-2 py-6 text-center">
-          <p className="text-sm text-body">{emptyMessage}</p>
+          <p className="text-sm text-body leading-[22px]">{emptyMessage}</p>
         </section>
       ) : (
         <NotificationList items={items} readEndpoint="/api/learn/notifications" />
@@ -83,7 +83,7 @@ export default async function LearnerNotificationHistoryPage({
             Older notifications →
           </Link>
         ) : (
-          <p className="text-sm text-muted-foreground">No further older notifications in this view.</p>
+          <p className="text-sm text-muted-foreground leading-[22px]">No further older notifications in this view.</p>
         )}
         {page.isOlderPage ? (
           <Link
@@ -94,7 +94,7 @@ export default async function LearnerNotificationHistoryPage({
           </Link>
         ) : null}
       </nav>
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-5">
         Personal notification read actions use the existing same-origin protected route.
         Announcements are not assigned a personal read state.
       </p>

@@ -71,7 +71,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
           ["Live rounds",liveTotals.rounds],["Roster",liveTotals.roster],["Checked in",liveTotals.checkedIn],
           ["Explicit no-shows",liveTotals.explicitNoShows],["Pending",liveTotals.pending],["Unrecorded",liveTotals.unrecorded],
         ].map(([name,count])=><div key={name} className="min-w-0 bg-surface px-3 py-3"><dt className="text-xs text-muted-foreground">{name}</dt><dd className="font-semibold tabular-nums">{count}</dd></div>)}</dl>
-        <p className="text-xs text-muted-foreground">Counts describe the full retrieved live-round sample before these screen filters, not every round in the college or verified attendance.</p>
+        <p className="text-xs text-muted-foreground leading-5">Counts describe the full retrieved live-round sample before these screen filters, not every round in the college or verified attendance.</p>
         {snapshot.truncated ? (
           <Alert tone="warning">Only the first 20 live rounds are shown; more records may exist.</Alert>
         ) : null}
@@ -84,13 +84,13 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                 <div className="flex min-w-0 flex-col gap-3 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
                   <div>
                     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{round.companyName} · {round.name}</h2>
-                    <p className="text-sm text-body">{round.jobTitle} · Started {
+                    <p className="text-sm text-body leading-[22px]">{round.jobTitle} · Started {
                       round.scheduledAt ? new Date(round.scheduledAt).toLocaleString("en-IN", {
                         timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short",
                       }) : "unknown"
                     } IST</p>
-                    <p className="text-xs text-muted-foreground">{tpoLiveRoundVenueLabel(round.venue)}</p>
-                    {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground">Elapsed {tpoLiveRoundTiming(round,snapshot.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
+                    <p className="text-xs text-muted-foreground leading-5">{tpoLiveRoundVenueLabel(round.venue)}</p>
+                    {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes!==null?<p className="text-xs text-muted-foreground leading-5">Elapsed {tpoLiveRoundTiming(round,snapshot.asOf).elapsedMinutes} min · approximately {tpoLiveRoundTiming(round,snapshot.asOf).remainingMinutes} min scheduled remaining. This is not an actual completion state.</p>:null}
                   </div>
                   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap"><Link href={tpoLiveRoundJobHref(round.jobId)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm text-[var(--lms-teal-deep)] md:min-h-9">Open drive</Link>
                   <Link href={"/tpo/drive-day/" + round.id}
@@ -98,7 +98,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     Open round
                   </Link></div>
                 </div>
-                <p role="status" className="mt-3 text-sm text-body">{tpoLiveAttendanceAttention(round.counts)}</p>
+                <p role="status" className="mt-3 text-sm text-body leading-[22px]">{tpoLiveAttendanceAttention(round.counts)}</p>
                 <dl className="mt-4 grid min-w-0 grid-cols-2 gap-px overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-border md:grid-cols-5">
                   {([
                     ["Roster", round.counts.total], ["Checked in", round.counts.checkedIn],
@@ -141,14 +141,14 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
             >
               <div className="flex min-w-0 flex-col gap-4 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div>
-                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link">
+                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-link leading-5">
                     Assigned round
                   </p>
                   <h2 className="mt-1 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">
                     {round.company} ·{" "}
                     {round.jobTitle}
                   </h2>
-                  <p className="mt-1 text-sm text-body">
+                  <p className="mt-1 text-sm text-body leading-[22px]">
                     {round.roundName} ·{" "}
                     {formatWhen(
                       round.startsAt,
