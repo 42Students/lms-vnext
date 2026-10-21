@@ -8,6 +8,7 @@ import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control
 import {AdminScopedLiveSearch} from "@/components/admin/admin-scoped-live-search";
 import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv-model";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
@@ -54,7 +55,9 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   {heading("Super Admin")}
-  <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
+  <Alert tone="warning" title={title==="Registered Faculty"?"Select a College to manage Faculty":title==="Registered Students"?"Select a College to manage Learners":"Select a college to continue"}>
+   {title==="Faculty Assignments"?"Choose a college in the header above to see its faculty assignments.":title==="Registered Faculty"?"Choose a college in the header above to see its faculty.":title==="Registered Students"?"Choose a college in the header above to see its students.":"Choose a college in the header above to continue."}
+  </Alert>
  </div>;
  const directory=await loader(parsed.data)
   .then(value=>({ok:true as const,value}))
@@ -67,11 +70,17 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry loading directory</Link>}/>
  </div>;
  const data=directory.value;
+ const humanStatus=(status:string)=>status.toLowerCase().replace(/_/g," ").replace(/\b\w/g,letter=>letter.toUpperCase());
+ const emptyRosterTitle=peopleFilters?.kind==="LEARNER"?
+  (data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.sectionId||data.query.cohortId||data.query.programId?"No students match these filters.":"No students found. Register students to get started."):
+  peopleFilters?.kind==="FACULTY"?
+  (data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.employmentType?"No faculty match these filters.":"No faculty found. Register faculty members to get started."):
+  title==="Faculty Assignments"?"No assignments found.":"No matching records";
  // Explicit legacy headings restore navigable columns while the authorized
  // server directory continues to own filtering, identity and pagination.
  const detailValue=(row:SuperAdminReadRow,label:string)=>
   row.details.find(detail=>detail.startsWith(label+": "))?.slice(label.length+2)??"—";
- const actionCell=(row:SuperAdminReadRow)=><div className="flex min-w-0 flex-col items-start gap-2">
+ const actionCell=(row:SuperAdminReadRow)=><div aria-label={row.title+" actions"} className="flex min-w-0 flex-col items-start gap-2">
   {renderRowActions?.(row)}
   {row.href?<Link href={row.href} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open details →</Link>:null}
   {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">{row.secondaryLabel??"Manage →"}</Link>:null}
@@ -83,8 +92,18 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>detailValue(row,"Email")},
   {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
   {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
-  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
+ ];
+ const facultyColumns:DataTableColumn<SuperAdminReadRow>[]=[
+  {key:"name",header:"Name",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
+  {key:"department",header:"Department",mobilePriority:"secondary",cell:row=>detailValue(row,"Department")},
+  {key:"mobile",header:"Mobile",mobilePriority:"secondary",cell:row=>detailValue(row,"Mobile")},
+  {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>detailValue(row,"Email")},
+  {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>detailValue(row,"Faculty type")!=="—"?detailValue(row,"Faculty type"):detailValue(row,"Employment type")},
+  {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
  ];
  const assignmentColumns:DataTableColumn<SuperAdminReadRow>[]=[
   {key:"faculty",header:"Faculty",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
@@ -97,6 +116,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
  ];
  const scopedColumns=peopleFilters?.kind==="LEARNER"?studentColumns:
+  peopleFilters?.kind==="FACULTY"?facultyColumns:
   title==="Faculty Assignments"?assignmentColumns:null;
  const summaries=peopleFilters?await Promise.allSettled([
   loader({...parsed.data,status:"ALL",page:1}),
@@ -145,12 +165,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-    <AdminScopedLiveSearch initial={data.query.q} path={path}/>
+    <AdminScopedLiveSearch initial={data.query.q} path={path} popularSuggestions={data.items.slice(0,15).map(row=>row.title)}/>
    </label>
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={data.query.status}
      className="min-h-11 w-full md:min-h-9">
-     {statuses.map(status=><option key={status} value={status}>{status}</option>)}
+     {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"Any status":humanStatus(status)}</option>)}
     </Select>
    </label>
    <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
@@ -216,7 +236,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    {compactReadLayout?null:<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
     <Select name="pageSize" defaultValue={data.query.pageSize}
      className="min-h-11 w-full md:min-h-9">
-     {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
+     {[25,50,100,200].map(size=><option value={size} key={size}>{size}</option>)}
     </Select>
    </label>}
 
@@ -224,7 +244,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Rows per page</summary>
      <div className="max-w-[200px] pb-1">
        <Select name="pageSize" aria-label="Rows per page" defaultValue={data.query.pageSize} className="min-h-11 w-full md:min-h-9">
-         {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
+         {[25,50,100,200].map(size=><option value={size} key={size}>{size}</option>)}
        </Select>
      </div>
    </details>:null}
@@ -242,7 +262,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </p>:null}
   {compactReadLayout?
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
@@ -250,7 +270,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
       </div>
     </div>
-   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>}
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
   {compactReadLayout?<>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 py-4">
@@ -258,7 +278,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
           <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
-          <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
+          <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>
         </div>
         <p className="mt-1 break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
         <div className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1">
@@ -276,8 +296,9 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     action={<Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>}/>}
   </> : scopedColumns?<>
+   {title==="Faculty Assignments"?<h2 className="text-lg font-semibold">Current teaching assignments</h2>:null}
     <DataTable columns={scopedColumns} rows={data.items} getRowKey={row=>row.id}
-      caption={title} empty={<EmptyState title="No matching records" description="No persisted records match the selected college and filters."/>}/>
+      caption={title} empty={<EmptyState title={emptyRosterTitle} description="Try changing the search or filters to see other records."/>}/>
     <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear search</Link>
   </> : <>
@@ -285,7 +306,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
-     <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
+     <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>
     </div>
     <p className="break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground leading-[20px]">{value}</p>)}
