@@ -38,7 +38,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
       /> : null}
       <section aria-label={title + " filters"} className="border-b border-border pb-4 print:hidden">
         <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3">
-          <label className="grid min-w-56 flex-1 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-56 flex-1 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Title, lesson or course
             <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
               placeholder="Search authored content"
@@ -47,28 +47,28 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
           <details className="group min-w-0 basis-full" open={Boolean(data.query.courseCode || data.query.programCode || data.query.cohortCode || data.query.periodCode || data.query.departmentName || data.query.deliveryId || data.query.pathStatus !== "ALL" || data.query.offeringType !== "ALL" || data.query.lessonStatus !== "ALL" || data.query.status !== "ALL" || data.query.visibility !== "ALL" || data.query.scope !== "ALL" || data.query.offeringStatus !== "ALL" || (videos && data.query.format !== "ALL"))}>
             <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body md:min-h-9">Filters</summary>
             <div className="grid min-w-0 gap-3 pt-3 md:grid-cols-2 xl:grid-cols-4">
-          <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Course code (exact)
             <Input type="search" name="courseCode" maxLength={64} defaultValue={data.query.courseCode ?? ""}
               placeholder="e.g. CS101"
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Program code (exact)
             <Input name="programCode" type="search" maxLength={64} defaultValue={data.query.programCode ?? ""}
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Batch code (exact)
             <Input name="cohortCode" type="search" maxLength={64} defaultValue={data.query.cohortCode??""}
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Academic period code (exact)
             <Input name="periodCode" type="search" maxLength={64} defaultValue={data.query.periodCode ?? ""}
               className="min-h-11 md:min-h-9" />
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Learning path status
             <Select name="pathStatus" defaultValue={data.query.pathStatus??"ALL"}
               className="min-h-11 md:min-h-9">
@@ -77,26 +77,26 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               <option value="ARCHIVED">Archived</option>
             </Select>
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Course department name
             <Input name="departmentName" type="search" maxLength={255} defaultValue={data.query.departmentName??""}
               className="min-h-11 md:min-h-9"/>
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Course offering type
             <Select name="offeringType" defaultValue={data.query.offeringType??"ALL"}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All offering types</option><option value="CORE">Core</option><option value="ELECTIVE">Elective</option>
             </Select>
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Owning lesson state
             <Select name="lessonStatus" defaultValue={data.query.lessonStatus??"ALL"}
               className="min-h-11 md:min-h-9">
               <option value="ALL">All lessons</option><option value="ACTIVE">Active lesson</option><option value="ARCHIVED">Archived lesson</option>
             </Select>
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Content status
             <Select name="status" defaultValue={data.query.status}
               className="min-h-11 md:min-h-9">
@@ -107,7 +107,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
             </Select>
           </label>
           {videos ? (
-            <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+            <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Video format
               <Select name="format" defaultValue={data.query.format}
                 className="min-h-11 md:min-h-9">
@@ -117,7 +117,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               </Select>
             </label>
           ) : null}
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Visible to students
             <Select name="visibility" defaultValue={data.query.visibility}
               className="min-h-11 md:min-h-9">
@@ -126,7 +126,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               <option value="HIDDEN">Hidden</option>
             </Select>
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Owning offering status
             <Select name="offeringStatus" defaultValue={data.query.offeringStatus??"ALL"}
               className="min-h-11 md:min-h-9">
@@ -134,7 +134,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
               <option value="ARCHIVED">Archived</option>
             </Select>
           </label>
-          <label className="grid min-w-48 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-48 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Section
             <Select name="deliveryId" defaultValue={data.query.deliveryId??""}
               className="min-h-11 md:min-h-9">
@@ -149,7 +149,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
                 "Section content includes shared and Section-specific items. Delivery-specific ordering is not yet enabled."}
             </span>
           </label>
-          <label className="grid min-w-36 gap-1 text-xs font-semibold text-body">
+          <label className="grid min-w-36 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Audience scope
             <Select name="scope" defaultValue={data.query.scope}
               className="min-h-11 md:min-h-9">

@@ -147,102 +147,102 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/components/courses/admin-course-overview.tsx`
 - [x] `src/components/courses/admin-learning-structure-actions.tsx`
 - [x] `src/components/courses/assignment-multipart-parts-editor.tsx`
-- [ ] `src/components/courses/college-assessment-aggregate.tsx`
-- [ ] `src/components/courses/college-assignment-actions.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-content-aggregate.tsx`
-- [ ] `src/components/courses/college-content-authoring-control.tsx`
-- [ ] `src/components/courses/college-learner-progress-report.tsx`
-- [ ] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/courses/college-lesson-create-control.tsx`
-- [ ] `src/components/courses/college-live-classes-directory.tsx`
-- [ ] `src/components/courses/college-quiz-actions.tsx`
-- [ ] `src/components/courses/college-quiz-create.tsx`
-- [ ] `src/components/courses/college-quiz-questions-editor.tsx`
-- [ ] `src/components/courses/faculty-assessment-editor.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-content-editor.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-ist-quarter-hour-picker.tsx`
-- [ ] `src/components/courses/faculty-lesson-authoring.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-live-class-editor.tsx`
-- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/courses/lesson-resource-materials-control.tsx`
-- [ ] `src/components/courses/super-admin-content-actions.tsx`
-- [ ] `src/components/courses/super-admin-content-directory-page.tsx`
-- [ ] `src/components/courses/super-admin-lesson-create.tsx`
-- [ ] `src/components/electives/college-elective-offering-manager.tsx`
-- [ ] `src/components/electives/college-slot-manager.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
-- [ ] `src/components/people/faculty-profile-text-section.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-company-create.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-general-requests.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/learner-placement-academic-evidence.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-placement-preferences.tsx`
-- [ ] `src/components/placements/learner-placement-requests.tsx`
-- [ ] `src/components/placements/learner-schedule-reschedule.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
-- [ ] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
-- [ ] `src/components/placements/placement-role-options.tsx`
-- [ ] `src/components/placements/placement-season-manager.tsx`
-- [ ] `src/components/placements/public-recruit-from-us.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/placements/recorded-outside-form.tsx`
-- [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-published-drive-edit.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx`
-- [ ] `src/components/placements/tpo-company-interaction-form.tsx`
-- [ ] `src/components/placements/tpo-company-person-editor.tsx`
-- [ ] `src/components/placements/tpo-drive-change-requests.tsx`
-- [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
-- [ ] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-interview-reschedule-form.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-joining-update-form.tsx`
-- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/college-project-summary-editor-full.tsx`
-- [ ] `src/components/projects/learner-own-task-controls.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/learner-project-board-search.tsx`
-- [ ] `src/components/projects/learner-project-mobile-filters.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/projects/mentor-sprint-write.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
-- [ ] `src/components/projects/mentor-task-details-edit.tsx`
+- [x] `src/components/courses/college-assessment-aggregate.tsx`
+- [x] `src/components/courses/college-assignment-actions.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/college-content-aggregate.tsx`
+- [x] `src/components/courses/college-content-authoring-control.tsx`
+- [x] `src/components/courses/college-learner-progress-report.tsx`
+- [x] `src/components/courses/college-learning-directory.tsx`
+- [x] `src/components/courses/college-lesson-create-control.tsx`
+- [x] `src/components/courses/college-live-classes-directory.tsx`
+- [x] `src/components/courses/college-quiz-actions.tsx`
+- [x] `src/components/courses/college-quiz-create.tsx`
+- [x] `src/components/courses/college-quiz-questions-editor.tsx`
+- [x] `src/components/courses/faculty-assessment-editor.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-editor.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-content-editor.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-ist-quarter-hour-picker.tsx`
+- [x] `src/components/courses/faculty-lesson-authoring.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-live-class-editor.tsx`
+- [x] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/courses/lesson-resource-materials-control.tsx`
+- [x] `src/components/courses/super-admin-content-actions.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/courses/super-admin-lesson-create.tsx`
+- [x] `src/components/electives/college-elective-offering-manager.tsx`
+- [x] `src/components/electives/college-slot-manager.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/hr/recruiter-round-inline-editor.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/people/faculty-profile-text-section.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/college-company-create.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-general-requests.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/placements/learner-placement-academic-evidence.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-placement-preferences.tsx`
+- [x] `src/components/placements/learner-placement-requests.tsx`
+- [x] `src/components/placements/learner-schedule-reschedule.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
+- [x] `src/components/placements/placement-draft-edit-form.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/placement-role-options.tsx`
+- [x] `src/components/placements/placement-season-manager.tsx`
+- [x] `src/components/placements/public-recruit-from-us.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/placements/recorded-outside-form.tsx`
+- [x] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-published-drive-edit.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
+- [x] `src/components/placements/tpo-company-interaction-form.tsx`
+- [x] `src/components/placements/tpo-company-person-editor.tsx`
+- [x] `src/components/placements/tpo-drive-change-requests.tsx`
+- [x] `src/components/placements/tpo-drive-edit-form.tsx`
+- [x] `src/components/placements/tpo-drive-lifecycle-controls.tsx`
+- [x] `src/components/placements/tpo-drive-selection-manager.tsx`
+- [x] `src/components/placements/tpo-interview-reschedule-form.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/tpo-joining-update-form.tsx`
+- [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/projects/college-project-summary-editor-full.tsx`
+- [x] `src/components/projects/learner-own-task-controls.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/learner-project-mobile-filters.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-sprint-write.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/projects/mentor-task-details-edit.tsx`
 - [ ] `src/components/projects/project-activity-filtered-list.tsx`
 - [ ] `src/components/projects/project-admin-audit-page.tsx`
 - [ ] `src/components/projects/project-admin-collection-controls.tsx`

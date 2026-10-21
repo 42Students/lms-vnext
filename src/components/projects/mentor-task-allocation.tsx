@@ -111,7 +111,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   </Button>
   {filtersOpen?<div id="mentor-allocation-filters"
     className="flex flex-wrap gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-   <label className="text-sm font-semibold">Release
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Release
     <Select value={release} onChange={e=>{setRelease(e.target.value);setSprint("");
       remember("release",e.target.value);remember("sprint","");}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
@@ -119,7 +119,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
      {releases.map(item=><option key={item.id} value={item.id}>{item.title}</option>)}
     </Select>
    </label>
-   <label className="text-sm font-semibold">Sprint
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Sprint
     <Select value={sprint} onChange={e=>{setSprint(e.target.value);remember("sprint",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All sprints</option>
@@ -127,14 +127,14 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       <option key={item.id} value={item.id}>{item.title}</option>)}
     </Select>
    </label>
-   <label className="text-sm font-semibold">Priority
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority
     <Select value={priority} onChange={e=>{setPriority(e.target.value);remember("priority",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All priorities</option>
      {["LOW","MEDIUM","HIGH","CRITICAL"].map(value=><option key={value} value={value}>{value}</option>)}
     </Select>
    </label>
-   <label className="text-sm font-semibold">Status
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status
     <Select value={status} onChange={e=>{setStatus(e.target.value);remember("status",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
      <option value="">All statuses</option>
@@ -142,7 +142,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
       <option key={value} value={value}>{value.replaceAll("_"," ")}</option>)}
     </Select>
    </label>
-   <label className="text-sm font-semibold">Assignment
+   <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Assignment
     <Select value={assignmentScope}
       onChange={e=>{setAssignmentScope(e.target.value);remember("assignment",e.target.value);}}
       className="ml-2 min-h-11 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
@@ -230,7 +230,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
          <p className="mt-1 text-xs font-semibold text-warning-text">
            Reassign from former member
          </p>:null}
-       {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4">Assign to
+       {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assign to
         <Select aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
          onChange={event=>void assign(task.id,event.target.value||null)}

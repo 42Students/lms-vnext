@@ -57,21 +57,21 @@ export function LearnerGeneralRequests({
  return <section aria-label="Other placement requests" className="min-w-0 space-y-4 border-b border-border pb-5">
   <h2 className="text-lg font-semibold">Other placement requests</h2>
   <p className="text-sm">Tell your placement cell about an off-campus offer, registration change, disputed absence, record correction or a request to apply after placement.</p>
-  <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Request kind<Select className={box} disabled={pending} value={kind}
+  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Request kind<Select className={box} disabled={pending} value={kind}
    onChange={e=>{setKind(e.target.value as Kind);setTarget("");setAux("");setProofUrl("");}}>
    {kinds.map(([id,name])=><option key={id} value={id}>{name}</option>)}
   </Select></label>
-  {kind==="REGISTRATION_CHANGE"?<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">New choice
+  {kind==="REGISTRATION_CHANGE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">New choice
    <Select className={box} value={target||"HIGHER_STUDIES"} onChange={e=>setTarget(e.target.value)}>
     {["HIGHER_STUDIES","PLACEMENTS","NOT_INTERESTED","ENTREPRENEURSHIP","COMPETITIVE_EXAMS"].map(key=>
      <option key={key} value={key}>{key.replaceAll("_"," ").toLowerCase()}</option>)}
    </Select>
   </label>:
-   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">{kind==="OFF_CAMPUS_OFFER"?"Company name":
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">{kind==="OFF_CAMPUS_OFFER"?"Company name":
     kind==="ABSENCE_DISPUTE"?"Application ID":kind==="OFFER_ACCEPTANCE_DISPUTE"?"Offer ID":kind==="CORRECTION_WITH_PROOF"?"Record field":"Requested drive ID"}
     <Input className={box} maxLength={kind==="OFF_CAMPUS_OFFER"?150:kind==="CORRECTION_WITH_PROOF"?140:200} value={target} onChange={e=>setTarget(e.target.value)}/>
    </label>}
-  {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+  {kind!=="REGISTRATION_CHANGE"&&kind!=="OFFER_ACCEPTANCE_DISPUTE"?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
    {kind==="OFF_CAMPUS_OFFER"?"Annual CTC in LPA":
     kind==="ABSENCE_DISPUTE"?"Round ID":kind==="CORRECTION_WITH_PROOF"?"Corrected value":"Justification"}
    <Input className={box} maxLength={1000} value={aux} onChange={e=>setAux(e.target.value)}/>
@@ -79,10 +79,10 @@ export function LearnerGeneralRequests({
    <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
    I request placement registration and consent to the placement rules.
   </label>:null}
-  {["OFF_CAMPUS_OFFER","ABSENCE_DISPUTE","CORRECTION_WITH_PROOF"].includes(kind)?<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Proof link (HTTPS)
+  {["OFF_CAMPUS_OFFER","ABSENCE_DISPUTE","CORRECTION_WITH_PROOF"].includes(kind)?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Proof link (HTTPS)
    <Input className={box} type="url" placeholder="https://..." maxLength={2000} value={proofUrl} onChange={e=>setProofUrl(e.target.value)}/>
   </label>:null}
-  <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Why are you requesting this?
+  <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Why are you requesting this?
    <Textarea className={box} rows={3} maxLength={2000} value={reason} onChange={e=>setReason(e.target.value)}/>
   </label>
   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending} onClick={()=>void submit()}>{pending?"Sending…":"Send request"}</Button>

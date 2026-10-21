@@ -84,30 +84,30 @@ export function FacultyCourseList({rows,query,pagination,scopeCount,periods,sect
         className="min-w-0 space-y-3">
         <FacultyCourseFilterAutoSubmit />
         <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
-          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Search courses
+          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search courses
             <Input name="q" type="search" defaultValue={query.q} maxLength={120}
               placeholder="Course, code, Section or academic period"
-              className="text-base md:text-sm" />
+              className="text-[var(--lms-font-base)] md:text-sm" />
           </label>
-          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Academic period
+          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Academic period
             <Select name="period" defaultValue={query.period}
-              className="text-base md:text-sm">
+              className="text-[var(--lms-font-base)] md:text-sm">
               <option value="">All assigned periods</option>
               {periods.map(period => <option key={period.id} value={period.id}>{period.name}</option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Section
+          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Section
             <Select name="section" defaultValue={query.section}
-              className="text-base md:text-sm">
+              className="text-[var(--lms-font-base)] md:text-sm">
               <option value="">All sections ({sections.length})</option>
               {sections.map(section=><option key={section.id} value={section.id}>
                 {section.name} ({section.count})
               </option>)}
             </Select>
           </label>
-          <label className="grid gap-1 text-[13px] leading-4 font-semibold text-body">Teaching role
+          <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Teaching role
             <Select name="role" defaultValue={query.role}
-              className="text-base md:text-sm">
+              className="text-[var(--lms-font-base)] md:text-sm">
               <option value="">All assigned roles</option>
               {COURSE_TEACHING_ROLES.map(role => <option key={role} value={role}>{role.replaceAll("_"," ")}</option>)}
             </Select>

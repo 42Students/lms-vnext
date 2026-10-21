@@ -162,25 +162,25 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.templates}</p>:null}
     <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
-      <label className="block space-y-1 text-sm font-medium">Class
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
           <option value="">{loading?"Loading classes…":"Select a class"}</option>
           {classes.map(c=><option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </Select>
       </label>
-      <label className="block space-y-1 text-sm font-medium">Published template
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Published template
         <Select value={templateId} onChange={e=>setTemplateId(e.target.value)} disabled={pending}>
           {templates.map(t=><option key={t.templateId} value={t.templateId}>{t.title} · v{t.version}</option>)}
         </Select>
       </label>
-      <label className="block space-y-1 text-sm font-medium">Workspace title
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace title
         <Input value={title} disabled={!plannerEditable} onChange={e=>setTitle(e.target.value)} maxLength={170} placeholder="Capstone Project" />
       </label>
-      <label className="block space-y-1 text-sm font-medium">Base slug
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Base slug
         <Input value={slug} disabled={!plannerEditable} onChange={e=>setSlug(e.target.value.toLowerCase())} maxLength={50} placeholder="capstone-project" aria-invalid={slug.length>0&&!isValidClassTeamBaseSlug(slug)} />
         {slug.length>0&&!isValidClassTeamBaseSlug(slug)?<span role="alert" className="block text-xs text-error">Use lowercase letters, numbers and single hyphens only. Start and end with a letter or number.</span>:null}
       </label>
-      <label className="block space-y-1 text-sm font-medium">Workspace mode
+      <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace mode
         <Select value={mode} disabled={!plannerEditable} onChange={e=>setMode(e.target.value as "TEAMS"|"WHOLE_CLASS"|"INDIVIDUAL")}>
           <option value="WHOLE_CLASS">One team</option>
           <option value="TEAMS">Split a class into teams</option>
@@ -188,16 +188,16 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         </Select>
       </label>
       {mode==="TEAMS"?<>
-        <label className="block space-y-1 text-sm font-medium">Preferred team size
+        <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Preferred team size
           <Input type="number" min={1} max={100} value={size} disabled={!plannerEditable} onChange={e=>setSize(Number(e.target.value))} />
         </label>
-        <label className="block space-y-1 text-sm font-medium">Grouping order
+        <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Grouping order
           <Select value={order} disabled={!plannerEditable} onChange={e=>setOrder(e.target.value as "ROLL"|"SHUFFLE")}>
             <option value="ROLL">Roll number</option>
             <option value="SHUFFLE">Seeded shuffle</option>
           </Select>
         </label>
-        {order==="SHUFFLE"?<label className="block space-y-1 text-sm font-medium">Shuffle seed
+        {order==="SHUFFLE"?<label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Shuffle seed
           <Input value={seed} disabled={!plannerEditable} onChange={e=>setSeed(e.target.value)} maxLength={128}/>
         </label>:null}
       </>:null}
@@ -237,7 +237,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           const learner=names.get(id);
           return <li key={id} className="flex min-w-0 flex-col gap-2 border-t border-border py-2 text-sm md:flex-row md:flex-wrap md:items-center">
             <span className="min-w-0 flex-1 break-words">{learner?.rollNumber??"—"} · {learner?.displayName??"Learner"}</span>
-            {groups.length>1?<label className="block min-w-0 text-xs md:w-36">Team
+            {groups.length>1?<label className="block min-w-0 md:w-36 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team
               <Select aria-label={"Move "+(learner?.displayName??"learner")+" to team"} disabled={!plannerEditable} value={index} onChange={event=>{
                 try{const updated=moveMemberBalanced(groups,id,Number(event.target.value));setGroups(updated);setError("");}
                 catch(e){setError(e instanceof Error?e.message:"Cannot move learner");}
@@ -245,7 +245,7 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
                 {groups.map((g,i)=><option key={i} value={i}>{g.name}</option>)}
               </Select>
             </label>:null}
-            {groups.length>1?<label className="block min-w-0 text-xs md:w-36">Swap with
+            {groups.length>1?<label className="block min-w-0 md:w-36 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Swap with
               <Select aria-label={"Swap "+(learner?.displayName??"learner")+" with learner in team"} disabled={!plannerEditable} value="" onChange={event=>{
                 const other=groups[Number(event.target.value)]?.membershipIds[0];
                 if(!other)return;

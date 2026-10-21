@@ -767,7 +767,7 @@ export async function PlacementCalendarWorkspace({
             value={state.view}
           />
 
-          <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+          <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Date
             <Input
               type="date"
@@ -778,7 +778,7 @@ export async function PlacementCalendarWorkspace({
             />
           </label>
 
-          <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+          <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Company
             <Input
               type="search"
@@ -807,7 +807,7 @@ export async function PlacementCalendarWorkspace({
              .sort((a,b)=>a.localeCompare(b,"en-IN")).slice(0,200).map(name=><option key={name} value={name}/>)}
           </datalist>:null}
           {isTpo ? (
-            <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+            <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
               Event type
               <Select
                 name="kind"
@@ -828,7 +828,7 @@ export async function PlacementCalendarWorkspace({
             <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
               <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
               <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
-              <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+              <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Round type
                 <Select
                   name="roundKind"
@@ -846,7 +846,7 @@ export async function PlacementCalendarWorkspace({
                 </Select>
               </label>
 
-              <label className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">
+              <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Job
                 <Input
                   type="search"

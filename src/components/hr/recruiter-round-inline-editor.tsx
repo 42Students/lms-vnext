@@ -98,14 +98,14 @@ export function RecruiterRoundInlineEditor({jobId,rows,readOnly}:{
     dismissible={!pending} title={active?"Change round":"Add a round"}>
     <form onSubmit={(e:FormEvent<HTMLFormElement>)=>{e.preventDefault();void submit(active?"UPDATE":"CREATE");}}
      className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
-     <label className="grid min-w-0 gap-1 text-sm text-body md:col-span-2">Name
+     <label className="grid min-w-0 gap-[6px] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
       <Input required maxLength={100} value={name} onChange={e=>setName(e.target.value)} className="w-full"/>
      </label>
-     <label className="grid gap-1 text-sm text-body">Type
+     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
       <Select value={kind} onChange={e=>setKind(e.target.value as Kind)} className="w-full">
        {kinds.map(([id,label])=><option value={id} key={id}>{label}</option>)}
       </Select></label>
-     <label className="grid min-w-0 gap-1 text-sm text-body">Where
+     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where
       <Select value={mode} onChange={e=>setMode(e.target.value)} className="w-full">
        <option value="">Date to be decided</option>
        <option value="ON_CAMPUS">On campus</option>

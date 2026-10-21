@@ -737,7 +737,7 @@ export function RecruiterResultControls({
                                 </Select>
                               </label>
 
-                              <label className="md:col-span-2">
+                              <label className="md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                                 <span className="mb-1 block text-xs font-semibold text-body">
                                   Candidate message
                                 </span>

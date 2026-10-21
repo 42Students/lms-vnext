@@ -104,28 +104,28 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   {!lessons.length?<p className="text-sm text-muted-foreground">Create an active course lesson before adding quizzes.</p>:null}
   {opened?<div className="min-w-0 max-w-4xl space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
    <div className="grid min-w-0 gap-4 md:grid-cols-2">
-    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Course / Lesson
+    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course / Lesson
      <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
       className="min-h-11 md:min-h-9">
       {lessons.map(x=><option key={x.id} value={x.id}>{x.courseCode} · {x.course} · {x.name}</option>)}
      </Select></label>
-    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Audience
+    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Audience
      <Select value={deliveryId} disabled={busy} onChange={e=>setDeliveryId(e.target.value)}
       className="min-h-11 md:min-h-9">
       <option value="">All currently eligible sections</option>
       {sections.map(x=><option key={x.deliveryId} value={x.deliveryId}>
        {x.sectionName} ({x.sectionCode})</option>)}
      </Select></label>
-    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Title
+    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title
      <Input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></label>
     <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Deadline (IST, required before publishing)
      <DateInput mode="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
       className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Maximum attempts
+    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
      <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
       onChange={e=>setMaxAttempts(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-sm font-semibold leading-5 text-body md:col-span-2">Description
+    <label className="grid gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
      <Textarea rows={2} maxLength={10000} value={description} disabled={busy}
       onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/></label>
    </div>
@@ -157,7 +157,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <Textarea value={question.prompt} maxLength={5000} disabled={busy} placeholder="Question prompt"
      aria-label={"Question "+(i+1)+" prompt"} onChange={e=>replaceQuestion(i,{...question,prompt:e.target.value})}
      className="min-h-24 w-full"/>
-    {question.options.map((option,j)=><label key={j} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 text-sm">
+    {question.options.map((option,j)=><label key={j} className="flex min-h-11 min-w-0 flex-wrap items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
      <ChoiceInput type={question.type==="SINGLE_CHOICE"?"radio":"checkbox"}
       name={"quiz-correct-"+i} checked={option.correct} disabled={busy}
       aria-label={"Correct answer "+(j+1)} onChange={e=>replaceQuestion(i,{...question,

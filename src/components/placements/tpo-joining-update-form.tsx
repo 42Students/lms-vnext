@@ -92,7 +92,7 @@ export function TpoJoiningUpdateForm({
 
   return (
     <Disclosure title={corrected?"Correct joining outcome":"Record joining outcome"} defaultOpen={!corrected} className="mt-3 min-w-0 border-t border-border pt-2" contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3 sm:grid-cols-2">
-      <label className="text-sm font-medium text-foreground">
+      <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         New joining outcome
         <Select
           value={status}
@@ -105,7 +105,7 @@ export function TpoJoiningUpdateForm({
         </Select>
       </label>
       {needsDate ? (
-        <label className="text-sm font-medium text-foreground">
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {status === "JOINED" ? "Actual joining date" : "Revised joining date"}
           <Input type="date" required value={joiningDate}
             onChange={(event) => setJoiningDate(event.target.value)}
@@ -113,7 +113,7 @@ export function TpoJoiningUpdateForm({
         </label>
       ) : null}
       {needsReason ? (
-        <label className="text-sm font-medium text-foreground sm:col-span-2">
+        <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Outcome reason
           <Textarea rows={2} required value={reason} maxLength={2000}
             onChange={(event) => setReason(event.target.value)}
@@ -121,7 +121,7 @@ export function TpoJoiningUpdateForm({
         </label>
       ) : null}
       {corrected ? (
-        <label className="text-sm font-medium text-foreground sm:col-span-2">
+        <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Reason for correcting the recorded outcome
           <Textarea rows={2} required value={correctionReason} maxLength={2000}
             onChange={(event) => setCorrectionReason(event.target.value)}

@@ -220,18 +220,18 @@ export function FacultyLessonVideoManager({
     <h3 className="text-base font-semibold text-[var(--lms-heading)]">Video</h3>
     <p className="text-xs text-muted-foreground">{limitsSummary("lesson-video")}</p>
     <div className="grid min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <label className="text-[13px] leading-4 font-semibold text-body">Title
-        <Input className="mt-1" value={title} maxLength={255} onChange={event=>setTitle(event.target.value)}/>
+      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Title
+        <Input className="mt-[6px]" value={title} maxLength={255} onChange={event=>setTitle(event.target.value)}/>
       </label>
-      <label className="text-[13px] leading-4 font-semibold text-body">Duration (seconds, optional)
-        <Input className="mt-1" type="number" min={1} max={86400} value={duration} onChange={event=>setDuration(event.target.value)}/>
+      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Duration (seconds, optional)
+        <Input className="mt-[6px]" type="number" min={1} max={86400} value={duration} onChange={event=>setDuration(event.target.value)}/>
       </label>
-      <label className="text-[13px] leading-4 font-semibold text-body">Points (lesson content)
-        <Input className="mt-1" type="number" min={0} max={1000}
+      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Points (lesson content)
+        <Input className="mt-[6px]" type="number" min={0} max={1000}
           value={contentPoints} onChange={event=>setContentPoints(event.target.value)}/>
       </label>
-      <label className="text-[13px] leading-4 font-semibold text-body">Upload Video
-        <Input type="file" className="mt-1 block min-h-11 w-full min-w-0 text-xs md:min-h-9"
+      <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Upload Video
+        <Input type="file" className="mt-[6px] block min-h-11 w-full min-w-0 text-xs md:min-h-9"
           accept={acceptAttributeFor("lesson-video")} disabled={busy}
           onChange={event=>{setFile(event.target.files?.[0]??null);event.currentTarget.value="";}}/>
       </label>
@@ -294,7 +294,7 @@ export function FacultyLessonVideoManager({
             </div>
             <div className="grid min-w-0 items-start gap-3 pt-3 sm:grid-cols-2">
             <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-title-${video.id}`}>Video title</label>
-              <Input id={`video-title-${video.id}`} className="mt-1 w-full min-w-0" maxLength={255}
+              <Input id={`video-title-${video.id}`} className="mt-[6px] w-full min-w-0" maxLength={255}
                 disabled={busy||!canEdit}
                 value={titleDraft[video.id]??video.title}
                 onChange={event=>setTitleDraft(old=>({...old,[video.id]:event.target.value}))}/>
@@ -302,19 +302,19 @@ export function FacultyLessonVideoManager({
                 disabled={busy||!canEdit}
                 onClick={()=>saveTitle(video)}>Update Video</Button>
             </div>
-            <label className="text-[13px] leading-4 font-semibold text-body">Replace video
-              <Input type="file" className="mt-1 block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
+            <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Replace video
+              <Input type="file" className="mt-[6px] block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit||!facultyVideoMayReplace(video)}
                 accept={acceptAttributeFor("lesson-video")}
                 onChange={event=>{const next=event.target.files?.[0];if(next)setConfirmation({kind:"REPLACE",video,file:next});event.currentTarget.value="";}}/>
             </label>
-            <label className="text-[13px] leading-4 font-semibold text-body">Thumbnail
-              <Input type="file" className="mt-1 block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit}
+            <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Thumbnail
+              <Input type="file" className="mt-[6px] block min-h-11 w-full min-w-0 max-w-full text-xs md:min-h-9" disabled={busy||!canEdit}
                 accept={acceptAttributeFor("lesson-video-thumbnail")}
                 onChange={event=>{thumbnail(video,event.target.files?.[0]??null);event.currentTarget.value="";}}/>
               <span className="block text-xs text-muted-foreground">{video.thumbnailStatus==="READY"?"Thumbnail ready":video.thumbnailStatus==="UPLOADING"?"Checking thumbnail":"No thumbnail"}</span>
             </label>
             <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-duration-${video.id}`}>Duration (seconds)</label>
-              <Input disabled={busy||!canEdit} id={`video-duration-${video.id}`} type="number" className="mt-1 w-full min-w-0" min={1} max={86400}
+              <Input disabled={busy||!canEdit} id={`video-duration-${video.id}`} type="number" className="mt-[6px] w-full min-w-0" min={1} max={86400}
                 value={durationDraft[video.id]??String(video.durationSeconds??"")}
                 onChange={event=>setDurationDraft(draft=>({...draft,[video.id]:event.target.value}))}/>
               <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>

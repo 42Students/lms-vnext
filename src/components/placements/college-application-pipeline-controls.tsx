@@ -157,7 +157,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     className="max-h-28 overflow-y-auto overscroll-contain pb-4 text-sm [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1rem),transparent_100%)]">{selected.slice(0,8).map(id=>
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
      {selected.length>8?<li>and {selected.length-8} more</li>:null}</ul>
-    <label className="grid gap-2 text-sm font-semibold">Reason
+    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Reason
      <Textarea rows={3} minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
       className="w-full text-base sm:text-sm"/></label>
     <label className="flex items-center gap-2 text-sm">

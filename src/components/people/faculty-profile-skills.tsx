@@ -36,7 +36,7 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
    <p className="mt-1 text-sm text-muted-foreground leading-[22px]">Add up to 100 professional skills and optional proficiency levels. Changes are saved only when you submit.</p>
   </div>
   {rows.length===0?<p className="text-sm text-muted-foreground leading-[22px]">No skills added yet.</p>:null}
-  {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find skill
+  {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find skill
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
    </label>:null}
@@ -48,11 +48,11 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
   {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground leading-5">Clear search to reorder Skills.</p>:null}
   <div className="space-y-3">
    {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] sm:grid-cols-2 sm:items-end">
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Skill {index+1}
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Skill {index+1}
      <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.skill}
       maxLength={120} required disabled={pending} onChange={event=>edit(skill.id,"skill",event.target.value)}/>
     </label>
-    <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Proficiency
+    <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Proficiency
      <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0" value={skill.proficiency}
       maxLength={64} disabled={pending} onChange={event=>edit(skill.id,"proficiency",event.target.value)}/>
     </label>

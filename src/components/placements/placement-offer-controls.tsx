@@ -844,11 +844,11 @@ export function PlacementOfferControls({
         </div>}>
         <div className="space-y-4">
           <p className="text-sm text-body">This notifies the learner and recalculates held-offer eligibility. History is retained.</p>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] leading-4 font-semibold">Reason<Select className={inputClass} value={withdrawReason}
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Reason<Select className={inputClass} value={withdrawReason}
             onChange={e=>setWithdrawReason(e.target.value)}>
             {["Company withdrew the offer","Hiring freeze","Duplicate offer issued","Offer details were incorrect","Other"].map(v=><option key={v}>{v}</option>)}
           </Select></label>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] leading-4 font-semibold">Additional details
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">Additional details
            <Textarea className={inputClass} maxLength={500} value={withdrawDetail} onChange={e=>setWithdrawDetail(e.target.value)}/>
           </label>
 

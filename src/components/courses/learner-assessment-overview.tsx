@@ -284,14 +284,14 @@ export function LearnerAssessmentOverview({
         }}
       />
       <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
-        <label className="w-full">
+        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search {kind === "ASSIGNMENT" ? "assignments" : "quizzes"}</span>
           <Input type="search" value={search} maxLength={100}
             onChange={event => {setSearch(event.target.value);setPage(1);}}
             placeholder="Title, lesson or course"
             className="min-h-11 md:min-h-9" />
         </label>
-        <label className="w-full">
+        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Course
           </span>
@@ -318,7 +318,7 @@ export function LearnerAssessmentOverview({
         </label>
       </div>
       <Disclosure title="State · Sort" className="border-b border-border" contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-4 md:grid-cols-2">
-        <label className="min-w-0 w-full">
+        <label className="min-w-0 w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</span>
           <Select className="min-h-11 md:min-h-9" value={stateFilter}
             onChange={event => {
@@ -330,7 +330,7 @@ export function LearnerAssessmentOverview({
             ))}
           </Select>
         </label>
-        <label className="w-full">
+        <label className="w-full text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort</span>
           <Select className="min-h-11 md:min-h-9" value={sort} onChange={event => {
             setSort(event.target.value as LearnerAssessmentSort);setPage(1);

@@ -86,7 +86,7 @@ export function TpoCompanyInteractionForm({
         All entries are permanent, actor-attributed history. No contact stage changes.
       </p>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="text-sm font-semibold text-foreground">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Contact
           <Select value={leadId} onChange={(event) => {setReviewing(false);setLeadId(event.target.value);}}
             disabled={busy}
@@ -96,7 +96,7 @@ export function TpoCompanyInteractionForm({
             ))}
           </Select>
         </label>
-        <label className="text-sm font-semibold text-foreground">
+        <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Interaction type
           <Select value={type}
             onChange={(event) => {setReviewing(false);setType(event.target.value as TpoCompanyInteractionKind);}}
@@ -108,13 +108,13 @@ export function TpoCompanyInteractionForm({
           </Select>
         </label>
       </div>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
         Outcome (optional)
         <Input value={outcome} onChange={(event) => {setReviewing(false);setOutcome(event.target.value);}}
           maxLength={30} disabled={busy}
           className="mt-1 block w-full" />
       </label>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
         Notes (required)
         <Textarea value={note} onChange={(event) => {setReviewing(false);setNote(event.target.value);}}
           maxLength={2000} rows={3} disabled={busy}

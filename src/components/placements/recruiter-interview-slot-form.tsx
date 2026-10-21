@@ -66,39 +66,39 @@ export function RecruiterInterviewSlotForm({action,rounds}:{action:string;rounds
  }
  return <form method="post" action={action} onSubmit={event=>void submit(event)} onChange={()=>setDirty(true)} className="grid min-w-0 gap-4 sm:grid-cols-2">
   <Input type="hidden" name="action" value="CREATE"/>
-  <label className="grid min-w-0 gap-1 text-sm text-body">Interview round
-   <Select name="roundId" required defaultValue="" className="min-h-11 w-full text-sm md:min-h-9">
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interview round
+   <Select name="roundId" required defaultValue="" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
     <option value="" disabled>Select an interview round</option>
     {rounds.map(row=><option key={row.id} value={row.id}>{row.sequence}. {row.name}</option>)}
    </Select>
   </label>
-  <label className="grid min-w-0 gap-1 text-sm text-body">Mode
-   <Select name="mode" required defaultValue="VIRTUAL" className="min-h-11 w-full text-sm md:min-h-9">
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode
+   <Select name="mode" required defaultValue="VIRTUAL" className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9">
     <option value="VIRTUAL">Virtual</option><option value="ON_CAMPUS">On campus</option>
    </Select>
   </label>
-  <label className="grid min-w-0 gap-1 text-sm text-body">Start (IST)
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start (IST)
    <Input name="startAt" type="datetime-local" min={today} required value={start}
     onChange={event=>{const next=event.target.value;setStart(next);if(end&&end<=next)setEnd("");setError(null);}}
     className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
-  <label className="grid min-w-0 gap-1 text-sm text-body">End (IST)
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">End (IST)
    <Input name="endAt" type="datetime-local" min={start||today} required value={end}
     onChange={event=>{setEnd(event.target.value);setError(null);}}
     className="min-h-11 w-full text-sm md:min-h-9"/>
   </label>
-  <label className="grid min-w-0 gap-1 text-sm text-body">Capacity
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Capacity
    <Input name="capacity" type="number" min={1} max={100} defaultValue={1}
-    required className="min-h-11 w-full text-sm md:min-h-9"/>
+    required className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
   </label>
   <details className="min-w-0 border-t border-border py-2 sm:col-span-2">
    <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-body md:min-h-9">Panel label (not a learner name) · Meeting location</summary>
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2">
-    <label className="grid min-w-0 gap-1 text-sm text-body">Panel label (not a learner name)
-     <Input name="panelLabel" maxLength={160} className="min-h-11 w-full text-sm md:min-h-9"/>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Panel label (not a learner name)
+     <Input name="panelLabel" maxLength={160} className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
     </label>
-    <label className="grid min-w-0 gap-1 text-sm text-body">Meeting location
-     <Input name="meetingLocation" maxLength={500} className="min-h-11 w-full text-sm md:min-h-9"/>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Meeting location
+     <Input name="meetingLocation" maxLength={500} className="min-h-11 w-full text-[var(--lms-font-base)] md:min-h-9"/>
     </label>
    </div>
   </details>
