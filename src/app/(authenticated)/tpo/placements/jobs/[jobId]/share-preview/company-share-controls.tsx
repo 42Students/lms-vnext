@@ -117,13 +117,13 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
    External sharing is unavailable until its audited database migration is registered.
   </Alert>:<>
    <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2">
-    <label className="grid w-full min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
+    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Expires in days
      <Select value={days} disabled={pending} onChange={event=>changeExpiry(event.target.value)}
       className="w-full">
       {[1,2,3,4,5,6,7,14,30,60,90].map(day=><option key={day} value={day}>{day}</option>)}
      </Select>
     </label>
-    <label className="grid w-full min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Please shortlist by
+    <label className="grid w-full min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] min-[768px]:w-auto">Please shortlist by
      <Input type="date" value={shortlistBy} disabled={pending} onChange={event=>setShortlistBy(event.target.value)}
       />
     </label>
