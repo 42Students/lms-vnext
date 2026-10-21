@@ -1,6 +1,6 @@
 import "server-only";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {and,asc,eq,inArray,ne,lt,gt,notExists} from "drizzle-orm";
+import {and,asc,eq,inArray,ne,lt,gt,notExists,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
@@ -126,6 +126,17 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     if(prior)throw Error(
      "Cannot schedule a new round while a previous round is still active (status: SCHEDULED). Please mark the current round as Completed or Cancel it first.",
     );
+   }
+   // A checked conflict query alone is not concurrency-safe when two
+   // different learners are booked into the same room across separate jobs.
+   // Transaction advisory locks serialize writes for each shared resource.
+   // Sort keys to avoid deadlocks between competing room/interviewer edits.
+   const resourceKeys=[
+    collegeId+":interview-room:"+normalizedRoom,
+    ...(normalizedPanel?[collegeId+":interview-panel:"+job.companyRelationshipId+":"+normalizedPanel]:[]),
+   ].sort();
+   for(const key of resourceKeys){
+    await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${key}, 0))`);
    }
    // Whole-college conflict query, not the first 2000 job-specific rows.
    // Preserve the 15-minute calendar conflict buffer for candidate, room
