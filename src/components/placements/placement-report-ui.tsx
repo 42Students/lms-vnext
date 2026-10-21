@@ -132,6 +132,85 @@ export function ReportFilters({
   );
 }
 
+/** Authoritative application-stage facts from the hiring funnel, not
+ * approximations based on unique placed learners or accepted offers.
+ * This strip is for the legacy hiring dashboard; ordinary TPO placement
+ * metrics remain available below it as separate outcome measures. */
+export type ReportHiringStageCounts = {
+ totalApplications:number;
+ stages: Readonly<Record<"APPLIED"|"SHORTLISTED"|"INTERVIEW"|"OFFERED"|
+  "HIRED"|"REJECTED"|"WITHDRAWN"|"WAITLISTED",number>> &
+  Partial<Readonly<Record<"ASSESSMENT",number>>>;
+};
+
+export function ReportHiringStageMetrics({counts}:{counts:ReportHiringStageCounts}){
+ const order=["APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED",
+  "HIRED","REJECTED","WITHDRAWN","WAITLISTED"] as const;
+ const label=(stage:string)=>stage.charAt(0)+stage.slice(1).toLowerCase();
+ const cards=[{label:"Total Applications",value:reportNumber(counts.totalApplications)},
+  ...order.map(stage=>({label:label(stage),
+   value:stage==="ASSESSMENT"&&counts.stages.ASSESSMENT===undefined
+    ?"—":reportNumber(counts.stages[stage]??0)}))];
+ return <SummaryStrip label="Hiring dashboard stages" steps={cards}/>;
+}
+
+/** The service already supports college-scoped batch, branch, employer,
+ * drive mode and dream category filters. Callers must pass the selected
+ * query through getPlacementReportWorkspace and obtain authorized batch
+ * options before displaying this form. Unsupported POOL / SUPER_DREAM
+ * classifications are deliberately excluded. */
+export type ReportDimensionOptions = {
+ batches:readonly {id:string;name:string}[];
+ branches:readonly string[];
+ companies:readonly string[];
+};
+export function ReportDimensionFilters({workspace,path,options}:{
+ workspace:PlacementReportWorkspace;path:string;options:ReportDimensionOptions;
+}){
+ const decoded:unknown=JSON.parse(workspace.reportFilterKey);
+ const values=Array.isArray(decoded)?decoded:[];
+ const selected=(index:number)=>typeof values[index]==="string"?values[index] as string:"";
+ return <form action={path} method="get"
+  aria-label="Report academic and employer filters"
+  className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-3">
+   {workspace.selectedSeasonId?<Input type="hidden" name="seasonId" value={workspace.selectedSeasonId}/>:null}
+   {workspace.selectedJobId?<Input type="hidden" name="jobId" value={workspace.selectedJobId}/>:null}
+   <label className="text-[13px] font-semibold">Batch
+    <Select name="batchId" defaultValue={selected(0)} className="mt-1 w-full">
+     <option value="">All batches</option>
+     {options.batches.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
+    </Select>
+   </label>
+   <label className="text-[13px] font-semibold">Branch
+    <Select name="branch" defaultValue={selected(1)} className="mt-1 w-full">
+     <option value="">All branches</option>
+     {options.branches.map(value=><option key={value} value={value}>{value}</option>)}
+    </Select>
+   </label>
+   <label className="text-[13px] font-semibold">Company
+    <Select name="company" defaultValue={selected(2)} className="mt-1 w-full">
+     <option value="">All companies</option>
+     {options.companies.map(value=><option key={value} value={value}>{value}</option>)}
+    </Select>
+   </label>
+   <label className="text-[13px] font-semibold">Drive mode
+    <Select name="mode" defaultValue={selected(3)} className="mt-1 w-full">
+     <option value="">All drive modes</option>
+     <option value="ON_CAMPUS">On campus</option>
+     <option value="OFF_CAMPUS">Off campus</option>
+    </Select>
+   </label>
+   <label className="text-[13px] font-semibold">Category
+    <Select name="category" defaultValue={selected(4)} className="mt-1 w-full">
+     <option value="">All categories</option>
+     <option value="REGULAR">Regular</option>
+     <option value="DREAM">Dream</option>
+    </Select>
+   </label>
+   <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply filters</Button>
+  </form>;
+}
+
 export function ReportScopeNote({
   note,
 }: {
