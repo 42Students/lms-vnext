@@ -129,18 +129,24 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  // Super Admin directory, rather than reporting page 999 of 1 as empty.
  const totalPages=superAdminReadPages(total,query.pageSize);
  const page=Math.min(query.page,totalPages);
- const rows=await db.select().from(source).orderBy(asc(source.name),asc(source.id))
+ // The old learner roster used numeric-aware roll ordering, while the
+ // default faculty/learner directory is sorted by normalized full name.
+ const rollSort=sql<string>`case when ${source.rollNumber} ~ '^[0-9]{1,15}$'
+    then lpad(${source.rollNumber},15,'0') else coalesce(${source.rollNumber},'') end`;
+ const sortKey=role==="LEARNER"&&sortBy==="roll"?rollSort:source.name;
+ const rows=await db.select().from(source)
+  .orderBy(sortDesc?desc(sortKey):asc(sortKey),asc(source.id))
   .limit(query.pageSize).offset((page-1)*query.pageSize);
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
-  id:row.id,title:row.name||"Unnamed person",subtitle:row.collegeName+" · "+role,
+  id:row.id,title:row.name||"-",subtitle:row.collegeName+" · "+role,
   // Legacy suspendedAt means this membership cannot act in the college;
   // a platform block also prevents sign-in even if membership stayed ACTIVE.
   status:row.status==="ACTIVE"&&(row.platformStatus!=="ACTIVE"||row.suspendedAt)
     ?"SUSPENDED":row.status,
   details:[
    ...(role==="FACULTY"?[
-    "Department: "+(row.departmentName??"Not assigned"),
+    "Department: "+(row.departmentName??"-"),
     "Department ID: "+(row.facultyDepartmentId??"Not assigned"),
     "Type: "+(row.employmentType??row.academicTitle??"Not set"),
     "Faculty type: "+(row.employmentType??"Not set"),
@@ -148,16 +154,16 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
     "Academic title: "+(row.academicTitle??"Not set"),
     "Faculty code: "+(row.legacyFacultyCode??"Not recorded"),
     "Legacy faculty ID: "+(row.legacyFacultyId??"Not recorded"),
-    "Gender: "+(row.gender||"Not recorded"),
-    "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded"),
-   ]:["Roll number: "+(row.rollNumber??"Not recorded"),"Class: "+(row.className??"Not assigned"),
+    "Gender: "+(row.gender||"-"),
+    "Email: "+(row.facultyContactEmail??"-"),"Mobile: "+(row.facultyContactMobile??"-"),
+   ]:["Roll number: "+(row.rollNumber??"-"),"Class: "+(row.className??"-"),
      "Classes: "+(row.classNames??"Not assigned"),
      "Student ID: "+(row.legacyUniqueId??"Not recorded"),
      "Registration number: "+(row.registrationNumber??"Not recorded"),
      "Legacy learner ID: "+(row.legacyLearnerId??"Not recorded"),
-     "Gender: "+(row.gender||"Not recorded"),
-     "Email: "+(row.learnerContactEmail??"Not recorded"),
-     "Mobile: "+(row.learnerContactMobile??"Not recorded")]),
+     "Gender: "+(row.gender||"-"),
+     "Email: "+(row.learnerContactEmail??"-"),
+     "Mobile: "+(row.learnerContactMobile??"-")]),
    "College ID: "+row.collegeId,
    "Organization ID: "+row.organizationId,
    "Membership ID: "+row.id,
@@ -169,4 +175,45 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   ],
   href:`/admin/people/directory/${encodeURIComponent(row.id)}`,
  }))};
+}
+
+/** Strictly selected-college suggestions (legacy: 15 search, 10 popular). */
+export async function listAdminScopedPeopleSuggestions(
+ context:RequestContext,role:"FACULTY"|"LEARNER",search:string,limit=15,
+) {
+ const bounded=Number.isSafeInteger(limit)?Math.max(1,Math.min(15,limit)):15;
+ const q=search.trim().slice(0,100);
+ const result=await listAdminScopedPeople(context,role,{
+  q,page:1,pageSize:25,status:"ALL",
+ });
+ return result.items.slice(0,q?bounded:Math.min(10,bounded)).map(row=>({
+  id:row.id,label:row.title,kind:role,
+  // Historical school-wide caches are intentionally replaced with a fresh,
+  // permission-scoped SQL query. Never put contact fields in suggestion data.
+  subtitle:row.subtitle,
+ }));
+}
+
+/** Exact, case-insensitive name check for faculty duplicate warnings.
+ * Limited to the selected college and authorized people.manage scope.
+ */
+export async function existsAdminScopedFacultyName(
+ context:RequestContext,facultyName:string,
+):Promise<boolean>{
+ const name=facultyName.trim();
+ if(!name||name.length>100)return false;
+ const result=await listAdminScopedPeople(context,"FACULTY",{
+  q:name,page:1,pageSize:200,status:"ALL",
+ });
+ return result.items.some(row=>row.title.localeCompare(name,undefined,{sensitivity:"accent"})===0);
+}
+
+/** Counts must be computed inside the same college scope as the roster. */
+export async function adminScopedFacultyStats(context:RequestContext){
+ const [all,active,suspended]=await Promise.all([
+  listAdminScopedPeople(context,"FACULTY",{q:"",page:1,pageSize:10,status:"ALL"}),
+  listAdminScopedPeople(context,"FACULTY",{q:"",page:1,pageSize:10,status:"ACTIVE"}),
+  listAdminScopedPeople(context,"FACULTY",{q:"",page:1,pageSize:10,status:"SUSPENDED"}),
+ ]);
+ return {total:all.total,active:active.total,suspended:suspended.total};
 }
