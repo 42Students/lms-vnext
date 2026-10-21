@@ -24,11 +24,23 @@ type StartResult = {
 const RESEND_SECONDS = 30;
 const EMAIL_RESEND_SECONDS = 60;
 const ATTEMPT_KEY = "42lms-login-attempt-v1";
-type SavedAttempt = { attempt: StartResult; expiresAt: number; nextResendAt: number };
-function saveLoginAttempt(value: SavedAttempt | null) {
+type SavedAttempt = {
+  attempt: StartResult;
+  expiresAt: number;
+  nextResendAt: number;
+  /** Exact requesting host including development port. Never resume elsewhere. */
+  host: string;
+};
+function saveLoginAttempt(value: Omit<SavedAttempt, "host"> | null) {
   try {
-    if (value) window.sessionStorage.setItem(ATTEMPT_KEY, JSON.stringify(value));
-    else window.sessionStorage.removeItem(ATTEMPT_KEY);
+    if (value) {
+      window.sessionStorage.setItem(
+        ATTEMPT_KEY,
+        JSON.stringify({ ...value, host: window.location.host.toLowerCase() }),
+      );
+    } else {
+      window.sessionStorage.removeItem(ATTEMPT_KEY);
+    }
   } catch { /* Private browsing can disable session storage. */ }
 }
 function loadLoginAttempt(): SavedAttempt | null {
@@ -39,7 +51,9 @@ function loadLoginAttempt(): SavedAttempt | null {
     if (!data || typeof data !== "object" || !("attempt" in data) || !("expiresAt" in data) || !("nextResendAt" in data))
       return null;
     const record = data as SavedAttempt;
-    if (typeof record.expiresAt !== "number" || record.expiresAt <= Date.now() ||
+    if (typeof record.host !== "string" ||
+        record.host !== window.location.host.toLowerCase() ||
+        typeof record.expiresAt !== "number" || record.expiresAt <= Date.now() ||
         typeof record.nextResendAt !== "number" || !record.attempt ||
         !/^[\da-f]{8}-[\da-f]{4}-[\da-f]{4}-[\da-f]{4}-[\da-f]{12}$/i.test(record.attempt.attemptId) ||
         !["PHONE","EMAIL"].includes(record.attempt.channel)) {
@@ -75,6 +89,11 @@ const ERROR_MESSAGES: Record<string, string> = {
   SECOND_FACTOR_UNAVAILABLE:
     "This administrator account needs both a verified phone number and email address.",
   CHANNEL_DISABLED: "This college does not allow that sign-in method. Select an available method.",
+  COMPANY_EMAIL_REQUIRED:
+    "Use your work email. Personal email (Gmail, Yahoo, Outlook and similar) can't be used for recruiting.",
+  RECRUITER_COLLEGE_ADDRESS:
+    "Recruiters sign in at their college's placement address, for example klu.42lms.com. You'll find it in your invitation email.",
+  INVALID_CHOICE: "The available accounts have changed. Refresh and choose an account again.",
   AUTH_NOT_CONFIGURED:
     "Sign-in is temporarily unavailable. Please try again shortly.",
 };
@@ -187,7 +206,7 @@ export function LoginForm({
       setCode("");
       setSecondCode("");
       saveLoginAttempt(null);
-    } else if(errorCode==="WRONG_TENANT"){
+    } else if(errorCode==="WRONG_TENANT"||errorCode==="INVALID_CHOICE"){
       setAttempt(null);
       saveLoginAttempt(null);
       setCode("");
