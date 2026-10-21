@@ -401,7 +401,7 @@ export function TenantDomainManager({
         pending={Boolean(pendingAction)}
         onConfirm={() => { if (primaryTarget) void runAction(primaryTarget, "primary"); }}
       >
-        {modalError ? <p role="alert" className="break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{modalError}</p> : null}
+        {modalError ? <p role="alert" className="break-words rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
       </ConfirmDialog>
 
       <ConfirmDialog
@@ -434,7 +434,7 @@ export function TenantDomainManager({
             disabled={Boolean(pendingAction)} onChange={event => setDeleteHostConfirmation(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
         </label> : null}
-        {modalError ? <p role="alert" className="mt-[var(--lms-space-2)] break-words border-l-2 border-error bg-error-subtle p-[var(--lms-space-3)] text-sm text-error">{modalError}</p> : null}
+        {modalError ? <p role="alert" className="mt-[var(--lms-space-2)] break-words rounded-[8px] border border-[rgba(239,68,68,0.25)] bg-[var(--lms-error-subtle)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-[14px] leading-5 text-[var(--lms-error-text)]">{modalError}</p> : null}
       </ConfirmDialog>
     </div>
   );
