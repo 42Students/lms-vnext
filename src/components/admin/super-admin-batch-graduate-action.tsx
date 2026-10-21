@@ -23,6 +23,13 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
     if(code==="BATCH_GRADUATION_STALE")throw new Error("This batch changed while you were working. Refresh and try again.");
     throw new Error("Could not mark this batch graduated. Refresh and try again.");
    }
+   const receipt:unknown=await response.json().catch(()=>null);
+   const cohort=receipt&&typeof receipt==="object"&&!Array.isArray(receipt)
+     ?(receipt as {cohort?:unknown}).cohort:null;
+   if(!cohort||typeof cohort!=="object"||Array.isArray(cohort)||
+      (cohort as Record<string,unknown>).id!==cohortId||
+      (cohort as Record<string,unknown>).status!=="COMPLETED")
+     throw new Error("Graduation could not be confirmed. Refresh before retrying.");
    setOpen(false);setSuccess("Batch marked graduated.");router.refresh();
    });
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}
