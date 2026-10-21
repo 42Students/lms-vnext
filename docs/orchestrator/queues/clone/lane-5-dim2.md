@@ -203,16 +203,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/admin/department-create-form.tsx`
 - [x] `src/components/admin/lecture-hall-manager.tsx`
 - [x] `src/components/admin/managed-college-subdomain.tsx`
-- [ ] `src/components/admin/organization-actions.tsx`
-- [ ] `src/components/admin/organization-create-form.tsx`
-- [ ] `src/components/admin/person-membership-actions.tsx`
-- [ ] `src/components/admin/person-onboard-dialog.tsx`
-- [ ] `src/components/admin/person-profile-dialog.tsx`
-- [ ] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
-- [ ] `src/components/admin/super-admin-attendance-settings-editor.tsx`
-- [ ] `src/components/admin/super-admin-batch-roster-manager.tsx`
-- [ ] `src/components/admin/super-admin-college-company-actions.tsx`
-- [ ] `src/components/admin/super-admin-company-verification.tsx`
+- [x] `src/components/admin/organization-actions.tsx`
+- [x] `src/components/admin/organization-create-form.tsx`
+- [x] `src/components/admin/person-membership-actions.tsx`
+- [x] `src/components/admin/person-onboard-dialog.tsx`
+- [x] `src/components/admin/person-profile-dialog.tsx`
+- [x] `src/components/admin/scoped-membership-lifecycle-actions.tsx`
+- [x] `src/components/admin/super-admin-attendance-settings-editor.tsx`
+- [x] `src/components/admin/super-admin-batch-roster-manager.tsx`
+- [x] `src/components/admin/super-admin-college-company-actions.tsx`
+- [x] `src/components/admin/super-admin-company-verification.tsx`
 - [ ] `src/components/admin/super-admin-faculty-assignment-create.tsx`
 - [ ] `src/components/admin/super-admin-faculty-bulk-import.tsx`
 - [ ] `src/components/admin/super-admin-faculty-schedule-reassign-action.tsx`

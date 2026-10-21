@@ -205,3 +205,13 @@ Shared component correction: `InlineNotice` body/dismiss 13→14px and radius 6�
 - `src/components/admin/department-create-form.tsx` | 2 instance(s) (inline; 2 live) | spec ↔ code: legacy status grey #54505d ↔ --lms-body-text; copy size 14px ↔ text-sm; status warning #d97706 ↔ --lms-warning | fixes: none
 - `src/components/admin/lecture-hall-manager.tsx` | 1 instance(s) (Banner; 0 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
 - `src/components/admin/managed-college-subdomain.tsx` | 3 instance(s) (Alert; 0 live) | spec ↔ code: legacy error #ef4444 ↔ --lms-error; radius 8px ↔ rounded-[8px]; font size 14px ↔ text-[14px] | fixes: none
+- `src/components/admin/organization-actions.tsx` | 0 instance(s) (inline; live 0) | spec ↔ code: none | fixes: none
+- `src/components/admin/organization-create-form.tsx` | 2 instance(s) (Alert; live 1) | spec ↔ code: error #ef4444 ↔ --lms-error; notice radius 8px ↔ rounded-[8px]; horizontal pad 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/person-membership-actions.tsx` | 2 instance(s) (inline; live 2) | spec ↔ code: legacy warning #d97706 ↔ --lms-warning; muted ink #54505d ↔ --lms-body-text; font 14px ↔ text-sm | fixes: none
+- `src/components/admin/person-onboard-dialog.tsx` | 0 instance(s) (inline; live 0) | spec ↔ code: none | fixes: none
+- `src/components/admin/person-profile-dialog.tsx` | 1 instance(s) (Alert; live 0) | spec ↔ code: error #ef4444 ↔ --lms-error; notice radius 8px ↔ rounded-[8px]; horizontal pad 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/scoped-membership-lifecycle-actions.tsx` | 6 instance(s) (inline; live 4) | spec ↔ code: legacy warning #d97706 ↔ --lms-warning; muted ink #54505d ↔ --lms-body-text; font 14px ↔ text-sm | fixes: none
+- `src/components/admin/super-admin-attendance-settings-editor.tsx` | 2 instance(s) (Alert; live 0) | spec ↔ code: error #ef4444 ↔ --lms-error; notice radius 8px ↔ rounded-[8px]; horizontal pad 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/super-admin-batch-roster-manager.tsx` | 4 instance(s) (Alert; live 2) | spec ↔ code: error #ef4444 ↔ --lms-error; notice radius 8px ↔ rounded-[8px]; horizontal pad 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/super-admin-college-company-actions.tsx` | 3 instance(s) (Alert; live 0) | spec ↔ code: error #ef4444 ↔ --lms-error; notice radius 8px ↔ rounded-[8px]; horizontal pad 16px ↔ --lms-space-4 | fixes: none
+- `src/components/admin/super-admin-company-verification.tsx` | 3 instance(s) (Alert; live 0) | spec ↔ code: error #ef4444 ↔ --lms-error; notice radius 8px ↔ rounded-[8px]; horizontal pad 16px ↔ --lms-space-4 | fixes: none
