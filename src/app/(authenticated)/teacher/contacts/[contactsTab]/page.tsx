@@ -89,17 +89,17 @@ export default async function FacultyContactsPage({
         }))} />
 
       <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-        <p className="mb-3 text-xs text-muted-foreground">Contact fields are masked for this role. The legacy Email and Contact columns remain visible as Private; no other learner or teacher phone number is disclosed.</p>
-        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <div className="flex min-w-0 flex-wrap items-center gap-3">
-            <h2 className="m-0 text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">{selected.label}</h2>
-            <span role="status" aria-live="polite" className="inline-flex items-center gap-2 rounded-full border border-[var(--lms-field-hover-border)] bg-surface px-3 py-1 text-sm text-body">
-              <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 11a3 3 0 1 0 0-6m0 9a5 5 0 0 1 4 4v2"/></svg>
-              {result.total} {result.total === 1 ? "contact" : "contacts"}
-            </span>
+        <div className="flex min-w-0 flex-col justify-between gap-3 sm:flex-row sm:items-end">
+          <div className="min-w-0">
+            <h2 className="m-0 text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
+            <p role="status" aria-live="polite" className="mt-1 text-sm leading-[22px] text-body">
+              {result.total} {result.total === 1 ? "contact" : "contacts"} in {selected.label}
+              {result.search ? <> matching “{result.search}”</> : null}
+            </p>
           </div>
           <FacultyContactsLiveSearch baseHref={baseHref} initialSearch={result.search} pageSize={result.pageSize}/>
         </div>
+        <p className="text-xs text-muted-foreground">Contact fields are masked for this role. The legacy Email and Contact columns remain visible as Private; no other learner or teacher phone number is disclosed.</p>
       </section>
 
       <FacultyContactsTable
