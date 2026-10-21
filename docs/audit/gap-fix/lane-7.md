@@ -131,3 +131,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-6_project-template-college.md.md` | 1/1 findings reviewed and routed to Projects/schema legacy assignment import owner. No historical null assignedBy forged; product decision for explicit system actor. **Handoff, not fixed**. No tests/CI.
 
 - `NEW_docs_audit_gap2_lane-2_temporary-sms-outage-recovery.md.md` | 3/3 findings reviewed and routed to Exotel SMS provider/diagnostics owner. No temporary test OTP bypass revived; privacy-safe provider warning remains intentional. **Handoff, not fixed**. No tests/CI.
+
+- `src_lib_api-error.ts.md` | G2-2-036-019 applied: exact, non-revealing teaching-scope message for FACULTY_TEACHING_SCOPE_REQUIRED. G2-2-036-020 kept generic permission 403 vs known scoped-resource 404 (do not infer foreign college from plain AuthorizationError). G2-2-037-022 partial: route-specific help and toast copy must be mapped by endpoint/action, not centralized across unrelated name fields; handoff. No execution/CI.
+
+- `NEW_docs_audit_gap2_lane-20_company-controller.md.md` | 2/2 company controller status/name and feedback findings routed to Placements company edit/create UI/service. Central api-error cannot safely infer which entity's `name` failed validation or whether the company was restored. **Handoff, not fixed**. No execution/CI.
