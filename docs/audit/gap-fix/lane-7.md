@@ -63,3 +63,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-2_l15-u030-hiring-dashboard.md.md` | 14/14 findings recorded as cross-lane handoff by ID and target. 0 edits to shared hiring dashboard analytics/services and table; organization-wide permission/csv export must be designed by owning lane. **Not fixed**, no CI.
 
 - `NEW_docs_audit_gap2_lane-2_admin-assignment-controller.md.md` | 13/13 findings recorded as cross-lane handoff by ID and target. 0 edits to shared assignment directory/service/schema; section-specific filtering and degraded stat rows must be implemented by Courses owner. **Not fixed**, no CI.
+
+- `NEW_docs_audit_gap2_lane-2_admin-assignment-publish-controller.md.md` | 13/13 findings reviewed and handed off with code target. No out-of-area Courses grade publish mutation/API edits, preserved permission/CAS requirements. **Handoff not fixed**, static source review only.
+
+- `NEW_docs_audit_gap2_lane-7_l19-u027-course-controller.md.md` | 13/13 findings reviewed and handed off with code target. No out-of-area Courses catalogue service/schema/UI edits, preserved permission/CAS requirements. **Handoff not fixed**, static source review only.

@@ -592,3 +592,39 @@ Org-wide hiring analytics, multi-section export and paged table have scoped data
 - G2-2-007-026 | `src/components/courses/college-assignment-list.tsx` | Restore exact toast copy.
 
 The Courses assignments directory's section targeting and stats are shared Courses/UI contracts; row-specific failure and exact classroom targeting must remain tenant scoped. Legacy hard-delete / publish-all messages cannot bypass current grant and audit protections. **13/13 handed off, not fixed**.
+
+## Admin assignment grade publish — lane-7 handoff (2026-10-21)
+
+- G2-2-008-001 | `src/app/api/courses/assignments/publish/route.ts` | Add guarded server bulk publish endpoint or document batch client semantics.
+- G2-2-008-003 | `src/modules/courses/grade-publish-service.ts` | Keep server-side snapshot/retryable batch and audited summary semantics.
+- G2-2-008-014 | `src/modules/courses/grade-publish-service.ts` | Authorize selected assignment + section before listing/fetching any learner IDs.
+- G2-2-008-021 | `src/modules/courses/grade-publish-service.ts` | Record one batch-level audit event with counts & actor after publish processing.
+- G2-2-008-023 | `src/modules/courses/grade-publish-service.ts` | Add first-class whole-assignment bulk permission guard.
+- G2-2-008-037 | `src/modules/courses/grade-publish-service.ts` | Bound calls by max records/work budget, provide progress + resumable cursor.
+- G2-2-008-042 | `src/modules/courses/grade-publish-service.ts` | Add audit batch summary integration with original count keys.
+- G2-2-008-045 | `src/app/api/courses/assignments/publish/route.ts` | Preserve whole-assignment scope or explicitly approve Section-by-Section segmentation.
+- G2-2-008-013 | `src/app/api/courses/assignments/publish/route.ts` | Confirm unauthenticated response and preserve 401 semantics.
+- G2-2-008-016 | `src/components/courses/faculty-assignment-grade-publish.tsx` | Display skipped/not graded/already published counts.
+- G2-2-008-017 | `src/components/courses/faculty-assignment-grade-publish.tsx` | Provide sanitized failure list with meaningful retry guidance.
+- G2-2-008-012 | `src/app/api/courses/assignments/publish/route.ts` | Map invalid path to stable validation error, document identifier migration.
+- G2-2-008-015 | `src/components/courses/faculty-assignment-grade-publish.tsx` | Restore result copy and details.
+
+A server-scoped bulk grade publish changes access control, audit, pagination and transaction boundaries; shared Courses owner must implement guarded summary without bypassing grading permissions. **13/13 handed off, not fixed**.
+
+## Course controller — lane-7 handoff (2026-10-21)
+
+- G2-19-027-059 | `src/modules/courses/course-service.ts` | Ensure all detail aliases collapse unauthorized/unknown to same safe error and no slug oracle.
+- G2-19-027-062 | `src/modules/courses/course-service.ts` | Check descendant lessons and content independently, including nonactive offerings; avoid stranded child data.
+- G2-19-027-064 | `src/modules/courses/course-service.ts` | Match legacy duplicate short title or preserve as uniqueness in migrated data.
+- G2-19-027-066 | `src/db/schema/courses.ts` | Differentiate hidden visibility from archived course lifecycle; avoid conflating user hide with archive.
+- G2-19-027-074 | `src/modules/courses/course-service.ts` | Map audit event taxonomy and add restore audit with actor/time and change summary.
+- G2-19-027-085 | `src/modules/courses/college-course-catalogue-model.ts` | Fix wrong pageSize view/query contract, prevent page count mismatch.
+- G2-19-027-087 | `src/modules/courses/course-service.ts` | Add expectedUpdatedAt/version in PATCH and stale-conflict message to prevent overwriting form edits.
+- G2-19-027-091 | `src/components/courses/admin-course-display-editor.tsx` | Connect storage receipt flow or document intentional deferral and render fallback.
+- G2-19-027-092 | `src/db/schema/courses.ts` | Write complete old-to-new schema migration with typed JSON extraction and legacy identity crosswalk.
+- G2-19-027-093 | `src/db/schema/courses.ts` | Resolve duplicate short titles during import and ensure intended constraint parity.
+- G2-19-027-095 | `src/modules/courses/course-service.ts` | Migrate version or use millisecond-precision expectedUpdatedAt CAS for course edits.
+- G2-19-027-096 | `src/db/schema/courses.ts` | Preserve deleted/restored audit lifecycle with timestamp and reversible status transition.
+- G2-19-027-098 | `src/components/courses/admin-course-overview.tsx` | Make bulk visibility reachable to college admins under same role policy and preserve selection/partial failures.
+
+Course catalogue status/visibility, optimistic updates and restoration are Courses/schema ownership. Legacy hidden and archived states cannot be conflated; migration and data-retention decisions required. **13/13 handed off, not fixed**.
