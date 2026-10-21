@@ -22,7 +22,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-faculty-assignment-actions.tsx.md` (edit src/components/college/college-faculty-assignment-actions.tsx; 18 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_modules_inbound-mail_admin-service.ts.md` (edit src/modules/inbound-mail/admin-service.ts; 16 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_modules_operations_scheduled-job-runner.ts.md` (edit src/modules/operations/scheduled-job-runner.ts; 16 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_modules_module-access_admin-read-service.ts.md` (edit src/modules/module-access/admin-read-service.ts; 14 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_modules_module-access_admin-read-service.ts.md` (edit src/modules/module-access/admin-read-service.ts; 14 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_scripts_sql_db10-sms-delivery-attempts-staging.sql.md` (edit scripts/sql/db10-sms-delivery-attempts-staging.sql; 14 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-student-register-form.tsx.md` (edit src/components/college/college-student-register-form.tsx; 13 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_app_platform_page.tsx.md` (edit src/app/platform/page.tsx; 12 findings; best P2)

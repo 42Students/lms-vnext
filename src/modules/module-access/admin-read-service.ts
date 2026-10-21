@@ -6,6 +6,7 @@ import {
   desc,
   count,
   eq,
+  ilike,
   inArray,
   isNull,
   or,
@@ -44,7 +45,6 @@ import {adminFeatureQuerySchema,featureRuleCutoff,boundedAdminFeaturePage} from 
 
 
 
-const COLLEGE_PAGE_SIZE = 20;
 const OVERRIDE_PAGE_SIZE = 30;
 
 function requireSuperAdmin(
@@ -68,6 +68,7 @@ type CollegeForAccess = {
   name: string;
   code: string;
   status: string;
+  legacyCollegeId?:number|null;
 };
 
 /**
@@ -145,6 +146,7 @@ export async function listSuperAdminFeatureControls(
 
   const query =
     adminFeatureQuerySchema.parse(rawQuery);
+  const collegePageSize=query.pageSize;
 
   const conditions: SQL[] = [
     eq(colleges.status, "ACTIVE"),
@@ -169,9 +171,17 @@ export async function listSuperAdminFeatureControls(
   }
 
   if (query.q) {
-    const nameMatch=sql`position(lower(${query.q}) in lower(${colleges.name})) > 0`;
+    // Escape LIKE wildcards: search is a literal substring, not a raw
+    // operator pattern. ILIKE supports appropriate trigram indexes when
+    // installed; never interpolate untrusted SQL into a raw expression.
+    const needle=query.q.replace(/[\\%_]/g,"\\    const nameMatch=sql`position(lower(${query.q}) in lower(${colleges.name})) > 0`;
     const codeMatch=sql`position(lower(${query.q}) in lower(${colleges.code})) > 0`;
-    conditions.push(query.searchField==="NAME"?nameMatch:query.searchField==="CODE"?codeMatch:sql`(${nameMatch} or ${codeMatch})`);
+    conditions.push(query.searchField==="NAME"?nameMatch:query.searchField==="CODE"?codeMatch:sql`(${nameMatch} or ${codeMatch})`);");
+    const pattern="%"+needle+"%";
+    const nameMatch=ilike(colleges.name,pattern);
+    const codeMatch=ilike(colleges.code,pattern);
+    conditions.push(query.searchField==="NAME"?nameMatch:
+      query.searchField==="CODE"?codeMatch:or(nameMatch,codeMatch)!);
   }
 
   const cutoff=featureRuleCutoff(query.recent,new Date());
@@ -191,7 +201,7 @@ export async function listSuperAdminFeatureControls(
 
   const [totals] = await db.select({total:count()}).from(colleges).where(where);
   const total=totals?.total ?? 0;
-  const effectivePage=boundedAdminFeaturePage(query.page,total,COLLEGE_PAGE_SIZE);
+  const effectivePage=boundedAdminFeaturePage(query.page,total,collegePageSize);
   const collegeRows=await db
     .select({
       id:colleges.id,
@@ -199,6 +209,7 @@ export async function listSuperAdminFeatureControls(
       name:colleges.name,
       code:colleges.code,
       status:colleges.status,
+      legacyCollegeId:colleges.legacyCollegeId,
     })
     .from(colleges)
     .where(where)
@@ -206,8 +217,8 @@ export async function listSuperAdminFeatureControls(
       query.sort === "CODE" ? asc(colleges.code) : query.sort === "CODE_DESC" ? desc(colleges.code) : query.sort === "NAME_DESC" ? desc(colleges.name) : asc(colleges.name),
       asc(colleges.id),
     )
-    .limit(COLLEGE_PAGE_SIZE)
-    .offset((effectivePage-1)*COLLEGE_PAGE_SIZE);
+    .limit(collegePageSize)
+    .offset((effectivePage-1)*collegePageSize);
 
   for (const college of collegeRows) {
     requirePermission(context, "college.read", {
@@ -223,6 +234,8 @@ export async function listSuperAdminFeatureControls(
   // just the 20 entries shown on the current matrix page. Resolve inherited
   // rules in bounded batches with the exact same scope and filter predicates.
   const scopeCounts = { shown: total, projectsOn: 0, placementsOn: 0 };
+  // These counters must represent the full matching scope, not the
+  // currently displayed page. Iterate in bounded database pages.
   const aggregateBatchSize = 200;
   for (let offset = 0; offset < total; offset += aggregateBatchSize) {
     const scoped = await db.select({
@@ -231,6 +244,7 @@ export async function listSuperAdminFeatureControls(
       name: colleges.name,
       code: colleges.code,
       status: colleges.status,
+      legacyCollegeId: colleges.legacyCollegeId,
     }).from(colleges).where(where).orderBy(asc(colleges.id))
       .limit(aggregateBatchSize).offset(offset);
     if (scoped.length === 0) break;
@@ -263,6 +277,7 @@ export async function listSuperAdminFeatureControls(
       id: college.id,
       name: college.name,
       code: college.code,
+      legacyCollegeId:college.legacyCollegeId,
       modules: resolveCollegeModuleDecisions(
         college.id,
         college.organizationId,
@@ -287,12 +302,17 @@ export async function listSuperAdminFeatureControls(
     recentFilter: query.recent,
     searchField: query.searchField,
     page: effectivePage,
-    pageSize: COLLEGE_PAGE_SIZE,
+    pageSize: collegePageSize,
+    range:{
+      from:total?(effectivePage-1)*collegePageSize+1:0,
+      to:Math.min(total,effectivePage*collegePageSize),
+      total,
+    },
     scopeCounts,
     total,
     totalPages: Math.max(
       1,
-      Math.ceil(total / COLLEGE_PAGE_SIZE),
+      Math.ceil(total / collegePageSize),
     ),
   };
 }

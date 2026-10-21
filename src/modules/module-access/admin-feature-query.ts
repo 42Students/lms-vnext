@@ -2,6 +2,10 @@ import {z} from "zod";
 export const adminFeatureQuerySchema=z.strictObject({
  q:z.string().trim().max(100).default(""),
  // URL pagination must be decimal; coercion would interpret 0x10 and 1e2.
+ pageSize:z.union([
+  z.literal(20),z.literal(50),z.literal(100),
+  z.enum(["20","50","100"]).transform(Number),
+ ]).default(20),
  page:z.union([
   z.number().int().min(1).max(10000),
   z.string().regex(/^[0-9]+$/).transform(Number)
