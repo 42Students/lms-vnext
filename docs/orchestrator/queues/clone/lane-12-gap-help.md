@@ -5,5 +5,5 @@ AUDIT ONLY: do not change code. Units moved here from slower lanes. Rules, facet
 - [x] (from lane 2) L18-U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/QuizAttempt.java`
 - [x] (from lane 4) L16-U031 (Cross-cutting area) `cross/16: Placements end to end: companies, drives, jobs, applications, rounds, offers, joining, verification, eligibility`
 - [x] (from lane 5) L17-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/TenantSettings.js`
-- [ ] (from lane 6) L18-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassSchedule.java`
+- [x] (from lane 6) L18-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassSchedule.java`
 - [ ] (from lane 9) L19-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java`
