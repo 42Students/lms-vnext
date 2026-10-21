@@ -199,6 +199,41 @@ export async function getProjectWorkspaceView(
     templateTitle: templateVersion?.title ?? null,
     templateVersion: templateVersion?.version ?? null,
     ...workspace,
+    legacySnapshot:{
+      ...workspace.legacySnapshot,
+      // Legacy ProjectWorkspaceDTO was a nested document. All these rows
+      // are already returned by authenticated, college-scoped vNext reads.
+      // This projection is read-only: edits still require CAS at each route.
+      meetings:meetings.map(item=>({
+        id:item.id,key:item.meetingKey??item.id,
+        title:item.title,status:item.status,meetingType:item.meetingType,
+        startAt:item.startsAt.toISOString(),endAt:item.endsAt.toISOString(),
+        meetingUrl:item.meetingUrl??null,
+        notes:item.outcome??null,
+      })),
+      team:members.map(member=>({
+        id:member.id,membershipId:member.membershipId,role:member.role,
+        roleLabel:member.roleLabel??null,isPrimary:member.isPrimary,
+      })),
+      delivery:finalDelivery.legacyDelivery,
+      deliveryHistory:finalDelivery.history,
+      taskSubmissions:taskSubmissions.map(row=>({
+        id:row.id,taskId:row.taskId,version:row.version,
+        status:row.status,submissionUrl:row.submissionUrl,
+        submittedAt:row.submittedAt.toISOString(),
+        submittedByMembershipId:row.submittedByMembershipId,
+        feedback:row.feedback??null,
+      })),
+      sectionPreviewTokens:{
+        ...workspace.legacySnapshot.sectionPreviewTokens,
+        // Read-only preview; mutation endpoints always validate their own
+        // authoritative per-section token, not these display aggregates.
+        delivery:finalDelivery.submissions.map(row=>
+          row.id+"@"+row.updatedAt.toISOString()).join("|"),
+        meetings:meetings.map(row=>
+          row.id+"@"+row.updatedAt.toISOString()).join("|"),
+      },
+    },
     members,
     mentorRoster,
     readiness,
