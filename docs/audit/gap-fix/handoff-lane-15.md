@@ -133,3 +133,5 @@
 
 - `src/modules/placements/learner-support-request-service.ts` G2-14-023-026: query `placement_learner_general_requests` with SAME current learner membership and college alongside placement requests, combine using `mergeLearnerPersonalRequestHistory`; apply type/status filters and pagination across combined history, not separately.
 - NEW `src/app/(authenticated)/mentor/courses/[courseId]/page.tsx` G2-12-004-009/010: redirect any legacy courseId segment to `/mentor/projects` with Next.js `redirect()`, no validation/toast. Do not alter generic mentor/not-found behavior.
+
+- Interactive `src/components/tpo/tpo-team-follow-controls.tsx`, `tpo-team-rename.tsx`, `tpo-team-message-actions.tsx`, `tpo-team-decision-toggle.tsx`, `tpo-team-ask-panel.tsx` G2-3-022-017/018: after successful authorized POST/PATCH show exact ADDED/OK/LEFT, EDITED/DELETED/DONE/CANCELLED feedback using role=status, never on speculative click or server render; preserve error and retry paths.

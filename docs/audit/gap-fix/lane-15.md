@@ -284,3 +284,6 @@
 
 - work2 #19 `learner-support-request-model.ts` | G2-14-023-026: added discriminated, chronologically ordered personal request history projection across placement and general request kinds without fake Job references. Authenticated dual-table service and combined post-merge filtering/pagination handed off.
 - work2 #20 `mentor/not-found.tsx` | G2-12-004-009/010: verified 404 fallback is not the dynamic legacy bookmark handler; did NOT redirect all unknown mentor routes (conflicting behavior). Documented exact dynamic route handoff for silent redirect without toast or UUID validation.
+
+- work2 #21 `college/jobs/[jobId]/archive/route.ts` | G2-9-013-055: documented explicit legacy soft-delete→confirmed archive translation, preview impact GET, same-origin POST and preserved downstream application/event history. Physical DELETE intentionally unavailable.
+- work2 #22 `tpo/team/[threadId]/page.tsx` | G2-3-022-017/018: documented exact verified action outcome mapping. Server page is not a mutation result surface, so fake toast on load skipped; child interactive controls must announce verified operation results, handoff recorded.
