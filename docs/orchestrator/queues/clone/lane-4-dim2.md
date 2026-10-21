@@ -358,20 +358,20 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
 - [x] `src/app/(authenticated)/tpo/companies/error.tsx`
 - [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/find/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/find/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/follow-ups/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/home/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/more/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/notifications/error.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/error.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/error.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/page.tsx`
+- [x] `src/app/(authenticated)/tpo/find/error.tsx`
+- [x] `src/app/(authenticated)/tpo/find/page.tsx`
+- [x] `src/app/(authenticated)/tpo/follow-ups/error.tsx`
+- [x] `src/app/(authenticated)/tpo/home/error.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/error.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/notifications/error.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/more/error.tsx`
+- [x] `src/app/(authenticated)/tpo/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/error.tsx`
