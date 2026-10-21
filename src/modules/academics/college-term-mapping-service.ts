@@ -500,3 +500,77 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
     });
   } catch (error) { return mapConflict(error); }
 }
+
+/**
+ * Legacy /api/v1/program-structure equivalence within the vNext membership
+ * model. The old standalone structure ID is archival only: never interpret
+ * a numeric legacy ID as a tenant-independent UUID or invent a second
+ * structure table. Status is represented by program_terms.is_active with a
+ * separately retained imported COMPLETED marker.
+ *
+ * create   -> POST   /api/academics/semesters
+ * update   -> PATCH  /api/academics/semesters/[semesterId]
+ * delete   -> DELETE /api/academics/semesters/[semesterId]
+ * fetchAll -> GET    /api/academics/semesters (college-scoped directory)
+ * byProgram/fetchActive -> the read-only projection below
+ * updateStatus -> PATCH /api/academics/semesters/[semesterId] {isActive,...}
+ * Course assignments remain a separate /api/academics/term-courses flow.
+ *
+ * All mutation routes enforce the current college/role, persisted actor,
+ * concurrency token and active-course/cohort dependency checks. Unlike the
+ * legacy entity, COMPLETED imported structures are not mutable.
+ */
+export const LEGACY_PROGRAM_STRUCTURE_CROSSWALK = [
+  {legacy:"create",vnext:"POST /api/academics/semesters",intent:"CREATE"},
+  {legacy:"update/{id}",vnext:"PATCH /api/academics/semesters/{semesterId}",intent:"UPDATE"},
+  {legacy:"delete/{id}",vnext:"DELETE /api/academics/semesters/{semesterId}",intent:"DELETE"},
+  {legacy:"fetchAll",vnext:"GET /api/academics/semesters",intent:"LIST"},
+  {legacy:"fetchAllSemesters",vnext:"listScopedLegacyProgramStructures",intent:"BY_PROGRAM"},
+  {legacy:"fetchActiveSemesters",vnext:"listScopedLegacyProgramStructures(activeOnly)",intent:"ACTIVE"},
+  {legacy:"updateStatus",vnext:"PATCH /api/academics/semesters/{semesterId} (isActive)",intent:"STATUS"},
+] as const;
+
+/** Preserve old fetchAll/byProgram/active semantics without bypassing selected
+ * college or exposing another tenant's imported structure identifiers. */
+export async function listScopedLegacyProgramStructures(
+  context: RequestContext, raw: unknown,
+) {
+  const input = z.strictObject({
+    programId: z.uuid().optional(),
+    activeOnly: z.boolean().default(false),
+  }).parse(raw);
+  const member = await resolveActingCollege(context,"academics.read");
+  const rows = await getDb().select({
+    id: programTerms.id,
+    programId: programTerms.programId,
+    semesterNumber: programTerms.termNumber,
+    name: programTerms.name,
+    legacyStructureId: programTerms.legacyStructureId,
+    legacySemesterId: programTerms.legacySemesterId,
+    legacyStructureStatus: programTerms.legacyStructureStatus,
+    isActive: programTerms.isActive,
+    totalCredits: programTerms.totalCredits,
+    startDate: programTerms.startDate,
+    endDate: programTerms.endDate,
+    updatedAt: programTerms.updatedAt,
+  }).from(programTerms)
+    .innerJoin(programs,eq(programs.id,programTerms.programId))
+    .innerJoin(departments,and(
+      eq(departments.id,programs.departmentId),
+      eq(departments.collegeId,member.collegeId),
+      isNull(departments.archivedAt),
+    ))
+    .where(and(
+      input.programId ? eq(programTerms.programId,input.programId) : undefined,
+      input.activeOnly ? eq(programTerms.isActive,true) : undefined,
+    ))
+    .orderBy(asc(programTerms.programId),asc(programTerms.termNumber),asc(programTerms.id));
+  return rows.map(row=>({
+    ...row,
+    status: row.legacyStructureStatus==="COMPLETED" ? "COMPLETED" as const :
+      row.isActive ? "ACTIVE" as const : "INACTIVE" as const,
+    // Display the vNext UUID; expose the legacy integer only as provenance.
+    structureId: row.id,
+    sourceEntity:"PROGRAM_TERM" as const,
+  }));
+}
