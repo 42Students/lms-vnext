@@ -125,6 +125,16 @@ export function mapLegacyLessonDiscussions(
   const mapped:Array<{legacyDiscussionId:number;lessonContentId:string;
     parentDiscussionId:string|null;sequence:number;createdAt:Date}>=[];
   const unresolved:number[]=[];
+  // Parent references must resolve inside the same content scope. A map of
+  // discussion UUIDs alone cannot prove this; reconcile all source rows in
+  // one college-scoped batch before accepting a reply.
+  const sourceContentByDiscussion=new Map<number,number>();
+  const duplicateIds=new Set<number>();
+  for(const row of rows){
+    if(sourceContentByDiscussion.has(row.legacyDiscussionId))
+      duplicateIds.add(row.legacyDiscussionId);
+    sourceContentByDiscussion.set(row.legacyDiscussionId,row.legacyContentId);
+  }
   const sorted=[...rows].sort((a,b)=>(a.sequence??Number.MAX_SAFE_INTEGER)-
     (b.sequence??Number.MAX_SAFE_INTEGER)||
     a.createdAt.getTime()-b.createdAt.getTime()||
@@ -132,7 +142,15 @@ export function mapLegacyLessonDiscussions(
   sorted.forEach((row,index)=>{
     const content=contentIdMap.get(row.legacyContentId);
     const parent=row.legacyParentId===null?null:discussionIdMap.get(row.legacyParentId);
-    if(!content||(row.legacyParentId!==null&&!parent)){
+    if(duplicateIds.has(row.legacyDiscussionId)||
+       !Number.isSafeInteger(row.legacyDiscussionId)||row.legacyDiscussionId<=0||
+       !Number.isSafeInteger(row.legacyContentId)||row.legacyContentId<=0||
+       !Number.isFinite(row.createdAt.getTime())||
+       (row.legacyParentId!==null&&(
+         !Number.isSafeInteger(row.legacyParentId)||row.legacyParentId<=0||
+         row.legacyParentId===row.legacyDiscussionId||
+         sourceContentByDiscussion.get(row.legacyParentId)!==row.legacyContentId))||
+       !content||(row.legacyParentId!==null&&!parent)){
       unresolved.push(row.legacyDiscussionId);return;
     }
     mapped.push({legacyDiscussionId:row.legacyDiscussionId,lessonContentId:content,

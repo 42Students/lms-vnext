@@ -35,6 +35,8 @@ export const collegeBranding = pgTable(
     legacyBrandingId: integer("legacy_branding_id"),
     legacyCollegeId: integer("legacy_college_id"),
     legacyLoginMethods: varchar("legacy_login_methods", { length: 32 }),
+    /** Active per-college authentication channel policy; fallback is EMAIL_PHONE. */
+    loginMethods: varchar("login_methods", { length: 16 }).notNull().default("EMAIL_PHONE"),
     legacyWasDeleted: boolean("legacy_was_deleted"),
     /** Historical logo path is quarantined until imported into verified storage. */
     legacyLogoSourceUrl: text("legacy_logo_source_url"),
@@ -59,6 +61,8 @@ export const collegeBranding = pgTable(
   },
   (table) => [
     check("college_branding_version_ck", sql`${table.version} >= 1`),
+    check("college_branding_login_methods_ck",
+      sql`${table.loginMethods} in (\'EMAIL_PHONE\',\'PHONE_EMAIL\',\'EMAIL_ONLY\',\'PHONE_ONLY\')`),
     check("college_branding_logo_url_ck", httpsUrl("logo_url")),
     check("college_branding_favicon_url_ck", httpsUrl("favicon_url")),
     check(
@@ -94,4 +98,20 @@ export function normalizeLegacyCollegeBranding(input: {
     legacyBrandingId:input.legacyBrandingId,legacyWasDeleted:input.isDeleted,
     legacyLogoSourceUrl:input.logoUrl,logoUrl:null,
     legacyBrandingArchivedAt: input.isDeleted === true ? new Date(0) : null};
+}
+
+/** Legacy null/unknown means both methods, email shown first. Keep original
+ * legacyLoginMethods separately for source reconciliation. A login route must
+ * resolve this setting from the verified target college, never from a client
+ * query string or a global user preference. */
+export const COLLEGE_LOGIN_METHODS = ["EMAIL_PHONE","PHONE_EMAIL","EMAIL_ONLY","PHONE_ONLY"] as const;
+export type CollegeLoginMethods = typeof COLLEGE_LOGIN_METHODS[number];
+export function effectiveCollegeLoginMethods(value: string | null | undefined): CollegeLoginMethods {
+  const normalized = value?.trim().toUpperCase();
+  return COLLEGE_LOGIN_METHODS.find(method => method === normalized) ?? "EMAIL_PHONE";
+}
+export function collegeLoginChannelAllowed(methods: CollegeLoginMethods, channel: "EMAIL" | "PHONE") {
+  return methods === "EMAIL_PHONE" || methods === "PHONE_EMAIL" ||
+    (methods === "EMAIL_ONLY" && channel === "EMAIL") ||
+    (methods === "PHONE_ONLY" && channel === "PHONE");
 }

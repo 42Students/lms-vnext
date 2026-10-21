@@ -50,3 +50,8 @@ CREATE TABLE skill_usage (
   CONSTRAINT db10_skill_usage_name_ck CHECK (length(trim(skill_name)) > 0),
   CONSTRAINT db10_skill_usage_count_ck CHECK (usage_count >= 0)
 );
+
+--> statement-breakpoint
+-- Legacy permits repeated synonyms within a skill, not a unique index.
+CREATE INDEX db10_skill_synonyms_skill_value_idx
+  ON skill_synonyms(skill_id,lower(synonym));
