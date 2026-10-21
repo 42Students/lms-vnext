@@ -6,7 +6,10 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
-import { DataTable } from "@/components/ui/data-table";
+import { Alert } from "@/components/ui/alert";
+import { AuthorizationError } from "@/modules/permissions/policy";
+import { sanitizeActivityMetadata } from "@/modules/activity/metadata-sanitizer";
+import { CollegeActivityRefresh } from "@/components/activity/college-activity-refresh";
 import { EmptyState } from "@/components/ui/empty-state";
 import { activitySearchParams, collegeActivityHref, collegeActivityQuerySchema, collegeActivityRecentHref, collegeActivityTodayHref, collegeActivityAllTimeHref } from "@/modules/activity/college-activity-model";
 import { listCollegeActivity } from "@/modules/activity/college-activity-service";
@@ -36,7 +39,25 @@ export default async function CollegeActivityPage({
       description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
       action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>} />
   </div>;
-  const data = await listCollegeActivity(context, parsed.data);
+  const data = await listCollegeActivity(context, parsed.data).catch((error:unknown)=>{
+    if (error instanceof AuthorizationError) throw error;
+    return null;
+  });
+  if (!data) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Activity Log" />
+    <Alert tone="error" title="Couldn't load activity">The college activity feed could not be refreshed. No audit history was modified.</Alert>
+    <ErrorState title="Activity temporarily unavailable"
+      description="Retry the same filters to load the latest recorded events."
+      action={<a href={collegeActivityHref(parsed.data)} className="font-semibold text-link underline underline-offset-4">Retry activity</a>} />
+  </div>;
+  const dayFormat=new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"});
+  const groupedByDay=new Map<string,typeof data.groups>();
+  for(const group of data.groups){
+    const day=dayFormat.format(group.latest.event.occurredAt);
+    const list=groupedByDay.get(day)??[];
+    list.push(group);
+    groupedByDay.set(day,list);
+  }
   const exportParams = new URLSearchParams();
   for (const key of ["view", "category", "module", "importance", "eventType", "q", "actorUserId", "actorName", "subjectType", "subjectId", "from", "to"] as const) {
     const value = data.query[key];
@@ -74,8 +95,7 @@ export default async function CollegeActivityPage({
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Last 30 days</Link>
       <Link href={collegeActivityAllTimeHref(data.query)}
         className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">All time</Link>
-      <Link href={collegeActivityHref({...data.query})}
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Refresh</Link>
+      <CollegeActivityRefresh />
     </div>
     <section className="border-b border-border pb-4" aria-label="Activity log filters">
       <form action="/college/activity" method="get" className="grid min-w-0 gap-[var(--lms-space-2)] md:grid-cols-2 lg:grid-cols-4">
@@ -169,21 +189,43 @@ export default async function CollegeActivityPage({
         </div>
       </form>
     </section>
-    <section className="min-w-0" aria-label="College activity events">
-      <DataTable rows={data.items} getRowKey={item=>item.event.id} caption="College activity events"
-        columns={[
-          {key:"occurred",header:"Occurred (IST)",mobilePriority:"secondary",cell:item=>when(item.event.occurredAt)},
-          {key:"actor",header:"Actor",mobilePriority:"secondary",cell:item=>collegeActivityActor(item.actor)},
-          {key:"event",header:"Event / entity",mobilePriority:"primary",cell:item=><>
-            <p className="font-semibold text-foreground">{item.event.summary}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{collegeActivityAction(item.event.eventType)} · {item.event.subjectType}</p>
-            <p className="mt-1 text-xs text-muted-foreground">{collegeActivityItem(item.event)}</p>
-          </>},
-          {key:"details",header:"Details",mobilePriority:"action",cell:item=>
-            <Link href={"/college/activity/" + encodeURIComponent(item.event.id)}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View event</Link>},
-        ]}
-        empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred." action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 w-full md:w-auto">Clear filters</Link>} />}/>
+    <section className="min-w-0 space-y-5" aria-label="College activity events">
+      {data.groups.length===0?<EmptyState title="No matching activity"
+        description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred."
+        action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />:null}
+      {[...groupedByDay.entries()].map(([day,groups])=>
+        <section key={day} className="space-y-3" aria-label={"Activity on "+day}>
+          <h2 className="border-b border-[var(--lms-canvas-border)] pb-2 text-[var(--lms-font-base)] font-semibold text-[var(--lms-heading)]">{day}</h2>
+          <ol className="divide-y divide-[var(--lms-canvas-border)]">
+            {groups.map(group=>{
+              const item=group.latest;
+              return <li key={item.event.id} className="space-y-2 py-3">
+                <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-semibold text-[var(--lms-heading)]">{item.event.summary}</p>
+                    <p className="text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">{collegeActivityActor(item.actor)} · {collegeActivityAction(item.event.eventType)}</p>
+                    <p className="text-xs text-muted-foreground">{collegeActivityItem(item.event)} · {when(item.event.occurredAt)}</p>
+                  </div>
+                  {group.count>1?<span className="rounded-md border border-[var(--lms-canvas-border)] px-2 py-1 text-xs font-semibold">{group.count} related events</span>:null}
+                </div>
+                <details className="min-w-0 text-sm">
+                  <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Details</summary>
+                  <dl className="grid min-w-0 gap-2 border-l border-[var(--lms-canvas-border)] pl-3 sm:grid-cols-2">
+                    <div><dt className="font-semibold">Actor</dt><dd className="break-words">{collegeActivityActor(item.actor)}</dd></div>
+                    <div><dt className="font-semibold">When (IST)</dt><dd>{when(item.event.occurredAt)}</dd></div>
+                    <div><dt className="font-semibold">Event</dt><dd className="break-all">{item.event.eventType}</dd></div>
+                    <div><dt className="font-semibold">Subject</dt><dd className="break-words">{item.event.subjectType} · {collegeActivityItem(item.event)}</dd></div>
+                  </dl>
+                  <p className="mt-2 text-xs text-muted-foreground">Sanitized recorded metadata{group.count>1?" (latest event in this group)":""}:</p>
+                  <pre className="max-w-full overflow-x-auto whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] py-2 text-xs">{JSON.stringify(sanitizeActivityMetadata(item.event.metadata),null,2)}</pre>
+                  <Link href={"/college/activity/"+encodeURIComponent(item.event.id)}
+                    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">View full event</Link>
+                </details>
+              </li>;
+            })}
+          </ol>
+        </section>)}
+      <p className="text-xs text-muted-foreground">Showing {data.items.length} recorded events in {data.groups.length} chronological groups on this page. Grouped counts never imply missing history was retrieved.</p>
     </section>
     <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
