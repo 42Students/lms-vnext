@@ -130,16 +130,6 @@ export async function saveProjectTaskPlan(
         groupKey: "project:" + scope.project.id,
         dedupeKey: "project-task-plan:" + scope.project.id + ":" + randomUUID(),
       });
-      const after = current.map(task => {
-        const row = input.tasks.find(next => next.id === task.id);
-        if (!row || !updatedTaskIds.includes(task.id)) return task;
-        return { ...task, ...row, legacyTaskKey: row.key,
-          updatedAt: now,
-          sequence: task.sprintId !== row.sprintId
-            ? /* Only response token needs the saved sequence. */ task.sequence
-            : task.sequence,
-        };
-      });
       // Return an updated token from the database, not reconstructed rows:
       // sprint allocation may have advanced sequence values.
       const persisted = await tx.select().from(projectTasks)
