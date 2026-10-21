@@ -16,7 +16,7 @@ import {safeProjectExternalHref} from "@/modules/projects/mentor-workspace-evide
 type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
  visibility:string;status:string;createdAt:Date;updatedAt:Date;sequence:number;
- resourceType?:string;pinned?:boolean;accessNotes?:string|null;
+ resourceType?:string;pinned?:boolean;accessNotes?:string|null;templateKey?:string|null;
  sprintId?:string|null;taskId?:string|null;
 };
 export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tasks=[]}:{
@@ -24,6 +24,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  sprints?:readonly {id:string;label:string}[];tasks?:readonly {id:string;label:string}[];
 }){
  const [search,setSearch]=useState("");
+ const [expanded,setExpanded]=useState<Record<string,boolean>>({});
  const [type,setType]=useState("ALL");
  const [visibility,setVisibility]=useState("ALL");
  const [status,setStatus]=useState("ACTIVE");
@@ -92,7 +93,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const filtered=rows.filter(row=>{
   const link=Boolean(row.url&&safeProjectExternalHref(row.url));
   const kind=row.resourceType??(link?"LINK":"NOTE");
-  return (!search.trim()||(row.title+" "+(row.description??"")).toLocaleLowerCase("en-IN")
+  return (!search.trim()||[row.title,row.description,row.url,row.accessNotes,row.resourceType,row.templateKey]
+    .filter(Boolean).join(" ").toLocaleLowerCase("en-IN")
      .includes(search.trim().toLocaleLowerCase("en-IN")))
     &&(type==="ALL"||(type==="LINK"&&link)||(type==="OTHER"&&!link)||
       type===kind)
@@ -125,10 +127,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       </div>)}
   </div>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    <label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
+    {rows.length>12?<label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
       <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-       aria-label="Search resources" placeholder="Search title, description, file name, or link" className=""/>
-    </label>
+       aria-label="Search resources" placeholder="Search title, key, notes, file name, or link" className=""/>
+    </label>:null}
     <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Type
       <Select value={type} onChange={event=>setType(event.target.value)}
         className="">
@@ -176,7 +178,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       className="min-h-10 text-sm font-[650] text-link underline">Clear filters</Button>
   </div>
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
-    {canReorder?"Drag resources to arrange a draft, then select Save order.":
+    {activeRows.length>250?"This library exceeds the 250-resource reorder limit. Resources remain visible and editable; split the change into smaller sections before rearranging.":
+      canReorder?"Drag resources to arrange a draft, then select Save order.":
       "Resource reordering is available when no filters are active."}
   </p>:null}
   {mode!=="LEARNER"&&!readOnly&&unsaved?<div className="flex flex-wrap items-center gap-2" role="group" aria-label="Unsaved resource order">
@@ -188,7 +191,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   {reorderError?<p role="alert" className="text-sm text-error leading-[22px]">{reorderError}</p>:null}
   {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
     ?"Share the first link or file with your team."
-    :"Add the briefs, templates and reference links your team will need."}
+    :"No resources yet. Add only the references the team will actually use."}
   />:filtered.length===0?<EmptyState title="No matching resources"
     description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{[...filtered].sort((a,b)=>
       Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||currentOrder(a)-currentOrder(b)).map(resource=>{
@@ -203,17 +206,17 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
        <p className="font-semibold text-foreground">{resource.title}</p>
-       {resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
-       {mode!=="LEARNER"&&resource.accessNotes?
+       {(rows.length<=12||expanded[resource.id])&&resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
+       {(rows.length<=12||expanded[resource.id])&&mode!=="LEARNER"&&resource.accessNotes?
          <p className="mt-2 whitespace-pre-wrap break-words text-xs text-body leading-[20px]">
            Access notes: {resource.accessNotes}
          </p>:null}
-       <p className="mt-2 text-xs text-muted-foreground leading-[20px]">
+       {(rows.length<=12||expanded[resource.id])?<p className="mt-2 text-xs text-muted-foreground leading-[20px]">
         Last updated: <time dateTime={new Date(resource.updatedAt).toISOString()}>
          {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
            timeZone:"Asia/Kolkata"}).format(new Date(resource.updatedAt))} IST
         </time>
-       </p>
+       </p>:null}
       </div>
       <div className="flex flex-wrap gap-2">
        <StatusBadge tone="neutral">{resource.resourceType??(safe?"Link":"Other")}</StatusBadge>
@@ -225,13 +228,21 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
        {resource.taskId?<StatusBadge tone="neutral">Task linked</StatusBadge>:null}
       </div>
      </div>
+     {rows.length>12?<Button variant="secondary" type="button" className="mt-2 text-xs"
+       aria-expanded={Boolean(expanded[resource.id])} aria-controls={"resource-details-"+resource.id}
+       onClick={()=>setExpanded(previous=>({...previous,[resource.id]:!previous[resource.id]}))}>
+       {expanded[resource.id]?"Collapse":"Expand"} {resource.title}
+     </Button>:null}
+     <div id={"resource-details-"+resource.id} hidden={rows.length>12&&!expanded[resource.id]}>
      <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
        <Button variant="secondary" type="button" disabled={stableOrder[0]===resource.id}
          className="text-xs"
+         aria-label={"Move up "+resource.title}
          onClick={()=>moveRelative(resource.id,-1)}>Move up</Button>
        <Button variant="secondary" type="button" disabled={stableOrder.at(-1)===resource.id}
          className="text-xs"
+         aria-label={"Move down "+resource.title}
          onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
      {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
@@ -245,6 +256,7 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          updatedAt:resource.updatedAt,
          sprintId:resource.sprintId,taskId:resource.taskId}}
         sprints={sprints} tasks={tasks}/>:null}
+     </div>
     </article>;
   })}</div>}
  </section>;
