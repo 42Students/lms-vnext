@@ -146,6 +146,7 @@ export async function createAssignmentFileUploadGrant(
       purpose:
         "ASSIGNMENT_SUBMISSION",
       assignmentId,
+      deliveryId: input.deliveryId,
       lessonContentId: null,
       objectKey: grant.objectKey,
       uploadTokenHash:
@@ -213,6 +214,12 @@ export async function prepareAssignmentFileReceipt(
         eq(
           courseUploadReceipts.assignmentId,
           assignmentId,
+        ),
+        // Receipt grants are delivery-specific. Never let the learner
+        // present a file uploaded for another section or delivery.
+        eq(
+          courseUploadReceipts.deliveryId,
+          deliveryId,
         ),
         eq(
           courseUploadReceipts.ownerMembershipId,
