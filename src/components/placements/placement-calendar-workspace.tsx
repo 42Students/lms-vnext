@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {CalendarCompanySelect} from "./calendar-company-select";
+import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -256,7 +257,10 @@ function normalizedState(
             ?.trim()
             .slice(0, 150) ?? ""
         : "",
-    jobId: audience !== "TPO" && /^[a-f0-9-]{36}$/i.test(first(searchParams.jobId) ?? "")
+    // Only canonical UUIDs are eligible for the current vNext job scope;
+    // legacy numeric aliases require a separately authorized alias resolver.
+    jobId: audience !== "TPO" &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(first(searchParams.jobId) ?? "")
       ? first(searchParams.jobId)! : "",
     focus: audience === "TPO" && ["OVERDUE","BLOCKED","BUSY"].includes(first(searchParams.focus) ?? "")
       ? first(searchParams.focus) as "OVERDUE" | "BLOCKED" | "BUSY"
@@ -445,6 +449,13 @@ function CalendarEventCard({
   allowFollowupEditing: boolean;
 }) {
   const href = eventHref(event, audience);
+  const minutes=event.endsAt?Math.round((event.endsAt.getTime()-event.startsAt.getTime())/60_000):null;
+  const downloadable=audience!=="TPO"&&event.kind==="INTERVIEW_SLOT"&&
+    minutes!==null&&minutes>=1&&minutes<=1440;
+  const ics=downloadable?collegeInterviewIcs({
+    id:event.id,title:[event.title,event.jobTitle,event.companyName].filter(Boolean).join(" · "),
+    date:event.startsAt.toISOString(),durationMinutes:minutes!,location:event.venue,
+  }):null;
 
   return (
     <article className="min-w-0 py-[var(--lms-space-4)]">
@@ -506,6 +517,12 @@ function CalendarEventCard({
           →
         </Link>
       ) : null}
+      {ics?<a download={"interview-"+event.id+".ics"}
+        href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(ics)}
+        aria-label={"Download interview calendar event for "+event.title}
+        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        Download .ics
+      </a>:null}
       {audience === "TPO" && allowFollowupEditing &&
        event.kind === "FOLLOW_UP" && event.status === "OPEN" &&
        event.followupId ? (
@@ -685,7 +702,7 @@ export async function PlacementCalendarWorkspace({
    .sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime());
   const sevenDayEnd=placementCalendarDayKey(new Date(now.getTime()+7*24*60*60*1000));
   const nextSeven=needsEvents.filter(event=>event.startsAt>=now &&
-   placementCalendarDayKey(event.startsAt)<=sevenDayEnd);
+   placementCalendarDayKey(event.startsAt)<=sevenDayEnd).sort((a,b)=>a.startsAt.getTime()-b.startsAt.getTime());
   const isTpo = audience === "TPO";
   // The follow-up POST/PATCH APIs use this exact persisted-table readiness
   // check, not a deployment string. Never show editing against absent DB09.
@@ -720,6 +737,36 @@ export async function PlacementCalendarWorkspace({
         }
         actions={
           <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <div
+            className={"grid w-full min-w-0 grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap "+(isTpo?calendarStyles.tpoViewSwitch:"")}
+            role="group"
+            aria-label="Calendar view"
+          >
+            {VIEWS.map((view) => (
+              <Link
+                key={view}
+                href={calendarHref(
+                  basePath,
+                  audience,
+                  state,
+                  { view },
+                )}
+                aria-current={
+                  state.view === view
+                    ? "page"
+                    : undefined
+                }
+                className={
+                  state.view === view
+                    ? "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-semibold capitalize text-[var(--lms-on-primary)] md:min-h-9 md:px-4"
+                    : "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-center text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:px-4"
+                }
+              >
+                {view}
+              </Link>
+            ))}
+          </div>
+
             {audience === "COLLEGE_ADMIN" ? (
               <Link href="/college/placements/interviews"
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-[var(--lms-link-text)] md:min-h-9">
@@ -760,22 +807,28 @@ export async function PlacementCalendarWorkspace({
       ) : null}
 
       {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-4">
-       <h2 className="text-base font-semibold">Today</h2>
+       <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+        Today, {new Intl.DateTimeFormat("en-IN",{weekday:"short",day:"numeric",month:"short",timeZone:"UTC"})
+         .format(new Date(today+"T12:00:00Z"))}
+       </p>
        {needsKnown?todayEvents.length?<ul className="mt-2 space-y-2">{todayEvents.map(event=><li key={event.id} className="text-sm text-body">
          {eventHref(event,audience)?<Link href={eventHref(event,audience)!}
           aria-label={"Open "+event.title+", "+eventTime(event.startsAt)+" IST"}
           className="inline-flex min-h-11 max-w-full flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
            <span>{eventTime(event.startsAt)}</span><span>· {event.kind==="APPLICATION_DEADLINE"?"Today: ":""}{event.title}</span>
-           {event.status==="DONE"?<span className="text-success-text">· Done</span>:null}
+           {event.status==="DONE"||event.startsAt.getTime()<now.getTime()?
+            <span className="font-normal text-muted-foreground">· done</span>:null}
          </Link>:<>
            <span className="font-semibold">{eventTime(event.startsAt)}</span>
-           {" · "}{event.title}{event.status==="DONE"?" · Done":""}
+           {" · "}{event.title}{event.status==="DONE"||event.startsAt.getTime()<now.getTime()?" · done":""}
          </>}
         </li>)}</ul>:<p className="mt-2 text-sm text-body">Nothing scheduled today</p>:
          <p role="status" className="mt-2 text-sm text-warning-text">Today&apos;s schedule is unavailable.</p>}
        {needsKnown?<p className="mt-3 text-sm text-body">
-        Next 7 days · {nextSeven.length} scheduled event{nextSeven.length===1?"":"s"}
-        {nextSeven.length>0?" · "+nextSeven[0].title+" · "+dateLabel(placementCalendarDayKey(nextSeven[0].startsAt)):""}
+        {nextSeven.length?
+         "Next 7 days: "+nextSeven.length+" "+(nextSeven.length===1?"item":"items")+
+         ", first "+nextSeven[0].title+" on "+dayLabel(placementCalendarDayKey(nextSeven[0].startsAt))+".":
+         "Nothing in the next 7 days."}
        </p>:null}
       </section>:null}
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-4">
@@ -875,35 +928,6 @@ export async function PlacementCalendarWorkspace({
               </span>
             </p>
           </div>
-          <div
-            className={"grid w-full min-w-0 grid-cols-3 gap-2 sm:flex sm:w-auto sm:flex-wrap "+(isTpo?calendarStyles.tpoViewSwitch:"")}
-            role="group"
-            aria-label="Calendar view"
-          >
-            {VIEWS.map((view) => (
-              <Link
-                key={view}
-                href={calendarHref(
-                  basePath,
-                  audience,
-                  state,
-                  { view },
-                )}
-                aria-current={
-                  state.view === view
-                    ? "page"
-                    : undefined
-                }
-                className={
-                  state.view === view
-                    ? "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-center text-sm font-semibold capitalize text-[var(--lms-on-primary)] md:min-h-9 md:px-4"
-                    : "inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-center text-sm font-semibold capitalize text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:px-4"
-                }
-              >
-                {view}
-              </Link>
-            ))}
-          </div>
         </div>
 
         <div className={"mt-4 grid min-w-0 grid-cols-3 items-center gap-2 sm:flex sm:flex-wrap "+(isTpo?calendarStyles.tpoNavigationRow:"")}>
@@ -917,7 +941,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Previous calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            ← Previous
+            Previous
           </Link>
           <Link
             href={calendarHref(
@@ -940,7 +964,7 @@ export async function PlacementCalendarWorkspace({
             aria-label="Next calendar period"
             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:text-[var(--lms-link-text)] md:min-h-9 md:w-auto md:px-4"
           >
-            Next →
+            Next
           </Link>
           <span className="order-first col-span-3 min-w-0 break-words text-sm font-semibold text-foreground sm:order-none sm:ml-2">
             {state.view === "week"
@@ -1079,7 +1103,8 @@ export async function PlacementCalendarWorkspace({
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Remove job filter</Link>
         </p>:null}
         {isTpo && (state.company || state.kind || state.kinds.length) ? (
-          <Link href={basePath} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Show everything</Link>
+          <Link href={calendarHref(basePath,audience,state,{company:"",kind:undefined,kinds:[],focus:null})}
+          className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Show everything</Link>
         ) : null}
       </section>
 
@@ -1095,9 +1120,9 @@ export async function PlacementCalendarWorkspace({
   const nextKinds=toggleTpoCalendarChip(currently,filter.value);
   return <FilterChipLink key={filter.value} href={calendarHref(basePath,audience,state,{kind:undefined,kinds:nextKinds})}
     selected={active}
-    title={(active?"Hide ":"Show ")+filter.label+
-      (state.kinds.length>0||state.kind?" too":" only")+
-      " · "+count+" matching event"+(count===1?"":"s")}
+    title={!state.kind&&!state.kinds.length?
+      "Show only "+filter.label.toLowerCase()+"s":
+      active?"Hide":"Show too"}
     aria-label={filter.label+" ("+count+"), "+(active?"selected":"not selected")}>
     <span aria-hidden="true" className={"mr-1.5 inline-block h-2.5 w-2.5 rounded-[var(--lms-radius-pill)] "+(filter.value==="BLOCKED"?"bg-muted-foreground":filter.value==="APPLICATION_DEADLINE"?"bg-warning":filter.value==="FOLLOW_UP"?"bg-success":"bg-primary")}/>
     {filter.label} ({count})
@@ -1109,10 +1134,11 @@ export async function PlacementCalendarWorkspace({
        </p>:null}
       </nav>:null}
 
-      <section
-        aria-label="Next scheduled calendar event"
-        className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4"
-      >
+      <details aria-label="Next scheduled calendar event" className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface">
+        <summary className="flex min-h-11 cursor-pointer items-center justify-between gap-2 px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          Next scheduled <span className="text-muted-foreground">Show details ▾</span>
+        </summary>
+        <div className="border-t border-border px-4 pb-4 pt-2">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h2 className="m-0 text-base font-semibold text-foreground">
@@ -1146,7 +1172,8 @@ export async function PlacementCalendarWorkspace({
             </Link>
           ) : null}
         </div>
-      </section>
+        </div>
+      </details>
 
       {isTpo&&state.view==="week"&&blockedEvents.length>0?<section
         aria-label="All-day blocked dates" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-4">
@@ -1158,7 +1185,7 @@ export async function PlacementCalendarWorkspace({
          </li>)}</ul>
        </section>:null}
       {isTpo&&state.view==="week"?<p className="text-xs text-muted-foreground" role="note">
-       Select an empty time slot to add a follow-up, drag a follow-up to move it, or open a round in its placement drive to change its schedule.
+       Click an empty time to add a follow-up; drag a follow-up to move it. Rounds are changed from their drive.
       </p>:null}
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
