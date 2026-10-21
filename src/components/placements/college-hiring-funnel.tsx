@@ -85,7 +85,7 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    {data.totalApplications===0?<div className="space-y-2">
     <p>No data for the selected filters</p>
     <Link href={collegeHiringAnalyticsHref({seasonId:selectedSeasonId??undefined,jobId:selectedJobId??undefined})}
-     className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">Clear filters</Link>
+     className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Clear filters</Link>
    </div>:<div className="space-y-3">
     {order.map(stage=><div key={stage} className={reportStyles.chartRow}>
       <span className={reportStyles.label}>{label(stage)}</span>

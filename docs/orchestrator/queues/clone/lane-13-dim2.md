@@ -233,56 +233,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/hr/hr-drive-draft-form.tsx`
 - [x] `src/components/marketing/marketing-layout.tsx`
 - [x] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/placements/college-hiring-funnel.tsx`
-- [ ] `src/components/placements/college-legacy-drive-settings.tsx`
-- [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/learner-placement-job-detail.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-placement-requests.tsx`
-- [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-report-ui.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/placements/super-admin-published-drive-edit.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-joining-update-form.tsx`
-- [ ] `src/components/placements/tpo-recruiter-grant-controls.tsx`
-- [ ] `src/components/placements/tpo-report-saved-filters.tsx`
-- [ ] `src/components/placements/tpo-round-calendar-control.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/placements/tpo-week-hour-calendar.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/learner-own-task-controls.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/projects/project-admin-submissions-page.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
-- [ ] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-audit-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/placements/college-hiring-funnel.tsx`
+- [x] `src/components/placements/college-legacy-drive-settings.tsx`
+- [x] `src/components/placements/learner-applications-browse.tsx`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/placements/learner-placement-job-detail.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-placement-requests.tsx`
+- [x] `src/components/placements/learner-placements-dashboard.tsx`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-draft-edit-form.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-workspace.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-report-ui.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/report-interactive-table.tsx`
+- [x] `src/components/placements/super-admin-published-drive-edit.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/tpo-joining-update-form.tsx`
+- [x] `src/components/placements/tpo-recruiter-grant-controls.tsx`
+- [x] `src/components/placements/tpo-report-saved-filters.tsx`
+- [x] `src/components/placements/tpo-round-calendar-control.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/placements/tpo-week-hour-calendar.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/learner-own-task-controls.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/projects/project-admin-submissions-page.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/tpo/recruiter-invite-landing.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/recruiter-saved-view-controls.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-audit-saved-views.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
 - [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
 - [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`

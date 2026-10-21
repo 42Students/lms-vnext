@@ -610,7 +610,7 @@ export function LearnerProfileWorkspace(props: {
           <p role="status" className="mt-3 text-sm text-body">
             Suggested next section:{" "}
             <Link href={"/learn/profile?section="+encodeURIComponent(coverage.next.section)}
-              className="font-semibold text-primary-text underline">
+              className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">
               {coverage.next.label}
             </Link>. This does not establish identity verification or placement eligibility.
           </p>

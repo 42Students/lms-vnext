@@ -819,7 +819,7 @@ export function ProjectWorkspace({
               action={readOnly?
                 <p className="text-sm text-body">This workspace is read-only, so sprints cannot be added.</p>:
                 <p className="text-sm text-body">First <a href="#mentor-project-add-release"
-                  className="font-semibold text-link underline">add a release</a>,
+                  className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">add a release</a>,
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             />:null}
           {mode!=="MENTOR"&&workspace.releases.length===0?
@@ -1100,7 +1100,7 @@ export function ProjectWorkspace({
                                 <div className="sm:col-span-2"><dt className="font-semibold">Submission</dt>
                                   <dd><a target="_blank" rel="noreferrer"
                                     href={safeHttpHref(latestAttempt.submissionUrl)!}
-                                    className="text-link underline">Open submission</a></dd>
+                                    className="text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open submission</a></dd>
                                 </div> : null}
                             </dl>
                             {mode === "LEARNER" &&
@@ -1307,7 +1307,7 @@ export function ProjectWorkspace({
                           return <p key={index} className="text-xs text-body">
                             {href && row.kind === "LINK" ?
                               <a href={href} rel="noopener noreferrer" target="_blank"
-                                className="text-link hover:underline">Open link · {name}</a> :
+                                className="text-link hover:underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open link · {name}</a> :
                               row.kind === "FILE" && typeof row.fileId === "string"
                                 ? <ProjectDeliveryEvidenceDownload projectId={workspace.project.id}
                                     fileId={row.fileId} name={name}/>

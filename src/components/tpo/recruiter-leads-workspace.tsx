@@ -1084,7 +1084,7 @@ export function RecruiterLeadsWorkspace({
                         onDragEnd={()=>setDraggedBoardId(null)}
                         title={lead.manualStage==="NEW"?"Drag to Contacted, or use Move to… below":undefined}>
                         <Link href={"/tpo/recruiters/" + encodeURIComponent(lead.id)}
-                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                          className="block text-link lms-inline-link underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">
                         <span className="block font-medium">{lead.name||"Unnamed contact"}</span>
                          {lead.designation?<span className="block text-xs text-muted-foreground">{lead.designation}</span>:null}
                         <span className="block text-sm text-muted-foreground">{lead.companyName || lead.emailNorm || lead.phoneNorm}</span>
@@ -1139,7 +1139,7 @@ export function RecruiterLeadsWorkspace({
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
             {duplicate ? <p role="alert" className="text-sm text-foreground">
-              Contact already exists: <Link className="underline" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
+              Contact already exists: <Link className="underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
             <label className="block min-w-0 text-[13px] font-semibold leading-4">Company *<Input className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
               value={form.companyName} onChange={e => field("companyName", e.target.value)}
