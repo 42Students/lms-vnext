@@ -124,6 +124,9 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
    <p className="text-sm text-[#7f1d1d]">Deleting archives this drive; existing application and decision records remain retained. Review the impact and reason before confirming.</p>
    <SuperAdminDriveArchive jobId={jobId} title={job.title}/>
   </section>:null}
-  <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Platform placement policy →</Link>
+  <div className="flex flex-wrap gap-4">
+   <Link href="/admin/placements/organization-applications" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Search organization applications →</Link>
+   <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Platform placement policy →</Link>
+  </div>
  </div>;
 }

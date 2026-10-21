@@ -21,7 +21,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-round-slot-action-service.ts.md` (edit src/modules/placements/college-round-slot-action-service.ts; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_college-application-detail-drawer.tsx.md` (edit src/components/placements/college-application-detail-drawer.tsx; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-draft-edit-form.tsx.md` (edit src/components/placements/placement-draft-edit-form.tsx; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-applicant-pipeline-service.ts.md` (edit src/modules/placements/tpo-applicant-pipeline-service.ts; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-applicant-pipeline-service.ts.md` (edit src/modules/placements/tpo-applicant-pipeline-service.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_college-interview-appointments.tsx.md` (edit src/components/placements/college-interview-appointments.tsx; 19 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-drive-attention-service.ts.md` (edit src/modules/placements/college-drive-attention-service.ts; 19 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-drive-workspace.tsx.md` (edit src/components/placements/placement-drive-workspace.tsx; 18 findings; best P1)
