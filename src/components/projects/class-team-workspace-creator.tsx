@@ -345,9 +345,14 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           onClick={()=>setClassesRetry(v=>v+1)}>Retry class search</Button>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Published template
-        <Select value={templateId} onChange={e=>setTemplateId(e.target.value)} disabled={pending}>
+        <Select aria-label="Choose a published project template"
+          value={templateId} onChange={e=>setTemplateId(e.target.value)} disabled={pending}>
+          {!templates.length?<option value="">No assigned published templates</option>:null}
           {templates.map(t=><option key={t.templateId} value={t.templateId}>{t.title} · v{t.version}</option>)}
         </Select>
+        {!templateId?<span role="alert" className="block text-xs text-warning">
+          Choose a published template assigned to this college before creating workspaces.
+        </span>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Workspace title
         <Input aria-invalid={Boolean(classId&&!title.trim())} value={title} disabled={!plannerEditable}
@@ -528,7 +533,9 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       {outcomeRestored?<p className="text-xs text-body">
         This report was kept for seven days on this device for the selected college.
       </p>:null}
-      <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
+      <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered · {
+        outcome.failedCount??Math.max(0,outcome.requested-outcome.alreadyCovered-outcome.created.length)
+      } not created</p>
       {outcomeCheckedAt?<p className="text-xs text-body">Reported at {new Date(outcomeCheckedAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>:null}
       <p role="status" className="text-sm leading-[22px]">{outcome.created.length===0
         ? "No workspaces were created — the selected class may have no active learners."
