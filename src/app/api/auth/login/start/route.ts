@@ -36,7 +36,17 @@ export async function POST(request: Request) {
       channel: result.channel,
       requiresSecondFactor: result.requiresSecondFactor,
     });
-    return privateAuthResponse(NextResponse.json(result));
+    // The legacy first OTP step acknowledged "OTP triggered"; retain that
+    // copy as an additive alias without disclosing which accounts, roles or
+    // colleges share this contact. Verification issues a first-party session
+    // cookie; only afterwards may the user choose a permitted membership.
+    // Native clients must use an approved cookie-capable first-party flow:
+    // this endpoint is NOT a bearer-token or cross-domain handoff service.
+    return privateAuthResponse(NextResponse.json({
+      ...result,
+      message: "OTP triggered",
+      nextStep: "VERIFY_CODE",
+    }));
   } catch (error) {
     return loginErrorResponse(error, { route: "login-start", ip: guarded.ip });
   }
