@@ -124,6 +124,8 @@ const socialSchema = z
     twitter: httpUrl,
     googleScholar: httpUrl,
     researchGate: httpUrl,
+    codingProfiles: z.record(z.string().trim().min(1).max(120), httpUrl).default({}),
+    codingProfileLinks: z.array(httpUrl).default([]),
   })
   .strict()
   .default({
@@ -133,6 +135,8 @@ const socialSchema = z
     twitter: "",
     googleScholar: "",
     researchGate: "",
+    codingProfiles: {},
+    codingProfileLinks: [],
   });
 
 const personalDetailsSchema = z
@@ -151,7 +155,8 @@ const personalDetailsSchema = z
 const languageSchema = z
   .object({
     id: z.string().uuid(),
-    language: requiredText(120),
+    // Legacy rows can be untitled; the editor may repair them without deleting history.
+    language: text(120),
     proficiency: text(64),
   })
   .strict();
@@ -159,7 +164,7 @@ const languageSchema = z
 const skillSchema = z
   .object({
     id: z.string().uuid(),
-    skill: requiredText(120),
+    skill: text(120),
     proficiency: text(64),
   })
   .strict();
@@ -170,7 +175,7 @@ const educationSchema = z
     educationType: text(100),
     program: text(100),
     specialization: text(100),
-    institutionName: requiredText(300),
+    institutionName: text(300),
     startYear: year,
     endYear: year,
     isCurrentlyPursuing: z.boolean().default(false),
@@ -211,7 +216,7 @@ const certificationSchema = z
   .object({
     id: z.string().uuid(),
     authority: text(300),
-    name: requiredText(300),
+    name: text(300),
     certificationDate: calendarDate,
     validityDate: calendarDate,
     certificateLink: httpUrl,
@@ -228,7 +233,7 @@ const certificationSchema = z
 const experienceSchema = z
   .object({
     id: z.string().uuid(),
-    organization: requiredText(200),
+    organization: text(200),
     designation: text(200),
     description: text(2000),
     from: calendarDate,
@@ -254,7 +259,7 @@ const experienceSchema = z
 const publicationSchema = z
   .object({
     id: z.string().uuid(),
-    title: requiredText(300),
+    title: text(300),
     journal: text(300),
     year,
     doi: text(240),
@@ -297,7 +302,7 @@ const metadataScalar = z.union([
 export const facultyProfileDocumentSchema = z
   .object({
     about: z
-      .object({ description: text(5000) })
+      .object({ description: text(100000) })
       .strict()
       .default({ description: "" }),
     personalDetails: personalDetailsSchema,
@@ -311,6 +316,8 @@ export const facultyProfileDocumentSchema = z
     skills: z.array(skillSchema).default([]),
     publications: z.array(publicationSchema).default([]),
     awards: z.array(awardSchema).default([]),
+    /** Historical organization affiliations are not thrown away during a profile edit. */
+    organizations: z.array(z.record(z.string().trim().min(1).max(120), metadataScalar)).default([]),
     metadata: z
       .record(z.string().trim().min(1).max(120), metadataScalar)
       .default({}),
@@ -384,8 +391,8 @@ export function facultyLegacyProfileExceptions(raw: unknown): string[] {
   const email = typeof contact.contactMail === "string" ? contact.contactMail.trim() : "";
   if (alternate && !primary) issues.push("Alternate contact requires primary mobile");
   if (alternate && alternate === primary) issues.push("Duplicate primary and alternate mobile");
-  if (primary && !/^\\d{10}$/.test(primary)) issues.push("Primary mobile must have 10 digits");
-  if (alternate && !/^\\d{10,15}$/.test(alternate)) issues.push("Alternate mobile must have 10 to 15 digits");
+  if (primary && !/^\d{10}$/.test(primary)) issues.push("Primary mobile must have 10 digits");
+  if (alternate && !/^\d{10,15}$/.test(alternate)) issues.push("Alternate mobile must have 10 to 15 digits");
   if (email && !z.email().safeParse(email).success) issues.push("Invalid contact email");
   const photo = record.profileImageUrl ?? record.profileImage;
   if (typeof photo === "string" && !legacyFacultyProfileImageUrlSchema.safeParse(photo).success) {
@@ -396,4 +403,141 @@ export function facultyLegacyProfileExceptions(raw: unknown): string[] {
   if (record.identityDocuments != null || record.aadhaarNumber != null ||
       record.panNumber != null) issues.push("Private identity evidence requires secure re-verification");
   return issues;
+}
+
+/**
+ * Adapt the legacy faculty JSON for a one-time, audited import. This deliberately
+ * does not interpret a URL as proof of file ownership; attachments are migrated
+ * separately through private, membership-bound receipt issuance.
+ * The caller must persist the result before relying on generated row IDs.
+ */
+export function importLegacyFacultyProfileDocument(raw: unknown): {
+  document: FacultyProfileDocument | null;
+  warnings: string[];
+} {
+  const warnings = facultyLegacyProfileExceptions(raw);
+  if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+    return { document: null, warnings };
+  }
+  const source = raw as Record<string, unknown>;
+  const object = (value: unknown): Record<string, unknown> =>
+    value && typeof value === "object" && !Array.isArray(value)
+      ? value as Record<string, unknown> : {};
+  const string = (value: unknown): string =>
+    typeof value === "string" ? value.trim() : value == null ? "" : String(value);
+  const date = (value: unknown): string => {
+    const candidate = string(value);
+    if (!candidate) return "";
+    const iso = candidate.match(/^(\d{4}-\d{2}-\d{2})(?:T.*)?$/);
+    if (iso) return iso[1];
+    const indian = candidate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})$/);
+    if (indian) return indian[3] + "-" + indian[2].padStart(2, "0") + "-" + indian[1].padStart(2, "0");
+    warnings.push("Historical date format needs review before import");
+    return candidate;
+  };
+  // A deterministic UUID per position preserves duplicate-looking records and
+  // preserves sequence on a repeatable import; it contains no embedded PII.
+  const stableId = (section: string, index: number): string => {
+    const seed = section + ":" + index;
+    const pieces = [2166136261, 2166136261 ^ 0x9e3779b9, 2166136261 ^ 0x85ebca6b, 2166136261 ^ 0xc2b2ae35];
+    for (let p = 0; p < pieces.length; p++) {
+      for (const ch of seed) pieces[p] = Math.imul(pieces[p] ^ (ch.charCodeAt(0) + p), 16777619) >>> 0;
+    }
+    const hex = pieces.map(v => v.toString(16).padStart(8, "0")).join("");
+    return hex.slice(0, 8) + "-" + hex.slice(8, 12) + "-4" + hex.slice(13, 16) +
+      "-8" + hex.slice(17, 20) + "-" + hex.slice(20, 32);
+  };
+  const fields: Record<string, readonly string[]> = {
+    languages: ["language", "proficiency"], skills: ["skill", "proficiency"],
+    education: ["educationType", "program", "specialization", "institutionName", "startYear", "endYear",
+      "isCurrentlyPursuing", "gradingType", "grade", "maxGrade", "isRecentEducation", "qualifyingExam",
+      "examRank", "examDetails", "degree", "field", "score", "description"],
+    certifications: ["authority", "name", "certificationDate", "validityDate", "certificateLink", "description"],
+    experiences: ["organization", "designation", "description", "from", "to", "experienceType",
+      "location", "isPaid", "salary"],
+    publications: ["title", "journal", "year", "doi", "link", "authors", "description"],
+    awards: ["title", "year", "description", "awardedBy"],
+  };
+  const list = (section: keyof typeof fields, legacySection = section): Record<string, unknown>[] => {
+    const records = source[section] ?? source[legacySection];
+    if (records == null) return [];
+    if (!Array.isArray(records)) { warnings.push(section + ": expected a list"); return []; }
+    return records.map((item, index) => {
+      const row = object(item);
+      const id = typeof row.id === "string" && z.string().uuid().safeParse(row.id).success
+        ? row.id : stableId(section, index);
+      const mapped: Record<string, unknown> = { id };
+      for (const key of fields[section]) {
+        if (row[key] !== undefined) mapped[key] = row[key];
+      }
+      for (const key of ["certificationDate", "validityDate", "from", "to"]) {
+        if (mapped[key] !== undefined) mapped[key] = date(mapped[key]);
+      }
+      if (section === "education") {
+        if (row.certificateUpload) warnings.push("education " + (index + 1) + ": re-verify private certificate");
+      }
+      if (section === "certifications" && row.certificateUpload) warnings.push("certification " + (index + 1) + ": re-verify private certificate");
+      if (section === "experiences" && (row.internshipCertificateUpload || row.offerLetterUpload))
+        warnings.push("experience " + (index + 1) + ": re-verify private attachments");
+      return mapped;
+    });
+  };
+  const sourcePersonal = object(source.personalDetails);
+  const sourceContact = object(source.contact);
+  const sourceAddress = object(source.address);
+  const sourceSocial = object(source.socialProfiles);
+  const social: Record<string, unknown> = {};
+  for (const field of ["linkedIn", "github", "portfolio", "twitter", "googleScholar", "researchGate"]) {
+    social[field] = sourceSocial[field] ?? source[field] ?? "";
+  }
+  social.codingProfiles = sourceSocial.codingProfiles ?? source.codingProfiles ?? {};
+  social.codingProfileLinks = sourceSocial.codingProfileLinks ?? source.codingProfileLinks ?? [];
+  const address: Record<string, unknown> = {};
+  for (const field of ["currentAddress", "permanentAddress", "city", "state", "pincode",
+    "currentCity", "currentState", "currentPincode", "permanentCity", "permanentState", "permanentPincode"]) {
+    address[field] = sourceAddress[field] ?? source[field] ?? "";
+  }
+  const canonical = {
+    about: { description: source.about && typeof source.about === "object"
+      ? string(object(source.about).description) : string(source.description ?? source.about) },
+    personalDetails: {
+      gender: sourcePersonal.gender ?? source.gender ?? "",
+      dateOfBirth: date(sourcePersonal.dateOfBirth ?? sourcePersonal.dob ?? source.dateOfBirth ?? source.dob),
+      bloodGroup: sourcePersonal.bloodGroup ?? source.bloodGroup ?? "",
+    },
+    contact: {
+      contactMobile: sourceContact.contactMobile ?? source.contactMobile ?? "",
+      contactPhone: sourceContact.contactPhone ?? source.contactPhone ?? "",
+      contactMail: sourceContact.contactMail ?? source.contactMail ?? "",
+    },
+    address, socialProfiles: social,
+    languages: list("languages"), skills: list("skills"),
+    education: list("education", "qualifications"), certifications: list("certifications"),
+    experiences: list("experiences"), publications: list("publications"), awards: list("awards"),
+    organizations: source.organizations ?? [],
+    metadata: source.metadata ?? {},
+  };
+  const parsed = facultyProfileDocumentSchema.safeParse(canonical);
+  if (!parsed.success) {
+    for (const issue of parsed.error.issues) {
+      warnings.push("Import requires correction at " + issue.path.join(".") + ": " + issue.message);
+    }
+    return { document: null, warnings };
+  }
+  if (source.profileImage || source.profileImageUrl || source.website)
+    warnings.push("Profile image needs a verified private upload receipt");
+  return { document: parsed.data, warnings };
+}
+
+/** The normalized roster remains authoritative for employee number, faculty type,
+ * academic role, and department; do not duplicate membership identity into JSON. */
+export function legacyFacultyHeaderHints(raw: unknown): {
+  employeeId: string; department: string; facultyType: string;
+} {
+  const value = raw && typeof raw === "object" && !Array.isArray(raw)
+    ? raw as Record<string, unknown> : {};
+  const str = (key: string) => typeof value[key] === "string" ? (value[key] as string).trim() : "";
+  return { employeeId: str("uniqueId") || str("employeeId"),
+    department: str("department") || str("deptId"),
+    facultyType: str("facultyType") };
 }

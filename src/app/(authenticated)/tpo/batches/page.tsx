@@ -14,9 +14,8 @@ import { listTpoBatches } from "@/modules/placements/tpo-batch-workspace-read-se
 import {countTpoLearnersWithoutClass} from "@/modules/placements/tpo-batch-unassigned-students-service";
 import { listTpoBatchCardEligibility } from "@/modules/placements/tpo-batch-directory-counts-service";
 import { listTpoBatchJourneyCounts } from "@/modules/placements/tpo-batch-journey-service";
-import { StackedMetricBar } from "@/components/ui/stacked-metric-bar";
-import batchStyles from "@/components/tpo/legacy-batch-eligibility.module.css";
 import { PageHeader } from "@/components/ui/page-header";
+import { Badge } from "@/components/ui/badge";
 import { Alert } from "@/components/ui/alert";
 import { Banner } from "@/components/ui/banner";
 import { InlineNotice } from "@/components/ui/inline-notice";
@@ -95,7 +94,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const batchPage=paginateTpoBatches(batches,pageParsed.data.page,pageParsed.data.pageSize);
  const [journey,recent]=await Promise.all([
   listTpoBatchJourneyCounts(context,data.batches.map(batch=>batch.id)).catch(()=>null),
-  listTpoBatchRecentCohortActions(context,batchPage.items.map(batch=>batch.id)).catch(()=>null),
+  listTpoBatchRecentCohortActions(context,data.batches.map(batch=>batch.id)).catch(()=>null),
  ]);
  const pageFilters={q:parsed.data.q,state:parsed.data.state,program:programParsed.data,department:departmentParsed.data,deadline:deadlineParsed.data,sort:sortParsed.data,...(showOlder?{showOlder:"1"}:{}),facetState:facets.states,facetProgram:facets.programs,facetDepartment:facets.departments,facetFinalYear:facets.finalYears.map(String)};
  const programs=listTpoBatchPrograms(data.batches);
@@ -105,12 +104,26 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  const eligibleCount=eligibility===null?null:working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.eligible??0),0);
  const pendingCount=eligibility===null?null:working.reduce((sum,batch)=>sum+(eligibility.get(batch.id)?.undecided??0),0);
  const placedCount=journey===null?null:working.reduce((sum,batch)=>sum+(journey.get(batch.id)?.placed??0),0);
+ const latestDecision=recent===null?null:[...recent.entries()].sort((a,b)=>b[1].occurredAt.localeCompare(a[1].occurredAt))[0]??null;
+ const filterCount=Number(parsed.data.state!=="ALL")+Number(Boolean(programParsed.data))+Number(Boolean(departmentParsed.data))+Number(deadlineParsed.data!=="ALL")+facets.states.length+facets.programs.length+facets.departments.length+facets.finalYears.length;
  return <div className="min-w-0 space-y-4">
   <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility} description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
+  <dl aria-label="Batch numbers" className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] md:grid-cols-4">{[
+  [activeCount===1?"batch open for placements":"batches open for placements",activeCount],[eligibleCount===1?"student eligible":"students eligible",eligibleCount],["not decided yet",pendingCount],["placed",placedCount],
+  ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-[var(--lms-canvas-border)] p-3 last:border-r-0"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
   {eligibility===null&&facets.states.length>0?<Alert tone="warning">State checklist filtering is unavailable until eligibility data loads; other filters remain applied.</Alert>:null}
 
-  <form role="search" aria-label="tpo batches filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-3" action="/tpo/batches" method="get">
-   <TpoBatchInstantSearch key={parsed.data.q??""} value={parsed.data.q??""}/>
+  <div className="flex min-w-0 flex-wrap items-end gap-2 border-b border-[var(--lms-canvas-border)] pb-3">
+   <div className="min-w-[min(100%,220px)] flex-[1_1_220px] sm:max-w-[320px]"><TpoBatchInstantSearch key={parsed.data.q??""} value={parsed.data.q??""}/></div>
+   <details className="group relative min-w-0">
+    <summary className="inline-flex min-h-11 cursor-pointer list-none items-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-body marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+     <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="16" height="16"><path d="M3 5h18M6 12h12M10 19h4"/></svg>
+     Filters{filterCount>0?<Badge tone="info">{filterCount}</Badge>:null}
+    </summary>
+    <div className="absolute right-0 z-20 mt-2 max-h-[min(75vh,700px)] w-[min(90vw,480px)] min-w-[min(90vw,300px)] overflow-y-auto rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-lg">
+     <h2 className="mb-3 text-lg font-semibold">Filter batches</h2>
+  <form role="search" aria-label="tpo batches filters" className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3" action="/tpo/batches" method="get">
+   <input type="hidden" name="q" value={parsed.data.q??""}/>
    <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">State<Select name="state" defaultValue={parsed.data.state} className="block min-h-11 w-full md:min-h-9"><option value="ALL">All</option><option value="IN_PLACEMENTS">In placements</option><option value="NOT_STARTED">Not started</option><option value="FINISHED">Finished</option></Select></label>
    <Disclosure title="Program · Department · Deadline · Sort · Page size" className="min-w-0 sm:col-span-2 lg:col-span-3" defaultOpen={Boolean(programParsed.data||departmentParsed.data||deadlineParsed.data!=="ALL"||sortParsed.data!=="WORKING_SET"||pageParsed.data.pageSize!==24)} contentClassName="pt-3"><div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
    <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program<Select name="program" defaultValue={programParsed.data} className="block min-h-11 w-full md:min-h-9"><option value="">All programs</option>{programs.map(p=><option key={p} value={p}>{p}</option>)}</Select></label>
@@ -128,8 +141,16 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     sort:sortParsed.data,pageSize:String(pageParsed.data.pageSize),
     ...(showOlder?{showOlder:"1"}:{}),
    }}/>
+
+    </div>
+   </details>
+  </div>
+  {latestDecision?<Alert tone="info" className="mt-3">
+    <span>Last change {new Date(latestDecision[1].occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST by {latestDecision[1].actor}</span>
+    {latestDecision[1].canUndo&&!data.batches.find(batch=>batch.id===latestDecision[0])?.finishedAt?<TpoBatchUndoControl batchId={latestDecision[0]} actionId={latestDecision[1].actionId}/>:null}
+   </Alert>:null}
   {unassigned!==null&&unassigned>0?<Banner tone="warning">
-    {unassigned} {unassigned===1?"student is":"students are"} not in any active class. Assign their academic classes before deciding placement eligibility.
+    {unassigned.toLocaleString("en-IN")} {unassigned===1?"student is":"students are"} not in any class. They can't be part of placements until Academic Setup puts them in a class of a batch.
    </Banner>:null}
   {unassigned===null?<InlineNotice tone="info" message="Class assignment counts could not load. The batch list is still available. Try again later."/>:null}
   {eligibility===null?<InlineNotice tone="info" message="Eligibility counts could not load. The batch list is still available. Try again later."/>:null}
@@ -138,9 +159,6 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {!data.ready&&deadlineParsed.data!=="ALL"?<InlineNotice tone="info" message="Deadline details are temporarily unavailable. All matching batches are still shown."/>:null}
   {!data.ready&&parsed.data.state!=="ALL"?<InlineNotice tone="info" message="Batch state details are temporarily unavailable. All matching batches are still shown."/>:null}
   {!data.ready?<Alert tone="warning">Couldn't refresh batches. Some batch details are temporarily unavailable; academic batches remain visible. <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link></Alert>:null}
-  <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-[var(--lms-canvas-border)] md:grid-cols-4">{[
-  ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
-  ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-[var(--lms-canvas-border)] p-3 last:border-r-0"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
   {workingSet.hidden>0?<Alert tone="info" className="flex-row flex-wrap items-center gap-2">
     {workingSet.hidden} older {workingSet.hidden===1?"batch is":"batches are"} hidden from your working set.
     <Link href={tpoBatchPageHref({...pageFilters,showOlder:"1"},1,pageParsed.data.pageSize)}
@@ -150,54 +168,53 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   <p role="status" className="text-sm text-muted-foreground leading-[1.6]">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<Alert tone="warning">The requested batch page no longer exists for these filters. Showing the last available page.</Alert>:null}
   {batches.length===0?<EmptyState
-    title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?"No placement batches or academic cohorts are available to list yet.":"No batches match these filters."}
+    title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?"No batches yet":"No batches match this view"}
+    description={data.batches.length===0?"Batches come from Academic Setup. Create the academic batch there first.":"Try another search or clear the active batch filters."}
     action={data.batches.length>0?<Link href={tpoBatchClearFiltersHref(pageParsed.data.pageSize)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear batch filters</Link>:undefined}/>:<ul className="grid min-w-0 gap-3 md:grid-cols-2 xl:grid-cols-3">{batchPage.items.map(b=><li key={b.id} className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
-    <h2 className="break-words font-semibold"><Link href={"/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize))} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{b.name}</Link></h2>
-    <p className="text-sm">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
-    <p className="text-xs text-muted-foreground">{data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:eligibility?.get(b.id)?.eligible??null}):"Status unavailable"}</p>
-    {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
-    {(() => {
-      const summary = eligibility?.get(b.id);
-      if (!summary) return <p role="status" className="text-sm leading-[1.6]">Eligibility counts unavailable.</p>;
-      const split = [
-        { key: "eligible", label: "Eligible", count: summary.eligible, color: "bg-success" },
-        { key: "ineligible", label: "Ineligible", count: summary.ineligible, color: "bg-error" },
-        { key: "undecided", label: "Not decided", count: summary.undecided, color: "bg-muted-foreground" },
-        { key: "review", label: "Needs review", count: summary.needsReview, color: "bg-warning" },
-      ] as const;
-      return <div className="min-w-0 space-y-2">
-        <p className="text-xs text-muted-foreground leading-5">{summary.assessed} {summary.assessed===1?"student":"students"} in batch</p>
-        <dl className="grid grid-cols-2 gap-2 text-xs">
-         <div><dt className="text-muted-foreground">Invited</dt><dd className="font-semibold">{b.invitedAt?"Yes":"Not yet"}</dd></div>
-         <div><dt className="text-muted-foreground">Registered</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.registered??0}</dd></div>
-         <div><dt className="text-muted-foreground">Verified profiles</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.verified??0}</dd></div>
-         <div><dt className="text-muted-foreground">Placed (offer evidence)</dt><dd className="font-semibold">{journey===null?"—":journey.get(b.id)?.placed??0}</dd></div>
-        </dl>
-        <dl className="grid grid-cols-1 gap-1 text-xs md:grid-cols-2">
-          {split.map(part=><div key={part.key}>
-            <dt className="text-muted-foreground">{part.label}</dt>
-            <dd className="font-semibold tabular-nums">{part.count}</dd>
-          </div>)}
-        </dl>
-        <StackedMetricBar className={"w-full "+batchStyles.bar} maximum={summary.assessed}
-          label={split.map(part=>part.label+": "+part.count).join(", ")}
-          segments={split.map(part=>({
-            label:part.label,value:part.count,
-            tone:part.key==="eligible"?"success" as const:
-              part.key==="ineligible"?"error" as const:
-              part.key==="review"?"warning" as const:"muted" as const,
-          }))} />
-        {summary.needsReview>0?<p className="text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-warning-text)]">Ambiguous class membership requires review.</p>:null}
-      </div>;
-    })()}
-    {recent?.get(b.id)?<section className="border-t border-[var(--lms-canvas-border)] pt-3 text-xs">
-     <p className="font-semibold">Last batch decision</p>
-     <p className="text-muted-foreground">By {recent?.get(b.id)!.actor} · {new Date(recent?.get(b.id)!.occurredAt).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})} IST</p>
-     {recent?.get(b.id)!.canUndo&&!b.finishedAt?<TpoBatchUndoControl batchId={b.id} actionId={recent?.get(b.id)!.actionId}/>:null}
-    </section>:null}
-    <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))} className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">{tpoBatchNextAction(b,data.ready,eligibility?.get(b.id),journey?.get(b.id))}</Link>
-   </li>)}</ul>}
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search and filters</Link>:undefined}/>:<ul className="grid min-w-0 grid-cols-1 gap-4 min-[700px]:grid-cols-[repeat(auto-fill,minmax(320px,1fr))]">
+   {batchPage.items.map(b=>{
+    const summary=eligibility?.get(b.id);
+    const total=summary?.assessed??0;
+    const status=data.ready?tpoBatchPlacementState({finishedAt:b.finishedAt,eligible:summary?.eligible??null}):"Status unavailable";
+    const next=tpoBatchNextAction(b,data.ready,summary,journey?.get(b.id));
+    const detailsHref="/tpo/batches/"+b.id+"?returnTo="+encodeURIComponent(tpoBatchPageHref(pageFilters,batchPage.page,pageParsed.data.pageSize));
+    const progress=journey?.get(b.id);
+    return <li key={b.id} className={"flex min-w-0 flex-col gap-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] p-4 shadow-sm "+(b.finishedAt?"bg-[var(--lms-neutral-50)]":"bg-surface")}>
+     <header className="flex min-w-0 items-start justify-between gap-2">
+      <div className="flex min-w-0 flex-col gap-1">
+       <h2 className="m-0 break-words text-[var(--lms-font-lg)] font-semibold leading-6">
+        <Link href={detailsHref} className="lms-inline-link text-[var(--lms-heading)] hover:text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">{b.name}</Link>
+       </h2>
+       <p className="text-xs text-muted-foreground">{b.department===b.program?b.program:b.department+" · "+b.program}{b.startYear?" · "+b.startYear+(b.endYear?"–"+b.endYear:""):""}</p>
+      </div>
+      <Badge tone={status==="In placements"?"success":status==="Finished"?"neutral":"warning"} className="shrink-0">{status}</Badge>
+     </header>
+     {summary?<div className="space-y-2">
+      <div className="flex flex-wrap gap-x-3 gap-y-1 text-sm text-muted-foreground">
+       <span><strong className="text-[var(--lms-heading)]">{total.toLocaleString("en-IN")}</strong> {total===1?"student":"students"}</span>
+       <span><strong className="text-[var(--lms-success-text)]">{summary.eligible.toLocaleString("en-IN")}</strong> eligible</span>
+       <span><strong className="text-[var(--lms-error-text)]">{summary.ineligible.toLocaleString("en-IN")}</strong> ineligible</span>
+       <span><strong className="text-[var(--lms-heading)]">{(summary.undecided+summary.needsReview).toLocaleString("en-IN")}</strong> not decided</span>
+      </div>
+      <div role="img" aria-label={summary.eligible+" eligible, "+summary.ineligible+" ineligible, "+(summary.undecided+summary.needsReview)+" not decided"} className="flex h-[6px] overflow-hidden rounded-full bg-[var(--lms-header-border)]">
+       <span className="bg-[#15803d]" style={{width:total>0?summary.eligible/total*100+"%":"0%"}}/>
+       <span className="bg-[var(--lms-error-text)]" style={{width:total>0?summary.ineligible/total*100+"%":"0%"}}/>
+      </div>
+      {summary.needsReview>0?<p className="text-xs font-semibold text-[var(--lms-warning-text)]">{summary.needsReview} need class membership review</p>:null}
+      {total>0?<ol aria-label="Journey" className="grid grid-cols-3 gap-1 text-center">
+       {([["Registered",progress?.registered],["Verified",progress?.verified],["Placed",progress?.placed]] as const).map(([label,value])=>
+        <li key={label} className="flex min-w-0 flex-col rounded-[var(--lms-radius-sm)] bg-[var(--lms-neutral-50)] px-1 py-2">
+         <strong className="text-sm text-[var(--lms-heading)]">{value??"—"}</strong><span className="text-xs text-muted-foreground">{label}</span>
+        </li>)}
+      </ol>:null}
+     </div>:<p role="status" className="text-sm text-muted-foreground">Eligibility counts unavailable.</p>}
+     <footer className="mt-auto flex flex-wrap items-center gap-3 pt-2">
+      <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,summary,progress)}
+       className={"lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 "+(next==="Review history"?"border-border bg-surface text-link":"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-white")}>{next}</Link>
+      {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<span className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</span>:null}
+     </footer>
+    </li>;
+   })}</ul>}
   {(batchPage.hasPrev||batchPage.hasNext)?<nav aria-label="Batch pages" className="flex flex-wrap gap-3 text-sm">
    {batchPage.hasPrev?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]" href={tpoBatchPageHref(pageFilters,batchPage.page-1,pageParsed.data.pageSize)}>Previous page</Link>:null}
    {batchPage.hasNext?<Link className="lms-inline-link inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[rgba(38,186,199,0.07)]" href={tpoBatchPageHref(pageFilters,batchPage.page+1,pageParsed.data.pageSize)}>Next page</Link>:null}
