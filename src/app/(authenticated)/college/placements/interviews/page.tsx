@@ -61,7 +61,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     Candidate interview appointment storage is not registered. No schedule or conflict counts are inferred from round-level placeholders.
    </Banner>:<>
    <SummaryStrip label="Interview summary" steps={[{label:"Scheduled",value:data.summary?.scheduled??0},{label:"Today",value:data.summary?.today??0},{label:"Companies",value:data.summary?.companies??0},{label:"Conflicts",value:data.summary?.conflicts??0}]}/>
-   <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
+   <form method="get" role="search" aria-label="Interview appointment filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
     <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search student, company or role
      <Input type="search" name="q" defaultValue={valid.data.q} maxLength={100} />
     </label>

@@ -132,3 +132,13 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/college/groups/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared; subtitle 14px=14px; 375px title20px=20px | fixes: none
 - `src/app/(authenticated)/college/hiring-dashboard/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared; subtitle 14px=14px; 375px title20px=20px | fixes: none
 - `src/app/(authenticated)/college/lecture-halls/[hallId]/page.tsx` | instances H1/B0/T0/F1/h10 | spec/code: h1 30px/600/#172033=shared; subtitle 14px=14px; 375px title20px=20px | fixes: filter group gap 1×12/16px→8px
+- `src/app/(authenticated)/college/lecture-halls/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/lessons/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/live-classes/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/not-found.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/people/manage/page.tsx` | instances H2/B0/T0/F2/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: filter gap 12/16px→8px ×1
+- `src/app/(authenticated)/college/placements/calendar/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/placements/drives/page.tsx` | instances H2/B0/T0/F1/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/placements/interviews/page.tsx` | instances H2/B0/T0/F1/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: filter gap 12/16px→8px ×1
+- `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx` | instances H2/B0/T1/F1/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: filter gap 12/16px→8px ×1
