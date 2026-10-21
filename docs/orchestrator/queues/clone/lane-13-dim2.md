@@ -133,16 +133,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/app/(authenticated)/tpo/reports/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/placed-branch/page.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/season-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-prep/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/team/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
