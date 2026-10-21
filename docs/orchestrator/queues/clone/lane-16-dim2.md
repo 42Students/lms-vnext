@@ -126,9 +126,9 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/teacher/live-classes/error.tsx`
 - [x] `src/app/(authenticated)/teacher/notifications/error.tsx`
 - [x] `src/app/(authenticated)/teacher/profile/contacts/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/profile/teaching/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
