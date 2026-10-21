@@ -297,7 +297,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/tracker/tracker-issue-logs-panel.tsx`
 - [x] `src/components/tracker/tracker-report-form.tsx`
 - [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/ui/data-table.tsx`
+- [x] `src/components/ui/data-table.tsx`
 - [ ] `src/components/ui/date-input.tsx`
 - [ ] `src/components/ui/tabs.tsx`
 - [ ] `src/components/ui/third-party-link.tsx`
