@@ -13,8 +13,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "INVALID_ORIGIN" }, { status: 403 });
   }
   try {
+    // Legacy /bulk-validate and /bulk-register are represented as the PREVIEW
+    // and IMPORT stages of this single, college-scoped endpoint. The service
+    // revalidates on IMPORT; clients must not treat an old preview as a permit.
+    const report = await runCollegeStudentCsv(
+      await getCurrentRequestContext(), await request.json(),
+    );
+    const preflightPassed = report.structuralErrors.length === 0 && report.invalid === 0;
     return NextResponse.json({
-      report: await runCollegeStudentCsv(await getCurrentRequestContext(), await request.json()),
+      report,
+      workflow: {
+        phase: report.preview ? "PREFLIGHT" : "WRITE",
+        preflightPassed,
+        retryPolicy: report.preview ? "CORRECT_INVALID_ROWS" : "REVIEW_RECEIPTS_BEFORE_RETRY",
+        requiresManualReconciliation:
+          "recoveryRequired" in report && report.recoveryRequired === true,
+      },
     },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
