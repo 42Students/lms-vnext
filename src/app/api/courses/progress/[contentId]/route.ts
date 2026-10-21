@@ -8,6 +8,7 @@ import {CourseProgressRetakeError,startAdminCourseProgressRetake}
  from "@/modules/courses/admin-progress-retake-service";
 import {
   getLearnerContentProgress,
+  listMyLearnerContentProgressBatch,
   saveLearnerContentProgress,
 } from "@/modules/courses/progress-service";
 
@@ -26,13 +27,20 @@ export async function GET(
       await getCurrentRequestContext();
     const { contentId } = await params;
     const url = new URL(request.url);
-    const progress =
-      await getLearnerContentProgress(
-        context,
-        contentId,
-        url.searchParams.get("deliveryId") ??
-          "",
-      );
+    const deliveryId=url.searchParams.get("deliveryId")??"";
+    const rawIds=url.searchParams.getAll("contentIds");
+    const contentIds=rawIds.flatMap(value=>value.split(",")).map(value=>value.trim()).filter(Boolean);
+    if(contentIds.length){
+      if(contentIds.length>500)return NextResponse.json({error:"TOO_MANY_CONTENT_IDS",
+       message:"Too many lessonContentIds in one request. Split into batches of 500 or fewer."},
+       {status:400});
+      if(!contentIds.includes(contentId))return NextResponse.json({error:"INVALID_CONTENT_ID",
+       message:"The content ID in the URL must be included in contentIds"},{status:400});
+      const progress=await listMyLearnerContentProgressBatch(context,deliveryId,contentIds);
+      return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
+       {headers:{"Cache-Control":"private, no-store"}});
+    }
+    const progress=await getLearnerContentProgress(context,contentId,deliveryId);
 
     return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
       {headers:{"Cache-Control":"private, no-store"}});
@@ -68,7 +76,18 @@ export async function PUT(
         body,
       );
 
-    return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
+    const legacyBody=body as Record<string,unknown>;
+    const reportedDuration=typeof legacyBody.durationSeconds==="number"?
+     legacyBody.durationSeconds:null;
+    const reportedComplete=typeof legacyBody.completed==="boolean"?
+     legacyBody.completed:null;
+    // Authored server duration and latest persisted progress beat unverified
+    // client/player duration and completion hints.
+    const playbackReconciled=(reportedDuration!==null&&
+      Math.abs(reportedDuration-progress.durationSeconds)>1)||
+      (reportedComplete!==null&&(progress.status==="COMPLETED")!==reportedComplete);
+    return NextResponse.json({progress,status:"OK",message:"OK",data:progress,
+      ...(reportedDuration!==null||reportedComplete!==null?{playbackReconciled}: {})},
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
@@ -81,7 +100,7 @@ export async function PUT(
 const batchInput=z.strictObject({
  action:z.literal("READ_BATCH"),
  deliveryId:z.uuid(),
- contentIds:z.array(z.uuid()).min(1).max(1000),
+ contentIds:z.array(z.uuid()).min(1).max(500),
 });
 
 const retakeInput=z.strictObject({
@@ -113,9 +132,9 @@ export async function POST(request:Request,{params}:RouteContext){
   const action=(raw as Record<string,unknown>).action;
   if(action==="READ_BATCH"){
    const rawIds=(raw as Record<string,unknown>).contentIds;
-   if(Array.isArray(rawIds)&&rawIds.length>1000)
+   if(Array.isArray(rawIds)&&rawIds.length>500)
     return NextResponse.json({error:"RETAKE_TOO_MANY_ITEMS",
-      message:"Too many lessonContentIds in one request. Split the request into batches of 1000 or fewer."},{status:400});
+      message:"Too many lessonContentIds in one request. Split the request into batches of 500 or fewer."},{status:400});
    const batch=batchInput.safeParse(raw);
    if(!batch.success)
     return NextResponse.json({error:"INVALID_REQUEST",
@@ -124,11 +143,8 @@ export async function POST(request:Request,{params}:RouteContext){
    if(!batch.data.contentIds.includes(contentId))
     return NextResponse.json({error:"INVALID_CONTENT_ID",
       message:"The content ID in the URL must be included in contentIds"},{status:400});
-   const progress=[];
-   for(const id of new Set(batch.data.contentIds)){
-    // Every item is independently checked against this learner's delivery.
-    progress.push(await getLearnerContentProgress(context,id,batch.data.deliveryId));
-   }
+   const progress=await listMyLearnerContentProgressBatch(
+    context,batch.data.deliveryId,batch.data.contentIds);
    return NextResponse.json({progress,status:"OK",message:"OK",data:progress},
       {headers:{"Cache-Control":"private, no-store"}});
   }
@@ -161,7 +177,7 @@ export async function POST(request:Request,{params}:RouteContext){
    return NextResponse.json({error:error.code,message:
     error.code==="NO_COURSE_CONTENT"?"That course has no content to retake":
     error.code==="RETAKE_STALE"?"Progress has changed. Review the current attempt again.":
-    "Too many lessonContentIds in one request."},
+    "Too many lessonContentIds in one request. Limit 500."},
     {status:error.code==="RETAKE_STALE"?409:400});
   return apiErrorResponse(error);
  }
