@@ -120,10 +120,10 @@ export function CollegePromotionConfirmation({
       {BATCH_PROMOTION_COPY.promoteButton}
     </Button>
     <ConfirmDialog open={open} onOpenChange={requestClose}
-      title={`Promote "${cohortName??"selected batch"}"`}
+      title={cohortName ? `Promote "${cohortName}"` : "Promote Batch"}
       description={"Confirm promotion to Semester "+targetTerm}
       cancelLabel="Cancel" confirmLabel="Yes, Promote"
-      pending={pending||yearChanged} onConfirm={submit}>
+      pending={pending} confirmDisabled={yearChanged} confirmVariant="primary" onConfirm={submit}>
       <div aria-busy={pending} className="min-w-0 space-y-3">
       <p className="m-0 max-w-prose break-words text-sm leading-[22px] text-body">
         {promotionImpactMessage(learnerCount)}. The server will recheck blockers and the saved version.
