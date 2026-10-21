@@ -21,7 +21,7 @@ export default async function SuperAdminProjectSubmissionsRoute({
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context)) {
     return <div className="min-w-0 space-y-4">
-      <PageHeader title="Project submissions" actions={<PageBackLink href="/admin/projects" label="Back to workspaces" />} />
+      <PageHeader title="Submissions" actions={<PageBackLink href="/admin/projects" label="Back to workspaces" />} />
       <ErrorState title="Project access denied"
         description="Your account cannot access Super Admin project workspaces."
         action={<PageBackLink href="/dashboard" label="Back to dashboard" />}
@@ -35,7 +35,7 @@ export default async function SuperAdminProjectSubmissionsRoute({
     return (
       <div className="min-w-0 space-y-4">
         <PageHeader
-          title="Project submissions"
+          title="Submissions"
           description="A selected college scope is required."
           actions={<PageBackLink href="/admin/projects" label="Back to workspaces" />}
         />
