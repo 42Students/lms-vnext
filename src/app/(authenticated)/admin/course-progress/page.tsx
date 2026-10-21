@@ -3,7 +3,7 @@ import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
 import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin-learning-filter-options-service";
-import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-learning-filter-fields";
+import {SuperAdminCourseProgressSelector} from "@/components/courses/super-admin-course-progress-selector";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
@@ -76,7 +76,7 @@ export default async function SuperAdminCourseProgressPage({
       <h2 className="text-base font-semibold text-[var(--lms-heading)]">Choose a class, then one of its courses.</h2>
       <p className="text-xs text-muted-foreground">Class sections are represented by their active batch in this directory. Use the offering detail for authorized class-level learner completion.</p>
       <div className="grid min-w-0 items-end gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
-        <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts}
+        <SuperAdminCourseProgressSelector courses={filters.courses} cohorts={filters.cohorts}
           selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
         <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9">
           <span aria-hidden="true" className="mr-2">↻</span> Refresh
