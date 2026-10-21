@@ -7,7 +7,7 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
 - [x] L12-U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobNotificationHelper.java`
-- [ ] L12-U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobRoleOption.java`
+- [x] L12-U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobRoleOption.java`
 - [ ] L12-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminLogsController.java`
 - [ ] L13-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Company.java`
 - [ ] L13-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/InterviewFeedbackForm.js`
