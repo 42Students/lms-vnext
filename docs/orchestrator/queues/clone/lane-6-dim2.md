@@ -299,14 +299,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
 - [x] `src/components/projects/learner-board-task-index.tsx`
 - [x] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/learner-project-goals.tsx`
-- [ ] `src/components/projects/mentor-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meeting-history.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx`
-- [ ] `src/components/projects/project-admin-workspace-list.tsx`
-- [ ] `src/components/projects/project-admin-workspace-page-export.tsx`
+- [x] `src/components/projects/learner-project-goals.tsx`
+- [x] `src/components/projects/mentor-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-meeting-history.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/project-admin-at-risk-page.tsx`
+- [x] `src/components/projects/project-admin-workspace-list.tsx`
+- [x] `src/components/projects/project-admin-workspace-page-export.tsx`
 - [ ] `src/components/projects/project-final-delivery-controls.tsx`
 - [ ] `src/components/projects/project-list.tsx`
 - [ ] `src/components/projects/project-mentor-reassignment.tsx`
