@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { Pagination } from "@/components/ui/pagination";
 import {CollegeArchivedLessonRestore} from "./college-archived-lesson-restore";
+import {LessonActions} from "./admin-learning-structure-actions";
 import {CollegeLessonVisibilityControl,CollegeLessonBulkVisibility} from "./college-lesson-visibility-controls";
 import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules/courses/college-course-tabs-copy";
 import { PageHeader } from "@/components/ui/page-header";
@@ -581,6 +582,10 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
                visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
              <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View recorded course activity</Link>
+             {item.status!=="ARCHIVED"?
+               <div aria-label="Lesson actions" className="flex min-w-0 flex-wrap gap-2">
+                 <LessonActions lesson={{id:item.id,name:item.name,description:item.description,sequence:item.sequence}}/>
+               </div>:null}
             </article>)}
             </>
            ) : (
@@ -618,7 +623,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                   </div>},
                 {key:"order",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.order,mobilePriority:"secondary" as const,
                   cell:item=>item.sequence+1},
-                {key:"students",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.studentsSeeIt,mobilePriority:"action" as const,
+                {key:"students",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.studentsSeeIt,mobilePriority:"secondary" as const,
                   cell:item=><div className="min-w-0 space-y-2">
                     <StatusBadge tone={item.status==="ARCHIVED"?"neutral":item.visibleToStudents?"success":"warning"}>{collegeLessonVisibilityLabel(item)}</StatusBadge>
                     {item.status==="ARCHIVED"?
@@ -630,6 +635,10 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                       View recorded course activity
                     </Link>
                   </div>},
+                {key:"actions",header:"Actions",mobilePriority:"action" as const,
+                  cell:item=>item.status==="ARCHIVED"
+                    ? <span className="text-xs text-muted-foreground">Restore using the visibility column</span>
+                    : <LessonActions lesson={{id:item.id,name:item.name,description:item.description,sequence:item.sequence}}/>},
               ]}
             /> : <DataTable
               caption="Recorded course progress"
@@ -678,7 +687,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
       </div>
       <p className="text-xs leading-5 text-muted-foreground">
         {lessons
-          ? "This catalogue is based on registered lesson and content rows. Content counts include historical draft/archived records; no file URLs or signed media are queried. Creation, editing, ordering and storage remain offering-scoped."
+          ? "This catalogue is based on registered lesson and content rows. Edit and Archive actions use the authorized lesson API; Archive retains history and files. Bulk selection remains in the separate visibility picker; no signed media URLs are queried."
           : "Counts use recorded learner-content progress rows only. Learners without activity are absent from counts. Completion flags reflect individual content records, not finished courses, distinct eligible learners, assignments, quizzes or attendance. Historic records may remain after enrollment changes."}
         Exact legacy reports, exports and browser parity remain unverified.
       </p>
