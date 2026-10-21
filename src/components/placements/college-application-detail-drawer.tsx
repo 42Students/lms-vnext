@@ -6,8 +6,17 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Disclosure} from "@/components/ui/disclosure";
 import {useEffect,useRef,useState} from "react";
-import {apiFetch} from "@/lib/api-fetch";
+import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
+import {CollegeInterviewAppointments} from "./college-interview-appointments";
 type Event={from:string|null;to:string;reason:string|null;when:string};
+type CandidateInterviews={
+ rounds:Array<{id:string;name:string;status:string;kind:string}>;
+ candidates:Array<{applicationId:string;name:string|null;screening:string}>;
+ interviews:Array<{id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
+ durationMinutes:number;mode:string;venue:string|null;meetingUrl:string|null;
+ interviewer:string|null;outcomeNote:string|null;version:number}>;
+ appointmentTotal:number;
+};
 export type CollegeApplicationDetail={
  application:{id:string;name:string|null;email:string|null;phone:string|null;
   rollNumber:string|null;role:string;source:string;status:string;submittedAt:string;
@@ -44,6 +53,11 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
  const [success,setSuccess]=useState("");
  const [linkNotice,setLinkNotice]=useState("");
  const [resumePreviewOpen,setResumePreviewOpen]=useState(false);
+ const [interviewOpen,setInterviewOpen]=useState(false);
+ const [interviewLoading,setInterviewLoading]=useState(false);
+ const [interviewError,setInterviewError]=useState("");
+ const [interviewData,setInterviewData]=useState<CandidateInterviews|null>(null);
+ const interviewFetchRef=useRef(false);
  const errorRef=useRef<HTMLParagraphElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  const endpoint="/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/applications/"+
@@ -61,13 +75,29 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   if(!note.trim()||saving)return;
   setSaving(true);setError("");setNoteError("");setSuccess("");
   try{
+   if(amendsNoteId&&detail){
+    // The append-only correction history is not a mutable JobApplication
+    // version. Refuse a stale editor before writing a new correction record.
+    const live=await apiFetch<CollegeApplicationDetail>(endpoint,{cache:"no-store"});
+    const latestKnown=detail.notes[0];
+    const latestLive=live.notes[0];
+    if(!live.notes.some(item=>item.id===amendsNoteId)||
+       latestKnown?.id!==latestLive?.id||
+       latestKnown?.createdAt!==latestLive?.createdAt){
+      setDetail(live);
+      setNoteError("These notes were updated by someone else. Please refresh and try again.");
+      return;
+    }
+   }
    await apiFetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({body:note.trim(),...(amendsNoteId?{amendsNoteId}:{})})});
    setNote("");setAmendsNoteId(null);await reload();setSuccess("Notes updated");
    showToast({tone:"success",title:"Notes updated"});
   }catch(reason){
    const explanation=reason instanceof Error?reason.message:"Please retry.";
-   setNoteError("Notes were not saved. "+explanation);
+   setNoteError(reason instanceof FriendlyFetchError&&reason.status===409?
+    "These notes were updated by someone else. Please refresh and try again.":
+    "Notes were not saved. "+explanation);
   }
   finally{setSaving(false);}
  }
@@ -82,6 +112,25 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
    await reload();setSuccess("Offer letter attached");
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to attach offer letter.");}
   finally{setSavingLetter(false);}
+ }
+ async function loadCandidateInterviews(){
+  if(interviewFetchRef.current)return;
+  interviewFetchRef.current=true;
+  setInterviewLoading(true);setInterviewError("");
+  try{
+   const data=await apiFetch<CandidateInterviews>(
+    "/api/placements/college/jobs/"+encodeURIComponent(jobId)+"/interviews",
+    {cache:"no-store"});
+   if(!Array.isArray(data.rounds)||!Array.isArray(data.candidates)||
+      !Array.isArray(data.interviews))throw Error("Invalid interview response.");
+   setInterviewData(data);
+  }catch(reason){
+   setInterviewError(reason instanceof Error?reason.message:"Failed to load interviews");
+  }finally{interviewFetchRef.current=false;setInterviewLoading(false);}
+ }
+ async function openCandidateInterviews(){
+  setInterviewOpen(true);
+  await loadCandidateInterviews();
  }
  async function rescreen(){
   if(rescreening)return;
@@ -108,7 +157,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   {label:"Application history",rows:detail?.history??[]},
  ];
  return <>
-  <Dialog open={true} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
+  <Dialog open={!interviewOpen} onOpenChange={open=>{if(!open)onClose();}} title="Application Details">
     <div className="flex min-w-0 items-center justify-end gap-3">
        <Button variant="secondary" type="button" onClick={()=>void reload()} disabled={loading}
         className="min-h-11 w-full sm:w-auto md:min-h-9">Refresh</Button>
@@ -184,11 +233,17 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       {linkNotice?<p role="status" className="text-sm text-body">{linkNotice}</p>:null}
       <section className="border-b border-border py-4">
        <h3 className="font-semibold">Interview scheduling</h3>
-       <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
-        (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
-        className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-[650] text-[var(--lms-teal-deep)] md:min-h-9 text-sm rounded-[var(--lms-control-radius)]">
-        Schedule or view candidate interviews
-       </a>
+       <p className="mt-1 text-sm text-body">Schedule or edit an interview, record completed/no-show feedback, notify the learner and download a calendar invitation.</p>
+       <div className="mt-3 flex flex-wrap gap-3">
+        <Button type="button" variant="secondary" onClick={()=>void openCandidateInterviews()}>
+         Manage candidate interviews
+        </Button>
+        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
+         (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
+         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9 text-sm">
+         Full interview schedule
+        </a>
+       </div>
       </section>
       <section className="border-b border-border py-4">
        <h3 className="font-semibold">Offer history</h3>
@@ -198,6 +253,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          {o.offerLetterUrl?<a href={o.offerLetterUrl}  rel="noreferrer noopener"
            className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
+          <p className="text-xs text-muted-foreground">Legacy forms accepted HTTP links. For applicant safety, only HTTPS offer-letter links can be attached. This stores the URL on the selected issued or accepted offer without changing its status.</p>
           <label className="grid gap-2 text-[13px] text-body font-semibold leading-4">Offer-letter HTTPS link
            <Input type="url" placeholder="https://..." value={letterInput[o.id]??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
@@ -247,6 +303,38 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           </li>)}</ol>:<p className="mt-2 text-sm text-body">No recorded events.</p>}
       </Disclosure>)}
     </div>:null}
+  </Dialog>
+  <Dialog open={interviewOpen} onOpenChange={next=>{if(!next){
+    setInterviewOpen(false);void reload();
+   }}} title={"Candidate interviews · "+(detail?.application.name??"Applicant")}
+   description="Interview actions are recorded against the college drive and notify the candidate."
+   className="max-w-[78rem]">
+   <div className="space-y-3">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+     <p className="text-sm text-body">Appointments and calendar invitations are shown in Indian Standard Time.</p>
+     <Button type="button" variant="secondary" disabled={interviewLoading}
+      onClick={()=>void loadCandidateInterviews()}>
+      {interviewLoading?"Loading…":"Refresh interviews"}
+     </Button>
+    </div>
+    {interviewLoading?<p role="status">Loading candidate interviews…</p>:null}
+    {interviewError?<div role="alert" className="space-y-2">
+      <p className="text-error">Failed to load interviews. {interviewError}</p>
+      <Button type="button" variant="secondary" onClick={()=>void loadCandidateInterviews()}>Retry interviews</Button>
+     </div>:null}
+    {interviewData?<>
+     {interviewData.appointmentTotal>interviewData.interviews.length?
+      <p role="status" className="text-sm text-warning">The interview list is paginated. Use the full schedule to see appointments outside the current snapshot.</p>:null}
+     <CollegeInterviewAppointments jobId={jobId}
+      rounds={interviewData.rounds}
+      candidates={interviewData.candidates.filter(candidate=>candidate.applicationId===applicationId)}
+      appointments={interviewData.interviews.filter(appointment=>appointment.applicationId===applicationId)}
+      preferredApplicationId={applicationId}/>
+    </>:null}
+    <Button type="button" variant="secondary" onClick={()=>{setInterviewOpen(false);void reload();}}>
+     Close candidate interviews
+    </Button>
+   </div>
   </Dialog>
   <Dialog open={resumePreviewOpen} onOpenChange={setResumePreviewOpen}
    title="Resume Preview"

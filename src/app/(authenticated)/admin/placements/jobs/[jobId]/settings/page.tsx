@@ -9,6 +9,8 @@ import {ErrorState} from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import { getPlacementJob } from "@/modules/placements/job-service";
+import {getJobEligibilityPolicy} from "@/modules/placements/eligibility-service";
+import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 import {driveSettingsIstDate} from "@/modules/placements/admin-drive-settings-date-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
@@ -43,6 +45,13 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </div>}/>
   </div>;
  }
+ const [policyRead,typesRead]=job.status==="PUBLISHED"?await Promise.allSettled([
+  getJobEligibilityPolicy(context,jobId),
+  listPlacementJobTypeChoices(context,job.collegeId),
+ ]):[null,null];
+ const publishedPolicy=policyRead?.status==="fulfilled"?policyRead.value:null;
+ const publishedJobTypes=typesRead?.status==="fulfilled"?typesRead.value:[];
+ const publishedEditReady=publishedPolicy!==null&&typesRead?.status==="fulfilled";
  return <div className="min-w-0 space-y-4 md:space-y-6">
     
   <PageHeader title="Settings" description="Drive status, deadline and policy controls for the selected college."
@@ -59,11 +68,21 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     {" "}<Link href={base} className="font-semibold underline">Edit draft details →</Link>
    </Banner>:null}
    {job.status==="PUBLISHED"?
-    <SuperAdminPublishedDriveEdit job={{
+    <SuperAdminPublishedDriveEdit
+     sourceReady={publishedEditReady}
+     jobTypes={publishedJobTypes}
+     job={{
       id:job.id,title:job.title,description:job.description,
       locations:job.locations,applicationDeadline:job.applicationDeadline?.toISOString()??null,
       openings:job.openings,minCtc:job.minimumAnnualCtcInr,maxCtc:job.maximumAnnualCtcInr,
       updatedAt:job.updatedAt.toISOString(),
+      jobTypeLabel:job.jobTypeLabel??"",employmentType:job.employmentType,
+      workMode:job.workMode,responsibilities:job.legacyPostingDetails?.responsibilities??"",
+      targeting:publishedPolicy?{
+       programs:publishedPolicy.allowedProgramIds.length,
+       cohorts:publishedPolicy.allowedCohortIds.length,
+       sections:publishedPolicy.allowedSectionIds.length,
+      }:null,
     }} />:null}
   </section>
   {job.legacyPostingDetails?<details className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]"
