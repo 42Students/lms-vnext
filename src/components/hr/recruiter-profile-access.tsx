@@ -53,7 +53,10 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
     <section aria-label="College Access" className="min-w-0 border-t border-border pt-4">
       {hideHeading ? null : <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">College Access</h2>}
       <p className="mt-1 max-w-3xl text-sm text-muted-foreground leading-[22px]">
-        Open a page for the exact college you select. These links do not change your account-wide active college. Leaving access takes effect immediately and requires a new placement-cell grant to return.
+        College access is granted and managed by the placement cell at each college.
+        You cannot add or approve college access from this profile.
+        Open a page for the exact college you select; these links do not change your account-wide active college.
+        Leaving access takes effect immediately and requires a new placement-cell grant to return.
       </p>
       {error ? (
         <InlineNotice tone="error" message={error}/>
@@ -65,7 +68,8 @@ export function RecruiterProfileAccess({ grants, hideHeading = false }: { grants
         onCancel={()=>setConfirmGrant(null)}
         onConfirm={()=>{if(confirmGrant)void leave(confirmGrant);}}/>
       {items.length === 0 ? (
-        <EmptyState title="No active college access."/>
+        <EmptyState title="No college access."
+          description="College access is managed by each placement cell. Ask the placement cell to grant access to your recruiter account."/>
       ) : (
         <div className="mt-4 divide-y divide-border">
           {items.map((grant) => (
