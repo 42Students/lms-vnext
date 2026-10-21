@@ -164,16 +164,17 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
           expectedVersion: row.expectedVersion,
         }))),
       });
-      const payload = await response.json() as { error?: string };
+      const payload = await response.json() as { error?: string;detail?:string };
       if (!response.ok) {
         const copy: Record<string, string> = {
           TPO_JOB_TYPE_EXISTS: "A job type name is already in use.",
+          TPO_JOB_TYPE_INVALID_LIST: "Send the list of job types",
           TPO_JOB_TYPE_LIMIT: "Up to 30 job types of your own",
           TPO_JOB_TYPE_LAST_ACTIVE: "Keep at least one job type switched on",
           TPO_JOB_TYPE_IN_USE: "Used by drives: switch it off instead",
           TPO_SETTINGS_STALE: "Job types changed. Refresh and retry.",
         };
-        throw new Error(copy[payload.error ?? ""] ?? payload.error ?? "Could not save job types");
+        throw new Error(payload.detail ?? copy[payload.error ?? ""] ?? payload.error ?? "Could not save job types");
       }
       setSaved(rows.map(row => ({ ...row, label: normalize(row.label) })));
       setMessage("Job types saved");
