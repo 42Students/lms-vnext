@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
@@ -51,12 +51,14 @@ export function PlacementRecruiterAccess({
     );
   const [email, setEmail] = useState("");
   const [title, setTitle] = useState("");
+  const inFlight = useRef(false);
   const [revokeTarget, setRevokeTarget] = useState<string | null>(null);
   const [pending, setPending] = useState<
     string | null
   >(null);
 
   async function grantAccess() {
+    if (inFlight.current) return;
     if (!relationshipId || !email.trim()) {
       showToast({
         tone: "error",
@@ -67,6 +69,7 @@ export function PlacementRecruiterAccess({
       return;
     }
 
+    inFlight.current = true;
     setPending("grant");
     try {
       const response = await fetch(
@@ -116,6 +119,7 @@ export function PlacementRecruiterAccess({
             : "Please try again.",
       });
     } finally {
+      inFlight.current = false;
       setPending(null);
     }
   }
@@ -123,6 +127,8 @@ export function PlacementRecruiterAccess({
   async function revokeAccess(
     grantId: string,
   ) {
+    if (inFlight.current) return;
+    inFlight.current = true;
     setPending(grantId);
     try {
       const response = await fetch(
@@ -159,6 +165,7 @@ export function PlacementRecruiterAccess({
             : "Please try again.",
       });
     } finally {
+      inFlight.current = false;
       setPending(null);
       setRevokeTarget(null);
     }
@@ -234,7 +241,7 @@ export function PlacementRecruiterAccess({
           </span>
           <Input
             aria-label="Recruiter title"
-            className="min-h-9 w-full"
+            className="min-h-11 w-full md:min-h-9"
             value={title}
             onChange={(event) =>
               setTitle(event.target.value)
