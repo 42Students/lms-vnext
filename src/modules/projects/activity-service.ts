@@ -83,6 +83,7 @@ export async function getProjectActivityPage(
         bounds.from ? gte(activityEvents.occurredAt, bounds.from) : undefined,
         bounds.until ? lt(activityEvents.occurredAt, bounds.until) : undefined,
         prefixes.length ? or(...prefixes.map(prefix => ilike(activityEvents.eventType, prefix + "%"))) : undefined,
+        filters.eventType?eq(activityEvents.eventType,filters.eventType):undefined,
         eq(
           activityEvents.module,
           "PROJECTS",
@@ -109,10 +110,12 @@ export async function getProjectActivityPage(
       ),
       desc(activityEvents.id),
     )
-    .limit(101);
+    .limit(filters.size+1)
+    .offset(filters.beforeTime?0:(filters.page-1)*filters.size);
 
   return {message:"Project activity feed retrieved",
-    events: rows.slice(0, 100), hasMore: rows.length > 100};
+    page:filters.page,pageSize:filters.size,
+    events:rows.slice(0,filters.size),hasMore:rows.length>filters.size};
 }
 
 /** Preserve the original bounded array contract for existing shared workspaces. */
