@@ -127,7 +127,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
        {detail.resume.available&&detail.resume.url?
         <a href={detail.resume.url}  rel="noopener noreferrer"
-          className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
+          className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-[650] text-[var(--lms-teal-deep)] md:min-h-9 text-sm rounded-[var(--lms-control-radius)]">
           Resume Preview · Open securely
         </a>:null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
@@ -163,7 +163,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        <h3 className="font-semibold">Interview scheduling</h3>
        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
         (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
-        className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-semibold text-[var(--lms-teal-deep)]">
+        className="mt-2 inline-flex min-h-11 items-center rounded border border-border px-3 font-[650] text-[var(--lms-teal-deep)] md:min-h-9 text-sm rounded-[var(--lms-control-radius)]">
         Schedule or view candidate interviews
        </a>
       </section>
