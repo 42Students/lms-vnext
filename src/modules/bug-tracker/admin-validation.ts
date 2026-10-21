@@ -24,7 +24,7 @@ const blankAsAbsent=<T extends z.ZodType>(schema:T)=>z.preprocess(
 );
 export const BUG_TRACKER_STATUS_OPTIONS=BUG_STATUSES.map(value=>({
  value,label:value.toLowerCase().split("_").map(part=>
-   part[0].toUpperCase()+part.slice(1)).join(" "),
+   part.charAt(0).toUpperCase()+part.slice(1)).join(" "),
 }));
 export const trackerAdminListSchema = z.object({
   status: blankAsAbsent(z.enum(BUG_STATUSES,{error:"Choose a valid issue status"})),
