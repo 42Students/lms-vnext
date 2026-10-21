@@ -18,11 +18,9 @@ export function auditActivityText(activity:{
   return activity.toValue==="CLOSED / FIXED"||activity.toValue==="PASS"?
    "Retest passed — issue closed":"Retest failed — returned to Fixing";
  }
- if(activity.type==="STATUS_CHANGED")return
-  "Status changed from "+label(activity.fromValue,statusLabels,"Unknown")+
+ if(activity.type==="STATUS_CHANGED")return "Status changed from "+label(activity.fromValue,statusLabels,"Unknown")+
   " to "+label(activity.toValue,statusLabels,"Unknown");
- if(activity.type==="RESOLUTION_CHANGED")return
-  "Resolution changed from "+label(activity.fromValue,resolutionLabels,"None")+
+ if(activity.type==="RESOLUTION_CHANGED")return "Resolution changed from "+label(activity.fromValue,resolutionLabels,"None")+
   " to "+label(activity.toValue,resolutionLabels,"None");
  return activity.type||"Activity";
 }
