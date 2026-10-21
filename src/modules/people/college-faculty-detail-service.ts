@@ -60,25 +60,38 @@ export async function getCollegeFacultyDetail(
       .limit(1)
     : [];
 
+  // Historical orphaned course assignments remain visible, but an offering
+  // from a different college must never disclose its identifiers or cohort.
+  // The course and the cohort's program must BOTH resolve to this college.
+  const authorizedAcademicContext=sql`
+    ${departments.id} is not null
+    and ${academicPeriods.id} is not null
+    and exists (
+      select 1 from departments program_department
+      where program_department.id = ${programs.departmentId}
+        and program_department.college_id = ${owner.collegeId}
+    )
+  `;
   const base = db.select({
     id: sql<string>`${courseTeachingAssignments.id}`.as("assignment_id"),
     role: sql<string>`${courseTeachingAssignments.role}`.as("assignment_role"),
     startedAt: sql<Date>`${courseTeachingAssignments.startedAt}`.mapWith(courseTeachingAssignments.startedAt).as("assignment_started_at"),
     endedAt: sql<Date | null>`${courseTeachingAssignments.endedAt}`.mapWith(courseTeachingAssignments.endedAt).as("assignment_ended_at"),
     deliveryEndedAt: sql<Date | null>`${courseSectionDeliveries.endedAt}`.mapWith(courseSectionDeliveries.endedAt).as("delivery_ended_at"),
-    offeringId: sql<string>`${courseOfferings.id}`.as("offering_id"),
-    courseName: sql<string|null>`case when ${departments.id} is not null then ${courses.name} else null end`.as("course_name"),
-    courseId: sql<string|null>`case when ${departments.id} is not null then ${courses.id} else null end`.as("course_id"),
-    courseSlug: sql<string|null>`case when ${departments.id} is not null then ${courses.slug} else null end`.as("course_slug"),
-    courseCover: sql<string|null>`case when ${departments.id} is not null then ${courses.thumbnailUrl} else null end`.as("course_cover"),
-    departmentName: sql<string|null>`${departments.name}`.as("department_name"),
-    programName: sql<string|null>`${programs.name}`.as("program_name"),
-    courseCode: sql<string>`${courses.code}`.as("course_code"),
-    cohortName: sql<string>`${cohorts.name}`.as("cohort_name"),
-    sectionName: sql<string>`${sections.name}`.as("section_name"),
-    sectionId: sql<string|null>`${sections.id}`.as("section_id"),
-    periodName: sql<string>`${academicPeriods.name}`.as("period_name"),
+    offeringId: sql<string>`case when ${authorizedAcademicContext} then ${courseOfferings.id} else '' end`.as("offering_id"),
+    courseName: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.name} else null end`.as("course_name"),
+    courseId: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.id} else null end`.as("course_id"),
+    courseSlug: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.slug} else null end`.as("course_slug"),
+    courseCover: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.thumbnailUrl} else null end`.as("course_cover"),
+    departmentName: sql<string|null>`case when ${authorizedAcademicContext} then ${departments.name} else null end`.as("department_name"),
+    programName: sql<string|null>`case when ${authorizedAcademicContext} then ${programs.name} else null end`.as("program_name"),
+    courseCode: sql<string|null>`case when ${authorizedAcademicContext} then ${courses.code} else null end`.as("course_code"),
+    cohortName: sql<string|null>`case when ${authorizedAcademicContext} then ${cohorts.name} else null end`.as("cohort_name"),
+    sectionName: sql<string|null>`case when ${authorizedAcademicContext} then ${sections.name} else null end`.as("section_name"),
+    sectionId: sql<string|null>`case when ${authorizedAcademicContext} then ${sections.id} else null end`.as("section_id"),
+    periodName: sql<string|null>`case when ${authorizedAcademicContext} then ${academicPeriods.name} else null end`.as("period_name"),
     metadataIncomplete: sql<boolean>`
+      not (${authorizedAcademicContext}) or
       ${courseSectionDeliveries.id} is null or ${courseOfferings.id} is null or
       ${courses.id} is null or ${departments.id} is null or
       ${cohorts.id} is null or ${programs.id} is null or
