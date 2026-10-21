@@ -16,7 +16,11 @@ import { tpoRecruiterGrantChangeSchema, isRecruiterGrantStale } from "./tpo-recr
 import { recruiterGrantValidUntil } from "./recruiter-grant-expiry-policy";
 
 export class TpoRecruiterGrantConflict extends Error {
-  constructor() { super("TPO_RECRUITER_GRANT_STALE_OR_INVALID"); this.name = "TpoRecruiterGrantConflict"; }
+  constructor(readonly detail:"STALE_OR_INVALID"|"REVOKED"="STALE_OR_INVALID") {
+    super(detail==="REVOKED"?"This recruiter's access was revoked; invite them again instead":
+      "TPO_RECRUITER_GRANT_STALE_OR_INVALID");
+    this.name = "TpoRecruiterGrantConflict";
+  }
 }
 
 export async function changeTpoRecruiterGrant(context: RequestContext, raw: unknown) {
@@ -101,7 +105,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       const expiry = recruiterGrantValidUntil(new Date(), accessMonths);
       const [grant] = await tx.insert(placementRecruiterCollegeGrants).values({
         recruiterUserId: recruiter.id, companyRelationshipId: relationship.id,
-        grantedByUserId: actorUserId, validUntil: expiry,
+        grantedByUserId: actorUserId, grantedByType:"TPO", validUntil: expiry,
         capabilities: ["DRIVES"], verificationStatus: "VERIFIED",
       }).returning();
       if (!grant) throw new TpoRecruiterGrantConflict();
@@ -125,6 +129,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         eq(placementCompanyRelationships.collegeId, collegeId),
       )).for("update").limit(1);
     if (!record || record.collegeId !== collegeId) throw new TpoRecruiterGrantConflict();
+    if(record.grant.status==="REVOKED")throw new TpoRecruiterGrantConflict("REVOKED");
     if (record.grant.status !== "ACTIVE" ||
       isRecruiterGrantStale(record.grant.updatedAt, input.expectedUpdatedAt)) {
       throw new TpoRecruiterGrantConflict();
@@ -151,13 +156,15 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
         subjectLabel:"Recruiter access grant",summary:"TPO extended recruiter access",
         metadata:{companyRelationshipId:extended.companyRelationshipId,
           recruiterUserId:extended.recruiterUserId,months:input.months,
-          validUntil:validUntil.toISOString()},
+          validUntil:validUntil.toISOString(),
+          expiryLabel:"Until "+new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(validUntil)},
       });
-      return {outcome:"extended" as const,grantId:extended.id,validUntil:validUntil.toISOString()};
+      return {outcome:"extended" as const,grantId:extended.id,validUntil:validUntil.toISOString(),
+        expiryLabel:"Until "+new Intl.DateTimeFormat("en-IN",{day:"2-digit",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(validUntil)};
     }
     const now = new Date();
     const [revoked] = await tx.update(placementRecruiterCollegeGrants).set({
-      status: "REVOKED", revokedByUserId: actorUserId,
+      status: "REVOKED", revokedByUserId: actorUserId, revokedByType:"TPO",
       revokeReason: input.reason?.trim() || null,
       revokedAt: now, updatedAt: sql`greatest(date_trunc('milliseconds',clock_timestamp()),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
     }).where(and(eq(placementRecruiterCollegeGrants.id, input.grantId),
@@ -169,7 +176,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       subjectType: "placement_recruiter_college_grant", subjectId: revoked.id,
       subjectLabel: "Recruiter access grant", summary: "TPO revoked recruiter college access",
       metadata: { companyRelationshipId: revoked.companyRelationshipId,
-        recruiterUserId: revoked.recruiterUserId,
+        recruiterUserId: revoked.recruiterUserId, actorRole:"TPO",
         ...(input.reason?.trim() ? {revokeReason:input.reason.trim()} : {}) },
       occurredAt: now,
     });
