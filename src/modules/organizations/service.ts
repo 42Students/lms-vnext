@@ -9,7 +9,7 @@ import {
   hasMembershipRole,
   isSuperAdmin,
 } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {
   createOrganizationInputSchema,
   organizationIdSchema,
@@ -156,6 +156,10 @@ export async function createOrganization(
 ) {
   const input = createOrganizationInputSchema.parse(rawInput);
 
+  // Legacy create is a platform-global operation. A selected organization or
+  // college scope may rename its own organization but must not create siblings.
+  if(context.adminScope?.organizationId||context.adminScope?.collegeId)
+    throw new AuthorizationError("organization.manage");
   requirePermission(context, "organization.manage", {});
   await assertUniqueActiveName(input.name);
 
@@ -328,6 +332,7 @@ export async function listArchivedOrganizations(context:RequestContext){
   });
   return tx.select({
    id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
+   updatedAt:organizations.updatedAt,status:organizations.status,
   }).from(organizations).where(and(
    eq(organizations.status,"ARCHIVED"),
    organizationId?eq(organizations.id,organizationId):undefined,
