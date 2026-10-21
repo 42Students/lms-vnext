@@ -286,7 +286,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             <span className="mt-1 block text-sm text-body">{row.unread} unread placement-cell messages</span>
           </Link>
         </li>)}
-      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
         No unread placement-cell conversations on this inbox page.
       </p>}
     </section>
@@ -303,7 +303,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             </span>
           </Link>
         </li>)}
-      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
         No formal drive requests are waiting at this college.
       </p>}
       <h3 className="mt-4 font-semibold text-[var(--lms-heading)]">Conversations waiting for a reply</h3>
@@ -314,7 +314,7 @@ export default async function HrHomePage({searchParams}: {searchParams:Promise<{
             {row.label} · Last message from you
           </Link>
         </li>)}
-      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground">
+      </ul>:<p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
         No recruiter-last-sent conversations on the visible inbox page.
       </p>}
       {conversationSignals?.limitedToCurrentPage?<Link

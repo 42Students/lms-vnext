@@ -21,7 +21,7 @@ export default async function CollegeClassProjectWorkspacePage() {
     <PageHeader title="Create workspaces from a class" description="Split active learners into balanced teams, review assignments, or add the whole class to a single Project workspace."/>
     <ErrorState title="Project templates unavailable"
       description="Assigned project templates could not be loaded. No workspace was created."
-      action={<Link href="/college/projects/workspaces/new" className="inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading templates</Link>}/>
+      action={<Link href="/college/projects/workspaces/new" className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">Retry loading templates</Link>}/>
   </div>;
   const templates = templatesResult.value;
   return (

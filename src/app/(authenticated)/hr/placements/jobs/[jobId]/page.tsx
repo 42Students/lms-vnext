@@ -124,7 +124,7 @@ export default async function HrPlacementJobPage({
         <ErrorState title="Invalid hiring filters"
           description="Check the selected tab, applicant and page filters, or clear them to continue."
           action={<Link href={"/hr/placements/jobs/"+encodeURIComponent(jobId)}
-            className="inline-flex min-h-9 max-[767px]:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+            className="md:min-h-9 inline-flex min-h-9 max-[767px]:min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Clear filters
           </Link>} />
       </div>;
@@ -508,7 +508,7 @@ export default async function HrPlacementJobPage({
         <p className="text-sm text-body">Suggest or discuss a change with the placement cell. Your college controls final approval.</p>
         {requestData.storageReady?<TpoDriveChangeRequests jobId={workspace.job.id} party="COMPANY"
           userId={context.user.id} requests={requestData.requests}/> :
-         <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">{requestData.pendingMessage}</p>}
+         <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body leading-[1.6]">{requestData.pendingMessage}</p>}
       </section>:null}
       {filters.tab === "applicants" ? (
         <section className="space-y-4 border-b border-border pb-4 md:pb-6">
@@ -677,7 +677,7 @@ export default async function HrPlacementJobPage({
           </div>
           <section className="space-y-2 border-b border-border pb-4 md:pb-6">
             <h3 className="font-semibold text-foreground">Selection readiness across all rounds · read only</h3>
-            {driveOverview.readOnly ? <p role="status" className="text-sm text-body">
+            {driveOverview.readOnly ? <p role="status" className="text-sm text-body leading-[1.6]">
               This drive is finished, so a selection list can no longer be sent.
             </p> : null}
             <p className="text-sm text-body">{selectionReadyIds.size} shared applicants have APPLIED PASS results in every completed evaluative round. No selection list is sent; formal selection, letter-of-intent and offer issue workflows remain with the placement team.</p>
@@ -703,7 +703,7 @@ export default async function HrPlacementJobPage({
                   status:item.status==="SELECTED"?"With the placement cell":
                     item.status==="VERIFIED"?"Verified, awaiting release":"Selection cancelled",
                 }))}
-              />:<p role="status" className="text-sm text-muted-foreground">
+              />:<p role="status" className="text-sm text-muted-foreground leading-[1.6]">
                 No selections have been recorded in this status.
               </p>}
               <p className="text-xs text-muted-foreground">
@@ -759,7 +759,7 @@ export default async function HrPlacementJobPage({
             Hiring rounds
           </h2>
           {driveOverview.readOnly
-            ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm text-body">
+            ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-surface-secondary p-3 text-sm text-body leading-[1.6]">
                 This drive is finished, so slots and results can no longer be sent.
               </p>
             : <div className="flex flex-wrap gap-2">          <Link href={"/recruiter/drives/"+workspace.job.id+"/rounds/editor"}
