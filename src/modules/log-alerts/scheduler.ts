@@ -214,12 +214,13 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
     if (!window) return;
     const token = await cloudLoggingAccessToken();
     let nextPageToken = window.pageToken;
-    // At most one complete page of 12 errors per tick. Each incident may need
-    // a five-second Telegram attempt, and regression/digest work shares the
-    // 150-second Cron HTTP deadline. Resuming by provider page token avoids
-    // advancing the cursor past unseen entries at identical timestamps.
-    let limit = 12;
-    for (let page = 0; page < 1 && limit > 0; page++) {
+    // Drain up to two complete provider pages (24 records) per 150-second
+    // invocation. Legacy's four pages of 50 would overrun the cron deadline
+    // when an incident triggers a five-second alert delivery. Persist each
+    // complete page token, never a partial timestamp, and resume next tick.
+    const pageBudget = 2;
+    let limit = 24;
+    for (let page = 0; page < pageBudget && limit > 0; page++) {
       let result: Awaited<ReturnType<typeof readCloudLogErrorPage>>;
       try {
         result = await readCloudLogErrorPage({
@@ -283,6 +284,12 @@ export async function runOptionalAlertTask(task: () => Promise<unknown>): Promis
     return false;
   }
 }
+
+/** Deployed cadence: invoke the scheduled tick every two minutes, with a
+ * three-minute distributed lease. A failed invocation must not overlap the
+ * previous tick; backlog is drained by complete pages on later invocations.
+ */
+export const LOG_ALERT_TICK_CADENCE_MINUTES = 2;
 
 /** Tick may run every 1-2 minutes; exactly one daily message after 09:00 IST. */
 export async function runAlertTick(now = new Date()): Promise<{ acquired: boolean; digest: boolean }> {

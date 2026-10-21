@@ -21,14 +21,27 @@ export const collegeOwnProfileSchema = z.object({
     linkedIn: httpsLink, github: httpsLink,
     website: httpsLink, instagram: httpsLink,
   }),
+  personalDetails: z.object({
+    gender: short, dateOfBirth: z.union([z.literal(""),z.iso.date()]),
+    bloodGroup: z.string().trim().max(16),
+  }).optional(),
   address: z.object({
     line1: short, line2: short, city: short,
     state: short, postalCode: z.string().trim().max(20), country: short,
+    currentAddress:z.string().trim().max(2000).optional(),
+    permanentAddress:z.string().trim().max(2000).optional(),
+    currentCity:short.optional(),currentState:short.optional(),
+    currentPincode:z.string().trim().max(20).optional(),
+    permanentCity:short.optional(),permanentState:short.optional(),
+    permanentPincode:z.string().trim().max(20).optional(),
   }),
   contacts: z.object({
     alternateEmail: z.union([z.literal(""), z.string().email()]),
     alternatePhone: z.string().trim().max(40),
     contactPerson: short,
+    contactMobile:z.string().trim().max(20).optional(),
+    contactPhone:z.string().trim().max(20).optional(),
+    contactMail:z.union([z.literal(""),z.email()]).optional(),
   }),
 });
 export type CollegeOwnProfileInput = z.infer<typeof collegeOwnProfileSchema>;
@@ -60,8 +73,17 @@ export async function loadCollegeOwnProfile(context: RequestContext) {
   ]);
   if (!person[0]) throw new Error("PROFILE_NOT_FOUND");
   const saved = record[0]?.document?.collegeAdmin;
-  const parsed = collegeOwnProfileSchema.omit({ displayName: true }).safeParse(saved);
-  return { displayName: person[0].displayName ?? "", ...(parsed.success ? parsed.data : emptyProfile) };
+  const parsed = collegeOwnProfileSchema.omit({ displayName: true }).safeParse(
+    saved && typeof saved==="object" && !Array.isArray(saved)
+    ? {...emptyProfile,...saved} : emptyProfile);
+  if (!parsed.success) {
+    // Preserve the record for section-by-section remediation instead of
+    // silently replacing malformed legacy data with empty fields.
+    const sections=[...new Set(parsed.error.issues.map(item=>
+      String(item.path[0]??"profile")))];
+    throw new Error("COLLEGE_PROFILE_SECTIONS_INVALID:"+sections.join(","));
+  }
+  return { displayName: person[0].displayName ?? "", ...parsed.data };
 }
 
 export async function updateCollegeOwnProfile(context: RequestContext, raw: unknown) {
@@ -76,7 +98,25 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
       .where(eq(facultyProfiles.membershipId, member.id)).for("update").limit(1);
     await tx.update(users).set({ displayName, updatedAt: new Date() })
       .where(eq(users.id, account.id));
-    const document = { ...(existing?.profileDocument ?? {}), collegeAdmin: details };
+    const previous=existing?.profileDocument?.collegeAdmin;
+    const prior=previous && typeof previous==="object" && !Array.isArray(previous)
+      ? previous as Record<string,unknown>:{};
+    const priorAddress=prior.address && typeof prior.address==="object" &&
+      !Array.isArray(prior.address) ? prior.address as Record<string,unknown>:{};
+    // Old editors omit later-added legacy fields. Preserve rather than erase
+    // them when saving unrelated profile sections.
+    const mergedDetails={
+      ...details,
+      ...(details.personalDetails===undefined && prior.personalDetails
+        ? {personalDetails:prior.personalDetails}:{}),
+      address:{...priorAddress,...details.address},
+      contacts:{
+        ...(prior.contacts && typeof prior.contacts==="object" &&
+           !Array.isArray(prior.contacts) ? prior.contacts as Record<string,unknown>:{}),
+        ...details.contacts,
+      },
+    };
+    const document = { ...(existing?.profileDocument ?? {}), collegeAdmin: mergedDetails };
     if (existing) {
       await tx.update(facultyProfiles).set({
         profileDocument: document,
