@@ -350,17 +350,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/tracker/known-errors-workspace.tsx`
 - [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
 - [x] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/ui/action-pagination.tsx`
-- [ ] `src/components/ui/avatar.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/metric-bar.tsx`
-- [ ] `src/components/ui/pagination.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/stat-tile.tsx`
-- [ ] `src/components/ui/summary-strip.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationFilterPanel.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
-- [ ] `src/styles/college-admin-north-star.css`
+- [x] `src/components/ui/action-pagination.tsx`
+- [x] `src/components/ui/avatar.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/metric-bar.tsx`
+- [x] `src/components/ui/pagination.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/stat-tile.tsx`
+- [x] `src/components/ui/summary-strip.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/VerificationFilterPanel.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/styles/college-admin-north-star.css`
