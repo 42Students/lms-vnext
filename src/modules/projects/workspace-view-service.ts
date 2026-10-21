@@ -32,6 +32,21 @@ import {
   listProjectActivity,
 } from "./activity-service";
 
+/** Only an explicitly absent staged relation/column may downgrade a
+ * non-critical workspace section to a visible load-error state. Permission,
+ * validation, and unexpected database failures must propagate; otherwise a
+ * forbidden project read is misleadingly rendered as an empty timeline. */
+function isUnavailableProjectSectionStorage(error:unknown):boolean{
+ let current:unknown=error;
+ for(let depth=0;depth<6;depth++){
+  if(!current||typeof current!=="object")return false;
+  const entry=current as {code?:unknown;cause?:unknown};
+  if(entry.code==="42P01"||entry.code==="42703")return true;
+  current=entry.cause;
+ }
+ return false;
+}
+
 export async function getProjectWorkspaceView(
   context: RequestContext,
   projectId: string,
@@ -57,8 +72,11 @@ export async function getProjectWorkspaceView(
     getProjectReadiness(context, projectId),
     listProjectMeetings(context, projectId)
       .then(items=>({items,failed:false as const}))
-      .catch(()=>({items:[] as Awaited<ReturnType<typeof listProjectMeetings>>,
-        failed:true as const})),
+      .catch((error:unknown)=>{
+        if(!isUnavailableProjectSectionStorage(error))throw error;
+        return {items:[] as Awaited<ReturnType<typeof listProjectMeetings>>,
+          failed:true as const};
+      }),
     listProjectSubmissions(context, projectId),
     listProjectTaskSubmissionsForProject(
       context,
@@ -70,8 +88,11 @@ export async function getProjectWorkspaceView(
     ),
     listProjectActivity(context,projectId)
       .then(items=>({items,failed:false as const}))
-      .catch(()=>({items:[] as Awaited<ReturnType<typeof listProjectActivity>>,
-        failed:true as const})),
+      .catch((error:unknown)=>{
+        if(!isUnavailableProjectSectionStorage(error))throw error;
+        return {items:[] as Awaited<ReturnType<typeof listProjectActivity>>,
+          failed:true as const};
+      }),
   ]);
   const activity=activityRead.items;
 
