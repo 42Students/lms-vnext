@@ -47,18 +47,18 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/learn/index.js`
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/student-groups/[id].js`
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/syllabus/video.js`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx`
-- [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobApplicationSourceValidator.java`
-- [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/PlacementJobServiceImpl.java`
-- [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/ZeptoMailService.java`
-- [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/lecturehalls/LectureHallSearchController.java`
-- [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/announcements/AnnouncementSearchController.java`
-- [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobLifecycleStatus.java`
-- [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectSprint.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertState.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Interview.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CollegeCompany.java`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Attendance/TeacherAttendanceView.jsx`
+- [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobApplicationSourceValidator.java`
+- [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/PlacementJobServiceImpl.java`
+- [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/ZeptoMailService.java`
+- [x] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/lecturehalls/LectureHallSearchController.java`
+- [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/announcements/AnnouncementSearchController.java`
+- [x] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobLifecycleStatus.java`
+- [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/RecruiterCollegeAccess.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectSprint.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LogAlertState.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Interview.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/CollegeCompany.java`
 - [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AppSetting.java`
 - [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoRecruiterLeadController.java`
 - [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerRequestController.java`
