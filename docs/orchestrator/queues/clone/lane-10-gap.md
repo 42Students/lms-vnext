@@ -59,7 +59,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U018 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/lecture-halls.js`
 - [x] U019 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/module-access.js`
 - [x] U020 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/programs.js`
-- [ ] U021 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/recruiters.js`
+- [x] U021 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/recruiters.js`
 - [ ] U022 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/settings.js`
 - [ ] U023 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/tenants.js`
 - [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/verification.js`
