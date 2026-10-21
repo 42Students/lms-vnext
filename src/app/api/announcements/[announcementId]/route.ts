@@ -26,7 +26,7 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     return NextResponse.json({
       announcement: await updateAnnouncement(context, announcementId, body),
-    });
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return announcementApiError(error);
   }
@@ -47,7 +47,7 @@ export async function DELETE(request: Request, { params }: RouteContext) {
     catch { return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 }); }
     return NextResponse.json({
       announcement: await deleteAnnouncement(context, announcementId, body),
-    });
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return announcementApiError(error);
   }
