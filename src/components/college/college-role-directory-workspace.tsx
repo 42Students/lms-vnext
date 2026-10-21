@@ -58,7 +58,12 @@ export async function CollegeRoleDirectoryWorkspace({
   const title = kind === "FACULTY" ? "Faculty" : "Students";
   const path = kind === "FACULTY" ? "/college/faculty" : "/college/students";
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <div className="min-w-0 space-y-4">
+    <PageHeader title={title} />
+    <ErrorState title="Admin not assigned to a college"
+      description="You are not assigned to a college. Contact your administrator to restore access to the roster."
+      action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+  </div>;
 
   let filter: ReturnType<typeof parseCollegeRoleDirectorySearchParams>;
   try {
@@ -117,21 +122,40 @@ export async function CollegeRoleDirectoryWorkspace({
       <Link href={"/college/students/"+item.membershipId}
         className="font-semibold text-link underline underline-offset-4">{item.name}</Link>},
     {key:"roll",header:"Roll No.",cell:item=>
-      <Link href={"/college/students/"+item.membershipId} className="text-link underline">View student record</Link>},
+      item.rollNumber ? <span title={item.rollNumber} className="max-w-32 truncate font-mono text-sm">{item.rollNumber}</span> : "—"},
     {key:"mobile",header:"Mobile",cell:item=>
       <Link href={collegeRoleContactHref(item.membershipId)}
         className="text-link underline">View contact card</Link>},
-    {key:"email",header:"Email",cell:item=>item.email??"Not recorded"},
+    {key:"email",header:"Email",cell:item=>item.email?
+      <span title={item.email} className="block max-w-52 truncate">{item.email}</span>:"—"},
     {key:"class",header:"Class",cell:item=>item.sections.length?
-      [...new Set(item.sections)].join(", "):"Not assigned"},
-    {key:"gender",header:"Gender",cell:()=>"Not in directory"},
+      [...new Set(item.sections)].join(", "):"—"},
+    {key:"gender",header:"Gender",cell:()=><span title="Gender is available only from an authorized profile, not the roster">—</span>},
     {key:"status",header:"Status",mobilePriority:"secondary",cell:item=><>
       <StatusBadge tone={effectiveStatus(item)==="Active"?"success":"warning"}>
         {effectiveStatus(item)}
       </StatusBadge>
       {item.userStatus!=="ACTIVE"?<p className="mt-1 text-xs text-warning">Account: {item.userStatus}</p>:null}
     </>},
-    {key:"actions",header:"Actions",cell:actions},
+    {key:"actions",header:"Actions",className:"text-right",cell:actions},
+  ];
+  const facultyColumns: DataTableColumn<Row>[] = [
+    {key:"name",header:"Name",mobilePriority:"primary",cell:item=>
+      <Link href={"/college/faculty/"+item.membershipId}
+        className="font-semibold text-link underline underline-offset-4">{item.name||"—"}</Link>},
+    {key:"department",header:"Department",cell:item=>item.department||"—"},
+    {key:"mobile",header:"Mobile",cell:item=>
+      <Link href={collegeRoleContactHref(item.membershipId)}
+        className="font-semibold text-link underline" aria-label={"View permitted mobile contact for "+item.name}>View contact</Link>},
+    {key:"email",header:"Email",cell:item=>item.email?
+      <span title={item.email} className="block max-w-52 truncate">{item.email}</span>:"—"},
+    {key:"type",header:"Type",cell:()=>
+      <span title="Employment type is available on the authorized faculty profile">—</span>},
+    {key:"gender",header:"Gender",cell:()=>
+      <span title="Gender is not exposed in the directory for privacy">—</span>},
+    {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
+      <StatusBadge tone={effectiveStatus(item)==="Active"?"success":"warning"}>{effectiveStatus(item)}</StatusBadge>},
+    {key:"actions",header:"Actions",className:"text-right",cell:actions},
   ];
   return (
     <div className="min-w-0 space-y-6 md:space-y-6">
@@ -139,11 +163,14 @@ export async function CollegeRoleDirectoryWorkspace({
         title={title}
         description={
           kind === "FACULTY"
-            ? "Manage faculty accounts, teaching information and membership status."
-            : "Find students by program, batch, class and account status."
+            ? "Register faculty and manage their profiles. Allocate teaching through Faculty Assignment."
+            : "Registered students, batch and class membership, and student lifecycle actions."
         }
         actions={kind === "FACULTY" ? (
-          <PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />
+          <div className="flex flex-wrap items-center gap-2">
+            <span aria-hidden="true" className="font-bold text-[var(--lms-primary-text)]">+</span>
+            <PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />
+          </div>
         ) : (
           <Link href="/college/students/register"
             className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-primary)] px-4 text-sm font-[650] text-white hover:bg-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
@@ -152,6 +179,10 @@ export async function CollegeRoleDirectoryWorkspace({
         )}
       />
 
+      {kind === "LEARNER" ? <p className="text-xs text-muted-foreground">
+        College: {context.membership.collegeId}. Registration uses this authorized college;
+        single registration and bulk registration are separate steps.
+      </p> : null}
       {kind === "LEARNER" ? <nav aria-label="Student directory tools"
         className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/students/import"
@@ -170,8 +201,15 @@ export async function CollegeRoleDirectoryWorkspace({
         <Link href="/college/people"
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People Directory</Link>
       </nav> : null}
+      {kind === "FACULTY" ? <div className="space-y-2">
+        <h2 className="text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Registered Faculty</h2>
+        <Link href="/college/faculty-assignment"
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Faculty Assignment →</Link>
+      </div> : null}
       {kind === "FACULTY" ? <nav aria-label="Faculty directory tools" className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/faculty/import" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Import faculty CSV</Link>
+        <Link href={collegeRoleDirectoryHref(kind,result.filter)}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
         <details className="min-w-0">
           <summary className="min-h-11 cursor-pointer py-2 font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export Faculty CSV (max 1,000)</summary>
           <div className="flex min-w-0 flex-col gap-2 border-t border-border py-2">
@@ -184,13 +222,16 @@ export async function CollegeRoleDirectoryWorkspace({
         </details>
         <Link href="/college/people" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">People Directory</Link>
       </nav> : null}
-      <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-2 gap-3 border-y border-border py-3 md:grid-cols-3">
+      <section aria-label={title+" directory summary"} className="grid min-w-0 grid-cols-2 gap-3 border-y border-border py-3 md:grid-cols-4">
         {[
           [title,result.metrics.registered],
           ["Active",result.metrics.active],
           ["Suspended",result.metrics.suspended],
         ].map(([label,value])=><StatTile key={label} variant="college" label={String(label)} value={value}/>)}
-        <p className="col-span-full text-xs text-muted-foreground leading-[20px]">Visible now: <span className="font-semibold">Not tracked</span>. Do not infer presence from login or membership status.</p>
+        <StatTile variant="college" label="Visible now" value={result.total}/>
+        <p className="col-span-full text-xs text-muted-foreground leading-[20px]">
+          Visible now means {result.total.toLocaleString("en-IN")} matching the selected roster filters, not online presence.
+        </p>
       </section>
       <section className="min-w-0 border-t border-border pt-4" aria-label={title + " directory filters"}>
         <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-3 md:grid-cols-2 min-[992px]:grid-cols-4">
@@ -200,10 +241,14 @@ export async function CollegeRoleDirectoryWorkspace({
               type="search"
               name="q"
               maxLength={100}
+              list={kind==="LEARNER"?"learner-directory-suggestions":"faculty-directory-suggestions"}
               defaultValue={result.filter.q}
               placeholder="Search this college"
-              
             />
+            <datalist id={kind==="LEARNER"?"learner-directory-suggestions":"faculty-directory-suggestions"}>
+              {result.items.slice(0,15).map(row=><option key={row.membershipId} value={row.name}/>)}
+            </datalist>
+            <span className="text-xs font-normal text-muted-foreground">Suggestions are limited to visible results in this college.</span>
           </label>
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Membership status
@@ -212,7 +257,7 @@ export async function CollegeRoleDirectoryWorkspace({
               defaultValue={result.filter.status}
               
             >
-              <option value="ALL">All statuses</option>
+              <option value="ALL">Any status</option>
               <option value="ACTIVE">Active</option>
               <option value="SUSPENDED">Suspended</option>
               <option value="ENDED">Ended</option>
@@ -270,7 +315,7 @@ export async function CollegeRoleDirectoryWorkspace({
             Employment type
             <Select className="min-h-11 w-full min-w-0 md:min-h-9" name="employmentType" defaultValue={result.filter.employmentType ?? ""}
               >
-              <option value="">All employment types</option>
+              <option value="">All types</option>
               {selectedDirectoryValueNotListed(result.filter.employmentType,result.employmentOptions) ?
                 <option value={result.filter.employmentType}>Selected type (outside first 100)</option> : null}
               {result.employmentOptions.map(value=><option key={value} value={value}>{value}</option>)}
@@ -408,9 +453,10 @@ export async function CollegeRoleDirectoryWorkspace({
           {result.total} matching {kind === "FACULTY" ? "faculty" : "learner"} membership{result.total === 1 ? "" : "s"}
         </p>
         {result.items.length === 0 ? (
-          <EmptyState title="No matching memberships"
+          <EmptyState title={kind==="FACULTY"?"No faculty found":"No students found"}
             description={result.total===0
-              ? collegeRoleDirectoryHasActiveFilters(kind,result.filter)?"No memberships match these directory filters.":"No role memberships are recorded in this college."
+              ? collegeRoleDirectoryHasActiveFilters(kind,result.filter)?"No matching records. Clear the filters to try again.":
+                kind==="FACULTY"?"No faculty found. Register faculty members to get started.":"No students found. Register students to get started."
               : "There are no records on this page. Select an earlier page."}
             action={collegeRoleDirectoryHasActiveFilters(kind,result.filter)?
               <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear roster filters</Link>:undefined}/>
@@ -440,7 +486,7 @@ export async function CollegeRoleDirectoryWorkspace({
                 </div>
                 {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE"&&item.cohort!==null?
                   <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>:null}
-                <details className="min-w-0"><summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More actions</summary><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
+                <details className="min-w-0"><summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More actions for {item.name}</summary><div className="flex min-w-0 flex-col items-start gap-2 pb-2">
                 <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
                 <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
@@ -459,52 +505,7 @@ export async function CollegeRoleDirectoryWorkspace({
               rows={result.items}
               getRowKey={item=>item.membershipId}
               empty={<EmptyState title="No role memberships" description="No role memberships match the selected filters."/>}
-              columns={kind === "LEARNER" ? studentColumns : [
-                {key:"person",header:"Person",mobilePriority:"primary",cell:item=><>
-                  <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
-                    className="font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-                    {item.name}
-                  </Link>
-                  <p className="mt-1 text-xs text-muted-foreground leading-[20px]">{item.email??"No email recorded"}</p>
-                  <Link href={collegeRoleContactHref(item.membershipId)}
-                    className="mt-1 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-                    View contact card
-                  </Link>
-                  {kind==="LEARNER"?<Link href={collegeLearnerVerificationHref(item.membershipId)}
-                    className="ml-3 inline-flex min-h-11 items-center text-xs font-semibold text-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-                    Profile verification
-                  </Link>:null}
-                </>},
-                {key:"membership",header:"Membership",mobilePriority:"secondary",cell:item=><>
-                  <StatusBadge tone={effectiveStatus(item)==="Active"?"success":"warning"}>
-                    {effectiveStatus(item)}
-                  </StatusBadge>
-                  {item.userStatus!=="ACTIVE"?<p className="mt-1 text-xs text-warning leading-[20px]">
-                    Platform account: {item.userStatus}
-                  </p>:null}
-                </>},
-                {key:"context",header:kind==="FACULTY"?"Teaching assignments":"Program · Batch · Class",
-                  mobilePriority:"secondary",cell:item=><>
-                    {describeCollegeDirectoryContext(kind,item)}
-                    {kind==="LEARNER"&&item.membershipStatus==="ACTIVE"&&
-                      item.userStatus==="ACTIVE"&&item.cohort!==null?
-                      <div className="mt-2">
-                        <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/>
-                      </div>:null}
-                    <Disclosure title="More actions" className="mt-2 min-w-0">
-                      <div className="flex min-w-0 flex-wrap items-center gap-2 pb-2">
-                        <CollegePersonAuditModal membershipId={item.membershipId} name={item.name} kind={kind}/>
-                        <CollegePersonProfileOverviewModal membershipId={item.membershipId} name={item.name} kind={kind}/>
-                        <CollegePersonEditAction membershipId={item.membershipId} kind={kind}
-                          departments={kind==="FACULTY"?result.departmentOptions:[]}/>
-                        {kind==="FACULTY"
-                          ? <CollegeFacultyLifecycleAction membershipId={item.membershipId} name={item.name} status={item.membershipStatus}/>
-                          : <CollegeStudentLifecycleAction membershipId={item.membershipId} name={item.name} status={item.membershipStatus}/>}
-                      </div>
-                    </Disclosure>
-                </>},
-                {key:"joined",header:"Joined",mobilePriority:"secondary",cell:item=>joinedLabel(item.joinedAt)},
-              ]}
+              columns={kind === "LEARNER" ? studentColumns : facultyColumns}
             />
           </div>
           </>
