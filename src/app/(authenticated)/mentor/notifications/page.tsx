@@ -104,7 +104,7 @@ async function MentorNotificationsContent({
   // tie-breaker within a priority rather than the only sort key.
   const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data)
     .slice().sort((a,b)=>{
-      const rank={REVIEW:0,REQUESTED:0,STALLED:1,MEETING_SOON:2} as const;
+      const rank={REVIEW:0,REQUESTED:1,STALLED:2,MEETING_SOON:3} as const;
       return rank[a.kind]-rank[b.kind] ||
         b.occurredAt.localeCompare(a.occurredAt) || a.key.localeCompare(b.key);
     });
@@ -118,7 +118,8 @@ async function MentorNotificationsContent({
   }));
   const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
-  const allRelevantFailed=!inbox && announcementResult.status==="rejected" &&
+  const allRelevantFailed=!inbox &&
+    (!announcementsEnabled || announcementResult.status==="rejected") &&
     (!projectAccess?.projects.enabled || failedSources.includes("Project attention"));
   const allSourcesEmpty = failedSources.length===0 && items.length===0 &&
     visibleAlerts.length===0 && announcements.length===0 && !nextHref;
