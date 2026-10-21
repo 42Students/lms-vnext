@@ -8,7 +8,8 @@ import { ThirdPartyLink } from "@/components/ui/third-party-link";
 import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
-import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
+import { initialCareerCalendarDay,shiftCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
+import {getLearnerCalendarExtras} from "@/modules/placements/learner-calendar-extras-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
@@ -23,8 +24,13 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const requested=typeof query.view==="string"?query.view:"coming";
   const view=requested==="past"?"past":requested==="calendar"||requested==="month"?"calendar":"coming";
   const context = await getCurrentRequestContext();
-  const [workspaceResult,resultsResult]=await Promise.allSettled([
-    getLearnerPlacementRequestWorkspace(context),listOwnAppliedPlacementResults(context),
+  const today = initialCareerCalendarDay();
+  const extraStart=shiftCareerCalendarDay(today,"day",-180);
+  const extraEnd=shiftCareerCalendarDay(today,"day",180);
+  const [workspaceResult,resultsResult,extrasResult]=await Promise.allSettled([
+    getLearnerPlacementRequestWorkspace(context),
+    listOwnAppliedPlacementResults(context),
+    getLearnerCalendarExtras(context,extraStart,extraEnd),
   ]);
   if(workspaceResult.status==="rejected"){
     if(workspaceResult.reason instanceof AuthorizationError)throw workspaceResult.reason;
@@ -36,6 +42,8 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   }
   const workspace=workspaceResult.value;
   const resultsUnavailable=resultsResult.status==="rejected";
+  const extrasUnavailable=extrasResult.status==="rejected";
+  const extras=extrasResult.status==="fulfilled"?extrasResult.value:null;
   const ownResults=resultsResult.status==="fulfilled"?resultsResult.value:[];
   const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
   // Newest request wins. A pending move must suppress attendance actions
@@ -59,7 +67,6 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const { ahead, past, undated } = partitionLearnerPlacementSchedule(workspace.rounds, now) as {
     ahead: WorkspaceRound[]; past: WorkspaceRound[]; undated: WorkspaceRound[];
   };
-  const today = initialCareerCalendarDay();
   const needsConfirmation=ahead.filter(row=>roundCanBeManaged(row)&&!row.learnerConfirmedAt).length;
   const rounds = workspace.rounds.map(row => ({
     ...row,
@@ -215,10 +222,25 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
           {details(row)}
         </article>)}
       </section>:null}
-      {view==="calendar"?<section aria-label="Calendar" className="space-y-2">
-
+      {view==="calendar"?<section aria-label="Calendar" className="space-y-3">
+        {extrasUnavailable?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
+          Calendar extras could not be loaded. Your confirmed rounds remain visible. Reload this page to retry college talks and exam dates.
+        </p>:null}
+        {extras?<div className="space-y-1 text-sm text-body" role="status">
+          <p>College calendar extras for {extras.startDay} to {extras.endDay} (IST).</p>
+          <p>{extras.talksAvailable
+            ? extras.talkCount>0?extras.talkCount+" pre-placement talk(s) scheduled."
+              :"No pre-placement talks in this period."
+            :"Pre-placement talk dates are unavailable."}</p>
+          <p>{!extras.blockedDatesAvailable
+            ?"College exam/blocked dates are unavailable; no empty calendar is assumed."
+            :extras.blockedDateCount>0
+              ?extras.blockedDateCount+" college exam/blocked date(s)."
+              :"No exam/blocked dates recorded in this period."}</p>
+        </div>:null}
         <Suspense fallback={<p role="status">Calendar</p>}>
-          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
+          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today}
+            rounds={rounds} supplements={extras?.supplements??[]} surface="schedule" />
         </Suspense>
       </section>:null}
       {view==="past"?<section aria-label="Past placement rounds" className="space-y-3">
