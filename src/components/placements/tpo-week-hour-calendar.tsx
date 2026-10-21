@@ -192,8 +192,8 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
        const position={top,height:blockHeight,
         left:"calc("+(event.column/event.columns*100)+"% + 2px)",
         width:"calc("+(100/event.columns)+"% - 4px)"};
-       const inner=<><strong className="block truncate">{event.title}</strong>
-        <span className="block truncate">{event.companyName}</span>
+       const inner=<><strong className="block truncate min-w-0">{event.title}</strong>
+        <span className="block truncate min-w-0">{event.companyName}</span>
         <span className="block text-xs">{kinds[event.kind]??event.kind}</span></>;
        return canCreate&&event.followupId&&event.status==="OPEN"?
         <Button variant="ghost" key={event.id} type="button"
@@ -212,7 +212,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
        <div key={event.id} data-event-kind={event.kind} style={position} className={"absolute z-10 overflow-hidden px-1 py-0.5 "+tone(event.kind)+" "+weekStyles.event}>{inner}</div>;
       })}
       {offHours.length?<div className="absolute inset-x-0 bottom-0 z-20 space-y-1 border-t border-border bg-surface/95 p-1">
-       {offHours.map(e=><p key={e.id} className="truncate text-xs" title={e.title}>Outside displayed hours · {e.title}</p>)}
+       {offHours.map(e=><p key={e.id} className="truncate text-xs min-w-0" title={e.title}>Outside displayed hours · {e.title}</p>)}
       </div>:null}
      </div>;
     })}
@@ -221,7 +221,7 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
   {move?<Dialog open={Boolean(move)} onOpenChange={next=>{if(!next)setMove(null);}} title="Move follow-up" className="max-w-lg">
       <TpoCalendarMoveFollowup followupId={move.id} currentIst={move.currentIst} />
       <Button variant="secondary" type="button" onClick={()=>setMove(null)}
-        className="mt-[var(--lms-space-3)] w-full sm:w-auto">Close</Button>
+        className="mt-[var(--lms-space-3)] w-full md:w-auto">Close</Button>
   </Dialog>:null}
   {!slot&&message?<InlineNotice tone="error" message={message}/>:null}
   {slot?<Dialog open={Boolean(slot)} onOpenChange={next=>{if(!next&&!saving)cancelDraft();}} dismissible={!saving} title="New recruiter follow-up" className="max-w-md">
@@ -243,11 +243,11 @@ export function TpoWeekHourCalendar({days,events,collegeId,canCreate,nowIso,bloc
      <Textarea value={note} maxLength={500} onChange={e=>setNote(e.target.value)}
       className=""/></label>
     {message?<InlineNotice tone="error" message={message}/>:null}
-    <div className="flex flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+    <div className="flex flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
      <Button variant="secondary" type="button" disabled={saving} onClick={()=>cancelDraft()}
-      className="w-full sm:w-auto">Cancel</Button>
+      className="w-full md:w-auto">Cancel</Button>
      <Button variant="primary" type="button" loading={saving} disabled={saving||loadingLeads||!leadId||!slot} onClick={()=>void save()}
-      className="w-full sm:w-auto">{saving?"Saving…":"Add follow-up"}</Button>
+      className="w-full md:w-auto">{saving?"Saving…":"Add follow-up"}</Button>
     </div>
    </div>
   </Dialog>:null}

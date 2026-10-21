@@ -128,7 +128,7 @@ export function ProjectList({
           </p>
 
           {(item.mentorName || item.memberCount !== undefined || item.progressPercent !== undefined) ? (
-            <div className="mt-3 grid min-w-0 grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs sm:grid-cols-3 [&>*]:min-w-0">
+            <div className="mt-3 grid min-w-0 grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-3 text-xs md:grid-cols-3 [&>*]:min-w-0">
               <div>
                 <p className="m-0 font-semibold text-muted-foreground">Mentor</p>
                 <p className="mt-1 break-words font-semibold text-foreground">
