@@ -299,8 +299,8 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx`
 - [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
 - [x] `src/app/(authenticated)/admin/projects/page.tsx`
-- [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
-- [ ] `src/app/(authenticated)/college/activity/page.tsx`
+- [x] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
+- [x] `src/app/(authenticated)/college/activity/page.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/page.tsx`
 - [ ] `src/app/(authenticated)/college/contacts/page.tsx`
 - [ ] `src/app/(authenticated)/college/placements/calendar/error.tsx`
