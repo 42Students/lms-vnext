@@ -105,7 +105,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/courses/college-quiz-questions-editor.tsx`
 - [x] `src/components/courses/faculty-assessment-editor.tsx`
 - [x] `src/components/courses/faculty-assignment-editor.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
 - [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
 - [ ] `src/components/courses/faculty-content-order-editor.tsx`
 - [ ] `src/components/courses/faculty-lesson-authoring.tsx`
