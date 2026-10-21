@@ -37,7 +37,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <ErrorState title="Invalid applicant filters"
       description="The requested search, status, screening or page is invalid."
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
   </div>;
   const [data,filters] = await Promise.all([
     getCollegeApplicationPipeline(context,jobId,query),
@@ -61,7 +61,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
       <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
       <details className="min-w-0" open={Boolean(query.screening!=="ALL"||query.source!=="ALL"||query.departmentId||query.programId||query.cohortId)}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 lg:grid-cols-3">
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Screening
         <Select name="screening" defaultValue={query.screening} className="min-h-11 w-full md:min-h-9">
@@ -100,7 +100,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
 
         </div>
       </details>
-      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
+      <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
     </form>
     <Tabs ariaLabel="Application pipeline stages" value={query.stage} renderPanel={false}
       items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
@@ -111,7 +111,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] text-sm sm:flex-row sm:items-center sm:justify-between">
       <span>{data.total.toLocaleString("en-IN")} matching applications</span>
       <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${adminHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
     </div>
     {!data.storageReady?<section className="space-y-3">
       <Banner tone="warning">Application stage actions are awaiting migration registration. You can still review the scoped applicant register.</Banner>

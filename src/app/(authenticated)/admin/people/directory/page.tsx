@@ -60,14 +60,14 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <PageHeader title="People Directory"
    description="Read-only membership directory within the active organization/college scope. Global mode lists membership records, not unrelated personal data."
    actions={<div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-start">
-    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">← Membership management</Link>
+    <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)]">← Membership management</Link>
     <SuperAdminPeopleCsvControl href={superAdminPeopleExportHref(data.query)} />
    </div>}/>
   <Tabs ariaLabel="People directory tabs" value={data.query.tab} renderPanel={false}
    items={tabs.map(tab=>({value:tab.id,label:tab.label,
     href:adminUsersHref({...data.query,tab:tab.id,role:"ALL",page:1})}))}/>
   <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
-   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Related people views</summary>
+   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Related people views</summary>
      {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
    <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Users without college memberships →</Link> : null}
   <nav aria-label="Related people views" className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] pt-[var(--lms-space-2)] text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-[var(--lms-space-4)]">
@@ -96,7 +96,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
    </div>
    <details className="min-w-0" open={query.data.membershipStatus!=="ALL" || query.data.platformStatus!=="ALL"}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
      <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Membership
       <Select name="membershipStatus" defaultValue={query.data.membershipStatus} className="min-h-11 w-full md:min-h-9">
@@ -110,7 +110,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      </label>
     </div>
    </details>
-   <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
+   <Link href="/admin/people/directory" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </form>
   <p className="text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching memberships · page {data.query.page} of {data.totalPages} · 30 per page</p>
   {data.items.length ? <DataTable<(typeof data.items)[number]>

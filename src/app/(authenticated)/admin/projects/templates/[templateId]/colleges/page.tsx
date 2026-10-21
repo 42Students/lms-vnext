@@ -57,7 +57,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
   return <div className="min-w-0 space-y-4">
     <div className="min-w-0">
-      <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">← Back to templates</Link>
+      <Link href="/admin/projects/templates" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">← Back to templates</Link>
       <PageHeader title={data.template.title}
         description="Availability within the current safety scope. Existing workspaces retain their pinned versions." />
     </div>
@@ -97,7 +97,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
               assignedToSelectedCollege={Boolean(row.assignment)} allowGlobalActions={false}/>:null},
       ]}
       empty={<EmptyState title="No matching colleges" description="No active colleges match the filters in the current safety scope."
-        action={<Link href={templateCollegeAvailabilityHref(id.data,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear filters</Link>}/>}
+        action={<Link href={templateCollegeAvailabilityHref(id.data,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/>}
     />
     <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateCollegeAvailabilityHref(id.data,{...data.query,page})} label="College availability pages" />
   </div>;

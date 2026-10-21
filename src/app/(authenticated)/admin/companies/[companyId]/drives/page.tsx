@@ -38,7 +38,7 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
         {key:"deadline",header:"Deadline",mobilePriority:"secondary",cell:job=>job.deadline?.toISOString().slice(0,10)??"—"},
         {key:"applicants",header:"Applicants",mobilePriority:"secondary",cell:job=>job.applicants},
         {key:"hired",header:"Hired",mobilePriority:"secondary",cell:job=>job.hired},
-        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+        {key:"actions",header:"Actions",mobilePriority:"action",cell:job=><Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           href={`/admin/placements/jobs/${job.id}`}>Open drive →</Link>},
       ]}/>
     {data.truncated ? <p className="text-sm text-muted-foreground">

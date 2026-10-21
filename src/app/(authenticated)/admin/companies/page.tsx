@@ -31,7 +31,7 @@ export default async function SuperAdminCompaniesPage({
   if (!parsed.success) return <div className="min-w-0 space-y-4">
     <PageHeader title="Companies" />
     <ErrorState title="Invalid company search" description="Check search text or relationship status."
-      action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
+      action={<Link href="/admin/companies" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
   </div>;
   const context = await getCurrentRequestContext();
   const [data, availableColleges] = await Promise.all([
@@ -55,11 +55,11 @@ export default async function SuperAdminCompaniesPage({
     </Alert>:null}
     {data.query.companyId ? <Alert tone="info">
       Inspecting relationships of employer {data.query.companyId.slice(-8)} in the authorized scope.{" "}
-      <Link href="/admin/companies" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Show all employers</Link>
+      <Link href="/admin/companies" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show all employers</Link>
     </Alert> : null}
     <div className="flex flex-wrap gap-3 text-sm">
-      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Show deleted (archived) companies →</Link>
-      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Active companies →</Link>
+      <Link href="/admin/companies?status=ALL&companyStatus=ARCHIVED" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Show deleted (archived) companies →</Link>
+      <Link href="/admin/companies?status=ACTIVE&companyStatus=ACTIVE" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Active companies →</Link>
     </div>
     <form method="get" className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto]">
       <Input type="hidden" name="view" value={view} />
@@ -180,11 +180,11 @@ export default async function SuperAdminCompaniesPage({
           <div><dt className="text-muted-foreground">Last drive activity</dt><dd>{row.lastActiveAt?new Date(row.lastActiveAt).toLocaleDateString("en-IN",{timeZone:"Asia/Kolkata"}):"—"}</dd></div>
         </dl>
         </Disclosure>
-        <Link className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+        <Link className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           href={`/admin/companies/${encodeURIComponent(row.companyId)}/drives`}>
           Drive history →
         </Link>
-        <Link className="mt-2 ml-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+        <Link className="mt-2 ml-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
           href={"/admin/companies?" + new URLSearchParams({companyId:row.companyId,status:"ALL",companyStatus:"ALL",trust:"ALL"}).toString()}>
           Review this employer&apos;s relationships →
         </Link>
@@ -192,8 +192,8 @@ export default async function SuperAdminCompaniesPage({
     </div> : <EmptyState title="No company relationships" description="No company relationships match the current scope and filters."/>}
     {data.truncated ? <p className="text-sm text-muted-foreground">Only 50 matching relationships are shown per page. Review other pages for remaining matches.</p> : null}
     <nav className="flex flex-wrap items-center gap-3 text-sm" aria-label="Company directory pages">
-      {data.query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
-      {data.query.page < data.totalPages ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,trust:data.query.trust,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
+      {data.query.page > 1 ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),trust:data.query.trust,page:String(data.query.page-1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Previous</Link> : null}
+      {data.query.page < data.totalPages ? <Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 hover:text-[var(--lms-primary-text)]" href={"/admin/companies?" + new URLSearchParams({q:data.query.q,status:data.query.status,owner:data.query.owner,website:data.query.website,changedWithin:data.query.changedWithin,trust:data.query.trust,searchField:data.query.searchField,companyStatus:data.query.companyStatus,verified:data.query.verified,view,sort:data.query.sort,...(data.query.companyId?{companyId:data.query.companyId}:{}),page:String(data.query.page+1),...(data.query.collegeId?{collegeId:data.query.collegeId}:{})}).toString()}>Next</Link> : null}
     </nav>
     <Disclosure title="Company curation" className="min-w-0" contentClassName="space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]">
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Company curation candidates">
@@ -227,6 +227,6 @@ export default async function SuperAdminCompaniesPage({
       className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Export matching companies as CSV →
     </Link>
-    <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Placement operations</Link>
+    <Link href="/admin/placements" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Placement operations</Link>
   </div>;
 }

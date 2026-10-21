@@ -75,7 +75,7 @@ export default async function SuperAdminLessonsPage({
         <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
       <details className="min-w-0" open={Boolean(data.query.courseCode || data.query.cohortCode)}>
-        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
           <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
         </div>
@@ -100,7 +100,7 @@ export default async function SuperAdminLessonsPage({
         <p className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm text-body">Learning path: <StatusBadge tone={lesson.pathStatus==="PUBLISHED"?"success":"neutral"}>{lesson.pathStatus}</StatusBadge> Offering: <StatusBadge tone={lesson.offeringStatus==="ACTIVE"?"success":"neutral"}>{lesson.offeringStatus}</StatusBadge></p>
         <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
         {lesson.status==="ACTIVE"?<details className="mt-[var(--lms-space-2)] min-w-0">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
+          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
           <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center">
           <LessonActions lesson={{id:lesson.id,name:lesson.name,description:lesson.description,sequence:lesson.sequence}}/>
           <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lesson.name,
@@ -110,7 +110,7 @@ export default async function SuperAdminLessonsPage({
           </div>
         </details>:null}
         <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
-          className="mt-[var(--lms-space-2)] inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text underline focus-visible:outline hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          className="mt-[var(--lms-space-2)] inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text underline focus-visible:outline hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
           Open offering to add lessons →
         </Link>
       </article>)}

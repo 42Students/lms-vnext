@@ -37,7 +37,7 @@ export default async function MembershipDetail({params}:{params:Promise<{members
    </div>)}
   </dl>
   <Link href={"/admin/people/directory/"+encodeURIComponent(membershipId)+"/audit"}
-    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:w-auto border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+    className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:w-auto border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
     View audit trail →
    </Link>
   <p className="max-w-3xl text-xs leading-5 text-muted-foreground">This page shows only this membership, not roles at other colleges.</p>
