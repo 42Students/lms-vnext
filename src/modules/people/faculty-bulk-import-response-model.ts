@@ -12,6 +12,7 @@ export const facultyBulkImportResponseSchema=z.strictObject({
  failed:z.number().int().min(0).max(500),
  skipped:z.number().int().min(0).max(500),
  partial:z.number().int().min(0).max(500),
+ successMessage:z.string().max(300).nullable().optional(),
  results:z.array(resultRow).max(500),
 }).refine(value=>
  value.total===value.results.length&&
