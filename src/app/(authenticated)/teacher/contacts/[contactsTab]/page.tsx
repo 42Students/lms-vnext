@@ -1,9 +1,9 @@
 import { Select } from "@/components/ui/select";
-import {Button} from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {parseFacultyContactsQuery} from "@/modules/courses/faculty-contacts-filter-model";
-import {facultyContactDirectoryQuery} from "@/modules/courses/faculty-contact-detail-model";
+import { parseFacultyContactsQuery } from "@/modules/courses/faculty-contacts-filter-model";
+import { facultyContactDirectoryQuery } from "@/modules/courses/faculty-contact-detail-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   FacultyContactsPagination,
@@ -51,29 +51,49 @@ export default async function FacultyContactsPage({
     tabs[contactsTab as keyof typeof tabs];
   const raw=await searchParams;
   const filters=parseFacultyContactsQuery(raw);
-  if(!filters)return <section role="alert" className="min-w-0 space-y-3">
-    <PageHeader title={"Invalid directory filters"} />
-    <Link href={"/teacher/contacts/"+contactsTab}
-      className="inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-      Return to Contacts
-    </Link>
-  </section>;
+  if (!filters) {
+    return (
+      <section role="alert" className="min-w-0 space-y-3">
+        <PageHeader title="Invalid directory filters" />
+        <Link
+          href={`/teacher/contacts/${contactsTab}`}
+          className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+        >
+          Return to Contacts
+        </Link>
+      </section>
+    );
+  }
   const {page,pageSize,search}=filters;
   const context = await getCurrentRequestContext();
   const loaded = await listFacultyContacts(context,{
     tab:selected.value,search,page,pageSize,
   }).then(value=>({ok:true as const,value}))
     .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
-  if(!loaded.ok)return <section className="min-w-0 space-y-4">
-    <PageHeader title="Contacts" />
-    <ErrorState title={loaded.denied?"Contacts access denied":"Couldn't load contacts"}
-      description={loaded.denied?"You no longer have access to these contacts.":"Something went wrong on our end. Please try again."}
-      action={<Link href={loaded.denied?"/teacher/contacts":"/teacher/contacts/"+contactsTab+"?"+new URLSearchParams({
-        ...(search?{q:search}:{}),page:String(page),pageSize:String(pageSize),
-      }).toString()} className="font-semibold text-primary-text underline">
-        {loaded.denied?"Back to Contacts":"Retry contacts"}
-      </Link>} />
-  </section>;
+  if (!loaded.ok) {
+    const retryQuery = new URLSearchParams({
+      ...(search ? { q: search } : {}),
+      page: String(page),
+      pageSize: String(pageSize),
+    });
+    const retryHref = loaded.denied
+      ? "/teacher/contacts"
+      : `/teacher/contacts/${contactsTab}?${retryQuery.toString()}`;
+    return (
+      <section className="min-w-0 space-y-4">
+        <PageHeader title="Contacts" />
+        <ErrorState
+          title={loaded.denied ? "Contacts access denied" : "Couldn't load contacts"}
+          description={loaded.denied
+            ? "You no longer have access to these contacts."
+            : "Something went wrong on our end. Please try again."}
+          action={<Link href={retryHref} className="font-semibold text-primary-text underline">
+            {loaded.denied ? "Back to Contacts" : "Retry contacts"}
+          </Link>}
+        />
+      </section>
+    );
+  }
   const result=loaded.value;
 
   const baseHref =
@@ -110,22 +130,25 @@ export default async function FacultyContactsPage({
         detailQuery={facultyContactDirectoryQuery({q:result.search,page:String(result.page),pageSize:String(result.pageSize)})}
       />
       <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
-      <FacultyContactsPagination
-        page={result.page}
-        totalPages={result.totalPages}
-        baseHref={baseHref}
-        search={result.search}
-        pageSize={result.pageSize}
-      />
-      <form method="GET" action={baseHref} className="flex min-w-0 items-end gap-2">
-        {result.search?<input type="hidden" name="q" value={result.search}/>:null}
-        <label className="flex flex-col gap-1 text-xs font-semibold text-[var(--lms-neutral-400)]">Rows per page
-          <Select name="pageSize" defaultValue={String(result.pageSize)} className="min-h-11 md:min-h-9">
-            <option value="10">10</option><option value="20">20</option><option value="50">50</option>
-          </Select>
-        </label>
-        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
-      </form>
+        <FacultyContactsPagination
+          page={result.page}
+          totalPages={result.totalPages}
+          baseHref={baseHref}
+          search={result.search}
+          pageSize={result.pageSize}
+        />
+        <form method="GET" action={baseHref} className="flex min-w-0 items-end gap-2">
+          {result.search ? <input type="hidden" name="q" value={result.search} /> : null}
+          <label className="flex flex-col gap-1 text-xs font-semibold text-[var(--lms-neutral-400)]">
+            Rows per page
+            <Select name="pageSize" defaultValue={String(result.pageSize)} className="min-h-11 md:min-h-9">
+              <option value="10">10</option>
+              <option value="20">20</option>
+              <option value="50">50</option>
+            </Select>
+          </label>
+          <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
+        </form>
       </div>
     </div>
   );
