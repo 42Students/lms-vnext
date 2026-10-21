@@ -58,16 +58,22 @@ export async function POST(request: Request) {
       message:"Choose an assigned project template before creating this workspace.",
       nextAction:"ASSIGN_PROJECT_TEMPLATE",
     },{status:422,headers:{"Cache-Control":"no-store"}});
-    const body={
-      ...legacy.data,
+    const generatedSlug=legacy.data.title.toLowerCase().normalize("NFKD")
+      .replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,80);
+    const canonical={
+      collegeId:legacy.data.collegeId,templateId:legacy.data.templateId,
+      title:legacy.data.title,slug:legacy.data.slug??generatedSlug,
       sectionId:legacy.data.sectionId??legacy.data.classId,
       primaryMentorMembershipId:legacy.data.primaryMentorMembershipId??legacy.data.mentorMembershipId,
       learnerMembershipIds:legacy.data.learnerMembershipIds??legacy.data.studentMembershipIds??[],
       initialStatus:legacy.data.initialStatus??legacy.data.status??"PLANNED",
-      slug:legacy.data.slug??legacy.data.title.toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-|-$/g,"").slice(0,80),
+      ...(typeof legacy.data.summary==="string"?{summary:legacy.data.summary}:{}),
+      ...(typeof legacy.data.phase==="string"?{phase:legacy.data.phase}:{}),
+      ...(typeof legacy.data.progressPercent==="number"?{progressPercent:legacy.data.progressPercent}:{}),
+      ...(typeof legacy.data.dueLabel==="string"?{dueLabel:legacy.data.dueLabel}:{}),
+      ...(typeof legacy.data.blocker==="string"?{blocker:legacy.data.blocker}:{}),
+      ...(typeof legacy.data.nextAction==="string"?{nextAction:legacy.data.nextAction}:{}),
     };
-    const {classId,mentorMembershipId,studentMembershipIds,status,...canonical}=body;
-    void classId;void mentorMembershipId;void studentMembershipIds;void status;
     const project = await createProjectInstance(context,canonical);
 
     return NextResponse.json(
