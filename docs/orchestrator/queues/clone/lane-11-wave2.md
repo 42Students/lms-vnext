@@ -11,7 +11,7 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_college-branding-form.tsx.md` (edit src/components/admin/college-branding-form.tsx; 31 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_college-branding-form.tsx.md` (edit src/components/admin/college-branding-form.tsx; 31 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_inbound-mail-list.tsx.md` (edit src/components/admin/inbound-mail-list.tsx; 28 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_learner-module-access-drawer.tsx.md` (edit src/components/admin/learner-module-access-drawer.tsx; 26 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-11/W2_src_components_admin_managed-college-subdomain.tsx.md` (edit src/components/admin/managed-college-subdomain.tsx; 26 findings; best P2)
