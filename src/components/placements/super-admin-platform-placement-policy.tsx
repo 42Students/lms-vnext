@@ -50,17 +50,17 @@ export function SuperAdminPlatformPlacementPolicy({initial}:{initial:Field[]}) {
   }catch(e){setError(e instanceof Error?e.message:"Policy update failed.");}
   finally{setBusy(null);}
  }
- return <section aria-labelledby="platform-placement-policy" className="min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)]">
+ return <section aria-labelledby="platform-placement-policy" className="min-w-0 space-y-[var(--lms-space-4)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-[var(--lms-space-4)]">
   <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
    <div><h2 id="platform-placement-policy" className="text-lg font-semibold text-foreground">Placements policy</h2>
     <p className="text-sm text-muted-foreground">Platform-wide defaults. Clear the college selection to review global settings. Changes require Super Admin access.</p>
    </div>
    <Button type="button" variant="secondary" disabled={Boolean(busy)} onClick={()=>void refresh()}>Reload</Button>
   </div>
-  <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
+  <div className="grid min-w-0 gap-x-6 gap-y-[var(--lms-space-3)] sm:grid-cols-2">
    {fields.map(field=><div key={field.key} className="min-w-0 space-y-[var(--lms-space-2)] border-b border-border py-[var(--lms-space-3)]">
      <label htmlFor={"policy-"+field.key} className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{field.label}</label>
-     <p className="text-xs text-muted-foreground">Default: {field.defaultValue} {field.unit} · {field.isOverridden?"Overridden":"Using default"}</p>
+     <p className="text-xs text-muted-foreground">Default: {field.defaultValue} {field.unit} · Allowed: {field.min}–{field.max} {field.unit} · {field.isOverridden?"Overridden":"Using default"}</p>
      <div className="flex flex-wrap items-center gap-2">
       <Input id={"policy-"+field.key} type="number" min={field.min} max={field.max} step={field.step}
        value={drafts[field.key]??String(field.value)}

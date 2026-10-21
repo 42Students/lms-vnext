@@ -1,6 +1,7 @@
 "use client";
 import {useEffect,useRef,useState} from "react";
 import {InlineNotice} from "@/components/ui/inline-notice";
+import {Button} from "@/components/ui/button";
 import type {PublicNetworkNotice} from "@/modules/auth/public-network-notice-model";
 /** PUB-auth-public-31: global network error status; never clears a saved draft/session. */
 export function ConnectionFailureNotice(){
@@ -30,6 +31,9 @@ export function ConnectionFailureNotice(){
    if(timer.current)clearTimeout(timer.current);};
  },[]);
  return message?<div className="my-[var(--lms-space-3)] w-full min-w-0">
-  <InlineNotice tone="error" message={message} onDismiss={()=>{lastMessage.current=null;if(timer.current)clearTimeout(timer.current);timer.current=null;setMessage(null);}}/>
+  <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
+   <div className="min-w-0 flex-1"><InlineNotice tone="error" message={message} onDismiss={()=>{lastMessage.current=null;if(timer.current)clearTimeout(timer.current);timer.current=null;setMessage(null);}}/></div>
+   <Button type="button" variant="secondary" size="sm" onClick={()=>window.location.reload()}>Retry page</Button>
+  </div>
  </div>:null;
 }

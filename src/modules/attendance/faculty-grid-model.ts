@@ -117,8 +117,10 @@ export function facultyAttendanceDayCell(
 
   if (heldCount === 0 && scheduled > 0) {
     return {
-      code: "S",
-      label: sessionCount === 1 ? "Scheduled" : `${scheduled} scheduled sessions`,
+      // A future timetable slot is not a held class or attendance mark.
+      // Scheduling remains visible in the separate timetable view.
+      code: "—",
+      label: "No class",
       present,
       absent,
       notMarked,
@@ -170,3 +172,11 @@ export function facultyAttendanceDayCell(
     ratio: `${present}/${heldCount}`,
   };
 }
+
+/** Pure IST boundary probes for midnight and month rollover parity. */
+export const FACULTY_ATTENDANCE_IST_BOUNDARY_EXAMPLES = [
+ {utc:"2026-10-31T18:29:00.000Z",indiaDay:"2026-10-31",indiaMonth:"2026-10"},
+ {utc:"2026-10-31T18:30:00.000Z",indiaDay:"2026-11-01",indiaMonth:"2026-11"},
+ {utc:"2026-11-01T18:29:00.000Z",indiaDay:"2026-11-01",indiaMonth:"2026-11"},
+ {utc:"2026-11-01T18:30:00.000Z",indiaDay:"2026-11-02",indiaMonth:"2026-11"},
+] as const;

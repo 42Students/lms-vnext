@@ -129,9 +129,17 @@ export async function listTpoCampaignDrafts(context:RequestContext){
     join placement_tpo_email_campaigns c on c.id=d.campaign_id
      and c.college_id=d.college_id
     where d.college_id=${college.id}::uuid
+    -- Imported integer campaign IDs are not chronological UUIDs; use stable
+    -- created_at then campaign_id ordering after migration.
     order by d.created_at desc,d.campaign_id desc limit 100`);
  });
- return {ready:true as const,rows:rows.rows};
+ // An older campaign list used recipients/sentBy, while the new table owns
+ // total_recipients/sender_name. Keep both names on read only; never infer
+ // carrier delivery from provider acceptance.
+ return {ready:true as const,rows:rows.rows.map(row=>({...row,
+  recipients:row.total_recipients,sentBy:row.sender_name,
+  campaignId:row.campaign_id,createdAt:row.created_at,
+ }))};
 }
 
 /** Read-only detail; no recipient contact data is returned. */

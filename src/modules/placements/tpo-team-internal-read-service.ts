@@ -167,7 +167,10 @@ export async function listMyTpoInternalThreads(
   const visibleItems=items.slice(0,100);
   const hasMore=safePage*100<totalCount;
   if(readsReady)return {status:"READY" as const,items:visibleItems.map(row=>({
-   ...row,unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0,
+   ...row,
+   // Count actual unread messages independently of a muted/unfollowed badge.
+   rawUnreadCount:Number(row.unreadMessages),
+   unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0,
   })),page:safePage,hasMore,asksReady,totalCount};
   // Legacy fallback while the proposed read-receipt migration is not yet registered.
   // Unread counts are per original recipient: query results never change who may read a thread.
@@ -193,7 +196,17 @@ export async function listMyTpoInternalThreads(
    unreadByHref.set(threadHref,(unreadByHref.get(threadHref)??0)+Number(row.total));
   }
   return {status:"READY" as const,items:visibleItems.map(row=>({
-   ...row,unreadCount:unreadByHref.get("/tpo/team/"+row.id)??0,
-  })),page:safePage,hasMore,asksReady};
+   ...row,rawUnreadCount:unreadByHref.get("/tpo/team/"+row.id)??0,
+   unreadCount:unreadByHref.get("/tpo/team/"+row.id)??0,
+  })),page:safePage,hasMore,asksReady,totalCount};
  });
+}
+
+/** Display states shared by the list/lookup entry points. Do not convert a
+ * failed authorization or unavailable storage into a misleading empty inbox. */
+export function tpoTeamThreadsListState(status:"READY"|"NOT_REGISTERED"|"FAILED",total:number){
+ if(status==="NOT_REGISTERED")return {kind:"UNAVAILABLE" as const,message:"Team conversations are not ready for this college."};
+ if(status==="FAILED")return {kind:"ERROR" as const,message:"Couldn\u0027t load team conversations. Try again."};
+ if(total===0)return {kind:"EMPTY" as const,message:"No team conversations yet."};
+ return {kind:"READY" as const,message:""};
 }
