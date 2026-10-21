@@ -1,0 +1,9 @@
+# Lane 14 — non-owned findings handoff
+
+- `src/modules/courses/lesson-discussion-service.ts` and `src/app/api/courses/lesson-contents/[lessonContentId]/discussions/route.ts` (courses/API owner): G2-17-027-025/-044/-046/-048 — separate per-content GET/POST with college+delivery+enrollment/teaching guards, trusted actor, pagination, same-origin write, attachment ACL; wait for migration registration and PG security negatives.
+- `src/modules/courses/learning-access.ts`, `src/modules/courses/faculty-course-service.ts` (courses owner): G2-19-019-002/-008/-037/-048/-052 — delivery-scoped content grants, date-only effective ranges, semester/batch projection and promotion locks/version CAS. Section grants are not a substitute.
+- `src/modules/courses/college-learning-directory-service.ts` (courses owner): G2-12-003-055, G2-13-013-033, G2-18-018-034 — enforce course.enabled + deletedAt, lesson deletedAt independently of ACTIVE and visible flags.
+- `src/modules/courses/lesson-service.ts` and `src/modules/courses/validation.ts` (courses owner): G2-18-018-008/-013/-015/-045 — optional/zero sequence append under lock, int overflow policy, expected-version compare+increment, stale conflict.
+- `src/modules/courses/super-admin-student-course-progress.ts` (courses owner): G2-14-003-078 — historical assignment/class/content and progress through offering/delivery; no numeric ID/UUID direct comparison.
+- `src/modules/courses/course-service.ts` and import mapping (courses owner): G2-12-003-084, G2-18-018-007, G2-17-027-007 — migrate legacy JSON/slug/parent and numeric IDs via tenant-scoped legacy_id_map; full course edit CAS and course->offering->path projection.
+- `drizzle/meta/_journal.json` (lane 15): G2-5-020-029 and G2-12-003-084 — review/register 0200/0201, replay disposable Postgres and test tenant negatives, actor spoof and upstream ancestry mutation before any runtime lesson API.
