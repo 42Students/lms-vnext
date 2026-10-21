@@ -104,6 +104,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
     accepted.set(row.sourcePath,row);
   }
   const problems:{path:string;reason:string}[]=[];
+  const correctedPaths=new Set<string>();
   async function event(
    findingId:string,action:"COMMENT"|"STATUS",path:string,actor:string,
    note:string,fromStatus:string|null,toStatus:string|null,
@@ -199,6 +200,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
      "Imported from immutable findings repository ("+input.severity+")",
      null,duplicate?"DUPLICATE":"NEW");
     await record(file.path,file.sha,action,"ACCEPTED",saved.id,null);
+    correctedPaths.add(file.path);
     stats.imported++;continue;
    }
    const [finding]=await tx.select().from(db10AuditFindings)
@@ -228,6 +230,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
     "Marked fixed by agent with verified commit references.",
     finding.status,"FIXED_DEV",input.commits??[]);
    await record(file.path,file.sha,action,"ACCEPTED",finding.id,null);
+   correctedPaths.add(file.path);
    stats.updates++;
   }
   // Deletions of accepted files create separate immutable ledger attempts;
@@ -252,7 +255,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
   // success merely because its previously rejected files were skipped.
   const mentioned=new Set(problems.map(item=>item.path));
   for(const [path,reason] of previousProblems){
-   if(!reason||mentioned.has(path))continue;
+   if(!reason||mentioned.has(path)||correctedPaths.has(path))continue;
    if(reason.startsWith("REJECTED") && accepted.has(path))continue;
    problems.push({path,reason});
   }
