@@ -77,13 +77,10 @@ export function groupFacultyAttendanceSessionsByIndiaDay<
     }));
 }
 
+/** A learner's late arrival or excused/medical attendance is not an
+ * explicit legacy absence; only ABSENT increments the absent count. */
 function isAbsenceLike(status: string | undefined) {
-  return (
-    status === "ABSENT" ||
-    status === "EXCUSED" ||
-    status === "MEDICAL" ||
-    status === "LATE"
-  );
+  return status === "ABSENT";
 }
 
 export function facultyAttendanceDayCell(
@@ -107,6 +104,7 @@ export function facultyAttendanceDayCell(
       // A legacy/imported absence is itself evidence that this learner was
       // marked, even when the session-level marker is missing.
       if (record && isAbsenceLike(record.status)) absent += 1;
+      else if(record && ["PRESENT","LATE","EXCUSED","MEDICAL"].includes(record.status)) present += 1;
       else notMarked += 1;
       continue;
     }
@@ -169,6 +167,6 @@ export function facultyAttendanceDayCell(
     notMarked,
     scheduled,
     sessionCount,
-    ratio: `${present}/${sessionCount}`,
+    ratio: `${present}/${heldCount}`,
   };
 }
