@@ -596,7 +596,20 @@ export const candidateAcademicEvidenceInputSchema = z
       .optional()
       .default(null),
   })
-  .strict();
+  .strict()
+  .superRefine((evidence, context) => {
+    // A PG score is meaningful only when the learner explicitly confirms
+    // the qualification. A score from an ambiguous historic import is not
+    // evidence of an actual postgraduate degree.
+    if (evidence.postgraduatePercentage !== null &&
+        evidence.hasPostgraduateQualification !== true) {
+      context.addIssue({
+        code: "custom",
+        path: ["hasPostgraduateQualification"],
+        message: "Confirm a postgraduate qualification before supplying its percentage",
+      });
+    }
+  });
 
 export const placementMissingEvidencePolicies = [
   "ALLOW_WITH_FLAG",
