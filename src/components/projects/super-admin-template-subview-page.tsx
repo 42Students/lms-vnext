@@ -634,7 +634,8 @@ export async function SuperAdminTemplateSubviewPage({
               return (
                 <article
                   key={version.id}
-                  className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4"
+                  id={"version-"+version.id}
+                  className="min-w-0 scroll-mt-28 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">

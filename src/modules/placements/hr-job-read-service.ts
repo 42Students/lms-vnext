@@ -119,6 +119,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     ? where
     : selectionOnly?and(where,sql`false`):
       and(where,eq(placementOffers.status,filters.offerState));
+  // The legacy Offers tab fetches its page on demand; keep summary counts on Overview.
+  const loadOfferRows=filters.tab==="offers";
   const [countsResult,applicationsResult,offerCountsResult,offersResult] = await Promise.allSettled([
     db.select({
       total: sql<number>`count(*)::integer`,
@@ -176,7 +178,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .innerJoin(collegeMemberships, eq(collegeMemberships.id, placementApplications.membershipId))
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .where(where),
-    db.select({
+    loadOfferRows?db.select({
       id: placementOffers.id, kind: placementOffers.kind, status: placementOffers.status, role: placementOffers.roleTitle,
       annualCtcInr: placementOffers.annualCtcInr, joiningDate: placementOffers.joiningDate,
       issuedAt: placementOffers.issuedAt, expiresAt: placementOffers.expiresAt,
@@ -191,14 +193,15 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .innerJoin(users, eq(users.id, collegeMemberships.userId))
       .where(offerCondition)
       .orderBy(desc(placementOffers.issuedAt), desc(placementOffers.id))
-      .limit(HR_OFFER_PAGE_SIZE).offset((filters.offerPage - 1) * HR_OFFER_PAGE_SIZE),
+      .limit(HR_OFFER_PAGE_SIZE).offset((filters.offerPage - 1) * HR_OFFER_PAGE_SIZE):Promise.resolve([]),
   ]);
   if(countsResult.status!=="fulfilled"||applicationsResult.status!=="fulfilled")
    throw new Error("RECRUITER_DRIVE_REQUIRED_READ_UNAVAILABLE");
   const counts=countsResult.value, applications=applicationsResult.value;
   const offerCounts=offerCountsResult.status==="fulfilled"?offerCountsResult.value:[];
   const offers=offersResult.status==="fulfilled"?offersResult.value:[];
-  const offersUnavailable=offerCountsResult.status!=="fulfilled"||offersResult.status!=="fulfilled";
+  const offersUnavailable=offerCountsResult.status!=="fulfilled"||
+    (loadOfferRows&&offersResult.status!=="fulfilled");
   // REC-home-drives-46: only placement-cell recorded candidate slots
   // with confirmedAt count as confirmed; internal recruiter BOOKED does not.
   const slotRows=(filters.tab==="rounds"||filters.tab==="overview")
