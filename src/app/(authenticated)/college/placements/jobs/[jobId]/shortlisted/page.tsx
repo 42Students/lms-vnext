@@ -200,7 +200,7 @@ export default async function CollegeDriveShortlistedPage({
       <CollegeApplicationPipelineControls
         key={jobId + ":" + JSON.stringify(query)}
         jobId={jobId} rows={internal} total={internal.length}
-        query={{ ...query, source: "INTERNAL" }} />
+        query={{ ...query, source: "INTERNAL" }} legacyShortlisted />
     ) : null}
     {external.length ? <section className="min-w-0 space-y-3">
       <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">External applications</h2>
