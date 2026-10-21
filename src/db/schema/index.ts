@@ -98,3 +98,6 @@ export * from "./lesson-content-materials";
 export * from "./placement-public-page-content";
 
 export * from "./recruiter-message-email";
+
+// Registered storage only; DB10_OUTBOUND_READY and dispatch remain fail-closed.
+export { db10OutboundMessages, db10OutboundSuppressions, db10GlobalEmailSuppressions } from "./db10-outbound-messages.draft";

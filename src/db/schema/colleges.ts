@@ -39,6 +39,7 @@ export const colleges = pgTable(
   },
   (table) => [
     uniqueIndex("colleges_code_uq").on(sql`lower(${table.code})`),
+    uniqueIndex("colleges_id_organization_uq").on(table.id, table.organizationId),
     foreignKey({
       name: "colleges_chair_membership_scope_fk",
       columns: [table.chairMembershipId, table.id],
