@@ -293,13 +293,13 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/tracker/tracker-issue-copy-actions.tsx`
 - [x] `src/components/tracker/tracker-issue-saved-views.tsx`
 - [x] `src/components/ui/action-pagination.tsx`
-- [ ] `src/components/ui/button.tsx`
-- [ ] `src/components/ui/dialog.tsx`
-- [ ] `src/components/ui/drawer.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/legacy-overlays.css`
-- [ ] `src/components/ui/multi-select.tsx`
-- [ ] `src/components/ui/page-header.tsx`
-- [ ] `src/components/ui/search-field.tsx`
-- [ ] `src/components/ui/tabs.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
+- [x] `src/components/ui/button.tsx`
+- [x] `src/components/ui/dialog.tsx`
+- [x] `src/components/ui/drawer.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/legacy-overlays.css`
+- [x] `src/components/ui/multi-select.tsx`
+- [x] `src/components/ui/page-header.tsx`
+- [x] `src/components/ui/search-field.tsx`
+- [x] `src/components/ui/tabs.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
