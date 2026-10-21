@@ -104,10 +104,9 @@ export function PersonOnboardDialog({
 
   function fail(field:string,message:string){
     setFieldError({field,message});
-    const refs:Record<string,React.RefObject<HTMLInputElement|null>>={
-      firstName:firstNameRef,lastName:lastNameRef,displayName:displayNameRef,phone:phoneRef,email:emailRef,
-    };
-    refs[field]?.current?.focus();
+    const input=field==="firstName"?firstNameRef:field==="lastName"?lastNameRef:
+      field==="displayName"?displayNameRef:field==="phone"?phoneRef:field==="email"?emailRef:null;
+    input?.current?.focus();
   }
   function submit() {
     if(pending||inFlightRef.current||profileIncomplete)return;
