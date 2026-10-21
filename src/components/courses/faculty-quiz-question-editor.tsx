@@ -452,7 +452,7 @@ export function FacultyQuizQuestionEditor({
                   className="min-w-0 border-b border-border py-4"
                 >
                   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-                    <h3 className="m-0 text-sm font-semibold text-foreground">
+                    <h3 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
                       Question{" "}
                       {questionIndex + 1}
                     </h3>

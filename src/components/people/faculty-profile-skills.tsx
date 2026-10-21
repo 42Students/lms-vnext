@@ -32,10 +32,10 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
  return <form id={facultyProfileAnchor("skills")} className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]"
    aria-label="Skills" onSubmit={submit}>
   <div>
-   <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg">Skills</h2>
-   <p className="mt-1 text-sm text-muted-foreground">Add up to 100 professional skills and optional proficiency levels. Changes are saved only when you submit.</p>
+   <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)] md:text-lg">Skills</h2>
+   <p className="mt-1 text-sm text-muted-foreground leading-[22px]">Add up to 100 professional skills and optional proficiency levels. Changes are saved only when you submit.</p>
   </div>
-  {rows.length===0?<p className="text-sm text-muted-foreground">No skills added yet.</p>:null}
+  {rows.length===0?<p className="text-sm text-muted-foreground leading-[22px]">No skills added yet.</p>:null}
   {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find skill
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
@@ -44,8 +44,8 @@ export function FacultyProfileSkills({initial,pending,onSave}:{
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleSkills.length)}</span>
     <Button variant="secondary" type="button"  onClick={()=>setSearch("")}>Clear Skill search</Button>
    </div>:null}
-  {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground">No matching skills. Clear the search to show all.</p>:null}
-  {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground">Clear search to reorder Skills.</p>:null}
+  {rows.length>5&&visibleSkills.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No matching skills. Clear the search to show all.</p>:null}
+  {rows.length>5&&!facultyProfileCanReorderVisible(rows.length,visibleSkills.length)?<p className="text-xs text-muted-foreground leading-5">Clear search to reorder Skills.</p>:null}
   <div className="space-y-3">
    {visibleSkills.map(({skill,index})=><div key={skill.id} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] sm:grid-cols-2 sm:items-end">
     <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Skill {index+1}

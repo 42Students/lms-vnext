@@ -21,7 +21,7 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
   </nav>
   <section className="space-y-3" aria-label="College application pipeline">
    <h2 className="text-lg font-semibold">Application pipeline</h2>
-   <p className="text-xs text-muted-foreground">These are current registered College Admin application stages, not cumulative funnel conversions.</p>
+   <p className="text-xs text-muted-foreground leading-5">These are current registered College Admin application stages, not cumulative funnel conversions.</p>
    <div className="grid min-w-0 grid-cols-2 gap-[var(--lms-space-3)] md:grid-cols-3 xl:grid-cols-5">
     {stages.map(stage=><StatTile key={stage} href={base+"/applications?stage="+stage}
       label={labels[stage]} value={data.totals[stage]??0}>
@@ -31,7 +31,7 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
   </section>
   <section aria-label="Drive needs attention" className="border-y border-[var(--lms-canvas-border)] py-4">
    <h2 className="font-semibold">Needs attention ({flags.length})</h2>
-   {!flags.length?<p className="mt-2 text-sm text-muted-foreground">No recorded attention flags for this drive.</p>:
+   {!flags.length?<p className="mt-2 text-sm text-muted-foreground leading-[22px]">No recorded attention flags for this drive.</p>:
     <ul className="mt-3 space-y-2">{flags.map(flag=><li key={flag.category}>
       <Link href={flag.href} className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)]">
        {flag.category==="STALE_APPLIED"?"Applications with no action in a week":
@@ -39,7 +39,7 @@ export function CollegeDrivePipelineOverview({jobId,data,attention}:{
       </Link>
       <span className="ml-2 text-sm">{flag.count} candidate(s)</span>
     </li>)}</ul>}
-   <Disclosure title="Evidence note" className="mt-[var(--lms-space-3)]"><p className="max-w-[75ch] pt-2 text-xs text-muted-foreground">Missing offer-letter evidence is not inferred without a registered private document record.</p></Disclosure>
+   <Disclosure title="Evidence note" className="mt-[var(--lms-space-3)]"><p className="max-w-[75ch] pt-2 text-xs text-muted-foreground leading-5">Missing offer-letter evidence is not inferred without a registered private document record.</p></Disclosure>
   </section>
  </div>;
 }

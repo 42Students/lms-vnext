@@ -271,13 +271,13 @@ export function AssignmentSubmissionControl({
         </div>
 
         {methodsError?<Alert tone="error" className="mt-2">{methodsError}</Alert>:null}
-        {methodsEnabled&&!methodsLoaded&&!methodsError?<p role="status" className="mt-2 text-xs">Loading allowed submission methods…</p>:null}
+        {methodsEnabled&&!methodsLoaded&&!methodsError?<p role="status" className="mt-2 text-xs leading-5">Loading allowed submission methods…</p>:null}
         {!fileUploadsEnabled&&mayUpload ? <Alert tone={mayWrite||mayLink?"warning":"error"} role={!mayWrite&&!mayLink?"alert":"status"} className="mt-2">
           {mayWrite||mayLink?"File uploads are currently unavailable. You can submit a written response or an HTTPS link.":
             "This assignment requires a PDF or file, but private uploads are unavailable. Ask your Faculty or college administrator to enable private file storage."}
         </Alert> : null}
         {submissionType==="LINK"&&methodsEnabled&&mayLink?
-          <label className="mt-3 grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Link type
+          <label className="mt-3 grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Link type
             <Select value={linkKind} disabled={submitting}
               className="min-h-11 md:min-h-9"
               onChange={event=>setLinkKind(event.target.value as typeof linkKind)}>
@@ -341,7 +341,7 @@ export function AssignmentSubmissionControl({
             if(href)router.push(href);
           }}>Discard</Button>
         </div>}>
-        <p className="text-sm text-body">You have unsent work. Keep editing to preserve your answer.</p>
+        <p className="text-sm text-body leading-[22px]">You have unsent work. Keep editing to preserve your answer.</p>
       </Dialog>
     </form>
   );

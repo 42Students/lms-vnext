@@ -31,7 +31,7 @@ export function SuperAdminLessonBulkVisibility({lessons}:{lessons:readonly Lesso
   <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Bulk lesson visibility</summary>
   <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
    <span role="status" className="text-sm text-muted-foreground">{selected.length} of {lessons.length} lessons selected</span>
-  <p className="text-sm text-body">Show or hide student access to published lesson content; unpublished content stays unpublished. This is a bulk operation with a per-content failure report.</p>
+  <p className="text-sm text-body leading-[22px]">Show or hide student access to published lesson content; unpublished content stays unpublished. This is a bulk operation with a per-content failure report.</p>
   <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-10">
     <Checkbox checked={lessons.length>0&&selected.length===lessons.length}
       onChange={e=>setSelected(e.target.checked?lessons.map(l=>l.id):[])} disabled={pending}/> Select all on this page

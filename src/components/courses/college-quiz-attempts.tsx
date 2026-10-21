@@ -53,15 +53,15 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
    {error?<Alert tone="error" className="flex-row flex-wrap items-center gap-2">{error}
     <Button variant="secondary" type="button" className="min-h-11 md:min-h-9" disabled={loading} onClick={()=>void open(page)}>Retry</Button>
    </Alert>:null}
-   {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground">
+   {!loading&&!error&&attempts.length===0?<p className="text-xs text-muted-foreground leading-5">
     {page===1?"No quiz submissions yet for this Section.":"No further quiz submissions on this page."}</p>:null}
-   {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold">{attempts.length} attempts</p>
-    <label className="undefinedmb-[6px] grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search Student on this page
+   {!loading&&attempts.length>0?<><p className="mb-2 text-xs font-semibold leading-5">{attempts.length} attempts</p>
+    <label className="mb-2 grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search Student on this page
      <Input type="search" value={learnerSearch} onChange={event=>setLearnerSearch(event.target.value)}
       className="min-h-11 md:min-h-9" placeholder="Student name or email"/>
     </label>
     {learnerSearch.trim()&&!attempts.some(item=>(item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||(item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase()))?
-     <p className="text-xs text-muted-foreground">No Students match your search.</p>:null}
+     <p className="text-xs text-muted-foreground leading-5">No Students match your search.</p>:null}
     <ul className="divide-y divide-border border-y border-border">{attempts.filter(item=>!learnerSearch.trim()||
       (item.learnerDisplayName??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())||
       (item.learnerEmail??"").toLowerCase().includes(learnerSearch.trim().toLowerCase())).map(item=><li key={item.id}
@@ -85,8 +85,8 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
      </Disclosure>
     </li>)}</ul>
    </>:null}
-    {loading?<p role="status" className="mt-3 text-xs text-muted-foreground">Loading quiz submissions, page {page}…</p>:null}
-    {!loading&&!error&&attempts.length>5?<p className="mt-2 text-xs text-muted-foreground">Scroll inside this panel to see more quiz submissions.</p>:null}
+    {loading?<p role="status" className="mt-3 text-xs text-muted-foreground leading-5">Loading quiz submissions, page {page}…</p>:null}
+    {!loading&&!error&&attempts.length>5?<p className="mt-2 text-xs text-muted-foreground leading-5">Scroll inside this panel to see more quiz submissions.</p>:null}
     {!loading&&!error?<nav aria-label="Quiz submission pages" className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3 text-xs">
       <span>Page {page} · up to 25 attempts per page</span>
       <div className="flex items-center gap-3">

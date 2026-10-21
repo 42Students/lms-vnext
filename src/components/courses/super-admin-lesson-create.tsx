@@ -36,7 +36,7 @@ export function SuperAdminLessonCreate({paths}:{paths:readonly Path[]}){
   }catch(e){setError(e instanceof Error?e.message:"Lesson could not be saved.");}
   finally{setPending(false);}
  }
- if(!paths.length)return <p role="status" className="border-y border-border py-4 text-sm text-body">Open a course offering to create its first lesson.</p>;
+ if(!paths.length)return <p role="status" className="border-y border-border py-4 text-sm text-body leading-[22px]">Open a course offering to create its first lesson.</p>;
  return <details className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
   <summary className="inline-flex min-h-11 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-[var(--lms-space-4)] text-sm font-[650] text-[var(--lms-on-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Add Lesson</summary>
   <form aria-label="Add lesson" onSubmit={event=>void submit(event)} className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)]">

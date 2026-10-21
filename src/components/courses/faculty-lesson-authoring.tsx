@@ -813,7 +813,7 @@ export function FacultyLessonAuthoring({
                   <FacultyIstQuarterHourPicker label="Starts" value={startsAt} onChange={setStartsAt}/>
                   <FacultyIstQuarterHourPicker label="Ends" value={endsAt} onChange={setEndsAt}/>
                 </div>
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground leading-5">
                   {FACULTY_IST_NOTE} Times use a 12-hour clock and 15-minute steps.
                 </p>
                 {(startsAt&&facultyIstQuarterHourIssue(startsAt)||
@@ -881,7 +881,7 @@ export function FacultyLessonAuthoring({
                       className="min-w-0 space-y-3 border-t border-[var(--lms-canvas-border)] py-4"
                     >
                       <div className="flex flex-wrap items-center justify-between gap-3">
-                        <p className="m-0 text-sm font-semibold text-foreground">
+                        <p className="m-0 text-sm font-semibold text-foreground leading-[22px]">
                           Question{" "}
                           {questionIndex + 1}
                         </p>
@@ -1165,7 +1165,7 @@ export function FacultyLessonAuthoring({
       )}
 
       {!mode && (!availableModes || availableModes.some((choice) => choice === "RESOURCE" || choice === "YOUTUBE" || choice === "LIVE_CLASS")) ? (
-        <p className="mt-3 text-xs text-muted-foreground">
+        <p className="mt-3 text-xs text-muted-foreground leading-5">
           File/video upload authoring is hidden
           until signed Cloud Storage upload receipts
           are available.
@@ -1175,7 +1175,7 @@ export function FacultyLessonAuthoring({
         title="Discard this content draft?" confirmLabel="Discard draft"
         description="Any unsaved changes in this content form will be lost."
         onConfirm={discardDraft}>
-        <p className="text-sm text-body">Keep editing to preserve the details you entered.</p>
+        <p className="text-sm text-body leading-[22px]">Keep editing to preserve the details you entered.</p>
       </ConfirmDialog>
     </div>
   );

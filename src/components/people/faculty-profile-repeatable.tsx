@@ -64,10 +64,10 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
     <form id={facultyProfileAnchor(section)} aria-label={title} onSubmit={submit}
       className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
       <div>
-        <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg">{title}</h2>
-        <p className="mt-1 text-sm text-muted-foreground">{description}</p>
+        <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)] md:text-lg">{title}</h2>
+        <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{description}</p>
       </div>
-      {rows.length === 0 ? <p className="text-sm text-muted-foreground">No records added yet.</p> : null}
+      {rows.length === 0 ? <p className="text-sm text-muted-foreground leading-[22px]">No records added yet.</p> : null}
       {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
           className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
@@ -76,8 +76,8 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
         <Button variant="secondary" type="button"  onClick={()=>setSearch("")}>Clear search</Button>
       </div>:null}
-      {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No matching records. Clear search to restore the full list.</p>:null}
-      {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground">Clear search to reorder records in their full saved order.</p>:null}
+      {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No matching records. Clear search to restore the full list.</p>:null}
+      {rows.length>5 && !facultyProfileCanReorderVisible(rows.length,visibleRows.length)?<p className="text-xs text-muted-foreground leading-5">Clear search to reorder records in their full saved order.</p>:null}
       <div className="space-y-3">
         {visibleRows.map(({row,index}) => (
           <fieldset key={row.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
@@ -132,7 +132,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
             }} className="mt-[var(--lms-space-3)] min-h-11 w-full text-error sm:w-auto min-[768px]:min-h-9">
               Remove draft record
             </Button>
-            {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground">This entry has a managed document. Contact your College to remove it.</p> : null}
+            {facultyProfileRecordHasManagedDocument(row) ? <p className="mt-2 text-xs text-muted-foreground leading-5">This entry has a managed document. Contact your College to remove it.</p> : null}
           </fieldset>
         ))}
       </div>
@@ -153,7 +153,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
           setRows(restoreFacultyProfileRows(initial));setChanged(false);}}>
         Discard unsaved edits
       </Button> : null}
-      {changed ? <p className="text-xs text-muted-foreground">
+      {changed ? <p className="text-xs text-muted-foreground leading-5">
         Draft changes, including removals, remain unsaved until you choose Save.
       </p> : null}
     {dialog}

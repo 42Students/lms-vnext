@@ -113,12 +113,12 @@ export function AdminCourseDisplayEditor({
     return (
       <section className="min-w-0" aria-label="Course Home content">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <h3 className="m-0 text-base font-semibold text-foreground">
+          <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
             Course Home content
           </h3>
           <StatusBadge tone="warning">Migration pending</StatusBadge>
         </div>
-        <p className="mt-2 max-w-prose break-words text-sm leading-6 text-body">
+        <p className="mt-2 max-w-prose break-words text-sm leading-[22px] text-body">
           Rich introduction, ordered takeaways and Course thumbnail are staged
           but cannot be persisted until the DB05 migration is verified. The
           existing Course description remains the learner-safe fallback.
@@ -131,7 +131,7 @@ export function AdminCourseDisplayEditor({
     <section className="min-w-0" aria-label="Course Home content" aria-busy={pending}>
       <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
         <div className="min-w-0">
-          <h3 className="m-0 text-base font-semibold text-foreground">
+          <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">
             Course Home content
           </h3>
           <p className="mt-1 max-w-prose text-xs leading-5 text-muted-foreground">

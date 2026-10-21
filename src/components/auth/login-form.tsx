@@ -315,10 +315,10 @@ export function LoginForm({
 
   return (
     <div className="login-form w-full max-w-md" data-step={attempt ? "code" : "contact"} aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
-      <h2 className="m-0 text-2xl font-semibold text-foreground">
+      <h2 className="m-0 text-2xl font-semibold text-[var(--lms-heading)]">
         {attempt?"Enter your code":"Sign in"}
       </h2>
-      <p className="mt-1 text-sm text-muted-foreground">
+      <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
         {attempt ? "We sent a code to "+attempt.maskedContact+".":
           channel==="PHONE"?"Use your registered mobile number.":
           "Use your registered email address."}
@@ -333,7 +333,7 @@ export function LoginForm({
         </div>
       ) : null}
       {collegeName && (errorCode === "NO_ACCOUNT_FOR_DOMAIN" || errorCode === "WRONG_TENANT") ? (
-        <p className="mt-2 text-sm text-body">
+        <p className="mt-2 text-sm text-body leading-[22px]">
           This account may belong to another college.{" "}
           <a href="https://42lms.com/login" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Use the main sign-in page (42lms.com)
@@ -441,7 +441,7 @@ export function LoginForm({
       ) : (
         <form onSubmit={verify} className="mt-5 space-y-4" noValidate>
           {attempt.requiresSecondFactor ? (
-            <p className="m-0 text-sm text-body">
+            <p className="m-0 text-sm text-body leading-[22px]">
               Administrator sign-in needs two codes. We texted one to{" "}
               <strong className="text-foreground">
                 {attempt.maskedPhone}
@@ -454,7 +454,7 @@ export function LoginForm({
               {Math.round(attempt.expiresInSeconds / 60)} minutes.
             </p>
           ) : (
-            <p className="m-0 text-sm text-body">
+            <p className="m-0 text-sm text-body leading-[22px]">
               We sent a 6-digit code to{" "}
               <strong className="text-foreground">
                 {attempt.maskedContact}
