@@ -274,7 +274,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        </section>
       </div>
       <section className="border-b border-border py-4">
-       <h3 className="font-semibold">Resume and match score</h3>
+       <h3 className="text-base font-semibold text-heading">Documents &amp; notes</h3>
+       <h4 className="mt-3 font-semibold">Resume</h4>
        <p className="mt-2 text-sm text-body">{detail.resume.reason}</p>
        {privateResumeUrl ? (
         <Button variant="secondary" type="button"
@@ -283,22 +284,6 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          Resume Preview
         </Button>
        ) : null}
-       <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
-       <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
-       <Button variant="secondary" type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
-        onClick={()=>void rescreen()}
-        className="mt-3">
-        {rescreening?"Re-screening…":"Re-screen"}
-       </Button>
-       <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
-       {rescreenResult?<div role="status" className="mt-3 space-y-2 border-y border-border py-3">
-        <p className="font-semibold">Current eligibility: {rescreenResult.status}</p>
-        {rescreenResult.checks.length?<ul className="space-y-1 text-sm">
-         {rescreenResult.checks.map((check,i)=><li key={i}>
-          {check.criterion}: {check.status} · {check.detail}
-         </li>)}</ul>:<p>No individual policy checks were recorded.</p>}
-        <p className="text-xs text-muted-foreground">Reviewed {when(rescreenResult.reviewedAt)}</p>
-       </div>:null}
       </section>
       <section className="border-b border-border py-4">
        <h3 className="font-semibold">Assessment Link</h3>
@@ -320,20 +305,6 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </section>
       {linkNotice?<p role="status" className="text-sm text-body">{linkNotice}</p>:null}
       <section className="border-b border-border py-4">
-       <h3 className="font-semibold">Interview scheduling</h3>
-       <p className="mt-1 text-sm text-body">Schedule or edit an interview, record completed/no-show feedback, notify the learner and download a calendar invitation.</p>
-       <div className="mt-3 flex flex-wrap gap-3">
-        <Button type="button" variant="secondary" onClick={()=>void openCandidateInterviews()}>
-         Manage candidate interviews
-        </Button>
-        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
-         (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
-         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9 text-sm">
-         Full interview schedule
-        </a>
-       </div>
-      </section>
-      <section className="border-b border-border py-4">
        <h3 className="font-semibold">Offer history</h3>
        {detail.offers.length?<ul className="mt-2 divide-y divide-border border-y border-border text-sm">{detail.offers.map(o=>
         <li key={o.id} className="min-w-0 space-y-2 break-words py-3">
@@ -343,7 +314,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
           <p className="text-xs text-muted-foreground">Legacy forms accepted HTTP links. For applicant safety, only HTTPS offer-letter links can be attached. This stores the URL on the selected issued or accepted offer without changing its status.</p>
           <label className="grid gap-2 text-[13px] text-body font-semibold leading-4">Offer-letter HTTPS link
-           <Input type="url" placeholder="https://..." value={letterInput[o.id]??""}
+           <Input type="url" placeholder="https://... link to the offer letter document" value={letterInput[o.id]??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
             />
           </label>
@@ -383,6 +354,55 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        </p>:null}
        {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
       </section>
+      <section className="border-b border-border py-4" aria-label="Screening">
+       <h3 className="text-base font-semibold text-heading">Screening</h3>
+       {detail.screening?<div className="mt-3 space-y-1 text-sm text-body">
+        <p><strong>Current screening:</strong> {detail.screening.status}</p>
+        {detail.screening.candidateMessage?<p className="whitespace-pre-wrap">Candidate feedback: {detail.screening.candidateMessage}</p>:null}
+        {detail.screening.internalReason?<p className="whitespace-pre-wrap">Internal screening reason: {detail.screening.internalReason}</p>:null}
+        {detail.screening.decidedAt?<p>Last screening decision: {when(detail.screening.decidedAt)}</p>:null}
+       </div>:<p className="mt-2 text-sm text-muted-foreground">No screening decision recorded.</p>}
+       {detail.scoring.available&&detail.scoring.score!==null&&detail.scoring.score!==undefined?
+         <p className="mt-2 text-sm">
+          Match Score: {Math.round(detail.scoring.score*100)}%
+          {detail.scoring.partial?<span title="Partial score: some matching evidence was unavailable."
+           className="ml-2 rounded-full border border-amber-400 bg-amber-50 px-2 py-1 text-xs font-semibold text-amber-800">Partial</span>:null}
+         </p>:
+         <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>}
+       <p className="mt-2 text-xs text-muted-foreground">
+        Historical screening scores are only displayed when backed by persisted evidence. Eligibility rechecks are separate from a hiring decision.
+       </p>
+       <Button variant="secondary" type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
+        onClick={()=>void rescreen()}
+        className="mt-3">
+        {rescreening?"Re-screening…":"Re-screen"}
+       </Button>
+       <p className="mt-1 text-xs text-muted-foreground">Re-screen checks recorded academic eligibility under current policy. It does not fabricate a match score or reverse an existing screening decision.</p>
+       {rescreenResult?<div role="status" className="mt-3 space-y-2 border-y border-border py-3">
+        <p className="font-semibold">Current eligibility: {rescreenResult.status}</p>
+        {rescreenResult.checks.length?<ul className="space-y-1 text-sm">
+         {rescreenResult.checks.map((check,i)=><li key={i}>
+          {check.criterion}: {check.status} · {check.detail}
+         </li>)}</ul>:<p>No individual policy checks were recorded.</p>}
+        <p className="text-xs text-muted-foreground">Reviewed {when(rescreenResult.reviewedAt)}</p>
+       </div>:null}
+
+      </section>
+      <section className="border-b border-border py-4">
+       <h3 className="font-semibold">Interview scheduling</h3>
+       <p className="mt-1 text-sm text-body">Schedule or edit an interview, record completed/no-show feedback, notify the learner and download a calendar invitation.</p>
+       <div className="mt-3 flex flex-wrap gap-3">
+        <Button type="button" variant="secondary" onClick={()=>void openCandidateInterviews()}>
+         Manage candidate interviews
+        </Button>
+        <a href={basePath+"/jobs/"+encodeURIComponent(jobId)+
+         (basePath==="/admin/placements"?"/schedule":"/interviews")+"?applicationId="+encodeURIComponent(applicationId)}
+         className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-teal-deep)] underline md:min-h-9 text-sm">
+         Full interview schedule
+        </a>
+       </div>
+      </section>
+      <h3 className="mt-4 text-base font-semibold text-heading">History</h3>
       {sections.map(section=><Disclosure key={section.label} title={section.label} className="border-b border-border py-2" contentClassName="pb-3">
         {section.rows.length?<ol className="mt-3 divide-y divide-border text-sm">{section.rows.map((event,index)=>
           <li key={index} className="min-w-0 break-words py-3">
