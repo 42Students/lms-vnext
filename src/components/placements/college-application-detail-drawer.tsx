@@ -90,6 +90,17 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
   window.addEventListener("beforeunload",warn);
   return ()=>window.removeEventListener("beforeunload",warn);
  },[dirty]);
+ function editNote(id?:string){
+  const original=detail?.notes.find(entry=>entry.id===id);
+  setNote(original?.body??"");setAmendsNoteId(id??null);
+  setNoteError("");setSuccess("");setNoteModalOpen(true);
+ }
+ function requestNoteClose(){
+  if(saving)return;
+  const original=detail?.notes.find(entry=>entry.id===amendsNoteId)?.body??"";
+  if(note.trim()!==original.trim()){setConfirmNoteDiscard(true);return;}
+  setNote("");setAmendsNoteId(null);setNoteModalOpen(false);
+ }
  function requestClose(){
   if(saving||savingLetter)return;
   if(dirty)setConfirmDiscard(true);
@@ -141,7 +152,8 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
    }
    await apiFetch(endpoint,{method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({body:note.trim(),...(amendsNoteId?{amendsNoteId}:{})})});
-   setNote("");setAmendsNoteId(null);await reload();setSuccess("Notes updated");
+   setNote("");setAmendsNoteId(null);setNoteModalOpen(false);
+   await reload();setSuccess("Notes updated");
    showToast({tone:"success",title:"Notes updated"});
   }catch(reason){
    const explanation=reason instanceof Error?reason.message:"Please retry.";
@@ -343,33 +355,33 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
         <p className="mt-2 text-sm text-body">No issued offers.</p>}
       </section>
       <section className="border-b border-border py-4">
-       <h3 className="font-semibold">Internal Notes</h3>
-       <p className="mt-1 text-xs text-muted-foreground">Visible only to the college placement team; correcting a note adds a new version and preserves its history.</p>
+       <h4 className="font-semibold">Internal Notes</h4>
+       <p className="mt-1 text-xs text-muted-foreground">
+        Visible only to the college placement team. Edits append a new version so the previous entry remains in history.
+       </p>
+       <div className="mt-3 flex min-w-0 flex-wrap gap-2">
+        <Button variant="secondary" type="button" onClick={()=>editNote()}
+         className="min-h-11 md:min-h-9">Add internal notes</Button>
+        {detail.internalNoteVersion?<Button variant="secondary" type="button"
+          onClick={()=>editNote(detail.internalNoteVersion??undefined)}
+          className="min-h-11 md:min-h-9">Edit Internal Notes</Button>:null}
+       </div>
        {detail.notes.length>3?<p id="application-notes-scroll-cue" className="mt-2 text-xs text-muted-foreground">More internal notes below ↓</p>:null}
-       <div tabIndex={0} role="region" aria-label="Internal notes history"
+       <div tabIndex={detail.notes.length>3?0:undefined} role="region" aria-label="Internal notes history"
         aria-describedby={detail.notes.length>3?"application-notes-scroll-cue":undefined}
-        className="mt-3 max-h-48 space-y-2 overflow-y-auto overscroll-contain pb-6 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">{detail.notes.map(n=>
-        <div key={n.id} className="border-b border-border py-2 text-sm">
-         <p>{n.body}</p><p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
-         <Button variant="secondary" type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
-          className="mt-1">
-          Edit Internal Notes
-         </Button>
-        </div>)}</div>
-       <label className="mt-3 grid gap-2 text-[13px] font-semibold text-body leading-4">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
-        <Textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
-         className="w-full"/></label>
-       {noteError?<p role="alert" className="text-sm text-error">{
-        noteError
-       }</p>:null}
-       {success?<p role="status" className="text-sm text-body">{success}</p>:null}
-<div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-       <Button variant="primary" type="button" disabled={saving||!note.trim()} onClick={()=>void save()}
-        className="min-h-11 w-full sm:w-auto md:min-h-9">
-         {saving?"Saving…":amendsNoteId?"Save correction":"Add note"}</Button>
-       {amendsNoteId?<Button variant="secondary" type="button" onClick={()=>{setAmendsNoteId(null);setNote("");}}
-         className="min-h-11 w-full sm:w-auto md:min-h-9">Cancel correction</Button>:null}
-</div>
+        className="mt-3 max-h-48 space-y-2 overflow-y-auto overscroll-contain pb-6 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">
+        {detail.notes.map(n=><div key={n.id} className="border-b border-border py-2 text-sm">
+          <p className="whitespace-pre-wrap break-words">{n.body}</p>
+          <p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
+          <Button variant="secondary" type="button" onClick={()=>editNote(n.id)}
+            className="mt-1">Edit Internal Notes</Button>
+         </div>)}
+        {!detail.notes.length?<p className="text-sm text-muted-foreground">No internal notes yet.</p>:null}
+       </div>
+       {detail.notesHasMore?<p className="mt-2 text-xs text-muted-foreground" role="status">
+        Older notes exist beyond the first 100 entries. Open the full application audit log for complete history.
+       </p>:null}
+       {success?<p role="status" className="mt-2 text-sm text-body">{success}</p>:null}
       </section>
       {sections.map(section=><Disclosure key={section.label} title={section.label} className="border-b border-border py-2" contentClassName="pb-3">
         {section.rows.length?<ol className="mt-3 divide-y divide-border text-sm">{section.rows.map((event,index)=>
@@ -380,6 +392,34 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       </Disclosure>)}
     </div>:null}
   </Dialog>
+  <Dialog open={noteModalOpen} onOpenChange={next=>{if(!next)requestNoteClose();}}
+   title="Edit Internal Notes"
+   description="College placement team only. Corrections append a versioned history record rather than overwriting earlier notes."
+   className="max-w-[38rem]">
+   {amendsNoteId?<p className="text-sm text-body">
+     Correcting an existing note. This creates a new audit version and preserves the previous text.
+   </p>:null}
+   <label className="mt-3 grid gap-2 text-[13px] font-semibold text-body">
+    Internal Notes
+    <Textarea rows={6} maxLength={2000} disabled={saving} value={note}
+     placeholder="Add a factual, staff-only application note"
+     onChange={event=>{setNote(event.target.value);setNoteError("");}}
+     className="w-full"/>
+   </label>
+   <p className="mt-1 text-xs text-muted-foreground">{note.length}/2000 characters</p>
+   {noteError?<p role="alert" className="mt-2 text-sm text-error">{noteError}</p>:null}
+   <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:justify-end">
+    <Button variant="secondary" type="button" disabled={saving} onClick={requestNoteClose}>Cancel</Button>
+    <Button variant="primary" type="button" disabled={saving||!note.trim()} onClick={()=>void save()}>
+     {saving?"Saving…":"Save"}
+    </Button>
+   </div>
+  </Dialog>
+  <ConfirmDialog open={confirmNoteDiscard} onOpenChange={setConfirmNoteDiscard}
+   title="Discard unsaved internal notes?"
+   description="Your changes to the internal note have not been saved."
+   confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
+   onConfirm={()=>{setNote("");setAmendsNoteId(null);setNoteModalOpen(false);setConfirmNoteDiscard(false);}}/>
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
     title="Discard unsaved application changes?"
     description="Unsaved offer-letter links and internal notes will be lost."
