@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import { PeopleServiceError } from "@/modules/people/errors";
 import { updateMembershipLifecycleWithRuntime } from "@/modules/people/runtime";
 
 export const runtime = "nodejs";
@@ -42,8 +43,24 @@ export async function PATCH(
       body,
     );
 
-    return NextResponse.json({ person });
+    // A transition is college-membership scoped, not an account-wide ban.
+    // Return the canonical current row for both legacy status indicators and
+    // vNext clients while preserving the pre-existing person envelope.
+    return NextResponse.json({
+      person,
+      membership: person.membership,
+      membershipId: person.membership.id,
+      status: person.membership.status,
+      suspendedAt: person.membership.suspendedAt,
+      suspensionReason: person.membership.suspensionReason,
+    });
   } catch (error) {
+    if (error instanceof PeopleServiceError && error.code === "MEMBERSHIP_NOT_FOUND") {
+      return NextResponse.json({
+        error: "MEMBERSHIP_NOT_FOUND",
+        message: "Not found",
+      }, { status: 404 });
+    }
     return apiErrorResponse(error);
   }
 }
