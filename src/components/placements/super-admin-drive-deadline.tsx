@@ -7,7 +7,7 @@ import {useRouter} from "next/navigation";
 export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:string|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [pendingIso,setPendingIso]=useState<string|null>(null);
- const [saved,setSaved]=useState(false);
+ const [savedIso,setSavedIso]=useState<string|null>(null);
  const inFlightRef=useRef(false);
  function review(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
@@ -31,19 +31,19 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({deadline:pendingIso,confirmed:true}),
    });
-   if(!result.ok)throw new Error("Deadline extension failed.");
-   setPendingIso(null);setSaved(true);router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Deadline extension failed.");}
+   if(!result.ok)throw new Error("Could not extend the deadline");
+   setSavedIso(pendingIso);setPendingIso(null);router.refresh();
+  }catch(e){setError(e instanceof Error?e.message:"Could not extend the deadline");}
   finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="space-y-3"><form onSubmit={review} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="text-base font-semibold">Extend deadline</h2>
   <p className="text-sm text-body">Current deadline: {deadline?new Date(deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" IST":"Not set"}</p>
   <label className="grid w-full max-w-md gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New application deadline (IST)
-   <Input name="deadline" type="datetime-local" required className="w-full" onChange={()=>{setError("");setSaved(false);}}/>
+   <Input name="deadline" type="datetime-local" required className="w-full" onChange={()=>{setError("");setSavedIso(null);}}/>
   </label>
   {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-  {saved?<p role="status" className="text-sm text-success">Deadline extended.</p>:null}
+  {savedIso?<p role="status" className="text-sm text-success">Deadline extended to {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(savedIso))}</p>:null}
   <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy}>
    {busy?"Saving…":"Extend deadline"}</Button>
  </form>

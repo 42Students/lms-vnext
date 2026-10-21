@@ -988,3 +988,12 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-5-018-025/-020 | `src/app/api/projects/[projectId]/activity/route.ts + activity event import` | Reconcile legacy projectId row migration to project scoped subjects/metadata and add optional legacy success envelope if compatibility clients require it.
 - G2-1-034-057 | `src/modules/placements/public-recruiter-invite-accept-service.ts + recruit consent UI` | Design PENDING_HR → JOINED consent lifecycle for existing recruiters while preserving token one-time use and verified college scope.
+
+- G2-8-029-009/-048 | `src/db/schema/projects.ts + template history importer` | Preserve legacy actionType, changedAt and full snapshot JSON/lifecycle independently of mutable current template header; source service cannot infer missing history.
+- G2-2-019-070 | `src/modules/announcements/service.ts` | Supply persisted cancelledAt/CANCELLED status to visibility model and recipient gating, update admin filters as needed.
+
+- G2-19-020-027 / G2-4-021-001 | `src/modules/bug-tracker/readiness.ts + deployment` | Verify DB10 migration and acceptance before enabling tracker flag; not confirmed.
+- G2-17-030-012/-035 | `src/components/placements/placement-operations-overview.tsx + deadline API` | Add per-drive More actions and authorized Super Admin acting-college deadline endpoint.
+
+- G2-12-017-021/-062 | `src/modules/projects/task-comment-service.ts + comment schema` | Confirm eligible active non-assignee learner versus observer read-only permissions and persist immutable author/task snapshots on comment rows; activity metadata snapshot added.
+- G2-5-019-014 | `src/modules/people/college-student-detail-service.ts` | Add active term/semester mapping and historical class/cohort projection once academic period ownership verified.

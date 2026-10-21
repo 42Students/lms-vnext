@@ -24,5 +24,5 @@ export async function getSuperAdminTemplateVersionHistory(context: RequestContex
       eq(projectTemplateVersions.version, template.currentVersion))).limit(1),
   ]);
   // History contains global template metadata, never college-assignment identifiers or contacts.
-  return { paging, detail: { template, versions, currentVersion: currentRows[0] ?? null, assignments: [], assignedColleges: [] } };
+  return { message:"Project template versions retrieved",paging, detail: { template, versions, currentVersion: currentRows[0] ?? null, assignments: [], assignedColleges: [] } };
 }
