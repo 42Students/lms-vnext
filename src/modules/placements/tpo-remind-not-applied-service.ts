@@ -77,13 +77,17 @@ export async function getTpoNonApplicantReminderPreview(context:RequestContext,r
    gt(activityEvents.createdAt,placementReminderCooldownCutoff(now)))).limit(1);
  const allowed=job.status==="PUBLISHED"&&(!job.applicationDeadline||job.applicationDeadline>now);
  if(!allowed)return {jobId:job.id,day,count:0,allowed:false,alreadySent:Boolean(past),
-  previewToken:null,reason:job.status!=="PUBLISHED"?"Drive is not published":"Application deadline has passed"};
+  previewToken:null,canRemind:false,
+  reason:job.status!=="PUBLISHED"?"Drive is not published":"Application deadline has passed"};
  const recipients=await getDb().transaction(async tx=>{
   await requireTpoJobActor(tx,context);
   return candidateAudience(tx,context,job);
  },{accessMode:"read only"});
+ const disabledReason=past?"This drive was reminded within the past 20 hours.":
+  recipients.length===0?"No registered eligible students are awaiting an application.":null;
  return {jobId:job.id,day,count:recipients.length,allowed:true,alreadySent:Boolean(past),
-  previewToken:placementReminderPreviewToken(job.id,day,recipients),reason:null};
+  canRemind:disabledReason===null,
+  previewToken:placementReminderPreviewToken(job.id,day,recipients),reason:disabledReason};
 }
 export async function remindTpoNonApplicants(context:RequestContext,rawJobId:unknown,raw:unknown){
  const input=tpoRemindNotAppliedSchema.parse(raw),job=await scopedJob(context,rawJobId);
