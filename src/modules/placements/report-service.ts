@@ -177,6 +177,7 @@ export async function getPlacementReportWorkspace(
       companyId: placementCompanies.id,
       companyName: placementCompanies.name,
       employmentType: placementJobs.employmentType,
+      status:placementJobs.status,
       jobTypeLabel:placementJobs.jobTypeLabel,
       countsAsPlaced: placementJobs.countsAsPlaced,
     })
@@ -301,6 +302,7 @@ export async function getPlacementReportWorkspace(
           jobId: placementApplications.jobId,
           membershipId: placementApplications.membershipId,
           status: placementOffers.status,
+          releasedAt:placementOffers.releasedAt,
           kind: placementOffers.kind,
           annualCtcInr: placementOffers.annualCtcInr,
           joiningStatus: placementJoiningOutcomes.status,
@@ -414,6 +416,7 @@ export async function getPlacementReportWorkspace(
       jobId: row.jobId,
       membershipId: row.membershipId,
       status: row.status,
+      releasedAt:row.releasedAt,
       kind: row.kind,
       annualCtcInr: row.annualCtcInr,
       joiningStatus: row.joiningStatus,

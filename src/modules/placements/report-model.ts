@@ -19,6 +19,7 @@ export type PlacementReportJob = {
   companyId: string;
   companyName: string;
   employmentType: string;
+  status?: string;
   jobTypeLabel?: string|null;
   countsAsPlaced?: boolean;
 };
@@ -36,6 +37,7 @@ export type PlacementReportOffer = {
   jobId: string;
   membershipId: string;
   status: string;
+  releasedAt?: Date | null;
   annualCtcInr: number | null;
   joiningStatus: string | null;
   kind?: string;
@@ -63,21 +65,25 @@ export type PlacementReportFacts = {
 
 export type PlacementReportMetrics = {
   drives: number;
+  liveDrives?: number | null;
   registered: number;
   applicants: number;
   applications: number;
   shortlisted: number;
   rejected: number;
   offers: number;
+  activeReleasedOffers?: number | null;
   acceptedOffers: number;
   declinedOffers: number;
   withdrawnOffers: number;
   studentsAccepted: number;
+  studentsAcceptedAnyType?: number;
   studentsPlaced: number;
   joined: number;
   deferred: number;
   didNotJoin: number;
   placementRatePercent: number | null;
+  placementRateOneDecimal?: number | null;
   studentsWithPackage?: number;
   averagePackageInr: number | null;
   medianPackageInr: number | null;
@@ -156,7 +162,7 @@ function validPackages(
     (value): value is number =>
       typeof value === "number" &&
       Number.isFinite(value) &&
-      value >= 0,
+      value > 0,
   );
 }
 
@@ -316,9 +322,16 @@ export function summarizePlacementReports(
   const applicants = distinct(
     applications.map((application) => application.membershipId),
   );
+  const placementRateOneDecimal=registrations.length===0?null:
+    Math.round((studentsPlaced.length/registrations.length)*1000)/10;
+  // A monotonic historical funnel requires audited stage transitions,
+  // not the final/current application screening snapshot.
+  const liveDrives=jobs.every(job=>job.status!==undefined)
+    ?jobs.filter(job=>job.status==="PUBLISHED").length:null;
 
   const metrics: PlacementReportMetrics = {
     drives: jobs.length,
+    liveDrives,
     registered: registrations.length,
     applicants: applicants.length,
     applications: applications.length,
@@ -329,6 +342,9 @@ export function summarizePlacementReports(
       (application) => application.screeningStatus === "REJECTED",
     ).length,
     offers: offers.length,
+    activeReleasedOffers:offers.some(offer=>offer.releasedAt===undefined)
+      ?null:offers.filter(offer=>offer.releasedAt!=null &&
+        (offer.status==="ISSUED"||offer.status==="ACCEPTED")).length,
     acceptedOffers: accepted.length,
     declinedOffers: offers.filter(
       (offer) => offer.status === "DECLINED",
@@ -340,6 +356,7 @@ export function summarizePlacementReports(
       jobsById.get(offer.jobId)?.countsAsPlaced ??
         (jobsById.get(offer.jobId)?.employmentType === "FULL_TIME"),
     ).map((offer) => offer.membershipId)).length,
+    studentsAcceptedAnyType:distinct(accepted.map(offer=>offer.membershipId)).length,
     studentsPlaced: studentsPlaced.length,
     joined: accepted.filter(
       (offer) => offer.joiningStatus === "JOINED",
@@ -354,6 +371,7 @@ export function summarizePlacementReports(
       studentsPlaced.length,
       registrations.length,
     ),
+    placementRateOneDecimal,
     studentsWithPackage: packages.length,
     averagePackageInr: roundAverage(packages),
     medianPackageInr: median(packages),
@@ -792,7 +810,7 @@ export function summarizePlacementReportDetails(input: {
       (value): value is number =>
         value !== null &&
         Number.isFinite(value) &&
-        value >= 0,
+        value > 0,
     );
 
   const bands: PlacementReportCtcBand[] = [
