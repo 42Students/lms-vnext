@@ -69,7 +69,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to update questions.");}
   finally{setBusy(false);}
  }
- return <section className="space-y-2">
+ return <section className="min-w-0 space-y-2">
   <Button variant="secondary" type="button" disabled={busy||loading} onClick={()=>open?(dirty?window.confirm("Discard unsaved Quiz question changes?")&&(setOpen(false),setDirty(false)):setOpen(false)):void load()}
    className="min-h-11 md:min-h-9">
    {loading?"Loading…":open?"Close questions":"Edit questions"}</Button>

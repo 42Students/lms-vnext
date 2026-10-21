@@ -37,7 +37,7 @@ export function CollegeQuizAttempts({quizId,offeringId,specificDeliveryId,delive
   finally{setLoading(false);}
  }
  if(!options.length||status==="DRAFT")return null;
- return <div className="mt-2 space-y-2">
+ return <div className="min-w-0 mt-2 space-y-2">
   {options.length>1?<label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
    <Select value={chosen.deliveryId} disabled={loading} onChange={e=>{
     setDeliveryId(e.target.value);setOpened(false);setAttempts([]);setLearnerSearch("");setPage(1);setHasMore(false);}}
