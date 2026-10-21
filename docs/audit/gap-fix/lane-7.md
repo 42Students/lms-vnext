@@ -127,3 +127,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-20_student-image-controller.md.md` | G2-20-024-017 reviewed; student-image gallery is still staged only and protected object storage is required. Exact target handoff recorded, no schema/verification/gallery mutation. **Not fixed**, no execution/CI.
 
 - `NEW_docs_audit_gap2_lane-20_student-image.md.md` | G2-20-015-025 reviewed; student-image gallery is still staged only and protected object storage is required. Exact target handoff recorded, no schema/verification/gallery mutation. **Not fixed**, no execution/CI.
+
+- `NEW_docs_audit_gap2_lane-6_project-template-college.md.md` | 1/1 findings reviewed and routed to Projects/schema legacy assignment import owner. No historical null assignedBy forged; product decision for explicit system actor. **Handoff, not fixed**. No tests/CI.
+
+- `NEW_docs_audit_gap2_lane-2_temporary-sms-outage-recovery.md.md` | 3/3 findings reviewed and routed to Exotel SMS provider/diagnostics owner. No temporary test OTP bypass revived; privacy-safe provider warning remains intentional. **Handoff, not fixed**. No tests/CI.
