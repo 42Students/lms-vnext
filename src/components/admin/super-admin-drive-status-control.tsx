@@ -10,7 +10,7 @@ import {useToast} from "@/components/ui/toast";
 /** Only use the currently authorized status route. Reopen is not a
  * Super Admin capability until the selected-college mutation supports it. */
 export function SuperAdminDriveStatusControl({jobId,status}:{
- jobId:string;status:"DRAFT"|"PUBLISHED"|"CLOSED"|"ARCHIVED"|"CANCELLED";
+ jobId:string;status:string;
 }){
  const router=useRouter();
  const {showToast}=useToast();
