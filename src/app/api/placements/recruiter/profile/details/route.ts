@@ -26,6 +26,18 @@ export async function PATCH(request:Request){
         phone:fields.phone??contactMobile};
     }
   }
+  // Legacy RecruiterSelfController returns this exact 400 error contract
+  // before attempting a mutation, not a misleading stale-version response.
+  if(normalized&&typeof normalized==="object"&&!Array.isArray(normalized)){
+    const candidate=(normalized as Record<string,unknown>).phone;
+    if(typeof candidate==="string"&&candidate.trim()&&
+       !/^(?:[0-9]{10}|\+91[0-9]{10})$/.test(candidate.trim())){
+      return NextResponse.json({
+        error:"INVALID_MOBILE",
+        message:"Enter a valid 10-digit mobile number, or leave it blank",
+      },{status:400,headers:{"Cache-Control":"private, no-store"}});
+    }
+  }
   const profile=await updateOwnRecruiterProfileDetails(
     await getCurrentRequestContext(),normalized);
   return NextResponse.json({profile,workEmailEditable:false,
