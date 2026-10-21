@@ -172,6 +172,10 @@ export const cohorts = pgTable(
       table.programId,
       sql`lower(${table.code})`,
     ),
+    /** Legacy batch identity used case-insensitive name under one program. */
+    uniqueIndex("cohorts_program_active_name_uq")
+      .on(table.programId, sql`lower(${table.name})`)
+      .where(sql`${table.status} <> 'ARCHIVED'`),
     index("cohorts_program_status_idx").on(
       table.programId,
       table.status,
