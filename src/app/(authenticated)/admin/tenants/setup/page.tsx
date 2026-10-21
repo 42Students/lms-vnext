@@ -1,4 +1,3 @@
-import {LaunchReadinessChecklist} from "@/components/admin/launch-readiness-checklist";
 import {PageBackLink} from "@/components/ui/page-back-link";
 import Link from "next/link";
 import {notFound} from "next/navigation";
@@ -239,10 +238,7 @@ export default async function SuperAdminTenantSetup({
      </Banner>}
     </section>
    </section>
-   <LaunchReadinessChecklist collegeId={college.id} collegeName={college.name}
-     readiness={readiness?.evaluation??null} loadFailed={readinessFailed}
-     logo={brandingFailed?"UNKNOWN":branding?.uploadedLogoUrl||branding?.logoUrl?"PRESENT":"MISSING"} />
-   <section aria-label="Launch checklist" className="space-y-3">
+   <section id="college-readiness" aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Launch checklist</h2>
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Inspect persisted readiness →</Link>
@@ -257,8 +253,9 @@ export default async function SuperAdminTenantSetup({
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<EmptyState title="Pick a college first"
-   description="Choose a college in the header to see what needs to be set up before launch. No other college will be selected automatically."
-   action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Create or select a college →</Link>}/>}
+  </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<Banner tone="info" action={<Link href={tabLink("STRUCTURE")} className="font-semibold text-link underline">Create or select a college →</Link>}>
+   Pick a college first. Select a college in the Super Admin scope switcher to configure its web address, sign-in method and branding. No tenant is guessed.
+  </Banner>}
+  </div>
  </div>;
 }
