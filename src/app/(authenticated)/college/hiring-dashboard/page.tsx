@@ -28,7 +28,7 @@ export default async function CollegeHiringDashboardPage({
         Placement Evidence by Department
       </Link>} />
       <ErrorState title="Invalid report search" description="No placement metrics were loaded."
-        action={<Link href="/college/hiring-dashboard" className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+        action={<Link href="/college/hiring-dashboard" className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto md:min-h-9">Clear filters</Link>} />
     </div>;
   }
   const workspace = await getPlacementReportWorkspace(context, {
