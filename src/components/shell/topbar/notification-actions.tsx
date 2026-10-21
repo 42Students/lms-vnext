@@ -77,6 +77,21 @@ export function TopbarNotifications({ config }: { config: TopbarConfig }) {
     };
   }, [update]);
 
+  useEffect(()=>{
+    if(typeof EventSource==="undefined")return;
+    // Cookie-authenticated same-origin SSE: never put a bearer in the URL.
+    const connection=new EventSource("/api/notifications/stream");
+    const changed=()=>{
+      window.dispatchEvent(new Event("lms:notifications-updated"));
+      void update();
+    };
+    connection.addEventListener("notifications",changed);
+    return ()=>{
+      connection.removeEventListener("notifications",changed);
+      connection.close();
+    };
+  },[update]);
+
   if (config.portal === "tpo") return <TpoNotificationCluster/>;
   return <div className={style.actions + " min-w-0 shrink-0"} aria-label="Messages and notifications">
     {config.messagesHref ? <IconLink href={config.messagesHref} label="Messages"
