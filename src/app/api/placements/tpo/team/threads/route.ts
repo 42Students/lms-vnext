@@ -9,12 +9,37 @@ import {TpoTeamAddPeopleRequiredError} from "@/modules/placements/tpo-team-asks-
 export const runtime="nodejs";
 export async function POST(request:Request){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
- const form=await request.formData().catch(()=>null);
+ const isJson=request.headers.get("content-type")?.toLowerCase().includes("application/json")??false;
+ let source:Record<string,unknown>={};
+ if(isJson){
+  const raw=await request.text().catch(()=>"");
+  if(raw.length>16_000)return NextResponse.json({
+    error:"INVALID_BODY",message:"Team conversation request is too large.",
+  },{status:413});
+  try{
+   const json:unknown=JSON.parse(raw);
+   if(json&&typeof json==="object"&&!Array.isArray(json))source=json as Record<string,unknown>;
+  }catch{/* Handled as invalid body below. */}
+ }else{
+  const form=await request.formData().catch(()=>null);
+  if(form){
+   source={
+    recipientMembershipId:form.get("recipientMembershipId"),
+    topic:form.get("topic"),firstMessage:form.get("firstMessage")||undefined,
+    kind:form.get("kind")||undefined,contextId:form.get("contextId")||undefined,
+    participantMembershipIds:form.getAll("participantMembershipIds").map(String),
+    idempotencyKey:form.get("idempotencyKey")||undefined,
+   };
+  }
+ }
  const parsed=internalThreadSchema.safeParse({
-  recipientMembershipId:form?.get("recipientMembershipId"),
-  topic:form?.get("topic"),
-  firstMessage:form?.get("firstMessage")||undefined,
-  idempotencyKey:form?.get("idempotencyKey")||undefined,
+  recipientMembershipId:source.recipientMembershipId,
+  topic:source.topic,firstMessage:source.firstMessage??source.message??undefined,
+  ...(source.kind?{kind:source.kind}:{}),
+  ...(source.contextId?{contextId:source.contextId}:{}),
+  ...(Array.isArray(source.participantMembershipIds)?
+    {participantMembershipIds:source.participantMembershipIds}:{}),
+  ...(source.idempotencyKey?{idempotencyKey:source.idempotencyKey}:{}),
  });
  if(!parsed.success)return NextResponse.json({
   error:"INVALID_BODY",message:"Review the recipient, topic and first message.",
@@ -22,8 +47,13 @@ export async function POST(request:Request){
  },{status:400,headers:{"Cache-Control":"private, no-store"}});
  try{
   const thread=await createTpoInternalThread(await getCurrentRequestContext(),parsed.data);
-  if(request.headers.get("accept")?.includes("application/json"))
-   return NextResponse.json({id:thread.id,href:"/tpo/team/"+thread.id});
+  if(isJson||request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json({id:thread.id,thread,
+     href:"/tpo/team/"+thread.id,message:"Team conversation started",
+     navigation:{list:"/tpo/team",thread:"/tpo/team/"+thread.id,
+      about:"/tpo/team/"+thread.id+"?tab=about",
+      messages:"/api/placements/tpo/team/threads/"+thread.id+"/messages"},
+   },{status:201,headers:{"Cache-Control":"private, no-store"}});
   return NextResponse.redirect(new URL("/tpo/team/"+thread.id,request.url),303);
  }catch(error){
   // ADD_PEOPLE is only safe when the scoped team-ask service has verified
