@@ -137,6 +137,10 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!updated)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  // Legacy job types are stored on each drive; a rename must update those records atomically.
+  await tx.update(placementJobs).set({jobTypeLabel:updated.label})
+   .where(and(eq(placementJobs.collegeId,collegeId),
+    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`));
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
    actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.renamed",
@@ -223,6 +227,10 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!saved)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  // Snapshot placement policy on every existing drive sharing this college type.
+  await tx.update(placementJobs).set({countsAsPlaced:input.countsAsPlaced})
+   .where(and(eq(placementJobs.collegeId,collegeId),
+    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`));
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
    eventType:"placements.tpo_job_type.placed_rule_changed",subjectType:"JOB_TYPE",
