@@ -281,25 +281,25 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/components/tpo/tpo-academic-import-preview.tsx`
 - [x] `src/components/tpo/tpo-audit-saved-views.tsx`
 - [x] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-preview.tsx`
-- [ ] `src/components/tpo/tpo-company-create-form.tsx`
-- [ ] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
-- [ ] `src/components/tpo/tpo-grid-column-chooser.tsx`
-- [ ] `src/components/tpo/tpo-home-return-refresh.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-audience-picker.tsx`
-- [ ] `src/components/tpo/tpo-participation-decision-form.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
-- [ ] `src/components/tpo/tpo-student-clipboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
-- [ ] `src/components/tpo/tpo-team-forms.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/ui/confirm-action-dialog.tsx`
-- [ ] `src/components/ui/filter-bar.tsx`
-- [ ] `src/components/ui/form-field.tsx`
-- [ ] `src/components/ui/list-toolbar.tsx`
-- [ ] `src/components/ui/toast.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-preview.tsx`
+- [x] `src/components/tpo/tpo-company-create-form.tsx`
+- [x] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
+- [x] `src/components/tpo/tpo-grid-column-chooser.tsx`
+- [x] `src/components/tpo/tpo-home-return-refresh.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/tpo/tpo-notice-audience-picker.tsx`
+- [x] `src/components/tpo/tpo-participation-decision-form.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-debar.tsx`
+- [x] `src/components/tpo/tpo-team-forms.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/ui/confirm-action-dialog.tsx`
+- [x] `src/components/ui/filter-bar.tsx`
+- [x] `src/components/ui/form-field.tsx`
+- [x] `src/components/ui/list-toolbar.tsx`
+- [x] `src/components/ui/toast.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
