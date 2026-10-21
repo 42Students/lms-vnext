@@ -1186,36 +1186,27 @@ export async function PlacementCalendarWorkspace({
                   </p>
 
                   <div className="mt-2 space-y-1">
-                    {shown.map((event) => {
-                      const href = eventHref(
-                        event,
-                        audience,
-                      );
-
-                      return href ? (
-                        <Link
-                          key={event.id}
-                          href={href}
-                          title={`${eventTime(event.startsAt)} IST · ${event.companyName} · ${event.title}`}
-                          className="block min-h-9 rounded-[var(--lms-control-radius)] bg-primary-subtle px-2 py-1 text-xs font-semibold text-primary-text hover:underline focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"
-                        >
-                          <span className="block truncate">
-                            {eventTime(
-                              event.startsAt,
-                            )}
-                          </span>
-                          <span className="block truncate">
-                            {event.title}
-                          </span>
-                        </Link>
-                      ) : (
-                        <div
-                          key={event.id}
-                          className="rounded-[var(--lms-control-radius)] bg-muted px-2 py-1 text-xs text-body"
-                        >
-                          {event.title}
-                        </div>
-                      );
+                    {shown.map(event=>{
+                      const href=eventHref(event,audience);
+                      const eventLabel=[eventTime(event.startsAt),event.companyName,
+                        event.title].filter(Boolean).join(" · ");
+                      return <details key={event.id} className="group min-w-0 rounded-[var(--lms-control-radius)] bg-primary-subtle text-xs text-primary-text">
+                       <summary title={eventLabel+" (open event details)"}
+                        aria-label={eventLabel+"; press Enter to view details"}
+                        className="min-h-11 cursor-pointer list-none rounded-[var(--lms-control-radius)] px-2 py-1 font-semibold hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
+                        <span className="block truncate">{eventTime(event.startsAt)}{event.status==="DONE"?" · Done":""}</span>
+                        <span className="block truncate">{event.title}</span>
+                       </summary>
+                       <div className="relative z-10 min-w-0 space-y-1 rounded-b-[var(--lms-control-radius)] border border-primary/20 bg-surface px-2 py-2 text-xs text-body">
+                        <strong className="block break-words">{event.title}</strong>
+                        <p className="break-words">{event.companyName} · {eventDateTime(event.startsAt)} IST</p>
+                        {event.venue?<p className="break-words">Venue: {event.venue}</p>:null}
+                        {event.note?<p className="whitespace-pre-wrap break-words">Notes: {event.note}</p>:null}
+                        {href?<Link href={href} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                          Open event →
+                        </Link>:null}
+                       </div>
+                      </details>;
                     })}
 
                     {dayEvents.length > shown.length ? (
