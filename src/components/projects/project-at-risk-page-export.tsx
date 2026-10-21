@@ -5,15 +5,19 @@ import {projectAdminCsv} from "@/modules/projects/project-admin-csv-model";
 type Row={
  id:string; title:string; mentorName:string|null; inactiveDays:number;
  riskReasons:string[]; blockerReason:string|null; lastActivityAt:string;
+ /** Display status from the college-scoped project row; no ID-derived guesses. */
+ status?:string|null;
+ severity?:string|null;
 };
 /** SA-placements-projects-63: export exactly the visible, tenant-scoped page. */
 export function ProjectAtRiskPageExport({rows,collegeId}:{rows:Row[];collegeId:string}){
  function save(){
-  const headings=["Workspace ID","Workspace","Mentor","Severity","Risk reasons",
-   "Inactive days","Blocker","Last activity (UTC)"];
-  const data=rows.map(row=>[row.id,row.title,row.mentorName,
-   row.riskReasons.length>1||row.blockerReason?"Risk":"Watch",
-   row.riskReasons.join("; "),row.inactiveDays,row.blockerReason,row.lastActivityAt]);
+  const headings=["Workspace","Mentor","Status","Severity","Risk reasons"];
+  const data=rows.map(row=>[
+   row.title,row.mentorName??"",row.status??"",
+   row.severity??(row.riskReasons.length>1||row.blockerReason?"Risk":"Watch"),
+   row.riskReasons.join("; "),
+  ]);
   const csv=projectAdminCsv([headings,...data]);
   const blob=new Blob([csv],{type:"text/csv;charset=utf-8"});
   const url=URL.createObjectURL(blob);
