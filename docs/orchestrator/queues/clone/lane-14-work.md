@@ -79,5 +79,5 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-campaign-drafts.ts.md` (edit src/db/schema/tpo-campaign-drafts.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0021_placements_p5_application_history.sql.md` (edit drizzle/0021_placements_p5_application_history.sql; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_organizations.ts.md` (edit src/db/schema/organizations.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0022_placements_p6a_screening.sql.md` (edit drizzle/0022_placements_p6a_screening.sql; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-policy.ts.md` (edit src/db/schema/tpo-policy.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0022_placements_p6a_screening.sql.md` (edit drizzle/0022_placements_p6a_screening.sql; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-policy.ts.md` (edit src/db/schema/tpo-policy.ts; 1 findings; best P1)

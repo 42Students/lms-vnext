@@ -153,3 +153,6 @@
 
 - Placement application historic importer/read model | G2-3-013-044 | Retain 0244 source events separately from native status history, resolve tenant/job/application foreign keys, preserve nullable actor/deleted and varchar50 statuses with original time; never invent actor or reclassify source event as authorized new transition; original 0021 unchanged.
 - Super-admin organization importer/tenant lifecycle service | G2-3-030-067 | Use 0245 source integer org ID for scoped migration only, preserve legacy isDeleted independently from vNext ACTIVE/ARCHIVED; preflight duplicates and tenant college FK before load, no inferred active status.
+
+- Placement auto screening importer and TPO/HR ranking service | G2-13-021-049 | 0246 stores source auto screening rows independent of manual decisions; resolve legacy IDs via authorized application/college, preserve floating score and JSON source skills/exclusions, quarantine bad values and avoid leaking internal metadata into recruiter/learner views. Original 0022 stays unchanged.
+- TPO rules mutation and database replay owner | G2-6-022-045 | Preflight placement_college_rules out-of-bound rows before 0247, preserve CAS and verify simultaneous API/DB limits for held offers 1..5, uplift 0..200, response 12..168; journal registration owned separately.

@@ -51,7 +51,7 @@ export const placementCollegeRules = pgTable(
     ),
     check(
       "placement_college_rules_bounds_ck",
-      sql`${table.maxHeldOffers} >= 1 and ${table.upliftPct} >= 0 and ${table.minResponseHours} >= 1 and ${table.version} >= 0`,
+      sql`${table.maxHeldOffers} between 1 and 5 and ${table.upliftPct} between 0 and 200 and ${table.minResponseHours} between 12 and 168 and ${table.version} >= 0`,
     ),
   ],
 );
