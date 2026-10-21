@@ -8,6 +8,7 @@ import {
   listProjectMeetings,
   scheduleProjectMeeting,
 } from "@/modules/projects/meeting-service";
+import {replaceLegacyProjectMeetingDraftSection} from "@/modules/projects/project-meeting-plan-service";
 
 export const runtime = "nodejs";
 /** Old bulk PUT /{projectId}/meetings maps to this GET collection plus
@@ -92,4 +93,27 @@ export async function POST(
         {status:error.status});
     return apiErrorResponse(error);
   }
+}
+
+/** Old meetings PUT submits the entire draft section with the original token.
+ * Do not fan out into POST/PATCH requests: a partial write would break legacy
+ * replace semantics. Scheduled or completed meetings remain protected.
+ */
+export async function PUT(request:Request,{params}:RouteContext){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ try{
+  const {projectId}=await params;
+  const raw=await request.text();
+  if(raw.length>250000)
+    return NextResponse.json({error:"INVALID_REQUEST"},{status:413});
+  let body:unknown;
+  try{body=JSON.parse(raw);}catch{
+   return NextResponse.json({error:"INVALID_BODY"},{status:400});
+  }
+  const result=await replaceLegacyProjectMeetingDraftSection(
+    await getCurrentRequestContext(),projectId,body);
+  return NextResponse.json({...result,message:result.changed?"Meetings updated":"No changes to save"},
+    {headers:{"Cache-Control":"private, no-store"}});
+ }catch(error){return apiErrorResponse(error);}
 }
