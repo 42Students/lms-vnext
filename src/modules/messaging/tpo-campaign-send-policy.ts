@@ -1,5 +1,17 @@
 import {isValidRecipient} from "./model";
 
+/** Global email suppression is independent of college-local lead opt-out:
+ * the dispatch worker must resolve the stable recipient HMAC from the
+ * normalized live address and read the ACTIVE global suppression row just
+ * before provider send. A missing table/key/query result is UNKNOWN, not
+ * implied clearance. Do not use a tenant-scoped hash as the global key. */
+export type CampaignGlobalSuppressionState="CLEAR"|"SUPPRESSED"|"UNKNOWN";
+export function campaignGlobalEmailSuppressionPermitsDispatch(
+ state:CampaignGlobalSuppressionState,
+):boolean{
+ return state==="CLEAR";
+}
+
 /** T-S2-04: the delivery gate must recheck current lead facts at dispatch. */
 export const TPO_CAMPAIGN_MAX_RECIPIENTS=500;
 export type CampaignRecipientFact={
