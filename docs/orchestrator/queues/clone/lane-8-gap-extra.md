@@ -12,8 +12,8 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L11-U024 (FE page) `docs/legacy-source/frontend/src/pages/tpo/settings.js`
 - [x] L11-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FeatureFlagController.java`
 - [x] L11-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/JobApplications.js`
-- [ ] L12-U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/company/MailDomainResolver.java`
-- [ ] L12-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AssignmentUploadReceipt.java`
+- [x] L12-U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/company/MailDomainResolver.java`
+- [x] L12-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AssignmentUploadReceipt.java`
 - [ ] L12-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/team.js`
 - [ ] L13-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminInboundMailController.java`
 - [ ] L14-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/AppSetting.java`
