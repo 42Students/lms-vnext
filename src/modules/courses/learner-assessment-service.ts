@@ -80,15 +80,16 @@ export async function getLearnerAssessmentOverview(
     const candidates = await getDb().select({id:courses.id,slug:courses.slug,code:courses.code})
       .from(courses).where(inArray(courses.id,ids));
     const matching=candidates.filter(row=>
-      row.slug.toLowerCase()===slug||row.code.toLowerCase()===slug);
+      row.slug?.toLowerCase()===slug||row.code.toLowerCase()===slug);
     if (matching.length!==1) throw new CoursesServiceError("COURSE_NOT_FOUND");
     slugCourseId=matching[0]!.id;
   }
-  const selectedCourseId=learnerAssessmentAuthorizedCourse(options.courseId,deliveries)??slugCourseId;
+  const explicitCourseId=learnerAssessmentAuthorizedCourse(options.courseId,deliveries);
+  const selectedCourseId=explicitCourseId??slugCourseId;
   // An explicit invalid or no-longer-enrolled filter must not silently
   // reset to All courses or select a course from another membership.
   const requestedCourse=options.courseId!==undefined&&options.courseId!==null&&options.courseId!=="";
-  if (requestedCourse && (!selectedCourseId || (slugCourseId && selectedCourseId!==slugCourseId)))
+  if (requestedCourse && (!explicitCourseId || (slugCourseId && explicitCourseId!==slugCourseId)))
     throw new CoursesServiceError("COURSE_NOT_FOUND");
   const requestedDelivery=options.deliveryId===undefined||options.deliveryId===null||
     options.deliveryId===""?null:z.string().uuid().parse(options.deliveryId);
