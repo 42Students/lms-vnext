@@ -72,7 +72,7 @@ export function ProjectSprintPlanEditor({ projectId, releaseId, sprints }: {
     "startDate" | "endDate" | "dueDate">,
     value: string) {
     setDraft(current => current.map(row => row.id === id
-      ? { ...row, [field]: field === "title" ? value : value || null } : row));
+      ? { ...row, [field]: field === "title" || field === "key" ? value : value || null } : row));
   }
   function move(index: number, direction: -1 | 1) {
     const other = index + direction;
