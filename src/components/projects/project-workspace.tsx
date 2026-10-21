@@ -420,7 +420,7 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
 }) {
   return (
     <PageHeader
-            title={workspace.project.title}
+            title={workspace.project.title?.trim()||"Workspace"}
             description={mode==="MENTOR"
               ? [workspace.project.courseLabel??"Course not linked",
                  "Mentor: "+(workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName
@@ -594,7 +594,7 @@ export function ProjectWorkspace({
       {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
-          { label: workspace.project.title },
+          { label: workspace.project.title?.trim()||"Workspace" },
         ]} />
       ) : null}
       {sectionBaseHref ? (
@@ -1090,13 +1090,18 @@ export function ProjectWorkspace({
       {show("sprints") || show("tasks") ? <section className="space-y-3">
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            {mode==="ADMIN"?"Execution":"Releases and Sprints"}
+            {mode==="ADMIN"?(activeSection==="tasks"?"Task plan":activeSection==="sprints"?
+              "Sprint plan":"Execution"):"Releases and Sprints"}
           </h2>
           {mentorReviewHref && !show("overview") ? <Link href={mentorReviewHref}
             className="mt-2 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-primary px-3 text-sm font-semibold text-link">
             Review submission
           </Link> : null}
-          {mode==="ADMIN"?<p className="mt-1 text-sm text-body">Release and sprint execution records.</p>:null}
+          {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
+            {activeSection==="tasks"?
+              "Break the work into clear tasks and review learner submissions below.":
+              "Delivery cadence · Plan work in clear, release-bound increments."}
+          </p>:null}
           {mode==="ADMIN"&&show("sprints")?<section aria-label="Sprint plan summary"
             className="mt-4 space-y-3 border-y border-[var(--lms-canvas-border)] py-4">
             <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Delivery cadence</p>
@@ -1179,15 +1184,14 @@ export function ProjectWorkspace({
           const submitted=[...latest.values()].filter(item=>item.status==="SUBMITTED").length;
           const done=liveTasks.filter(task=>task.status==="DONE").length;
           const active=liveTasks.filter(task=>task.status==="IN_PROGRESS").length;
-          const needsReview=liveTasks.filter(task=>task.status==="IN_REVIEW").length;
           return <div className="space-y-4">
             <section aria-label="Task plan metrics" className="space-y-2">
              <h3 className="text-base font-semibold text-foreground">Task plan</h3>
              <p className="text-sm text-body">Only this workspace’s task plan is updated when you save.</p>
              <dl className="grid grid-cols-2 border-y border-border sm:grid-cols-4">
               {([
-               ["Total tasks",liveTasks.length],["Completed",done],
-               ["In progress",active],["Awaiting review",needsReview],
+               ["Tasks",liveTasks.length],["In progress",active],
+               ["Done",done],["Submissions",workspace.taskSubmissions.length],
               ] as const).map(([name,count])=><div key={name} className="border-b border-border p-3">
                <dt className="text-xs text-body">{name}</dt>
                <dd className="text-xl font-semibold tabular-nums">{count}</dd>
@@ -1889,9 +1893,14 @@ export function ProjectWorkspace({
         {show("resources") ? <section className="space-y-3">
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
+              {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
+                Project references</p>:null}
               <h2 className="m-0 text-lg font-semibold text-foreground">
-                Resources
+                {mode==="ADMIN"?"Resource library":"Resources"}
               </h2>
+              {mode==="ADMIN"?<p className="mt-1 text-sm text-body">
+                Curate the references, files and access guidance this workspace team needs.
+              </p>:null}
               {mode==="LEARNER"?<p aria-label="Resource counts" className="mt-1 text-sm text-body">
                 {workspace.resources.filter(resource=>resource.status!=="ARCHIVED").length} active resources ·
                 {" "}{workspace.resources.filter(resource=>resource.required&&resource.status!=="ARCHIVED").length} required
@@ -1914,6 +1923,9 @@ export function ProjectWorkspace({
             mode={mode} readOnly={readOnly}
             sprints={workspace.sprints.map(item=>({id:item.id,label:item.title}))}
             tasks={workspace.tasks.map(item=>({id:item.id,label:item.title}))}/>
+          {mode==="ADMIN"?<p className="text-xs text-body">
+            Resources are shared with the workspace team.
+          </p>:null}
           <ProjectResourceFilesSection
             projectId={workspace.project.id}
             resources={workspace.resources.filter(item=>item.status==="ACTIVE")
@@ -2147,16 +2159,20 @@ export function ProjectWorkspace({
       {show("audit") ? (
         <section className="space-y-3">
           <div>
+            {mode==="ADMIN"?<p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">
+              Resource activity</p>:null}
             <h2 className="m-0 text-lg font-semibold text-foreground">
-              Activity
+              {mode==="ADMIN"?"See who changed project resources and when":"Activity"}
             </h2>
             <p className="mt-1 text-sm text-body">
-              Task moves, sprint updates and resource changes from your project.
+              {mode==="ADMIN"?
+                "Trace resource changes here, or open the full project audit trail for broader events.":
+                "Task moves, sprint updates and resource changes from your project."}
             </p>
           </div>
 
-          {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?projectId=" + encodeURIComponent(workspace.project.id)}
-            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
+          {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?entityId=" + encodeURIComponent(workspace.project.id) + "&range=all"}
+            className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View audit trail</Link> : null}
           {mode === "ADMIN" ? <ProjectResourceAuditList events={workspace.activity.map(event => ({
             id: event.id, eventType: event.eventType, summary: event.summary,
             subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
