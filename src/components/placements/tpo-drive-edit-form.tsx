@@ -176,6 +176,31 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Role<Input required name="title" defaultValue={job.title} minLength={3} maxLength={100} placeholder="e.g. Systems Engineer" className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={3} className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Location (comma-separated)<Input name="locations" defaultValue={job.locations.join(", ")} className={cls}/></label>
+  <section aria-label="Drive job details" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
+   <h2 className="mb-3 font-semibold text-foreground">The drive</h2>
+   <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Job type
+     <Select name="employmentType" defaultValue={job.employmentType} className={cls}>
+      <option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option>
+      <option value="CONTRACT">Contract</option>
+     </Select>
+    </label>
+    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Work mode
+     <Select name="workMode" defaultValue={job.workMode} className={cls}>
+      <option value="ONSITE">Onsite</option><option value="HYBRID">Hybrid</option><option value="REMOTE">Remote</option>
+     </Select>
+    </label>
+    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Mode
+     <Select name="recruiterDriveMode" defaultValue={job.recruiterDriveMode} className={cls}>
+      <option value="ON_CAMPUS">On campus</option><option value="OFF_CAMPUS">Off campus (company&apos;s site)</option>
+     </Select>
+    </label>
+    <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)] sm:col-span-2 xl:col-span-3">College job type label (optional)
+     <Input name="jobTypeLabel" maxLength={40} defaultValue={job.jobTypeLabel??""}
+      placeholder="e.g. Full-time, Internship" className={cls}/>
+    </label>
+   </div>
+  </section>
   <details className="group min-w-0 border-y border-border py-3">
    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-3 text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
     Compensation and openings <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
@@ -212,6 +237,31 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     </label>)}
    </div>:<p className="text-sm text-muted-foreground">No active batches. Current targeting is unchanged until a batch is available.</p>}
   </fieldset>
+  <section aria-label="Eligibility marks and passing years" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)]">
+   <h2 className="text-base font-semibold text-foreground">Eligibility</h2>
+   <p className="text-xs leading-5 text-body">Marks follow the Students page: verified first; otherwise student-submitted values are flagged as not verified. Use verified marks only to require confirmed evidence.</p>
+   <label className="flex min-h-11 items-center gap-3 text-sm font-semibold">
+    <Checkbox name="verifiedMarksOnly" defaultChecked={job.verifiedMarksOnly} className="h-4 w-4 accent-primary"/>
+    Require verified marks only
+   </label>
+   <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+    {([
+     ["minTenthPctBasisPoints","10th minimum (%)",job.minTenthPctBasisPoints],
+     ["minTwelfthPctBasisPoints","12th minimum (%)",job.minTwelfthPctBasisPoints],
+     ["minDiplomaPctBasisPoints","Diploma minimum (%)",job.minDiplomaPctBasisPoints],
+     ["minUndergraduatePctBasisPoints","Undergraduate minimum (%)",job.minUndergraduatePctBasisPoints],
+     ["minPostgraduatePctBasisPoints","Postgraduate minimum (%)",job.minPostgraduatePctBasisPoints],
+    ] as const).map(([name,label,value])=><label key={name} className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">{label}
+     <Input name={name} type="number" min={0} max={100} step="0.01"
+      defaultValue={value===null?"":value/100} className={cls}/>
+    </label>)}
+   </div>
+   <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">Passing years
+    <Input name="allowedPassingYears" defaultValue={job.allowedPassingYears.join(", ")}
+     placeholder="e.g. 2026, 2027" className={cls}/>
+   </label>
+   <p className="text-xs leading-5 text-muted-foreground">Separate years with commas. Leave blank for no passing-year restriction. Other program and academic targeting is managed from the drive workspace.</p>
+  </section>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"
