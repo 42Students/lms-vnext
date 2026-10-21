@@ -4,7 +4,7 @@ import { eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, colleges, membershipRoles, organizations,
-  systemRoles, users,
+  users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -76,7 +76,7 @@ export async function seedDevE2eCollegeFixtures(context: RequestContext) {
 
       for (const identity of identities) {
         // +1 555-0100..0199 is a fictional-use phone range, not a real recipient.
-        const phone = `+1555010${fixture.tag === "a" ? "1" : "2"}${String(identity.phoneIndex).padStart(2, "0")}`;
+        const phone = `+1202555010${fixture.tag === "a" ? identity.phoneIndex : identity.phoneIndex + 3}`;
         const identityUid = `e2e-seed-${fixture.tag}-${identity.tag}`;
         const [existingUser] = await tx.select({ id: users.id, phoneE164: users.phoneE164 })
           .from(users).where(eq(users.identityUid, identityUid)).limit(1);
@@ -125,7 +125,6 @@ export async function seedDevE2eCollegeFixtures(context: RequestContext) {
     // The caller must already be a global SUPER_ADMIN. Do not grant that
     // system role to any seeded account; exercising privileged login uses
     // the authenticated operator rather than inventing an admin bypass.
-    void systemRoles;
     return { created, reused, colleges: collegesResult, accounts };
   });
 }
