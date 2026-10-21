@@ -44,7 +44,7 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
   read:row=>tpoStudentDisplayLabel(row.journeyState)},
  {key:"gender",label:"Gender",read:row=>row.profileFacts?.gender??"Not recorded"},
  {key:"dob",label:"Birth year",read:row=>row.profileFacts?.birthYear??"Not recorded"},
- {key:"phone",label:"Phone (last four)",read:row=>row.profileFacts?.phoneMasked??"Not recorded"},
+ {key:"phone",label:"Phone (masked)",read:row=>row.profileFacts?.phoneMasked??"Not recorded"},
  {key:"degree",label:"Degree",read:row=>row.profileFacts?.degree??"Not recorded"},
  {key:"entranceExam",label:"Entrance exam",read:row=>row.profileFacts?.entranceExam??"Not recorded"},
  {key:"pg",label:"PG % (profile entry)",read:row=>row.profileFacts?.pgPercentage??"Not recorded"},
@@ -62,8 +62,8 @@ const columns:readonly TpoGridColumn<TpoStudentRow>[]=[
   {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"}]},
   read:row=>row.verification.status==="UNKNOWN"?"Verification unavailable":row.verification.status==="WAITING"? "Waiting: "+row.verification.waitingSections.join(" / "):row.verification.status==="SENT_BACK"?"Sent back":row.verification.status==="VERIFIED"?"Verified Education and Identity":"Not verified"},
  {key:"cgpa",label:"CGPA",read:row=>row.cgpa},
- {key:"tenth",label:"10th %",read:row=>row.tenthPct},
- {key:"twelfth",label:"12th %",read:row=>row.twelfthPct},
+ {key:"tenth",label:"10th %",tooltip:row=>row.marksVerified===true?"Academic marks marked verified":row.marksVerified===false?"Academic marks not verified":"Verification unavailable",read:row=>row.tenthPct},
+ {key:"twelfth",label:"12th %",tooltip:row=>row.marksVerified===true?"Academic marks marked verified":row.marksVerified===false?"Academic marks not verified":"Verification unavailable",read:row=>row.twelfthPct},
  {key:"diploma",label:"Diploma %",read:row=>row.diplomaPct},
  {key:"ug",label:"UG %",read:row=>row.ugPct},
  {key:"passingYear",label:"Passing year",read:row=>row.passingYear},
@@ -110,8 +110,8 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
  const sortedRows=[...rows].sort((a,b)=>{
   const diff=pageSort.startsWith("APPLICATIONS")?a.applicationCount-b.applicationCount:
    pageSort.startsWith("OFFERS")?a.offerCount-b.offerCount:0;
-  return pageSort==="NAME"?a.displayName.localeCompare(b.displayName):
-   (pageSort.endsWith("_DESC")?-diff:diff)||a.displayName.localeCompare(b.displayName);
+  const byName=a.displayName.localeCompare(b.displayName,"en-IN",{sensitivity:"base",numeric:true})||a.membershipId.localeCompare(b.membershipId);
+  return pageSort==="NAME"?byName:(pageSort.endsWith("_DESC")?-diff:diff)||byName;
  });
  // Translate historic numeric roll/registration bookmarks only inside
  // this already-authorized college roster; every mutation still uses a UUID.
@@ -149,12 +149,16 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
 
  const open=(id:string|null)=>{const q=new URLSearchParams(params.toString());if(id)q.set("student",id);else q.delete("student");router.replace(pathname+(q.size?"?"+q.toString():""),{scroll:false});};
  const displayColumns:readonly TpoGridColumn<TpoStudentRow>[]=[
-  ...columns.slice(0,5),
+  ...columns.filter(column=>["student","number","batch","stage"].includes(column.key)),
   {key:"afterCollege",label:"After college",filter:{urlKey:"afterCollege",options:
-   AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
-  ...columns.slice(5),
+    AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
+    read:row=>afterCollegeDisplay(afterCollege[row.membershipId]?.outcome)??"Not decided"},
+  ...columns.filter(column=>!["student","number","batch","stage"].includes(column.key)),
+  {key:"class",label:"Class",read:row=>row.classIds.map(id=>classes.find(item=>item.id===id)?.name??id).join(", ")||"Not assigned"},
  ];
+ const legacyVisibleColumns=["student","number","batch","stage","afterCollege","profile","best","applications","offers"] as const;
  const filters:TpoFilterField[]=[
+  {key:"batchId",urlKey:"batchId",label:"Batch",options:[...new Map(rows.map(row=>[row.cohortId,{value:row.cohortId,label:row.cohortName+(row.fromFinishedBatch?" · From finished batch":"")}])).values()]},
   {key:"programId",urlKey:"programId",label:"Program",options:programs.map(p=>({value:p.id,label:p.name}))},
   {key:"classId",urlKey:"classId",label:"Class",options:classes.map(c=>({value:c.id,label:c.name}))},
   {key:"afterCollege",urlKey:"afterCollege",label:"After college",options:AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}))},
@@ -232,11 +236,12 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    </Select>
   </label>
   <GridWorkspace rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  defaultVisibleKeys={legacyVisibleColumns}
    selection={{selected:noteSelection,onChange:setNoteSelection}}
    filters={filters} rollOf={row=>[row.rollNumber??"",row.registrationNumber??""]}
    filterTitle="Filter students" exportName={viewName} xlsxHref={xlsxHref}
    savedViews={canManageViews?<TpoStudentSavedViews embedded/>:undefined}>
-  <TpoGrid integratedWorkspace mobilePrimaryKeys={["student","number","stage","profile","attention","offersAwaiting"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
+  <TpoGrid integratedWorkspace mobileActionsCollapsible defaultVisibleKeys={legacyVisibleColumns} mobilePrimaryKeys={["student","number","stage","profile","offers"]} storageKey="tpo-students-columns-v1" selection={{selected:noteSelection,onChange:setNoteSelection,allIds:shared?.allIds??rows.map(row=>row.membershipId)}} rows={sortedRows} columns={displayColumns} rowKey={row=>row.membershipId}
    openPrimary={{columnKey:"student",onOpen:row=>open(row.membershipId),
      ariaLabel:row=>"Open student panel for "+row.displayName}}
    rowActions={row=><div className="flex flex-col items-start gap-1">
