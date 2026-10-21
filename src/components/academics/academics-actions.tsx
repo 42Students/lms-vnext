@@ -18,6 +18,12 @@ import { useToast } from "@/components/ui/toast";
 import { hasUnsavedCollegeProgramEdit, updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
+class AcademicMutationResponseError extends Error {
+  constructor(code: string, readonly fieldErrors: Readonly<Record<string, string>>) {
+    super(code);
+  }
+}
+
 async function mutate(
   path: string,
   method: "PATCH" | "DELETE",
@@ -39,8 +45,16 @@ async function mutate(
     .catch(() => null);
 
   if (!response.ok) {
-    throw new Error(
-      payload?.error ?? "REQUEST_FAILED",
+    const fields: Record<string, string> = {};
+    const candidate: unknown = payload?.fieldErrors;
+    if (candidate && typeof candidate === "object" && !Array.isArray(candidate)) {
+      for (const [key, value] of Object.entries(candidate)) {
+        if (/^[a-zA-Z][a-zA-Z0-9_]{0,63}$/.test(key) && typeof value === "string") fields[key] = value;
+      }
+    }
+    throw new AcademicMutationResponseError(
+      typeof payload?.error === "string" ? payload.error : "REQUEST_FAILED",
+      fields,
     );
   }
 
@@ -70,11 +84,14 @@ function useAcademicMutation() {
         router.refresh();
       } catch (error) {
         onError?.(error);
-        showToast({
-          tone: "error",
-          title: "Academic update failed",
-          description: academicSetupErrorMessage(error),
-        });
+        if (!(error instanceof AcademicMutationResponseError) ||
+            Object.keys(error.fieldErrors).length === 0) {
+          showToast({
+            tone: "error",
+            title: "Academic update failed",
+            description: academicSetupErrorMessage(error),
+          });
+        }
       }
     });
   }
@@ -120,6 +137,7 @@ export function ProgramActions({
   const [archiveOpen, setArchiveOpen] =
     useState(false);
   const [editError, setEditError] = useState("");
+  const [editFieldErrors, setEditFieldErrors] = useState<Record<string, string>>({});
   const [archiveError, setArchiveError] = useState("");
   const [discardOpen, setDiscardOpen] =
     useState(false);
@@ -135,6 +153,7 @@ export function ProgramActions({
 
   function openEdit() {
     setEditError("");
+    setEditFieldErrors({});
     setDepartmentId(program.departmentId ?? "");
     setName(program.name);
     setCode(program.code);
@@ -207,7 +226,18 @@ export function ProgramActions({
                     ),
                   `Updated program “${name.trim()}”.`,
                   () => { setEditError(""); setEditOpen(false); },
-                  (error) => setEditError(academicSetupErrorMessage(error, "Program was not updated")),
+                  (error) => {
+                    setEditError(academicSetupErrorMessage(error, "Program was not updated"));
+                    if (error instanceof AcademicMutationResponseError) {
+                      const fields = error.fieldErrors;
+                      setEditFieldErrors({
+                        name: fields.name ?? fields.programName ?? fields.program_name ?? "",
+                        code: fields.code ?? fields.programCode ?? fields.program_code ?? "",
+                        durationTerms: fields.durationTerms ?? fields.duration_terms ?? "",
+                        departmentId: fields.departmentId ?? fields.department_id ?? "",
+                      });
+                    }
+                  },
                 )
               }
             >
@@ -224,22 +254,20 @@ export function ProgramActions({
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">
             Program name
             <Input
-              value={name}
-              onChange={(event) =>
-                setName(event.target.value)
-              }
+              value={name} aria-invalid={Boolean(editFieldErrors.name)}
+              onChange={(event) => { setName(event.target.value); setEditFieldErrors(current => ({...current, name:""})); }}
               maxLength={255}
             />
+            {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Code
             <Input
-              value={code}
-              onChange={(event) =>
-                setCode(event.target.value)
-              }
+              value={code} aria-invalid={Boolean(editFieldErrors.code)}
+              onChange={(event) => { setCode(event.target.value); setEditFieldErrors(current => ({...current,code:""})); }}
               maxLength={64}
             />
+            {editFieldErrors.code ? <span role="alert" className="text-xs text-error">{editFieldErrors.code}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {displayDurationYears?"Duration (years)":"Duration terms"}
@@ -248,16 +276,15 @@ export function ProgramActions({
               min={1}
               max={displayDurationYears?10:24}
               step={1}
-              value={durationTerms}
-              onChange={(event) =>
-                setDurationTerms(
-                  event.target.value,
-                )
-              }
+              value={durationTerms} aria-invalid={Boolean(editFieldErrors.durationTerms)}
+              onChange={(event) => { setDurationTerms(event.target.value);
+                setEditFieldErrors(current => ({...current,durationTerms:""})); }}
             />
+            {editFieldErrors.durationTerms ? <span role="alert" className="text-xs text-error">{editFieldErrors.durationTerms}</span> : null}
           </label>
           {departments.length ? <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
-            <Select value={departmentId} onChange={event=>setDepartmentId(event.target.value)}>
+            <Select value={departmentId} aria-invalid={Boolean(editFieldErrors.departmentId)}
+              onChange={event=>{setDepartmentId(event.target.value);setEditFieldErrors(current=>({...current,departmentId:""}));}}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
           </label> : null}
