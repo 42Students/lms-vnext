@@ -97,10 +97,42 @@ export function TpoDriveEditForm({job}:{job:Draft}){
   if(cgpa!==null&&(!Number.isFinite(cgpa)||cgpa<0||cgpa>10)){
    setError("Enter a CGPA from 0 to 10.");return;
   }
+  const percentageKeys=[
+   "minTenthPctBasisPoints","minTwelfthPctBasisPoints",
+   "minDiplomaPctBasisPoints","minUndergraduatePctBasisPoints",
+   "minPostgraduatePctBasisPoints",
+  ] as const;
+  const marks:Record<(typeof percentageKeys)[number],number|null>={
+   minTenthPctBasisPoints:null,minTwelfthPctBasisPoints:null,
+   minDiplomaPctBasisPoints:null,minUndergraduatePctBasisPoints:null,
+   minPostgraduatePctBasisPoints:null,
+  };
+  for(const key of percentageKeys){
+   const value=optionalNumber(fields.get(key));
+   if(value!==null&&(!Number.isFinite(value)||value<0||value>100||
+      Math.abs(Math.round(value*100)-value*100)>0.00001)){
+    setError("Enter a percentage from 0 to 100 with at most two decimal places.");return;
+   }
+   marks[key]=value===null?null:Math.round(value*100);
+  }
+  const yearsRaw=String(fields.get("allowedPassingYears")??"").trim();
+  const years=yearsRaw?yearsRaw.split(",").map(value=>Number(value.trim())):[];
+  if(years.length>101||years.some(year=>!Number.isInteger(year)||year<2000||year>2100)||
+    new Set(years).size!==years.length){
+   setError("Enter distinct passing years between 2000 and 2100, separated by commas.");return;
+  }
+  const jobTypeLabel=String(fields.get("jobTypeLabel")??"").trim();
+  if(jobTypeLabel.length>40){setError("Job type label must be at most 40 characters.");return;}
   setProposal({
    confirmed:true,expectedUpdatedAt:version,
    applicationDeadline:deadline,minCgpaHundredths:cgpa===null?null:Math.round(cgpa*100),
    allowedCohortIds:fields.getAll("allowedCohortIds").map(String),
+   allowedPassingYears:years,...marks,
+   verifiedMarksOnly:fields.get("verifiedMarksOnly")==="on",
+   jobTypeLabel:jobTypeLabel||null,
+   employmentType:String(fields.get("employmentType")??job.employmentType),
+   workMode:String(fields.get("workMode")??job.workMode),
+   recruiterDriveMode:String(fields.get("recruiterDriveMode")??job.recruiterDriveMode),
    reason,title,description,locations,
    openings:optionalNumber(fields.get("openings")),
    minimumAnnualCtcInr:minimum,maximumAnnualCtcInr:maximum,
