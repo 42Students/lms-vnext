@@ -13,6 +13,6 @@ export function SuperAdminTemplatePageExport({items}:{items:Template[]}){
  }
  return <Button variant="secondary" type="button" disabled={!items.length} onClick={exportCsv}
   className="min-h-11 md:min-h-9">
-  Export this page · CSV
+  ↓ Export CSV
  </Button>;
 }

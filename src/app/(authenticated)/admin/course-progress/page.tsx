@@ -31,7 +31,7 @@ export default async function SuperAdminCourseProgressPage({
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress" />
-    <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its course progress." />
+    <Alert tone="warning" role="status">Select a college to view course progress.</Alert>
   </div>;
   const [dataResult,filtersResult] = await Promise.allSettled([
     listCollegeCourseProgress(context, parsed),
@@ -47,42 +47,84 @@ export default async function SuperAdminCourseProgressPage({
   const data=dataResult.value;
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
   const summary = adminProgressStats(data.items);
+  const selected=Boolean(data.query.courseCode&&data.query.cohortCode);
+  const selectedNames={
+    course:filters.courses.find(item=>item.code===data.query.courseCode)?.name??data.query.courseCode,
+    batch:filters.cohorts.find(item=>item.code===data.query.cohortCode)?.name??data.query.cohortCode,
+  };
+  const uniqueLearnerCount=data.items.reduce((value,item)=>value+item.learnersWithRecords,0);
+  // Offering counts are not per-student completion percentages. The existing
+  // authorized offering detail route remains the source of measured reports.
+  const exportHref="/api/admin/course-progress/export?"+new URLSearchParams({
+   q:data.query.q,status:data.query.status,
+   ...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),
+   ...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{}),
+  }).toString();
   return <div className="min-w-0 space-y-6">
     <PageHeader title="Course Progress"
-      description="View course progress by class and course. Select an offering below to see its learner progress report; this directory shows recorded content activity, not a measured completion rate."
+      description="See measured completion for a class and course, then focus on the students furthest behind."
       actions={<PageBackLink href="/admin/courses" label="Courses" />}
     />
     <Alert tone="info">
-      Progress counts videos watched to the end, assignments submitted and quizzes attempted. Resources are not counted toward completion. Recorded progress is not a substitute for attendance or assessed achievement.
-      Select a course offering, then choose View student progress for the individual learner report. A complete class/course measured-completion report requires verified teaching assignments and completion denominators.
+      <strong>Measured work only.</strong> Progress counts videos watched to the end, assignments submitted and quizzes attempted.
+      Resources are not counted, because they are marked done by the student&apos;s own click.
     </Alert>
+    <p className="text-xs text-muted-foreground">The offering directory below is based on recorded content rows; a learner completion percentage is available only in the authorized per-student report.</p>
     
-    <form className="grid min-w-0 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 min-[1200px]:grid-cols-[minmax(0,1fr)_auto]">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course or cohort
-        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
-          className="min-h-11 md:min-h-9" />
-      </label>
-      <Disclosure title="More filters" className="min-w-0 order-last min-[768px]:col-span-2"
-        contentClassName="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-3)] min-[768px]:grid-cols-2">
-      <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Offering status
-        <Select name="status" defaultValue={data.query.status} className="min-h-11 md:min-h-9">
-          <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
-        </Select>
-      </label>
-      <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
-      </Disclosure>
-      <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
+    <form method="get" action="/admin/course-progress" role="search" aria-label="Select class and course progress"
+      className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5">
+      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Choose a class, then one of its courses.</h2>
+      <p className="text-xs text-muted-foreground">Class sections are represented by their active batch in this directory. Use the offering detail for authorized class-level learner completion.</p>
+      <div className="grid min-w-0 items-end gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+        <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts}
+          selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
+        <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9">
+          <span aria-hidden="true" className="mr-2">↻</span> Refresh
+        </Button>
+        {selected&&data.items.length>0?<a href={exportHref}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Export CSV</a>:
+         <span aria-disabled="true" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-4 text-sm text-muted-foreground md:min-h-9">Export CSV</span>}
+      </div>
+      <details className="border-t border-border pt-3">
+        <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text">More filters</summary>
+        <div className="grid gap-3 pt-2 sm:grid-cols-2">
+          <label className="grid gap-2 text-sm">Search offering
+            <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}/>
+          </label>
+          <label className="grid gap-2 text-sm">Offering status
+            <Select name="status" defaultValue={data.query.status}>
+             <option value="ACTIVE">Active</option><option value="ARCHIVED">Archived</option><option value="ALL">All</option>
+            </Select>
+          </label>
+        </div>
+      </details>
     </form>
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Some course-progress filters could not be loaded. Your saved filters still apply to the visible offerings.{" "}
       <Link href={adminLearningHref("PROGRESS",data.query)} className="font-semibold text-primary-text underline">Retry filter choices</Link>.
     </Alert>:null}
     <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:underline" href="/admin/course-progress">Clear filters</Link>
+    {selected?<div className="space-y-3">
+      <p className="text-sm font-semibold text-[var(--lms-heading)]">Selected batch: {selectedNames.batch} · Course: {selectedNames.course}</p>
+      <dl className="grid min-w-0 grid-cols-2 gap-3 md:grid-cols-4">
+        {[
+          {label:"Offerings",value:data.items.length},
+          {label:"Recorded content rows",value:summary.contentRecords},
+          {label:"Completed content rows",value:summary.completedContentRecords},
+          {label:"Learners with records",value:uniqueLearnerCount},
+        ].map(stat=><div key={stat.label} className="rounded-[var(--lms-canvas-radius)] border border-border p-4">
+          <dt className="text-xs text-muted-foreground">{stat.label}</dt>
+          <dd className="mt-2 text-xl font-semibold tabular-nums">{stat.value}</dd>
+        </div>)}
+      </dl>
+      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Per student</h2>
+      <p className="text-sm text-body">Open the authorized offering report to see the learners furthest behind. Retakes count only the current enrolled attempt.</p>
+    </div>:<EmptyState title="Pick a class, then one of its courses." description="Choose a batch and a taught course to see recorded activity. No learner report has been requested."/>}
     <p role="status" className="text-sm text-muted-foreground">
       {data.total.toLocaleString("en-IN")} matching offerings · on this page: {summary.contentRecords} recorded content progress rows,
       {" "}{summary.completedContentRecords} completed rows. Learner counts are per-offering, not additive.
     </p>
-    {data.items.length ? <div className="divide-y divide-border border-y border-border">
+    {selected&&data.items.length ? <div className="divide-y divide-border border-y border-border">
       {data.items.map(item => <article key={item.offeringId} className="min-w-0 py-4">
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{item.courseName} ({item.courseCode})</h2>
@@ -103,16 +145,13 @@ export default async function SuperAdminCourseProgressPage({
           View student progress →
         </Link>
       </article>)}
-    </div> : <EmptyState title="No recorded course progress" description="No course offerings match these filters. The absence of records is not proof of incomplete student work." />}
+    </div> : selected?<EmptyState title="No recorded course progress" description="No course offerings match these filters. The absence of records is not proof of incomplete student work." />:null}
     <div className="flex flex-wrap items-center justify-between gap-3">
       <span className="text-sm text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <Pagination page={data.query.page} pageCount={data.totalPages}
         hrefForPage={page=>adminLearningHref("PROGRESS",{...data.query,page})}
         label="Course progress pages" showBoundaryLinks={false}/>
-      <div className="flex min-w-0 justify-start print:hidden">
-        <a href={"/api/admin/course-progress/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)]">Export offering progress (course-progress.csv)</a>
-      </div>
+
     </div>
   </div>;
 }
