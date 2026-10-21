@@ -111,7 +111,7 @@ export function RecruiterLeadDetailWorkspace({
   collegeId, leadId,
 }: { collegeId: string; leadId: string }) {
   const router=useRouter();
-  const [confirmation,setConfirmation]=useState<"LEAVE"|"CLOSE_EDIT"|"CLOSE_NOT_NOW"|"SAVE_EDIT"|"MARK_NOT_NOW"|"CREATE_INVITE"|"CLOSE_INVITE"|null>(null);
+  const [confirmation,setConfirmation]=useState<"LEAVE"|"CLOSE_EDIT"|"CLOSE_NOT_NOW"|"SAVE_EDIT"|"MARK_NOT_NOW"|"CREATE_INVITE"|"SEND_INVITE"|"CLOSE_INVITE"|null>(null);
   const [lead, setLead] = useState<Lead | null>(null);
   const [activities, setActivities] = useState<Activity[]>([]);
   const [companySummary,setCompanySummary]=useState<CompanySummary|null>(null);
@@ -346,6 +346,35 @@ export function RecruiterLeadDetailWorkspace({
     if (ok) setNotNowOpen(false);
   }
 
+  async function sendInviteEmail(confirmed=false) {
+    if (!confirmed) { setConfirmation("SEND_INVITE"); return; }
+    if (!lead?.emailNorm || !lead.companyRelationshipId || lead.unsubscribedAt) {
+      setActionError("Add a work email and link a company before inviting.");
+      return;
+    }
+    setSaving(true); setActionError(""); setInviteNotice("");
+    try {
+      const response = await fetch(base + "/invite", {
+        method: "POST", credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ collegeId, sendEmail: true }),
+      });
+      const reply = await response.json().catch(() => null) as
+        { error?: string; invite?: { emailed?: boolean } } | null;
+      if (!response.ok || reply?.invite?.emailed !== true) {
+        throw new Error(reply?.error === "TPO_RECRUITER_INVITE_DELIVERY_PENDING" ?
+          "Automatic email delivery is not configured. Create a link and send it manually." :
+          "Invite email was not accepted by the provider. Try again or create a manual link.");
+      }
+      // An emailed invitation invalidates any old manual invitation preview.
+      setInviteLink(""); setInviteMessage(""); setInviteExpiresAt("");
+      setActionToast("Invite email accepted by the delivery provider.");
+      await load();
+    } catch (cause) {
+      setActionError(cause instanceof Error ? cause.message : "Could not send invitation.");
+    } finally { setSaving(false); }
+  }
+
   async function createInviteLink(confirmed=false) {
     if(!confirmed){setConfirmation("CREATE_INVITE");return;}
     if(lead?.unsubscribedAt){setActionError("Asked not to be contacted.");return;}
@@ -400,10 +429,10 @@ export function RecruiterLeadDetailWorkspace({
     <section className="min-w-0 space-y-5">
       {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 focus-visible:underline">← Recruiter leads</Link>:null}
       {phase === "loading" ? (
-        <GracefulPageLoading label="Loading recruiter details…" shape="card"/>
+        <GracefulPageLoading label="Loading recruiter lead" shape="card"/>
       ) : phase === "error" || !lead ? (
         <div role="alert" className="space-y-3 border-b border-border pb-5">
-          <PageHeader title={error.includes("not found")?"Recruiter not found":"Could not load recruiter details"} />
+          <PageHeader title={error.includes("not found")?"This recruiter isn\u0027t in Engage":"Could not load recruiter details"} />
           <p>{error || "The recruiter contact could not be found or loaded."}</p>
            <p className="text-xs text-muted-foreground">The recruiter may be missing, or the activity and follow-up services may be unavailable. Your college scope remains unchanged.</p>
           <Link href="/tpo/recruiters" className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] focus-visible:underline">
@@ -425,7 +454,7 @@ export function RecruiterLeadDetailWorkspace({
                 <div className="flex min-w-48 flex-col gap-1">
                   <Link href="/tpo/recruiters" className={button} onClick={event=>{if(!confirmLeave())event.preventDefault();}}>← Recruiter leads</Link>
                   <Link className={button} href={"/tpo/placements/new?company="+encodeURIComponent(lead.companyName??"")}>Create drive</Link>
-                  <Link className={button} href={"/tpo/messages?tab=team&q="+encodeURIComponent(lead.companyName||lead.name)}>Team talk</Link>
+                  <Link className={button} href={"/tpo/messages?tab=team&about="+encodeURIComponent("COMPANY:"+(lead.companyName||lead.name).trim().toLowerCase())}>Team talk</Link>
                   <Button type="button" variant="ghost" className="w-full justify-start" onClick={openEdit}>Edit details</Button>
                   {lead.manualStage==="NEW"?<Button type="button" variant="ghost" disabled={saving}
                     className="w-full justify-start" onClick={()=>void mutate(base+"/contacted","POST",{collegeId})}>Mark contacted</Button>:null}
@@ -496,6 +525,11 @@ export function RecruiterLeadDetailWorkspace({
                       maxLength={500} value={invitePersonalNote} disabled={saving}
                       onChange={event=>setInvitePersonalNote(event.target.value)}/>
                   </label>
+                  <Button type="button" variant="primary" className="min-h-11 md:min-h-9"
+                    disabled={saving||!lead.emailNorm||!lead.companyRelationshipId||Boolean(lead.unsubscribedAt)}
+                    onClick={() => void sendInviteEmail()}>
+                    {saving ? "Sending…" : lead.inviteSentAt ? "Resend invite" : "Send invite email"}
+                  </Button>
                   <Button
                     type="button"
                     variant="secondary" className="min-h-11 md:min-h-9"
@@ -506,7 +540,7 @@ export function RecruiterLeadDetailWorkspace({
                   </Button>
                   <p className="text-xs text-muted-foreground leading-[20px]">
                     The link expires after seven days. Creating a new link invalidates the previous one.
-                    Automatic email delivery is not available; use the email draft or copy the message.
+                    If automatic email delivery is not configured, use the email draft or copy the message.
                   </p>
                   {lead.unsubscribedAt||lead.manualStage==="NOT_NOW"?
                     <p role="status" className="text-xs text-warning leading-[20px]">This person said they are not hiring from your college this season or unsubscribed.</p>:null}
@@ -722,20 +756,23 @@ export function RecruiterLeadDetailWorkspace({
               confirmation==="CLOSE_NOT_NOW"?"Discard Not now changes?":
               confirmation==="SAVE_EDIT"?"Save recruiter details?":
               confirmation==="MARK_NOT_NOW"?"Mark recruiter Not now?":
-              confirmation==="CREATE_INVITE"?"Create recruiter invitation?":"Close one-time invitation preview?"}
+              confirmation==="CREATE_INVITE"?"Create recruiter invitation?":
+               confirmation==="SEND_INVITE"?"Send recruiter invitation email?":"Close one-time invitation preview?"}
             description={confirmation==="LEAVE"?"Leave this recruiter? Unsaved changes will be lost.":
               confirmation==="CLOSE_EDIT"?"Discard unsaved recruiter changes?":
               confirmation==="CLOSE_NOT_NOW"?"Discard your Not now reason and revisit date?":
               confirmation==="SAVE_EDIT"?"Save updated recruiter details? Contact identity changes may affect duplicate checks and outreach. The update will be recorded in the activity log.":
               confirmation==="MARK_NOT_NOW"?"Mark this recruiter Not Now? The stage and reason/revisit date will be saved with an auditable change record. No invitation will be sent.":
               confirmation==="CREATE_INVITE"?"Create an invitation valid for 7 days? Any previous link will stop working.":
+               confirmation==="SEND_INVITE"?"Send a seven-day invitation through the approved provider? Any previous invitation link will stop working. Email delivery is acknowledged only after provider acceptance.":
               "Close invitation preview? The one-time token and message will not be shown again."}
             confirmLabel={confirmation==="SAVE_EDIT"?"Save changes":
               confirmation==="MARK_NOT_NOW"?"Mark Not now":
               confirmation==="CREATE_INVITE"?"Create invitation":
+               confirmation==="SEND_INVITE"?"Send invite email":
               confirmation==="LEAVE"?"Leave recruiter":
               confirmation==="CLOSE_INVITE"?"Close preview":"Discard"}
-            confirmVariant={confirmation==="SAVE_EDIT"||confirmation==="CREATE_INVITE"?"primary":"danger"}
+            confirmVariant={confirmation==="SAVE_EDIT"||confirmation==="CREATE_INVITE"||confirmation==="SEND_INVITE"?"primary":"danger"}
             pending={saving}
             onConfirm={()=>{
               const action=confirmation;
@@ -746,6 +783,7 @@ export function RecruiterLeadDetailWorkspace({
               else if(action==="SAVE_EDIT")void saveEdit(undefined,true);
               else if(action==="MARK_NOT_NOW")void markNotNow(undefined,true);
               else if(action==="CREATE_INVITE")void createInviteLink(true);
+               else if(action==="SEND_INVITE")void sendInviteEmail(true);
               else if(action==="CLOSE_INVITE"){
                 setInviteLink("");setInviteMessage("");setInviteNotice("");setInviteExpiresAt("");
               }
