@@ -458,6 +458,10 @@ export function FacultyAttendanceWorkspace({
     if (!selectedSession) { setError("Please select a class."); return; }
     if (markingWindow !== "OPEN" || submitting || submitLock.current) return;
     setError(null);
+    if (workspace.roster.length > 500) {
+      setError("Maximum 500 learners per attendance request. Contact your College administrator to review this roster.");
+      return;
+    }
     if (selectedSession.attendanceStatus === "MARKED" && !facultyCorrectionReasonValid(correctionReason)) {
       setError("Explain this attendance correction in at least 8 characters."); return;
     }

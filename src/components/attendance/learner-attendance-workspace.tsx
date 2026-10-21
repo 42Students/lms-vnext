@@ -2,7 +2,7 @@
 
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
-import {learnerAttendanceDateLabel as dateLabel, learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/learner-attendance-display-date-model";
+import {learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/learner-attendance-display-date-model";
 import {learnerAttendanceUrlRecoveryNotice} from "@/modules/attendance/learner-attendance-url-recovery-model";
 import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-attendance-month-navigation-model";
 

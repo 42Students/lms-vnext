@@ -23,6 +23,7 @@ export const STORAGE_FILE_ERROR_STATUS = {
   STORAGE_ALREADY_SUBMITTED: 409,
   STORAGE_FILES_REQUIRED: 400,
   STORAGE_NOT_CONFIGURED: 503,
+  STORAGE_PROVIDER_UNAVAILABLE: 503,
 } as const;
 
 export type StorageFileErrorCode = keyof typeof STORAGE_FILE_ERROR_STATUS;
@@ -34,6 +35,8 @@ export function storageFileFriendlyMessage(
  code:StorageFileErrorCode,operation:"resource"|"generic"="generic",
 ):string{
  switch(code){
+  case "STORAGE_PROVIDER_UNAVAILABLE":
+   return "Private document storage is temporarily unavailable. Please try again later.";
   case "STORAGE_NOT_CONFIGURED":
    return operation==="resource"?"Resource storage is unavailable":"File storage is unavailable. Contact your administrator.";
   case "STORAGE_NAME_INVALID":

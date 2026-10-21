@@ -59,6 +59,8 @@ export type PrivateUploadRequest = {
   namespace: PrivateObjectNamespace;
   contentType: string;
   expectedSizeBytes: number;
+  /** Display name is metadata only; never put untrusted names in R2 keys. */
+  originalName?: string;
   maxSizeBytes?: number;
   expiresInMs?: number;
 };
@@ -89,6 +91,10 @@ export function validatePrivateUploadRequest(input: PrivateUploadRequest) {
   ) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_INVALID_SIZE");
   }
+  const originalName = input.originalName?.trim();
+  if (originalName && (originalName.length > 255 || /[\\/\x00-\x1f\x7f]/.test(originalName))) {
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_INVALID_SCOPE");
+  }
   const expiresInMs = input.expiresInMs ?? 10 * 60 * 1000;
   if (
     !Number.isSafeInteger(expiresInMs) ||
@@ -97,7 +103,7 @@ export function validatePrivateUploadRequest(input: PrivateUploadRequest) {
   ) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_INVALID_SIZE");
   }
-  return { ...input, contentType, maxSizeBytes, expiresInMs };
+  return { ...input, contentType, originalName: originalName || null, maxSizeBytes, expiresInMs };
 }
 
 export type PrivateReadRequest = {
@@ -163,7 +169,15 @@ export async function createPrivateUploadGrant(raw: PrivateUploadRequest) {
     expiresSeconds: Math.floor(input.expiresInMs / 1000),
     headers: requiredHeaders,
   });
-  return { objectKey, uploadUrl, method: "PUT" as const, expiresAt, requiredHeaders, uploadTokenHash };
+  return {
+    objectKey, uploadUrl, method: "PUT" as const, expiresAt, requiredHeaders,
+    uploadTokenHash,
+    originalName: input.originalName,
+    // Browser clients must renew a one-use grant before expiry and send exactly
+    // these signed headers on their direct PUT. Upload bytes never pass this
+    // server's JS heap. Completion requires a fresh HEAD and scan attestation.
+    refreshBefore: new Date(expiresAt.getTime() - Math.min(30_000, input.expiresInMs / 2)),
+  };
 }
 
 function assertScopedKey(
@@ -193,7 +207,15 @@ export async function readPrivateObjectAttestation(
 ) {
   assertScopedKey(objectKey, expected);
   // 404 is missing; network/configuration errors must propagate separately.
-  const head = await headObject(getPrivateR2Config(), objectKey);
+  let head: Awaited<ReturnType<typeof headObject>>;
+  try {
+    head = await headObject(getPrivateR2Config(), objectKey);
+  } catch (error) {
+    if (error instanceof PrivateObjectStorageError) throw error;
+    // Provider or credential outages must not be misreported as a missing
+    // document, or as user error. Never pass raw S3 URLs/errors to clients.
+    throw new PrivateObjectStorageError("PRIVATE_STORAGE_PROVIDER_UNAVAILABLE");
+  }
   if (!head) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_OBJECT_NOT_ATTESTED");
   }
@@ -280,7 +302,8 @@ export async function recordPrivateObjectScanVerdict(
  * access to the owning membership. Scope IDs alone are NOT authorization:
  * the caller must check parent row, college, role, visibility and enrollment. The object must still pass the same tenant
  * scope, malware scan and checksum attestation. Public bucket URLs are never
- * returned or persisted.
+ * returned or persisted. Every link expires within 1–15 minutes (default
+ * five minutes); obtain a fresh authorized grant rather than persisting URL.
  */
 export async function createPrivateReadGrant(raw: PrivateReadRequest) {
   const input = validatePrivateReadRequest(raw);
@@ -293,12 +316,15 @@ export async function createPrivateReadGrant(raw: PrivateReadRequest) {
     method: "GET",
     key: input.objectKey,
     expiresSeconds: Math.floor(input.expiresInMs / 1000),
+    // Prevent private files being cached in an intermediary browser/proxy.
+    query: { "response-cache-control": "private, no-store, max-age=0" },
   });
 
   return {
     objectKey: input.objectKey,
     readUrl,
     expiresAt,
+    refreshBefore: new Date(expiresAt.getTime() - Math.min(30_000, input.expiresInMs / 2)),
     generation: attestation.generation,
     contentType: attestation.contentType,
     sizeBytes: attestation.sizeBytes,
