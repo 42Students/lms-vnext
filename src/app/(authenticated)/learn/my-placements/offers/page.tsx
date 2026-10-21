@@ -21,6 +21,7 @@ import {learnerOfferExpirySchema,filterOwnOffersByExpiry} from "@/modules/placem
 import { ownOffersDueWithinWeek } from "@/modules/placements/learner-offers-due-model";
 import { learnerOffersExpiringSoon } from "@/modules/placements/learner-offers-expiring-soon-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { getOwnLearnerPlacementRulesView } from "@/modules/placements/learner-placement-rules-service";
 import { LearnerPlacementOffers } from "@/components/placements/learner-placement-offers";
 import {learnerOfferCountsAsPlaced,safeLearnerOfferLetterHref} from "@/modules/placements/learner-offer-letter-model";
 import { getOwnLearnerOfferBrowse } from "@/modules/placements/learner-offers-browse-service";
@@ -72,9 +73,12 @@ export default async function LearnerOffersPage({
   const dueOnly=expiry==="all"&&query.due==="1";
   const conflictingDeadlines=expiry!=="all"&&query.due==="1";
   const context = await getCurrentRequestContext();
-  const [offers,requestRead] = await Promise.all([
+  const [offers,requestRead,rulesRead] = await Promise.all([
     getOwnLearnerOfferBrowse(context,view).catch(() => null),
     readOptionalLearnerAlertSource(()=>listOwnPlacementRequests(context)),
+    getOwnLearnerPlacementRulesView(context,{from:"offers"})
+      .then(value=>({available:true as const,value}))
+      .catch(()=>({available:false as const,value:null})),
   ]);
   if(offers===null){
     // A scoped read failed: do not turn a failed request into an empty inbox.
@@ -107,7 +111,14 @@ export default async function LearnerOffersPage({
   const order=sortParsed.success?sortParsed.data:"priority";
   const sorted=sortOwnOfferRows(visibleOffers,order,Date.parse(snapshotNowIso));
   const focused = resolveLearnerOfferFocus(sorted,requestedPage,query.focus);
-  const paginated = paginateOwnOffers(sorted,focused.page,15);
+  const needsReply=(row:(typeof sorted)[number])=>row.offer.status==="ISSUED" &&
+    (!row.offer.expiresAt || row.offer.expiresAt.getTime()>Date.parse(snapshotNowIso));
+  const totalPending=sorted.filter(needsReply).length;
+  // Keep the pending group together up to the supported 50-result page limit.
+  const pageSize=view==="all"&&order==="priority"?Math.min(50,Math.max(15,totalPending)):15;
+  const paginated = paginateOwnOffers(sorted,focused.page,pageSize);
+  const waitingOnPage=paginated.items.filter(needsReply);
+  const answeredOnPage=paginated.items.filter(row=>!needsReply(row));
   const pageClamped=!focused.found && sorted.length>0 && requestedPage>paginated.page;
   const hasActiveFacets = learnerOfferHasActiveFacets({searchTerm,dueOnly,sort:order,kind,joining:joiningFilter,expiry});
   const emptyState = learnerOffersEmptyState(offers.counts.all, Boolean(searchTerm) || dueOnly || kind !== "all" || joiningFilter !== "all" || expiry !== "all");
@@ -120,8 +131,55 @@ export default async function LearnerOffersPage({
     status: row.offer.status, expiresAt: row.offer.expiresAt?.toISOString() ?? null,
   })), Date.parse(snapshotNowIso));
 
+  const renderOffers=(rows:typeof paginated.items)=>(
+    <LearnerPlacementOffers
+          extensionsAvailable={requestRead.available}
+          preserveOrder
+          extensionRequests={requests.map(row=>({
+            offerId:row.request.offerId,status:row.request.status,
+            requestType:row.request.requestType,
+          }))}
+          snapshotNowIso={snapshotNowIso}
+          offers={rows.map((row) => ({
+            offerId: row.offer.id,
+            applicationId: row.offer.applicationId,
+            companyName: row.company.name,
+            jobTitle: row.job.title,
+            roleTitle: row.offer.roleTitle,
+            kind: row.offer.kind === "LOI" ? "LOI" as const : "OFFER" as const,
+            status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN",
+            annualCtcInr: row.offer.annualCtcInr,
+            letterHref: safeLearnerOfferLetterHref(row.offer.offerLetterUrl),
+            countsAsPlaced: learnerOfferCountsAsPlaced({kind:row.offer.kind==="LOI"?"LOI":"OFFER",
+              jobEmploymentType:row.job.employmentType,roleEmploymentType:row.role.employmentType}),
+            joiningDate: row.offer.joiningDate,
+            expiresAt: row.offer.expiresAt?.toISOString() ?? null,
+            issuedAt: row.offer.issuedAt.toISOString(),
+            acceptanceChannel: row.offer.acceptanceChannel,
+            acceptedDisputableUntil: row.offer.acceptedDisputableUntil?.toISOString()??null,
+            joining: row.joining
+              ? {
+                  status: row.joining.status as
+                    "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED",
+                  joiningDate: row.joining.joiningDate,
+                  reason: row.joining.reason,
+                }
+              : null,
+          }))}
+        />
+  );
   return (
     <div className="min-w-0 space-y-6">
+      <PageHeader title="My Placements" description="Opportunities and your application journey" />
+      <Tabs ariaLabel="Placements sections" renderPanel={false} value="/learn/my-placements/offers" items={[
+        {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
+        {value:"/learn/my-placements/jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
+        {value:"/learn/my-placements/applications",label:"Applications",href:"/learn/my-placements/applications"},
+        {value:"/learn/my-placements/calendar",label:"Schedule",href:"/learn/my-placements/calendar"},
+        {value:"/learn/my-placements/offers",label:"Offers",href:"/learn/my-placements/offers"},
+        {value:"/learn/my-placements/announcements",label:"Announcements",href:"/learn/my-placements/announcements"},
+        {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
+      ]}/>
       <Link
         href="/learn/my-placements/applications"
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] hover:underline md:min-h-[var(--lms-control-height)]"
@@ -260,54 +318,47 @@ export default async function LearnerOffersPage({
           ) : null}
         </section>
       ) : (
-        <LearnerPlacementOffers
-          extensionsAvailable={requestRead.available}
-          preserveOrder
-          extensionRequests={requests.map(row=>({
-            offerId:row.request.offerId,status:row.request.status,
-            requestType:row.request.requestType,
-          }))}
-          snapshotNowIso={snapshotNowIso}
-          offers={paginated.items.map((row) => ({
-            offerId: row.offer.id,
-            applicationId: row.offer.applicationId,
-            companyName: row.company.name,
-            jobTitle: row.job.title,
-            roleTitle: row.offer.roleTitle,
-            kind: row.offer.kind === "LOI" ? "LOI" as const : "OFFER" as const,
-            status: row.offer.status as "ISSUED" | "ACCEPTED" | "DECLINED" | "WITHDRAWN",
-            annualCtcInr: row.offer.annualCtcInr,
-            letterHref: safeLearnerOfferLetterHref(row.offer.offerLetterUrl),
-            countsAsPlaced: learnerOfferCountsAsPlaced({kind:row.offer.kind==="LOI"?"LOI":"OFFER",
-              jobEmploymentType:row.job.employmentType,roleEmploymentType:row.role.employmentType}),
-            joiningDate: row.offer.joiningDate,
-            expiresAt: row.offer.expiresAt?.toISOString() ?? null,
-            issuedAt: row.offer.issuedAt.toISOString(),
-            acceptanceChannel: row.offer.acceptanceChannel,
-            acceptedDisputableUntil: row.offer.acceptedDisputableUntil?.toISOString()??null,
-            joining: row.joining
-              ? {
-                  status: row.joining.status as
-                    "PENDING" | "JOINED" | "DID_NOT_JOIN" | "DEFERRED",
-                  joiningDate: row.joining.joiningDate,
-                  reason: row.joining.reason,
-                }
-              : null,
-          }))}
-        />
+        <>
+          {waitingOnPage.length>0?<section aria-labelledby="offers-waiting-heading" className="space-y-4">
+            <h2 id="offers-waiting-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
+              Needs your reply <span className="text-sm font-normal text-muted-foreground">({totalPending})</span>
+            </h2>
+            {renderOffers(waitingOnPage)}
+          </section>:null}
+          {answeredOnPage.length>0?<section aria-labelledby="offers-earlier-heading" className="space-y-4">
+            <h2 id="offers-earlier-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
+              {waitingOnPage.length>0?"Earlier offers":"Your offers"}
+            </h2>
+            {renderOffers(answeredOnPage)}
+          </section>:null}
+        </>
       )}
       {paginated.total>0 ? <div className="space-y-2">
         <p className="text-sm tabular-nums text-[var(--lms-muted-text)]">{paginated.from.toLocaleString("en-IN")}–{paginated.to.toLocaleString("en-IN")} of {paginated.total.toLocaleString("en-IN")} matching offers</p>
         <Pagination label="Offer results pagination" page={paginated.page} pageCount={paginated.pages} hrefForPage={pageUrl} />
       </div> : null}
-      <section aria-label="How offers work at your college" className="min-w-0 border-b border-border py-4 md:py-6">
+      <section aria-label="How offers work at your college" className="min-w-0 rounded-[12px] border border-border bg-surface p-4 md:p-5">
         <h2 className="font-semibold text-foreground">How offers work at your college</h2>
         <p className="mt-2 text-sm text-body">Check the offer response deadline and official terms before replying. Accepting a letter of intent is not the same as confirmed joining. College rules may affect how many offers you can hold.</p>
+        {rulesRead.value?.policyView?<>
+          <h3 className="mt-4 text-sm font-semibold text-[var(--lms-heading)]">Where you stand:</h3>
+          <p className="mt-2 text-sm text-body">{rulesRead.value.policyView.personal}</p>
+          <details className="mt-3">
+            <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">See all the rules</summary>
+            <ul className="mt-2 list-disc space-y-2 pl-5 text-sm text-body">
+              {rulesRead.value.policyView.points.map(point=><li key={point}>{point}</li>)}
+            </ul>
+            <p className="mt-2 text-xs text-muted-foreground">Drive-specific checks remain authoritative. The placement cell reviews any changes.</p>
+          </details>
+        </>:rulesRead.available?<p className="mt-3 text-sm text-body">Your college has not published a placement policy record here yet.</p>:
+          <p role="alert" className="mt-3 text-sm text-body">We couldn't load the rules.
+            <Link href="/learn/my-placements/offers" className="ml-2 font-semibold text-link underline">Retry</Link>
+          </p>}
         <div className="mt-3 flex flex-wrap gap-4">
           <Link href="/learn/my-placements/rules?from=offers"
             className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Read placement rules</Link>
           <Link href="/learn/my-placements/placement"
-            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Need more time? Send a request to the placement cell</Link>
+            className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline md:min-h-[var(--lms-control-height)]">Need more time on an offer, or got an offer outside campus? Request help from the placement cell</Link>
         </div>
       </section>
       <p className="text-xs text-muted-foreground">
