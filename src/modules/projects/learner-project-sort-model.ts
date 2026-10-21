@@ -24,7 +24,9 @@ export function sortLearnerProjectRows<T extends Row>(
  const mode=sortSchema.parse(modeInput);
  // Preserve the scoped backend order for unrelated projects, even when
  // timestamps tie or arrive in nonchronological order.
- const originalIndex=new Map(rows.map((row,index)=>[row.project.id,index]));
+ const originalIndex=new Map<string,number>(
+  rows.map((row,index):[string,number]=>[row.project.id,index]),
+ );
  return [...rows].sort((a,b)=>{
   const archived=Number(a.project.status==="ARCHIVED")-Number(b.project.status==="ARCHIVED");
   if(archived)return archived;
