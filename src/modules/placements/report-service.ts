@@ -26,6 +26,7 @@ import {
   users,
 } from "@/db/schema";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
+import { placementDriveSelections } from "@/db/schema/placement-drive-selections";
 import type { RequestContext } from "@/modules/identity/context";
 import { isSuperAdmin } from "@/modules/identity/context";
 import {
@@ -47,6 +48,7 @@ import {
   type PlacementReportJob,
   type PlacementReportOffer,
   type PlacementReportRegistration,
+  type PlacementReportSelection,
 } from "./report-model";
 
 export const placementReportQuerySchema = z
@@ -158,6 +160,7 @@ export async function getPlacementReportWorkspace(
     jobs: [],
     applications: [],
     offers: [],
+    selections: [],
     registrations: [],
     branches: [],
   };
@@ -289,7 +292,7 @@ export async function getPlacementReportWorkspace(
     "placement_batch_registrations",
   );
 
-  const [applicationRows, offerRows, registrationRows] =
+  const [applicationRows, offerRows, selectionRows, registrationRows] =
     await Promise.all([
       db
         .select({
@@ -365,6 +368,33 @@ export async function getPlacementReportWorkspace(
         )
         .where(selectedJobFilters),
 
+      db
+        .select({
+          jobId: placementDriveSelections.jobId,
+          membershipId: placementApplications.membershipId,
+          status: placementDriveSelections.status,
+        })
+        .from(placementDriveSelections)
+        .innerJoin(
+          placementApplications,
+          eq(placementApplications.id, placementDriveSelections.applicationId),
+        )
+        .innerJoin(
+          placementJobs,
+          and(
+            eq(placementJobs.id, placementDriveSelections.jobId),
+            eq(placementJobs.id, placementApplications.jobId),
+          ),
+        )
+        .innerJoin(
+          collegeMemberships,
+          and(
+            eq(collegeMemberships.id, placementApplications.membershipId),
+            eq(collegeMemberships.collegeId, college.id),
+          ),
+        )
+        .where(selectedJobFilters),
+
       registrationsAvailable
         ? db
           .select({
@@ -401,6 +431,7 @@ export async function getPlacementReportWorkspace(
   const membershipIds = [...new Set([
     ...applicationRows.map((row) => row.membershipId),
     ...offerRows.map((row) => row.membershipId),
+    ...selectionRows.map((row) => row.membershipId),
     ...registrationRows.map((row) => row.membershipId),
   ])];
   const branchRows = membershipIds.length === 0 ? [] : await db
@@ -447,6 +478,12 @@ export async function getPlacementReportWorkspace(
       annualCtcInr: row.annualCtcInr,
       joiningStatus: row.joiningStatus,
     }));
+
+  const selections: PlacementReportSelection[] = selectionRows.map((row) => ({
+    jobId: row.jobId,
+    membershipId: row.membershipId,
+    status: row.status,
+  }));
 
   const registrations: PlacementReportRegistration[] =
     registrationRows.map((row) => ({
@@ -501,6 +538,7 @@ export async function getPlacementReportWorkspace(
     jobs,
     applications: applications.filter((row) => inBranch(row.membershipId)),
     offers: offers.filter((row) => inBranch(row.membershipId)),
+    selections: selections.filter((row) => inBranch(row.membershipId)),
     registrations: registrations.filter((row) => inBranch(row.membershipId)),
     branches,
   });
