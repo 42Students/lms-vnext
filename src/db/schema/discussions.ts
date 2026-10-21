@@ -61,6 +61,12 @@ export const courseDiscussionMessages = pgTable(
     index(
       "course_discussion_messages_delivery_created_idx",
     ).on(table.deliveryId, table.createdAt),
+    index("course_discussion_messages_live_cursor_idx")
+      .on(table.deliveryId,table.createdAt,table.id)
+      .where(sql`${table.deletedAt} is null`),
+    index("course_discussion_messages_live_pin_idx")
+      .on(table.deliveryId,table.createdAt)
+      .where(sql`${table.deletedAt} is null and ${table.pinned}=true`),
     index(
       "course_discussion_messages_delivery_pinned_idx",
     ).on(table.deliveryId, table.pinned),
