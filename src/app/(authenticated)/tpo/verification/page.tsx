@@ -44,7 +44,7 @@ export default async function TpoVerificationPage({searchParams}:{searchParams:P
    </div>
    </details>
   </nav>
-  <form method="get" action="/tpo/verification" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-4">
+  <form method="get" action="/tpo/verification" className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-4" aria-label="Filter verification">
    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="tab" defaultValue={query.tab} className="min-h-11">
      <option value="WAITING">Waiting</option><option value="SENT_BACK">Sent back</option><option value="VERIFIED">Verified</option>
