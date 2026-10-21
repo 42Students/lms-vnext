@@ -4,6 +4,7 @@ import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import {readTpoBulkRequestBody,TpoBulkBodyError} from "@/modules/placements/tpo-bulk-request-body";
 import { actOnPlacementOffer } from "@/modules/placements/offer-service";
+import { placementOfferActionSchema } from "@/modules/placements/validation";
 
 export const runtime = "nodejs";
 
@@ -30,7 +31,7 @@ export async function POST(
       await actOnPlacementOffer(
         context,
         offerId,
-        await readTpoBulkRequestBody(request),
+        placementOfferActionSchema.parse(await readTpoBulkRequestBody(request)),
         new Date(),
         context.membership?.roles.includes("LEARNER") ? "ISSUED" : undefined,
       );

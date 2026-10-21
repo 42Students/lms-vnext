@@ -32,8 +32,8 @@ export function DateRangePicker({
   const endId = endInputProps?.id ?? `${generatedId}-end`;
   const startRequired = required ?? startInputProps?.required;
   const endRequired = required ?? endInputProps?.required;
-  const validBounds = (values: Array<string | undefined>) =>
-    values.filter((date): date is string => Boolean(date)).sort();
+  const validBounds = (values: Array<string | number | undefined>) =>
+    values.filter((date): date is string | number => Boolean(date)).map(String).sort();
   const startMin = validBounds([min, startInputProps?.min]).at(-1);
   const startMax = validBounds([end || undefined, max, startInputProps?.max])[0];
   const endMin = validBounds([start || undefined, min, endInputProps?.min]).at(-1);
