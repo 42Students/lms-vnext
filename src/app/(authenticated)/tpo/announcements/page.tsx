@@ -185,7 +185,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {tab.data==="yours" && row.scheduledAt && new Date(row.scheduledAt)>new Date()?
       <p role="status" className="mt-2 text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-warning-text)]">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
       tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
-      <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground leading-[22px]">Ended</p>:null}
+      <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground leading-[1.6]">Ended</p>:null}
     <p className="mt-3 max-w-[72ch] whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
      {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?
       <a key={index} href={part.value} rel="noopener noreferrer"
