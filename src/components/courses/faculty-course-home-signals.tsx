@@ -21,6 +21,12 @@ export function FacultyCourseHomeSignals({
 }) {
   const firstPending =
     signals.pendingSubmissions[0] ?? null;
+  const contextReady = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(deliveryId);
+  const actionClass = "inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-5 text-sm font-semibold text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] disabled:cursor-not-allowed disabled:opacity-50 md:min-h-[var(--lms-control-height)]";
+  const actionLabel = firstPending ? "Review work" : "Open course content";
+  const actionIcon = firstPending
+    ? <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M4 20h16M5 16l10-10 3 3-10 10H5v-3zM14 7l3 3" strokeLinecap="round" strokeLinejoin="round"/></svg>
+    : <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="18" height="18"><path d="M12 5c-2.4-1.4-5.3-1.5-9-1v14c3.7-.5 6.6-.4 9 1m0-14c2.4-1.4 5.3-1.5 9-1v14c-3.7-.5-6.6-.4-9 1m-9-14v14" strokeLinecap="round" strokeLinejoin="round"/></svg>;
   const attendanceReady = signals.completeness.attendance;
   const assignmentsReady = signals.completeness.assignments;
   const riskReady = attendanceReady && assignmentsReady;
@@ -39,17 +45,7 @@ export function FacultyCourseHomeSignals({
 
   return (
     <div className="min-w-0 space-y-6">
-      {missing.length ? (
-        <Alert tone="warning" aria-label="Incomplete faculty course signals">
-          <p className="font-semibold">Some faculty course signals are incomplete ({missing.join(", ")}).</p>
-          <p className="mt-1">Unknown metrics are shown as unavailable, not zero.</p>
-          <Link href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
-            className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
-            Retry signals
-          </Link>
-        </Alert>
-      ) : null}
-      <section className="border-b border-border pb-4">
+      <section aria-label="Next action" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <div>
             <div className="flex flex-wrap items-center gap-2">
@@ -72,27 +68,37 @@ export function FacultyCourseHomeSignals({
             </div>
             <h2 className="mt-2 text-xl font-semibold text-[var(--lms-heading)]">
               {firstPending
-                ? firstPending.assignmentTitle
+                ? `${signals.pendingSubmissions.length} submission${signals.pendingSubmissions.length===1?"":"s"} waiting`
                 : assignmentsReady ? "Nothing waiting on you" : "Some signals unavailable"}
             </h2>
             <p className="mt-1 text-sm text-body">
               {firstPending
-                ? `${signals.pendingSubmissions.length} submission(s) waiting.`
+                ? "Review pending learner work before it piles up."
                 : assignmentsReady
-                  ? "No submitted assignments currently need grading. Continue with course content or review class health."
-                  : "Assignment submission status could not be confirmed. Retry signals before assuming work is clear."}
+                  ? "No submissions pending review. Jump back into the course content."
+                  : "Submission signals are incomplete. You can still open the course content while they are retried."}
             </p>
           </div>
-          <Link
-            href={reviewHref}
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-[var(--lms-on-primary)] transition-colors hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]"
-          >
-            {firstPending
-              ? "Review work"
-              : "Open course content"}
-          </Link>
+          {contextReady
+            ? <Link href={reviewHref} className={actionClass}>{actionIcon}{actionLabel}</Link>
+            : <button type="button" disabled title="Loading course…" className={actionClass}>
+                {actionIcon}{actionLabel}
+              </button>}
         </div>
       </section>
+      {missing.length ? (
+        <Alert tone="warning" aria-label="Incomplete faculty course signals">
+          <p className="font-semibold">
+            {!attendanceReady && !assignmentsReady
+              ? "Faculty course signals could not be loaded. You can still use the other course tabs."
+              : `Some faculty course signals are incomplete (${missing.join(", ")}). Unknown metrics are shown as unavailable, not zero.`}
+          </p>
+          <Link href={facultyCourseTabHref(deliveryId,"home")+"?refreshSignals=1"}
+            className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
+            Retry signals
+          </Link>
+        </Alert>
+      ) : null}
 
       {blueprintFocusHref?<Link href={blueprintFocusHref}
         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
@@ -107,7 +113,7 @@ export function FacultyCourseHomeSignals({
             Items that need faculty attention.
           </p>
         </div>
-        <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+        <div className="grid gap-3 md:grid-cols-2">
           <StatTile
             label="Reviews"
             value={assignmentsReady ? signals.pendingSubmissions.length : "—"}
@@ -126,6 +132,10 @@ export function FacultyCourseHomeSignals({
               : "Attendance data unavailable."}
             href={`/teacher/courses/${deliveryId}/attendanceDetail`}
           />
+        </div>
+      </section>
+      <section aria-label="Class insights">
+        <div className="grid gap-3 md:grid-cols-2">
           <StatTile
             label="At-risk Students"
             value={riskReady ? signals.atRiskTotal : "—"}
@@ -147,6 +157,7 @@ export function FacultyCourseHomeSignals({
         </div>
       </section>
 
+      <div className="grid items-start gap-4 lg:grid-cols-2">
       {riskReady && signals.atRiskTotal > 0 ? (
         <section
           className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-6"
@@ -265,6 +276,7 @@ export function FacultyCourseHomeSignals({
         <h2 className="text-base font-semibold text-[var(--lms-heading)]">Performance</h2>
         <p className="mt-2 text-sm text-body">Performance metrics are unavailable until assignment signals can be refreshed.</p>
       </section>}
+      </div>
     </div>
   );
 }
