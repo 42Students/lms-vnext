@@ -58,7 +58,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
   try{filter=parseCollegePeopleDirectorySearchParams(raw);}catch{filter=null;}
 
   if (!filter) {
-    return <div className="space-y-5">
+    return <div className="min-w-0 space-y-5">
       <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory} />
       <ErrorState title="Invalid directory filters"
         description="Check the search, role, status or page. No people were loaded."
