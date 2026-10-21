@@ -29,7 +29,7 @@ export default async function SuperAdminPlacementStudentLookup({searchParams}:{
    <PageBackLink href="/admin/placements" label="Placement overview" />
    <PageHeader title="Student placement lookup" />
   </div>
-  <form action="/admin/placements/student-lookup" role="search" className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
+  <form action="/admin/placements/student-lookup" role="search" className="grid min-w-0 gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
    <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
       placeholder="Find one student in this college"
