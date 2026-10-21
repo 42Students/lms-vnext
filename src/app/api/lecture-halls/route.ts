@@ -9,6 +9,7 @@ import {
   searchLectureHallsForPicker,
   listLectureHallsLegacyPage,
   getLectureHallStatistics,
+  normalizeLegacyLectureHallCreate,
 } from "@/modules/academics/lecture-hall-service";
 import { lectureHallErrorResponse } from "./error-response";
 
@@ -34,6 +35,7 @@ export async function GET(request: Request) {
         query: search.get("query") ?? "",
         ...(search.has("deptId") ? { deptId: search.get("deptId") } : {}),
         ...(search.has("limit") ? { limit: search.get("limit") } : {}),
+        ...(search.has("roomType") ? { roomType: search.get("roomType") } : {}),
       }), responseOptions);
     }
     if (legacy && (search.has("page") || search.has("size"))) {
@@ -42,6 +44,7 @@ export async function GET(request: Request) {
         ...(search.has("page") ? { page: search.get("page") } : {}),
         ...(search.has("size") ? { size: search.get("size") } : {}),
         ...(search.has("deptId") ? { deptId: search.get("deptId") } : {}),
+        ...(search.has("query") ? { query: search.get("query") } : {}),
       }), responseOptions);
     }
     const params=Object.fromEntries([...search].filter(([key])=>
@@ -75,7 +78,9 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     }
     return NextResponse.json(
-      { hall: await createLectureHall(context, body) },
+      { hall: await createLectureHall(context,
+          new URL(request.url).searchParams.get("legacy") === "1"
+            ? normalizeLegacyLectureHallCreate(body) : body) },
       { status: 201 },
     );
   } catch (error) {
