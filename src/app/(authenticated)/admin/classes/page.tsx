@@ -35,9 +35,11 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     ? await Promise.allSettled([
         listCollegeClasses(context,filter.data),
         listCollegeSectionOptions(context),
+        listRecurringPreviewOptions(context),
       ]) :null;
   const data=loaded?.[0]?.status==="fulfilled"?loaded[0].value:null;
   const options=loaded?.[1]?.status==="fulfilled"?loaded[1].value:null;
+  const recurring=loaded?.[2]?.status==="fulfilled"?loaded[2].value:null;
   const exportHref=data?"/api/admin/classes/export?"+new URLSearchParams({
     ...(data.query.q?{q:data.query.q}:{}),
     ...(data.query.programId?{programId:data.query.programId}:{}),
@@ -57,6 +59,9 @@ export default async function SuperAdminClassesPage({ searchParams }: {
     </Alert>:null}
     {selected&&loaded?.[1]?.status==="rejected"?<Alert tone="warning">Could not load class options.
       <Link href="/admin/classes" className="ml-2 font-semibold underline">Retry options</Link>
+    </Alert>:null}
+    {selected&&loaded?.[2]?.status==="rejected"?<Alert tone="warning">Recurring schedule options could not be loaded.
+      <Link href="/admin/classes" className="ml-2 font-semibold underline">Retry recurring options</Link>
     </Alert>:null}
     {data ? <>
     <div className="grid min-w-0 items-start gap-5 xl:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
@@ -99,6 +104,8 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Existing Classes/Sections</h2>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
           <Link href={pageUrl(data.query)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+          {recurring?<CollegeRecurringEntry options={{...recurring,
+            classes:recurring.classes.map(row=>({...row,updatedAt:row.updatedAt.toISOString()}))}}/>:null}
           {exportHref?<Link href={exportHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Export classes.csv</Link>:null}
           <span className="text-xs tabular-nums text-muted-foreground">{data.total.toLocaleString("en-IN")} results</span>
         </div>

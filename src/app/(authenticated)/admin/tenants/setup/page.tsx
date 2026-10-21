@@ -19,6 +19,12 @@ import {summarizeTenantSetupReadiness} from "@/modules/colleges/admin-tenant-set
 import {listOrganizations} from "@/modules/organizations/service";
 import {OrganizationCreateForm} from "@/components/admin/organization-create-form";
 import {CollegeCreateForm} from "@/components/admin/college-create-form";
+import {CollegeBulkImport} from "@/components/admin/college-bulk-import";
+import {CollegeEditDialog} from "@/components/admin/college-edit-dialog";
+import {CollegeArchiveButton} from "@/components/admin/college-archive-button";
+import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
+import {Input} from "@/components/ui/input";
+import {Button} from "@/components/ui/button";
 import {TenantSetupOrganizationList} from "@/components/admin/tenant-setup-organization-list";
 import {ManagedCollegeSubdomain} from "@/components/admin/managed-college-subdomain";
 import {getManagedCollegeSubdomain} from "@/modules/tenant-domains/managed-subdomain-service";
@@ -27,6 +33,7 @@ import {readAdminCollegeSignInPolicy} from "@/modules/colleges/admin-signin-poli
 import {CollegeLogoUploader} from "@/components/admin/college-logo-uploader";
 import {CollegeBrandingForm} from "@/components/admin/college-branding-form";
 import {getCollegeBranding} from "@/modules/colleges/branding-service";
+import {parseTenantLifecycleSearchParams} from "@/modules/colleges/admin-tenant-lifecycle-model";
 
 export const dynamic="force-dynamic";
 type Tab="STRUCTURE"|"LAUNCH";
@@ -43,11 +50,14 @@ export default async function SuperAdminTenantSetup({
     description="Your account cannot configure Super Admin tenants."
     action={<PageBackLink href="/dashboard" label="Back to dashboard" />}/>
   </div>;
- const parsed=parseSuperAdminTenantSetupQuery(await searchParams);
- if(!parsed.success)return <div className="min-w-0 space-y-4 md:space-y-6">
+ const raw=await searchParams;
+ const parsed=parseSuperAdminTenantSetupQuery(Object.fromEntries(Object.entries(raw).filter(([key])=>key==="tab")));
+ const directoryFilters=parseTenantLifecycleSearchParams(Object.fromEntries(
+  Object.entries(raw).filter(([key])=>key==="q"||key==="page")));
+ if(!parsed.success||!directoryFilters)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Tenant Setup" actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
-  <ErrorState title="Invalid tenant setup step"
-   description="Select a valid Tenant structure or Launch setup step."
+  <ErrorState title="Invalid tenant setup filters"
+   description="Select a valid setup step, search of at most 100 characters and page number."
    action={<Link href="/admin/tenants/setup"
     className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
  </div>;
@@ -68,7 +78,7 @@ export default async function SuperAdminTenantSetup({
  let managedFailed=false,signinFailed=false,brandingFailed=false,detailFailed=false;
  if(tab==="STRUCTURE"&&globallyScoped){
   const [organizationsResult,collegesResult]=await Promise.allSettled([
-   listOrganizations(context),getSuperAdminTenantLifecycleDirectory(context,{status:"ALL",page:1}),
+   listOrganizations(context),getSuperAdminTenantLifecycleDirectory(context,{status:"ALL",q:directoryFilters.q,page:directoryFilters.page}),
   ]);
   if(organizationsResult.status==="fulfilled")organizations=organizationsResult.value;
   else organizationFailed=true;
@@ -98,6 +108,27 @@ export default async function SuperAdminTenantSetup({
  }
  const creatable=organizationFailed?[]:organizations.filter(item=>can(context,"college.manage",{organizationId:item.id}));
  const orgCreate=globallyScoped&&!organizationFailed&&can(context,"organization.manage");
+ type SetupCollege=NonNullable<typeof list>["items"][number];
+ const collegeColumns:DataTableColumn<SetupCollege>[]=[
+  {key:"name",header:"College",mobilePriority:"primary",cell:item=>
+   <Link href={"/admin/colleges/"+encodeURIComponent(item.id)}
+    className="font-semibold text-primary-text underline">{item.name}</Link>},
+  {key:"organization",header:"Organization",cell:item=>item.organizationName},
+  {key:"code",header:"Unique ID",cell:item=>item.code},
+  {key:"city",header:"City",cell:item=>item.city||"—"},
+  {key:"state",header:"State",cell:item=>item.state||"—"},
+  {key:"status",header:"Status",cell:item=><Badge tone={item.status==="ACTIVE"?"success":"neutral"}>{item.status}</Badge>},
+  {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
+   <div className="flex flex-wrap items-center gap-2">
+    <Link href={"/admin/colleges/"+encodeURIComponent(item.id)}
+     className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">Manage</Link>
+    {item.status==="ACTIVE"&&can(context,"college.manage",{
+      organizationId:item.organizationId,collegeId:item.id})?<>
+      <CollegeEditDialog college={item}/>
+      <CollegeArchiveButton collegeId={item.id} name={item.name}/>
+    </>:null}
+   </div>},
+ ];
  const summary=summarizeTenantSetupReadiness(readiness?.evaluation??null);
  const retry=<Link href={tabLink(tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -167,19 +198,41 @@ export default async function SuperAdminTenantSetup({
        <CollegeCreateForm organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:
        <Banner tone="warning">No verified, authorized active organization is available for college creation. Create an organization or retry the directory.</Banner>}
      </div>
-     {!collegesFailed?<div className="min-w-0 space-y-3 border-t border-border pt-4">
+     {!organizationFailed&&creatable.length>0?<CollegeBulkImport organizations={creatable.map(o=>({id:o.id,name:o.name}))}/>:null}
+     {!collegesFailed&&list?<div className="min-w-0 space-y-3 border-t border-border pt-4">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
        <h3 className="font-semibold text-body">Existing Colleges</h3>
-       <Link href="/admin/tenants" className="font-semibold text-primary-text underline">Manage all</Link>
+       <Link href="/admin/colleges" className="font-semibold text-primary-text underline">Manage all</Link>
       </div>
-      <ul className="min-w-0 divide-y divide-border text-sm text-body">
-       {list?.items.map(item=><li key={item.id} className="min-w-0 py-2">
-        <Link href={"/admin/colleges/"+encodeURIComponent(item.id)} className="font-semibold text-primary-text underline">{item.name}</Link>
-        {" · "}{item.code} · {item.status}
-       </li>)}
-      </ul>
-      {list&&!list.items.length?<EmptyState title="No colleges in the current scope" description="Create the first college from an authorized active organization."/>:null}
-      <p className="text-xs text-muted-foreground">First college directory page only. Open Manage all for the full authorized directory.</p>
+      <form action="/admin/tenants/setup" method="get" role="search"
+       className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-end">
+       <input type="hidden" name="tab" value="structure"/>
+       <label className="flex min-w-0 flex-1 flex-col gap-1.5 text-sm font-semibold text-body">
+        Search colleges
+        <Input name="q" type="search" maxLength={100} defaultValue={directoryFilters.q}
+         placeholder="Search college, organization or Unique ID"/>
+       </label>
+       <Button type="submit" variant="secondary">Search</Button>
+       <Link href="/admin/tenants/setup?tab=structure"
+        className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-link underline md:min-h-9">Clear</Link>
+      </form>
+      <p role="status" className="text-xs text-muted-foreground">
+       {list.total} colleges · Page {list.page} of {list.totalPages}
+      </p>
+      <DataTable caption="Existing Colleges" rows={list.items} getRowKey={item=>item.id}
+       columns={collegeColumns}
+       empty={<EmptyState title="No colleges match this view" description="Clear search or create an authorized college."/>}/>
+      {list.totalPages>1?<nav aria-label="College directory pages" className="flex flex-wrap items-center gap-3 text-sm">
+       {list.page>1?<Link href={"/admin/tenants/setup?tab=structure&page="+(list.page-1)+"&q="+encodeURIComponent(directoryFilters.q)}
+        className="font-semibold text-link underline">Previous</Link>:null}
+       <span>Page {list.page} of {list.totalPages}</span>
+       {list.page<list.totalPages?<Link href={"/admin/tenants/setup?tab=structure&page="+(list.page+1)+"&q="+encodeURIComponent(directoryFilters.q)}
+        className="font-semibold text-link underline">Next</Link>:null}
+      </nav>:null}
+      <p className="text-xs text-muted-foreground">
+       Bulk Import Colleges (CSV) accepts the legacy template after verified organization mapping, confirms the batch,
+       and reports each Created, Skipped or Failed row. The complete directory is available under Manage all.
+      </p>
      </div>:null}
     </section>
     <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Continue to launch setup →</Link>

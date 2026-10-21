@@ -29,11 +29,12 @@ export function recurringSlotTimeIst(slot: Pick<Result["slots"][number], "starts
 }
 
 export function CollegeRecurringPreview({
-  classes, halls, faculty, deliveries, errors, defaultSectionId = "",
+  classes, halls, faculty, deliveries, errors, defaultSectionId = "", onCancel,
 }: { classes: ClassOption[]; halls: Option[]; faculty: FacultyOption[]; deliveries: DeliveryOption[];
-  defaultSectionId?: string;
+  defaultSectionId?: string; onCancel?:()=>void;
   errors?: { classes:boolean; halls:boolean; faculty:boolean; deliveries:boolean } }) {
   const router=useRouter();
+  const cancel=()=>{if(onCancel)onCancel();else router.push("/college/classes");};
   const chosen = classes.find(item => item.id === defaultSectionId);
   const [sectionId, setSectionId] = useState(chosen?.id ?? "");
   const [title, setTitle] = useState("Class session");
@@ -154,7 +155,7 @@ export function CollegeRecurringPreview({
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div><h2 className="text-lg font-semibold">Create recurring class schedule</h2>
          <p className="max-w-[75ch] text-sm text-body leading-[22px]">Preview does not create sessions. Confirmed execution rechecks conflicts and creates only clear dates.</p></div>
-        <Button type="button" variant="secondary" disabled={pending} onClick={()=>dirty?setDiscardOpen(true):router.push("/college/classes")}>Cancel</Button>
+        <Button type="button" variant="secondary" disabled={pending} onClick={()=>dirty?setDiscardOpen(true):cancel()}>Cancel</Button>
       </div>
       {errors && Object.values(errors).some(Boolean) ? <Alert tone="warning">
         Some schedule options could not be loaded: {Object.entries(errors).filter(([,failed])=>failed).map(([name])=>name).join(", ")}.
@@ -291,7 +292,7 @@ export function CollegeRecurringPreview({
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
         title="Discard recurring schedule changes?"
         description="Your unsaved session pattern and preview will be lost."
-        confirmLabel="Discard changes" onConfirm={()=>{setDirty(false);setDiscardOpen(false);router.push("/college/classes");}}/>
+        confirmLabel="Discard changes" onConfirm={()=>{setDirty(false);setDiscardOpen(false);cancel();}}/>
       <ConfirmDialog open={confirming} onOpenChange={setConfirming}
         title="Create recurring sessions?"
         description={`Create ${result?.ready ?? 0} clear sessions? Conflicting dates will be skipped and listed after saving.`}
