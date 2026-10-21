@@ -25,6 +25,12 @@ export function projectSuperAdminDrivePipeline(rows: readonly {stage: string; to
     total: Object.values(counts).reduce((sum, n) => sum + n, 0) + rejected + waitlisted,
     // Six independent CURRENT-status buckets, not cumulative conversions.
     // Do not imply a prior-stage drop-off when an applicant has already moved.
-    funnel: hiringFunnel(counts).map(stage => ({...stage, percentPrevious: null})),
+    // Legacy pipeline is a six-stage, current-status snapshot, not a
+    // conversion/drop-off chart. Consumers must never infer completion rates.
+    snapshotOnly: true as const,
+    funnel: hiringFunnel(counts).map(stage => ({
+      key:stage.key,label:stage.label,count:stage.count,
+      percentPrevious:null,
+    })),
   };
 }

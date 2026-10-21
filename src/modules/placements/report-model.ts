@@ -759,6 +759,13 @@ export type PlacementReportJoiningRow = PlacementJoiningCounts & {
   companyName: string;
 };
 
+export type PlacementOfferStatusRow = {
+ status:"RELEASED"|"ACCEPTED"|"DECLINED"|"EXPIRED"|"WITHDRAWN"|"REVOKED";
+ label:string;
+ offers:number;
+ students:number;
+};
+
 export type PlacementReportCtcBand = {
   label: string;
   minimumInr: number;
@@ -779,6 +786,7 @@ export type PlacementReportDetails = {
   };
   offers: {
     totals: PlacementOfferFunnelCounts;
+    byStatus: PlacementOfferStatusRow[];
     byDrive: PlacementReportOfferFunnelRow[];
     byCompany: PlacementReportOfferFunnelRow[];
   };
@@ -993,6 +1001,32 @@ export function summarizePlacementReportDetails(input: {
 
   const offerTotals = emptyOfferFunnel();
   const joiningTotals = emptyJoiningCounts();
+  // Legacy Placement Summary: Offer status | Offers | Students. Only
+  // persisted released offer outcomes are counted; a pending selection is
+  // not represented as an issued offer, and an expired ISSUED offer is
+  // inferred from the same report as-of instant used for funnel counts.
+  const statusOrder=[
+   ["RELEASED","Released, waiting for the student"],
+   ["ACCEPTED","Accepted"],["DECLINED","Declined"],["EXPIRED","Expired"],
+   ["WITHDRAWN","Withdrawn by company"],["REVOKED","Reversed"],
+  ] as const;
+  type OfferStatus=PlacementOfferStatusRow["status"];
+  const byStatusCount=new Map<OfferStatus,{offers:number;students:Set<string>}>();
+  for(const [key] of statusOrder)
+   byStatusCount.set(key,{offers:0,students:new Set<string>()});
+  for(const offer of offers){
+   const expired=offer.status==="ISSUED"&&offer.expiresAt!==null&&
+    Number.isFinite(Date.parse(offer.expiresAt))&&Date.parse(offer.expiresAt)<=asOfMs;
+   const key=expired?"EXPIRED":offer.status==="ISSUED"?"RELEASED":offer.status;
+   if(!byStatusCount.has(key as OfferStatus))continue;
+   const status=byStatusCount.get(key as OfferStatus)!;
+   status.offers+=1;status.students.add(offer.membershipId);
+  }
+  const offerStatusRows:PlacementOfferStatusRow[]=statusOrder
+   .map(([status,label])=>({status,label,
+     offers:byStatusCount.get(status)!.offers,
+     students:byStatusCount.get(status)!.students.size}))
+   .filter(row=>row.offers>0);
 
   const offerByDrive = new Map<string, PlacementReportOfferFunnelRow>();
   const offerByCompany = new Map<string, PlacementReportOfferFunnelRow>();
@@ -1095,6 +1129,7 @@ export function summarizePlacementReportDetails(input: {
     },
     offers: {
       totals: offerTotals,
+      byStatus:offerStatusRows,
       byDrive: byLabel(offerByDrive),
       byCompany: byLabel(offerByCompany),
     },

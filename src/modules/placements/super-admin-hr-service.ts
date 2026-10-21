@@ -634,6 +634,22 @@ async function loadActiveRelationship(
   return row;
 }
 
+/** Three calendar months in the fixed Asia/Kolkata business timezone.
+ * Clamp month-end instead of rolling an October 31 grant into March.
+ * All new recruiter grants are finite; this helper never revives an
+ * imported historical grant without an explicit admin decision.
+ */
+function defaultRecruiterGrantExpiry(now:Date):Date{
+ const istOffsetMs=330*60_000;
+ const local=new Date(now.getTime()+istOffsetMs);
+ const year=local.getUTCFullYear(),month=local.getUTCMonth()+3;
+ const daysInTarget=new Date(Date.UTC(year,month+1,0)).getUTCDate();
+ return new Date(Date.UTC(year,month,
+   Math.min(local.getUTCDate(),daysInTarget),
+   local.getUTCHours(),local.getUTCMinutes(),local.getUTCSeconds(),
+   local.getUTCMilliseconds())-istOffsetMs);
+}
+
 function isUniqueViolation(error: unknown) {
   return Boolean(
     error &&
@@ -703,8 +719,7 @@ export async function createSuperAdminHrAccount(
   let reusedExisting = false;
   const grantTime = new Date();
   // Explicit expiry for newly created and reused recruiter grants.
-  const grantExpiry = new Date(Date.UTC(grantTime.getUTCFullYear(),
-    grantTime.getUTCMonth() + 3, grantTime.getUTCDate(), grantTime.getUTCHours()));
+  const grantExpiry = defaultRecruiterGrantExpiry(grantTime);
 
   try {
     await db.transaction(async (tx) => {
@@ -1060,7 +1075,7 @@ export async function grantSuperAdminHrCollegeAccess(
   const expiration=validUntilString
     ?dateOnly?new Date(Date.parse(validUntilString+"T00:00:00+05:30")+86_400_000)
       :new Date(validUntilString)
-    :new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+3,now.getUTCDate(),now.getUTCHours()));
+    :defaultRecruiterGrantExpiry(now);
   if(!Number.isFinite(expiration.getTime())||expiration<=now||
       expiration.getTime()>now.getTime()+5*366*24*60*60*1000)
     throw new Error("GRANT_EXPIRY_INVALID: INVALID_VALID_UNTIL: enter YYYY-MM-DD in Asia/Kolkata or an ISO timestamp such as 2026-12-31T23:59:00+05:30");
