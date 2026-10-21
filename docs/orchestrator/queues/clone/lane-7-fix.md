@@ -1,6 +1,6 @@
 # Gap FIX queue: lane chat-7
 
-61 audit documents, 2705 open items (GAP/MISSING). Documents are sorted so the ones with the most P0/P1 items come first.
+24 audit documents, 1470 open items (GAP/MISSING). Documents are sorted so the ones with the most P0/P1 items come first.
 
 This is a CODE job now. For EACH document below, read it (facet table rows whose Verdict is GAP or MISSING) and implement every fix so vNext matches the old LMS, strictly one document at a time:
 1. Work P0 rows first, then P1, then P2, then P3, but finish the whole document before moving on.
@@ -12,7 +12,6 @@ This is a CODE job now. For EACH document below, read it (facet table rows whose
 
 Documents:
 
-- [ ] `docs/audit/gap2/lane-17/legacy-resource-viewer.md` (P0:3 P1:19 P2:29 P3:8 open:59)
 - [ ] `docs/audit/gap2/lane-7/u035-superadmin-template-overview.md` (P0:1 P1:33 P2:32 P3:0 open:66)
 - [ ] `docs/audit/gap2/lane-7/u030-superadmin-project-audit.md` (P0:1 P1:17 P2:44 P3:0 open:62)
 - [ ] `docs/audit/gap2/lane-7/u033-superadmin-template-colleges.md` (P0:1 P1:12 P2:33 P3:2 open:48)
@@ -22,16 +21,13 @@ Documents:
 - [ ] `docs/audit/gap2/lane-7/u015-college-admin-workspace-summary.md` (P0:0 P1:29 P2:50 P3:1 open:80)
 - [ ] `docs/audit/gap2/lane-7/u020-college-admin-workspace-create.md` (P0:0 P1:28 P2:58 P3:2 open:88)
 - [ ] `docs/audit/gap2/lane-7/u017-college-admin-workspace-team.md` (P0:0 P1:27 P2:47 P3:0 open:74)
-- [ ] `docs/audit/gap2/lane-17/superadmin-semester-course-mapping.md` (P0:0 P1:25 P2:39 P3:7 open:71)
 - [ ] `docs/audit/gap2/lane-7/u018-college-admin-deleted-workspaces.md` (P0:0 P1:25 P2:35 P3:1 open:61)
 - [ ] `docs/audit/gap2/lane-7/l14-u030-super-admin-interview-edit-form.md` (P0:0 P1:23 P2:26 P3:2 open:51)
 - [ ] `docs/audit/gap2/lane-7/u013-college-admin-workspace-resources.md` (P0:0 P1:20 P2:48 P3:0 open:68)
 - [ ] `docs/audit/gap2/lane-7/u004-college-admin-projects-readiness.md` (P0:0 P1:21 P2:32 P3:9 open:62)
 - [ ] `docs/audit/gap2/lane-7/u011-college-admin-workspace-overview.md` (P0:0 P1:20 P2:40 P3:2 open:62)
 - [ ] `docs/audit/gap2/lane-7/u002-college-admin-projects-audit.md` (P0:0 P1:20 P2:33 P3:7 open:60)
-- [ ] `docs/audit/gap2/lane-17/placement-job-service.md` (P0:0 P1:21 P2:13 P3:0 open:34)
 - [ ] `docs/audit/gap2/lane-7/u016-college-admin-workspace-tasks.md` (P0:0 P1:18 P2:41 P3:0 open:59)
-- [ ] `docs/audit/gap2/lane-17/tpo-scheduled-jobs.md` (P0:0 P1:21 P2:9 P3:1 open:31)
 - [ ] `docs/audit/gap2/lane-7/u021-college-admin-mentor-reassignment.md` (P0:0 P1:17 P2:47 P3:2 open:66)
 - [ ] `docs/audit/gap2/lane-7/l18-u031-people-management-end-to-end.md` (P0:0 P1:18 P2:34 P3:4 open:56)
 - [ ] `docs/audit/gap2/lane-7/l18-u021-job-important-date-event-dto.md` (P0:0 P1:19 P2:21 P3:3 open:43)
@@ -39,37 +35,4 @@ Documents:
 - [ ] `docs/audit/gap2/lane-7/l17-u031-projects-end-to-end.md` (P0:0 P1:20 P2:10 P3:1 open:31)
 - [ ] `docs/audit/gap2/lane-7/u014-college-admin-workspace-sprints.md` (P0:0 P1:16 P2:49 P3:2 open:67)
 - [ ] `docs/audit/gap2/lane-7/u027-mentor-project-detail.md` (P0:0 P1:16 P2:36 P3:0 open:52)
-- [ ] `docs/audit/gap2/lane-17/college-admin-lessons.md` (P0:0 P1:15 P2:41 P3:6 open:62)
 - [ ] `docs/audit/gap2/lane-7/u019-college-admin-project-workspaces-list.md` (P0:0 P1:14 P2:48 P3:6 open:68)
-- [ ] `docs/audit/gap2/lane-7/u036-cross-exports-imports.md` (P0:0 P1:15 P2:34 P3:1 open:50)
-- [ ] `docs/audit/gap2/lane-7/u007-college-admin-workspace-audit.md` (P0:0 P1:16 P2:23 P3:4 open:43)
-- [ ] `docs/audit/gap2/lane-17/superadmin-lesson-content-wrapper.md` (P0:0 P1:16 P2:22 P3:1 open:39)
-- [ ] `docs/audit/gap2/lane-7/l15-u025-recruiter-college-controller.md` (P0:0 P1:16 P2:17 P3:1 open:34)
-- [ ] `docs/audit/gap2/lane-7/u012-college-admin-workspace-readiness.md` (P0:0 P1:14 P2:33 P3:1 open:48)
-- [ ] `docs/audit/gap2/lane-7/u010-college-admin-workspace-meetings.md` (P0:0 P1:13 P2:34 P3:2 open:49)
-- [ ] `docs/audit/gap2/lane-7/u001-college-admin-projects-at-risk.md` (P0:0 P1:13 P2:29 P3:6 open:48)
-- [ ] `docs/audit/gap2/lane-7/l17-u021-public-job-response-dto.md` (P0:0 P1:14 P2:15 P3:0 open:29)
-- [ ] `docs/audit/gap2/lane-7/u028-mentor-projects-list.md` (P0:0 P1:11 P2:45 P3:2 open:58)
-- [ ] `docs/audit/gap2/lane-7/l12-u020-company-domain.md` (P0:0 P1:13 P2:17 P3:2 open:32)
-- [ ] `docs/audit/gap2/lane-7/l14-u020-college-company.md` (P0:0 P1:12 P2:16 P3:0 open:28)
-- [ ] `docs/audit/gap2/lane-7/l13-u023-learner-schedule-controller.md` (P0:0 P1:12 P2:14 P3:1 open:27)
-- [ ] `docs/audit/gap2/lane-7/u005-college-admin-project-template-detail.md` (P0:0 P1:10 P2:27 P3:5 open:42)
-- [ ] `docs/audit/gap2/lane-17/learner-placements-interviews.md` (P0:0 P1:9 P2:23 P3:0 open:32)
-- [ ] `docs/audit/gap2/lane-17/grade-audit-log-entity.md` (P0:0 P1:9 P2:11 P3:0 open:20)
-- [ ] `docs/audit/gap2/lane-7/u026-mentor-notifications.md` (P0:0 P1:6 P2:38 P3:1 open:45)
-- [ ] `docs/audit/gap2/lane-17/job-search-controller.md` (P0:0 P1:7 P2:21 P3:5 open:33)
-- [ ] `docs/audit/gap2/lane-17/learner-courses-courseid-catchall.md` (P0:0 P1:7 P2:17 P3:2 open:26)
-- [ ] `docs/audit/gap2/lane-7/u008-college-admin-workspace-delivery.md` (P0:0 P1:6 P2:24 P3:7 open:37)
-- [ ] `docs/audit/gap2/lane-17/classroom-message-entity.md` (P0:0 P1:7 P2:10 P3:2 open:19)
-- [ ] `docs/audit/gap2/lane-17/learner-project-detail.md` (P0:0 P1:6 P2:8 P3:0 open:14)
-- [ ] `docs/audit/gap2/lane-17/project-release-entity.md` (P0:0 P1:5 P2:18 P3:3 open:26)
-- [ ] `docs/audit/gap2/lane-17/email-suppression-entity.md` (P0:0 P1:5 P2:10 P3:1 open:16)
-- [ ] `docs/audit/gap2/lane-17/lesson-content-class-sequence-entity.md` (P0:0 P1:5 P2:8 P3:1 open:14)
-- [ ] `docs/audit/gap2/lane-7/u006-college-admin-project-templates.md` (P0:0 P1:3 P2:27 P3:7 open:37)
-- [ ] `docs/audit/gap2/lane-17/tpo-placements-page-controller.md` (P0:0 P1:3 P2:17 P3:7 open:27)
-- [ ] `docs/audit/gap2/lane-17/job-eligibility-override-repository.md` (P0:0 P1:3 P2:9 P3:2 open:14)
-- [ ] `docs/audit/gap2/lane-7/u025-mentor-landing.md` (P0:0 P1:1 P2:23 P3:2 open:26)
-- [ ] `docs/audit/gap2/lane-17/public-job-response-dto.md` (P0:0 P1:2 P2:10 P3:2 open:14)
-- [ ] `docs/audit/gap2/lane-17/quiz-option-entity.md` (P0:0 P1:1 P2:12 P3:4 open:17)
-- [ ] `docs/audit/gap2/lane-17/learner-saved-jobs-service.md` (P0:0 P1:0 P2:15 P3:7 open:22)
-- [ ] `docs/audit/gap2/lane-17/attendance-name-with-dp.md` (P0:0 P1:0 P2:9 P3:3 open:12)

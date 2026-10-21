@@ -1,6 +1,6 @@
 # Gap FIX queue: lane chat-1
 
-64 audit documents, 2335 open items (GAP/MISSING). Documents are sorted so the ones with the most P0/P1 items come first.
+49 audit documents, 1395 open items (GAP/MISSING). Documents are sorted so the ones with the most P0/P1 items come first.
 
 This is a CODE job now. For EACH document below, read it (facet table rows whose Verdict is GAP or MISSING) and implement every fix so vNext matches the old LMS, strictly one document at a time:
 1. Work P0 rows first, then P1, then P2, then P3, but finish the whole document before moving on.
@@ -12,27 +12,12 @@ This is a CODE job now. For EACH document below, read it (facet table rows whose
 
 Documents:
 
-- [ ] `docs/audit/gap2/lane-11/recruiter-drives-jobid.md` (P0:6 P1:12 P2:48 P3:2 open:68)
-- [ ] `docs/audit/gap2/lane-11/recruiter-drives-new.md` (P0:4 P1:23 P2:62 P3:2 open:91)
-- [ ] `docs/audit/gap2/lane-11/l17-u026-notification-controller.md` (P0:2 P1:21 P2:13 P3:0 open:36)
-- [ ] `docs/audit/gap2/lane-11/l17-u030-drives-landing.md` (P0:2 P1:18 P2:29 P3:1 open:50)
-- [ ] `docs/audit/gap2/lane-11/l15-u022-tpo-recruiter-access-controller.md` (P0:2 P1:6 P2:25 P3:1 open:34)
-- [ ] `docs/audit/gap2/lane-11/l19-u027-course-controller.md` (P0:1 P1:26 P2:22 P3:0 open:49)
-- [ ] `docs/audit/gap2/lane-11/l18-u023-learner-eligibility-controller.md` (P0:1 P1:21 P2:13 P3:0 open:35)
-- [ ] `docs/audit/gap2/lane-11/l19-u024-super-admin-announcement-controller.md` (P0:1 P1:14 P2:23 P3:0 open:38)
 - [ ] `docs/audit/gap2/lane-1/l18-u025-public-tracker-logs-access.md` (P0:1 P1:4 P2:11 P3:5 open:21)
-- [ ] `docs/audit/gap2/lane-11/tpo-drives-jobid-edit.md` (P0:0 P1:41 P2:63 P3:2 open:106)
-- [ ] `docs/audit/gap2/lane-11/tpo-drive-day-roundid.md` (P0:0 P1:31 P2:43 P3:2 open:76)
-- [ ] `docs/audit/gap2/lane-11/tpo-drives-jobid.md` (P0:0 P1:23 P2:59 P3:0 open:82)
 - [ ] `docs/audit/gap2/lane-1/l19-u031-cross-messaging.md` (P0:0 P1:25 P2:29 P3:22 open:76)
-- [ ] `docs/audit/gap2/lane-11/tpo-announcements.md` (P0:0 P1:19 P2:74 P3:1 open:94)
-- [ ] `docs/audit/gap2/lane-11/tpo-drives-new.md` (P0:0 P1:21 P2:46 P3:2 open:69)
 - [ ] `docs/audit/gap2/lane-1/l12-u030-interview-form.md` (P0:0 P1:18 P2:23 P3:8 open:49)
-- [ ] `docs/audit/gap2/lane-11/tpo-audit.md` (P0:0 P1:16 P2:36 P3:2 open:54)
 - [ ] `docs/audit/gap2/lane-1/learner-placement-profile-controller.md` (P0:0 P1:17 P2:18 P3:0 open:35)
 - [ ] `docs/audit/gap2/lane-1/college-admin-profile.md` (P0:0 P1:15 P2:30 P3:9 open:54)
 - [ ] `docs/audit/gap2/lane-1/auth-controller.md` (P0:0 P1:14 P2:31 P3:0 open:45)
-- [ ] `docs/audit/gap2/lane-11/tpo-companies.md` (P0:0 P1:13 P2:41 P3:4 open:58)
 - [ ] `docs/audit/gap2/lane-1/learner-profile-controller.md` (P0:0 P1:12 P2:38 P3:1 open:51)
 - [ ] `docs/audit/gap2/lane-1/l12-u022-tpo-results-controller.md` (P0:0 P1:13 P2:25 P3:4 open:42)
 - [ ] `docs/audit/gap2/lane-1/company-share-token.md` (P0:0 P1:13 P2:23 P3:6 open:42)
