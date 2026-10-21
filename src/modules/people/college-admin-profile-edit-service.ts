@@ -74,8 +74,28 @@ export function readCollegeProfileSections(raw:unknown){
    normalized[name]=defaults[name];continue;
   }
   const result=sections[name].safeParse(source[name]);
-  if(result.success)normalized[name]=result.data;
-  else {unavailableSections.push(name);normalized[name]=defaults[name];}
+  if(result.success){normalized[name]=result.data;continue;}
+  unavailableSections.push(name);
+  // An invalid legacy JSON field must not discard its valid siblings.
+  // Keep the warning so an operator can still repair the original document.
+  if((name==="social"||name==="address"||name==="contacts") &&
+      source[name] && typeof source[name]==="object" &&
+      !Array.isArray(source[name])){
+    const shape=name==="social"?collegeOwnProfileSchema.shape.social.shape:
+      name==="address"?collegeOwnProfileSchema.shape.address.shape:
+      collegeOwnProfileSchema.shape.contacts.shape;
+    const fragment=source[name] as Record<string,unknown>;
+    const retained:Record<string,unknown>={
+      ...(defaults[name] as Record<string,unknown>),
+    };
+    for(const [key,fieldSchema] of Object.entries(shape)){
+      if(!Object.prototype.hasOwnProperty.call(fragment,key))continue;
+      const candidate=fieldSchema.safeParse(fragment[key]);
+      if(candidate.success)retained[key]=candidate.data;
+    }
+    const repaired=sections[name].safeParse(retained);
+    normalized[name]=repaired.success?repaired.data:defaults[name];
+  }else normalized[name]=defaults[name];
  }
  const parsed=collegeOwnProfileSchema.omit({displayName:true}).parse(normalized);
  return {document:parsed,unavailableSections,missingSections,
