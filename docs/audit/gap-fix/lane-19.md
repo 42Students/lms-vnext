@@ -1,0 +1,4 @@
+# Lane chat-19 — gap FIX proof
+
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-followup-queue-service.ts.md` | G2-14-022-027 skipped (already satisfied for the vNext client; `tpo-due-followup-workspace.tsx` posts once, ignores the response body, and shows exactly one completion notice; the old `/api/v1/.../done` 204 endpoint is a different contract). Kept typed `completeConfirmedTpoFollowup` result to avoid breaking modern API callers. No service changes.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-application-detail-service.ts.md` | G2-2-016-101 applied: `attachCollegeApplicationOfferLetter` returns the exact legacy `Offer letter attached` message alongside the existing offer ID and ISO attachment timestamp; preserves all new persisted-offer semantics.
