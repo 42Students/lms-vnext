@@ -341,15 +341,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-7.md: file, number of 
 - [x] `src/components/tpo/tpo-notice-audience-picker.tsx`
 - [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
 - [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-team-ask-panel.tsx`
-- [ ] `src/components/tpo/tpo-team-search.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/tpo/tpo-students-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`
+- [x] `src/components/tpo/tpo-team-search.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
 - [ ] `src/components/ui/action-pagination.tsx`
 - [ ] `src/components/ui/avatar.tsx`
 - [ ] `src/components/ui/date-input.tsx`
