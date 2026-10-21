@@ -81,3 +81,28 @@ export function isLegacyAssessmentDeadlineAfterApplication(
  const timestamp=Date.parse(assessmentDeadline);
  return Number.isFinite(timestamp)&&timestamp>applicationDeadline.getTime();
 }
+
+/** Calendar export for a previously authorized job's legacy important dates.
+ * The caller owns the permissioned job read; never use this to fetch jobs by
+ * arbitrary identifier. Output is bounded to the existing 20-entry schema.
+ * TYPE is preserved in the description, not discarded during the ICS export.
+ */
+export function legacyPostingImportantDatesIcs(
+  entries:readonly {label:string;at:string;type?:string;dateType?:string}[],
+  calendarName="Job important dates",
+):string {
+ const escape=(value:string)=>value.replace(/\\/g,"\\\\")
+  .replace(/\r?\n/g,"\\n").replace(/;/g,"\\;").replace(/,/g,"\\,").slice(0,240);
+ const stamp=(date:Date)=>date.toISOString().replace(/[-:]/g,"").replace(/\.\d{3}Z$/,"Z");
+ const events=entries.slice(0,20).flatMap((entry,index)=>{
+  const start=new Date(entry.at);
+  if(!Number.isFinite(start.getTime())||!entry.label.trim())return [];
+  const uid="legacy-important-"+index+"-"+start.getTime()+"@lms-vnext";
+  return ["BEGIN:VEVENT","UID:"+uid,"DTSTAMP:"+stamp(start),
+   "DTSTART:"+stamp(start),"SUMMARY:"+escape(entry.label.trim()),
+   "DESCRIPTION:"+escape(entry.type??entry.dateType??"IMPORTANT_DATE"),"END:VEVENT"];
+ });
+ return ["BEGIN:VCALENDAR","VERSION:2.0","PRODID:-//42Students//Job dates//EN",
+  "CALSCALE:GREGORIAN","METHOD:PUBLISH","X-WR-CALNAME:"+escape(calendarName),
+  ...events,"END:VCALENDAR",""].join("\r\n");
+}
