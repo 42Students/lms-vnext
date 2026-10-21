@@ -330,20 +330,20 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/audit/actors/error.tsx`
 - [x] `src/app/(authenticated)/tpo/audit/error.tsx`
 - [x] `src/app/(authenticated)/tpo/audit/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/history/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/rules/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/batches/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/export/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/export/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/history/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/rules/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/students/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/error.tsx`
+- [x] `src/app/(authenticated)/tpo/batches/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/error.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/export/error.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/export/page.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/interviews/error.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/calendar/rounds/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
