@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
+import { useEffect, useState, useTransition, useSyncExternalStore, type FormEvent } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
@@ -11,7 +11,6 @@ import { Button } from "@/components/ui/button";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Disclosure } from "@/components/ui/disclosure";
 import { PageSizeSelect } from "@/components/ui/page-size-select";
 import { useToast } from "@/components/ui/toast";
 import { Alert } from "@/components/ui/alert";
@@ -23,7 +22,8 @@ import {
   programDurationYearsLabel, legacyDurationYearsToTerms,
 } from "@/modules/admin-ui/program-directory";
 
-const PROGRAM_SIZE_KEY = "42lms-program-page-size";
+const PROGRAM_SIZE_KEY = "admin-programs-page-size";
+const FALLBACK_PROGRAM_SIZE_KEY = "42lms-program-page-size";
 function listenSize(fn: () => void) {
   window.addEventListener("storage", fn);
   window.addEventListener("lms-program-size", fn);
@@ -31,7 +31,7 @@ function listenSize(fn: () => void) {
 }
 function storedSize(): number {
   try {
-    const size = Number(localStorage.getItem(PROGRAM_SIZE_KEY));
+    const size = Number(localStorage.getItem(PROGRAM_SIZE_KEY)??localStorage.getItem(FALLBACK_PROGRAM_SIZE_KEY));
     return [10,25,50,100].includes(size) ? size : 25;
   } catch { return 25; }
 }
@@ -50,25 +50,31 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
       </div>
     ),
   },
-  { key: "duration", header: "Duration", mobilePriority: "secondary", cell: (item) => programDurationYearsLabel(item.durationTerms) },
+  { key: "duration", header: "Duration", mobilePriority: "secondary", className:"min-w-[110px]", cell: (item) => programDurationYearsLabel(item.durationTerms) },
   { key: "department", header: "Department", mobilePriority: "secondary", cell: (item) => item.departmentName||"Name unavailable" },
   {
     key: "contents",
-    header: "Contents",
+    header: "Contents", className:"min-w-[250px]",
     cell: (item) => item.contents
-      ? <Disclosure title="Linked records" className="min-w-0"
-          contentClassName="max-w-60 break-words pb-2 pt-1 text-xs leading-5 text-muted-foreground">
-          <span title="Archived records are also counted because they may block deletion">
-            {item.contents.semesters} semesters · {item.contents.batches} batches · {item.contents.classes} classes
-          </span>
-        </Disclosure>
-      : <span className="text-muted-foreground">—</span>,
+      ? <div className="flex min-w-[220px] flex-wrap gap-1.5" aria-label={"Linked records for "+item.name}>
+          {([
+            ["Semesters",item.contents.semesters],
+            ["Batches",item.contents.batches],
+            ["Classes",item.contents.classes],
+          ] as const).map(([label,count])=><span key={label}
+            title={String(count)+" "+label.toLowerCase()+" linked to this program, including archived records"}
+            className={"inline-flex items-center whitespace-nowrap rounded-full border px-2 py-0.5 text-xs font-medium "+
+             (count>0?"border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] text-[var(--lms-primary-text)]":"border-border bg-muted text-muted-foreground")}>
+            {count} {count===1?label.slice(0,-1):label}
+           </span>)}
+        </div>
+      : <span role="status" className="text-xs text-muted-foreground">Checking dependencies…</span>,
   },
   {
     key: "actions",
     mobilePriority: "action",
     header: <span className="sr-only">Actions</span>,
-    className: "text-right",
+    className: "min-w-[165px] text-right",
     cell: (item) => <ProgramActions compactActions displayDurationYears program={{
       id: item.id,
       name: item.name,
@@ -95,13 +101,20 @@ export function AdminProgramDirectory({
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [durationYears, setDurationYears] = useState("4");
+  const [departmentSearch,setDepartmentSearch]=useState("");
+  const [refreshPending,startRefresh]=useTransition();
   const [fieldErrors,setFieldErrors]=useState<{department?:string;name?:string;duration?:string}>({});
   const [createError,setCreateError]=useState("");
   const [search, setSearch] = useState("");
+  const [debouncedSearch,setDebouncedSearch]=useState("");
+  useEffect(()=>{
+    const handle=window.setTimeout(()=>setDebouncedSearch(search),220);
+    return ()=>window.clearTimeout(handle);
+  },[search]);
   const [page, setPage] = useState(1);
   const pageSize = useSyncExternalStore(listenSize, storedSize, () => 25);
 
-  const filtered = filterAdminPrograms(programs, search);
+  const filtered = filterAdminPrograms(programs, debouncedSearch);
   const result = paginateAdminPrograms(filtered, page, pageSize);
   const csvHref = "data:text/csv;charset=utf-8," +
     encodeURIComponent("\ufeff" + adminProgramsCsv(filtered));
@@ -175,21 +188,24 @@ export function AdminProgramDirectory({
           Programs belong to a department. Choose the usual academic years; two terms are stored per year.
         </p>
         {departments.length === 0 ? (
-          <p role="status" className="mt-3 text-sm text-muted-foreground">
+          <Alert tone="warning" className="mt-3">
             <strong>No departments in this college yet</strong> · Create a department before adding a program. <Link href={departmentHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Go to Departments</Link>
-          </p>
+          </Alert>
         ) : null}
         <div className="mt-4 grid min-w-0 grid-cols-1 gap-4">
           <div>
             <label htmlFor="admin-program-department" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department</label>
+            <Input type="search" className="mb-2 min-h-11 md:min-h-9" value={departmentSearch}
+              onChange={event=>setDepartmentSearch(event.target.value)}
+              aria-label="Search departments" placeholder="Search departments" maxLength={100}/>
             <Select
               className="min-h-11 md:min-h-9" id="admin-program-department" value={departmentId}
               onChange={(event) => {setDepartmentId(event.target.value);setFieldErrors(old=>({...old,department:undefined}));}}
               aria-invalid={Boolean(fieldErrors.department)} aria-describedby={fieldErrors.department?"admin-program-department-error":undefined}
               required
             >
-              <option value="">Select department</option>
-              {departments.map((department) => (
+              <option value="">{departments.length?"Select department":"No departments available"}</option>
+              {departments.filter(department=>department.id===departmentId||department.name.toLocaleLowerCase("en").includes(departmentSearch.trim().toLocaleLowerCase("en"))).map(department=>(
                 <option key={department.id} value={department.id}>{department.name}</option>
               ))}
             </Select>
@@ -210,16 +226,19 @@ export function AdminProgramDirectory({
           </div>
           <div>
             <label htmlFor="admin-program-duration" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (Years)</label>
-            <Input className="min-h-11 md:min-h-9" id="admin-program-duration" type="number" value={durationYears}
-              onChange={(event) => {setDurationYears(event.target.value);setFieldErrors(old=>({...old,duration:undefined}));}}
-              aria-invalid={Boolean(fieldErrors.duration)} aria-describedby={fieldErrors.duration?"admin-program-duration-error":undefined}
-              min={1} max={10} step={1} required />
+            <div className="flex min-w-0 items-stretch">
+              <Input className="min-h-11 min-w-0 flex-1 rounded-r-none md:min-h-9" id="admin-program-duration" type="number" value={durationYears}
+               onChange={(event) => {setDurationYears(event.target.value);setFieldErrors(old=>({...old,duration:undefined}));}}
+               aria-invalid={Boolean(fieldErrors.duration)} aria-describedby={fieldErrors.duration?"admin-program-duration-error":undefined}
+               placeholder="e.g., 4" min={1} max={10} step={1} required />
+              <span className="inline-flex shrink-0 items-center rounded-r-[var(--lms-control-radius)] border border-l-0 border-border bg-muted px-3 text-sm text-body">Years</span>
+            </div>
             {fieldErrors.duration?<p id="admin-program-duration-error" role="alert" className="mt-1 text-xs text-error">{fieldErrors.duration}</p>:null}
           </div>
         </div>
         <div className="mt-4 flex justify-stretch md:justify-end">
           <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending || departments.length === 0}>
-            {pending ? "Creating…" : "Create Program"}
+            {pending ? <span className="inline-flex items-center gap-2"><svg aria-hidden="true" className="size-4 animate-spin" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="9" strokeDasharray="40 16"/></svg>Creating…</span> : <span className="inline-flex items-center gap-2"><svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>Create Program</span>}
           </Button>
         </div>
         </form>
