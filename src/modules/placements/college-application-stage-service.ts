@@ -82,8 +82,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      .for("update",{of:placementApplications}).limit(1);
     if(!application||application.status!=="SUBMITTED")
      throw new PlacementsServiceError("PLACEMENT_SCREENING_APPLICATION_INACTIVE");
-    if(application.source==="EXTERNAL"&&input.assessmentUrl)
-     throw Error("External applicant assessment links are read-only in the college workspace.");
+    if(application.source==="EXTERNAL")
+     throw Error("External applicant stages are read-only in the college workspace.");
     const [old]=await tx.select().from(placementCollegeApplicationStages)
      .where(and(eq(placementCollegeApplicationStages.jobId,jobId),
       eq(placementCollegeApplicationStages.applicationId,applicationId))).for("update").limit(1);
