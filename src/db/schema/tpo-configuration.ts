@@ -113,7 +113,7 @@ export function toLegacyTpoJobType(
 export function validatedTpoJobTypeName(name:string):string{
  const normalized=name.trim();
  if(normalized.length<2||normalized.length>40||
-  !/^[\p{L}\p{N} +&/().,'-]+$/u.test(normalized))
+  !/^[\p{L}\p{N} +&\/().,'-]+$/u.test(normalized))
   throw new Error("Job type name must be 2–40 letters, numbers or allowed punctuation");
  return normalized;
 }
