@@ -15,7 +15,7 @@ export type SummaryProject={
 };
 type Choice={id:string;name:string;code:string};
 const style="mt-1 w-full";
-export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProject}){
+export function CollegeProjectSummaryEditorFull({project:p,taskProgress}:{project:SummaryProject;taskProgress?:{done:number;total:number}}){
  const router=useRouter();
  const {askConfirm,dialog}=useConfirmFlow();
  const [open,setOpen]=useState(false),[busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -27,6 +27,8 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
   startDate:p.startDate??"",endDate:p.endDate??"",sprintLengthWeeks:p.sprintLengthWeeks?.toString()??"",
   estimationUnit:p.estimationUnit??"POINTS",
  });
+ const hasTaskData=(taskProgress?.total??0)>0;
+ const derivedProgress=hasTaskData?Math.round(100*(taskProgress?.done??0)/(taskProgress?.total??1)):null;
  const change=(key:keyof typeof form,value:string|number)=>setForm(v=>({...v,[key]:value}));
  useEffect(()=>{
   if(!open)return;
@@ -76,7 +78,10 @@ export function CollegeProjectSummaryEditorFull({project:p}:{project:SummaryProj
        <option key={v} value={v}>{v}</option>)}
     </Select></label>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
-     value={form.progressPercent} onChange={e=>change("progressPercent",Number(e.target.value))}/></label>
+     disabled={hasTaskData} value={derivedProgress??form.progressPercent}
+     onChange={e=>change("progressPercent",Number(e.target.value))}/>
+     {hasTaskData?<span className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks while this workspace has tasks.</span>:null}
+    </label>
     {field("Phase","phase",120)}{field("Due label","dueLabel",160)}{field("Course label","courseLabel",160)}
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class<Select className={style} value={form.sectionId}
      onChange={e=>change("sectionId",e.target.value)}>
