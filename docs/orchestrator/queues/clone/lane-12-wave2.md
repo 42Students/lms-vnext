@@ -26,7 +26,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_NEW_docs_audit_gap2_lane-6_l11-u017-tpo-more.md.md` (new; 23 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_verification_page.tsx.md` (edit src/app/(authenticated)/tpo/verification/page.tsx; 21 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_audit_page.tsx.md` (edit src/app/(authenticated)/tpo/audit/page.tsx; 21 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-company-memory-workspace.tsx.md` (edit src/components/tpo/tpo-company-memory-workspace.tsx; 21 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-company-memory-workspace.tsx.md` (edit src/components/tpo/tpo-company-memory-workspace.tsx; 21 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-job-types-editor.tsx.md` (edit src/components/tpo/tpo-job-types-editor.tsx; 19 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-notice-read-progress.tsx.md` (edit src/components/tpo/tpo-notice-read-progress.tsx; 18 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_students_page.tsx.md` (edit src/app/(authenticated)/tpo/students/page.tsx; 18 findings; best P2)
