@@ -347,14 +347,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
 - [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
 - [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
-- [ ] `src/components/tpo/tpo-students-drive-visibility.tsx`
-- [ ] `src/components/tpo/tpo-team-ask-panel.tsx`
-- [ ] `src/components/tpo/tpo-topbar-new-menu.tsx`
-- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
-- [ ] `src/components/tracker/tracker-issue-logs-panel.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-debar.tsx`
+- [x] `src/components/tpo/tpo-students-drive-visibility.tsx`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`
+- [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
+- [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
+- [x] `src/components/tracker/tracker-issue-logs-panel.tsx`
 - [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
 - [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
 - [ ] `src/components/tracker/tracker-report-form.tsx`
