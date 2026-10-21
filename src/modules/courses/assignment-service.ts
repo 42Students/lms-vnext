@@ -7,6 +7,7 @@ import {
   isNull,
   ne,
   or,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
@@ -232,9 +233,10 @@ export async function getCourseAssignmentForAdmin(context:RequestContext,assignm
   updatedAt:courseAssignments.updatedAt,
  }).from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
  if(!row)throw new CoursesServiceError("ASSIGNMENT_NOT_FOUND");
- const submissions=await getDb().select({id:assignmentSubmissions.id})
+ const [submissions]=await getDb().select({total:sql<number>`count(*)::integer`})
   .from(assignmentSubmissions).where(eq(assignmentSubmissions.assignmentId,assignmentId));
- return {...row,hasSubmissions:submissions.length>0,submissionCount:submissions.length};
+ const submissionCount=Number(submissions?.total??0);
+ return {...row,hasSubmissions:submissionCount>0,submissionCount};
 }
 
 export async function createCourseAssignment(
