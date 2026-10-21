@@ -314,3 +314,6 @@
 
 - work2 #39 `tpo-drive-cancel-service.ts` | G2-8-011-001: explicit safe legacy lifecycle projection that keeps REQUEST/SENT_BACK/REJECTED in request domain and DRAFT/PUBLISHED/CLOSED/CANCELLED in Job domain; cancellation's immutable effects untouched; combined UI action mapping handed off.
 - work2 #40 `learner-attention-service.ts` | G2-15-004-065: typed projection maps persisted project status/progress, actual mentor membership start, delivery submit/review instants and due date to legacy learner view; no inferred review timestamp. Fixture/service integration handed off.
+
+- work2 #41 `learner-career-rounds-workspace.tsx` | G2-17-005-014/025: added legacy ahead/past/month alias mapping and initial upcoming default for interview schedule, URL Back/Forward adaptation. Combined standalone interviews, vendor tests and rounds must be supplied by authorized parent loader; not invented from per-kind prop.
+- work2 #42 `super-admin-content-authoring-service.ts` | G2-9-025-063: replaced fixed first-500 lesson limit with bounded searchable 50-per-page result, acting-college scope retained. Per-section delivery choices and content creation API must be wired to authorized delivery rather than blanket null; handoff.
