@@ -34,13 +34,13 @@ export function SuperAdminCompanyMerge({companies}:{companies:readonly Company[]
     finally{inFlightRef.current=false;setBusy(false);}
   }
   return <div className="mt-[var(--lms-space-3)] min-w-0 space-y-[var(--lms-space-3)] print:hidden">
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Keep company
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Keep company
       <Select className="min-h-11 w-full md:min-h-9"
         value={keep} disabled={busy} onChange={e=>{setKeep(e.target.value);setError("");setResult("");}}>
         {companies.map(x=><option key={x.id} value={x.id}>{x.name}</option>)}
       </Select>
     </label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Merge duplicate
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Merge duplicate
       <Select className="min-h-11 w-full md:min-h-9"
         value={source} disabled={busy} onChange={e=>{setSource(e.target.value);setError("");setResult("");}}>
         <option value="">Select company</option>
