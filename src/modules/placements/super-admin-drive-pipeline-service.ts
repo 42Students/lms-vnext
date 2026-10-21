@@ -33,5 +33,9 @@ export async function getSuperAdminDrivePipeline(context: RequestContext, jobId:
     .where(and(eq(placementApplications.jobId, job.id),
       eq(placementApplications.status, "SUBMITTED")))
     .groupBy(stage);
-  return projectSuperAdminDrivePipeline(counts);
+  // Old Admin metrics are a current-status snapshot, not a conversion
+  // cohort. Showing percentages against the preceding stage incorrectly
+  // implies every application passed through that stage in this snapshot.
+  const snapshot=projectSuperAdminDrivePipeline(counts);
+  return {...snapshot,funnel:snapshot.funnel.map(row=>({...row,percentPrevious:null}))};
 }

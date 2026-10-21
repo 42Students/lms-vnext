@@ -13,16 +13,27 @@ import { publicEnquiryTablesReady } from "./readiness";
 import { enquiryMacMatches } from "./otp-model";
 import { publicEnquiryNetworkTag,PublicEnquiryError } from "./send-service";
 
+/** Match legacy clean() before activity and notification content reaches persistence.
+ * Persisted DB limits (name 120, company 160) still apply. */
+function cleanRecruitText(value:string,max:number):string{
+ return value.replace(/<[^>]*>/g," ").replace(/[<>\u0000-\u001f\u007f]/g," ")
+  .replace(/\s+/g," ").trim().slice(0,max);
+}
 export const publicRecruitEnquirySchema=z.strictObject({
  email:publicRecruiterWorkEmailSchema.max(150),code:z.string().regex(/^[0-9]{6}$/),
- name:z.string().trim().min(1).max(120),company:z.string().trim().max(150).default(""),
+ name:z.string().max(4096).transform(value=>cleanRecruitText(value,120))
+  .refine(value=>value.length>0,"Enter your name"),
+ company:z.string().max(4096).transform(value=>cleanRecruitText(value,160)).default(""),
  mobile:normalizedTpoLeadPhoneSchema,
- hiringFor:z.string().trim().max(1500),
+ hiringFor:z.string().max(8192).transform(value=>cleanRecruitText(value,1000)),
 });
 export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,verifiedIp:string|null){
  const parsed=publicRecruitEnquirySchema.safeParse(raw);
- if(!parsed.success||!z.string().uuid().safeParse(collegeId).success)
+ if(!parsed.success||!z.string().uuid().safeParse(collegeId).success){
+  if(!parsed.success&&parsed.error.issues.some(issue=>issue.path[0]==="name"))
+   throw new PublicEnquiryError("NAME_REQUIRED");
   throw new PublicEnquiryError("INVALID");
+ }
  if(process.env.DB09_TPO_API_READY!=="DB09_VERIFIED"||!await publicEnquiryTablesReady())
   throw new PublicEnquiryError("NOT_READY");
  const secret=process.env.TPO_RECRUITER_OTP_HMAC_SECRET??"";
@@ -77,7 +88,8 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
   if(!lead)throw new PublicEnquiryError("INVALID");
   await tx.insert(placementTpoLeadActivities).values({
    collegeId,leadId:lead.id,type:"SYSTEM",isSystem:true,
-   note:"Recruiter reached out through public placements",
+   note:"Recruiter reached out through public placements"+
+    (hiringFor?" · "+hiringFor.slice(0,900):""),
    createdAt:now,
   });
   const [event]=await tx.insert(activityEvents).values({
@@ -104,5 +116,5 @@ export async function submitPublicRecruitEnquiry(collegeId:string,raw:unknown,ve
  });
  if(outcome==="LIMIT")throw new PublicEnquiryError("LIMIT");
  if(outcome!=="DONE")throw new PublicEnquiryError("INVALID");
- return {received:true as const};
+ return {received:true as const,status:"RECEIVED" as const};
 }

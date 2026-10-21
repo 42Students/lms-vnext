@@ -10,7 +10,7 @@ import { z } from "zod";
 import {publicPublicationFresh} from "../public-page/publication-freshness-model";
 
 export class PublicEnquiryError extends Error {
- constructor(readonly code:"NOT_READY"|"INVALID"|"LIMIT"|"DELIVERY_FAILED"){super("PUBLIC_ENQUIRY_"+code);}
+ constructor(readonly code:"NOT_READY"|"INVALID"|"LIMIT"|"DELIVERY_FAILED"|"NAME_REQUIRED"){super("PUBLIC_ENQUIRY_"+code);}
 }
 export function publicEnquiryNetworkTag(ip:string|null,secret:string){
  if(!ip||ip.length>120||Buffer.byteLength(secret,"utf8")<32)
