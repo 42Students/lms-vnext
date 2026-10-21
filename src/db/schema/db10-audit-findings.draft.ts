@@ -16,7 +16,7 @@ export const db10AuditFindings=pgTable("audit_findings",{
   kind:varchar("kind",{length:32}).notNull(),
   severity:varchar("severity",{length:16}).notNull(),
   reportedSeverity:varchar("reported_severity",{length:32}),
-  roles:jsonb("roles").$type<string[]>().notNull().default(sql`\'[]\'::jsonb`),
+  roles:jsonb("roles").$type<string[]>().notNull().default(sql`'[]'::jsonb`),
   environment:varchar("environment",{length:80}),
   status:varchar("status",{length:24}).notNull().default("NEW"),
   assignee:varchar("assignee",{length:150}),
@@ -56,7 +56,7 @@ export const db10AuditFindingEvents=pgTable("audit_finding_events",{
   actorLabel:varchar("actor_label",{length:150}),
   sourceFile:varchar("source_file",{length:500}),
   sourceCommitSha:varchar("source_commit_sha",{length:64}),
-  relatedCommits:jsonb("related_commits").$type<Array<{repo:string;sha:string}>>().notNull().default(sql`\'[]\'::jsonb`),
+  relatedCommits:jsonb("related_commits").$type<Array<{repo:string;sha:string}>>().notNull().default(sql`'[]'::jsonb`),
   fromValue:jsonb("from_value"),
   toValue:jsonb("to_value"),
   action:varchar("action",{length:32}).notNull(),
@@ -66,8 +66,8 @@ export const db10AuditFindingEvents=pgTable("audit_finding_events",{
   createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
   index("db10_audit_finding_events_finding_idx").on(t.findingId,t.createdAt),
-  check("db10_audit_finding_events_actor_kind_ck",sql`${t.actorKind} in (\'USER\',\'SYNC_AGENT\',\'SYSTEM\')`),
-  check("db10_audit_finding_events_actor_shape_ck",sql`(${t.actorKind} = \'USER\' and ${t.actorUserId} is not null) or (${t.actorKind} <> \'USER\' and ${t.actorUserId} is null and length(btrim(coalesce(${t.actorLabel},\'\'))) > 0)`),
+  check("db10_audit_finding_events_actor_kind_ck",sql`${t.actorKind} in ('USER','SYNC_AGENT','SYSTEM')`),
+  check("db10_audit_finding_events_actor_shape_ck",sql`(${t.actorKind} = 'USER' and ${t.actorUserId} is not null) or (${t.actorKind} <> 'USER' and ${t.actorUserId} is null and length(btrim(coalesce(${t.actorLabel},''))) > 0)`),
   check("db10_audit_finding_events_action_ck",
     sql`${t.action} in ('STATUS','ASSIGNEE','SEVERITY','DUPLICATE','FIX_COMMIT','COMMENT')`),
 ]);
