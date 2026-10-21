@@ -27,5 +27,12 @@ Evidence basename roots: `LectureHall*.java` and `LectureHalls.js` under `docs/l
 | G2-19-018-021 | F21 | LectureHallController.java:115-129 dept/college scope endpoints | lecture-hall-service.ts:167-235 query filter | GAP | P2 | Match picker filtering | S |
 | G2-19-018-022 | F22 | LectureHall.java:26-27 RoomType JPA enum ordinal | lecture-halls.ts:13,22 text enumeration | GAP | P1 | Map ordinal to enum name | S |
 | G2-19-018-023 | F23 | LectureHalls.js:216-229 hard-delete action | lecture-hall-manager.tsx:152-183 archive/restore | GAP | P2 | Document expanded lifecycle | S |
+| G2-19-018-024 | F04 | LectureHalls.js:230-261 Description its own column | lecture-hall-manager.tsx:202 under name | GAP | P2 | Restore Description column | S |
+| G2-19-018-025 | F06 | LectureHalls.js:372-374 Description rows2 textarea | lecture-hall-manager.tsx:304-307 single-line Input | GAP | P2 | Use textarea rows2 | S |
+| G2-19-018-026 | F07 | LectureHallServiceImpl.java:80-85 duplicate text includes name | lecture-hall-manager.tsx:63-66 generic duplicate | GAP | P2 | Include room name | S |
+| G2-19-018-027 | F08 | LectureHalls.js:141,207 create/update success text | lecture-hall-copy.ts:23-24 same copy | MATCH | P3 | Keep these exact toasts | S |
+| G2-19-018-028 | F10 | LectureHallController.java:56-78 create returns 200 envelope | lecture-hall-service.ts:237-267 row/event | GAP | P2 | Map response compatibility | S |
+| G2-19-018-029 | F12 | LectureHallServiceImpl.java:39-59 trims and capacity1..5000 | lecture-hall-service.ts:51-67 same range | MATCH | P3 | Keep server bounds | S |
+| G2-19-018-030 | F22 | LectureHall.java:11-27 int PK in singular table | lecture-halls.ts:6-16 UUID PK plural table | GAP | P1 | Define legacy-to-new ID mapping | M |
 
-23 facets, 23 distinct rows. Follow-up detail: preserve vNext UUID and tenant checks while reconciling legacy room CRUD, filters, pagination, layout and enum conversion.
+23 facets, 30 distinct rows. Follow-up detail: preserve vNext UUID and tenant checks while reconciling legacy room CRUD, filters, pagination, layout and enum conversion.
