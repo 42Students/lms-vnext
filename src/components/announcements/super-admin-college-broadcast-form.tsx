@@ -99,7 +99,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmDisabled={!valid}
    title="Approve announcement to placement cells" description={broadcastConsentSummary(mode,count,false)}
    confirmLabel="Consent and publish" confirmVariant="danger" onConfirm={()=>{void submit();}}>
-   <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, recipient rows are persisted atomically and become visible according to their schedule.</p>
+   <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, the placement-cell announcement is sent immediately.</p>
   </ConfirmDialog>
  </Disclosure>;
 }
