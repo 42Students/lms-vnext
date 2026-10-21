@@ -874,6 +874,109 @@ export async function revokeProjectTemplateFromCollege(
   });
 }
 
+
+/** Atomic equivalent of the legacy PUT colleges API. All IDs are vNext
+ * UUIDs, not old numeric college/template IDs. A single template row lock
+ * serializes the entire compare-and-replace with publication and individual
+ * assignment/revocation. No partial set is visible if any check fails.
+ */
+export async function replaceProjectTemplateCollegeAssignments(
+ context:RequestContext,templateIdInput:string,
+ rawInput:{collegeIds:string[];expectedCollegeIds:string[]},
+){
+ requirePermission(context,"project-template.manage");
+ const templateId=projectTemplateIdSchema.parse(templateIdInput);
+ const desired=Array.from(new Set(rawInput.collegeIds)).sort();
+ const expected=Array.from(new Set(rawInput.expectedCollegeIds)).sort();
+ if(desired.length!==rawInput.collegeIds.length||
+    expected.length!==rawInput.expectedCollegeIds.length){
+   throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_CONFLICT");
+ }
+ const scopedIds=Array.from(new Set([...desired,...expected]));
+ // Check each college's active organization and the actor's explicit scope
+ // without querying assignments. This prevents foreign IDs in desired sets.
+ const collegesById=new Map<string,Awaited<ReturnType<typeof loadProjectCollegeScope>>>();
+ for(const collegeId of scopedIds){
+   const college=await loadProjectCollegeScope(collegeId);
+   requirePermission(context,"project-template.assign",{
+     collegeId:college.id,organizationId:college.organizationId,
+   });
+   collegesById.set(collegeId,college);
+ }
+ try{
+  return await getDb().transaction(async tx=>{
+   const [template]=await tx.select().from(projectTemplates)
+     .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
+   if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+   await assertPersistedPlatformPermission(tx,context,"project-template.manage");
+   for(const college of collegesById.values()){
+     await assertPersistedPlatformPermission(tx,context,"project-template.assign",{
+       collegeId:college.id,organizationId:college.organizationId,
+     });
+   }
+   const existing=await tx.select().from(projectTemplateCollegeAssignments)
+     .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
+       isNull(projectTemplateCollegeAssignments.revokedAt)))
+     .orderBy(asc(projectTemplateCollegeAssignments.collegeId));
+   const current=existing.map(item=>item.collegeId).sort();
+   if(current.length!==expected.length||
+      current.some((id,index)=>id!==expected[index])){
+     throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_CONFLICT");
+   }
+   const oldSet=new Set(current),newSet=new Set(desired);
+   const additions=desired.filter(id=>!oldSet.has(id));
+   const removals=current.filter(id=>!newSet.has(id));
+   if(!additions.length&&!removals.length){
+     return {collegeIds:current,addedCount:0,removedCount:0,changed:false};
+   }
+   if(additions.length&&(template.status!=="PUBLISHED"||!template.publishedVersion)){
+     throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
+   }
+   const [version]=additions.length?await tx.select({id:projectTemplateVersions.id})
+     .from(projectTemplateVersions).where(and(
+       eq(projectTemplateVersions.templateId,templateId),
+       eq(projectTemplateVersions.version,template.publishedVersion!))).limit(1):[];
+   if(additions.length&&!version)throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
+   const now=new Date();
+   for(const row of existing.filter(row=>!newSet.has(row.collegeId))){
+     await tx.update(projectTemplateCollegeAssignments).set({revokedAt:now})
+       .where(eq(projectTemplateCollegeAssignments.id,row.id));
+     const college=collegesById.get(row.collegeId)!;
+     await recordActivityEventInTransaction(tx,context,{
+       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED,
+       organizationId:college.organizationId,collegeId:college.id,
+       subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+       summary:"Project template removed from college",
+       metadata:{assignmentId:row.id,templateVersionId:row.templateVersionId,via:"bulk_set"},
+       groupKey:"template:"+templateId,
+     });
+   }
+   for(const collegeId of additions){
+     const [inserted]=await tx.insert(projectTemplateCollegeAssignments).values({
+       templateId,templateVersionId:version!.id,collegeId,
+       assignedByUserId:context.user.id,assignedAt:now,
+     }).returning();
+     if(!inserted)throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_CONFLICT");
+     const college=collegesById.get(collegeId)!;
+     await recordActivityEventInTransaction(tx,context,{
+       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_ASSIGNED,
+       organizationId:college.organizationId,collegeId,
+       subjectType:"project_template",subjectId:templateId,subjectLabel:template.title,
+       summary:"Project template assigned to college",
+       metadata:{assignmentId:inserted.id,publishedVersion:template.publishedVersion,
+        newVersionId:version!.id,via:"bulk_set"},
+       groupKey:"template:"+templateId,
+     });
+   }
+   return {collegeIds:desired,addedCount:additions.length,
+     removedCount:removals.length,changed:true};
+  });
+ }catch(error){
+   if(error instanceof ProjectsServiceError)throw error;
+   throw mapTemplateConstraint(error);
+ }
+}
+
 export async function listAssignedProjectTemplates(
   context: RequestContext,
   collegeIdInput: string,
