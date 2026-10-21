@@ -77,6 +77,7 @@ export async function ProjectAdminSubmissionsPage({
   const { view, ...safeQuery } = parsed.data;
   const query: ProjectAdminCollectionQuery = safeQuery;
   const sort=query.sort??"SUBMITTED_DESC";
+  const focus=query.focusedProjectId;
   // An unsubmitted tab must not depend on unrelated final-delivery reads:
   // one optional summary failure cannot hide a separate valid workspace list.
   const all = view==="ALL"?await Promise.allSettled([
@@ -91,13 +92,14 @@ export async function ProjectAdminSubmissionsPage({
   const renderedAt=new Date();
   const unsubmittedResult=view==="NOT_SUBMITTED"
     ? await listProjectAdminUnsubmitted(context,collegeId,{
-        q:query.q,status:query.status,page:query.page,pageSize:query.pageSize,
+        q:query.q,status:query.status,focusedProjectId:focus,page:query.page,pageSize:query.pageSize,
       }).then(value=>({ok:true as const,value})).catch(()=>({ok:false as const}))
     : null;
   const unsubmitted=unsubmittedResult?.ok?unsubmittedResult.value:null;
   if(view==="ALL"&&!result){
     const params=new URLSearchParams();
     if(query.q)params.set("q",query.q);
+    if(focus)params.set("projectId",focus);
     if(query.status)params.set("status",query.status);
     if(query.submissionStatus)params.set("submissionStatus",query.submissionStatus);
     if(query.page&&query.page>1)params.set("page",String(query.page));
@@ -130,6 +132,14 @@ export async function ProjectAdminSubmissionsPage({
         ]}
       />
       <ProjectAdminNav basePath={basePath} active="submissions" />
+      {focus?<div role="status" className="flex flex-wrap items-center gap-3 border-b border-border py-2 text-sm">
+        <span>Showing workspace {focus}</span>
+        <Link href={view==="NOT_SUBMITTED"?
+          projectAdminUnsubmittedHref(queuePath,{...query,focusedProjectId:undefined}):
+          projectAdminSubmissionHref(queuePath,{...query,focusedProjectId:undefined},
+            query.submissionStatus&&query.submissionStatus!=="DRAFT"?query.submissionStatus:undefined)}
+          className="font-semibold text-link underline">Clear workspace focus</Link>
+      </div>:null}
       <Tabs
         ariaLabel="Submission categories"
         renderPanel={false}
@@ -240,6 +250,7 @@ export async function ProjectAdminSubmissionsPage({
               column==="revisions"?"REVISIONS_DESC":"SUBMITTED_DESC";
             const params=new URLSearchParams();
             if(query.q)params.set("q",query.q);
+            if(focus)params.set("projectId",focus);
             if(query.status)params.set("status",query.status);
             if(query.submissionStatus)params.set("submissionStatus",query.submissionStatus);
             if(query.pageSize)params.set("pageSize",String(query.pageSize));
