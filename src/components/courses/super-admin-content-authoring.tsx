@@ -21,6 +21,7 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
 }){
  const router=useRouter();
  const [resourceOpen,setResourceOpen]=useState(false);
+ const [videoMode,setVideoMode]=useState<"UPLOAD"|"YOUTUBE">("UPLOAD");
  const [offeringId,setOfferingId]=useState(lessons[0]?.offeringId??"");
  const [lessonId,setLessonId]=useState(lessons[0]?.id??"");
  const [sectionId,setSectionId]=useState("");
@@ -38,7 +39,7 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
  const isResource=kind==="RESOURCES";
  const heading=kind==="VIDEOS"?"Add a video":
   kind==="LIVE_CLASSES"?"Schedule a live class":"Add Resource";
- const author=selected?<FacultyLessonAuthoring key={contentKey}
+ const author=selected&&(kind!=="VIDEOS"||videoMode==="YOUTUBE")?<FacultyLessonAuthoring key={contentKey}
    lessonId={selected.id} deliveryId={deliveryId}
    audience={deliveryId?"SECTION":"OFFERING"}
    nextContentSequence={selected.nextContentSequence}
@@ -105,24 +106,39 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
      dismissible className="max-w-[700px]"
      title="Add Resource"
      description={"Create a resource in "+(selected?.name??"the selected lesson")+
-       ". Uploaded files require a verified private-storage grant."}
+       ". Link titles and notes are supported; unverified file attachments cannot be published."}
      footer={<Button type="button" variant="secondary" onClick={()=>setResourceOpen(false)}>Cancel</Button>}>
      <div className="min-w-0 space-y-3">
       {author}
       <p className="text-xs text-muted-foreground">
-       Link titles are optional. Existing uploaded files are preserved when you edit resource links.
+       Add notes and a link title (optional) alongside an HTTPS resource URL.
+       Private files require a scanned, verified upload receipt and cannot be
+       attached from an untrusted local path or pasted storage URL.
       </p>
      </div>
     </Dialog>:
     <article className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
      <h2 className="text-lg font-semibold text-foreground">{heading}</h2>
+     {kind==="VIDEOS"?<fieldset className="flex flex-wrap gap-3" aria-label="Video type">
+      <legend className="mb-2 text-[13px] font-semibold text-body">Video type</legend>
+      <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+       <input type="radio" name="super-admin-video-kind" value="UPLOAD"
+        checked={videoMode==="UPLOAD"} disabled={!allowVideoUpload}
+        onChange={()=>setVideoMode("UPLOAD")}/>Video (Upload)
+      </label>
+      <label className="inline-flex min-h-9 items-center gap-2 text-sm">
+       <input type="radio" name="super-admin-video-kind" value="YOUTUBE"
+        checked={videoMode==="YOUTUBE"} onChange={()=>setVideoMode("YOUTUBE")}/>
+       YouTube Video
+      </label>
+     </fieldset>:null}
      {author}
-     {kind==="VIDEOS"&&selected&&(allowVideoUpload?
+     {kind==="VIDEOS"&&selected&&videoMode==="UPLOAD"&&(allowVideoUpload?
       <div className="space-y-2">
        <p className="text-xs text-muted-foreground">
-        Upload a private video using a signed grant or add a YouTube link above.
-        Video assets remain separate per lesson and audience; importing remote
-        videos directly is unavailable until validated and scanned.
+        Select one MP4, WebM, MOV or AVI video. The private upload uses a
+        short-lived signed grant; progress and processing/scan status appear
+        below. Learners cannot play videos until verification finishes.
        </p>
        <FacultyLessonVideoManager key={"video:"+contentKey}
         lessonId={selected.id} deliveryId={deliveryId}
@@ -132,6 +148,17 @@ export function SuperAdminContentAuthoring({kind,lessons,sections=[],allowVideoU
        Private video upload is unavailable without an active college storage identity.
        You can still add a YouTube link.
       </p>)}
+     {kind==="VIDEOS"?<div className="space-y-2 border-t border-border pt-3">
+      <Button type="button" variant="secondary" disabled
+       title="Direct third-party video imports are unavailable until server-side SSRF, type, size and malware-scan checks are deployed.">
+       Import from URL
+      </Button>
+      <p role="status" className="text-xs text-muted-foreground">
+       Direct video URL import is unavailable: only files uploaded to verified
+       private storage, or YouTube links, can be saved. Remote server imports
+       must pass network allowlisting, file validation and malware scanning.
+      </p>
+     </div>:null}
      {kind==="LIVE_CLASSES"?<p className="text-xs text-muted-foreground">
       Meetings use the selected time zone, with a 15-minute date and time step.
      </p>:null}
