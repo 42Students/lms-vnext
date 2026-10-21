@@ -58,4 +58,4 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-12.md: surface | regre
 - [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
 - [x] `src/components/tpo/tpo-company-team-conversation.tsx`
 - [x] `src/components/tpo/tpo-notice-undo-toast.tsx`
-- [ ] `src/components/tpo/tpo-topbar-new-menu.tsx`
+- [x] `src/components/tpo/tpo-topbar-new-menu.tsx`
