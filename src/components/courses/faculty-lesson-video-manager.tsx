@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
 import { LoadingState } from "@/components/ui/loading-state";
@@ -30,6 +31,7 @@ export function FacultyLessonVideoManager({
   lessonId,deliveryId,nextContentSequence,
 }: { lessonId:string;deliveryId:string|null;nextContentSequence:number }) {
   const router=useRouter();
+  const {showToast}=useToast();
   const [videos,setVideos]=useState<ManagedVideo[]>([]);
   const [loading,setLoading]=useState(true);
   const [busy,setBusy]=useState(false);
@@ -69,7 +71,7 @@ export function FacultyLessonVideoManager({
     return()=>{controller.abort();controllerRef.current?.abort();};
   },[lessonId,deliveryId]);
 
-  function run(action:Action,name:string|null=null){
+  function run(action:Action,name:string|null=null,failureTitle?:string){
     if(locked.current)return;
     locked.current=true;
     const controller=new AbortController();
@@ -77,7 +79,13 @@ export function FacultyLessonVideoManager({
     setBusy(true);setActiveName(name);setProgress(0);setError(null);setInfo(null);
     void (async()=>{
       try{await action(controller.signal);}
-      catch(cause){if(!controller.signal.aborted)setError(cause instanceof Error?cause.message:"Could not update lesson video.");}
+      catch(cause){
+        if(!controller.signal.aborted){
+          const detail=cause instanceof Error?cause.message:"Could not update lesson video.";
+          setError(detail);
+          if(failureTitle)showToast({tone:"error",title:failureTitle,description:detail});
+        }
+      }
       finally{
         if(!controller.signal.aborted){
           try{await list(controller.signal);}
@@ -143,7 +151,7 @@ export function FacultyLessonVideoManager({
     if(!video.durationSeconds){setError("Set a valid duration before adding video lesson content.");return;}
     const points=Number(contentPoints);
     if(!contentPoints.trim()){setError("Points are required.");return;}
-    if(!Number.isInteger(points)||points<0||points>1000){setError("Enter Points from 0 to 1000.");return;}
+    if(!Number.isInteger(points)||points<0||points>1000){setError("Points must be a whole number between 0 and 1000.");return;}
     run(async signal=>{
       const key=`video-asset/${video.id}`;
       const current=await lessonContents(signal);
@@ -199,20 +207,40 @@ export function FacultyLessonVideoManager({
       upload(action.video, action.file);
       return;
     }
+    if(action.video.lessonContentId){
+      // The current video DELETE only archives the storage asset. It does
+      // not retire an attached published lesson-content row atomically.
+      setError("This video is linked to lesson content. Remove the content and video together in the authorized lesson workspace.");
+      return;
+    }
     run(async signal => {
-      await request(`/api/courses/videos/${encodeURIComponent(action.video.id)}`, "DELETE", undefined, signal);
+      const result=await request(`/api/courses/videos/${encodeURIComponent(action.video.id)}`, "DELETE", undefined, signal);
+      if(!result || typeof result!=="object" ||
+         (result as {id?:unknown}).id!==action.video.id ||
+         (result as {deleted?:unknown}).deleted!==true)
+        throw new Error("Could not verify the video deletion.");
+      setPreviewId(current=>current===action.video.id?null:current);
+      showToast({tone:"success",title:"Video deleted successfully"});
       router.refresh();
-    });
+    },null,"Failed to delete");
   }
   function saveTitle(video:ManagedVideo){
     const next=(titleDraft[video.id]??video.title).trim();
     if(!next||next.length>255){setError("Enter a video title (1–255 characters).");return;}
     if(next===video.title){setInfo("Video title is unchanged.");return;}
+    if(video.lessonContentId){
+      setError("Video title is linked to lesson content. Edit both together after content synchronization is available.");
+      return;
+    }
     change(video,{title:next});
   }
   function saveDuration(video:ManagedVideo){
     const value=Number(durationDraft[video.id]??video.durationSeconds??"");
     if(!Number.isInteger(value)||value<1||value>86400){setError("Enter a duration between 1 second and 24 hours.");return;}
+    if(video.lessonContentId){
+      setError("Video duration is linked to lesson content. Edit both together after synchronization is available.");
+      return;
+    }
     change(video,{durationSeconds:value});
   }
 
@@ -287,7 +315,7 @@ export function FacultyLessonVideoManager({
               onClick={()=>reorder(video,1)}>
               Move down
             </Button>
-              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit}
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||Boolean(video.lessonContentId)}
               onClick={()=>setConfirmation({kind:"DELETE",video})}>
               Delete
             </Button>
@@ -295,11 +323,11 @@ export function FacultyLessonVideoManager({
             <div className="grid min-w-0 items-start gap-3 pt-3 sm:grid-cols-2">
             <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-title-${video.id}`}>Video title</label>
               <Input id={`video-title-${video.id}`} className="mt-[6px] w-full min-w-0" maxLength={255}
-                disabled={busy||!canEdit}
+                disabled={busy||!canEdit||Boolean(video.lessonContentId)}
                 value={titleDraft[video.id]??video.title}
                 onChange={event=>setTitleDraft(old=>({...old,[video.id]:event.target.value}))}/>
               <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button"
-                disabled={busy||!canEdit}
+                disabled={busy||!canEdit||Boolean(video.lessonContentId)}
                 onClick={()=>saveTitle(video)}>Update Video</Button>
             </div>
             <label className="text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Replace video
@@ -314,17 +342,19 @@ export function FacultyLessonVideoManager({
               <span className="block text-xs text-muted-foreground">{video.thumbnailStatus==="READY"?"Thumbnail ready":video.thumbnailStatus==="UPLOADING"?"Checking thumbnail":"No thumbnail"}</span>
             </label>
             <div className="min-w-0 text-[13px] leading-4 font-semibold text-body"><label htmlFor={`video-duration-${video.id}`}>Duration (seconds)</label>
-              <Input disabled={busy||!canEdit} id={`video-duration-${video.id}`} type="number" className="mt-[6px] w-full min-w-0" min={1} max={86400}
+              <Input disabled={busy||!canEdit||Boolean(video.lessonContentId)} id={`video-duration-${video.id}`} type="number" className="mt-[6px] w-full min-w-0" min={1} max={86400}
                 value={durationDraft[video.id]??String(video.durationSeconds??"")}
                 onChange={event=>setDurationDraft(draft=>({...draft,[video.id]:event.target.value}))}/>
-              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit} onClick={()=>saveDuration(video)}>Save duration</Button>
+              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="md" variant="secondary" type="button" disabled={busy||!canEdit||Boolean(video.lessonContentId)} onClick={()=>saveDuration(video)}>Save duration</Button>
             </div>
           </div>
 
           </details>
           {!canEdit?<Alert tone="info">Shared video · read only in this Section.</Alert>:null}
           {previewId===video.id&&deliveryId?<FacultyVideoPreview key={video.id} videoId={video.id} deliveryId={deliveryId}/>:null}
-          {video.lessonContentId?<p className="text-xs text-muted-foreground leading-[20px]">Linked to lesson content</p>:null}
+          {video.lessonContentId?<Alert tone="info">
+            Linked to lesson content. Deletion and separate metadata edits are unavailable until a single authorized operation can update both records safely.
+          </Alert>:null}
           {video.processingStatus==="PROCESSING"?<Alert tone="warning">Checking file. Playback and publishing are not available yet.</Alert>:null}
         </li>;
       })}
@@ -336,7 +366,7 @@ export function FacultyLessonVideoManager({
       onOpenChange={nextOpen=>{if(!nextOpen&&!busy)setConfirmation(null);}}
       title={confirmation?.kind==="DELETE"?"Delete this video?":"Replace this video?"}
       description={confirmation?.kind==="DELETE"
-        ?"The video will be deleted from this lesson."
+        ?"Delete this unlinked video? This removes the managed asset; existing lesson content is not deleted by this action."
         :"The selected file will replace the current lesson video."}
       confirmLabel={confirmation?.kind==="DELETE"?"Delete video":"Replace video"}
       confirmVariant={confirmation?.kind==="DELETE"?"danger":"primary"}

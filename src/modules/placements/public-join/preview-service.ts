@@ -8,6 +8,20 @@ import {publicJoinTablesReady} from "./readiness";
 import {publicJoinPreviewForDisplay,type PublicJoinPreview} from "./preview-model";
 import {publicCollegeJoinTokenSchema} from "../public-college-join-model";
 
+/** Legacy links without an expiry cannot safely be written into the vNext
+ * NOT NULL expiresAt schema as an arbitrary far-future date. On migration,
+ * record them for administrator rotation and issue new finite-lived signed
+ * tokens with out-of-band delivery. Until a valid replacement is enabled,
+ * previews stay unavailable; legacy hashes are never auto-upgraded to a
+ * permanent link and expiry checks are never bypassed. */
+export const legacyPublicJoinLinkMigrationPolicy = {
+ previousExpiry: "UNBOUNDED",
+ action: "ADMIN_ROTATION_REQUIRED",
+ importedLinkMayAuthorizeJoin: false,
+ replacementNeedsFiniteExpiry: true,
+ revokeOrRetireOriginalAfterRotation: true,
+} as const;
+
 /** Never log tokens, attempt queries before registration, or expose stored ids. */
 export async function getPublicJoinPreview(token:string,scope:"COLLEGE"|"COMPANY"):Promise<PublicJoinPreview>{
  if(!publicCollegeJoinTokenSchema.safeParse(token).success)return {kind:"UNAVAILABLE"};

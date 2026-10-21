@@ -30,7 +30,7 @@ export function SuperAdminBatchGraduateAction({cohortId,name}:{cohortId:string;n
       (cohort as Record<string,unknown>).id!==cohortId||
       (cohort as Record<string,unknown>).status!=="COMPLETED")
      throw new Error("Graduation could not be confirmed. Refresh before retrying.");
-   setOpen(false);setSuccess("Batch marked graduated.");router.refresh();
+   setOpen(false);setSuccess("Marked "+name+" as graduated (Completed)");router.refresh();
    });
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not graduate this batch. Try again.");}
  }

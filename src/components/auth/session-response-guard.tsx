@@ -30,7 +30,9 @@ export function SessionResponseGuard() {
       }
       if (response.status === 401 || reason === "SESSION_EXPIRED" || reason === "SESSION_REVOKED") {
         redirected = true;
-        window.location.assign(sessionExpiredHref(
+        // The root sign-in page renders the session-expiry explanation from
+        // the validated auth=expired/revoked flag. Replace avoids Back loops.
+        window.location.replace(sessionExpiredHref(
           window.location.pathname + window.location.search,
           reason === "SESSION_REVOKED" ? "revoked" : "expired",
         ));

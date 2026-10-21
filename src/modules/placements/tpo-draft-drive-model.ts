@@ -10,7 +10,7 @@ export const tpoDraftDriveStepOneSchema = z.object({
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]),
   /** Canonical scoped label (all five built-ins and active custom types). */
   jobTypeLabel: z.string().trim().min(2).max(40)
-   .regex(/^[\p{L}\p{N} +&/().,'-]+$/u,"Choose an available job type").optional(),
+   .regex(/^[\p{L}\p{N} +&\/().,'-]+$/u,"Choose an available job type").optional(),
   workMode: z.enum(["ONSITE", "REMOTE", "HYBRID"]),
   applicationDeadline: z.iso.datetime({ offset: true }).nullable(),
 }).strict().superRefine((value, ctx) => {

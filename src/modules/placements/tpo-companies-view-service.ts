@@ -1,8 +1,13 @@
 import {
   and,
+  asc,
   desc,
   eq,
+  ilike,
   inArray,
+  isNull,
+  or,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 
@@ -10,6 +15,7 @@ import { getDb } from "@/db/client";
 import {
   collegeMemberships,
   placementApplications,
+  placementCompanies,
   placementCompanyRelationships,
   placementJobs,
   placementJoiningOutcomes,
@@ -37,6 +43,43 @@ import {
 } from "./tpo-companies-view-model";
 
 const uuid = z.string().uuid();
+
+/** Authorized global employer picker: never return another college’s CRM details. */
+export async function searchTpoCompanyCandidates(context:RequestContext,raw:unknown){
+ const input=z.object({collegeId:z.string().uuid(),q:z.string().trim().min(2).max(120)}).strict().parse(raw);
+ const liveCollege=await requireTpoBatchActor(context);
+ if(liveCollege!==input.collegeId)throw new AuthorizationError("placements.manage");
+ await requirePlacementManageScope(context,input.collegeId);
+ const term=input.q.toLocaleLowerCase("en-US");
+ const pattern="%"+term.replace(/[%_\\]/g,"\\$&")+"%";
+ const rows=await getDb().select({
+  companyId:placementCompanies.id,name:placementCompanies.name,
+  primaryDomain:placementCompanies.primaryDomain,websiteUrl:placementCompanies.websiteUrl,
+  relationshipId:placementCompanyRelationships.id,
+ }).from(placementCompanies).leftJoin(placementCompanyRelationships,and(
+  eq(placementCompanyRelationships.companyId,placementCompanies.id),
+  eq(placementCompanyRelationships.collegeId,input.collegeId),
+  eq(placementCompanyRelationships.status,"ACTIVE"),
+  isNull(placementCompanyRelationships.archivedAt),
+ )).where(and(
+  eq(placementCompanies.status,"ACTIVE"),isNull(placementCompanies.archivedAt),
+  or(ilike(placementCompanies.name,pattern),ilike(placementCompanies.primaryDomain,pattern)),
+ )).orderBy(
+  sql`case when lower(trim(${placementCompanies.name})) = ${term} then 0
+    when lower(${placementCompanies.primaryDomain}) = ${term} then 1
+    when lower(${placementCompanies.name}) like ${term+"%"} then 2 else 3 end`,
+  asc(placementCompanies.name),asc(placementCompanies.id),
+ ).limit(50);
+ // Distinct domains can legitimately share display names. Canonical IDs
+ // are the identity; active company/college relationships are unique.
+ const unique=[...new Map(rows.map(row=>[row.companyId,row])).values()];
+ return {items:unique.map(row=>({
+  companyId:row.companyId,name:row.name,primaryDomain:row.primaryDomain,
+  websiteUrl:row.websiteUrl,relationshipId:row.relationshipId,
+  linkedToCollege:row.relationshipId!==null,
+ })),limit:50};
+}
+
 
 export const tpoCompaniesQuerySchema = z
   .object({

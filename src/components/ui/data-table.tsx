@@ -11,6 +11,8 @@ export type DataTableColumn<Row> = {
   cell: (row: Row) => ReactNode;
   /** Native table sorting semantics; visual sort controls stay in the column header. */
   sortDirection?: "ascending" | "descending" | "none";
+  /** Optional URL-driven column sort; caller must sort rows on the server. */
+  sortable?: boolean;
   className?: string;
   mobileLabel?: string;
   mobilePriority?: "primary" | "secondary" | "action" | "hidden";
@@ -31,13 +33,36 @@ export type DataTableProps<Row> = {
   caption?: string;
   rowHref?: (row: Row) => string;
   className?: string;
+  /** Safe same-origin URL for the *next* sort state. Query params persist state. */
+  sortHref?: (columnKey: string, next: "ascending" | "descending") => string;
+  /** Native form-based multi-selection; no client-only handler is required. */
+  rowSelection?: {
+    formId: string;
+    action: string;
+    method?: "get" | "post";
+    fieldName?: string;
+    isDisabled?: (row: Row) => boolean;
+    controls: ReactNode;
+  };
 };
 
 /** Backwards-compatible export for existing DataTable consumers and tests. */
 export { isSafeInternalHref as isSafeDataTableHref } from "@/lib/safe-internal-href";
 
-export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className }: DataTableProps<Row>) {
+export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHref, className, sortHref, rowSelection }: DataTableProps<Row>) {
   if(rows.length===0) return <div data-slot="data-table" aria-label={caption} className={cx("rounded-[var(--lms-radius-md)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:p-[var(--lms-canvas-padding)]", className)}>{empty}</div>;
+  // Native form association keeps this component usable in Server Components:
+  // checkboxes join a form by stable caller-owned ID without a client boundary.
+  const selection = rowSelection && rowSelection.formId.trim() &&
+    isSafeInternalHref(rowSelection.action) ? rowSelection : null;
+  const sortLinks = new Map(columns.map(col=>{
+    if(!col.sortable || !sortHref) return [col.key,null] as const;
+    try {
+      const next = col.sortDirection==="ascending"?"descending":"ascending";
+      const candidate = sortHref(col.key,next);
+      return [col.key,isSafeInternalHref(candidate)?candidate:null] as const;
+    } catch { return [col.key,null] as const; }
+  }));
   const primary=columns.find(col=>col.mobilePriority==="primary") ??
     columns.find(col=>col.mobilePriority===undefined || col.mobilePriority==="secondary");
   const actions=columns.filter(col=>col.mobilePriority==="action");
@@ -78,6 +103,11 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
     }));
     return {
       key:getRowKey(row),row,detailLinks,
+      selectable:(()=>{
+        if(!selection) return false;
+        try { return selection.isDisabled?.(row)!==true; }
+        catch { return false; }
+      })(),
       detailHref:(()=>{
         try {
           const href=rowHref?.(row);
@@ -97,12 +127,29 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
       <table className="block w-full border-separate border-spacing-0 text-left text-[14px] leading-5 tabular-nums md:table md:border-collapse md:[&_tbody_tr:last-child_td]:border-b-0">
         <caption className="sr-only">{caption ?? "Records"}</caption>
         <thead className="hidden md:table-header-group md:bg-[var(--lms-white)]">
-          <tr>{columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
-            className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)] md:first:left-0 md:first:z-20",col.className)}>{col.header}</th>)}</tr>
+          <tr>
+            {selection ? <th scope="col" className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)]">
+              <span className="sr-only">Select records</span>
+            </th> : null}
+            {columns.map(col=><th key={col.key} scope="col" aria-sort={col.sortDirection}
+              className={cx("border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[11px] text-xs font-semibold leading-[18px] text-[var(--lms-neutral-400)] md:sticky md:top-0 md:z-10 md:bg-[var(--lms-white)] md:first:left-0 md:first:z-20",col.className)}>
+              {sortLinks.get(col.key) ? <Link href={sortLinks.get(col.key)!}
+                aria-label={"Sort by "+col.key+(col.sortDirection==="ascending"?" descending":" ascending")}
+                className="inline-flex items-center gap-2 rounded-sm underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+                {col.header}<span aria-hidden="true">{col.sortDirection==="ascending"?"▲":col.sortDirection==="descending"?"▼":"↕"}</span>
+              </Link> : col.header}
+            </th>)}
+          </tr>
         </thead>
         <tbody className="block space-y-[var(--lms-space-3)] md:table-row-group md:space-y-0">
           {prepared.map(item=><tr key={item.key} data-slot="data-table-row"
             className="block min-w-0 overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] md:table-row md:overflow-visible md:rounded-none md:border-0 md:p-0 md:transition-colors md:duration-[var(--lms-motion-fast)] md:hover:bg-[var(--lms-white)] focus-within:border-[var(--lms-primary)] md:focus-within:border-[var(--lms-canvas-border)] md:focus-within:bg-[var(--lms-primary-subtle)] motion-reduce:transition-none">
+            {selection ? <td className="block py-1 md:table-cell md:border-b md:border-[var(--lms-canvas-border)] md:px-[var(--lms-space-4)]">
+              <input type="checkbox" name={selection.fieldName??"selected"} value={item.key}
+                form={selection.formId} disabled={!item.selectable}
+                aria-label={"Select record "+item.key}
+                className="size-4 accent-[var(--lms-primary)] disabled:opacity-50"/>
+            </td> : null}
             {columns.map(col=>{
               const phoneVisible=visibleOnPhone.has(col.key);
               const content=cell(item,col);
@@ -141,5 +188,9 @@ export function DataTable<Row>({ columns, rows, getRowKey, empty, caption, rowHr
         </tbody>
       </table>
     </ScrollCue>
+    {selection ? <form id={selection.formId} method={selection.method??"post"}
+      action={selection.action} className="mt-3 flex min-h-11 items-center gap-2">
+      {selection.controls}
+    </form> : null}
   </div>;
 }

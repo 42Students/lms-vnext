@@ -29,3 +29,23 @@ export function afterCollegeDisplay(outcome:AfterCollegeOutcome|null|undefined){
 export function afterCollegeAllOptions(){
  return AFTER_COLLEGE_OUTCOMES.map(value=>({value,label:AFTER_COLLEGE_LABELS[value]}));
 }
+
+/** Registration is a learner's intent to participate in placements, not a
+ * NAAC/NIRF after-college result. In particular, selecting PLACEMENTS never
+ * creates a PLACED_ON_CAMPUS or PLACED_OFF_CAMPUS outcome. */
+export const REGISTRATION_CHOICES = ["PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED"] as const;
+export const registrationChoiceSchema=z.enum(REGISTRATION_CHOICES);
+export type RegistrationChoice=z.infer<typeof registrationChoiceSchema>;
+export const REGISTRATION_CHOICE_LABELS:Record<RegistrationChoice,string>={
+ PLACEMENTS:"Placements",HIGHER_STUDIES:"Higher studies",NOT_INTERESTED:"Not interested",
+};
+export function registrationChoiceOptions(){
+ return REGISTRATION_CHOICES.map(value=>({value,label:REGISTRATION_CHOICE_LABELS[value]}));
+}
+
+/** Per-college custom outcome labels/job types must use a tenant + revision
+ * scoped lookup. Stable built-in options can be reused until either changes;
+ * callers supply a trustworthy server catalog revision, not a browser guess. */
+export function afterCollegeCatalogScopeKey(collegeId:string,catalogVersion:string|number){
+ return JSON.stringify([z.string().uuid().parse(collegeId),String(catalogVersion)]);
+}

@@ -9,6 +9,21 @@ import { requirePlacementManageScope } from "./scope";
 import { tpoRulesChangeSchema, tpoSeasonChangeSchema } from "./tpo-season-write-model";
 import { PlacementsServiceError } from "./errors";
 
+/** Legacy openRegistration has no writable vNext season columns yet:
+ * isCurrent and isRegistrationOpen are independent of ACTIVE/CLOSED, and a
+ * registration deadline is not a season endDate. Never claim registration is
+ * open, nor mutate a season's endDate as a surrogate for this operation.
+ * The required schema migration + eligibility read must ship atomically with
+ * a separately authorized write route, CAS, activity and notification policy. */
+export const legacySeasonRegistrationWriteContract = {
+ action: "OPEN_REGISTRATION",
+ needsColumns: ["is_registration_open", "registration_deadline"],
+ mustNotConflateWith: ["status", "endDate"],
+ requires: ["scoped TPO actor", "persisted permission", "version check",
+   "audited season transition", "learner eligibility reads"],
+ supported: false,
+} as const;
+
 export class TpoSettingsStaleError extends Error {
   constructor() { super("TPO_SETTINGS_STALE"); this.name = "TpoSettingsStaleError"; }
 }

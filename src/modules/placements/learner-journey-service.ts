@@ -74,6 +74,7 @@ export async function getLearnerPlacementJourney(
           company: {
             id: placementCompanies.id,
             name: placementCompanies.name,
+            logoPublicUrl: placementCompanies.logoPublicUrl,
           },
         })
         .from(placementApplications)

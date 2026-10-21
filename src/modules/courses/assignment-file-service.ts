@@ -32,6 +32,30 @@ import {
 } from "./learning-access";
 import { CoursesServiceError } from "./errors";
 
+/** Retain the legacy machine error code while making each scoped upload
+ * failure distinguishable for the API presentation layer. No storage keys,
+ * foreign receipt IDs or owner details appear in these explanations. */
+export type AssignmentReceiptFailureKind=
+ |"NOT_FOUND"|"REVOKED"|"USED"|"EXPIRED"|"OBJECT_NOT_READY"
+ |"EMPTY_FILE"|"MIME_MISMATCH"|"SIZE_MISMATCH";
+export class AssignmentFileReceiptFailure extends CoursesServiceError {
+ readonly publicMessage:string;
+ constructor(public readonly reason:AssignmentReceiptFailureKind){
+  super(reason==="OBJECT_NOT_READY"?"ASSIGNMENT_FILE_NOT_READY":"ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+  const messages:Record<AssignmentReceiptFailureKind,string>={
+   NOT_FOUND:"Upload receipt not found.",
+   REVOKED:"This upload receipt is no longer valid.",
+   USED:"This upload receipt has already been used.",
+   EXPIRED:"This upload receipt has expired. Please upload again.",
+   OBJECT_NOT_READY:"The uploaded file is not ready. Please try again.",
+   EMPTY_FILE:"The uploaded file is empty. Please upload a non-empty file.",
+   MIME_MISMATCH:"The uploaded file type does not match the declared type.",
+   SIZE_MISMATCH:"The uploaded file size does not match the declared size.",
+  };
+  this.publicMessage=messages[reason];
+ }
+}
+
 function assignmentAudienceMatches(
   assignment: Awaited<
     ReturnType<
@@ -237,17 +261,13 @@ export async function prepareAssignmentFileReceipt(
     )
     .limit(1);
 
-  if (
-    !receipt ||
-    receipt.revoked ||
-    receipt.consumedAt ||
-    receipt.expiresAt.getTime() <=
-      Date.now()
-  ) {
-    throw new CoursesServiceError(
-      "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
-    );
-  }
+  // Receipt lookup is already scoped to this learner, college and delivery.
+  // Missing/foreign IDs get the same generic not-found reason.
+  if(!receipt)throw new AssignmentFileReceiptFailure("NOT_FOUND");
+  if(receipt.revoked)throw new AssignmentFileReceiptFailure("REVOKED");
+  if(receipt.consumedAt)throw new AssignmentFileReceiptFailure("USED");
+  if(receipt.expiresAt.getTime()<=Date.now())
+    throw new AssignmentFileReceiptFailure("EXPIRED");
 
   const attestation =
     await readPrivateObjectAttestation(
@@ -262,21 +282,18 @@ export async function prepareAssignmentFileReceipt(
       },
     ).catch(error => {
       if (error instanceof PrivateObjectStorageError && error.code === "PRIVATE_STORAGE_OBJECT_NOT_ATTESTED") {
-        throw new CoursesServiceError("ASSIGNMENT_FILE_NOT_READY");
+        throw new AssignmentFileReceiptFailure("OBJECT_NOT_READY");
       }
       throw error;
     });
 
-  if (
-    attestation.contentType !==
-      receipt.declaredContentType ||
-    attestation.sizeBytes !==
-      receipt.declaredSizeBytes
-  ) {
-    throw new CoursesServiceError(
-      "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
-    );
-  }
+  // MIME and size are independently actionable. The storage layer's
+  // attestation currently rejects missing, empty and unscanned objects
+  // together; never falsely describe those unverified cases as zero bytes.
+  if(attestation.contentType!==receipt.declaredContentType)
+    throw new AssignmentFileReceiptFailure("MIME_MISMATCH");
+  if(attestation.sizeBytes!==receipt.declaredSizeBytes)
+    throw new AssignmentFileReceiptFailure("SIZE_MISMATCH");
 
   return {
     receipt,

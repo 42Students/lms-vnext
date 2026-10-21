@@ -143,6 +143,23 @@ export async function listActiveSessions(userId: string) {
   return rowsOf(result);
 }
 
+/** Explicit own-account revoke-all, including this device. This differs from
+ * the 'sign out everywhere else' action exposed on the existing devices route.
+ * A caller MUST derive userId from a verified device session, not request JSON.
+ */
+export async function revokeAllOwnSessions(userId: string): Promise<number> {
+  const result = await getDb().execute(sql`
+    UPDATE identity_device_sessions
+    SET revoked_at = now(),
+        revoked_by_user_id = ${userId},
+        revocation_reason = 'USER_SIGNED_OUT_ALL_DEVICES'
+    WHERE user_id = ${userId} AND revoked_at IS NULL
+      AND expires_at > now()
+    RETURNING id
+  `);
+  return rowsOf(result).length;
+}
+
 /** Ends every live session of the user except the one making the request. */
 export async function revokeOtherSessions(
   userId: string,

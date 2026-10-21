@@ -8,8 +8,10 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
 type Release={id:string;title:string;description:string|null;status:string;updatedAt:Date};
-export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
- projectId:string;release?:Release;linkedSprints?:number;
+type Readiness={readyToShip:boolean;completedSprintCount:number;
+ committedPoints:number;completedPoints:number};
+export function MentorReleaseEditor({projectId,release,linkedSprints=0,readiness}:{
+ projectId:string;release?:Release;linkedSprints?:number;readiness?:Readiness;
 }){
  const router=useRouter(),[open,setOpen]=useState(false),[pending,setPending]=useState(false);
  const editorId=useId();
@@ -20,6 +22,7 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
  const [error,setError]=useState(""),[message,setMessage]=useState("");
  const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [confirmDelete,setConfirmDelete]=useState(false);
+ const [confirmShip,setConfirmShip]=useState(false);
  const dirty=title!==(release?.title??"")||description!==(release?.description??"");
  useEffect(()=>{
    if(!open||!dirty)return;
@@ -38,6 +41,8 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
    if(dirty)setConfirmDiscard(true);else setOpen(false);
  }
  const canRemove=Boolean(release&&release.status!=="SHIPPED"&&linkedSprints===0);
+ const canShip=Boolean(release&&release.status!=="SHIPPED"&&linkedSprints>0&&
+  readiness?.readyToShip===true&&readiness.completedSprintCount===linkedSprints);
  const url="/api/projects/"+encodeURIComponent(projectId)+"/releases"+
   (release?"/"+encodeURIComponent(release.id):"");
  async function save(){
@@ -65,7 +70,28 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
   }catch{setError("Could not delete the release. Reload its current status and retry.");}
   finally{inFlight.current=false;setPending(false);}
  }
+ async function ship(){
+  if(!release||!canShip||pending||inFlight.current)return;
+  inFlight.current=true;setPending(true);setError("");
+  try{
+   await projectMutation(url+"/ship","POST",{
+    expectedUpdatedAt:new Date(release.updatedAt).toISOString(),
+   });
+   setConfirmShip(false);showToast({tone:"success",title:"Release shipped."});
+   router.refresh();
+  }catch{setError("Could not ship the release. Refresh sprint progress and retry.");}
+  finally{inFlight.current=false;setPending(false);}
+ }
  return <div className="space-y-2">
+  {release&&release.status!=="SHIPPED"?<div className="space-y-2 border-b border-border pb-3 text-sm">
+   <p>{readiness
+    ? `${readiness.completedSprintCount} of ${linkedSprints} sprints complete · ${readiness.completedPoints} of ${readiness.committedPoints} points completed`
+    : "Release readiness is not loaded. Refresh the linked sprint summary."}</p>
+   <Button type="button" disabled={!canShip||pending} onClick={()=>setConfirmShip(true)}>
+    Ship release</Button>
+   {!canShip?<p className="text-xs text-muted-foreground">
+    A release needs at least one linked sprint and all linked sprints completed before shipping.</p>:null}
+  </div>:null}
   {(!release||release.status!=="SHIPPED")?<Button variant={release?"secondary":"primary"} type="button" aria-expanded={open} aria-controls={editorId}
    className="min-h-11 px-3 md:min-h-9"
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</Button>:null}
@@ -98,6 +124,11 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
     confirmLabel="Discard changes" pending={pending}
     onConfirm={()=>{setConfirmDiscard(false);setOpen(false);
       setTitle(release?.title??"");setDescription(release?.description??"");}}/>
+  <ConfirmDialog open={confirmShip} onOpenChange={next=>{if(!pending)setConfirmShip(next);}}
+    title="Ship this release?" description="All linked sprints must be complete. This operation updates the release status."
+    confirmLabel="Ship release" pending={pending} onConfirm={()=>void ship()}>
+    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
+  </ConfirmDialog>
   <ConfirmDialog open={confirmDelete} onOpenChange={next=>{if(!pending)setConfirmDelete(next);}}
     title="Delete this release?" description="This cannot be undone."
     confirmLabel="Delete release" pending={pending} onConfirm={()=>void remove()}>

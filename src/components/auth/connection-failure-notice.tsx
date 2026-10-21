@@ -14,7 +14,7 @@ export function ConnectionFailureNotice(){
    // A notice triggered in a background tab must still be readable on return.
    if(!document.hidden&&lastMessage.current) timer.current=setTimeout(()=>{
     lastMessage.current=null;setMessage(null);timer.current=null;
-   },10000);
+   },5000);
   }
   const show=(event:Event)=>{
    const detail=(event as CustomEvent<PublicNetworkNotice>).detail;

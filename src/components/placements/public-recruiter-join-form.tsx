@@ -194,7 +194,7 @@ export function PublicRecruiterJoinForm({
             <PageHeader title={alreadyJoined?"You already have access to "+college:"You now have access to "+college} />
             <p className="mt-3 text-sm text-body">
               {alreadyJoined
-                ? "You already have an account. Sign in on "+college+"'s placement address with "+signInEmail+"."
+                ? "You already have an account at "+college+". Use its placement sign-in page with "+signInEmail+". Your sign-in code will be sent to that email."
                 : "Sign in with your work email, "+signInEmail+". We'll email you a code each time."}
             </p>
             <Link href="/login" className="mt-4 inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary min-[768px]:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sign in</Link>
@@ -257,6 +257,7 @@ export function PublicRecruiterJoinForm({
                 <label className="flex flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                   Company name
                   <Input ref={companyNameRef} type="text" value={companyName} maxLength={200}
+                    required={scope==="COLLEGE"&&!knownCompany} autoComplete="organization"
                     aria-invalid={Boolean(fieldErrors.companyName)} aria-describedby={fieldErrors.companyName?"join-company-error":undefined}
                     onChange={event => {setCompanyName(event.target.value);clearField("companyName");}}
                     className="w-full min-w-0" />

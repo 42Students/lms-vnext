@@ -29,21 +29,31 @@ const switchMembershipSchema = z.strictObject({
 });
 
 class MembershipTenantLookupUnavailable extends Error {}
+class MembershipHostChangeRequired extends Error {}
 
 function authErrorResponse(error: unknown) {
   if(error instanceof MembershipTenantLookupUnavailable){
-    return privateAuthJson({error:"TENANT_LOOKUP_UNAVAILABLE"},{status:503});
+    return privateAuthJson({error:"TENANT_LOOKUP_UNAVAILABLE",message:"Service unavailable. Try again from your college LMS address."},{status:503});
+  }
+  if(error instanceof MembershipHostChangeRequired){
+    return privateAuthJson({
+      error:"MEMBERSHIP_HOST_CHANGE_REQUIRED",
+      message:"Open the selected college's verified LMS address and sign in again. Your session credentials are not transferred between domains.",
+      nextStep:"SIGN_IN_ON_TARGET_HOST",
+    },{status:409});
   }
   if (error instanceof SessionAuthenticationError) {
     return privateAuthJson(
-      { error: error.code },
+      { error: error.code, message:"Unauthorized. Sign in again." },
       { status: 401 },
     );
   }
 
   if (error instanceof ContextResolutionError) {
     return privateAuthJson(
-      { error: error.code },
+      { error: error.code, message:error.code==="MEMBERSHIP_NOT_ACTIVE"
+        ?"This college membership is not active. Contact your administrator."
+        :"Invalid membership target. Choose an active college and role." },
       {
         status:
           error.code === "MEMBERSHIP_NOT_FOUND" ||
@@ -121,10 +131,16 @@ export async function POST(request: Request) {
     const parsed = switchMembershipSchema.safeParse(body);
 
     if (!parsed.success) {
-      return privateAuthJson(
-        { error: "INVALID_REQUEST" },
-        { status: 400 },
-      );
+      // Legacy targetKey bookmarks cannot prove ownership of an opaque UUID
+      // membership and are not accepted as substitute authority.
+      const legacyTarget=body!==null&&typeof body==="object"&&!Array.isArray(body)&&
+        "targetKey" in body;
+      return privateAuthJson({
+        error:"INVALID_REQUEST",
+        message:legacyTarget
+          ?"This old college switch link is no longer supported. Choose an active college and role in the workspace switcher."
+          :"Invalid membership target. Choose an active college and role.",
+      },{status:400});
     }
 
     const context = await resolveRequestContext({
@@ -138,7 +154,9 @@ export async function POST(request: Request) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
     }
     if (collegeScope && membership.collegeId !== collegeScope) {
-      throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
+      // Verified membership is owned by this user but cannot be activated
+      // on the current host. Do not mint raw JWT or URL handoff tokens.
+      throw new MembershipHostChangeRequired();
     }
     if (parsed.data.role && !membership.roles.includes(parsed.data.role)) {
       throw new ContextResolutionError("MEMBERSHIP_NOT_FOUND");
@@ -147,6 +165,8 @@ export async function POST(request: Request) {
     const response = privateAuthJson({
       ok: true,
       membership,
+      sessionTransport:"FIRST_PARTY_COOKIE",
+      hostChange:false,
     });
 
     response.cookies.set(

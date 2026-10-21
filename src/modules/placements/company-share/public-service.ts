@@ -6,7 +6,7 @@ import {
  colleges,collegeMemberships,organizations,placementApplications,placementApplicationScreenings,
  placementCompanies,placementCompanyRelationships,placementJobs,users,learnerProfiles,
 } from "@/db/schema";
-import {projectCompanyShareRows} from "./column-model";
+import {projectCompanyShareRows,safeCompanyShareColumns} from "./column-model";
 import {companyShareTablesReady} from "./readiness";
 import {placementTableExists} from "../staged-tables";
 import {placementCompanyShareSelections as selectedShares} from "@/db/schema/placement-company-share-selection";
@@ -70,6 +70,11 @@ export async function getPublicCompanyApplicantShare(
   const selected=selectionReady?await tx.select({applicationId:selectedShares.applicationId})
     .from(selectedShares).where(eq(selectedShares.shareId,grant.shareId)):[];
   const selectedIds=selected.map(item=>item.applicationId);
+  // Capability tokens permit only the explicit applicant projection. Never
+  // forward arbitrary DB stored selectedColumns or job posting JSON keys:
+  // internal screening rules, identity IDs and legacy importantDates maps
+  // are not part of the public grant.
+  const selectedColumns=safeCompanyShareColumns(grant.selectedColumns);
   const filter=and(
    eq(placementApplications.jobId,grant.jobId),
    selectedIds.length?inArray(placementApplications.id,selectedIds):undefined,
@@ -115,10 +120,10 @@ export async function getPublicCompanyApplicantShare(
    kind:"READY" as const,title:grant.title,companyName:grant.companyName,
    collegeName:grant.collegeName,sharedAt:grant.sharedAt.toISOString(),
    expiresAt:grant.expiresAt.toISOString(),
-   rows:projectCompanyShareRows(records,grant.selectedColumns),
+   rows:projectCompanyShareRows(records,selectedColumns),
    total,page:isCsv?1:pagination.page,totalPages:pagination.totalPages,
    truncated:isCsv&&total>500,search:search.data,
-   selectedColumns:grant.selectedColumns,shortlistBy:grant.shortlistBy?.toISOString()??null,
+   selectedColumns,shortlistBy:grant.shortlistBy?.toISOString()??null,
   };
  });
 }

@@ -2,6 +2,8 @@ import "server-only";
 
 import { and, asc, count, countDistinct, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
+import { recordActivityEventInTransaction } from "@/modules/activity/service";
+import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -32,6 +34,7 @@ export async function getCollegeCompanyHistory(
       id: placementCompanyRelationships.id,
       collegeId: placementCompanyRelationships.collegeId,
       companyName: placementCompanies.name,
+      relationshipStatus: placementCompanyRelationships.status,
       internalNotes: placementCompanyRelationships.internalNotes,
       contactName: placementCompanyRelationships.contactPersonName,
       contactEmail: placementCompanyRelationships.contactEmail,
@@ -131,6 +134,7 @@ export async function getCollegeCompanyHistory(
   return {
     company: {
       name: relationship.companyName,
+      relationshipStatus: relationship.relationshipStatus,
       contactName: relationship.contactName,
       contactEmail: relationship.contactEmail,
       contactPhone: relationship.contactPhone,
@@ -145,4 +149,71 @@ export async function getCollegeCompanyHistory(
     },
     truncated: rows.length > 100,
   };
+}
+
+/** Only relationship-owned CRM details can be edited by a college placement admin.
+ * Never change the shared canonical company's identity or show notes to learners. */
+export const updateCollegeCompanyPrivateDetailsSchema = z.object({
+  contactPersonName: z.string().trim().max(150).nullable(),
+  contactEmail: z.string().trim().max(150)
+    .email("Must be a valid email").nullable(),
+  contactPhone: z.string().trim().max(30)
+    .regex(/^[+()\d][\d\s().-]{6,29}$/, "Enter a valid phone number").nullable(),
+  internalNotes: z.string().max(2000).nullable(),
+}).strict();
+
+export async function updateCollegeCompanyPrivateDetails(
+  context: RequestContext,
+  rawRelationshipId: string,
+  rawInput: unknown,
+) {
+  const relationshipId = z.string().uuid().parse(rawRelationshipId);
+  const input = updateCollegeCompanyPrivateDetailsSchema.parse(rawInput);
+  const db = getDb();
+  const [existing] = await db.select({
+    collegeId: placementCompanyRelationships.collegeId,
+    name: placementCompanies.name,
+  }).from(placementCompanyRelationships)
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id, placementCompanyRelationships.companyId))
+    .where(eq(placementCompanyRelationships.id, relationshipId)).limit(1);
+  if (!existing) {
+    throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+  }
+  await requirePlacementManageScope(context, existing.collegeId);
+
+  return db.transaction(async (tx) => {
+    const [locked] = await tx.select({
+      id: placementCompanyRelationships.id,
+      status: placementCompanyRelationships.status,
+    }).from(placementCompanyRelationships)
+      .where(and(
+        eq(placementCompanyRelationships.id, relationshipId),
+        eq(placementCompanyRelationships.collegeId, existing.collegeId),
+      )).for("update").limit(1);
+    if (!locked || locked.status !== "ACTIVE") {
+      throw new PlacementsServiceError("PLACEMENT_COMPANY_RELATIONSHIP_NOT_FOUND");
+    }
+    await tx.update(placementCompanyRelationships).set({
+      ...input,
+      updatedAt: new Date(),
+    }).where(and(
+      eq(placementCompanyRelationships.id, relationshipId),
+      eq(placementCompanyRelationships.collegeId, existing.collegeId),
+      eq(placementCompanyRelationships.status, "ACTIVE"),
+    ));
+
+    await recordActivityEventInTransaction(tx, context, {
+      eventType: ACTIVITY_EVENT_TYPES.PLACEMENTS_COMPANY_LINKED,
+      collegeId: existing.collegeId,
+      subjectType: "placement_company_relationship",
+      subjectId: relationshipId,
+      subjectLabel: existing.name,
+      summary: "College employer private contact details updated",
+      // Store the action, never private contact values or notes in audit metadata.
+      metadata: { action: "UPDATE_PRIVATE_CONTACT", relationshipId },
+      groupKey: "placement-companies:" + existing.collegeId,
+    });
+    return { updated: true };
+  });
 }

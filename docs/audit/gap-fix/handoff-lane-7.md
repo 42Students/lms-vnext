@@ -976,3 +976,54 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-7-004-008/-064 | `src/components/projects/project-admin-readiness-page.tsx` | Mount canonical ProjectWorkspaceReadiness details by selected workspace and preserve release/override context.
 - G2-13-012-027 / G2-12-012-015 / G2-12-012-031 | `src/modules/placements/public-join/domain-model.ts + approved PSL dataset` | Replace partial hand-maintained public suffix list with reviewed maintained PSL without unsafe registrable-domain guessing; new packages forbidden in lane.
+
+- G2-11-006-021 | `src/modules/placements/tpo-audit-service.ts + TpoAuditPage` | Implement scoped About/What happened/Who/When facet option count queries and checklist chips, not only links.
+- G2-12-024-021 | `src/modules/log-alerts/admin-service.ts` | Add hour-scoped query over full recorded incidents to avoid latest100 cutoff for manual digests, retaining bounded tenant and rate guards.
+
+- G2-12-026-007/-039 | `src/modules/projects/activity-service.ts` | Add exact eventType and page/size API aliases to bounded project activity service if legacy clients need them; category/IST date filtering now wired.
+- G2-12-020-017/-055 | `src/modules/placements/public-join/domain-model.ts + company-curation-domain-model.ts` | Replace partial manual suffixes with maintained reviewed PSL normalization across all company gates (new packages forbidden without owner approval).
+
+- G2-11-006-003 | `src/modules/placements/tpo-audit-service.ts` | Map legacy recruiter and student context IDs to authorized vNext URLs; grid adapts UUID drive links.
+- G2-2-034-040 | `src/lib/report-client-error.ts + upload clients` | Emit safe FILE_UPLOAD_FAILURE classification/code only; never raw filename/presigned URL.
+
+- G2-5-018-025/-020 | `src/app/api/projects/[projectId]/activity/route.ts + activity event import` | Reconcile legacy projectId row migration to project scoped subjects/metadata and add optional legacy success envelope if compatibility clients require it.
+- G2-1-034-057 | `src/modules/placements/public-recruiter-invite-accept-service.ts + recruit consent UI` | Design PENDING_HR → JOINED consent lifecycle for existing recruiters while preserving token one-time use and verified college scope.
+
+- G2-8-029-009/-048 | `src/db/schema/projects.ts + template history importer` | Preserve legacy actionType, changedAt and full snapshot JSON/lifecycle independently of mutable current template header; source service cannot infer missing history.
+- G2-2-019-070 | `src/modules/announcements/service.ts` | Supply persisted cancelledAt/CANCELLED status to visibility model and recipient gating, update admin filters as needed.
+
+- G2-19-020-027 / G2-4-021-001 | `src/modules/bug-tracker/readiness.ts + deployment` | Verify DB10 migration and acceptance before enabling tracker flag; not confirmed.
+- G2-17-030-012/-035 | `src/components/placements/placement-operations-overview.tsx + deadline API` | Add per-drive More actions and authorized Super Admin acting-college deadline endpoint.
+
+- G2-12-017-021/-062 | `src/modules/projects/task-comment-service.ts + comment schema` | Confirm eligible active non-assignee learner versus observer read-only permissions and persist immutable author/task snapshots on comment rows; activity metadata snapshot added.
+- G2-5-019-014 | `src/modules/people/college-student-detail-service.ts` | Add active term/semester mapping and historical class/cohort projection once academic period ownership verified.
+
+- G2-11-024-009/-051 | `src/modules/placements/tpo-communication-settings-service.ts + schema` | Migrate approval-required, AFTER_REVIEW applicant visibility and trusted domains as audited editable fields, not just duration.
+- G2-10-025-055/-095 / G2-14-016-035 | `src/app/(authenticated)/hr/profile/page.tsx` | Pass verified selectedCollegeId into recruiter profile service and document contact/login mapping; enforce current grant capability matrix.
+
+- G2-7-032-037 | `src/components/projects/project-readiness-override-form.tsx + toast system` | Integrate legacy timed toast without suppressing inline retry status.
+- G2-18-031-077 | `src/modules/auth/runtime.ts + session store + identity persistence` | Verify Exotel test allowlists, contact collision, revocation timing, and no cross-college session grant using DB integration; no runtime testing permitted in lane.
+
+- G2-3-011-033/-048 | `src/modules/placements/tpo-draft-drive-model.ts + job types API + draft form` | Support five built-ins, active custom types, and hidden historical selected labels with authoritative college grant; current draft employment enum only three types.
+- G2-13-025-005/-021/-025/-036 | `src/modules/placements/recruiter-self-grants-service.ts + public pending-invite service/shell` | Independently verify pending invite belongs to logged-in recruiter contact/user without requiring an existing ACTIVE grant, expose only four safe identity fields and route outside grant-only shell.
+
+- G2-9-013-056/-077/-078 | `src/modules/placements/job-service.ts + notification service` | Archive cascade must cancel nonterminal interviews, postcommit notify learners, audit once, preserve tenant scope and idempotency; preview now warns omission.
+- G2-9-015-067 | `src/modules/placements/college-drive-read-service.ts` | Explicitly map legacy isDraft/isActive categories to vNext statuses, include archived only with authorized filter.
+
+- G2-12-017-019/-024/-025 | `src/modules/projects/task-comment-service.ts + status mutation action` | Wire projectTaskSystemCommentSchema only from trusted actions, persist immutable progress/status snapshots; human comments stay NOTE/PROGRESS_UPDATE/FLAG_FOR_MENTOR.
+- G2-15-009-053 | `src/modules/attendance/faculty-attendance-service.ts + Faculty attendance UI` | Decide explicit pre-start/historical correction policy; change UI and server together with audit, never UI-only enable.
+
+- G2-4-029-024/-025 | `src/components/projects/project-activity-filtered-list.tsx + project audit loader` | Expose distinguishable initial resource-audit fetch failure with exact 'Failed to load resource audit history.' and retry, not only load-more.
+- G2-13-004-068 | `src/modules/placements/hr-conversation-inbox-service.ts + TPO message legacy importer` | Migrate EVENT/MESSAGE read statuses and UUID thread mapping; unread now excludes EVENT.
+
+- G2-5-027-002 / G2-7-036-038 | `src/modules/people/college-student-csv-service.ts + import run ledger` | Add exact bulk register/history and audited safe undo after identity/enrollment reconciliation, keep PREVIEW vs IMPORT contract.
+- G2-10-021-030/-053/-054/-103 | `src/modules/placements/super-admin-hr-service.ts + schema` | Plan global-without-college recruiter creation and legacy grant mapping without bypassing verified company relation, contact and expiry rules.
+
+- G2-16-027-046 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | Validate 12h maximum and no-past CREATE in server Zod/transaction; UI-only cap can be bypassed.
+- G2-14-009-015/-051 | `src/components/attendance/faculty-attendance-workspace.tsx` | Ensure Active days derives from marked/held sessions, not future scheduled, matching updated month sessionCount.
+
+- G2-2-030-010/-028 | `src/modules/placements/tpo-configuration-read-service.ts + other choices providers` | Compose genuine authorized 12-key catalogue from owning modules; do not return fabricated empty choices.
+- G2-17-026-010 / G2-18-004-014 | `src/app/(authenticated)/learn/notifications/page.tsx + learner notification source` | Map courseSlug over courseId with authorized enrollment and translate safe known CTA types; legacy tab alias already present.
+
+- G2-5-027-037 | `src/components/college/student-class-move-action.tsx` | On verified successful PATCH, show studentSectionMoveSuccessMessage and refreshed source/destination, do not show preemptively.
+- G2-13-011-024 / G2-18-010-036 | `src/modules/messaging/providers.ts + dev provisioning docs` | Migrate DEV_MAIL_ALLOW exact addresses to AUTH_TEST_EMAILS and classify suppression; domain wildcards require explicit owner approval and remain disabled in nonprod.

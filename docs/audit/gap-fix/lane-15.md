@@ -329,3 +329,29 @@
 
 - work2 #49 `learner-course-card-search-model.ts` | G2-3-014-012: added bounded weighted ranking (exact 100/prefix 80/substring 60/edit distance <=2 40) with optional authorized usage boost and deterministic tie breaker for local course autocomplete. Full global synonym dictionary and cross-module usage unavailable; handoff for scoped source.
 - work2 #50 `api/courses/quiz-attempts/route.ts` | G2-3-001-049: explicit nextPage and deliveryId to permit reliable iteration across all section-scoped attempt pages, without truncating results silently or allowing unbounded cross-college query. Legacy college-wide consolidation remains authenticated consumer responsibility.
+
+- work2 #51 `learner-placement-job-detail.tsx` | G2-18-023-005/020: shows primary persisted application denial before generic availability, supplies REGISTER and RULES destinations derived from existing blockers; no eligibility-only OPEN assertion added. Need typed actionCode from apply service for exact parity.
+- work2 #52 `admin-readiness-overrides-service.ts` | G2-7-004-043/G2-7-032-078: includes archived projects in existing active override audit listing (chooser remains separate); exports active/clear, value, note, actor and timestamp event mapping; CLEAR remains excluded from active list.
+
+- work2 #53 `session-response-guard.tsx` | G2-1-037-028: root sign-in already shows session expired/revoked notice from validated auth query; replaced history entry to prevent Back loops after failed API auth and retained returnTo.
+- work2 #54 `mentor-notifications-service.ts` | G2-7-026-086: explicit legacy created_at/createdAt, type/title/message, receiverType, readAt projection into event plus authenticated recipient receipt; malformed timestamps and non-mentor audiences rejected. Persistence import/historical crosswalk requires authorized import service.
+
+- work2 #55 `admin-directory-query-model.ts` | G2-4-014-017: added strict legacy /search query/state/city/orgId/limit default15 validator without altering current admin directory default25; old numeric orgId requires verified scoped crosswalk.
+- work2 #56 `tracker/issues/[publicId]/retest/route.ts` | G2-17-024-020: still returns persisted refreshed issue envelope, now explicit status/version receipt and private no-store; UI must reread latest ticket on mutation completion.
+
+- work2 #57 `college-live-classes-directory.tsx` | G2-18-007-018: guarded Join rendering for validated HTTPS no-credentials meeting URL, Invalid link/No link when authorized data explicitly provides value, no guessing when aggregate intentionally omits links. Authorized source handoff required to populate meetingUrl.
+- work2 #58 `college-drive-bulk-actions.tsx` | G2-9-015-068/051/052: separated close from archival, documented scheduled-round and issued-offer consequences; exact single Job opened/closed success, verb-specific bulk result and failed selection retained for retry.
+
+- work2 #59 `mentor-release-editor.tsx` | G2-17-017-005/015: optional authoritative readiness totals (sprints, completed/committed points), Ship disabled until at least one/all linked sprints completed, versioned POST ship with confirmation and success/error states; parent rollup input remains integration handoff.
+- work2 #60 `faculty-profile-repeatable.tsx` | G2-1-003-040: exact 'Remove this entry?' confirmation title and delayed-save explanation moved into ConfirmDialog description; unsaved draft deletion only after confirmation.
+
+- work2 #61 `tpo/reports/failure-reasons/page.tsx` | G2-13-031-090: plotted applied FAIL shares using applied-decision denominator (not total adverse events), excluded unknown denominator from percentage chart instead of reporting zero, and explicitly named absent reasons.
+- work2 #62 `api/college/departments/[departmentId]/route.ts` | G2-18-027-017: documented standardized 409 DEPARTMENT_HAS_DEPENDENCIES mapping with safe message/usage/requestId and no-store archive response. Did not leak raw legacy exception text.
+
+- work2 #63 `app/globals.css` | G2-3-033-032: removed unsupported 26px mobile page title override; now inherits base 30px. Old shell's phone rules address header/nav only; alternate mobile typography awaits rendered legacy measurement.
+- work2 #64 `project-admin-collection-controls.tsx` | G2-10-028-020/G2-7-019-027: documented five historical labels and avoided false Ready=COMPLETED or Blocked=ARCHIVED aliases; authorized at-risk link exposes Blocked workbench, while canonical status filter remains accurate. Full legacy filter query needs domain rollup.
+
+- work2 #65 `tpo/reports/ctc/page.tsx` | G2-13-031-087: explicitly validates five legacy INR cutoffs 0/4/6/10/20 lakh and warns when the current 0–3/3–6/6–10/10–20/20+ aggregation cannot be truthfully split; no fabricated 3–4 counts. Raw-offer model reaggregation is a cross-file handoff.
+- work2 #66 `college/lessons/error.tsx` | G2-17-007-033: exact refresh-failure state and Retry plus list return, explicitly avoids claiming empty results or stale rows not actually mounted. Parent partial-fetch cache must retain verified rows; handoff.
+
+- work2 #67 `api/academics/schedule-events/route.ts` | G2-2-032-046: additive legacy `OK` status/message after confirmed create, while retaining vNext `{event}`, HTTP 201, and private no-store. Success-toast duration requires UI mutation handler integration.

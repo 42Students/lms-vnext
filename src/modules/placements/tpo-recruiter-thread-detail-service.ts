@@ -7,12 +7,12 @@ import { hasMembershipRole,type RequestContext } from "@/modules/identity/contex
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { listMessageThreads } from "./tpo-messaging-service";
 
-/** Legacy message transport, event and request linkage have no columns in
- * the current vNext message table; keep them explicit null, not fabricated. */
+/** Legacy author, channel and request-event fields are persisted in vNext.
+ * Read them from the scoped thread instead of inventing empty values. */
 export type TpoRecruiterMessageItem={
  id:string;senderType:string;senderId:string;senderName:string|null;
  body:string;createdAt:Date;readAt:Date|null;
- via:null;kind:null;event:null;changeRequestId:null;
+ via:string;kind:string;event:string|null;changeRequestId:string|null;
 };
 export async function getTpoRecruiterThreadDetail(context:RequestContext,rawId:unknown){
  const id=z.string().uuid().parse(rawId),member=context.membership;
@@ -28,6 +28,8 @@ export async function getTpoRecruiterThreadDetail(context:RequestContext,rawId:u
  const newest=await getDb().select({
   id:placementTpoMessages.id,senderType:placementTpoMessages.senderType,
   senderId:placementTpoMessages.senderUserId,senderName:users.displayName,
+  via:placementTpoMessages.via,kind:placementTpoMessages.kind,
+  event:placementTpoMessages.event,changeRequestId:placementTpoMessages.changeRequestId,
   body:placementTpoMessages.body,createdAt:placementTpoMessages.createdAt,
   readAt:placementTpoMessages.readAt,
  }).from(placementTpoMessages).innerJoin(placementTpoMessageThreads,
@@ -37,8 +39,6 @@ export async function getTpoRecruiterThreadDetail(context:RequestContext,rawId:u
    eq(placementTpoMessageThreads.collegeId,member.collegeId)))
   .orderBy(desc(placementTpoMessages.createdAt),desc(placementTpoMessages.id))
   .limit(100);
- const messages:TpoRecruiterMessageItem[]=newest.reverse().map(row=>({
-  ...row,via:null,kind:null,event:null,changeRequestId:null,
- }));
+ const messages:TpoRecruiterMessageItem[]=newest.reverse();
  return {thread,messages,total:count?.total??0};
 }

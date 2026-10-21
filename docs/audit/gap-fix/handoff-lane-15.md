@@ -169,3 +169,25 @@
 
 - Learner autocomplete G2-3-014-012: wire `rankLearnerCourseAutocomplete` into authorized result set; merge approved legacy global synonyms and independently authenticated usage boosts before claiming full global search parity.
 - College quiz attempts G2-3-001-049: list all authorized section deliveryIds for a quiz, iterate `nextPage` for each, and combine with stable attempt identity in UI/export; no unpaged cross-college leakage or hard first-page assumption.
+
+- Learner job apply gate G2-18-023-005/020: add typed backend actionCode REGISTER/RULES and authoritative denial reason to authorized per-role job detail DTO; current UI maps text blockers as fallback only, must agree with real apply service at click.
+- Project readiness historical audit G2-7-032-078: query all persisted events to show CLEAR and transitions using readinessOverrideAuditProjection; active list intentionally filters latest FORCE states while archived projects with active overrides remain visible.
+
+- Mentor legacy notification migration G2-7-026-086: translate vetted records through projectLegacyMentorNotification then persist activityEvents and inAppNotifications under trusted member college/user grant, never accept receiverType or userId from client as authorization. Ensure historical audience and readAt preserved.
+
+- College legacy search endpoint G2-4-014-017: bind legacyCollegeDirectorySearchSchema to authorized college directory query; resolve historic numeric orgId through verified tenant crosswalk, apply city/state predicates and top-N limit15 without relaxing admin scope.
+- Bug tracker retest consumer G2-17-024-020: after success use returned fresh issue.version/status and refresh page instead of mutating stale local state; still no raw legacy BugReportResponse replacement.
+
+- College live class aggregate G2-18-007-018: current `listCollegeContentAggregate` intentionally omits externalUrl, so permissioned reader must add a reviewed meetingUrl only for authorized college/offerings; then directory renders Join, Invalid link or No link. Do NOT expose raw URLs via unscoped aggregate before approval.
+- College drive bulk archive G2-9-015-068: bulk CLOSE preview only returns pendingLettersWithdrawn; extend impact if UI needs exact interview notification counts. Actual archive remains separate and must use per-drive impact confirmation.
+
+- Mentor release rollup G2-17-017-005/015: parent loader must supply verified `readiness` with readyToShip, completedSprintCount, committedPoints, completedPoints from tenant-scoped persisted release/sprint/task service; Ship stays disabled without those authoritative fields and server reconfirms gate.
+
+- Department archive legacy client G2-18-027-017: map DEPARTMENT_HAS_DEPENDENCIES 409+usage+safe message from current apiErrorResponse to old status ERROR conflict UI; do not reproduce raw server exception detail.
+
+- Legacy project workspace status filters G2-10-028-020/G2-7-019-027: build authorized five-state projection combining lifecycle and readiness/risk, extend URL parser & service before rendering noncanonical Select options. Never incorrectly alias Ready to COMPLETED or Blocked to ARCHIVED.
+
+- TPO CTC report model G2-13-031-087: change `src/modules/placements/report-model.ts` underlying knownCtc loop to boundaries 0/400000/600000/1000000/2000000 INR, labels below4/4-6/6-10/10-20/20+ LPA; regenerate CSV/metric tests. UI cannot accurately split existing 3–6 aggregate without raw offers.
+- College lessons partial load G2-17-007-033: maintain last valid rows in list component state when a subsequent partial scope fetch fails; show warning `Couldn't refresh lessons` plus Retry while retaining actual cached rows; error.tsx alone can't render the old list.
+
+- Class schedule creator UI G2-2-032-046: show verified create success toast and legacy duration from UI design source only after authorized POST acknowledgment; never show success on 401/403.

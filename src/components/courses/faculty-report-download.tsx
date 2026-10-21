@@ -1,24 +1,45 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 import { buildFacultyReportPdf, type FacultyReportPdfInput } from "@/modules/courses/faculty-report-pdf";
 
-type Props = Omit<FacultyReportPdfInput, "generatedAt"> & { incomplete?: boolean };
+/** An incomplete learner workflow (ungraded or unsubmitted work) is NOT an
+ * unavailable roster. Only an explicit failed/partial roster read authorizes
+ * a data-integrity confirmation. The page that loads the roster owns that
+ * distinction and must not pass rosterUnavailable for ordinary in-progress work.
+ */
+type Props = Omit<FacultyReportPdfInput, "generatedAt"> & {
+  incomplete?: boolean;
+  rosterUnavailable?: boolean;
+  rosterWarning?: string;
+};
 
 export function FacultyReportDownload(props: Props) {
   const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
   const [confirmationOpen,setConfirmationOpen]=useState(false);
+  const locked=useRef(false);
+  const {showToast}=useToast();
 
-  function downloadPdf() {
+  async function downloadPdf() {
+    if(locked.current)return;
+    locked.current=true;
     setError(null);
+    setPending(true);
     try {
+      // Allow the pending button affordance to paint before synchronous
+      // PDF serialization; generation remains on the user's own click.
+      await new Promise<void>(resolve=>window.setTimeout(resolve,0));
       // All private report data was resolved via server-side Faculty authorization.
-      const {incomplete,...reportData}=props;
       const pdf = buildFacultyReportPdf({
-        ...reportData,
-        summary:incomplete?["This report is incomplete",...reportData.summary]:reportData.summary,
+        kind:props.kind,title:props.title,subtitle:props.subtitle,
+        sections:props.sections,
+        summary:props.rosterUnavailable
+          ? ["This report is incomplete",...props.summary]
+          : props.summary,
       });
       let url: string | null = null;
       let link: HTMLAnchorElement | null = null;
@@ -41,20 +62,39 @@ export function FacultyReportDownload(props: Props) {
         }
       }
     } catch {
-      setError(props.kind==="attendance"?"Couldn\'t generate the attendance report. Please try again.":"Could not generate the PDF. Please try again.");
+      const message=props.kind==="attendance"
+        ? "Couldn't generate the attendance report. Please try again."
+        : "Couldn't generate the PDF. Please try again.";
+      setError(message);
+      showToast({tone:"error",title:message});
+    } finally {
+      locked.current=false;
+      setPending(false);
     }
   }
 
   return (
     <div className="min-w-0 space-y-2 print:hidden">
-      <Button type="button" variant="primary" aria-haspopup={props.incomplete?"dialog":undefined} className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" onClick={()=>{
-        if(props.incomplete){setError(null);setConfirmationOpen(true);}else downloadPdf();
-      }}>{props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
-      <ConfirmDialog open={confirmationOpen} onOpenChange={setConfirmationOpen}
+      <Button type="button" variant="primary"
+        aria-haspopup={props.rosterUnavailable?"dialog":undefined}
+        loading={pending} disabled={pending}
+        className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
+        onClick={()=>{
+          if(props.rosterUnavailable){setError(null);setConfirmationOpen(true);}
+          else void downloadPdf();
+        }}>{pending?"Generating PDF…":props.kind==="attendance"?"Download Report":"Download PDF"}</Button>
+      {props.incomplete && !props.rosterUnavailable ? <p role="status"
+        className="text-xs leading-5 text-muted-foreground">
+        Some learner work is not submitted or graded yet. This does not mean the roster failed to load.
+      </p> : null}
+      <ConfirmDialog open={confirmationOpen}
+        onOpenChange={next=>{if(!pending)setConfirmationOpen(next);}}
         title="This report is incomplete"
-        description="Some learners have not submitted or some submitted assignments have not been graded. The PDF will be marked incomplete."
+        description={props.rosterWarning ||
+          "The complete class roster could not be loaded. Downloading now may omit learners from this report."}
         confirmLabel="Download marked incomplete" confirmVariant="primary"
-        onConfirm={()=>{setConfirmationOpen(false);downloadPdf();}}/>
+        pending={pending}
+        onConfirm={()=>{setConfirmationOpen(false);void downloadPdf();}}/>
       {error ? <Alert tone="error">{error}</Alert> : null}
     </div>
   );

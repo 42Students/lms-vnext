@@ -53,6 +53,9 @@ export async function provisionPlatformIdentity(
     dependencies.identityDirectory,
   );
 
+  // OTP delivery, session revocation and selected-college authorization are
+  // enforced by their separate runtime services, not by provisioning. A
+  // canonical identity alone must never grant an active college session.
   return dependencies.repository.persistResolvedIdentity({
     identityUid: identity.uid,
     phoneE164:

@@ -198,10 +198,11 @@ function median(values: readonly number[]): number | null {
   );
 }
 
-function percentage(numerator: number, denominator: number) {
+/** Legacy TPO placement rate uses one decimal and reports 0 for an empty registered pool. */
+function percentage(numerator: number, denominator: number): number {
   return denominator === 0
-    ? null
-    : Math.round((numerator / denominator) * 100);
+    ? 0
+    : Math.round((numerator / denominator) * 1000) / 10;
 }
 
 function bestAcceptedFullTimePackages(
@@ -348,8 +349,7 @@ export function summarizePlacementReports(
   const applicants = distinct(
     applications.map((application) => application.membershipId),
   );
-  const placementRateOneDecimal=registrations.length===0?null:
-    Math.round((studentsPlaced.length/registrations.length)*1000)/10;
+  const placementRateOneDecimal=percentage(studentsPlaced.length,registrations.length);
   // A monotonic historical funnel requires audited stage transitions,
   // not the final/current application screening snapshot.
   const liveDrives=jobs.every(job=>job.status!==undefined)

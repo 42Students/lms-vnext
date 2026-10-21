@@ -32,6 +32,10 @@ import {
 } from "./recruiter-profile-service";
 
 /**
+ * Pending invitations are a separate lifecycle and must not be inferred from
+ * an ACTIVE grant. Do not expose other leads by weakening the authenticated
+ * recruiter grant predicate; pending invitation reads require a distinct
+ * token/contact ownership proof and safe route outside active-grant shell.
  * Additional read-only detail for the already implemented
  * /hr/profile page.
  *

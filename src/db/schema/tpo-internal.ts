@@ -30,11 +30,20 @@ export const placementTpoInternalThreads = pgTable(
     startedByMembershipId: uuid("started_by_membership_id").notNull(),
     invitedMembershipId: uuid("invited_membership_id").notNull(),
     topic: varchar("topic", { length: 200 }).notNull(),
+    kind: varchar("kind", { length: 16 }).notNull().default("DIRECT"),
+    isPrivate: boolean("is_private").notNull().default(true),
+    contextId: uuid("context_id"),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
     uniqueIndex("placement_tpo_internal_threads_id_college_uq").on(t.id, t.collegeId),
     index("tpo_internal_threads_college_idx").on(t.collegeId, t.createdAt),
+    index("tpo_internal_threads_college_kind_idx").on(t.collegeId,t.kind,t.createdAt),
+    check("tpo_internal_threads_kind_ck",
+      sql`${t.kind} in ('DIRECT','TOPIC','DRIVE','COMPANY')`),
+    check("tpo_internal_threads_context_ck",
+      sql`(${t.kind} in ('DIRECT','TOPIC') and ${t.contextId} is null)
+        or (${t.kind} in ('DRIVE','COMPANY') and ${t.contextId} is not null)`),
     foreignKey({
       name: "placement_tpo_internal_threads_started_by_college_fk",
       columns: [t.startedByMembershipId, t.collegeId],
@@ -50,6 +59,40 @@ export const placementTpoInternalThreads = pgTable(
       "placement_tpo_internal_threads_distinct_ck",
       sql`${t.startedByMembershipId} <> ${t.invitedMembershipId}`,
     ),
+  ],
+);
+
+/** Group roster is tenant-bound. The original pair columns remain for
+ * backward compatibility and direct-thread history.
+ */
+export const placementTpoInternalThreadParticipants = pgTable(
+  "placement_tpo_internal_thread_participants",
+  {
+    threadId: uuid("thread_id").notNull(),
+    collegeId: uuid("college_id").notNull(),
+    membershipId: uuid("membership_id").notNull(),
+    joinedAt: timestamp("joined_at", { withTimezone: true }).notNull().defaultNow(),
+    leftAt: timestamp("left_at", { withTimezone: true }),
+  },
+  (t) => [
+    primaryKey({
+      name: "tpo_internal_thread_participants_pk",
+      columns: [t.threadId, t.membershipId],
+    }),
+    foreignKey({
+      name: "tpo_internal_thread_participants_thread_college_fk",
+      columns: [t.threadId,t.collegeId],
+      foreignColumns: [placementTpoInternalThreads.id,placementTpoInternalThreads.collegeId],
+    }).onDelete("restrict"),
+    foreignKey({
+      name: "tpo_internal_thread_participants_member_college_fk",
+      columns: [t.membershipId,t.collegeId],
+      foreignColumns: [collegeMemberships.id,collegeMemberships.collegeId],
+    }).onDelete("restrict"),
+    index("tpo_internal_thread_participants_member_idx")
+      .on(t.collegeId,t.membershipId,t.leftAt),
+    check("tpo_internal_thread_participants_leave_ck",
+      sql`${t.leftAt} is null or ${t.leftAt} >= ${t.joinedAt}`),
   ],
 );
 

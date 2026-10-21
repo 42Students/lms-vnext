@@ -15,6 +15,30 @@ export const hrInterviewSlotCreateSchema=z.strictObject({
  row.endAt.getTime()-row.startAt.getTime()<=8*60*60*1000,{
  message:"Slot must have a positive duration of at most eight hours",
 });
+/** Direct legacy interview creation has a 60-minute duration by default.
+ * The slot-booking endpoint still requires explicit start/end for safe overlap
+ * checks; configured min/max are resolved and passed by the caller.
+ */
+export function directInterviewTimeWindow(input:{
+ startAt:Date;durationMinutes?:number|null;minMinutes?:number;maxMinutes?:number;
+}):{startAt:Date;endAt:Date;durationMinutes:number}{
+ const duration=input.durationMinutes??60;
+ const min=input.minMinutes??15,max=input.maxMinutes??480;
+ if(!Number.isSafeInteger(min)||!Number.isSafeInteger(max)||min<1||max>1440||max<min||
+    !Number.isSafeInteger(duration)||duration<min||duration>max)
+  throw new Error(`Duration must be between ${min} and ${max} minutes`);
+ if(!(input.startAt instanceof Date)||!Number.isFinite(input.startAt.getTime()))
+  throw new Error("Invalid interview start time");
+ return {startAt:input.startAt,endAt:new Date(input.startAt.getTime()+duration*60_000),
+  durationMinutes:duration};
+}
+export const HR_INTERVIEW_ROUND_DESCRIPTION_ERROR =
+ "Round description is required. Please describe what this round is about so we can send clear context to the candidate.";
+export function requireHrInterviewRoundDescription(value:string|null|undefined):string{
+ const text=value?.trim();
+ if(!text)throw new Error(HR_INTERVIEW_ROUND_DESCRIPTION_ERROR);
+ return text;
+}
 export const hrInterviewSlotActionSchema=z.strictObject({
  slotId:z.string().uuid(),
  expectedVersion:z.union([z.number().int(),z.string().regex(/^[1-9][0-9]*$/).transform(Number)])

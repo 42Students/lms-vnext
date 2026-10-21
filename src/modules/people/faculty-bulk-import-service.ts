@@ -34,7 +34,7 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
       await onboardPersonWithRuntime(context, {
         collegeId: actor.collegeId, displayName: name,
         phoneE164: entry.phoneE164, ...(entry.email?{email:entry.email}:{}),
-        roles:["FACULTY"],
+        roles:entry.facultyType==="MENTOR"?["FACULTY","MENTOR"]:["FACULTY"],
       });
       results.push({row:index+1,name,status:"CREATED",message:"Faculty membership onboarded"});
     } catch(error) {

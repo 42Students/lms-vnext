@@ -6,6 +6,8 @@ import {
   renameOrganization,
 } from "@/modules/organizations/service";
 import { apiErrorResponse } from "@/lib/api-error";
+import { organizationIdSchema } from "@/modules/organizations/validation";
+import { listOrganizations } from "@/modules/organizations/service";
 
 export const runtime = "nodejs";
 
@@ -14,6 +16,30 @@ type RouteContext = {
     organizationId: string;
   }>;
 };
+
+/** A per-ID read must respect the persisted actor's selected tenant scope.
+ * listOrganizations rechecks that scope in its read transaction, so no
+ * arbitrary organization UUID can expose a record outside the current tenant.
+ */
+export async function GET(_request: Request,{params}:RouteContext) {
+ try {
+  const {organizationId}=await params;
+  const id=organizationIdSchema.safeParse(organizationId);
+  if(!id.success)return NextResponse.json({
+   error:"ORGANIZATION_NOT_FOUND",
+   message:"Failed to fetch organization. Please try again or contact support.",
+  },{status:404,headers:{"Cache-Control":"no-store"}});
+  const rows=await listOrganizations(await getCurrentRequestContext());
+  const organization=rows.find(item=>item.id===id.data);
+  if(!organization)return NextResponse.json({
+   error:"ORGANIZATION_NOT_FOUND",
+   message:"Failed to fetch organization. Please try again or contact support.",
+  },{status:404,headers:{"Cache-Control":"no-store"}});
+  return NextResponse.json({organization},{headers:{"Cache-Control":"no-store"}});
+ } catch(error) {
+  return apiErrorResponse(error);
+ }
+}
 
 export async function PATCH(
   request: Request,
@@ -46,7 +72,7 @@ export async function PATCH(
       body as { name: string },
     );
 
-    return NextResponse.json({ organization });
+    return NextResponse.json({ organization, message:"Organization updated successfully." });
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -71,7 +97,8 @@ export async function DELETE(
       organizationId,
     );
 
-    return NextResponse.json({ organization });
+    // Archive is recoverable in vNext; never suggest the record was deleted.
+    return NextResponse.json({ organization, message:"Organization archived successfully." });
   } catch (error) {
     return apiErrorResponse(error);
   }

@@ -19,12 +19,27 @@ import { publicJoinTablesReady } from "./readiness";
 import { publicRecruiterJoinedNotification } from "./join-notification-model";
 import { recruiterGrantValidUntil, recruiterGrantEffectiveAt } from "../recruiter-grant-expiry-policy";
 
+/** Legacy public-link behavior is deliberately not implicitly grandfathered.
+ * Old indefinite HMAC/nonced links and direct-post paths cannot be authorized
+ * by vNext's explicit expiry/revocation, OTP and reviewed-drive grant model.
+ * The owner must explicitly approve any compatibility importer, not reuse
+ * old long-lived tokens or set bypassesDriveReview=true.
+ */
+export const PUBLIC_JOIN_LEGACY_COMPATIBILITY = {
+ indefiniteLegacyLinks:"RETIRED_PENDING_OWNER_APPROVAL",
+ directPostWithoutReview:"RETIRED_PENDING_OWNER_APPROVAL",
+ modernLinkRequiresOtp:true,
+ modernLinkRequiresExpiry:true,
+ modernLinkRequiresRevocation:true,
+ bypassesDriveReview:false,
+} as const;
+
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinAcceptError extends Error {
   constructor(readonly code: "INVALID" | "REMOVED" | "NOT_CONFIGURED" |
     "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY" | "WRONG_CODE" |
     "CODE_EXPIRED" | "CODE_LOCKED" | "CODE_REQUIRED" |
-    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "ACCOUNT_UNAVAILABLE" | "PHONE_STORAGE_NOT_READY") {
+    "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "COMPANY_REQUIRED" | "ACCOUNT_UNAVAILABLE" | "PHONE_STORAGE_NOT_READY") {
     super("PUBLIC_JOIN_" + code);
     this.name = "PublicJoinAcceptError";
   }
@@ -137,7 +152,7 @@ export async function acceptPublicRecruiterJoin(
       if (existingCompany && existingCompany.status !== "ACTIVE") throw new PublicJoinAcceptError("INVALID");
       if (existingCompany) companyId = existingCompany.id;
       else {
-        if (companyName.trim().length < 2) throw new PublicJoinAcceptError("INVALID");
+        if (companyName.trim().length < 2) throw new PublicJoinAcceptError("COMPANY_REQUIRED");
         const [sameName] = await tx.select({ id: placementCompanies.id }).from(placementCompanies)
           .where(sql`lower(${placementCompanies.name}) = lower(${companyName})`).limit(1);
         if (sameName) throw new PublicJoinAcceptError("COMPANY_EXISTS");

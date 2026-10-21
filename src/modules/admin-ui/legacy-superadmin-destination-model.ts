@@ -29,7 +29,7 @@ export function legacySuperAdminDestination(
  pathSegments:readonly string[],
  type?:string,
 ):string|null {
- if(pathSegments.length===0)return null;
+ if(pathSegments.length===0||pathSegments.some(segment=>!segment||segment==="."||segment===".."))return null;
  const normalized=pathSegments.map(segment=>segment.toLowerCase());
  const slug=normalized[0]??"";
  if(slug==="projects"&&normalized.length===2){

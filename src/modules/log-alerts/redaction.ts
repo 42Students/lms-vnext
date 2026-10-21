@@ -21,6 +21,8 @@ export function redactAlertText(value: unknown): string {
     .replace(/\b(?:parameters|params|bindings|values)\s*[:=]\s*(?:\[[^\]]*\]|\([^)]*\)|\{[^}]*\})/gi, "[sql values redacted]")
     .replace(/\b(?:select|insert|update|delete)\s+.+/gi, "[sql redacted]")
     .replace(/["'\u0060][^"'\u0060]{1,256}["'\u0060]/g, "[value]")
+    // Short uploaded filenames are sensitive even without home paths.
+    .replace(/\b[^\s\\/:"'<>]{1,120}\.(?:pdf|docx?|xlsx?|pptx?|png|jpe?g|webp|zip|mp4|mov|webm)\b/gi, "[filename redacted]")
     .replace(/\s+/g, " ")
     .trim()
     .slice(0, 420);

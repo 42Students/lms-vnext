@@ -137,6 +137,11 @@ export default async function TpoRecruiterAccessPage({
         relationshipId: company.relationshipId,
         name: company.name,
       }))} />
+      <Alert tone="info">
+        Recruiter access lasts six months by default unless changed below. Legacy
+        recruiter approval and AFTER_REVIEW visibility settings have not been
+        migrated as a combined policy; verify individual grants before sharing details.
+      </Alert>
       <Disclosure title="Recruiter link and duration" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 space-y-4 pt-3">
 
       {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
