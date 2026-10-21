@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,gt,ne} from "drizzle-orm";
+import {and,asc,eq,ne,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementJobRounds,placementJobs,placementRoundResults,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -15,6 +15,7 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
  const [scope]=await getDb().select({
   roundId:placementJobRounds.id,roundName:placementJobRounds.name,
   roundStatus:placementJobRounds.status,roundKind:placementJobRounds.kind,
+  roundUpdatedAt:placementJobRounds.updatedAt,
   jobStatus:placementJobs.status,jobTitle:placementJobs.title,
  }).from(placementJobRounds).innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
   .where(and(eq(placementJobRounds.id,roundId),eq(placementJobs.id,jobId),
@@ -49,7 +50,7 @@ export async function getTpoRoundApplyPreview(context:RequestContext,rawJobId:un
  await getDb().transaction(async tx=>{await requireTpoJobActor(tx,context);});
  return {scope,ready,rows,destinations:{PASS:passDestination,FAIL:"Not cleared",
    HOLD:"Waitlisted",ABSENT:"Absent"},...summarizeRoundApply(rows),
-  previewToken:roundApplyPreviewToken(roundId,rows),
+  previewToken:roundApplyPreviewToken(roundId+"|"+scope.roundUpdatedAt.toISOString(),rows),
   skippedUnrecordedNote:"Applicants with no staged result remain pending; they are not automatically failed."};
 }
 export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown,rawRoundId:unknown,raw:unknown){
@@ -57,6 +58,35 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
  const preview=await getTpoRoundApplyPreview(context,rawJobId,rawRoundId);
  if(!preview.ready)throw new PlacementsServiceError("PLACEMENT_RESULT_ROUND_NOT_READY");
  if(input.expectedPreviewToken!==preview.previewToken)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+ /** Each whole-round submission consumes its observed round revision in
+  * one short transaction BEFORE entering the per-applicant transactions.
+  * A second officer using the same preview loses the CAS, even when both
+  * originally saw identical staged results. We deliberately do not keep a
+  * FOR UPDATE lock open while another transaction applies applicants, which
+  * would deadlock against result-service's job/round row locks.
+  *
+  * vNext intentionally requires a COMPLETED round before results can be
+  * applied. An apply with skipped/unchanged results never re-completes or
+  * fabricates selection history; the remaining staged rows are retryable
+  * from a fresh preview. Every per-result transaction is independently
+  * atomic with its stage, activity event and learner notice. Unlike legacy
+  * one-call bulk apply, partial results are explicit rather than hidden.
+  */
+ if(preview.staged>0){
+  await getDb().transaction(async tx=>{
+   await requireTpoJobActor(tx,context);
+   const expectedTime=preview.scope.roundUpdatedAt.toISOString();
+   const [claimed]=await tx.update(placementJobRounds).set({
+    updatedAt:sql`greatest(clock_timestamp(), ${placementJobRounds.updatedAt} + interval '1 millisecond')`,
+   }).where(and(
+    eq(placementJobRounds.id,preview.scope.roundId),
+    eq(placementJobRounds.jobId,placementJobIdSchema.parse(rawJobId)),
+    eq(placementJobRounds.status,"COMPLETED"),
+    sql`date_trunc('milliseconds', ${placementJobRounds.updatedAt}) = ${expectedTime}::timestamptz`,
+   )).returning({id:placementJobRounds.id});
+   if(!claimed)throw new PlacementsServiceError("PLACEMENT_JOB_PREVIEW_STALE");
+  });
+ }
  const results:Array<{resultId:string;applicationId:string;student:string;outcome:string;status:"applied"|"skipped";reason?:string}>=[];
  for(const row of preview.rows.filter(r=>r.status==="STAGED")){
   try{
@@ -66,8 +96,11 @@ export async function applyTpoWholeRound(context:RequestContext,rawJobId:unknown
    results.push({...row,status:"skipped",reason:roundApplyFailureReason(error)});
   }
  }
+ const applied=results.filter(r=>r.status==="applied").length;
+ const skipped=results.filter(r=>r.status==="skipped").length;
  return {total:preview.rows.length,previouslyApplied:preview.applied,
-  applied:results.filter(r=>r.status==="applied").length,
-  skipped:results.filter(r=>r.status==="skipped").length,
+  applied,skipped,partial:skipped>0,
+  completion:"ROUND_ALREADY_COMPLETED" as const,
+  retryRequiresFreshPreview:skipped>0,
   unchanged:preview.rows.filter(r=>r.status==="APPLIED").length,results};
 }
