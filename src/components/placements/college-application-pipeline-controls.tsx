@@ -30,7 +30,7 @@ function stageAge(row:Row){
 }
 const stageLabel=(stage:string)=>stage.replaceAll("_"," ").toLowerCase()
  .replace(/(^|\s)\S/g,match=>match.toUpperCase());
-export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements",initialDetailId=null}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements";initialDetailId?:string|null}){
+export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements",initialDetailId=null,legacyShortlisted=false}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements";initialDetailId?:string|null;legacyShortlisted?:boolean}){
  const router=useRouter();
  const {showToast}=useToast();
  // A late network reply from the previous selected college must not open a
@@ -163,6 +163,19 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
     <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)}
      aria-label={"View Details for "+(row.name||"learner")} disabled={busy}
      className="min-h-11 text-xs md:min-h-9">View Details</Button>
+    {legacyShortlisted&&row.stage==="ASSESSMENT"&&
+      (row.allowedNextStages??transitions[row.stage]??[]).includes("INTERVIEW")?
+      <Link href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}
+       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text underline md:min-h-9">
+       Mark Passed · Schedule Interview</Link>:null}
+    {legacyShortlisted&&row.stage==="INTERVIEW"&&
+      (row.allowedNextStages??transitions[row.stage]??[]).includes("OFFERED")?
+      <Button type="button" variant="secondary" disabled={busy} onClick={()=>selectRow(row,"OFFERED")}
+       className="min-h-11 text-xs md:min-h-9">Move to Offered</Button>:null}
+    {legacyShortlisted&&row.stage==="OFFERED"&&
+      (row.allowedNextStages??transitions[row.stage]??[]).includes("HIRED")?
+      <Button type="button" variant="secondary" disabled={busy} onClick={()=>selectRow(row,"HIRED")}
+       className="min-h-11 text-xs md:min-h-9">Mark Hired</Button>:null}
     {row.stage==="INTERVIEW"&&basePath==="/college/placements"?
      <Link href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}
       className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text underline md:min-h-9">
@@ -176,13 +189,15 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
       className="min-h-11 min-w-32 max-w-full text-sm md:min-h-9">
       <option value="">Move to...</option>
-      {(row.allowedNextStages??transitions[row.stage]??[]).filter(stage=>stage!=="REJECTED")
+      {(row.allowedNextStages??transitions[row.stage]??[]).filter(stage=>
+        stage!=="REJECTED"&&!(legacyShortlisted&&row.stage==="ASSESSMENT"&&stage==="INTERVIEW"))
        .map(stage=><option key={stage} value={stage}>{stageLabel(stage)}</option>)}
      </Select>}
     {row.status==="SUBMITTED"&&(row.allowedNextStages??transitions[row.stage]??[]).includes("REJECTED")?
      <Button type="button" variant="danger" disabled={busy}
       aria-label={"Reject "+(row.name||"learner")}
-      onClick={()=>selectRow(row,"REJECTED")} className="min-h-11 text-xs md:min-h-9">Reject</Button>:null}
+      onClick={()=>selectRow(row,"REJECTED")} className="min-h-11 text-xs md:min-h-9">
+      {legacyShortlisted&&row.stage==="ASSESSMENT"?"Mark Failed":"Reject"}</Button>:null}
    </div>},
  ];
  return <section className="space-y-4">
