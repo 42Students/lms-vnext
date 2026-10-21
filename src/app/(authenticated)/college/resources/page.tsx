@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeContentAggregate } from "@/components/courses/college-content-aggregate";
 import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
-import {getCollegeContentAuthoringOptions} from "@/modules/courses/college-content-authoring-service";
+import {getCollegeContentAuthoringOptions,collegeExistingContentFiltersFromSearch} from "@/modules/courses/college-content-authoring-service";
 import {resourceMaterialsRuntimeEnabled} from "@/modules/courses/resource-material-readiness";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -19,7 +19,8 @@ export default async function CollegeResourcesPage({
 }) {
   const context = await getCurrentRequestContext();
   if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
-  const raw = collegeContentSearchParams(await searchParams);
+  const supplied=await searchParams;
+  const raw = collegeContentSearchParams(supplied);
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return (
@@ -32,7 +33,7 @@ export default async function CollegeResourcesPage({
     );
   }
   const [authoringResult, catalogueResult] = await Promise.allSettled([
-    getCollegeContentAuthoringOptions(context,"RESOURCE"),
+    getCollegeContentAuthoringOptions(context,"RESOURCE",collegeExistingContentFiltersFromSearch(supplied)),
     listCollegeContentAggregate(context,"RESOURCE",parsed.data),
   ]);
   const authoring=authoringResult.status==="fulfilled"?authoringResult.value:null;
@@ -42,7 +43,8 @@ export default async function CollegeResourcesPage({
       actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Lessons</Link>} />
     {authoring?<CollegeContentAuthoringControl kind="RESOURCE" lessons={authoring.lessons}
       deliveries={authoring.deliveries} existing={authoring.existing}
-      existingTruncated={authoring.existingTruncated} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>:
+      existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
+      existingFilters={authoring.existingFilters} materialsEnabled={resourceMaterialsRuntimeEnabled()}/>:
       <div className="space-y-2">
         <ErrorState title="Could not load courses"
           description="Course selections for resources are unavailable; the existing list can still be viewed."

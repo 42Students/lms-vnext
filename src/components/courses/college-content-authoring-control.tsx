@@ -39,8 +39,9 @@ function isoIst(local:string,zone:MeetingZone="Asia/Kolkata"){
  if(matches.length>1)throw Error("This local time occurs twice due to a daylight-saving change. Choose another time.");
  return matches[0]!;
 }
-export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,materialsEnabled=false}:{
+export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing,existingTruncated=false,existingPage=1,existingFilters,materialsEnabled=false}:{
  kind:Kind;lessons:Lesson[];deliveries:Delivery[];existing:Existing[];existingTruncated?:boolean;
+ existingPage?:number;existingFilters?:{courseId:string;lessonId:string;sectionId:string;search:string};
  materialsEnabled?:boolean;
 }){
  const router=useRouter(),[editing,setEditing]=useState<string|null>(null),[open,setOpen]=useState(false);
@@ -54,10 +55,10 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
  const [newResourceId,setNewResourceId]=useState<string|null>(null);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const [orderDraft,setOrderDraft]=useState<Record<string,string>>({});
- const [listCourseId,setListCourseId]=useState("");
- const [listLessonId,setListLessonId]=useState("");
- const [listQuery,setListQuery]=useState("");
- const [listSectionId,setListSectionId]=useState("");
+ const [listCourseId,setListCourseId]=useState(existingFilters?.courseId??"");
+ const [listLessonId,setListLessonId]=useState(existingFilters?.lessonId??"");
+ const [listQuery,setListQuery]=useState(existingFilters?.search??"");
+ const [listSectionId,setListSectionId]=useState(existingFilters?.sectionId??"");
  const [removeLink,setRemoveLink]=useState(false);
  const [openMaterialsId,setOpenMaterialsId]=useState<string|null>(null);
  const [deliveryId,setDeliveryId]=useState("");
@@ -73,6 +74,18 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
   (!listLessonId||item.lessonId===listLessonId)&&
   (!listSectionId||!item.deliveryId||item.deliveryId===listSectionId)&&
   (!listSectionId||item.offeringId===deliveries.find(row=>row.deliveryId===listSectionId)?.offeringId));
+ function applyExistingFilters(changes:Record<string,string>){
+  const params=new URLSearchParams(window.location.search);
+  const current:Record<string,string>={
+   existingCourse:listCourseId,existingLesson:listLessonId,
+   existingSection:listSectionId,existingSearch:listQuery.trim(),
+  };
+  for(const [key,value] of Object.entries({...current,...changes})){
+   if(value)params.set(key,value);else params.delete(key);
+  }
+  if(!("existingPage" in changes))params.delete("existingPage");
+  router.replace(window.location.pathname+(params.size?"?"+params.toString():""));
+ }
  const text=kind==="YOUTUBE"?"Link YouTube video":kind==="RESOURCE"?"Add Resource":"Schedule live class";
  const draft=JSON.stringify({lessonId,title,url,notes,duration,start,end,deliveryId,timeZone,removeLink,visibleToStudents});
  function closeEditor(){
@@ -285,21 +298,23 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </div>
    <LessonResourceMaterialsControl contentId={newResourceId} deliveryId={deliveryId||null} editable/>
   </section>:null}
-  {existing.length>0&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
+  {(existing.length>0||existingPage>1||existingTruncated||Boolean(existingFilters?.search))&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
    {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground leading-5">
     Additional link and file materials are unavailable until the Resource Materials database runtime is verified.
     You can still edit Resource notes and its saved HTTPS link.
    </p>:null}
    {existingTruncated?<p role="status" className="text-xs text-muted-foreground leading-5">
-    Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
+    Showing page {existingPage} of saved items. More content is available through the next page.
    </p>:null}
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Search Existing Content
     <Input type="search" maxLength={100} value={listQuery} onChange={event=>setListQuery(event.target.value)}
+     onBlur={()=>applyExistingFilters({existingSearch:listQuery.trim()})}
+     onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();applyExistingFilters({existingSearch:listQuery.trim()});}}}
      placeholder="Content title, Lesson or Course code"
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2"/>
    </label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course
-    <Select value={listCourseId} onChange={event=>{setListCourseId(event.target.value);setListLessonId("");setListSectionId("");}}
+    <Select value={listCourseId} onChange={event=>{setListCourseId(event.target.value);setListLessonId("");setListSectionId("");applyExistingFilters({existingCourse:event.target.value,existingLesson:"",existingSection:""});}}
       className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All courses</option>
      {[...new Map(lessons.map(lesson=>[lesson.offeringId,
@@ -308,7 +323,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     </Select>
    </label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Lesson
-    <Select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");}}
+    <Select value={listLessonId} onChange={event=>{setListLessonId(event.target.value);setListSectionId("");applyExistingFilters({existingLesson:event.target.value,existingSection:""});}}
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">All Lessons</option>
      {lessons.filter(row=>!listCourseId||row.offeringId===listCourseId).map(row=>
@@ -317,7 +332,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </label>
    <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Section
     <Select value={listSections.some(row=>row.deliveryId===listSectionId)?listSectionId:""}
-     onChange={e=>setListSectionId(e.target.value)}
+     onChange={e=>{setListSectionId(e.target.value);applyExistingFilters({existingSection:e.target.value});}}
      className="min-h-10 max-w-2xl rounded border border-border bg-background p-2">
      <option value="">Showing every section&apos;s content together</option>
      {listSections.map(row=><option key={row.deliveryId} value={row.deliveryId}>
@@ -328,7 +343,14 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
     Showing shared offering items and content specific to the selected Section.
     The Order field below is the authored default order, not a Section-specific override.
    </p>:null}
-   <p className="text-xs text-muted-foreground leading-5">{matching.length} matching content items{existingTruncated?" among the first 250 saved items":""}.</p>
+   <p className="text-xs text-muted-foreground leading-5">{matching.length} matching content items on page {existingPage}{existingTruncated?" · more available":""}.</p>
+   <div className="flex flex-wrap items-center gap-2" aria-label="Existing content pagination">
+    <Button type="button" variant="secondary" size="sm" disabled={existingPage<=1}
+     onClick={()=>applyExistingFilters({existingPage:String(existingPage-1)})}>Previous page</Button>
+    <span className="text-xs text-muted-foreground">Page {existingPage}</span>
+    <Button type="button" variant="secondary" size="sm" disabled={!existingTruncated}
+     onClick={()=>applyExistingFilters({existingPage:String(existingPage+1)})}>Next page</Button>
+   </div>
    {matching.length===0?<p className="text-xs text-muted-foreground leading-5">No saved items match this Lesson and Section.</p>:null}
    <ul className="space-y-1">{matching.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
     <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.courseCode} · {item.lessonName} · {item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?

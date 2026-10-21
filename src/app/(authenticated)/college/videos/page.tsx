@@ -3,7 +3,7 @@ import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeContentAggregate } from "@/components/courses/college-content-aggregate";
 import {CollegeContentAuthoringControl} from "@/components/courses/college-content-authoring-control";
-import {getCollegeContentAuthoringOptions} from "@/modules/courses/college-content-authoring-service";
+import {getCollegeContentAuthoringOptions,collegeExistingContentFiltersFromSearch} from "@/modules/courses/college-content-authoring-service";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { collegeContentQuerySchema, collegeContentSearchParams } from "@/modules/courses/college-content-aggregate-model";
@@ -17,7 +17,8 @@ export default async function CollegeVideosPage({
 }) {
   const context = await getCurrentRequestContext();
   if(!context.membership)return <CollegeCourseMissingScope area="Video"/>;
-  const raw = collegeContentSearchParams(await searchParams);
+  const supplied=await searchParams;
+  const raw = collegeContentSearchParams(supplied);
   const parsed = collegeContentQuerySchema.safeParse(raw);
   if (!parsed.success) {
     return (
@@ -31,7 +32,7 @@ export default async function CollegeVideosPage({
   }
   // Keep the catalogue usable when one authoring dependency is unavailable.
   const [authoringResult, catalogueResult] = await Promise.allSettled([
-    getCollegeContentAuthoringOptions(context,"YOUTUBE"),
+    getCollegeContentAuthoringOptions(context,"YOUTUBE",collegeExistingContentFiltersFromSearch(supplied)),
     listCollegeContentAggregate(context,"VIDEO",parsed.data),
   ]);
   const authoring=authoringResult.status==="fulfilled"?authoringResult.value:null;
@@ -40,7 +41,8 @@ export default async function CollegeVideosPage({
     <PageHeader title="Video" eyebrow="College Admin · Courses & Content"
       actions={<Link href="/college/lessons" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Lessons</Link>} />
     {authoring?<CollegeContentAuthoringControl kind="YOUTUBE" lessons={authoring.lessons} deliveries={authoring.deliveries}
-      existing={authoring.existing} existingTruncated={authoring.existingTruncated} />:
+      existing={authoring.existing} existingTruncated={authoring.existingTruncated} existingPage={authoring.existingPage}
+      existingFilters={authoring.existingFilters} />:
       <ErrorState title="Could not load courses or lessons"
         description="Courses, Faculty, Lessons or Sections are unavailable for video authoring. Existing videos can still be browsed."
         action={<Link href="/college/videos" className="font-semibold text-link underline">Retry</Link>} />}
