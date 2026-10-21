@@ -236,7 +236,7 @@ export default async function TpoAuditPage({
         <form role="search" aria-label="tpo audit filters"
           method="get"
           action="/tpo/audit"
-          className="mt-3 grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4"
+          className="mt-3 grid min-w-0 grid-cols-1 gap-[8px] sm:grid-cols-2 lg:grid-cols-4"
         >
           <div className="contents">          <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             About

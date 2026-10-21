@@ -180,7 +180,7 @@ export default async function TpoCompanyMemoryPage({
         <form role="search" aria-label="tpo companies filters"
           action="/tpo/companies"
           method="get"
-          className="grid min-w-0 grid-cols-1 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
+          className="grid min-w-0 grid-cols-1 gap-[8px] border-b border-border py-4 md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_auto_auto_auto]"
         >
           <label className="flex flex-col gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search companies

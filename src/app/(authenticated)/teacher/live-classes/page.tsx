@@ -38,7 +38,7 @@ export default async function Page({searchParams}:{searchParams:Promise<Params>}
     />
   </Disclosure>
   <form role="search" aria-label="teacher live classes filters" action="/teacher/live-classes" method="get"
-   className="grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_auto_auto] lg:items-end">
+   className="grid min-w-0 gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,12rem)_minmax(0,1fr)_auto_auto] lg:items-end">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">When
     <Select name="view" defaultValue={data.query.view}
      className="text-sm">
