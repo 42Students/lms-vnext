@@ -124,10 +124,10 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
   return <section className="min-w-0 border-b border-border pb-4">
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div>
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           {props.section === "sprints" ? "Sprint plan" : "Task plan"}
         </h2>
-        <p className="mt-1 text-sm text-body">
+        <p className="mt-1 text-sm text-body leading-[22px]">
           {props.section === "sprints"
             ? "The sprints every workspace created from this template starts with."
             : "The tasks every workspace created from this template starts with."}
@@ -141,10 +141,10 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     {message ? <Banner tone="success">{message}</Banner> : null}
     {expanded ? <form className="mt-4 grid min-w-0 gap-4" onSubmit={save}>
       {props.section === "sprints" ? <>
-        <p className="m-0 text-xs text-muted-foreground">
+        <p className="m-0 text-xs text-muted-foreground leading-[20px]">
           No start/end dates here on purpose — a template seeds many workspaces, each starting on a different day.
         </p>
-        {draft.releases.length === 0 ? <p className="text-sm">No releases saved yet.</p> : null}
+        {draft.releases.length === 0 ? <p className="text-sm leading-[22px]">No releases saved yet.</p> : null}
         {draft.releases.map((release, index) => <label key={release.key} className={label}>
           Release {index + 1} title
           <Input className={field} maxLength={200} required disabled={pending}
@@ -207,9 +207,9 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         <Button type="button" size="sm" variant="secondary"
           disabled={pending || !draft.releases.length || draft.sprints.length >= 200}
           onClick={addSprint}>Add sprint</Button>
-        {!draft.sprints.length ? <p className="text-sm">No sprints yet.</p> : null}
+        {!draft.sprints.length ? <p className="text-sm leading-[22px]">No sprints yet.</p> : null}
       </> : <>
-        {!draft.sprints.length ? <p className="text-sm">
+        {!draft.sprints.length ? <p className="text-sm leading-[22px]">
           No sprints saved yet. A task can only be linked to a sprint that already exists on this template.{" "}
           <Link className="font-semibold text-primary-text"
             href={"/admin/projects/templates/" + props.templateId + "/sprints"}>Add sprints first</Link>.
@@ -272,7 +272,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
         <Button type="button" size="sm" variant="secondary"
           disabled={pending || !draft.sprints.length || draft.tasks.length >= 2000}
           onClick={addTask}>Add task</Button>
-        {!draft.tasks.length ? <p className="text-sm">No tasks yet.</p> : null}
+        {!draft.tasks.length ? <p className="text-sm leading-[22px]">No tasks yet.</p> : null}
       </>}
       {error ? <Banner tone="error">{error}</Banner> : null}
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:flex-wrap sm:items-center sm:justify-end">

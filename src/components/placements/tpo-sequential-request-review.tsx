@@ -30,16 +30,16 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
   }
  }
  return <section aria-label="Review one by one" className="space-y-3 border-b border-border pb-6">
-  <h2 className="font-semibold">Review one by one</h2>
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Review one by one</h2>
   {!sequence.length?<Button variant="secondary" type="button" disabled={!requests.length} onClick={()=>{
    setSequence(requests.map(item=>item.id));setPosition(0);setDecided(0);setMessage("");
   }} >
    Start with the first of {requests.length}
   </Button>:current?<div className="space-y-3 border-t border-border pt-4">
-   <p role="status" className="text-sm font-semibold">{position+1} of {sequence.length} · {decided} decided</p>
+   <p role="status" className="text-sm font-semibold leading-[22px]">{position+1} of {sequence.length} · {decided} decided</p>
    <p className="font-semibold">{current.studentName} · {current.requestType.replaceAll("_"," ")}</p>
-   <p className="text-sm text-body">{current.companyName} · {current.jobTitle}</p>
-   <p className="whitespace-pre-wrap text-sm text-body">{current.reason}</p>
+   <p className="text-sm text-body leading-[22px]">{current.companyName} · {current.jobTitle}</p>
+   <p className="whitespace-pre-wrap text-sm text-body leading-[22px]">{current.reason}</p>
    <TpoRequestDecisionControl key={current.id} requestId={current.id}
     expectedUpdatedAt={current.expectedUpdatedAt} requestType={current.requestType}
     onSuccess={()=>advance(true)} />
@@ -55,6 +55,6 @@ export function TpoSequentialRequestReview({requests}:{requests:readonly Row[]})
    <Button variant="secondary" type="button" onClick={stop} className="ml-2">Finish</Button>
   </div>}
   {message?<InlineNotice tone="success" message={message}/>:null}
-  <p className="text-xs text-muted-foreground">This session covers the pending requests on the visible page. Each decision is independently persisted and rechecked on the server.</p>
+  <p className="text-xs text-muted-foreground leading-[20px]">This session covers the pending requests on the visible page. Each decision is independently persisted and rechecked on the server.</p>
  </section>;
 }

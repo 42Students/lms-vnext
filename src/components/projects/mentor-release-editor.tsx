@@ -70,7 +70,7 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
    className="min-h-11 px-3 md:min-h-9"
    onClick={()=>{if(open)requestClose();else setOpen(true);}}>{release?"Edit release":"Add release"}</Button>:null}
   {open?<form id={editorId} onSubmit={event=>{event.preventDefault();void save();}} className="space-y-3 border-t border-border pt-3">
-   <p className="text-sm font-semibold">{release?"Edit release":"New release"}</p>
+   <p className="text-sm font-semibold leading-[22px]">{release?"Edit release":"New release"}</p>
    <label className="block text-[13px] font-semibold">Title
     <Input className="mt-1 min-h-11 w-full md:min-h-9" maxLength={200}
      required value={title} onChange={e=>setTitle(e.target.value)}/></label>
@@ -86,12 +86,12 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
    </div>
    {canRemove?<div className="border-t border-[var(--lms-canvas-border)] pt-3"><Button variant="link" type="button" disabled={pending} onClick={()=>{setError("");setConfirmDelete(true);}}
      className="min-h-11 w-full !justify-start !text-[var(--lms-error)] sm:w-auto md:min-h-9">Delete release</Button></div>:null}
-   {release&&linkedSprints>0?<p className="text-xs text-muted-foreground">
+   {release&&linkedSprints>0?<p className="text-xs text-muted-foreground leading-[20px]">
     Release cannot be deleted until its {linkedSprints} linked sprint(s) are removed.
    </p>:null}
   </form>:null}
-  {error&&!confirmDelete?<p role="alert" className="text-xs text-error">{error}</p>:null}
-  {message?<p role="status" className="text-xs text-success">{message}</p>:null}
+  {error&&!confirmDelete?<p role="alert" className="text-xs text-error leading-[20px]">{error}</p>:null}
+  {message?<p role="status" className="text-xs text-success leading-[20px]">{message}</p>:null}
   <ConfirmDialog open={confirmDiscard} onOpenChange={setConfirmDiscard}
     title="Discard unsaved project changes?"
     description="You have unsaved project changes. Leave this page and discard them?"
@@ -101,7 +101,7 @@ export function MentorReleaseEditor({projectId,release,linkedSprints=0}:{
   <ConfirmDialog open={confirmDelete} onOpenChange={next=>{if(!pending)setConfirmDelete(next);}}
     title="Delete this release?" description="This cannot be undone."
     confirmLabel="Delete release" pending={pending} onConfirm={()=>void remove()}>
-    {error?<p role="alert" className="break-words text-sm text-error">{error}</p>:null}
+    {error?<p role="alert" className="break-words text-sm text-error leading-[22px]">{error}</p>:null}
   </ConfirmDialog>
  </div>;
 }

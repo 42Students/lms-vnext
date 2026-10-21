@@ -91,18 +91,18 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
   if(statuses.includes(lane as EditableStatus))void move(id,lane as EditableStatus);
  }
  return <section aria-label="Project Board lanes" className="space-y-3">
-  <p className="text-sm text-body">{readOnly
+  <p className="text-sm text-body leading-[22px]">{readOnly
     ?"This workspace is read-only. Task moves and backlog pulls are disabled."
     :"Drag your own task into a lane, or use the move control for touch and keyboard."}</p>
-  {busy?<p role="status" aria-live="polite" className="text-sm text-body">Saving your change…</p>:null}
-  {notice?<p role="status" aria-live="polite" className="text-sm text-success-text">{notice}</p>:null}
+  {busy?<p role="status" aria-live="polite" className="text-sm text-body leading-[22px]">Saving your change…</p>:null}
+  {notice?<p role="status" aria-live="polite" className="text-sm text-success-text leading-[22px]">{notice}</p>:null}
   {error?<Alert tone="error">{error}</Alert>:null}
   {undo&&tasks.some(task=>task.id===undo.taskId&&canLearnerMoveOwnTask(task.status,undo.status))?
    <Button type="button" disabled={busy||readOnly} variant="ghost" className="min-h-9 !text-[var(--lms-primary-text)] underline"
     onClick={()=>{const last=undo;void move(last.taskId,last.status,last.blockerReason,true)}}>
     Undo last task move
   </Button>:null}
-  <p className="text-xs text-muted-foreground sm:hidden">Scroll sideways to see all Board lanes.</p>
+  <p className="text-xs text-muted-foreground sm:hidden leading-[20px]">Scroll sideways to see all Board lanes.</p>
   <div role="region" aria-label="Project Board lanes, scroll horizontally to see more"
     tabIndex={0} data-dragging={dragging} className={styles.scrollRegion}>
    <div className={styles.track}>{lanes.map(lane=>
@@ -124,7 +124,7 @@ export function LearnerBoardInteractive({projectId,initialTasks,filters,sprints,
        className={"border p-3 text-sm "+styles.card}>
         <Link href={learnerBoardTaskHref(projectId,filters,task.id)}
          className="block break-words font-semibold text-primary-text">{task.title}</Link>
-        <p className="mt-2 text-xs text-muted-foreground">{task.priority}</p>
+        <p className="mt-2 text-xs text-muted-foreground leading-[20px]">{task.priority}</p>
         {!readOnly && own && (task.sprintId===null||editable) && task.status==="TODO" &&
           task.templateKey.startsWith("learner-"+membershipId!.replaceAll("-","")+"-") ?
           <LearnerDeleteOwnTask projectId={projectId} taskId={task.id}/>:null}
