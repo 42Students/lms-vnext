@@ -39,7 +39,20 @@ function escapedSearch(value: string) {
   return "%" + value.replace(/[\\%_]/g, "\\$&") + "%";
 }
 
-/** A College Admin sees role memberships in their *current* college only. */
+/**
+ * A College Admin sees role memberships in their *current* college only.
+ *
+ * Legacy detail-field crosswalk (never leak these private fields in directory rows):
+ * Learner.id -> collegeMemberships.id, name/email/mobile -> users.displayName/
+ * email/phoneE164, roll/unique/registration -> learnerProfiles.rollNumber/
+ * legacyUniqueId/registrationNumber, DOB -> learnerProfiles.profileDocument,
+ * department/program/class -> scoped program enrollment/section enrollment.
+ * Faculty.id/college/dept -> membership.id/collegeId/profile.primaryDepartmentId;
+ * legacy bio/education sections -> facultyProfiles.profileDocument.
+ * Faculty.suspendedAt/reason -> collegeMemberships.suspendedAt/suspensionReason;
+ * lifecycle audit is held by activity events, not this list projection.
+ * Read the separate role-specific detail endpoint for private fields.
+ */
 export async function listCollegeRoleDirectory(
   context: RequestContext,
   kind: CollegeDirectoryKind,
@@ -179,7 +192,11 @@ export async function listCollegeRoleDirectory(
   const matchesLearnerIdentity = (search: string) => exists(db.select({ member: learnerProfiles.membershipId })
     .from(learnerProfiles).where(and(
       eq(learnerProfiles.membershipId, collegeMemberships.id),
-      or(ilike(learnerProfiles.rollNumber, search), ilike(learnerProfiles.registrationNumber, search)),
+      or(
+        ilike(learnerProfiles.rollNumber, search),
+        ilike(learnerProfiles.registrationNumber, search),
+        ilike(learnerProfiles.legacyUniqueId, search),
+      ),
     )));
   const matchesLearnerProgram = (search: string) => exists(db.select({enrollmentId:learnerProgramEnrollments.id})
     .from(learnerProgramEnrollments)
@@ -275,6 +292,9 @@ export async function listCollegeRoleDirectory(
       filter.q ? or(
         ilike(users.displayName, escapedSearch(filter.q)),
         ilike(users.email, escapedSearch(filter.q)),
+        // Full-college phone lookup is permitted only in this persisted,
+        // people.manage-authorized admin service; do not return the phone in rows.
+        kind === "LEARNER" ? ilike(users.phoneE164, escapedSearch(filter.q)) : undefined,
         kind === "LEARNER" ? matchesLearnerIdentity(escapedSearch(filter.q)) : undefined,
         kind === "LEARNER" ? matchesLearnerProgram(escapedSearch(filter.q)) : undefined,
         kind === "FACULTY" ? matchesFacultyIdentity(escapedSearch(filter.q)) : undefined,
