@@ -11,6 +11,19 @@ import {
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
+/**
+ * Legacy app_setting crosswalk is intentionally NOT an automatic table copy.
+ * Approved module keys only: projects, placements, electives. Translate
+ * GLOBAL→GLOBAL, ORGANIZATION→ORGANIZATION, COLLEGE→COLLEGE,
+ * DEPARTMENT→DEPARTMENT, PROGRAM→PROGRAM, BATCH→COHORT,
+ * CLASS→SECTION (only for a real section), LEARNER→MEMBERSHIP.
+ * The old integer scope ID must be looked up through a verified tenant-scoped
+ * UUID mapping; GROUP_BACKED classes do not become fabricated sections.
+ * Parse explicitly approved boolean setting values, reject unknown keys,
+ * ambiguous duplicate rules, invalid scopes and unverified role membership.
+ * Never grant access based on a raw legacy setting_key/value. Greenfield
+ * vNext requires no historical AppSetting migration at present.
+ */
 export const moduleAccessRules = pgTable(
   "module_access_rules",
   {
