@@ -12,6 +12,7 @@ export function GracefulPageLoading({ label = "Loading your page...", shape = "c
     return () => clearTimeout(timer);
   }, [label, shape]);
   return <section data-slot="graceful-page-loading" aria-busy={true} className="min-w-0 space-y-[var(--lms-space-4)] bg-transparent py-[var(--lms-space-2)]">
+    <span role="status" className="sr-only">{label}</span>
     {shape === "directory" ? <>
       <div aria-hidden="true" className="space-y-[var(--lms-space-3)]">
         <Skeleton label={label} variant="line" />
