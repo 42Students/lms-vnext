@@ -251,7 +251,7 @@ function QuizCard({
         </p>
       ) : null}
 
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
         <span>
           {item.maxAttempts} attempt
           {item.maxAttempts === 1 ? "" : "s"}
@@ -300,8 +300,8 @@ export function AdminOfferingLearningOverview({
 
   if (!learningPath) {
     return (
-      <div className="space-y-5">
-        <section className="border-b border-border pb-5">
+      <div className="space-y-6">
+        <section className="border-b border-border pb-4">
           <div className="flex flex-wrap gap-2">
             <StatusBadge tone="info">
               {offering.type}
@@ -346,7 +346,7 @@ export function AdminOfferingLearningOverview({
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <div className="flex flex-wrap gap-2">
@@ -394,7 +394,7 @@ export function AdminOfferingLearningOverview({
         </div>
       </section>
 
-      <section aria-label="In this course" className="min-w-0 border-b border-border pb-5">
+      <section aria-label="In this course" className="min-w-0 border-b border-border pb-4">
         <h2 className="text-lg font-semibold text-foreground">In this course</h2>
         <p className="mt-1 text-sm text-muted-foreground">Recorded shared learning items only. Visibility and publication are separate controls.</p>
         <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6">
@@ -412,7 +412,7 @@ export function AdminOfferingLearningOverview({
       </div>
 
       {workspace.lessons.length === 0 ? (
-        <section className="border-y border-dashed border-border py-5">
+        <section className="border-y border-dashed border-border py-4">
           <h3 className="m-0 text-base font-semibold text-foreground">
             No Lessons yet
           </h3>
@@ -463,7 +463,7 @@ export function AdminOfferingLearningOverview({
 
 
                   {itemCount === 0 ? (
-                    <div className="mt-3 rounded-xl border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
+                    <div className="mt-3 rounded-xl border border-dashed border-border bg-surface p-6 text-sm text-muted-foreground">
                       No shared learning items in
                       this Lesson yet.
                     </div>

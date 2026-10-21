@@ -494,7 +494,7 @@ export function FacultyAttendanceWorkspace({
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       {savedNotice?<Alert tone="success">{savedNotice}</Alert>:null}
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-4">
         <PageHeader
           title="Attendance"
           eyebrow={workspace.course.courseCode + " · " + workspace.course.sectionName}
@@ -521,7 +521,7 @@ export function FacultyAttendanceWorkspace({
 
       {mode === "REPORT" ? (
         <>
-          <section className="border-b border-border pb-5">
+          <section className="border-b border-border pb-4">
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div className="flex flex-wrap gap-2">
                 <StatusBadge tone="info">
@@ -551,7 +551,7 @@ export function FacultyAttendanceWorkspace({
                 >
                   ←
                 </Button>
-                <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+                <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Jump to month
                   <Input
                     className="w-full"
@@ -578,7 +578,7 @@ export function FacultyAttendanceWorkspace({
             </div>
           </section>
 
-          <section aria-label="Monthly class health" className="border-b border-border pb-5">
+          <section aria-label="Monthly class health" className="border-b border-border pb-4">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h2 className="text-sm font-semibold text-body">Monthly Attendance</h2>
@@ -804,7 +804,7 @@ export function FacultyAttendanceWorkspace({
               description="Use Schedule Class to create a class session before marking attendance."
             />
           ) : (
-            <section className="border-b border-border pb-5">
+            <section className="border-b border-border pb-4">
               <div className="grid min-w-0 gap-[var(--lms-space-4)] lg:grid-cols-[minmax(16rem,24rem)_1fr]">
                 <div>
                   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -919,7 +919,7 @@ export function FacultyAttendanceWorkspace({
                 aria-label="Attendance roster"
               >
                 {visibleRoster.length === 0 ? (
-                  <p className="p-5 text-sm text-muted-foreground">
+                  <p className="p-6 text-sm text-muted-foreground">
                     No learners match this search.
                   </p>
                 ) : (
@@ -1211,7 +1211,7 @@ export function FacultyAttendanceWorkspace({
           onSubmit={createSession}
           className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2"
         >
-          <label className="grid min-w-0 gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Class title
             <Input
               className="w-full"
@@ -1226,7 +1226,7 @@ export function FacultyAttendanceWorkspace({
               placeholder="Lecture, Lab, Tutorial…"
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Starts at (IST)
             <Input
               className="w-full"
@@ -1238,7 +1238,7 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Ends at (IST)
             <Input
               className="w-full"
@@ -1250,7 +1250,7 @@ export function FacultyAttendanceWorkspace({
               required
             />
           </label>
-          <label className="grid min-w-0 gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Location
             <Input
               className="w-full"

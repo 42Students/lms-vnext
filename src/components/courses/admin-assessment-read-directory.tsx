@@ -28,7 +28,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
   const title = assignment ? "Assignments" : "Quizzes";
   const base = assignment ? "/admin/assignments" : "/admin/quizzes";
   const stats = adminAssessmentStats(data.items);
-  return <div className="min-w-0 space-y-4 md:space-y-5">
+  return <div className="min-w-0 space-y-4 md:space-y-6">
     {showHeader ? <PageHeader eyebrow="Super Admin · Courses" title={title}
       description={`${title} across the selected college. Submission/attempt counts reflect persisted rows, not distinct learners or completion rates.`} /> : null}
     <FilterBar title="Assessment filters"><form action={base} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-5)] md:grid-cols-2 xl:grid-cols-3 print:hidden">

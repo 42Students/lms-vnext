@@ -116,7 +116,7 @@ export function NotificationList({
               }}
               aria-label={"Open notification: "+item.title}
               loading={pendingId===item.id}
-              className="w-full min-h-12 justify-start rounded-none border-x-0 border-t-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-left whitespace-normal shadow-none hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:py-5">
+              className="w-full min-h-12 justify-start rounded-none border-x-0 border-t-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-left whitespace-normal shadow-none hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:py-4">
               <div className="flex min-w-0 items-start gap-3">
                <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -131,7 +131,7 @@ export function NotificationList({
               key={item.id}
               className={readEndpoint==="/api/learn/notifications"
                 ? "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-3 transition-colors duration-200 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary"
-                : "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors duration-150 hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:py-5"}
+                : "min-w-0 border-b border-[var(--lms-canvas-border)] bg-transparent py-4 transition-colors duration-150 hover:bg-primary-subtle focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-primary min-[768px]:py-4"}
             >
               <div className="flex flex-col gap-3 min-[768px]:flex-row min-[768px]:items-start min-[768px]:justify-between">
                 <div className="min-w-0 flex-1">

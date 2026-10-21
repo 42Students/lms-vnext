@@ -300,7 +300,7 @@ function QuizItem({
           {item.description}
         </p>
       ) : null}
-      <div className="mt-3 flex flex-wrap gap-x-5 gap-y-2 text-xs text-muted-foreground">
+      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-2 text-xs text-muted-foreground">
         <span>
           {item.maxAttempts} attempt
           {item.maxAttempts === 1 ? "" : "s"}
@@ -430,7 +430,7 @@ export function FacultyCourseWorkspace({
         }
       />
 
-      <section className="border-b border-border pb-5">
+      <section className="border-b border-border pb-4">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -496,7 +496,7 @@ export function FacultyCourseWorkspace({
         />
       ) : (
         <>
-          <section id="learning-path" className="scroll-mt-24 border-t border-border pt-5">
+          <section id="learning-path" className="scroll-mt-24 border-t border-border pt-6">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
@@ -557,7 +557,7 @@ export function FacultyCourseWorkspace({
               description="The current learning path has no active lessons."
             />
           ) : (
-            <div className="space-y-5">
+            <div className="space-y-6">
               {workspace.lessons.filter(lesson=>!selectedLessonId||lesson.id===selectedLessonId).map(
                 (lesson) => {
                   const lessonIndex=workspace.lessons.findIndex(row=>row.id===lesson.id);
@@ -662,7 +662,7 @@ export function FacultyCourseWorkspace({
                       />
 
                       {itemCount === 0 ? (
-                        <div className="mt-3 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-5 text-sm text-muted-foreground">
+                        <div className="mt-3 rounded-[var(--lms-canvas-radius)] border border-dashed border-border bg-surface p-6 text-sm text-muted-foreground">
                           {selectedLessonId&&contentFilter==="ALL"?"No lesson content yet":contentFilter==="ALL"?"No active content or assessments in this lesson.":"No lesson content matches this filter."}
                         </div>
                       ) : (

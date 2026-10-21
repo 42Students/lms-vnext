@@ -541,7 +541,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
           ) : null}
             </div>
           </details>
-          <Button type="submit" className="min-h-11 w-full px-5 md:min-h-9 md:w-auto">Filter</Button>
+          <Button type="submit" className="min-h-11 w-full px-6 md:min-h-9 md:w-auto">Filter</Button>
           <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Clear
           </Link>

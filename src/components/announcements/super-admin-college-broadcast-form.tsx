@@ -56,7 +56,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  }
  return <Disclosure title={<h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>} className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]">
   <p className="text-sm text-body">Send an in-app announcement from 42 to selected placement cells. Immediate announcements also create a bell for active TPO members; scheduled announcements appear at their planned time. No SMS or email is sent.</p>
-  <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Audience
+  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Audience
    <Select disabled={pending} value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11">
     <option value="SELECTED_COLLEGES">Selected placement cells</option>
     <option value="ALL_COLLEGES">Every placement cell in current scope ({colleges.length})</option>
@@ -71,16 +71,16 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    </fieldset>
   </details>:null}
   <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
-  <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Title<Input disabled={pending} value={title} maxLength={200} onChange={e=>setTitle(e.target.value)}/></label>
-  <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Message<Textarea disabled={pending} value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)}/></label>
+  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Title<Input disabled={pending} value={title} maxLength={200} onChange={e=>setTitle(e.target.value)}/></label>
+  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Message<Textarea disabled={pending} value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)}/></label>
   <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Message {message.length}/8000</p>
   <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)]">
    <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
    <fieldset className="min-w-0 space-y-[var(--lms-space-3)]"><legend className="sr-only">Button (optional)</legend>
-   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Button label
+   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Button label
     <Input disabled={pending} value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="View details"/>
    </label>
-   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">HTTPS link
+   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">HTTPS link
     <Input disabled={pending} type="url" value={buttonUrl} maxLength={500} onChange={e=>setButtonUrl(e.target.value)} placeholder="https://example.com"/>
    </label>
    <p className="text-xs text-muted-foreground">Provide both fields or leave both blank. Label must be 60 characters or fewer.</p>
@@ -89,8 +89,8 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    </fieldset>
   </details>
   <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Schedule (local)<Input disabled={pending} type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
-   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Show until (local)<Input disabled={pending} type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
+   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Schedule (local)<Input disabled={pending} type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
+   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Show until (local)<Input disabled={pending} type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
   </div>
   <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-h-9">
    <Checkbox disabled={pending} checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin for recipients
