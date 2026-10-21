@@ -25,6 +25,9 @@ export const placementCompanies = pgTable(
   {
     id: uuid("id").defaultRandom().primaryKey(),
     name: text("name").notNull(),
+    legacyCompanyId: integer("legacy_company_id"),
+    legacyCreatedByRole: varchar("legacy_created_by_role",{length:20}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     websiteUrl: text("website_url"),
     primaryDomain: varchar("primary_domain", {
       length: 255,
@@ -65,6 +68,15 @@ export const placementCompanies = pgTable(
     index("placement_companies_status_idx").on(table.status),
     index("placement_companies_name_idx").on(sql`lower(${table.name})`),
     check("placement_companies_version_ck", sql`${table.version} > 0`),
+    uniqueIndex("placement_companies_legacy_company_uq").on(table.legacyCompanyId)
+      .where(sql`${table.legacyCompanyId} is not null`),
+    check("placement_companies_legacy_lengths_ck", sql`
+      length(trim(${table.name})) between 2 and 150
+      and (${table.websiteUrl} is null or length(${table.websiteUrl}) <= 500)
+      and (${table.logoPublicUrl} is null or length(${table.logoPublicUrl}) <= 500)
+      and (${table.industry} is null or length(${table.industry}) <= 100)`),
+    check("placement_companies_legacy_deleted_ck",sql`
+      ${table.legacyWasDeleted} is distinct from true or ${table.status} = 'ARCHIVED'`),
     index("placement_companies_verified_idx").on(table.verifiedAt),
     check("placement_companies_verifier_ck", sql`(${table.verifiedAt} is null) = (${table.verifiedByUserId} is null)`),
     check(
