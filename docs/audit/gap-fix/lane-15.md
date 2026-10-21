@@ -236,3 +236,9 @@
 
 ## Packet 57 — quiz question points cap mismatch
 - `drizzle_0007_courses_c4b_quizzes.sql.md` | G2-16-016-035: original 0007/active quizzes.ts and generic quiz-validation.ts allow 1..1000, but old QuizQuestionRequestDTO cap is 100 and faculty-quiz-authoring-model already imposes <=100. | Coordinated change REQUIRED: lowering only SQL/schema would let generic validator admit 101..1000 and cause DB rejects. Immutable 0007 unmodified; handoff to quiz validation owner to align model+API+schema in one release after checking stored questions. No history import required in greenfield; no SQL executed.
+
+## Packet 58 — semester curriculum credits
+- `drizzle_0050_db02_program_terms_curriculum.sql.md` | G2-17-002-086: legacy service and registered DB allow nullable or 0..30 credits; existing vNext college-term-mapping-model accepts only 1..10 for writes. Historical read-only values 0, 11..30 must survive if imported; no truncation or implicit correction. | Existing 0050 immutable, DB upper bound should remain 30 for legitimate past credits. Coordinate writer/API to permit approved 0..30 or explicitly keep legacy values read-only with a warning and block stale overwrites. No migration needed for greenfield and none executed.
+
+## Packet 59 — recruiter email state registered migration
+- `src_db_schema_recruiter-message-email.ts.md` | G2-20-010-053: confirmed BOTH email state and inbound hash-idempotency tables, relevant checks, indexes and delivery_channel are already registered in 0135_lanes_round_3.sql (not just proposed), and dispatch/inbound sources gate on enabled env, readiness tables, signed sender/provider, reply token expiry and HMAC. Updated schema documentation rather than duplicate migration. | Runtime enablement and trustworthy provider acceptance NOT verified, legacy raw-token/email records intentionally retired. Existing 0135 left unchanged; no new migration, no worker run.
