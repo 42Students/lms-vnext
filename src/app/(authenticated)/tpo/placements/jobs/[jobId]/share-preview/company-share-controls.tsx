@@ -128,7 +128,7 @@ export function CompanyShareControls({jobId,preferenceKey,ready,initialLinks,sta
       />
     </label>
     <details className="group min-w-0 border-t border-border pt-3 sm:col-span-2">
-      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Columns to share ({selectedColumns.length} of 11 maximum) <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
+      <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 py-2 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden flex-wrap">Columns to share ({selectedColumns.length} of 11 maximum) <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
       <fieldset className="min-w-0"><legend className="sr-only">Columns to share ({selectedColumns.length} of 11 maximum)</legend>
      <div className="grid min-w-0 gap-2 min-[768px]:grid-cols-3">{SHARE_COLUMNS.map(([key,label])=>
       <label key={key} className="inline-flex min-h-11 items-center gap-2 text-sm">
