@@ -8,7 +8,8 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { assertAssignmentSubmissionDeadline } from "./assignment-submission-deadline-policy";
-import {allowedAssignmentSubmissionPart} from "./assignment-method-policy";
+import {allowedAssignmentSubmissionPart, allowedAssignmentMixedParts} from "./assignment-method-policy";
+import { assignmentSubmissionLinks } from "@/db/schema/assignment-submission-links";
 import {facultyAssignmentGradingAllowed,facultyAssignmentGradePublicationAllowed} from "./faculty-assignment-grading-policy";
 import {facultyRegradeFeedbackAllowed} from "./faculty-regrade-feedback-model";
 import {facultyGradeHasChanges} from "./faculty-grade-noop-model";
@@ -86,6 +87,9 @@ function toLearnerSubmission<
       | "GRADED";
     gradedByUserId: string | null;
     gradedAt: Date | null;
+    previousPoints: number | null;
+    legacyGradingKind: string | null;
+    legacySubmissionSnapshot: Record<string, unknown> | null;
   },
 >(submission: T) {
   if (submission.gradePublished) {
@@ -100,6 +104,11 @@ function toLearnerSubmission<
       "NOT_GRADED" as const,
     gradedByUserId: null,
     gradedAt: null,
+    // Archived imports and regrades must not leak an unpublished score
+    // through the legacy snapshot or previous-points columns.
+    previousPoints: null,
+    legacyGradingKind: null,
+    legacySubmissionSnapshot: null,
   };
 }
 
@@ -202,15 +211,16 @@ export async function submitCourseAssignment(
       input.deliveryId,
     );
 
-  const preparedFile =
-    input.submissionType === "FILE"
-      ? await prepareAssignmentFileReceipt(
-          context,
-          assignmentId,
-          input.deliveryId,
-          input.uploadReceiptId,
-        )
-      : null;
+  // Prepare every file against the persisted learner/college scope before
+  // taking row locks. The transaction rechecks each receipt and consumes it
+  // exactly once; no object metadata is trusted from the submitted JSON.
+  const fileReceiptIds = input.submissionType === "FILE"
+    ? input.uploadReceiptIds ?? (input.uploadReceiptId ? [input.uploadReceiptId] : [])
+    : [];
+  const preparedFiles = input.submissionType === "FILE"
+    ? await Promise.all(fileReceiptIds.map(receiptId =>
+        prepareAssignmentFileReceipt(context, assignmentId, input.deliveryId, receiptId)))
+    : [];
 
   try {
     return await getDb().transaction(async (tx) => {
@@ -238,12 +248,19 @@ export async function submitCourseAssignment(
       {
         const [policy]=await tx.select({methods:courseAssignments.allowedSubmissionMethods})
           .from(courseAssignments).where(eq(courseAssignments.id,assignmentId)).limit(1);
-        if(!policy||!allowedAssignmentSubmissionPart(policy.methods,{
-          kind:input.submissionType,
-          linkKind:input.submissionType==="LINK"?input.linkKind:undefined,
-          fileMimeTypes:input.submissionType==="FILE"?
-            [preparedFile?.attestation.contentType??""]:[],
-        }))throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
+        const methodAllowed = policy && (input.submissionType === "FILE"
+          ? allowedAssignmentMixedParts(policy.methods, {
+              hasWrittenResponse: Boolean(input.textContent),
+              links: (input.links ?? []).map(link => ({ kind: link.kind })),
+              fileMimeTypes: preparedFiles.map(file => file.attestation.contentType),
+            })
+          : allowedAssignmentSubmissionPart(policy.methods, {
+              kind: input.submissionType,
+              linkKind: input.submissionType === "LINK" ? input.linkKind : undefined,
+            }));
+        if (!methodAllowed) {
+          throw new CoursesServiceError("ASSIGNMENT_METHOD_NOT_ALLOWED");
+        }
       }
 
       const [persistedMembership] = await tx
@@ -274,72 +291,48 @@ export async function submitCourseAssignment(
         throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
       }
 
-      let lockedReceipt:
-        | typeof courseUploadReceipts.$inferSelect
-        | null = null;
-
-      if (
-        input.submissionType === "FILE"
-      ) {
-        if (!preparedFile) {
-          throw new CoursesServiceError(
-            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
-          );
+      const lockedReceipts: Array<typeof courseUploadReceipts.$inferSelect> = [];
+      if (input.submissionType === "FILE") {
+        if (preparedFiles.length !== fileReceiptIds.length ||
+            preparedFiles.length === 0 || preparedFiles.length > 20) {
+          throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
         }
-        const [receipt] = await tx
-          .select()
-          .from(courseUploadReceipts)
-          .where(
-            and(
-              eq(
-                courseUploadReceipts.id,
-                input.uploadReceiptId,
-              ),
-              eq(
-                courseUploadReceipts.assignmentId,
-                assignmentId,
-              ),
-              eq(
-                courseUploadReceipts.ownerMembershipId,
-                membership.id,
-              ),
-              eq(
-                courseUploadReceipts.collegeId,
-                membership.collegeId,
-              ),
-              eq(
-                courseUploadReceipts.purpose,
-                "ASSIGNMENT_SUBMISSION",
-              ),
-            ),
-          )
-          .for("update")
-          .limit(1);
-
-        if (
-          !receipt ||
-          receipt.revoked ||
-          receipt.consumedAt ||
-          receipt.deliveryId !== input.deliveryId ||
-          receipt.expiresAt.getTime() <=
-            Date.now() ||
-          // DB06 requires a privileged CLEAN scan and retained attestation.
-          receipt.scanStatus !== "CLEAN" ||
-          receipt.scanAttestedBy !== "lms-vnext-privileged-scanner" ||
-          !receipt.scanAttestedAt ||
-          receipt.scanAttestedAt.getTime() > Date.now() ||
-          !receipt.retentionUntil ||
-          receipt.retentionUntil.getTime() < Date.now() ||
-          receipt.objectKey !==
-            preparedFile.receipt.objectKey ||
-          receipt.uploadTokenHash !==
-            preparedFile.receipt.uploadTokenHash
-        ) {
-          throw new CoursesServiceError(
-            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
-          );
+        // Lock and verify ALL receipts before writing. Ordered locks avoid
+        // deadlocks if malformed competing requests attempt shared receipts.
+        const receiptById = new Map<string, typeof courseUploadReceipts.$inferSelect>();
+        for (const receiptId of [...fileReceiptIds].sort()) {
+          const [receipt] = await tx.select().from(courseUploadReceipts)
+            .where(and(
+              eq(courseUploadReceipts.id, receiptId),
+              eq(courseUploadReceipts.assignmentId, assignmentId),
+              eq(courseUploadReceipts.deliveryId, input.deliveryId),
+              eq(courseUploadReceipts.ownerMembershipId, membership.id),
+              eq(courseUploadReceipts.collegeId, membership.collegeId),
+              eq(courseUploadReceipts.purpose, "ASSIGNMENT_SUBMISSION"),
+            )).for("update").limit(1);
+          if (!receipt) {
+            throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+          }
+          receiptById.set(receiptId, receipt);
         }
-        lockedReceipt = receipt;
+        const checkedAt = new Date();
+        for (const [sequence, prepared] of preparedFiles.entries()) {
+          const receipt = receiptById.get(fileReceiptIds[sequence]!);
+          if (!receipt ||
+              receipt.revoked || receipt.deletedAt || receipt.consumedAt ||
+              receipt.expiresAt.getTime() <= checkedAt.getTime() ||
+              receipt.scanStatus !== "CLEAN" ||
+              receipt.scanAttestedBy !== "lms-vnext-privileged-scanner" ||
+              !receipt.scanAttestedAt ||
+              receipt.scanAttestedAt.getTime() > checkedAt.getTime() ||
+              !receipt.retentionUntil ||
+              receipt.retentionUntil.getTime() < checkedAt.getTime() ||
+              receipt.objectKey !== prepared.receipt.objectKey ||
+              receipt.uploadTokenHash !== prepared.receipt.uploadTokenHash) {
+            throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+          }
+          lockedReceipts.push(receipt);
+        }
       }
 
       const [created] = await tx
@@ -349,14 +342,26 @@ export async function submitCourseAssignment(
           deliveryId: input.deliveryId,
           membershipId: membership.id,
           submissionType: input.submissionType,
-          textContent: input.submissionType === "TEXT"
-            ? input.textContent
+          textContent: input.submissionType === "TEXT" || input.submissionType === "FILE"
+            ? input.textContent ?? null
             : null,
           submissionUrl: input.submissionType === "LINK"
             ? input.submissionUrl
             : null,
         })
         .returning();
+
+      if (input.submissionType === "FILE" && input.links?.length) {
+        await tx.insert(assignmentSubmissionLinks).values(
+          input.links.map((link, sequence) => ({
+            submissionId: created!.id,
+            sequence,
+            kind: link.kind,
+            url: link.url,
+            caption: link.caption,
+          })),
+        );
+      }
 
       // Audit only identifiers and type, never the learner's answer.
       const submissionEvent = await recordActivityEventInTransaction(tx, context, {
@@ -379,100 +384,70 @@ export async function submitCourseAssignment(
           "?deliveryId="+encodeURIComponent(input.deliveryId),
       }).onConflictDoNothing();
 
-      if (
-        input.submissionType === "FILE"
-      ) {
-        if (
-          !preparedFile ||
-          !lockedReceipt
-        ) {
-          throw new CoursesServiceError(
-            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
-          );
-        }
-
-        const attestation =
-          preparedFile.attestation;
-        const consumedAt = new Date();
-        // Consume the locked receipt before the attested file row. The
-        // composite FK binds the file to this exact consumption snapshot.
-        const [claimed] = await tx
-          .update(courseUploadReceipts)
-          .set({
-            attestedGeneration:
-              attestation.generation,
-            actualContentType:
-              attestation.contentType,
-            actualSizeBytes:
-              attestation.sizeBytes,
-            sha256Hex:
-              attestation.sha256Hex,
-            consumedAt,
-            consumedBySubmissionId:
-              created!.id,
-            updatedAt: new Date(),
-          })
-          .where(
-            and(
-              eq(
-                courseUploadReceipts.id,
-                lockedReceipt.id,
-              ),
+      if (input.submissionType === "FILE") {
+        // The entire submission, its ordered files and link assets commit or
+        // roll back together. Composite FK verification sees consumed receipts.
+        const fileSummaries: Array<{
+          originalName: string;
+          mimeType: string;
+          sizeBytes: number;
+        }> = [];
+        for (const [sequence, preparedFile] of preparedFiles.entries()) {
+          const lockedReceipt = lockedReceipts[sequence];
+          if (!lockedReceipt) {
+            throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+          }
+          const attestation = preparedFile.attestation;
+          const consumedAt = new Date();
+          const [claimed] = await tx.update(courseUploadReceipts)
+            .set({
+              attestedGeneration: attestation.generation,
+              actualContentType: attestation.contentType,
+              actualSizeBytes: attestation.sizeBytes,
+              sha256Hex: attestation.sha256Hex,
+              consumedAt,
+              consumedBySubmissionId: created!.id,
+              updatedAt: consumedAt,
+            })
+            .where(and(
+              eq(courseUploadReceipts.id, lockedReceipt.id),
+              eq(courseUploadReceipts.ownerMembershipId, membership.id),
+              eq(courseUploadReceipts.assignmentId, assignmentId),
+              eq(courseUploadReceipts.deliveryId, input.deliveryId),
               isNull(courseUploadReceipts.consumedAt),
               sql`${courseUploadReceipts.expiresAt} > now()`,
               eq(courseUploadReceipts.revoked, false),
+              isNull(courseUploadReceipts.deletedAt),
               eq(courseUploadReceipts.scanStatus, "CLEAN"),
               eq(courseUploadReceipts.scanAttestedBy, "lms-vnext-privileged-scanner"),
               sql`${courseUploadReceipts.scanAttestedAt} <= ${consumedAt}`,
               sql`${courseUploadReceipts.retentionUntil} >= ${consumedAt}`,
-            ),
-          )
-          .returning({
-            id: courseUploadReceipts.id,
+            ))
+            .returning({ id: courseUploadReceipts.id });
+          if (!claimed) {
+            throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+          }
+          await tx.insert(assignmentSubmissionFiles).values({
+            assignmentSubmissionId: created!.id,
+            uploadReceiptId: lockedReceipt.id,
+            sequence,
+            objectKey: lockedReceipt.objectKey,
+            objectGeneration: attestation.generation,
+            originalName: lockedReceipt.originalName,
+            mimeType: attestation.contentType,
+            sizeBytes: attestation.sizeBytes,
+            sha256Hex: attestation.sha256Hex,
           });
-
-        if (!claimed) {
-          throw new CoursesServiceError(
-            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
-          );
+          fileSummaries.push({
+            originalName: lockedReceipt.originalName,
+            mimeType: attestation.contentType,
+            sizeBytes: attestation.sizeBytes,
+          });
         }
-
-        await tx
-          .insert(
-            assignmentSubmissionFiles,
-          )
-          .values({
-            assignmentSubmissionId:
-              created!.id,
-            // Current FILE submissions accept one receipt; the staged schema
-            // requires an explicit per-submission ordinal.
-            sequence: 0,
-            uploadReceiptId:
-              lockedReceipt.id,
-            objectKey:
-              lockedReceipt.objectKey,
-            objectGeneration:
-              attestation.generation,
-            originalName:
-              lockedReceipt.originalName,
-            mimeType:
-              attestation.contentType,
-            sizeBytes:
-              attestation.sizeBytes,
-            sha256Hex:
-              attestation.sha256Hex,
-          });
-
         return toLearnerSubmission({
           ...created!,
-          file: {
-            originalName:
-              lockedReceipt.originalName,
-            mimeType:
-              attestation.contentType,
-            sizeBytes:
-              attestation.sizeBytes,
-          },
+          file: fileSummaries[0],
+          files: fileSummaries,
         });
       }
 
