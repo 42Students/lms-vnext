@@ -677,7 +677,7 @@ export function AdminAttendanceWorkspace({
           target ? (
             <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-[var(--lms-space-2)] [&>button]:min-h-11 [&>button:last-child]:col-span-2 sm:flex sm:flex-wrap sm:justify-end sm:[&>button:last-child]:col-span-1 sm:[&>button]:min-h-[var(--lms-control-height)]">
               <Button size="sm" variant="secondary" disabled={correcting||refreshing}
-                onClick={()=>startRefresh(()=>router.refresh())}>Refresh record</Button>
+                onClick={()=>{setTarget(null);startRefresh(()=>router.refresh());}}>Refresh grid and reopen</Button>
               {target.record && target.record.status !== "PRESENT" ? (
                 <Button size="sm" disabled={correcting||refreshing} onClick={()=>void correct("PRESENT")}>
                   {correcting?"Saving…":"Mark present"}
@@ -723,7 +723,7 @@ export function AdminAttendanceWorkspace({
               <Input maxLength={500} value={correctionNote} disabled={correcting||refreshing}
                 onChange={event=>setCorrectionNote(event.target.value)} />
             </label>
-            <p className="text-xs text-muted-foreground">This record was loaded with the grid. Refresh record before changing an older result; server authorization is checked again on save.</p>
+            <p className="text-xs text-muted-foreground">This record was loaded with the grid. Choose Refresh grid and reopen before changing an older result; server authorization is checked again on save.</p>
             <p className="text-xs text-muted-foreground">
               The Faculty correction window is {data.policy.correctionWindowHours} hours. College Admin corrections are not limited by it. Present corrections remove the absence exception. This change is recorded.
             </p>
