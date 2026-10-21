@@ -23,6 +23,8 @@ export type RecruiterInboundOutcome=
  "NOT_VERIFIED"|"EMPTY"|"ACCESS_ENDED";
 export type RecruiterEmailInboundResult={
  accepted:boolean;replayed:boolean;outcome?:RecruiterInboundOutcome;
+ /** Storage is temporarily missing; a verified upstream worker must retry. */
+ retryable?:boolean;
 };
 /** The trusted mail gateway signs the original payload after provider verification.
  * HTML-only mail is flattened to inert text, never interpreted as markup.
@@ -87,27 +89,36 @@ export async function acceptAuthenticatedRecruiterEmailReply(
  const [ready]=await db.execute<{ok:boolean}>(sql`
   select to_regclass('public.inbound_mail_messages') is not null as ok
  `).then(result=>result.rows);
- if(!ready?.ok)return {accepted:false,replayed:false};
+ if(!ready?.ok)return {accepted:false,replayed:false,retryable:true};
  return db.transaction(async tx=>{
   const sourceMessageId=input.providerMessageId?.trim()||
-   "no-id:"+randomUUID();
+   "signed-body:"+createHash("sha256").update(rawBody,"utf8").digest("hex");
   const [received]=await tx.insert(inboundMailMessages).values({
    id:randomUUID(),sourceMessageId,
    fromAddress:input.from,toAddress:input.to,
    subject:input.subject?.trim()||"(no subject)",
    bodyPlain:fullText,originalBodyPlain:fullText,
-   bodyPreview:fullText.slice(0,1000),receivedAt:new Date(),status:"NEW",
+   bodyPreview:fullText.slice(0,1000),
+   kind:isReply?"REPLY":"OTHER",
+   receivedAt:new Date(),status:"NEW",
   }).onConflictDoNothing().returning({id:inboundMailMessages.id});
   if(!received)return {accepted:true,replayed:true,outcome:"DUPLICATE" as const};
-  const auditResult=async(outcome:Exclude<RecruiterInboundOutcome,"DUPLICATE">)=>{
-   const routed=outcome==="POSTED"?"POSTED":outcome==="STORED"?"STORED":outcome;
+  const auditResult=async(
+    outcome:Exclude<RecruiterInboundOutcome,"DUPLICATE">,
+    routed?:{threadId:string;postedMessageId:string;collegeId:string;recruiterUserId:string},
+  )=>{
+   const routedStatus=outcome;
    await tx.update(inboundMailMessages).set({
     kind:isReply?"REPLY":"OTHER",
-    routingStatus:routed,
-    routeAttemptCount:routed==="STORED"?0:1,
-    lastRouteAttemptAt:routed==="STORED"?null:new Date(),
-    lastRouteErrorCode:routed==="POSTED"||routed==="STORED"?null:routed,
-    status:routed==="POSTED"?"RESOLVED":"NEW",
+    ...(routed?{
+      threadId:routed.threadId,postedMessageId:routed.postedMessageId,
+      collegeId:routed.collegeId,recruiterUserId:routed.recruiterUserId,
+    }:{}),
+    routingStatus:routedStatus,
+    routeAttemptCount:routedStatus==="STORED"?0:1,
+    lastRouteAttemptAt:routedStatus==="STORED"?null:new Date(),
+    lastRouteErrorCode:routedStatus==="POSTED"||routedStatus==="STORED"?null:routedStatus,
+    status:routedStatus==="POSTED"?"RESOLVED":"NEW",
     version:1,
    }).where(eq(inboundMailMessages.id,received.id));
    return {accepted:true,replayed:false,outcome};
@@ -183,6 +194,9 @@ export async function acceptAuthenticatedRecruiterEmailReply(
   });
   // Successfully routed mail needs no manual triage; failed/unknown mail
   // remains NEW in the Super Admin Inbox for operator follow-up.
-  return auditResult("POSTED");
+  return auditResult("POSTED",{
+    threadId:state.threadId,postedMessageId:id,
+    collegeId:auth.rows[0].college_id,recruiterUserId:state.recruiterUserId,
+  });
  });
 }
