@@ -28,7 +28,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-13_l18-u019-faculty-verification.md.md` (new; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_placements_placement-report-ui.tsx.md` (edit src/components/placements/placement-report-ui.tsx; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_modules_people_college-contacts-model.ts.md` (edit src/modules/people/college-contacts-model.ts; 12 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_activity_notification-toolbar.tsx.md` (edit src/components/activity/notification-toolbar.tsx; 12 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_components_activity_notification-toolbar.tsx.md` (edit src/components/activity/notification-toolbar.tsx; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_NEW_docs_audit_gap2_lane-14_l18-u021-job-important-date-event-dto.md.md` (new; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_app_authenticated_admin_projects_templates_page.tsx.md` (edit src/app/(authenticated)/admin/projects/templates/page.tsx; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-19/W2_src_app_authenticated_admin_features_collegeId_history_page.tsx.md` (edit src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx; 11 findings; best P2)
