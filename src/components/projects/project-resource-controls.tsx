@@ -16,8 +16,27 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
 
+type CanonicalResourceType="FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT";
+type LegacyResourceType="PDF"|"DOC"|"PPT"|"VIDEO";
+type ResourceTypeChoice=CanonicalResourceType|LegacyResourceType;
+const legacyTypes:readonly LegacyResourceType[]=["PDF","DOC","PPT","VIDEO"];
+function isLegacy(value:ResourceTypeChoice):value is LegacyResourceType{
+ return legacyTypes.some(kind=>kind===value);
+}
+function canonicalResourceType(value:ResourceTypeChoice):CanonicalResourceType{
+ if(value==="PDF")return "FILE";
+ if(value==="DOC"||value==="PPT")return "DOCUMENT";
+ if(value==="VIDEO")return "LINK";
+ return value;
+}
+function initialResourceChoice(resource:{resourceType?:CanonicalResourceType;
+ legacyResourceKind?:string|null}):ResourceTypeChoice{
+ const legacy=resource.legacyResourceKind;
+ return legacy&&legacyTypes.some(kind=>kind===legacy)?
+   legacy as LegacyResourceType:resource.resourceType??"LINK";
+}
 type ResourceMetadata={
-  resourceType:"FILE"|"LINK"|"DOCUMENT"|"CODE"|"NOTE"|"ENVIRONMENT";
+  resourceType:ResourceTypeChoice;
   status:"ACTIVE"|"DRAFT"|"ARCHIVED";
   pinned:boolean;accessNotes:string;sprintId:string;taskId:string;
 };
@@ -33,7 +52,7 @@ type Resource = {
   url: string | null;
   required: boolean;
   visibility: "TEAM" | "MENTOR_ONLY";
-  resourceType?:ResourceMetadata["resourceType"];status?:ResourceMetadata["status"];
+  resourceType?:CanonicalResourceType;legacyResourceKind?:string|null;status?:ResourceMetadata["status"];
   pinned?:boolean;accessNotes?:string|null;sprintId?:string|null;taskId?:string|null;
 };
 
@@ -115,8 +134,8 @@ function ResourceForm({
           <Select value={metadata.resourceType}
             onChange={event=>onMetadata({...metadata,resourceType:event.target.value as ResourceMetadata["resourceType"]})}
             className="w-full">
-            {(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(value=>
-              <option key={value} value={value}>{value[0]+value.slice(1).toLowerCase()}</option>)}
+            {(["LINK","PDF","DOC","PPT","VIDEO","FILE","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(value=>
+              <option key={value} value={value}>{["DOC","PPT","PDF"].includes(value)?value:value[0]+value.slice(1).toLowerCase()}</option>)}
           </Select>
         </label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
@@ -235,7 +254,9 @@ export function CreateProjectResourceControl({
           url: url.trim() || undefined,
           required: isLearner ? false : required,
           visibility: isLearner ? "TEAM" : visibility,
-          ...(!isLearner?{resourceType:metadata.resourceType,status:metadata.status,
+          ...(!isLearner?{resourceType:canonicalResourceType(metadata.resourceType),
+            legacyResourceKind:isLegacy(metadata.resourceType)?metadata.resourceType:null,
+            status:metadata.status,
             pinned:metadata.pinned,accessNotes:metadata.accessNotes||null,
             sprintId:metadata.sprintId||null,taskId:metadata.taskId||null}:{}),
         },
@@ -367,7 +388,7 @@ export function ProjectResourceActions({
     useState(resource.required);
   const [visibility, setVisibility] = useState<"TEAM" | "MENTOR_ONLY">(resource.visibility);
   const [metadata,setMetadata]=useState<ResourceMetadata>({
-    resourceType:resource.resourceType??"LINK",status:resource.status??"ACTIVE",
+    resourceType:initialResourceChoice(resource),status:resource.status??"ACTIVE",
     pinned:resource.pinned??false,accessNotes:resource.accessNotes??"",
     sprintId:resource.sprintId??"",taskId:resource.taskId??"",
   });
@@ -377,7 +398,7 @@ export function ProjectResourceActions({
     useState<string | null>(null);
   const dirty=title!==resource.title||description!==(resource.description??"")||
     url!==(resource.url??"")||required!==resource.required||visibility!==resource.visibility||
-    metadata.resourceType!==(resource.resourceType??"LINK")||metadata.status!==(resource.status??"ACTIVE")||
+    metadata.resourceType!==initialResourceChoice(resource)||metadata.status!==(resource.status??"ACTIVE")||
     metadata.pinned!==(resource.pinned??false)||metadata.accessNotes!==(resource.accessNotes??"")||
     metadata.sprintId!==(resource.sprintId??"")||metadata.taskId!==(resource.taskId??"");
   useEffect(()=>{
@@ -397,6 +418,7 @@ export function ProjectResourceActions({
   ) {
     event.preventDefault();
     setError(null);
+    if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
     if (!description.trim() && !url.trim()) {
       setError(
         "Add a description or an HTTP(S) resource URL.",
@@ -417,7 +439,9 @@ export function ProjectResourceActions({
           url: url.trim() || null,
           required,
           visibility,
-          resourceType:metadata.resourceType,status:metadata.status,
+          resourceType:canonicalResourceType(metadata.resourceType),
+          legacyResourceKind:isLegacy(metadata.resourceType)?metadata.resourceType:null,
+          status:metadata.status,
           pinned:metadata.pinned,accessNotes:metadata.accessNotes||null,
           sprintId:metadata.sprintId||null,taskId:metadata.taskId||null,
         },
@@ -425,14 +449,14 @@ export function ProjectResourceActions({
       setEditOpen(false);
       showToast({
         tone: "success",
-        title: "Project resource updated",
+        title: "Resources updated",
       });
       router.refresh();
     } catch (caught) {
       setError(
         caught instanceof Error
           ? caught.message
-          : "Could not update the resource.",
+          : "Failed to update resources.",
       );
     } finally {
       setPending(false);
@@ -482,7 +506,7 @@ export function ProjectResourceActions({
             setRequired(resource.required);
             setVisibility(resource.visibility);
             setMetadata({
-    resourceType:resource.resourceType??"LINK",status:resource.status??"ACTIVE",
+    resourceType:initialResourceChoice(resource),status:resource.status??"ACTIVE",
     pinned:resource.pinned??false,accessNotes:resource.accessNotes??"",
     sprintId:resource.sprintId??"",taskId:resource.taskId??"",
   });
