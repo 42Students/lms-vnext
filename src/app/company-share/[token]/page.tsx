@@ -36,7 +36,7 @@ export default async function CompanySharePage({
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
      <Input name="code" type="text" required inputMode="numeric" autoComplete="one-time-code"
       pattern="[0-9]{6}" minLength={6} maxLength={6}
-      className="min-h-11 w-full max-w-full tracking-widest md:min-h-9" />
+      className="min-h-11 w-full max-w-full md:min-h-9" />
     </label>
     <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open shared applicants</Button>
    </form>
