@@ -81,7 +81,7 @@ export function LearnerLiveClassLink({href,endsAt}:{href:string;endsAt?:string|n
       <CopyLinkIcon/>
     </Button>
    </span>
-   <span className="min-w-0 sm:order-3 [&_a:first-child]:!border-[var(--lms-button-primary)] [&_a:first-child]:!bg-[var(--lms-button-primary)] [&_a:first-child]:!text-[var(--lms-on-primary)] [&_a:first-child]:!no-underline [&_a:first-child]:hover:!bg-[var(--lms-button-primary-hover)] [&_a:first-child]:min-h-11">
+   <span className="min-w-0 sm:order-3 [&_a:first-child]:!border-primary [&_a:first-child]:!bg-primary [&_a:first-child]:!text-on-primary [&_a:first-child]:!no-underline [&_a:first-child]:hover:!bg-[var(--lms-button-primary-hover)] [&_a:first-child]:min-h-11">
     <ThirdPartyLink href={href} label="Join Meeting"/>
    </span>
   </div>
