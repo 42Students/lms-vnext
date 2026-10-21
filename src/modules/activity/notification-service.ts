@@ -9,6 +9,7 @@ import {
   inArray,
   isNull,
   lt,
+  lte,
   or,
   sql,
 } from "drizzle-orm";
@@ -1548,4 +1549,58 @@ export async function releaseScheduledStaffNotification(
     }).where(eq(activityEvents.id, id));
     return { delivered: rows.length, alreadyReleased: false };
   });
+}
+
+
+/**
+ * Worker-facing due batch. This is deliberately separate from the public
+ * staff composer and only called by a credential-gated internal endpoint.
+ * Every due event is independently locked and checked again at release.
+ */
+export async function releaseDueStaffNotifications(
+  asOf: Date = new Date(),
+  requestedLimit = 50,
+): Promise<{ checked: number; delivered: number; failed: number }> {
+  const now = z.date().parse(asOf);
+  const limit = z.number().int().min(1).max(100).parse(requestedLimit);
+  const due = await getDb().select({ id: activityEvents.id })
+    .from(activityEvents)
+    .where(and(
+      eq(activityEvents.subjectType, "NOTIFICATION"),
+      eq(sql.raw("activity_events.metadata ->> 'deliveryStatus'"), "SCHEDULED"),
+      lte(sql.raw("activity_events.metadata ->> 'scheduledAt'"), now.toISOString()),
+      sql.raw("activity_events.metadata ->> 'deletedAt' is null"),
+    ))
+    .orderBy(activityEvents.occurredAt, activityEvents.id)
+    .limit(limit);
+  let delivered = 0;
+  let failed = 0;
+  for (const row of due) {
+    try {
+      const released = await releaseScheduledStaffNotification(row.id, now);
+      delivered += released.delivered;
+    } catch {
+      failed += 1;
+      // Do not convert a transient failure into immediate delivery. Keep the
+      // scheduled receipts invisible so a later run can retry safely.
+      const [current] = await getDb().select({ metadata: activityEvents.metadata })
+        .from(activityEvents).where(and(
+          eq(activityEvents.id, row.id),
+          eq(sql.raw("activity_events.metadata ->> 'deliveryStatus'"), "SCHEDULED"),
+        )).limit(1);
+      if (current) {
+        await getDb().update(activityEvents).set({
+          metadata: {
+            ...current.metadata,
+            deliveryAttempts: Number(current.metadata.deliveryAttempts ?? 0) + 1,
+            lastReleaseError: "Scheduled release could not be completed",
+          },
+        }).where(and(
+          eq(activityEvents.id, row.id),
+          eq(sql.raw("activity_events.metadata ->> 'deliveryStatus'"), "SCHEDULED"),
+        ));
+      }
+    }
+  }
+  return { checked: due.length, delivered, failed };
 }
