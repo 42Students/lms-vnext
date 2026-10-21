@@ -2,9 +2,34 @@ import { canContactRecipientAtRuntime } from "./runtime-safety";
 import { opaqueBatchAttemptKey } from "./batch-dedupe";
 import { decideDelivery, normalizeRecipient, outboundSendSchema, type DeliveryPolicy, type OutboundSendRequest, type OutboundStatus } from "./model";
 
+export type ProviderAcceptance =
+  | boolean
+  | { status: "ACCEPTED" | "NOT_CONFIGURED" | "FAILED" };
 export interface OutboundProvider {
-  send(request: OutboundSendRequest): Promise<boolean>;
+  // ACCEPTED is transport acknowledgement, not guaranteed inbox delivery.
+  send(request: OutboundSendRequest): Promise<ProviderAcceptance>;
 }
+export type OperatorDeliveryOutcome = "SENT" | "NOT_CONFIGURED" | "SUPPRESSED" | "FAILED" | "QUEUED";
+export function operatorDeliveryOutcome(record: Pick<DeliveryRecord,"status"|"reason">):
+  {status:OperatorDeliveryOutcome;message:string} {
+  if(record.status==="SENT")return {status:"SENT",message:"Accepted by the delivery provider"};
+  if(record.status==="QUEUED")return {status:"QUEUED",message:"Queued; delivery not confirmed"};
+  if(record.status==="SUPPRESSED")return {status:"SUPPRESSED",
+    message:record.reason==="nonprod-not-allowlisted"?
+      "Not attempted: recipient outside development allowlist":"Not attempted: "+(record.reason??"delivery policy")};
+  if(record.reason==="provider-not-configured")
+    return {status:"NOT_CONFIGURED",message:"Delivery provider or template is not configured"};
+  return {status:"FAILED",message:"Failed to send; review the delivery receipt"};
+}
+/** Fan-out cannot be inferred from an EMAIL or SMS transport receipt.
+ * Dispatchers route app notifications independently from external channels.
+ * The TRAI job-update lane requires its registered Exotel/DLT template.
+ */
+export const LEGACY_NOTIFICATION_CHANNEL_MATRIX = {
+  JOB_UPDATE: ["IN_APP","EMAIL","TRAI_SMS"],
+  COURSE_EVENT: ["IN_APP","EMAIL"],
+  IN_APP_ONLY: ["IN_APP"],
+} as const;
 export type DeliveryRecord = {
   batchId: string;
   channel: OutboundSendRequest["channel"];
@@ -126,7 +151,14 @@ export async function deliverBatch(args: {
       }
       if(record.status==="QUEUED"){
         try {
-          record.status = await args.provider.send({ ...request, recipient: normalizeRecipient(request.channel, request.recipient) }) ? "SENT" : "FAILED";
+          const accepted = await args.provider.send({
+            ...request, recipient: normalizeRecipient(request.channel, request.recipient),
+          });
+          const outcome = typeof accepted==="boolean"
+            ? accepted?"ACCEPTED":"FAILED" : accepted.status;
+          record.status = outcome==="ACCEPTED"?"SENT":"FAILED";
+          record.reason = outcome==="NOT_CONFIGURED"?"provider-not-configured":
+            outcome==="FAILED"?"provider-rejected":null;
         } catch {
           record.status = "FAILED";
         }

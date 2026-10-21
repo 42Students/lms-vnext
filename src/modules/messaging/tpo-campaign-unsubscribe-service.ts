@@ -1,5 +1,6 @@
 import "server-only";
-import {and,eq,isNull,sql} from "drizzle-orm";
+import {createHash} from "node:crypto";
+import {and,asc,eq,isNull,sql} from "drizzle-orm";
 import {activityEvents,colleges,collegeMemberships,membershipRoles,users,inAppNotifications} from "@/db/schema";
 import {tpoCampaignUnsubscribeEvent} from "./tpo-campaign-unsubscribe-notification-model";
 import {getDb} from "@/db/client";
@@ -22,19 +23,30 @@ export async function unsubscribeTpoCampaignRecipient(
   // Untrusted or malformed links must not trigger a privileged storage probe.
   const key=resolveTpoCampaignRecipientSecret(process.env);
   const claim=verifyTpoCampaignRecipientToken(token,key,Date.now());
-  if(!claim)throw new CampaignUnsubscribeInvalid();
+  // A legacy recipient link was an opaque token stored only as SHA256.
+  // Migrated recipient records carry the historical digest separately.
+  // Unknown and already-used links receive the same confirmation to avoid
+  // exposing whether an email address or campaign ever existed.
+  const legacyCandidate=!claim && typeof token==="string" &&
+    token.length>0 && token.length<=200 && !token.includes(".");
+  if(!claim && !legacyCandidate)return {unsubscribed:true};
+  const legacyHash=legacyCandidate?createHash("sha256").update(token).digest("hex"):null;
   const db=getDb();
   const registered=await db.execute<{ready:boolean}>(sql`select to_regclass('public.placement_tpo_email_campaign_recipients') is not null as ready`);
   if(registered.rows[0]?.ready!==true)throw new Error('TPO_CAMPAIGNS_NOT_REGISTERED');
   const outcome=await db.transaction(async tx=>{
     const [row]=await tx.select().from(placementTpoEmailCampaignRecipients)
-      .where(and(
+      .where(claim?and(
         eq(placementTpoEmailCampaignRecipients.id,claim.recipientId),
         eq(placementTpoEmailCampaignRecipients.collegeId,claim.collegeId),
         eq(placementTpoEmailCampaignRecipients.campaignId,claim.campaignId),
-      )).for("update").limit(1);
-    if(!row)return "DENY";
-    const decision=campaignUnsubscribeDecision(claim,row);
+      ):eq(placementTpoEmailCampaignRecipients.legacyUnsubscribeSha256,legacyHash!))
+      .orderBy(asc(placementTpoEmailCampaignRecipients.createdAt),
+        asc(placementTpoEmailCampaignRecipients.id))
+      .for("update").limit(1);
+    if(!row)return "ALREADY";
+    const decision=claim?campaignUnsubscribeDecision(claim,row):
+      row.unsubscribedAt?"ALREADY":"APPLY";
     if(decision!=="APPLY")return decision;
     const now=new Date();
     const [changed]=await tx.update(placementTpoEmailCampaignRecipients)
@@ -43,7 +55,7 @@ export async function unsubscribeTpoCampaignRecipient(
         eq(placementTpoEmailCampaignRecipients.id,row.id),
         isNull(placementTpoEmailCampaignRecipients.unsubscribedAt),
       )).returning({id:placementTpoEmailCampaignRecipients.id});
-    if(!changed)return "DENY";
+    if(!changed)return "ALREADY";
     // DB09 placement_tpo_leads_invite_lifecycle_ck requires a token to be
     // cleared when the lead opts out. This also prevents new OTP delivery.
     const [lead]=await tx.update(placementTpoLeads)
@@ -89,6 +101,6 @@ export async function unsubscribeTpoCampaignRecipient(
     }
     return "APPLY";
   });
-  if(outcome==="DENY")throw new CampaignUnsubscribeInvalid();
+  if(outcome==="DENY")return {unsubscribed:true};
   return {unsubscribed:true};
 }
