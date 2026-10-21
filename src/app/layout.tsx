@@ -9,8 +9,8 @@ const inter = Inter({ subsets: ["latin"], display: "swap", variable: "--font-int
 const jetbrainsMono = JetBrains_Mono({ subsets: ["latin"], weight: ["500"], display: "swap", variable: "--font-jetbrains-mono" });
 
 export const metadata: Metadata = {
-  title: { default: "42LMS", template: "%s · 42LMS" },
-  description: "42LMS",
+  title: { default: "42 LMS", template: "%s · 42 LMS" },
+  description: "42 LMS — learning, applied projects and placement operations",
 };
 
 export default function RootLayout({

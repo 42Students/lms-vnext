@@ -53,7 +53,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_api_tpo_verification_review_route.ts.md` (edit src/app/api/tpo/verification/review/route.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_components_courses_faculty-submission-file-review.tsx.md` (edit src/components/courses/faculty-submission-file-review.tsx; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-public-join-link-model.ts.md` (edit src/modules/placements/tpo-public-join-link-model.ts; 4 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_layout.tsx.md` (edit src/app/layout.tsx; 4 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_app_layout.tsx.md` (edit src/app/layout.tsx; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-messages-service.ts.md` (edit src/modules/placements/tpo-messages-service.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_src_modules_placements_tpo-team-conversation-service.ts.md` (edit src/modules/placements/tpo-team-conversation-service.ts; 4 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-20/W2_NEW_docs_audit_gap2_lane-20_job-service.md.md` (new; 4 findings; best P2)

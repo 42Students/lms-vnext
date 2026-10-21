@@ -24,7 +24,10 @@ async function optionalPublicBranding(collegeId: string) {
 export async function generateMetadata():Promise<Metadata> {
  const tenant=await resolveRequestTenant((await headers()).get("host"));
  const brand=tenant.kind==="college"?await optionalPublicBranding(tenant.collegeId):null;
- return {title:"Sign in · "+(brand?.collegeName??"42LMS")};
+ // On the public root, the historic browser tab reads simply 42 LMS.
+ // Scoped college sign-in retains its own college label, without doubling
+ // the root title template.
+ return {title:{absolute:brand?.collegeName?"Sign in · "+brand.collegeName:"42 LMS"}};
 }
 
 async function isSignedIn() {
