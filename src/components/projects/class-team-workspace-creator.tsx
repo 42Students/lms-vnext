@@ -6,6 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { DataTable } from "@/components/ui/data-table";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
 import { projectApiError, projectMutation } from "./project-api";
 import { previewClassTeams, type ProjectTeam } from "@/modules/projects/class-team-split-model";
 import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move";
@@ -35,6 +37,8 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
 }) {
   const router=useRouter();
   const [classes,setClasses]=useState<ClassChoice[]>([]);
+  const [classQuery,setClassQuery]=useState("");
+  const [classesRetry,setClassesRetry]=useState(0);
   const [classId,setClassId]=useState("");
   const [roster,setRoster]=useState<Roster|null>(null);
   const [templateId,setTemplateId]=useState(templates.some(t=>t.templateId===initialTemplateId)?initialTemplateId!:templates[0]?.templateId??"");
@@ -55,19 +59,34 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const [preflight,setPreflight]=useState<{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;
   items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[];scopeKey:string}|null>(null);
   const [outcome,setOutcome]=useState<CohortCreationOutcome|null>(null);
+  const [preflightLoading,setPreflightLoading]=useState(false);
+  const [preflightError,setPreflightError]=useState("");
+  const [outcomeRestored,setOutcomeRestored]=useState(false);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
   if(prevCollegeId!==collegeId){setPrevCollegeId(collegeId);setLoading(true);}
   useEffect(()=>{
     const controller=new AbortController();
-    void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId),{signal:controller.signal})
-      .then(async response=>{
-        if(!response.ok)throw Error(await projectApiError(response));
-        return response.json() as Promise<{classes:ClassChoice[]}>;
-      }).then(body=>{if(!controller.signal.aborted)setClasses(body.classes);})
-      .catch(e=>{if(!controller.signal.aborted)setError(e instanceof Error?e.message:"Could not load classes");})
-      .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
-    return()=>controller.abort();
-  },[collegeId]);
+    setLoading(true);
+    const timer=window.setTimeout(()=>{
+      void fetch("/api/projects/class-team-classes?collegeId="+encodeURIComponent(collegeId)+
+        "&q="+encodeURIComponent(classQuery.trim())+"&limit=100",
+        {signal:controller.signal,cache:"no-store"})
+        .then(async response=>{
+          if(!response.ok)throw Error(await projectApiError(response));
+          return response.json() as Promise<{classes:ClassChoice[]}>;
+        }).then(body=>{if(!controller.signal.aborted){
+          setClasses(previous=>{
+            const selected=previous.find(item=>item.id===classId);
+            return selected&&!body.classes.some(item=>item.id===selected.id)
+              ?[selected,...body.classes]:body.classes;
+          });
+          setError("");
+        }})
+        .catch(e=>{if(!controller.signal.aborted)setError(e instanceof Error?e.message:"Could not load classes");})
+        .finally(()=>{if(!controller.signal.aborted)setLoading(false);});
+    },400);
+    return()=>{window.clearTimeout(timer);controller.abort();};
+  },[collegeId,classId,classQuery,classesRetry]);
   const rosterKey=collegeId+"|"+classId+"|"+rosterRefreshKey;
   const [prevRosterKey,setPrevRosterKey]=useState(rosterKey);
   if(prevRosterKey!==rosterKey){
@@ -106,48 +125,84 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   const preflightActive=mode==="INDIVIDUAL"&&Boolean(classId)&&Boolean(templateId);
   const [prevPreflightActive,setPrevPreflightActive]=useState(preflightActive);
   if(prevPreflightActive!==preflightActive){setPrevPreflightActive(preflightActive);if(!preflightActive)setPreflight(null);}
+  type PreflightResult = {
+    toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;
+    items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[];
+  };
+  async function fetchPreflight(signal?:AbortSignal):Promise<PreflightResult>{
+    const response=await fetch("/api/projects/cohort-preflight?collegeId="+encodeURIComponent(collegeId)+
+      "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
+      {signal,cache:"no-store"});
+    if(!response.ok)throw Error(await projectApiError(response));
+    return await response.json() as PreflightResult;
+  }
   useEffect(()=>{
     if(!preflightActive)return;
     const ctl=new AbortController();
-    void fetch("/api/projects/cohort-preflight?collegeId="+encodeURIComponent(collegeId)+
-      "&classId="+encodeURIComponent(classId)+"&templateId="+encodeURIComponent(templateId),
-      {signal:ctl.signal}).then(r=>r.ok?r.json():Promise.reject(Error("Preflight failed")))
-      .then((data:{toCreate:number;alreadyCovered:number;eligible:number;duplicates:number;items:{membershipId:string;status:"TO_CREATE"|"ALREADY_COVERED"|"DUPLICATE"}[]})=>{
-        if(!ctl.signal.aborted)setPreflight({...data,scopeKey:preflightScopeKey});
-      }).catch(()=>{if(!ctl.signal.aborted)setPreflight(null)});
+    setPreflightLoading(true);setPreflightError("");
+    void fetchPreflight(ctl.signal)
+      .then(data=>{if(!ctl.signal.aborted)setPreflight({...data,scopeKey:preflightScopeKey});})
+      .catch(e=>{if(!ctl.signal.aborted){
+        setPreflight(null);setPreflightError(e instanceof Error?e.message:"Preflight failed. Nothing was created.");
+      }})
+      .finally(()=>{if(!ctl.signal.aborted)setPreflightLoading(false);});
     return ()=>ctl.abort();
-  },[mode,collegeId,classId,templateId,roster,preflightScopeKey]);
+  },[preflightActive,collegeId,classId,templateId,roster,preflightScopeKey]);
   const names=new Map(roster?.members.map(m=>[m.membershipId,m] as const)??[]);
   const plannerEditable=canEditClassTeamPlanner(pending,rosterLoading);
+  const dirty=Boolean(classId||title.trim()||slug.trim()||classQuery||
+    mode!=="TEAMS"||order!=="ROLL"||size!==5||seed!=="class-project");
+  const discard=useProjectEditorDiscardGuard(true,dirty,pending,()=>router.push(basePath));
   const balanced=groups.length>0&&Math.max(...groups.map(g=>g.membershipIds.length))-Math.min(...groups.map(g=>g.membershipIds.length))<=1;
   const emptyMessages=classTeamCreatorEmptyMessages(loading,classes.length,templates.length,Boolean(error));
   async function create() {
     if(!mayBeginClassTeamCreation(createInFlight.current,Boolean(roster&&groups.length&&balanced&&!rosterLoading)))return;
     if(!roster)return;
-    if(mode==="INDIVIDUAL"){
-      if(!currentPreflight)return;
-      if(!window.confirm("Create "+currentPreflight.toCreate+
-        " workspaces? "+currentPreflight.alreadyCovered+" already covered."))return;
+    if(!classId){
+      setError(mode==="INDIVIDUAL"?"Pick the class to create one workspace per student.":
+        "Pick the class to split into teams.");return;
     }
     createInFlight.current=true;
     let created=false;
     setPending(true);setError("");setNotice("");
     try {
+      if(mode==="INDIVIDUAL"){
+        // Revalidate immediately before the confirmation: counts from an earlier
+        // GET are informational only, never the basis of creation.
+        setPreflightLoading(true);
+        const fresh=await fetchPreflight();
+        setPreflightLoading(false);
+        setPreflight({...fresh,scopeKey:preflightScopeKey});
+        if(fresh.toCreate===0){
+          setNotice("Nothing was created. All eligible learners are already covered.");
+          return;
+        }
+        if(!window.confirm("Create "+fresh.toCreate+
+          " workspaces? "+fresh.alreadyCovered+" already covered."))return;
+      }
       const result=await projectMutation("/api/projects/class-team-workspaces","POST",{
         collegeId,classId:roster.classId,templateId,rosterRevision:roster.revision,
         baseTitle:title.trim(),baseSlug:slug.trim(),teams:groups,cohortMode:mode==="INDIVIDUAL",expectedPreviewVersion:previewVersion(groups),
       }) as CohortCreationOutcome;
       setOutcome(result);
       created=true;
-      setNotice(result.created.length+" Project workspaces created.");
+      if(result.created.length===0){
+        setNotice("Nothing was created. Check existing workspaces before retrying.");
+      }else{
+        setNotice(result.created.length+" Project workspaces created.");
+      }
+      if(mode==="INDIVIDUAL" && result.created.length < result.requested-result.alreadyCovered){
+        setNotice("Some workspaces were not created. Review the learner outcome report before retrying.");
+      }
       if(mode!=="INDIVIDUAL"){
         if(result.created.length===1)router.push(basePath+"/"+result.created[0].projectId);
         else router.push(basePath);
       }
       router.refresh();
     } catch(e) {
-      setError(classTeamCreationFeedback(e));
+      setError("Nothing was created. "+classTeamCreationFeedback(e));
     } finally {
+      setPreflightLoading(false);
       // After a successful POST, keep Create locked until navigation unmounts this form.
       // Releasing the latch would allow a second request while router.push is pending.
       if(!created||mode==="INDIVIDUAL"){
@@ -158,15 +213,26 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
   }
   return <div className="min-w-0 space-y-4 md:space-y-5">
     <p className="text-sm text-body leading-[22px]">Choose one team, split a class into teams, or give each learner a workspace.</p>
+    <a href={basePath+"/create"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+      Create a single workspace instead
+    </a>
     {mode==="TEAMS" ? <p className="border-l-2 border-border pl-3 text-sm text-body leading-[22px]">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
     {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.classes}</p>:null}
     {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.templates}</p>:null}
     <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+        <Input type="search" aria-label="Find a class" placeholder="Search class name or code"
+          value={classQuery} maxLength={120} disabled={pending}
+          onChange={event=>setClassQuery(event.target.value)} />
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
           <option value="">{loading?"Loading classes…":"Select a class"}</option>
           {classes.map(c=><option key={c.id} value={c.id}>{c.name} ({c.code})</option>)}
         </Select>
+        {!classId&&!loading?<span className="block text-xs text-warning">
+          {mode==="INDIVIDUAL"?"Pick the class to create one workspace per student.":"Pick the class to split into teams."}
+        </span>:null}
+        {error&&classes.length===0?<Button variant="secondary" size="sm" type="button"
+          onClick={()=>setClassesRetry(v=>v+1)}>Retry class search</Button>:null}
       </label>
       <label className="block space-y-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Published template
         <Select value={templateId} onChange={e=>setTemplateId(e.target.value)} disabled={pending}>
@@ -209,6 +275,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     </div>:null}
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
     {roster?<p className="text-sm text-muted-foreground leading-[22px]">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
+    {mode==="INDIVIDUAL"&&preflightLoading?<p role="status" className="text-sm text-body">Checking learner creation eligibility…</p>:null}
+    {mode==="INDIVIDUAL"&&preflightError?<div role="alert" className="border-l-2 border-error p-3 text-sm">
+      <p>Preflight could not be loaded. Nothing was created. {preflightError}</p>
+      <Button size="sm" variant="secondary" onClick={()=>setRosterRefreshKey(v=>v+1)}>Retry preflight</Button>
+    </div>:null}
     {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="border-b border-border pb-5 text-sm">
       <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Before creating: one workspace per student</h2>
       <p>{currentPreflight.toCreate} to create · {currentPreflight.alreadyCovered} already covered · {currentPreflight.duplicates} duplicates · {currentPreflight.eligible} eligible</p>
@@ -307,10 +378,16 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         }}>Export outcome CSV</Button>
     </section>:null}
     <div className="sticky bottom-0 z-10 flex min-w-0 flex-col-reverse gap-3 border-t border-border bg-surface py-3 md:flex-row md:flex-wrap md:justify-end">
-      <Button variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending} onClick={()=>router.push(basePath)}>Cancel</Button>
+      <Button variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto"
+        disabled={pending} onClick={discard.requestClose}>Cancel</Button>
       <Button className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!balanced||!title.trim()||!isValidClassTeamBaseSlug(slug)||!templateId||!roster||rosterLoading||(mode==="INDIVIDUAL"&&!currentPreflight)} onClick={()=>void create()}>
         {pending?"Creating workspaces…":mode==="TEAMS"?"Create team workspaces":mode==="INDIVIDUAL"?"Create "+(currentPreflight?.toCreate??0)+" workspaces":"Create whole-class workspace"}
       </Button>
     </div>
+    <ConfirmDialog open={discard.discardOpen} onOpenChange={discard.setDiscardOpen}
+      title="Discard unsaved changes?"
+      description="Leave this workspace plan and discard its unsaved changes?"
+      confirmLabel="Discard changes" pending={pending}
+      onConfirm={discard.confirmDiscard} />
   </div>;
 }
