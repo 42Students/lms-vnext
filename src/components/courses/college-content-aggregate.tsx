@@ -25,7 +25,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
   const title = videos ? COLLEGE_COURSE_TAB_COPY.videosTitle : "Resources";
   const path = videos ? "/college/videos" : "/college/resources";
   return (
-    <div className="min-w-0 space-y-5 md:space-y-6">
+    <div className="min-w-0 space-y-6 md:space-y-6">
       {showHeader ? <PageHeader
         eyebrow="College Admin · Courses & Content"
         title={title}
@@ -36,7 +36,7 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
           </Link>
         }
       /> : null}
-      <section aria-label={title + " filters"} className="border-b border-border pb-5 print:hidden">
+      <section aria-label={title + " filters"} className="border-b border-border pb-4 print:hidden">
         <form method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-3">
           <label className="grid min-w-56 flex-1 gap-1 text-xs font-semibold text-body">
             Title, lesson or course
