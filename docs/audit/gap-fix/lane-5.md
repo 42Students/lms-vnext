@@ -280,3 +280,15 @@
 
 ## Packet 59 — Candidate interviews canonical route
 - The old Super Admin Interviews entry now maps to the already implemented selected-college Calendar candidate appointment list (default agenda view, bounded whitelisted date/company/job/round-kind filters), rather than prioritizing round-level records that lack Confirmed/Reschedule/No Show lifecycle. Calendar already reads actual bookings with independent retry. Existing detailed round pages remain addressable. G2-5-007-012/028 page route resolved via canonical consumer; same-scope stale list retention remains calendar-service handoff. No code/tests/CI run.
+
+## Packet 60 — New global project template
+- Clarified selected org/college scope denial and how to clear it before global template authoring. Clarified college module gate at assignment/workspace consumption rather than falsely applying one arbitrary college's Projects flag to a global catalog. G2-5-029-040/041 intent reconciled with vNext platform authoring model. No code/tests/CI run.
+
+## Packet 61 — Global project template catalogue
+- Preserved strict invalid-filter handling with a recovery link retaining safely bounded q, instead of silently interpreting unknown status. Clarified that Templates is global project-authoring catalogue even with no college selected; Workspaces retain selected-college safety. G2-7-031-021/G2-6-029-030 addressed as explicit route/design split. No code/tests/CI run.
+
+## Packet 62 — Project audit scope
+- Selected-college audit and explicitly permitted platform-wide audit now have distinct visible scope explanations; no-college non-global actor sees exact "Select a college to continue". G2-7-030-046/032 addressed on page, preserving permission-gated global service. No code/tests/CI run.
+
+## Packet 63 — College web address
+- Managed subdomain and verified custom domains now load independently; either can show exact "Couldn't load the web address." with retry without hiding the successfully loaded subsection. Authorization denial is not swallowed. Added explicit unsaved/scope-transition warning. G2-9-031-028 addressed, G2-5-030-018 shared dirty/busy registry handoff. No code/tests/CI run.

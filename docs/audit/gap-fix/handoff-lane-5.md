@@ -136,3 +136,6 @@
 
 - G2-11-030-009: Super Admin learner application detail already provides authorized stage history, but contact email/phone, resume, notes require separate evidence-based field permissions and exact college membership scope; do not append private columns to broad directory.
 - G2-5-007-028: candidate Calendar booked interview feed already isolates fetch errors; last-good historical appointment state must be cached with selected-college, date window, role and exact filters to avoid leaking across scope transitions.
+
+- Global template creation G2-5-029-041: historical `module.projects.enabled` gate was per legacy principal. vNext platform-wide blueprint authoring cannot choose a college module state; module access belongs at assignment and workspace entrypoints. Document product decision centrally before adding platform-wide module lock.
+- College web-address edit G2-5-030-018: shared college setup section registry still needed for unsaved/BUSY SPA/scope switch. Subdomain page now has safe read-specific recoveries but an advisory warning cannot block navigation.
