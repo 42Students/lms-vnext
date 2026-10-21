@@ -1,6 +1,6 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { projectTemplateIdSchema } from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -15,6 +15,7 @@ import { ProjectTemplateActions } from "@/components/projects/project-template-c
 import { StatusBadge } from "@/components/ui/status-badge";
 import { getProjectTemplateDetail } from "@/modules/projects/template-service";
 import { can } from "@/modules/permissions/policy";
+import { SuperAdminTemplatePreviewControl } from "@/components/admin/super-admin-template-preview-control";
 
 export default async function SuperAdminProjectTemplateDetailPage({
   params,
@@ -24,7 +25,12 @@ export default async function SuperAdminProjectTemplateDetailPage({
   const context = await getCurrentRequestContext();
   const { templateId } = await params;
   const id = projectTemplateIdSchema.safeParse(templateId);
-  if (!id.success) notFound();
+  if (!id.success) return <div className="min-w-0 space-y-5">
+    <PageHeader title="Project template"/>
+    <ErrorState title="No template in this link"
+     description="This template identifier is not supported. Choose a template from the directory. Legacy numeric and slug identifiers require a verified migration mapping."
+     action={<PageBackLink href="/admin/projects/templates" label="Back to templates"/>}/>
+   </div>;
   if (!can(context,"project-template.read")) {
     return <div className="min-w-0 space-y-5">
       <PageHeader title="Project template"/>
@@ -37,11 +43,17 @@ export default async function SuperAdminProjectTemplateDetailPage({
   try {
     detail = await getProjectTemplateDetail(context, id.data);
   } catch (error) {
-    if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND") notFound();
+    if (error instanceof ProjectsServiceError && error.code === "PROJECT_TEMPLATE_NOT_FOUND")
+      return <div className="min-w-0 space-y-5">
+       <PageHeader title="Project template"/>
+       <ErrorState title="Template not found"
+        description="No template is available for this link. Choose a valid template from the directory."
+        action={<PageBackLink href="/admin/projects/templates" label="Back to templates"/>}/>
+      </div>;
     return <div className="min-w-0 space-y-5">
       <PageHeader title="Project template"/>
-      <ErrorState title="Project template unavailable"
-        description="This template could not be loaded. No version or college assignment details are shown."
+      <ErrorState title="Failed to load template"
+        description="This template could not be loaded. Check your active scope and retry; no version or college assignment details are shown."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(id.data)}
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Retry template details</Link>}/>
     </div>;
@@ -73,6 +85,20 @@ export default async function SuperAdminProjectTemplateDetailPage({
             >
               {detail.template.status}
             </StatusBadge>
+            {detail.currentVersion?
+              <SuperAdminTemplatePreviewControl title={detail.template.title} blueprint={detail.currentVersion.blueprint}/> : null}
+            {can(context,"activity.read")?<Link
+              href={"/admin/projects/audit?subjectType=project_template&subjectId="+encodeURIComponent(detail.template.id)}
+              className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+              Audit trail</Link>:null}
+            {detail.template.status==="PUBLISHED"&&context.adminScope?.collegeId&&
+             detail.assignments.some(a=>a.collegeId===context.adminScope?.collegeId)?
+             <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
+              className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-primary">
+              Use this template</Link>:
+             <span role="status" className="text-xs text-muted-foreground">
+              {context.adminScope?.collegeId?"Assign a published template to this college to create workspaces.":"Choose a college to use this template."}
+             </span>}
             {can(context, "project-template.manage") && detail.template.status === "DRAFT" ?
               <TemplateMetadataEditControl templateId={detail.template.id} title={detail.template.title}
                 summary={detail.template.summary} currentVersion={detail.template.currentVersion}
