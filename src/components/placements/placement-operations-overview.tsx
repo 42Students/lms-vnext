@@ -42,7 +42,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       <Metric label="Closed / draft" value={operations.summary.closedJobs+operations.summary.draftJobs} description="Closed and draft drives; cancelled drives are counted separately." />
       <Metric label="All drives" value={operations.summary.totalJobs} description="All non-archived college drives, not the bounded card sample." />
       {operations.attention.available?<Metric label="Needs attention" value={affected} description="Affected records in all four legacy attention categories; not a distinct-drive count." />:
-        <p role="status" className="p-3 text-sm text-body">Couldn\u0027t check for anything that needs attention.</p>}
+        <p role="status" className="p-3 text-sm text-body">Couldn't check for anything that needs attention.</p>}
     </div> : null}
     <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border sm:grid-cols-2 xl:grid-cols-4">
       <Metric label="Live jobs" value={operations.summary.publishedJobs} description="Published opportunities currently operated by the placement cell." />
@@ -54,7 +54,7 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       operations.attention.available
         ? <SuperAdminNeedsAttention items={attentionItems} basePath={basePath}/>
         : <section role="status" className="border-b border-border py-4 text-sm text-body">
-            Couldn\u0027t check for anything that needs attention.
+            Couldn't check for anything that needs attention.
             <Link href={basePath} className="ml-3 font-semibold text-link underline">Retry</Link>
           </section>
     ):
@@ -92,7 +92,6 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
       {activeSample.length>0?
         <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 xl:grid-cols-4">
           {activeSample.map(item=>{
-            const needs=operations.workQueue.filter(action=>action.jobId===item.job.id);
             const work=attentionItems.filter(action=>action.jobId===item.job.id)
               .reduce((total,action)=>total+action.count,0);
             const deadline=item.job.applicationDeadline;
@@ -103,7 +102,10 @@ export function PlacementOperationsOverview({ operations, basePath, showDriveSea
                 <span aria-label={company+" company monogram"} className="flex size-12 shrink-0 items-center justify-center rounded-[10px] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] text-base font-semibold text-[var(--lms-primary-text)]">
                   {company.trim().slice(0,2).toUpperCase()||"CO"}
                 </span>
-                <StatusBadge tone={work>0?"warning":"success"}>{work>0?work+" need attention":"Live"}</StatusBadge>
+                <StatusBadge tone={work>0?"warning":"neutral"}>
+                  {!operations.attention.available?"Attention unavailable":
+                    work>0?"At least "+work+" affected":"Published"}
+                </StatusBadge>
               </div>
               <div className="min-w-0 flex-1">
                 <h3 className="break-words text-sm font-semibold text-[var(--lms-heading)]">
