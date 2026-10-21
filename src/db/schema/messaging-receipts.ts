@@ -22,6 +22,9 @@ export const messagingDeliveryBatches = pgTable(
   "messaging_delivery_batches",
   {
     id: uuid("id").primaryKey(),
+    legacyCommandId: integer("legacy_command_id"),
+    legacyPurpose: varchar("legacy_purpose",{length:160}),
+    legacyCreatedAtLocal: varchar("legacy_created_at_local",{length:36}),
     organizationId: uuid("organization_id")
       .notNull()
       .references(() => organizations.id),
@@ -44,6 +47,8 @@ export const messagingDeliveryBatches = pgTable(
   },
   (t) => [
     index("messaging_batches_scope_idx").on(t.collegeId, t.createdAt),
+    uniqueIndex("messaging_batches_legacy_command_uq").on(t.legacyCommandId)
+      .where(sql`${t.legacyCommandId} is not null`),
     check("messaging_delivery_batches_total_check", sql`${t.total}>=0 and ${t.total}<=500`),
     check("messaging_delivery_batches_queued_check", sql`${t.queued}>=0`),
     check("messaging_delivery_batches_sent_check", sql`${t.sent}>=0`),
@@ -60,6 +65,10 @@ export const messagingDeliveryReceipts = pgTable(
   "messaging_delivery_receipts",
   {
     id: uuid("id").primaryKey(),
+    legacyReceiptId: integer("legacy_receipt_id"),
+    legacyAttemptedAtLocal: varchar("legacy_attempted_at_local",{length:36}),
+    failureCode: varchar("failure_code",{length:64}),
+    safeFailureSummary: varchar("safe_failure_summary",{length:180}),
     batchId: uuid("batch_id")
       .notNull()
       .references(() => messagingDeliveryBatches.id, { onDelete: "restrict" }),
@@ -85,6 +94,10 @@ export const messagingDeliveryReceipts = pgTable(
       t.purpose,
     ),
     index("messaging_receipts_batch_idx").on(t.batchId, t.status),
+    uniqueIndex("messaging_receipts_legacy_id_uq").on(t.legacyReceiptId)
+      .where(sql`${t.legacyReceiptId} is not null`),
+    check("messaging_receipts_failure_summary_len_ck",sql`
+      ${t.safeFailureSummary} is null or length(${t.safeFailureSummary}) <= 180`),
     check("messaging_delivery_receipts_recipient_key_check", sql`${t.recipientKey} ~ '^[a-f0-9]{64}$'`),
     check("messaging_delivery_receipts_channel_check", sql`${t.channel} in ('EMAIL','SMS')`),
     check("messaging_delivery_receipts_status_check", sql`${t.status} in ('QUEUED','SENT','FAILED','SUPPRESSED')`),
@@ -103,6 +116,11 @@ export const messagingSmsDeliveryAttempts = pgTable(
   "messaging_sms_delivery_attempts",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyAttemptId: integer("legacy_attempt_id"),
+    /** One attempt per provider invocation. It is not an outbox command. */
+    commandId: uuid("command_id"),
+    safeFailureSummary: varchar("safe_failure_summary",{length:180}),
+    providerStatus: varchar("provider_status",{length:40}),
     organizationId: uuid("organization_id").references(
       () => organizations.id, { onDelete: "restrict" },
     ),
@@ -128,6 +146,11 @@ export const messagingSmsDeliveryAttempts = pgTable(
   },
   (t) => [
     index("messaging_sms_attempts_time_idx").on(t.attemptedAt),
+    uniqueIndex("messaging_sms_attempts_legacy_id_uq").on(t.legacyAttemptId)
+      .where(sql`${t.legacyAttemptId} is not null`),
+    index("messaging_sms_attempts_command_idx").on(t.commandId,t.attemptedAt),
+    check("messaging_sms_attempts_summary_ck",sql`
+      ${t.safeFailureSummary} is null or length(${t.safeFailureSummary}) <= 180`),
     index("messaging_sms_attempts_suffix_purpose_idx").on(
       t.recipientSuffix, t.purpose, t.attemptedAt,
     ),
