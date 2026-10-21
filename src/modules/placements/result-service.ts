@@ -11,6 +11,9 @@ import {
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {placementTpoApplicationStages} from "@/db/schema/placement-tpo-application-stages";
+import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory} from "@/db/schema/placement-college-application-stages";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
+import {z} from "zod";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import {deliverRecordedLearnerPlacementEvent} from "./learner-placement-event-delivery";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -216,6 +219,58 @@ export async function listPlacementRoundResults(
       asc(placementRoundResults.applicationId),
       desc(placementRoundResults.version),
     );
+}
+
+/** Old GET /tpo/results/pending never included applied/superseded versions.
+ * Keep this separate from the auditing view which lists all history. */
+export async function listPendingPlacementRoundResults(
+ context:RequestContext,roundIdInput:string,
+){
+ const roundId=placementRoundIdSchema.parse(roundIdInput);
+ const {round,job}=await loadRoundContext(roundId);
+ await requirePlacementManageScope(context,job.collegeId);
+ return getDb().select().from(placementRoundResults)
+  .where(and(eq(placementRoundResults.roundId,round.id),
+   eq(placementRoundResults.status,"STAGED")))
+  .orderBy(asc(placementRoundResults.applicationId),desc(placementRoundResults.version));
+}
+
+/** The legacy interview ID is a source locator, not a vNext permission grant.
+ * Both scoped job and booked application membership are verified before
+ * presenting a feedback affordance to the operator. */
+export async function getLegacyInterviewFeedbackContext(
+ context:RequestContext,rawInterviewId:unknown,
+){
+ const interviewId=z.number().int().positive().parse(
+  typeof rawInterviewId==="string"?Number(rawInterviewId):rawInterviewId);
+ const [record]=await getDb().select({
+  slot:placementRoundCandidateSlots,round:placementJobRounds,job:placementJobs,
+ }).from(placementRoundCandidateSlots)
+  .innerJoin(placementJobRounds,and(eq(placementJobRounds.id,placementRoundCandidateSlots.roundId),
+    eq(placementJobRounds.jobId,placementRoundCandidateSlots.jobId)))
+  .innerJoin(placementJobs,eq(placementJobs.id,placementRoundCandidateSlots.jobId))
+  .where(and(eq(placementRoundCandidateSlots.legacyInterviewId,interviewId),
+    eq(placementRoundCandidateSlots.status,"BOOKED"))).limit(1);
+ if(!record||!record.slot.applicationId)
+  throw new PlacementsServiceError("PLACEMENT_RESULT_NOT_PARTICIPANT");
+ await requirePlacementManageScope(context,record.job.collegeId);
+ return {
+  interviewId,applicationId:record.slot.applicationId,
+  jobId:record.job.id,roundId:record.round.id,
+  roundName:record.round.name,roundStatus:record.round.status,
+  completed:record.round.status==="COMPLETED",
+  mayStage:record.round.status==="COMPLETED"&&
+   record.job.status!=="CLOSED"&&record.job.status!=="ARCHIVED",
+  // A feedback decision is staged first and applied separately. HIRE must
+  // create and release a real offer: it cannot silently mark a learner hired.
+  outcomes:{
+   HIRE:"CREATE_OFFER_AFTER_CONFIRMATION",
+   REJECT:"STAGE_FAIL_THEN_APPLY",
+   HOLD:"REVIEW_WITHOUT_RANKED_WAITLIST",
+   PROCEED:"REVIEW_WITHOUT_AUTOMATIC_STAGE",
+  } as const,
+  warning:"Applying a rejection will notify the learner in-app. An offer requires a separate confirmed offer workflow.",
+ };
 }
 
 export async function stagePlacementRoundResult(
@@ -741,6 +796,17 @@ export async function applyPlacementRoundResult(
       );
     }
 
+    // Read learner-facing pipeline stage under lock. A repeated result
+    // that does not change the learner-visible stage must not dispatch a
+    // second APPLICATION_STATUS_CHANGED notification.
+    const [beforeStage]=await tx.select().from(placementCollegeApplicationStages)
+      .where(eq(placementCollegeApplicationStages.applicationId,current.application.id))
+      .for("update").limit(1);
+    if(beforeStage&&["OFFERED","HIRED"].includes(beforeStage.stage))
+      throw new PlacementsServiceError("PLACEMENT_RESULT_APPLICATION_INACTIVE");
+    let nextLearnerStage:"SHORTLISTED"|"ASSESSMENT"|"INTERVIEW"|"WAITLISTED"|"REJECTED"=
+      applied.outcome==="HOLD"?"WAITLISTED":
+      applied.outcome==="FAIL"||applied.outcome==="ABSENT"?"REJECTED":"SHORTLISTED";
     // TPO-drive-workspace-42: applied PASS advances this applicant to the
     // next active evaluative round. Applied FAIL/HOLD/ABSENT clears stale
     // progression. 0108 is the registered durable stage table.
@@ -754,6 +820,7 @@ export async function applyPlacementRoundResult(
         )).orderBy(asc(placementJobRounds.sequence)).limit(1);
       if(nextRound){
         const stage=nextRound.kind==="INTERVIEW"?"INTERVIEW":"TEST";
+        nextLearnerStage=nextRound.kind==="INTERVIEW"?"INTERVIEW":"ASSESSMENT";
         await tx.insert(placementTpoApplicationStages).values({
           applicationId:current.application.id,jobId:current.job.id,roundId:nextRound.id,
           stage,changedByUserId:context.user.id,changedAt:now,
@@ -772,6 +839,25 @@ export async function applyPlacementRoundResult(
         eq(placementTpoApplicationStages.applicationId,current.application.id));
     }
 
+    if(beforeStage?.stage!==nextLearnerStage){
+      const [saved]=await tx.insert(placementCollegeApplicationStages).values({
+        jobId:current.job.id,applicationId:current.application.id,
+        stage:nextLearnerStage,previousStage:beforeStage?.stage??null,
+        movedByUserId:context.user.id,reason:"Round result applied",
+        movedAt:now,updatedAt:now,
+      }).onConflictDoUpdate({
+        target:placementCollegeApplicationStages.applicationId,
+        set:{stage:nextLearnerStage,previousStage:beforeStage?.stage??null,
+          movedByUserId:context.user.id,reason:"Round result applied",
+          movedAt:now,updatedAt:now,
+          version:sql`${placementCollegeApplicationStages.version}+1`},
+      }).returning({id:placementCollegeApplicationStages.id});
+      if(saved)await tx.insert(placementCollegeApplicationStageHistory).values({
+        stageId:saved.id,fromStage:beforeStage?.stage??null,
+        toStage:nextLearnerStage,reason:"Round result applied",
+        actorUserId:context.user.id,movedAt:now,
+      });
+    }
     const learnerResultEvent=await recordActivityEventInTransaction(
       tx,
       context,
@@ -791,6 +877,8 @@ export async function applyPlacementRoundResult(
           applicationId:
             current.application.id,
           outcome: applied.outcome,
+          learnerStage:nextLearnerStage,
+          stageChanged:beforeStage?.stage!==nextLearnerStage,
         },
         groupKey:
           `placement-job:${current.job.id}:results`,
@@ -799,12 +887,14 @@ export async function applyPlacementRoundResult(
       },
     );
 
-    await deliverRecordedLearnerPlacementEvent(tx,{
-      eventId:learnerResultEvent.id,collegeId:current.job.collegeId,
-      membershipId:current.application.membershipId,
-      kind:applied.outcome==="ABSENT"?"MARKED_ABSENT":"APPLICATION_STATUS_CHANGED",
-      subject:current.round.name+" · "+current.job.title,
-    });
+    if(beforeStage?.stage!==nextLearnerStage){
+      await deliverRecordedLearnerPlacementEvent(tx,{
+        eventId:learnerResultEvent.id,collegeId:current.job.collegeId,
+        membershipId:current.application.membershipId,
+        kind:applied.outcome==="ABSENT"?"MARKED_ABSENT":"APPLICATION_STATUS_CHANGED",
+        subject:current.round.name+" · "+current.job.title,
+      });
+    }
 
     return applied;
   });
