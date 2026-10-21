@@ -46,4 +46,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_app_api_projects_projectId_activity_route.ts.md` (edit src/app/api/projects/[projectId]/activity/route.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-9/W3_src_modules_notifications_zeptomail-email.ts.md` (edit src/modules/notifications/zeptomail-email.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-2/W2_src_components_courses_faculty-course-filter-auto-submit.tsx.md` (edit src/components/courses/faculty-course-filter-auto-submit.tsx; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_placements_jobs_jobId_schedule_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-11/W3_src_app_authenticated_admin_placements_jobs_jobId_schedule_page.tsx.md` (edit src/app/(authenticated)/admin/placements/jobs/[jobId]/schedule/page.tsx; 1 findings; best P1)
