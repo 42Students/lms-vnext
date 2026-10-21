@@ -27,5 +27,5 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L17-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassroomMessage.java`
 - [x] L17-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/DrivesLanding.js`
 - [x] L18-U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ClassSchedule.java`
-- [ ] L18-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js`
+- [x] L18-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js`
 - [ ] L19-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ModuleAccessController.java`
