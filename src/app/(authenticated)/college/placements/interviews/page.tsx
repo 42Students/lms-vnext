@@ -16,6 +16,8 @@ import {collegeInterviewFilters,listCollegeInterviewDirectory} from "@/modules/p
 import {CollegeInterviewStatusActions} from "@/components/placements/college-interview-status-actions";
 import {EmptyState} from "@/components/ui/empty-state";
 import { Disclosure } from "@/components/ui/disclosure";
+import {CollegeInterviewRefresh} from "@/components/placements/college-interview-refresh";
+import {CollegeInterviewNotice} from "@/components/placements/college-interview-notice";
 export const dynamic="force-dynamic";
 type Params=Record<string,string|string[]|undefined>;
 const first=(v:string|string[]|undefined)=>Array.isArray(v)?v[0]:v;
@@ -90,7 +92,7 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Interviews"
    description="Review the interview schedule, conflicts and candidate context without leaving the placements workspace." actions={<div className="flex flex-wrap gap-2">
-     <Link href={build(valid.data.page)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">Refresh</Link>
+     <CollegeInterviewRefresh/>
      <Link href="/college/placements/calendar" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">Calendar view</Link>
      <Disclosure title="Exports" className="w-full min-w-0 md:w-auto"><div className="flex min-w-0 flex-col items-stretch gap-2 py-2 sm:flex-row sm:items-center"><a href={build(1,"ics")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Download .ics</a><a href={build(1,"csv")} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] md:min-h-9 md:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export CSV</a></div></Disclosure></div>}/>
   <p className="text-xs text-muted-foreground" aria-label="Interview company scope">{valid.data.companyId?data.companies.find(item=>item.id===valid.data.companyId)?.name??"Selected company":"All companies"}</p>
@@ -164,8 +166,8 @@ export default async function CollegeInterviewsPage({searchParams}:{searchParams
     {data.summary.conflicts>0?<StatusBadge tone="error">{data.summary.conflicts} {data.summary.conflicts===1?"conflict":"conflicts"}</StatusBadge>:null}
     {hasActiveFilters?<Link href="/college/placements/interviews" className="inline-flex min-h-9 items-center text-primary-text underline">Clear filters</Link>:null}
    </div>
-   {data.limited?<Banner tone="warning">Results and summary are capped at the first 5,000 records. Narrow filters for a complete view.</Banner>:null}
-   {data.conflictsIncomplete?<Banner tone="warning">More than 10,000 overlapping bookings exist in this period. Conflict flags may be incomplete; narrow the time range before scheduling.</Banner>:null}
+   {data.limited?<CollegeInterviewNotice message="Results and summary are capped at the first 5,000 records. Narrow filters for a complete view."/>:null}
+   {data.conflictsIncomplete?<CollegeInterviewNotice message="More than 10,000 overlapping bookings exist in this period. Conflict flags may be incomplete; narrow the time range before scheduling."/>:null}
    <section aria-label="College interview appointments" className="space-y-3">
     <div className="space-y-3 md:hidden">
       {data.rows.map(row=><article key={row.id} className="space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">

@@ -45,10 +45,14 @@ export async function GET(request:Request,{params}:RouteContext){
    if(!selectedMaterialId)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},
      {status:404,headers:{"Cache-Control":"private, no-store"}});
    const visible=await listLessonResourceMaterials(context,contentId,deliveryId);
-   const selected=visible.find(row=>row.id===selectedMaterialId&&row.kind==="FILE"&&
-     row.uploadStatus==="READY");
+   const selected=visible.find(row=>row.id===selectedMaterialId);
    if(!selected)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource not found"},
      {status:404,headers:{"Cache-Control":"private, no-store"}});
+   if(selected.kind!=="FILE")return Response.json({error:"INVALID_REQUEST",message:"Invalid Resource material"},
+     {status:400,headers:{"Cache-Control":"private, no-store"}});
+   if(selected.uploadStatus!=="READY")return Response.json({
+     error:"COURSE_FILE_UNAVAILABLE",message:"Resource file storage is not allowed"
+   },{status:503,headers:{"Cache-Control":"private, no-store"}});
    const [material]=await getDb().select({
     key:lessonContentMaterials.storageKey,name:lessonContentMaterials.originalName,
     generation:lessonContentMaterials.objectGeneration,
@@ -67,6 +71,16 @@ export async function GET(request:Request,{params}:RouteContext){
    displayName=material?.name??selected.title;
   }else{
    key=await getLearnerCourseFileReference(context,deliveryId,contentId);
+   // The old material name, not the opaque private object UUID, must label a
+   // download. Resolve it only after the existing learner authorization gate.
+   if(key){
+    const [matched]=await getDb().select({name:lessonContentMaterials.originalName})
+     .from(lessonContentMaterials).where(and(
+      eq(lessonContentMaterials.lessonContentId,contentId),
+      eq(lessonContentMaterials.storageKey,key),
+     )).limit(1);
+    displayName=matched?.name??null;
+   }
   }
  }catch(error){return apiErrorResponse(error);}
  if(!key)return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":"private, no-store"}});
@@ -78,7 +92,7 @@ export async function GET(request:Request,{params}:RouteContext){
    return Response.json({error:"COURSE_FILE_NOT_FOUND",message:"Resource file not found"},{status:404,headers:{"Cache-Control":"private, no-store"}});
  }catch{
   return Response.json({error:"COURSE_FILE_UNAVAILABLE",
-   message:"The course file is not available from storage."},{status:503});
+   message:"Resource file storage is not allowed"},{status:503,headers:{"Cache-Control":"private, no-store"}});
  }
  const download=values[0]==="1";
  const query=download?{"response-content-disposition":'attachment; filename="'+fileName(displayName??key)+'"'}:undefined;
@@ -86,7 +100,7 @@ export async function GET(request:Request,{params}:RouteContext){
  // Legacy clients can opt into an authorized JSON link response; browser
  // navigation retains the download/playback redirect and R2 Range support.
  if(request.headers.get("accept")?.includes("application/json"))
-  return Response.json({status:"OK",message:"Resource ready",data:{url:signed}},
+  return Response.json({status:"OK",message:"OK",data:{url:signed}},
    {headers:{"Cache-Control":"private, no-store","Referrer-Policy":"no-referrer"}});
  return new Response(null,{status:302,headers:{
   Location:signed,

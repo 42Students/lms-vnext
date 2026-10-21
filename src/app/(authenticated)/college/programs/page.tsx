@@ -1,4 +1,5 @@
 import { Alert } from "@/components/ui/alert";
+import { ErrorState } from "@/components/ui/error-state";
 import {AuthorizationError} from "@/modules/permissions/policy";
 import Link from "next/link";
 import { isSuperAdmin } from "@/modules/identity/context";
@@ -23,10 +24,21 @@ export default async function CollegeProgramsPage() {
   </div>;
 
   // Both reads enforce scoped permissions and active college status.
-  const [programs, departments] = await Promise.all([
-    listPrograms(context, collegeId),
-    listDepartments(context, collegeId),
-  ]);
+  let programs:Awaited<ReturnType<typeof listPrograms>>;
+  let departments:Awaited<ReturnType<typeof listDepartments>>;
+  try {
+    [programs, departments] = await Promise.all([
+      listPrograms(context, collegeId),
+      listDepartments(context, collegeId),
+    ]);
+  } catch (error) {
+    if(error instanceof AuthorizationError)throw error;
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Programs" description="Create, find and manage the programs in your college."/>
+      <ErrorState title="Could not load programs" description="Your college programs could not be refreshed. No records were changed."
+        action={<Link href="/college/programs" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
+    </div>;
+  }
   // Auxiliary counts/archive listings must not cause a false empty active
   // directory. Keep the main program roster available when they fail.
   const [contentsResult, archivedResult] = await Promise.allSettled([
