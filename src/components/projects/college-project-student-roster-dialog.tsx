@@ -30,6 +30,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  const [search,setSearch]=useState("");
  const [options,setOptions]=useState<Candidate[]>([]);
  const [selected,setSelected]=useState<string[]>([]);
+ const [mode,setMode]=useState<"ADD"|"REPLACE">("ADD");
  const [initial,setInitial]=useState<string[]>([]);
  const [version,setVersion]=useState(expectedUpdatedAt);
  const [roleLabel,setRoleLabel]=useState("");
@@ -48,7 +49,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
    const choices=[...learners,...candidates.candidates];
    setOptions([...new Map(choices.map(candidate=>[candidate.membershipId,candidate])).values()]);
    const ids=learners.map(x=>x.membershipId);
-   setSelected(ids);setInitial(ids);setVersion(expectedUpdatedAt);setLoaded(true);
+   setMode("ADD");setSelected([]);setInitial(ids);setVersion(expectedUpdatedAt);setLoaded(true);
   }catch{if(sequence===requestSequence.current)
     setError("Failed to load learner options. Try again.");}
   finally{if(sequence===requestSequence.current)setSearching(false);}
@@ -68,15 +69,25 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  }
  async function save(){
   if(lock.current||!loaded)return;
-  if(!selected.length){setError("Select at least one student.");return;}
-  if(selected.length>500){setError("Select no more than 500 students.");return;}
-   lock.current=true;setBusy(true);setError("");
+  const adding=selected.filter(id=>!initial.includes(id));
+  const nextTotal=mode==="REPLACE"?selected.length:initial.length+adding.length;
+  if(!selected.length){setError("At least one learner is required.");return;}
+  if(nextTotal>500){
+   setError("This workspace has "+initial.length+" active students. The requested change would bring it to "+nextTotal+"; the maximum is 500.");
+   return;
+  }
+  lock.current=true;setBusy(true);setError("");
   try{
    const result=await apiFetch<Result>(endpoint+"/roster",{
     method:"POST",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({learnerMembershipIds:selected,roleLabel:roleLabel.trim()||undefined,expectedUpdatedAt:version}),
+    body:JSON.stringify({
+     learnerMembershipIds:selected,roleLabel:roleLabel.trim()||undefined,
+     expectedUpdatedAt:version,mode,confirmRemoval:mode==="REPLACE"&&removeCount>0,
+    }),
    });
-   setVersion(result.updatedAt);setInitial([...selected]);setConfirmOpen(false);setOpen(false);
+   setVersion(result.updatedAt);
+   setInitial(mode==="REPLACE"?[...selected]:[...new Set([...initial,...selected])]);
+   setSelected([]);setConfirmOpen(false);setOpen(false);
    showToast({tone:"success",title:"Learners updated",
     description:result.added+" added · "+result.removed+" removed."});
    router.refresh();
@@ -84,16 +95,23 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
    setConfirmOpen(false);
    setError(cause instanceof FriendlyFetchError&&cause.status===409?
     "This roster changed while you were working. Your selected learners are kept. Refresh and review before retrying.":
-    "Could not update the roster. Your selected learners are kept; try again.");
+    "Failed to update learners. Your selected learners are kept; try again.");
   }finally{lock.current=false;setBusy(false);}
  }
- const changed=selected.length!==initial.length||selected.some(x=>!initial.includes(x));
- const removeCount=initial.filter(id=>!selected.includes(id)).length;
+ const changed=mode==="ADD"?selected.some(id=>!initial.includes(id)):
+  selected.length!==initial.length||selected.some(id=>!initial.includes(id));
+ const removeCount=mode==="REPLACE"?initial.filter(id=>!selected.includes(id)).length:0;
+ const nextTotal=mode==="REPLACE"?selected.length:initial.length+
+  selected.filter(id=>!initial.includes(id)).length;
+ const removedNames=options.filter(option=>initial.includes(option.membershipId)&&
+  !selected.includes(option.membershipId)).map(option=>option.displayName?.trim()||"Unnamed member");
+ const removalSummary=removedNames.slice(0,10).join(", ")+
+  (removedNames.length>10?" and "+(removedNames.length-10)+" more":"");
  return <>
   <Button type="button" size="sm" variant="secondary" onClick={()=>{setOpen(true);void load();}}>Manage students…</Button>
   <Dialog open={open} onOpenChange={value=>{if(!busy){setOpen(value);if(!value)requestSequence.current++;}}}
    title="Manage students"
-   description="Choose learners for this workspace. Changes are saved together only after confirmation.">
+   description="Add learners to this workspace, or explicitly choose to replace existing students. All changes are saved together.">
    <div className="space-y-4">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] sm:flex-row sm:items-end">
      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search learners
@@ -103,33 +121,57 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
       {searching?"Searching…":"Search"}
      </Button>
     </div>
-    {loaded?<fieldset disabled={busy} tabIndex={0} className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
-     <legend className="px-[var(--lms-space-2)] text-[13px] font-semibold leading-5">Students (required) · {selected.length} selected</legend>
-     {options.map(option=><label key={option.membershipId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[13px] leading-5">
+    {loaded?<div className="space-y-3">
+     <label className="flex min-h-11 items-center gap-2 text-sm font-medium text-body">
+      <Checkbox checked={mode==="REPLACE"} disabled={busy}
+       onChange={event=>{
+        const replacing=event.target.checked;
+        setMode(replacing?"REPLACE":"ADD");
+        setSelected(replacing?[...initial]:[]);
+        setError("");
+       }}/>
+      Replace existing learners
+     </label>
+     <p className="text-xs text-muted-foreground" role="status">
+      {mode==="ADD"?"Adding to "+initial.length+" existing students. No current learner will be removed.":
+        "Replacement starts with all "+initial.length+" current students selected. Deselect a learner to remove them."}
+     </p>
+     <fieldset disabled={busy} tabIndex={0} aria-describedby={error?"roster-selection-error":undefined} className="max-h-64 min-w-0 divide-y divide-[var(--lms-canvas-border)] overflow-y-auto overscroll-contain border-y border-[var(--lms-canvas-border)] px-[var(--lms-space-2)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+     <legend className="px-[var(--lms-space-2)] text-[13px] font-semibold leading-5">
+      Students (required) · {selected.length} selected · {nextTotal} of 500 total
+     </legend>
+     {options.filter(option=>mode==="REPLACE"||!initial.includes(option.membershipId))
+      .map(option=><label key={option.membershipId} className="flex min-h-11 min-w-0 items-center gap-[var(--lms-space-2)] py-[var(--lms-space-2)] text-[13px] leading-5">
       <Checkbox className="size-4" checked={selected.includes(option.membershipId)}
        onChange={event=>setSelected(previous=>event.target.checked?
-        (previous.length>=500?previous:[...previous,option.membershipId]):previous.filter(id=>id!==option.membershipId))}/>
+        ((mode==="REPLACE"?previous.length:initial.length+previous.length)>=500
+          ?previous:[...previous,option.membershipId]):previous.filter(id=>id!==option.membershipId))}/>
       <span className="min-w-0 break-words">{option.displayName??option.email??"Learner"}</span>
      </label>)}
      {!options.length?<p className="text-sm text-muted-foreground leading-[22px]">No eligible learners available. Search by name or email.</p>:null}
-     {selected.length>=500?<p role="status" className="text-sm text-muted-foreground">Maximum 500 students can be selected.</p>:null}
-    </fieldset>:searching?<LoadingState label="Loading eligible learners…"/>:error?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
+     {nextTotal>=500?<p role="status" className="text-sm text-muted-foreground">Maximum 500 students can be selected.</p>:null}
+     </fieldset>
+    </div>:searching?<LoadingState label="Loading eligible learners…"/>:error?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
-     <Input value={roleLabel} onChange={event=>setRoleLabel(event.target.value)} maxLength={120}/>
+     <Input value={roleLabel} onChange={event=>setRoleLabel(event.target.value)} maxLength={120} placeholder="Project Contributor"/>
     </label>
-    <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">Replace roster will keep selected learners and end the active membership of learners you unselect. Their earlier project work is retained. Class-managed teams must be changed through the class team workspace.</p>
-    {error&&loaded?<p role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
+    <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">Add students without affecting current members, or explicitly replace the roster. Replacing ends active membership for unselected students but retains earlier project work. Class-managed teams are changed in their own workspace.</p>
+    {error&&loaded?<p id="roster-selection-error" role="alert" className="text-[13px] leading-5 text-[var(--lms-error-text)]">{error}</p>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
      <Button type="button" variant="secondary" className="w-full sm:w-auto" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-     <Button type="button" className="w-full sm:w-auto" loading={busy} disabled={busy||!loaded||!changed} onClick={()=>setConfirmOpen(true)}>
-      {busy?"Saving…":"Replace roster"}
+     <Button type="button" className="w-full sm:w-auto" loading={busy} disabled={busy||!loaded||!changed||nextTotal>500}
+      onClick={()=>setConfirmOpen(true)}>
+      {busy?"Saving…":mode==="REPLACE"?"Replace roster":"Add students"}
      </Button>
     </div>
    </div>
   </Dialog>
   <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
-   title={"Remove "+removeCount+" learner(s) from this workspace?"}
-   description="Learners removed from the roster lose active access, but their previous project work is retained. Confirm the selected learners before replacing the roster."
-   confirmLabel="Replace roster" pending={busy} onConfirm={()=>void save()}/>
+   title={mode==="REPLACE"?"Replace workspace roster"+(removeCount?" and remove "+removeCount+" learner(s)?":"?"):"Add selected students?"}
+   description={mode==="REPLACE"&&removeCount?
+    "Remove: "+removalSummary+". These learners lose active access, but their previous project work is retained.":
+    mode==="REPLACE"?"Keep the selected learners as the complete workspace roster.":
+    "Add "+selected.length+" student(s) to the existing "+initial.length+" workspace learners without removing anyone."}
+   confirmLabel={mode==="REPLACE"?"Replace roster":"Add students"} pending={busy} onConfirm={()=>void save()}/>
  </>;
 }
