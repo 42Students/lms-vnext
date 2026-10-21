@@ -214,6 +214,11 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
             className="min-h-11 min-w-0 md:min-h-9" />
           {fieldErrors.code ? <span role="alert" className="text-xs text-error">{fieldErrors.code}</span> : null}
         </label>
+        <div className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label htmlFor={"batch-program-locked-" + row.id}>Program</label>
+          <Input id={"batch-program-locked-" + row.id} value="Program is fixed after batch creation"
+            readOnly disabled aria-label="Program cannot change after creation" />
+        </div>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Expected end period (optional)
           <Select disabled={pending} value={expectedEndPeriodId} onChange={e => setExpectedEndPeriodId(e.target.value)}
             className="min-h-11 md:min-h-9 ">
@@ -391,16 +396,23 @@ export function CollegeCohortRowActions({ row, periods }: {
   return <div className="min-w-0">
     <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
     <Button variant="secondary" type="button" disabled={pending || blocked}
+      aria-label={"Edit batch " + row.name}
       onClick={() => {
         setEditing(true);setDiscardConfirm(false);setPendingLifecycleAction(null);
         setNotice("");setEditErrors({});setRemoveError(false);
       }}
       >
-      Edit
+      <span aria-hidden="true">✎</span> Edit
     </Button>
-    <Link href={studentsHref} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-      Students
+    <Link href={studentsHref} aria-label={"Manage students in " + row.name} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 text-sm font-semibold text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+      <span aria-hidden="true">♙</span> Students
     </Link>
+    <Button variant="secondary" type="button" disabled={pending || row.status !== "PLANNED" ||
+      row.activeSections > 0 || row.activeEnrolledLearners > 0}
+      aria-label={"Archive batch " + row.name}
+      title={row.status !== "PLANNED" ? "Only planned batches may be archived." :
+        "Archive this batch; historical records remain available."}
+      onClick={retire}><span aria-hidden="true">×</span> Archive</Button>
     <Dropdown trigger="More" label="Batch lifecycle actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
       <Menu className="w-full min-w-0">
     {row.status === "ACTIVE" && <MenuItem type="button"
@@ -437,12 +449,12 @@ export function CollegeCohortRowActions({ row, periods }: {
       Archived batches cannot be edited.
     </p> : null}
     {editing ? <Dialog open={editing} onOpenChange={next=>{if(!next)close();}}
-      title={"Edit Batch " + row.name}>
+      title={"Edit batch " + row.name} className="!max-w-[520px]">
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation. Status: {row.status}. Planned batches can be archived only before class or student records exist; active batches may be marked Completed after their final term. The legacy Inactive transition is not supported by this progression model.</p>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
-          <Input maxLength={255} value={name} error={Boolean(editErrors.name)}
+          <Input maxLength={255} value={name} placeholder="e.g., 2024–2028 Batch" error={Boolean(editErrors.name)}
             onChange={e => { setName(e.target.value); setEditErrors(current => ({ ...current, name: "" })); }}
             className="min-h-11 min-w-0 md:min-h-9" />
           {editErrors.name ? <span role="alert" className="text-xs text-error">{editErrors.name}</span> : null}
@@ -497,15 +509,15 @@ export function CollegeCohortRowActions({ row, periods }: {
           </Button>
           <Button variant="primary" disabled={pending || !hasUnsavedCollegeCohortEdit(original, draft)} type="submit"
             >
-            {pending ? "Saving…" : "Save changes"}
+            {pending ? "Saving…" : "Save Changes"}
           </Button>
         </div>
       </form>
     </Dialog> : null}
     <ConfirmDialog open={discardConfirm} onOpenChange={setDiscardConfirm}
-      title="Discard unsaved batch changes?"
-      description="The changes to this batch will be lost."
-      confirmLabel="Discard changes" pending={pending}
+      title={"Discard edits to " + row.name + "?"}
+       description={"Unsaved edits to " + row.name + " will be lost."}
+       confirmLabel="Discard edits" pending={pending}
       onConfirm={()=>{setDiscardConfirm(false);setEditing(false);setNotice("");setEditErrors({});}}/>
     {!editing && notice && !removeError ? <p role="status" className="mt-1 text-xs text-body leading-5">{notice}</p> : null}
   </div>;
