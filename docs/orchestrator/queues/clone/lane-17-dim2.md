@@ -183,36 +183,36 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/courses/faculty-contacts-table.tsx`
 - [x] `src/components/courses/faculty-content-order-editor.tsx`
 - [x] `src/components/courses/faculty-course-home-signals.tsx`
-- [ ] `src/components/courses/faculty-course-list.tsx`
-- [ ] `src/components/courses/faculty-course-roster.tsx`
-- [ ] `src/components/courses/faculty-course-workspace.tsx`
-- [ ] `src/components/courses/faculty-lesson-video-manager.tsx`
-- [ ] `src/components/courses/faculty-quiz-review.tsx`
-- [ ] `src/components/courses/faculty-submission-file-review.tsx`
-- [ ] `src/components/courses/learner-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-attendance.tsx`
-- [ ] `src/components/courses/learner-course-discussion.tsx`
-- [ ] `src/components/courses/learner-course-list.tsx`
-- [ ] `src/components/courses/learner-course-overview.tsx`
-- [ ] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/courses/learner-live-class-link.tsx`
-- [ ] `src/components/courses/learner-live-session-status.tsx`
-- [ ] `src/components/courses/learner-quiz-attempt.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/courses/resource-progress-control.tsx`
-- [ ] `src/components/courses/super-admin-content-directory-page.tsx`
-- [ ] `src/components/groups/college-study-member-actions.tsx`
-- [ ] `src/components/hr/hr-company-reports-grid.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/drive-day-roster.tsx`
-- [ ] `src/components/placements/learner-career-calendar.module.css`
-- [ ] `src/components/placements/learner-career-calendar.tsx`
-- [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-career-rounds.tsx`
-- [ ] `src/components/placements/learner-placement-academic-evidence.tsx`
-- [ ] `src/components/placements/learner-placement-job-detail.tsx`
+- [x] `src/components/courses/faculty-course-list.tsx`
+- [x] `src/components/courses/faculty-course-roster.tsx`
+- [x] `src/components/courses/faculty-course-workspace.tsx`
+- [x] `src/components/courses/faculty-lesson-video-manager.tsx`
+- [x] `src/components/courses/faculty-quiz-review.tsx`
+- [x] `src/components/courses/faculty-submission-file-review.tsx`
+- [x] `src/components/courses/learner-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-attendance.tsx`
+- [x] `src/components/courses/learner-course-discussion.tsx`
+- [x] `src/components/courses/learner-course-list.tsx`
+- [x] `src/components/courses/learner-course-overview.tsx`
+- [x] `src/components/courses/learner-course-workspace.tsx`
+- [x] `src/components/courses/learner-live-class-link.tsx`
+- [x] `src/components/courses/learner-live-session-status.tsx`
+- [x] `src/components/courses/learner-quiz-attempt.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/resource-progress-control.tsx`
+- [x] `src/components/courses/super-admin-content-directory-page.tsx`
+- [x] `src/components/groups/college-study-member-actions.tsx`
+- [x] `src/components/hr/hr-company-reports-grid.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/placements/college-interview-appointments.tsx`
+- [x] `src/components/placements/drive-day-roster.tsx`
+- [x] `src/components/placements/learner-career-calendar.module.css`
+- [x] `src/components/placements/learner-career-calendar.tsx`
+- [x] `src/components/placements/learner-career-rounds-workspace.tsx`
+- [x] `src/components/placements/learner-career-rounds.tsx`
+- [x] `src/components/placements/learner-placement-academic-evidence.tsx`
+- [x] `src/components/placements/learner-placement-job-detail.tsx`
 - [ ] `src/components/placements/learner-placement-jobs.tsx`
 - [ ] `src/components/placements/learner-placement-journey.tsx`
 - [ ] `src/components/placements/learner-placement-offers.tsx`
