@@ -1,8 +1,6 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {type ReactNode} from "react";
 import {ProjectAuditRefreshButton} from "@/components/projects/project-audit-filters";
-import {ActivityCenter,type ActivityCenterGroup} from "@/components/activity/activity-center";
-import {sanitizeActivityMetadata} from "@/modules/activity/metadata-sanitizer";
 import {StatusBadge} from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
@@ -173,25 +171,6 @@ export async function ProjectAdminAuditPage({
   const result = activityRead.value;
   const rawEvents=result.items;
   const coveredEvents=rawEvents.length;
-  const groups:ActivityCenterGroup[]=result.groups.map(group=>({
-    key:group.key,count:group.count,
-    latest:{
-      event:{
-        id:group.latest.event.id,
-        module:group.latest.event.module,
-        eventType:group.latest.event.eventType,
-        importance:group.latest.event.importance,
-        subjectType:group.latest.event.subjectType,
-        subjectId:group.latest.event.subjectId,
-        subjectLabel:group.latest.event.subjectLabel,
-        summary:group.latest.event.summary,
-        metadata:sanitizeActivityMetadata(group.latest.event.metadata),
-        occurredAt:group.latest.event.occurredAt.toISOString(),
-      },
-      actor:group.latest.actor,
-    },
-    earliest:{event:{occurredAt:group.earliest.event.occurredAt.toISOString()}},
-  }));
   const peopleCount=new Set(rawEvents.map(item=>item.actor.id)
     .filter((id):id is string=>Boolean(id))).size;
   const destructiveCount=rawEvents.filter(item=>destructiveProjectEventTypes.has(
@@ -419,7 +398,7 @@ export async function ProjectAdminAuditPage({
         </div>)}
       </section>
       <p role="status" className="text-xs text-body">
-        Displaying {coveredEvents} raw audit actions in {groups.length} grouped entries.
+        Displaying {coveredEvents} raw audit actions in {result.groups.length} grouped entries.
         {partialCoverage?" Counts are minimums for this page; older events are available below.":""}
         {" Up to 25 actions are shown per page."}
       </p>
@@ -502,18 +481,10 @@ export async function ProjectAdminAuditPage({
         </div>}
       </section>
 
-      <ActivityCenter
-        emptyActionHref={basePath + "/audit"}
-        groups={groups}
-        nextRemaining={result.remainingCount}
-        nextHref={
-          result.nextCursor
-            ? basePath +
-              "/audit?" +
-              nextParams.toString()
-            : null
-        }
-      />
+      {result.nextCursor?<Link href={basePath+"/audit?"+nextParams.toString()}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+        Load older events{result.remainingCount?" ("+result.remainingCount+" remaining)":""}
+      </Link>:null}
 
       <p className="text-xs text-muted-foreground leading-[20px]">
         This view reflects persisted vNext Project activity events. Legacy-only audit actions remain tracked as W03 parity work until their producers are implemented against the shared activity taxonomy.
