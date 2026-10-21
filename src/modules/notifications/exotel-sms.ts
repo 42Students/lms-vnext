@@ -1,5 +1,8 @@
 import { outboundFetch } from "@/lib/outbound";
 import { sql } from "drizzle-orm";
+import { z } from "zod";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { getDb } from "@/db/client";
 import { writeStructuredLog } from "@/observability/logger";
 import type { SmsProvider } from "./types";
@@ -48,35 +51,110 @@ export function normalizeSmsPhoneForIndia(input: string): string | null {
   return /^\+[1-9][0-9]{7,14}$/.test(compact) ? compact : null;
 }
 
-/** DB-031 append-only attempt (ready only after database lane registers migration).
- * No full phone, SMS body, OTP or secret is persisted. Ledger failures cannot
- * change provider acceptance or trigger an ambiguous retry. */
+/** Provider acceptance is not handset delivery; this audit stores neither SMS
+ * body, OTP, recipient address nor provider credentials. */
+export const SMS_PROVIDER_ACCEPTANCE_NOTE = "SENT means the SMS operator accepted the request, not that the handset received the message.";
+export type SmsAttemptPurpose = "otp" | "job.update" | "notification" | "attendance.absence" | "attendance.correction";
+export type SmsAttemptInput = {
+  purpose: SmsAttemptPurpose;
+  recipient: string;
+  outcome: "PROVIDER_ACCEPTED" | "FAILED";
+  providerSid?: string | null;
+  failureCode?: string | null;
+  sourceEventId?: string | null;
+  collegeId?: string | null;
+  organizationId?: string | null;
+};
+const smsUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+/**
+ * Shared append-only DB-031 adapter for OTP/job/attendance/notice transports.
+ * Return value describes audit storage ONLY; never interpret it as send status.
+ * No external send is triggered here. The schema lane owns the migration.
+ */
+export async function appendSmsDeliveryAttempt(input: SmsAttemptInput): Promise<"RECORDED" | "STORAGE_PENDING" | "FAILED"> {
+  const suffix = input.recipient.replace(/[^0-9]/g, "").slice(-4) || null;
+  const code = input.failureCode ?? null;
+  const sid = input.providerSid ?? null;
+  const pairIsPresent = Boolean(input.collegeId) === Boolean(input.organizationId);
+  const validIds = (!input.collegeId || smsUuid.test(input.collegeId)) &&
+    (!input.organizationId || smsUuid.test(input.organizationId)) &&
+    (!input.sourceEventId || smsUuid.test(input.sourceEventId));
+  const validResult = input.outcome === "PROVIDER_ACCEPTED"
+    ? Boolean(sid && /^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(sid) && !code)
+    : Boolean(code && /^[A-Z0-9_.:-]{1,40}$/.test(code) && !sid);
+  if (!pairIsPresent || !validIds || !validResult) return "FAILED";
+  try {
+    const db = getDb();
+    const readyResult = await db.execute(sql<{ready:boolean}>`select to_regclass('public.sms_delivery_attempts') is not null as ready`);
+    if (!readyResult.rows[0]?.ready) {
+      writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_unavailable",
+        { purpose: input.purpose, reason: "DB31_NOT_REGISTERED" });
+      return "STORAGE_PENDING";
+    }
+    await db.execute(sql`
+      insert into sms_delivery_attempts
+        (organization_id, college_id, purpose, provider, recipient_suffix, outcome,
+         provider_message_id, safe_failure_code, source_event_id, provider_accepted_at)
+      values (${input.organizationId ?? null}, ${input.collegeId ?? null},
+        ${input.purpose}, 'EXOTEL', ${suffix}, ${input.outcome}, ${sid}, ${code},
+        ${input.sourceEventId ?? null},
+        ${input.outcome === "PROVIDER_ACCEPTED" ? new Date() : null})
+    `);
+    return "RECORDED";
+  } catch {
+    writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_write_failed",
+      { purpose: input.purpose, reason: "ATTEMPT_AUDIT_UNAVAILABLE" });
+    return "FAILED";
+  }
+}
 async function bestEffortOtpAttempt(
   phone: string, outcome: "PROVIDER_ACCEPTED" | "FAILED",
   providerSid: string | null, failureCode: string | null,
 ): Promise<void> {
-  const suffix = phone.replace(/[^0-9]/g, "").slice(-4) || null;
-  try {
-    const db = getDb();
-    const readyResult = await db.execute(sql`select to_regclass('public.sms_delivery_attempts') is not null as ready`);
-    const rows = Array.isArray(readyResult)
-      ? readyResult : ((readyResult as { rows?: unknown[] }).rows ?? []);
-    if ((rows[0] as { ready?: boolean } | undefined)?.ready !== true) {
-      writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_unavailable",
-        { purpose: "otp", reason: "DB31_NOT_REGISTERED" });
-      return;
-    }
-    await db.execute(sql`
-      insert into sms_delivery_attempts
-        (purpose, provider, recipient_suffix, outcome, provider_message_id,
-         safe_failure_code, provider_accepted_at)
-      values ('otp', 'EXOTEL', ${suffix}, ${outcome}, ${providerSid},
-        ${failureCode}, ${outcome === "PROVIDER_ACCEPTED" ? new Date() : null})
-    `);
-  } catch {
-    writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_write_failed",
-      { purpose: "otp", reason: "ATTEMPT_AUDIT_UNAVAILABLE" });
-  }
+  await appendSmsDeliveryAttempt({purpose:"otp",recipient:phone,outcome,providerSid,failureCode});
+}
+
+/** Support reads are restricted to active platform super-administrators.
+ * No tenant membership or browser query can grant unscoped SMS-log access.
+ * The read endpoint/UI still needs to be wired by its own owning lane. */
+export async function listSmsDeliveryAttemptsForSupport(context: RequestContext, raw: unknown) {
+  if (!isSuperAdmin(context) || context.user.platformStatus !== "ACTIVE")
+    throw new AuthorizationError("admin-scope.select");
+  requirePermission(context,"admin-scope.select");
+  if (context.adminScope?.collegeId || context.adminScope?.organizationId)
+    throw new AuthorizationError("admin-scope.select");
+  const query = z.strictObject({
+    suffix:z.string().max(32).optional(),
+    purpose:z.enum(["otp","job.update","notification","attendance.absence","attendance.correction"]).optional(),
+    outcome:z.enum(["PROVIDER_ACCEPTED","FAILED"]).optional(),
+    page:z.number().int().min(1).max(100000).default(1),
+    size:z.number().int().min(1).max(100).default(25),
+  }).parse(raw);
+  const suffix=(query.suffix ?? "").replace(/[^0-9]/g, "").slice(-4);
+  const predicate = sql.join([
+    sql`true`,
+    ...(suffix ? [sql`recipient_suffix = ${suffix}`] : []),
+    ...(query.purpose ? [sql`purpose = ${query.purpose}`] : []),
+    ...(query.outcome ? [sql`outcome = ${query.outcome}`] : []),
+  ],sql` and `);
+  const ready=await getDb().execute(sql<{ready:boolean}>`select to_regclass('public.sms_delivery_attempts') is not null as ready`);
+  if (!ready.rows[0]?.ready) return {ready:false,entries:[],totalElements:0,totalPages:0,page:query.page,
+    note:SMS_PROVIDER_ACCEPTANCE_NOTE};
+  const [{total}] = (await getDb().execute(sql<{total:number}>`
+    select count(*)::int as total from sms_delivery_attempts where ${predicate}`)).rows;
+  const offset=(query.page-1)*query.size;
+  const records=await getDb().execute(sql<{
+    id:string;purpose:string;provider:string;recipientSuffix:string|null;
+    outcome:string;providerMessageId:string|null;safeFailureCode:string|null;createdAt:Date;
+  }>`
+    select id,purpose,provider,recipient_suffix as "recipientSuffix",
+      outcome,provider_message_id as "providerMessageId",
+      safe_failure_code as "safeFailureCode",created_at as "createdAt"
+    from sms_delivery_attempts where ${predicate}
+    order by created_at desc,id desc limit ${query.size} offset ${offset}
+  `);
+  return {ready:true,entries:records.rows,totalElements:total??0,
+    totalPages:Math.ceil((total??0)/query.size),page:query.page,note:SMS_PROVIDER_ACCEPTANCE_NOTE};
 }
 function configured(config: ExotelConfig) {
   return Boolean(
