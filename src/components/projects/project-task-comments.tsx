@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
@@ -12,7 +12,7 @@ type Comment={id:string;body:string;commentKind:ProjectTaskCommentKind;createdAt
 export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  projectId:string;taskId:string;updatedAt:string;canPost:boolean;
 }){
- const router=useRouter();const [open,setOpen]=useState(false);
+ const router=useRouter();
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
  const [kind,setKind]=useState<ProjectTaskCommentKind>("NOTE");
  const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
@@ -27,10 +27,12 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    const result=await fetch(url,{cache:"no-store",credentials:"same-origin"});
    if(!result.ok)throw new Error("Could not load comments");
    const data=await result.json() as {comments:Comment[]};
-   setRows(data.comments);setOpen(true);
+   setRows([...data.comments].sort((left,right)=>
+     Date.parse(right.createdAt)-Date.parse(left.createdAt)||right.id.localeCompare(left.id)));
   }catch(caught){setError(caught instanceof Error?caught.message:"Could not load comments");}
   finally{setBusy(false);}
  }
+ useEffect(()=>{void show();},[projectId,taskId]);
  async function post(){
   if(!body.trim()){setError("message is required");return;}
   setBusy(true);setError(null);
@@ -45,11 +47,21 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   finally{setBusy(false);}
  }
  return <div className="mt-[var(--lms-space-2)] min-w-0 space-y-[var(--lms-space-3)]">
-   <Button size="sm" variant="secondary" onClick={()=>open?setOpen(false):void show()}>
-     Comments
-   </Button>
-   {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
-     <p className="text-xs text-muted-foreground leading-[20px]">Task activity timeline with notes and progress updates.</p>
+   <div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
+     <h3 className="text-base font-semibold text-heading">Activity</h3>
+     <p className="text-xs text-muted-foreground leading-[20px]">Task activity and comments, most recent first.</p>
+     {busy && rows.length===0 ? <p role="status" className="text-sm text-muted-foreground">Loading comments…</p> : null}
+     <div className="max-h-40 overflow-y-auto rounded border border-border p-3">
+       {rows.filter(row=>row.commentKind!=="NOTE").length===0
+         ? <p className="text-sm text-muted-foreground">No activity yet.</p>
+         : rows.filter(row=>row.commentKind!=="NOTE").map(row=>(
+           <p key={row.id} className="mb-2 text-sm last:mb-0">
+             <strong>{row.authorName || "Unknown"}</strong> · {PROJECT_TASK_COMMENT_KIND_LABELS[row.commentKind] ?? "Update"} ·
+             {" "}{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(row.createdAt))}
+           </p>
+         ))}
+     </div>
+     <h3 className="pt-3 text-base font-semibold text-heading">Comments</h3>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
          className="w-full">
@@ -64,7 +76,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
        <p role="status" className="text-sm text-muted-foreground leading-[22px]">No comments match this filter.</p>:null}
      {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
       <p className="mb-1 text-xs font-semibold text-muted-foreground leading-[20px]">
-        {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
+        {row.authorName || "Unknown"} · {new Intl.DateTimeFormat("en-IN", {
           dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
         }).format(new Date(row.createdAt))}
       </p>
@@ -92,7 +104,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
        message is required
      </p> : null}
      {canPost?<Button className="w-full md:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
-   </div>:null}
-   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+   </div>
+   {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-sm text-error leading-[22px]"><p>{error}</p><Button size="sm" variant="secondary" onClick={()=>void show()} disabled={busy}>Retry</Button></div>:null}
  </div>;
 }
