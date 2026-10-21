@@ -3,7 +3,10 @@ export const publicPlacementMetricSchema=z.enum([
  "STUDENTS","PLACED","PERCENT","OFFERS","HIRING_COMPANIES","HIGHEST_CTC","MEDIAN_CTC",
 ]);
 export type PublicPlacementMetricKey=z.infer<typeof publicPlacementMetricSchema>;
-export const DEFAULT_PUBLIC_METRICS:PublicPlacementMetricKey[]=["PLACED","OFFERS","HIRING_COMPANIES"];
+/** Legacy STUDENTS, PLACED, COMPANIES ordering; legacy COMPANIES maps
+ * to the audited HIRING_COMPANIES aggregate, not a company roster. */
+export const LEGACY_PUBLIC_METRIC_KEY_MAP={COMPANIES:"HIRING_COMPANIES"} as const;
+export const DEFAULT_PUBLIC_METRICS:PublicPlacementMetricKey[]=["STUDENTS","PLACED","HIRING_COMPANIES"];
 export const PUBLIC_METRIC_LABELS:Readonly<Record<PublicPlacementMetricKey,string>>={
  STUDENTS:"Students in placements",PLACED:"Students placed",PERCENT:"Placed %",
  OFFERS:"Offers",HIRING_COMPANIES:"Companies that hired",
@@ -24,7 +27,8 @@ export function formatPublicPlacementMetric(key:PublicPlacementMetricKey,values:
    Math.round(100*values.placed/values.population):null):
   key==="OFFERS"?values.offers:key==="HIRING_COMPANIES"?values.employers:
   key==="HIGHEST_CTC"?values.highestCtcInr:values.medianCtcInr;
- if(amount===null||!Number.isFinite(amount))return "(not enough data yet)";
+ // A suppressed aggregate is absent, not an empty tile exposing the choice.
+ if(amount===null||!Number.isFinite(amount))return null;
  if(key==="HIGHEST_CTC"||key==="MEDIAN_CTC")return (amount/100000).toFixed(1)+" LPA";
  if(key==="PERCENT")return amount+"%";
  return new Intl.NumberFormat("en-IN").format(amount);

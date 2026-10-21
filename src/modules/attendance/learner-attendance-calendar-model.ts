@@ -112,3 +112,27 @@ export function learnerAttendanceMonthWindow(month: string) {
     to: new Date(Date.UTC(year!, monthNumber!, 1) - istOffsetMilliseconds),
   };
 }
+
+
+/** Legacy inclusive YYYY-MM-DD date range, normalized to canonical IST.
+ * The half-open UTC end avoids duplicate month-end records regardless of
+ * a traveller's browser timezone or DST rules. Course IDs must still be
+ * resolved to an authorized delivery, never blindly coerced to UUIDs. */
+export function legacyAttendanceInclusiveWindow(startDay:string,endDay:string){
+ const date=z.iso.date();
+ if(!date.safeParse(startDay).success||!date.safeParse(endDay).success||
+   endDay<startDay)throw new Error("Invalid attendance date range");
+ function start(day:string){
+  const [year,month,date]=day.split("-").map(Number);
+  const plain=new Date(Date.UTC(year!,month!-1,date!));
+  if(plain.toISOString().slice(0,10)!==day)
+   throw new Error("Invalid attendance date");
+  return plain.getTime()-330*60_000;
+ }
+ const from=start(startDay),to=start(endDay)+86_400_000;
+ if(to<=from)throw new Error("Invalid attendance date range");
+ return {from:new Date(from),to:new Date(to)};
+}
+export function attendanceWithinIstWindow(at:Date,range:{from:Date;to:Date}){
+ return at.getTime()>=range.from.getTime()&&at.getTime()<range.to.getTime();
+}
