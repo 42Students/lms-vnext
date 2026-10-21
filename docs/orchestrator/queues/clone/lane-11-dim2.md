@@ -328,21 +328,21 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/public/error-page-view.tsx`
 - [x] `src/components/public/graceful-screen.tsx`
 - [x] `src/components/public/public-page-loading.tsx`
-- [ ] `src/components/shell/learner-faculty-mobile-footer.tsx`
-- [ ] `src/components/shell/mobile-navigation.tsx`
-- [ ] `src/components/shell/shell-nav-icons.tsx`
-- [ ] `src/components/shell/sidebar-nav.tsx`
-- [ ] `src/components/shell/topbar/icons.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-header-indicators.tsx`
-- [ ] `src/components/tpo/tpo-mobile-footer.tsx`
-- [ ] `src/components/ui/avatar.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/overlay-close-icon.tsx`
-- [ ] `src/components/ui/page-back-link.tsx`
-- [ ] `src/components/ui/split-button.tsx`
+- [x] `src/components/shell/learner-faculty-mobile-footer.tsx`
+- [x] `src/components/shell/mobile-navigation.tsx`
+- [x] `src/components/shell/shell-nav-icons.tsx`
+- [x] `src/components/shell/sidebar-nav.tsx`
+- [x] `src/components/shell/topbar/icons.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-header-indicators.tsx`
+- [x] `src/components/tpo/tpo-mobile-footer.tsx`
+- [x] `src/components/ui/avatar.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/overlay-close-icon.tsx`
+- [x] `src/components/ui/page-back-link.tsx`
+- [x] `src/components/ui/split-button.tsx`
