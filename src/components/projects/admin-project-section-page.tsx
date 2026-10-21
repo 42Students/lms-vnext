@@ -42,8 +42,8 @@ export async function AdminProjectSectionPage({
 
   const context = await getCurrentRequestContext();
   if (!getProjectAdminCollegeId(context)) {
-    return <ErrorState title="No college selected"
-      description="Pick a college in the header to work with its project workspaces."
+    return <ErrorState title="Admin not assigned to a college"
+      description="You must be assigned to a college to view project workspaces. Choose a college in the header to continue."
       action={<Link href={basePath} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">
         Back to workspaces
       </Link>} />;
