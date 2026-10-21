@@ -35,7 +35,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
         description={lessons ? undefined : COLLEGE_COURSE_TAB_COPY.progressDescription}
         actions={
           <Link href="/college/courses"
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Course offerings
           </Link>
         }
@@ -542,7 +542,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             </div>
           </details>
           <Button type="submit" className="min-h-11 w-full px-5 md:min-h-9 md:w-auto">Filter</Button>
-          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+          <Link href={href} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Clear
           </Link>
         </form>
@@ -570,7 +570,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             <>
             {data.items.map(item=><article key={item.id} className="min-w-0 space-y-2 py-4">
              <h3 className="break-words font-semibold">{item.name}</h3>
-             <Link className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+             <Link className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
               {item.courseName} ({item.courseCode})
              </Link>
@@ -580,13 +580,13 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
               <CollegeArchivedLessonRestore id={item.id} name={item.name}/>:
               <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
                visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
-             <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View recorded course activity</Link>
+             <Link href={collegeOfferingProgressHref(item.offeringId)} className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View recorded course activity</Link>
             </article>)}
             </>
            ) : (
             <>
             {data.items.map(item=><article key={item.offeringId} className="min-w-0 space-y-2 py-4">
-             <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+             <Link className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
               href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}>
               {item.courseName} ({item.courseCode})
              </Link>
@@ -594,7 +594,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
              <p className="flex flex-wrap items-center gap-2 text-xs text-body">Offering state: <StatusBadge tone={item.offeringStatus==="ACTIVE"?"success":"neutral"}>{item.offeringStatus}</StatusBadge></p>
              <p className="text-xs text-body">{collegeProgressDescription(item)}</p>
              <Link href={collegeOfferingLessonsHref(item.offeringId)}
-              className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">View authored lessons</Link>
+              className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View authored lessons</Link>
             </article>)}
             </>
            )}
@@ -611,7 +611,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"course",header:COLLEGE_COURSE_TAB_COPY.lessonColumns.course,mobilePriority:"secondary" as const,
                   cell:item=><div className="min-w-0">
                     <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       {item.courseName} ({item.courseCode})
                     </Link>
                     <p className="mt-1 text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
@@ -626,7 +626,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                       <CollegeLessonVisibilityControl lesson={{id:item.id,name:item.name,
                         visibleToStudents:item.visibleToStudents,updatedAt:item.updatedAt.toISOString()}}/>}
                     <Link href={collegeOfferingProgressHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       View recorded course activity
                     </Link>
                   </div>},
@@ -640,12 +640,12 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
                 {key:"course",header:"Course / offering",mobilePriority:"primary" as const,
                   cell:item=><div className="min-w-0">
                     <Link href={"/college/courses/offerings/"+encodeURIComponent(item.offeringId)}
-                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       {item.courseName} ({item.courseCode})
                     </Link>
                     <p className="text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
                     <Link href={collegeOfferingLessonsHref(item.offeringId)}
-                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
+                      className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
                       View authored lessons
                     </Link>
                   </div>},
