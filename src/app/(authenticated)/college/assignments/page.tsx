@@ -2,7 +2,7 @@ import {CollegeCourseMissingScope} from "@/components/courses/college-course-mis
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
-import {getCollegeAssignmentAuthoringOptions} from "@/modules/courses/college-assignment-authoring-options";
+import {getCollegeAssignmentAuthoringCatalog} from "@/modules/courses/college-assignment-authoring-options";
 import Link from "next/link";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -38,7 +38,7 @@ export default async function CollegeAssignmentsPage({
   const query=parseCollegeAssessmentQuery("ASSIGNMENT",validation.data);
   const [dataResult,lessonsResult]=await Promise.allSettled([
     listCollegeAssessmentAggregate(context,"ASSIGNMENT",query),
-    getCollegeAssignmentAuthoringOptions(context),
+    getCollegeAssignmentAuthoringCatalog(context),
   ]);
   if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments"/>
@@ -53,7 +53,7 @@ export default async function CollegeAssignmentsPage({
   return <div className="min-w-0 overflow-x-clip">
     <CollegeAssessmentAggregate data={data}
       leading={lessonsResult.status==="fulfilled"?
-        <CollegeAssignmentCreate lessons={lessonsResult.value} deliveries={data.reviewDeliveries}/>:
+        <CollegeAssignmentCreate lessons={lessonsResult.value.lessons} deliveries={lessonsResult.value.deliveries}/>:
         <Alert tone="warning" role="status">
           Assignment creation options are temporarily unavailable. Existing assignments remain visible.
         </Alert>}/>
