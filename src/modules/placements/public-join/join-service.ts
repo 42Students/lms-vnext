@@ -37,7 +37,7 @@ export const PUBLIC_JOIN_LEGACY_COMPATIBILITY = {
 
 type Scope = "COLLEGE" | "COMPANY";
 export class PublicJoinAcceptError extends Error {
-  constructor(readonly code: "INVALID" | "REMOVED" | "NOT_CONFIGURED" |
+  constructor(readonly code: "INVALID" | "LINK_INVALID" | "REMOVED" | "NOT_CONFIGURED" |
     "RATE_LIMITED" | "NETWORK_GUARD_NOT_READY" | "WRONG_CODE" |
     "CODE_EXPIRED" | "CODE_LOCKED" | "CODE_REQUIRED" |
     "OTHER_COMPANY_EMAIL" | "COMPANY_EXISTS" | "COMPANY_REQUIRED" | "ACCOUNT_UNAVAILABLE" | "PHONE_STORAGE_NOT_READY") {
@@ -259,6 +259,7 @@ export async function acceptPublicRecruiterJoin(
     if(decision===code)throw new PublicJoinAcceptError(code);
   }
   if (decision === "NOT_CONFIGURED") throw new PublicJoinAcceptError("NOT_CONFIGURED");
+  if (decision === "DENIED") throw new PublicJoinAcceptError("LINK_INVALID");
   if (decision !== "JOINED" && decision !== "ALREADY_JOINED") {
     throw new PublicJoinAcceptError("INVALID");
   }

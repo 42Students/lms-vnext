@@ -5,7 +5,7 @@ import { Dialog } from "@/components/ui/dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { FRIENDLY_MESSAGES, friendlyApiError } from "@/lib/friendly-error";
@@ -239,6 +239,21 @@ export function KnownErrorsWorkspace({
   const router = useRouter();
   const { showToast } = useToast();
   const { run, pending } = useGuardedAction({ timeoutMs: 20_000 });
+  const viewedOnce = useRef(false);
+  const [dismissed, setDismissed] = useState(false);
+  const unseenCount = items.filter((item) =>
+    new Date(item.lastSeenAt).getTime() > (lastViewedAt?.getTime() ?? 0)).length;
+
+  // This runs only after the authorized server query has returned. Retain the
+  // pre-query timestamp and count for the current view; do not silently erase
+  // the "since your last visit" banner by refreshing immediately.
+  useEffect(() => {
+    if (viewedOnce.current) return;
+    viewedOnce.current = true;
+    void apiFetch("/api/tracker/logs/viewed", {
+      method: "POST", timeoutMs: 15_000,
+    }).catch(() => { viewedOnce.current = false; });
+  }, []);
 
   async function markViewed() {
     try {
@@ -262,6 +277,13 @@ export function KnownErrorsWorkspace({
 
   return (
     <div id="known-errors" className="space-y-5">
+      {unseenCount > 0 && !dismissed ? <div role="status"
+        className="flex flex-wrap items-center justify-between gap-3 border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-4 py-3 text-sm text-body">
+        <p>{unseenCount} new or updated error {unseenCount === 1 ? "group" : "groups"} since your last visit.</p>
+        <Button variant="secondary" size="sm" type="button" onClick={() => setDismissed(true)}>
+          Dismiss
+        </Button>
+      </div> : null}
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-4">
         <p className="m-0 text-sm text-body leading-[22px]">Last reviewed: {formatInstant(lastViewedAt)}</p>
         <Button variant="secondary" size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={pending} loading={pending} onClick={markViewed}>
