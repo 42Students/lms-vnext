@@ -30,8 +30,8 @@ import { requirePlacementManageScope } from "./scope";
  * - persisted membership roles/status;
  * - their own optional faculty department.
  *
- * Contact details, profile documents, other memberships
- * and other users are never selected.
+ * Only this account's contact fields and avatar-availability flag may be
+ * returned. Private storage paths are never exposed as public image URLs.
  */
 export async function getOwnTpoProfile(
   context: RequestContext,
@@ -58,6 +58,10 @@ export async function getOwnTpoProfile(
   const rows = await getDb()
     .select({
       displayName: users.displayName,
+      contactMail: users.email,
+      contactMobile: users.phoneE164,
+      avatarObjectPath: facultyProfiles.avatarObjectPath,
+      profileDocument: facultyProfiles.profileDocument,
       collegeName: colleges.name,
       collegeCode: colleges.code,
       membershipStatus:
@@ -159,5 +163,22 @@ export async function getOwnTpoProfile(
     membershipStatus: own.membershipStatus,
     roles: [...new Set(rows.map((row) => row.role))],
     departmentName: own.departmentName,
+    contactMail: own.contactMail,
+    contactMobile: own.contactMobile,
+    // A private object key must be signed by a separately authorized media
+    // endpoint. Never hand this key or an unverified external URL to the UI.
+    profileImageAvailable: Boolean(own.avatarObjectPath),
+    profileImageUrl: null as string | null,
+    avatarInitials: (own.displayName ?? "").trim().split(/\s+/).slice(0,2)
+      .map(part=>part[0]?.toUpperCase()??"").join("") || "?",
+    website: (() => {
+      const raw=own.profileDocument?.website;
+      if(typeof raw!=="string")return null;
+      try{
+        const url=new URL(raw);
+        return url.protocol==="https:" && !url.username && !url.password && url.hostname
+          ? url.toString():null;
+      }catch{return null;}
+    })(),
   };
 }
