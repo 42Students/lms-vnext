@@ -276,7 +276,7 @@ function EventCard({
         <Link
           href={`${courseBasePath}/${encodeURIComponent(event.deliveryId)}/attendanceDetail?sessionId=${encodeURIComponent(event.id)}`}
           aria-label={`Open attendance for ${event.title}`}
-          className="flex min-h-11 items-center border-t border-border px-3 py-2 text-xs font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+          className="flex min-h-11 items-center border-t border-border px-3 py-2 text-xs font-[650] text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 rounded-[var(--lms-control-radius)] text-sm"
         >
           Open class attendance
         </Link>
@@ -656,7 +656,7 @@ export function LearnerClassSchedule({
                     </h3>
                     {agenda.length ? <a download={"classes-"+chosenDay+".ics"}
                       href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text sm:w-auto hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                       Download selected day (.ics)
                     </a> : null}
                   </div>
@@ -672,7 +672,7 @@ export function LearnerClassSchedule({
                 <p className="min-w-0 text-sm font-semibold text-body">{chosenDay} · {agenda.length} authorized sessions</p>
                 <a download={"classes-"+chosenDay+".ics"}
                   href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(dayIcs.content)}
-                  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+                  className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
                   Download selected day (.ics)
                 </a>
                 {dayIcs.truncated ? <p className="w-full text-xs text-warning-foreground">Export includes the first 100 selected sessions only.</p> : null}

@@ -17,7 +17,7 @@ export function CollegeArchivedPrograms({ programs }: {
   const [error, setError] = useState("");
   return <section aria-label="Archived programs" className="min-w-0 border-t border-border pt-4">
     <Button variant="ghost" type="button" onClick={() => setOpen(value => !value)}
-      className="w-full justify-between font-semibold text-primary-text md:w-auto">
+      className="w-full justify-between font-[650] text-primary-text md:w-auto">
       {open ? "Hide archived programs" : "Show archived programs"} ({programs.length}{programs.length === 100 ? "+" : ""})
     </Button>
     {open ? <div className="mt-3 space-y-3">
@@ -25,7 +25,7 @@ export function CollegeArchivedPrograms({ programs }: {
         className="flex min-w-0 flex-col items-stretch gap-3 border-t border-border pt-3 md:flex-row md:items-center md:justify-between">
         <p className="min-w-0 break-words text-sm text-body">{program.name} ({program.code}) · {program.departmentName}</p>
         <Button variant="secondary" type="button" disabled={busy}
-          className="w-full rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-semibold text-primary-text md:w-auto"
+          className="w-full rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650] text-primary-text md:w-auto"
           onClick={async () => {
             if (!(await askConfirm(`Restore ${program.name}? Its active name and code must remain unique.`))) return;
             setError("");
