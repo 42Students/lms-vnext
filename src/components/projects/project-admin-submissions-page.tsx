@@ -206,20 +206,6 @@ export async function ProjectAdminSubmissionsPage({
           <p className="text-lg font-semibold tabular-nums">{result.total}</p>
         </div>
       </div>:null}
-      {false?<div className="grid min-w-0 grid-cols-2 gap-2 border-y border-border py-3 md:grid-cols-4">
-        {([
-          ["Active workspaces", summary.activeWorkspaces, basePath+"?status=ACTIVE"],
-          ["Pending review", summary.pendingReview, queuePath+"?status=ACTIVE&submissionStatus=SUBMITTED"],
-          ["Needs student action", summary.needsStudentAction, queuePath+"?status=ACTIVE&submissionStatus=CHANGES_REQUESTED"],
-          ["Reviewed", summary.reviewed, queuePath+"?submissionStatus=APPROVED"],
-        ] as const).map(([name, value, href]) => {
-          return <Link key={name} href={href}
-            className="block min-w-0 bg-surface px-3 py-3 transition-colors duration-[var(--lms-motion-fast)] ease-[var(--lms-motion-ease)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            <p className="text-xs font-semibold text-muted-foreground leading-[20px]">{name}</p>
-            <p className="mt-2 text-2xl font-semibold text-foreground">{value}</p>
-          </Link>;
-        })}
-      </div>:null}
       <FilterBar title="Filters"><ProjectAdminFilters
         query={query}
         includeSubmissionStatus
