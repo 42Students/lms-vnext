@@ -59,11 +59,15 @@ export async function getLearnerPlacementJourney(
             driveStatus: placementJobs.status,
             closedAt: placementJobs.closedAt,
             employmentType:placementJobs.employmentType,
+            jobTypeLabel:placementJobs.jobTypeLabel,
+            recordedOutside:placementJobs.recordedOutside,
             workMode:placementJobs.workMode,
             locations:placementJobs.locations,
             applicationDeadline:placementJobs.applicationDeadline,
             minimumAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
             maximumAnnualCtcInr:placementJobs.maximumAnnualCtcInr,
+            ctcLpa:placementJobs.ctcLpa,
+            stipendPerMonthInr:placementJobs.stipendPerMonthInr,
             isDream:placementJobs.isDream,
             legacyPostingDetails:placementJobs.legacyPostingDetails,
           },
@@ -244,6 +248,13 @@ export async function getLearnerPlacementJourney(
     const knownRounds=roundsByJob.get(row.job.id)??[];
     const unresolvedRound=knownRounds.find(round=>round.kind!=="TALK" &&
       !appliedResults.some(result=>result.roundId===round.id));
+    // An unsuccessful completed round, a closed drive or withdrawn
+    // application cannot show a future stage as an actionable NEXT round.
+    const processEnded=row.job.driveStatus==="CLOSED" ||
+      row.screening.status==="REJECTED" ||
+      row.application.status!=="SUBMITTED" ||
+      appliedResults.some(result=>result.outcome==="FAIL"||result.outcome==="ABSENT");
+    const waitlisted=appliedResults.some(result=>result.outcome==="HOLD");
     const terminal =
       row.screening.status ===
         "SHORTLISTED" ||
@@ -291,7 +302,8 @@ export async function getLearnerPlacementJourney(
             :result.outcome==="FAIL"?"NOT_CLEARED"
             :result.outcome==="ABSENT"?"ABSENT":"WAITLISTED"
           :round.kind==="TALK"?"TALK"
-          :row.job.driveStatus==="CLOSED"?"ENDED"
+          :processEnded?"ENDED"
+          :waitlisted?"LATER"
           :round.id===unresolvedRound?.id?"NEXT":"LATER";
         return {roundId:round.id,sequence:round.sequence,kind:round.kind,
           name:round.name,status:round.status,state,

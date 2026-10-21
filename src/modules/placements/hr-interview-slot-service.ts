@@ -122,6 +122,25 @@ export async function writeHrInterviewSlot(
       gt(hrInterviewSlots.endAt,input.startAt)))
     .limit(1);
    if(recruiterConflict)throw new Error("RECRUITER_SLOT_OVERLAP");
+   // A named on-campus room is a college resource, not a recruiter-owned
+   // resource. The college row lock in verifyRecruiterSlotJob serializes
+   // competing recruiter proposals for this college before this predicate.
+   // Do not treat blank/general venues as unique room identifiers.
+   if(input.mode==="ON_CAMPUS" && input.meetingLocation?.trim()){
+    const room=input.meetingLocation.trim().toLocaleLowerCase("en-IN");
+    const [roomConflict]=await tx.select({id:hrInterviewSlots.id})
+     .from(hrInterviewSlots).where(and(
+      eq(hrInterviewSlots.collegeId,job.collegeId),
+      eq(hrInterviewSlots.mode,"ON_CAMPUS"),
+      ne(hrInterviewSlots.status,"CANCELLED"),
+      sql`lower(btrim(${hrInterviewSlots.meetingLocation})) = ${room}`,
+      lt(hrInterviewSlots.startAt,input.endAt),
+      gt(hrInterviewSlots.endAt,input.startAt),
+     )).limit(1);
+    // Reuse the route's existing conflict code until it can return a
+    // distinct room-conflict message; never expose another recruiter slot.
+    if(roomConflict)throw new Error("SLOT_OVERLAP");
+   }
    const [newSlot]=await tx.insert(hrInterviewSlots).values({
     collegeId:job.collegeId,jobId:job.id,roundId:round.id,startAt:input.startAt,endAt:input.endAt,
     timezone:input.timezone,mode:input.mode,meetingLocation:input.meetingLocation??null,
