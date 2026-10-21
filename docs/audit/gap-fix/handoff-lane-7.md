@@ -695,3 +695,35 @@ The project template detail already does scoped read-only assignment, but its cr
 - G2-2-013-016 | `src/modules/admin-ui/college-dashboard-cards-service.ts` | Version old REST response envelope for clients, no success toast requirement.
 
 College dashboard summary totals require independent failures with nullable counts; do not fabricate zero for failed queries or broaden selected-college scope. Dashboard/Admin UI owner must decouple setup queries. **11/11 handed off, not fixed**.
+
+## ZeptoMail event template mapping — lane-7 handoff (2026-10-21)
+
+- G2-2-003-004 | `src/modules/notifications/zeptomail-config.ts` | Introduce audited typed event-to-template lookup and channel matrix for 19 legacy events.
+- G2-2-003-005 | `src/modules/notifications/zeptomail-provider.ts` | Port event-specific property keys into typed provider configuration; protect OTP templates separately.
+- G2-2-003-011 | `src/modules/notifications/zeptomail-provider.ts` | Add startup validation enumerating each email-enabled event with missing ID and aggregate warning.
+- G2-2-003-012 | `src/modules/notifications/zeptomail-provider.ts` | Reject literal placeholder value across all email send paths.
+- G2-2-003-016 | `src/modules/notifications/zeptomail-config.ts` | Add startup readiness audit and operational health metric, respecting non-production send restrictions.
+- G2-2-003-017 | `src/modules/notifications/zeptomail-provider.ts` | Implement explicit legacy-event dispatch adapter with complete channel and merge-variable coverage.
+- G2-2-003-021 | `src/modules/notifications/zeptomail-provider.ts` | Encode six-event email allowlist and refuse other legacy events unless owner explicitly expands.
+- G2-2-003-022 | `src/modules/notifications/zeptomail-provider.ts` | Enforce negative event-channel policy to prevent cost/privacy regressions.
+- G2-2-003-027 | `src/modules/notifications/zeptomail-config.ts` | Implement reviewed registry of each legacy event, channel and template binding; add channel tests.
+- G2-2-003-014 | `src/modules/notifications/zeptomail-provider.ts` | Expose structured skip counts to ops without exposing recipients/credentials.
+- G2-2-003-013 | `src/modules/notifications/zeptomail-config.ts` | Provide non-sensitive log/metric for complete event template provisioning.
+
+Notification channel matrix and provider templates belong to Messaging/Notifications. Missing template IDs must not trigger sends, and expanding permitted email events carries privacy and cost consequences. **11/11 handed off, not fixed**.
+
+## Lesson Resource uploads — lane-7 handoff (2026-10-21)
+
+- G2-6-025-002 | `src/modules/storage/file-policy.ts` | Provide a lesson Resource file kind with course/delivery scope, not project-resource reuse.
+- G2-6-025-005 | `src/modules/courses/lesson-resource-materials-service.ts` | Provide authenticated per-file Open/download action instead of public URL.
+- G2-6-025-008 | `src/modules/storage/file-policy.ts` | Introduce distinct typed Resource namespace before issuing grants.
+- G2-6-025-026 | `src/modules/storage/file-lifecycle.ts` | Store immutable Resource parent content/offering/delivery IDs and verify on upload completion.
+- G2-6-025-027 | `src/modules/courses/lesson-resource-materials-service.ts` | Add atomic FILE grant/complete/attach, consumed token, object head, scan and tenant binding.
+- G2-6-025-049 | `src/db/schema/lesson-content-materials.ts` | Wire material FILE rows with grant/complete/attestation transition and scoped signed downloads.
+- G2-6-025-018 | `src/modules/courses/lesson-resource-materials-service.ts` | Preserve unauthenticated 401 vs authenticated 403 with exact UI wording.
+- G2-6-025-019 | `src/modules/courses/lesson-resource-materials-service.ts` | Map typed 403 to legacy complete staff-only message in upload UI.
+- G2-6-025-020 | `src/modules/storage/file-policy.ts` | Use new equivalent Resource-specific bad-request copy, without trusting caller-provided scope.
+- G2-6-025-021 | `src/modules/storage/file-policy.ts` | Translate storage error codes to exact legacy Resource messages and field helper text.
+- G2-6-025-023 | `src/modules/storage/file-lifecycle.ts` | Offer explicit storage-unavailable recovery, avoid exposing provider stack.
+
+Existing signed storage intentionally prevents public download URLs. Course Resource FILE attachments require a scoped grant, HEAD/scan attestation and one-time receipt consumption before exposing downloads. Storage/Courses schema owned elsewhere. **11/11 handed off, not fixed**.

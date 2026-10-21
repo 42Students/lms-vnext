@@ -75,3 +75,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-7_u005-college-admin-project-template-detail.md.md` | 12/12 findings reviewed with per-ID target handoff in Projects template read-only detail/UI/service. 0 files outside lane area edited. **Handoff, not fixed**, no code execution or CI.
 
 - `NEW_docs_audit_gap2_lane-2_admin-college-summary-controller.md.md` | 11/11 findings reviewed with per-ID target handoff in College Admin dashboard-card/setup-checklist services. 0 files outside lane area edited. **Handoff, not fixed**, no code execution or CI.
+
+- `NEW_docs_audit_gap2_lane-2_zeptomail-template-id-resolver.md.md` | 11/11 findings mapped to Notification template resolver/provider owner files. No code outside lane scope altered, security/tenant boundary retained. **Handoff, not fixed**; static only.
+
+- `NEW_docs_audit_gap2_lane-6_resource-upload-controller.md.md` | 11/11 findings mapped to Storage policy/lifecycle and Courses lesson materials owner files. No code outside lane scope altered, security/tenant boundary retained. **Handoff, not fixed**; static only.
