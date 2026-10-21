@@ -1,4 +1,4 @@
-import {and,count,eq,isNull,sql} from "drizzle-orm";
+import {and,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courseTeachingAssignments,courseSectionDeliveries,courseOfferings,courses,departments} from "@/db/schema";
 import {getCurrentRequestContext} from "@/auth/request-context";
@@ -47,10 +47,13 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
   intro={workspace?<div className="space-y-4">
    {metricsReady?<section aria-label="Faculty assignment overview" className="grid grid-cols-2 divide-x divide-border border-y border-border lg:grid-cols-4">
     {[
-     ["Assignments",total],["Active",active],["Primary instructors",primary],["Classes covered",covered],
-    ].map(([label,value])=><div key={label} className="min-w-0 px-3 py-4">
-      <p className="text-xs text-muted-foreground">{label}</p>
-      <p className="mt-1 text-xl font-semibold tabular-nums">{typeof value==="number"?value.toLocaleString("en-IN"):"—"}</p>
+     {label:"Assignments",value:total},
+     {label:"Active",value:active},
+     {label:"Primary instructors",value:primary},
+     {label:"Classes covered",value:covered},
+    ].map(stat=><div key={stat.label} className="min-w-0 px-3 py-4">
+      <p className="text-xs text-muted-foreground">{stat.label}</p>
+      <p className="mt-1 text-xl font-semibold tabular-nums">{typeof stat.value==="number"?stat.value.toLocaleString("en-IN"):"—"}</p>
     </div>)}
    </section>:<p role="status" className="text-sm text-muted-foreground">Faculty assignment totals are temporarily unavailable.</p>}
    <section aria-label="Create Faculty Assignment" className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
@@ -86,8 +89,8 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
         contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">
         <p className="m-0 text-xs text-body">End assignment {row.id}</p>
         <p className="m-0 max-w-prose text-xs text-muted-foreground">
-          Delete teaching assignment? Ending it preserves teaching history. The teaching history remains
-          auditable and the assignment can no longer create new sessions.
+          Delete teaching assignment? Ending it preserves auditable teaching history,
+          and the assignment can no longer create new sessions.
         </p>
         <TeachingAssignmentActions legacyCopy assignment={{
           id:row.id,facultyDisplayName:row.title,courseName:row.subtitle,
