@@ -93,7 +93,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   }finally{submissionInProgress.current=false;}
  }
  const downloadSample=()=>{
-  const sample="First Name,Last Name,Mobile Number,Email\r\nAnjali,Sharma,9876543210,anjali@example.edu\r\n";
+  const sample="First Name,Last Name,Mobile Number,Email,Faculty Type\r\nJohn,Doe,9876543210,john@example.com,LECTURER\r\nJane,Smith,9876543211,,MENTOR\r\n";
   const element=document.createElement("a");
   const url=URL.createObjectURL(new Blob([sample],{type:"text/csv"}));
   element.href=url;element.download="bulk_faculty_sample.csv";
@@ -105,7 +105,7 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   {dialog}
   <h3 className="font-semibold text-foreground">Bulk register faculty</h3>
   <p className="text-sm text-body">
-    Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional).
+    Import up to 500 faculty. Columns: First Name, Last Name, Mobile Number, Email (optional), Faculty Type (LECTURER or MENTOR).
     Local preview does not check existing college accounts. The server validates each identity during creation; partial imports are possible.
   </p>
   <div className="flex min-w-0 flex-col items-stretch gap-3 print:hidden sm:flex-row sm:flex-wrap sm:items-center">
@@ -114,9 +114,9 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
      className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9"
      onFiles={files=>void fileSelected(files?.[0]??null)}/>
   </div>
-  {filename?<p className="text-xs text-muted-foreground print:hidden">File: {filename}</p>:null}
+  {filename?<p className="text-xs text-muted-foreground print:hidden">File: {filename} · {busy?"Importing":previewVersion===fileVersion.current?"Locally validated":"Needs validation"}</p>:null}
   {count>0?<p role="status" className="text-sm text-body">
-    Parsed {count} row(s). Review the local preview before creating Faculty accounts.
+    Parsed {count} row(s). Select college if needed, then Validate or Create.
   </p>:null}
   {(issue||error)?<Alert tone="error">{error||issue}</Alert>:null}
   {rowIssues.length>0?<Alert tone="error">
@@ -127,17 +127,37 @@ export function SuperAdminFacultyBulkImport({collegeId}:{collegeId:string}){
   <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap">
     <Button type="button" variant="secondary" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9"
       disabled={busy||!count||Boolean(issue||error)||rowIssues.length>0||!filename}
-      onClick={()=>setPreviewVersion(fileVersion.current)}>Preview CSV</Button>
+      onClick={()=>{setError("");setPreviewVersion(fileVersion.current);}}>Validate</Button>
     <Button type="button" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9 print:hidden"
       loading={busy} onClick={()=>void submit()}
       disabled={busy||!count||Boolean(issue||error)||rowIssues.length>0||!filename||
         previewVersion!==fileVersion.current}>
-      {busy?"Importing…":"Create faculty"}
+      {busy?"Importing…":"Create"}
     </Button>
   </div>
+  {previewVersion===fileVersion.current&&count>0&&rowIssues.length===0?
+   <div className="max-h-60 min-w-0 overflow-auto rounded-md border border-border" role="region" aria-label="Faculty CSV row preview" tabIndex={0}>
+    <table className="w-full min-w-[540px] border-collapse text-left text-xs">
+     <thead><tr className="border-b border-border bg-surface-subtle">
+      <th scope="col" className="px-3 py-2">First Name</th>
+      <th scope="col" className="px-3 py-2">Last Name</th>
+      <th scope="col" className="px-3 py-2">Mobile Number</th>
+      <th scope="col" className="px-3 py-2">Email</th>
+      <th scope="col" className="px-3 py-2">Faculty Type</th>
+     </tr></thead>
+     <tbody>{parsedRows.slice(0,10).map((row,index)=><tr key={index} className="border-b border-border">
+      <td className="px-3 py-2">{row.firstName}</td>
+      <td className="px-3 py-2">{row.lastName}</td>
+      <td className="px-3 py-2">{row.phoneE164}</td>
+      <td className="px-3 py-2">{row.email??"—"}</td>
+      <td className="px-3 py-2">{row.facultyType}</td>
+     </tr>)}</tbody>
+    </table>
+    {count>10?<p className="px-3 py-2 text-xs text-muted-foreground">Showing first 10 of {count} rows.</p>:null}
+   </div>:null}
   {previewVersion===fileVersion.current&&count>0&&rowIssues.length===0?(
     <Alert tone="warning" role="status">
-      {count} rows passed local duplicate and format checks only. No server-side duplicate or department preflight has run.
+      Validated {count} row(s) locally. Existing-mobile/email and department checks are not available until Create. No server-side duplicate or department preflight has run.
       Create faculty will begin irreversible onboarding after confirmation.
     </Alert>
   ):null}
