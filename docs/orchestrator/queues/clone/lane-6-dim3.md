@@ -76,14 +76,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/placements/college-drive-legacy-nav.tsx`
 - [x] `src/components/placements/learner-placement-journey.tsx`
 - [x] `src/components/placements/recruiter-interview-slot-form.tsx`
-- [ ] `src/components/projects/learner-project-tabs.tsx`
-- [ ] `src/components/projects/project-workspace-readiness.tsx`
-- [ ] `src/components/shell/topbar/tpo-notification-cluster.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tracker/tracker-issue-logs-panel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/page.tsx`
+- [x] `src/components/projects/learner-project-tabs.tsx`
+- [x] `src/components/projects/project-workspace-readiness.tsx`
+- [x] `src/components/shell/topbar/tpo-notification-cluster.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
+- [x] `src/components/tracker/tracker-issue-logs-panel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/page.tsx`
 - [ ] `src/components/admin/admin-program-directory.tsx`
 - [ ] `src/components/admin/super-admin-hr-account-dialog.tsx`
 - [ ] `src/components/courses/assignment-file-submission-control.tsx`
