@@ -9,6 +9,7 @@ import { Suspense } from "react";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerCalendar } from "@/components/placements/learner-career-calendar";
 import { initialCareerCalendarDay } from "@/modules/placements/learner-career-calendar-model";
+import {listLearnerCareerCalendarSupplements} from "@/modules/placements/learner-career-supplement-service";
 import { getLearnerPlacementRequestWorkspace } from "@/modules/placements/request-service";
 import { partitionLearnerPlacementSchedule,learnerRoundIsDayOnly } from "@/modules/placements/learner-placement-schedule-model";
 import {LearnerScheduleReschedule} from "@/components/placements/learner-schedule-reschedule";
@@ -23,8 +24,10 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   const requested=typeof query.view==="string"?query.view:"coming";
   const view=requested==="past"?"past":requested==="calendar"||requested==="month"?"calendar":"coming";
   const context = await getCurrentRequestContext();
-  const [workspaceResult,resultsResult]=await Promise.allSettled([
-    getLearnerPlacementRequestWorkspace(context),listOwnAppliedPlacementResults(context),
+  const [workspaceResult,resultsResult,calendarResult]=await Promise.allSettled([
+    getLearnerPlacementRequestWorkspace(context),
+    listOwnAppliedPlacementResults(context),
+    ...(view==="calendar"?[listLearnerCareerCalendarSupplements(context)]:[]),
   ]);
   if(workspaceResult.status==="rejected"){
     if(workspaceResult.reason instanceof AuthorizationError)throw workspaceResult.reason;
@@ -36,6 +39,10 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
   }
   const workspace=workspaceResult.value;
   const resultsUnavailable=resultsResult.status==="rejected";
+  if(view==="calendar"&&calendarResult?.status==="rejected"&&
+    calendarResult.reason instanceof AuthorizationError)throw calendarResult.reason;
+  const calendarExtras=calendarResult?.status==="fulfilled"?calendarResult.value:[];
+  const calendarExtrasUnavailable=view==="calendar"&&calendarResult?.status==="rejected";
   const ownResults=resultsResult.status==="fulfilled"?resultsResult.value:[];
   const outcomeByRound=new Map(ownResults.map(row=>[row.applicationId+":"+row.roundId,row]));
   // Newest request wins. A pending move must suppress attendance actions
@@ -216,9 +223,14 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
         </article>)}
       </section>:null}
       {view==="calendar"?<section aria-label="Calendar" className="space-y-2">
-
+        {calendarExtrasUnavailable?<p role="alert"
+          className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm">
+          Application deadlines and exam blocked dates could not be loaded. Scheduled rounds are still shown.
+          <Link href="/learn/my-placements/schedule?view=calendar" className="ml-2 font-semibold text-link underline">Retry calendar</Link>
+        </p>:null}
         <Suspense fallback={<p role="status">Calendar</p>}>
-          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds} surface="schedule" />
+          <LearnerCareerCalendar initialAnchor={today} todayAnchor={today} rounds={rounds}
+            supplements={calendarExtras} surface="schedule" />
         </Suspense>
       </section>:null}
       {view==="past"?<section aria-label="Past placement rounds" className="space-y-3">
