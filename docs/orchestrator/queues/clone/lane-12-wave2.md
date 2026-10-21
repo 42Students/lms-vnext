@@ -31,7 +31,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-notice-read-progress.tsx.md` (edit src/components/tpo/tpo-notice-read-progress.tsx; 18 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_students_page.tsx.md` (edit src/app/(authenticated)/tpo/students/page.tsx; 18 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_bug-tracker_admin-service.ts.md` (edit src/modules/bug-tracker/admin-service.ts; 16 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_super-admin-classes-service.ts.md` (edit src/modules/admin-ui/super-admin-classes-service.ts; 16 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_super-admin-classes-service.ts.md` (edit src/modules/admin-ui/super-admin-classes-service.ts; 16 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_reports_unplaced_page.tsx.md` (edit src/app/(authenticated)/tpo/reports/unplaced/page.tsx; 15 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_messages_threadId_page.tsx.md` (edit src/app/(authenticated)/tpo/messages/[threadId]/page.tsx; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_modules_admin-ui_department-directory.ts.md` (edit src/modules/admin-ui/department-directory.ts; 12 findings; best P2)
