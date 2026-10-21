@@ -12,15 +12,29 @@ import {Button} from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import {Textarea} from "@/components/ui/textarea";
+import {Dialog} from "@/components/ui/dialog";
+import {Select} from "@/components/ui/select";
 
 type Readiness = Awaited<ReturnType<typeof getTpoDriveLifecycleReadiness>>;
 type Action = "PUBLISH" | "CLOSE" | "REOPEN";
+const DECLINE_REQUEST_REASONS=[
+ "Does not fit our students",
+ "Details are incomplete",
+ "Clashes with another drive",
+ "Company is not approved",
+] as const;
 
-export function TpoDriveLifecycleControls({ readiness, initialPublish = false }: { readiness: Readiness; initialPublish?: boolean }) {
+export function TpoDriveLifecycleControls({ readiness, initialPublish = false, requestId,requestStatus }: {
+ readiness: Readiness; initialPublish?: boolean;requestId?:string;
+ requestStatus?:"REQUEST"|"SENT_BACK"|null;
+}) {
   const router = useRouter();
   const {run}=useGuardedAction({timeoutMs:35000});
   const [action, setAction] = useState<Action | null>(initialPublish ? "PUBLISH" : null);
   const [reason, setReason] = useState("");
+  const [declineOpen,setDeclineOpen]=useState(false);
+  const [declineReason,setDeclineReason]=useState("");
+  const canDecline=Boolean(requestId&&(requestStatus==="REQUEST"||requestStatus==="SENT_BACK"));
   const [pending, setPending] = useState(false);
   const [notifyByEmail,setNotifyByEmail]=useState(false);
   const [acknowledged,setAcknowledged]=useState(false);
@@ -56,9 +70,11 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
         },
       );
 
-      setSuccess(selected.action==="PUBLISH"?
-        "Published. "+(result.notifiedCount??0)+" eligible learners notified in the app. No email sent.":
-        "Drive updated.");
+      setSuccess(selected.action==="PUBLISH"?"Published":"Reopened");
+      // The legacy app+email default is NOT delivered by this adapter;
+      // keep any notification counts separate from the success claim.
+      if(selected.action==="PUBLISH"&&result.emailSent===true)
+        setSuccess("Published");
       setAction(null);
       setReason("");
       setAcknowledged(false);
@@ -66,10 +82,34 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
     } catch (failure) {
       setError(failure instanceof FriendlyFetchError && failure.code==="EMAIL_DELIVERY_UNAVAILABLE"?
         "Email delivery is not configured. Choose app notifications only.":
-        failure instanceof Error?failure.message:friendlyApiError({}));
+        failure instanceof Error?failure.message:
+          selected.action==="PUBLISH"?"Publish failed":"Reopen failed");
     } finally {
       setPending(false);
     }
+    });
+  }
+
+  async function declineRecruiterRequest(){
+    if(!canDecline||!requestId||!requestStatus||
+       !DECLINE_REQUEST_REASONS.includes(declineReason as typeof DECLINE_REQUEST_REASONS[number])||
+       pending)return;
+    await run(async()=>{
+      setPending(true);setError(null);setSuccess("");
+      try{
+        await apiFetch("/api/placements/tpo/drive-requests/"+
+          encodeURIComponent(requestId)+"/decision",{
+          method:"POST",credentials:"same-origin",
+          headers:{"content-type":"application/json"},
+          body:JSON.stringify({action:"DECLINE",expectedStatus:requestStatus,
+            reason:declineReason,confirmed:true}),
+        });
+        setSuccess("Declined");
+        setDeclineOpen(false);setDeclineReason("");
+        router.refresh();
+      }catch(cause){
+        setError(cause instanceof Error?cause.message:"Decline failed");
+      }finally{setPending(false);}
     });
   }
 
@@ -81,6 +121,12 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
         eligibility policy, an active role, an evaluative round and an active season/company.
         Reopen is blocked after applied results or accepted offers.
       </p>
+      {canDecline ? <div className="mt-3">
+        <Button type="button" variant="danger" disabled={pending}
+          onClick={()=>{setDeclineReason("");setDeclineOpen(true);setError(null);}}>
+          Decline this request
+        </Button>
+      </div> : null}
       <div className="mt-4">
         {readiness.close.allowed ? (
           <Link href={"/tpo/placements/jobs/" + encodeURIComponent(readiness.jobId) + "/close-preview"}
@@ -111,6 +157,8 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
           {item.action === "PUBLISH" ? "Before publishing" : "Before reopening"}: {item.decision.blockers.map(tpoDriveReadinessMessage).join(" ")}
         </p>
       ))}
+      {!readiness.publish.allowed&&readiness.publish.blockers.length===0 ?
+        <p role="alert" className="mt-3 text-sm text-error">Could not verify eligibility and rounds. Retry before publishing.</p> : null}
       {selected?.decision.allowed ? (
         <div className="mt-4 space-y-3">
           <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
@@ -164,6 +212,28 @@ export function TpoDriveLifecycleControls({ readiness, initialPublish = false }:
           </div>
         </div>
       ) : null}
+      <Dialog open={declineOpen} title="Decline this request"
+        description="The recruiter sees this reason. For anything they can fix, request a change instead: the drive stays in review."
+        onOpenChange={open=>{if(!open&&!pending)setDeclineOpen(false);}}
+        footer={<div className="flex flex-wrap justify-end gap-2">
+          <Button type="button" variant="secondary" disabled={pending}
+            onClick={()=>setDeclineOpen(false)}>Cancel</Button>
+          <Button type="button" variant="danger"
+            disabled={pending || !DECLINE_REQUEST_REASONS.includes(
+              declineReason as typeof DECLINE_REQUEST_REASONS[number])}
+            onClick={()=>void declineRecruiterRequest()}>
+            {pending?"Declining…":"Decline"}
+          </Button>
+        </div>}>
+        <label className="block text-sm font-semibold text-foreground">
+          Reason
+          <Select className="mt-2 w-full" value={declineReason}
+            onChange={event=>setDeclineReason(event.target.value)}>
+            <option value="">Tell them why</option>
+            {DECLINE_REQUEST_REASONS.map(value=><option key={value} value={value}>{value}</option>)}
+          </Select>
+        </label>
+      </Dialog>
       {success?<InlineNotice tone="success" message={success}/>:null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
     </section>
