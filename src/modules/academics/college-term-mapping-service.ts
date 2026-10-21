@@ -79,7 +79,15 @@ export async function listCollegeTermMappings(context: RequestContext) {
       id: programTermCourses.id, termId: programTerms.id,
       courseId: programTermCourses.courseId,
       termNumber: programTerms.termNumber, termName: programTerms.name,
-      programName: programs.name, courseName: courses.name, courseCode: courses.code,
+      programName: programs.name,
+      // Keep a same-college mapping visible even if its linked course record is
+      // unavailable or no longer resolves in the scoped course directory.
+      // Never expose a different college's course name through this join.
+      courseName: sql<string>`case when ${courseDepartment.id} is null
+        then ('Course name unavailable (ID ' || ${programTermCourses.courseId}::text || ')')
+        else ${courses.name} end`,
+      courseCode: sql<string>`case when ${courseDepartment.id} is null
+        then '—' else ${courses.code} end`,
       type: programTermCourses.type, credits: programTermCourses.credits,
       displayOrder: programTermCourses.displayOrder,
     }).from(programTermCourses)
@@ -87,16 +95,22 @@ export async function listCollegeTermMappings(context: RequestContext) {
       .innerJoin(programs, eq(programs.id, programTerms.programId))
       .innerJoin(departments, and(eq(departments.id, programs.departmentId),
         eq(departments.collegeId, membership.collegeId)))
-      .innerJoin(courses, eq(courses.id, programTermCourses.courseId))
-      .innerJoin(courseDepartment, and(
+      .leftJoin(courses, eq(courses.id, programTermCourses.courseId))
+      .leftJoin(courseDepartment, and(
         eq(courseDepartment.id, courses.departmentId),
         eq(courseDepartment.collegeId, membership.collegeId),
       ))
       .orderBy(asc(programs.name), asc(programTerms.termNumber), asc(programTermCourses.displayOrder)),
   ]);
-  // Current academic-period offerings give a genuine course-by-course staffing
-  // warning; a course without active deliveries has no assigned teacher.
-  const staffingRows = await db.select({
+  // Read curriculum and course choices independently from staffing. A failed
+  // staffing query must not hide a valid mapping roster or an edit action.
+  // These are ACTIVE DELIVERY counts, not the legacy all-program-class report.
+  let staffingAvailable = true;
+  let staffingRows: Array<{
+    courseId: string; deliveries: number; missing: number; uncoveredClasses: string | null;
+  }> = [];
+  try {
+    staffingRows = await db.select({
     courseId: courses.id,
     deliveries: sql<number>`count(distinct ${courseSectionDeliveries.id})::int`,
     missing: sql<number>`count(distinct case when ${courseTeachingAssignments.id}
@@ -119,22 +133,41 @@ export async function listCollegeTermMappings(context: RequestContext) {
       eq(academicPeriods.status, "ACTIVE"),
       eq(courseOfferings.status, "ACTIVE"), eq(courses.status, "ACTIVE")))
     .groupBy(courses.id);
+  } catch {
+    // Legacy also treats the staffing endpoint as a soft dependency. The
+    // unmapped curriculum still renders and can be corrected independently.
+    staffingAvailable = false;
+  }
   const staffByCourse = new Map(staffingRows.map(row => [row.courseId, row]));
-  return { terms, courses: courseChoices,
+  return { terms, courses: courseChoices, staffingAvailable,
     mapped: mapped.map(row => {
       const staffing = staffByCourse.get(row.courseId);
-      const warning = !staffing || staffing.deliveries === 0
-        ? "No faculty assigned"
+      const warning = !staffingAvailable ? "Faculty staffing warnings unavailable"
+        : !staffing || staffing.deliveries === 0 ? "No faculty assigned"
         : staffing.missing === 0 ? null
         : staffing.missing === staffing.deliveries ? "No faculty assigned"
         : `No faculty for ${staffing.missing} of ${staffing.deliveries} classes`;
       return { ...row, staffingWarning: warning,
-        staffingTooltip: staffing?.uncoveredClasses || (!staffing ? "No active class deliveries" : null) };
+        staffingTooltip: !staffingAvailable
+          ? "Staffing could not be loaded. Refresh to retry."
+          : staffing?.uncoveredClasses || (!staffing ? "No active class deliveries" : null),
+        // Supplement the legacy class-count report without conflating data
+        // sources: each number here covers CURRENT active course deliveries.
+        staffingSource: "ACTIVE_DELIVERIES" as const,
+        staffingAvailable,
+        totalClasses: staffingAvailable ? staffing?.deliveries ?? 0 : null,
+        unstaffedClassCount: staffingAvailable ? staffing?.missing ?? 0 : null,
+        unstaffedClasses: staffingAvailable ? staffing?.uncoveredClasses ?? null : null,
+        fullyUnstaffed: staffingAvailable ? (!staffing || staffing.missing === staffing.deliveries) : null,
+      };
     }),
   };
 }
 
 export async function addCollegeTermMapping(context: RequestContext, raw: unknown) {
+  // Current program-term-course contract requires explicit CORE/ELECTIVE and
+  // credits 1..10. Legacy accepted isMandatory and 0..30, but it would be
+  // unsafe to infer historical type or silently coerce old credit values.
   const input = collegeTermCourseAddSchema.parse(raw);
   const membership = await ownCollege(context);
   try {
@@ -145,6 +178,9 @@ export async function addCollegeTermMapping(context: RequestContext, raw: unknow
           eq(departments.collegeId, membership.collegeId), isNull(departments.archivedAt)))
         .where(and(eq(courses.id, input.courseId), eq(courses.status, "ACTIVE")))
         .limit(1);
+      // Do not reveal whether a submitted UUID is foreign, inactive, or
+      // missing. The user-facing model maps all three to the actionable
+      // "unavailable in your college" message.
       if (!course) throw new CollegeTermMappingError("COURSE_NOT_FOUND");
       const rows = await tx.select({
         id: programTermCourses.id, courseId: programTermCourses.courseId,
@@ -161,7 +197,7 @@ export async function addCollegeTermMapping(context: RequestContext, raw: unknow
         collegeId: membership.collegeId, organizationId: membership.organizationId,
         subjectType: "program_term_course", subjectId: inserted.id,
         summary: "Course mapped to semester",
-        metadata: { termId: term.id, courseId: course.id, type: inserted.type,
+        metadata: { action: "SEMESTER_COURSE_ADD", termId: term.id, courseId: course.id, type: inserted.type,
           credits: inserted.credits, displayOrder: inserted.displayOrder },
       });
       return inserted;
@@ -202,6 +238,9 @@ export async function updateCollegeTermMapping(
         .for("update");
       const current = before.find(row => row.id === mappingId);
       if (!current) throw new CollegeTermMappingError("TERM_COURSE_NOT_FOUND");
+      // vNext reorders one scoped mapping by a 1-based position, not by
+      // replacing all mappingIds. A full-list legacy reorder adapter would
+      // need its own validated set-equality contract and endpoint.
       if (input.position > before.length)
         throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
       const order = reorderTermCourseIds(before.map(row => row.id), mappingId, input.position);
@@ -224,6 +263,7 @@ export async function updateCollegeTermMapping(
         subjectType: "program_term_course", subjectId: mappingId,
         summary: "Semester course mapping updated",
         metadata: {
+          action: current.displayOrder !== input.position ? "SEMESTER_COURSE_REORDER" : "SEMESTER_COURSE_UPDATE",
           termId: subject.termId,
           fromCredits: current.credits,
           toCredits: input.credits,
@@ -269,6 +309,9 @@ export async function removeCollegeTermMapping(
         .where(and(eq(courseOfferings.courseId, row.courseId),
           eq(courseOfferings.status, "ACTIVE")))
         .limit(1);
+      // Legacy allowed deletion despite current usage. vNext deliberately
+      // preserves live batch offering integrity: reject before deletion and
+      // show TERM_COURSE_IN_USE in the caller's confirmation workflow.
       if (activeOffering) throw new CollegeTermMappingError("TERM_COURSE_IN_USE");
       const [removed] = await tx.delete(programTermCourses).where(eq(programTermCourses.id, row.id)).returning();
       await recordActivityEventInTransaction(tx, context, {
@@ -276,7 +319,7 @@ export async function removeCollegeTermMapping(
         collegeId: member.collegeId, organizationId: member.organizationId,
         subjectType: "program_term_course", subjectId: removed.id,
         summary: "Course unmapped from semester",
-        metadata: { termId: term.id, courseId: removed.courseId },
+        metadata: { action: "SEMESTER_COURSE_REMOVE", termId: term.id, courseId: removed.courseId },
       });
       return { id: removed.id };
     });
@@ -284,7 +327,11 @@ export async function removeCollegeTermMapping(
 }
 
 /** Atomically add several courses to one semester, preserving display order.
- * A failed eligibility or duplicate check rolls back all selected courses. */
+ * A failed eligibility or duplicate check rolls back all selected courses.
+ * This intentionally differs from old partial-success duplicate skipping:
+ * return a clear conflict rather than silently omitting selected courses.
+ * The UI/route must surface the all-or-nothing contract before confirmation.
+ */
 export async function addCollegeTermMappings(context: RequestContext, raw: unknown) {
   const inputs = z.array(collegeTermCourseAddSchema).min(1).max(100).parse(raw);
   const targetTerm = inputs[0]!.programTermId;
@@ -301,11 +348,17 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
         .innerJoin(departments, and(eq(departments.id, courses.departmentId),
           eq(departments.collegeId, member.collegeId), isNull(departments.archivedAt)))
         .where(and(inArray(courses.id, courseIds), eq(courses.status, "ACTIVE")));
+      // Cross-college, inactive and missing IDs share the same error: never
+      // disclose the presence of another tenant's catalog entry. The whole
+      // bulk request fails, with no partial new mappings committed.
       if (available.length !== courseIds.length)
         throw new CollegeTermMappingError("COURSE_NOT_FOUND");
       const existing = await tx.select({ courseId: programTermCourses.courseId,
         displayOrder: programTermCourses.displayOrder }).from(programTermCourses)
         .where(eq(programTermCourses.programTermId, term.id)).for("update");
+      // The old backend silently skipped duplicates; vNext deliberately
+      // keeps the batch all-or-nothing so callers can retry a clean selection
+      // without assuming that every requested course was inserted.
       if (existing.some(row => courseIds.includes(row.courseId)))
         throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
       let next = nextTermCourseOrder(existing.map(row => row.displayOrder));
@@ -323,7 +376,7 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
         collegeId: member.collegeId, organizationId: member.organizationId,
         subjectType: "program_term", subjectId: term.id,
         summary: "Courses mapped to semester",
-        metadata: { courseIds, count: inserted.length },
+        metadata: { action: "SEMESTER_COURSE_ADD", courseIds, count: inserted.length, atomic: true },
       });
       return inserted;
     });
