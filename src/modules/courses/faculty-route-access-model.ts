@@ -7,10 +7,20 @@ export function canAccessFacultyRoute(context: RequestContext | null | undefined
   const membership = context?.membership;
   return Boolean(
     context && membership &&
-    hasMembershipRole(context, "FACULTY") &&
-    can(context, "courses.read", {
-      organizationId: membership.organizationId,
-      collegeId: membership.collegeId,
-    }),
+    (
+      (hasMembershipRole(context, "FACULTY") &&
+        can(context, "courses.read", {
+          organizationId: membership.organizationId,
+          collegeId: membership.collegeId,
+        })) ||
+      // A former legacy faculty ADMIN must now hold an explicit, active
+      // COLLEGE_ADMIN tenant role. This grants the admin course workspace
+      // entitlement, never a facultyType-based or cross-college bypass.
+      (hasMembershipRole(context, "COLLEGE_ADMIN") &&
+        can(context, "courses.manage", {
+          organizationId: membership.organizationId,
+          collegeId: membership.collegeId,
+        }))
+    ),
   );
 }

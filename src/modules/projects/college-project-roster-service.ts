@@ -1,4 +1,5 @@
 import "server-only";
+import {z} from "zod";
 import {and,eq,exists,inArray,isNull,sql} from "drizzle-orm";
 import {replaceCollegeProjectRosterSchema} from "./college-project-roster-model";
 import {getDb} from "@/db/client";
@@ -13,7 +14,14 @@ import type {RequestContext} from "@/modules/identity/context";
 
 /** COL-projects-15: one all-or-nothing learner-roster replacement. Class teams stay managed by their own workflow. */
 export async function replaceCollegeProjectLearners(context:RequestContext,projectId:string,raw:unknown){
- const input=replaceCollegeProjectRosterSchema.parse(raw);
+ const input=replaceCollegeProjectRosterSchema.extend({
+  learnerMembershipIds:z.array(z.string().uuid()).max(500)
+   .refine(values=>new Set(values).size===values.length,"Each learner must be selected once."),
+  // Additive by default: replacing the roster requires an explicit choice,
+  // and removing active learners needs a separate confirmation.
+  mode:z.enum(["ADD","REPLACE"]).default("ADD"),
+  confirmRemoval:z.boolean().optional(),
+ }).parse(raw);
  const scope=await requireProjectManageAccess(context,projectId);
  return getDb().transaction(async tx=>{
   const [project]=await tx.select({
@@ -34,7 +42,13 @@ export async function replaceCollegeProjectLearners(context:RequestContext,proje
    .for("update");
   const existingLearners=existing.filter(x=>x.role==="LEARNER");
   const selected=new Set(input.learnerMembershipIds);
-  const toRemove=existingLearners.filter(x=>!selected.has(x.membershipId));
+  const toRemove=input.mode==="REPLACE"
+   ?existingLearners.filter(x=>!selected.has(x.membershipId)):[];
+  if(toRemove.length && input.confirmRemoval!==true)
+   throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
+  if(existingLearners.length-toRemove.length+
+      input.learnerMembershipIds.filter(id=>!existingLearners.some(member=>member.membershipId===id)).length>500)
+   throw new ProjectsServiceError("PROJECT_MEMBER_CONFLICT");
   const learnerIds=new Set(existingLearners.map(x=>x.membershipId));
   const toAdd=input.learnerMembershipIds.filter(id=>!learnerIds.has(id));
   if(toAdd.some(id=>existing.some(x=>x.membershipId===id)))
