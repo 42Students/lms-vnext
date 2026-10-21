@@ -275,34 +275,34 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/components/projects/learner-project-activity.tsx`
 - [x] `src/components/projects/mentor-delivery-lock-control.tsx`
 - [x] `src/components/projects/project-activity-filtered-list.tsx`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/projects/project-task-comments.tsx`
-- [ ] `src/components/projects/super-admin-template-overview-editor.tsx`
-- [ ] `src/components/public/error-recovery-actions.tsx`
-- [ ] `src/components/public/graceful-error-boundary.tsx`
-- [ ] `src/components/public/graceful-screen.tsx`
-- [ ] `src/components/shell/topbar/account-menu.tsx`
-- [ ] `src/components/tpo/grid/tpo-grid.tsx`
-- [ ] `src/components/tpo/tpo-audit-grid.tsx`
-- [ ] `src/components/tpo/tpo-campaign-compose.tsx`
-- [ ] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
-- [ ] `src/components/tpo/tpo-everyone-controls.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-notice-read-progress.tsx`
-- [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
-- [ ] `src/components/tpo/tpo-team-away-form.tsx`
-- [ ] `src/components/tpo/tpo-team-forms.tsx`
-- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
-- [ ] `src/components/tracker/tracker-issue-copy-actions.tsx`
-- [ ] `src/components/ui/confirm-action-dialog.tsx`
-- [ ] `src/components/ui/confirm-dialog.tsx`
-- [ ] `src/components/ui/filter-chip.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/third-party-link.tsx`
-- [ ] `src/components/verification/VerificationFilterPanel.tsx`
-- [ ] `src/components/verification/VerificationWorkspace.tsx`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/projects/project-task-comments.tsx`
+- [x] `src/components/projects/super-admin-template-overview-editor.tsx`
+- [x] `src/components/public/error-recovery-actions.tsx`
+- [x] `src/components/public/graceful-error-boundary.tsx`
+- [x] `src/components/public/graceful-screen.tsx`
+- [x] `src/components/shell/topbar/account-menu.tsx`
+- [x] `src/components/tpo/grid/tpo-grid.tsx`
+- [x] `src/components/tpo/tpo-audit-grid.tsx`
+- [x] `src/components/tpo/tpo-campaign-compose.tsx`
+- [x] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
+- [x] `src/components/tpo/tpo-everyone-controls.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-notice-read-progress.tsx`
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- [x] `src/components/tpo/tpo-team-away-form.tsx`
+- [x] `src/components/tpo/tpo-team-forms.tsx`
+- [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
+- [x] `src/components/tracker/tracker-issue-copy-actions.tsx`
+- [x] `src/components/ui/confirm-action-dialog.tsx`
+- [x] `src/components/ui/confirm-dialog.tsx`
+- [x] `src/components/ui/filter-chip.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/third-party-link.tsx`
+- [x] `src/components/verification/VerificationFilterPanel.tsx`
+- [x] `src/components/verification/VerificationWorkspace.tsx`
 
 
 ## Dimension sweep: lane chat-10 owns "Colour tokens and raw colours (part 2 of 2)" across the whole codebase
@@ -310,16 +310,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 50 files (101 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: every colour must be a legacy token or exactly a legacy value; replace tailwind default palette and stray hex with tokens; check text contrast; no pure black text.
 Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/reviews/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/more/page.tsx`
-- [ ] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/mentor/projects/[projectId]/review-completeness/page.tsx`
+- [x] `src/app/(authenticated)/mentor/reviews/page.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/page.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/page.tsx`
+- [x] `src/app/(authenticated)/tpo/more/page.tsx`
+- [x] `src/components/activity/notification-list.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
 - [ ] `src/components/placements/learner-placement-journey.tsx`
 - [ ] `src/components/placements/tpo-drive-clone-action.tsx`

@@ -84,9 +84,9 @@ export function TpoAuditGrid({rows}:{rows:readonly TpoAuditRow[]}){
    selection={{selected,onChange:setSelected,allIds:visible.map(row=>row.kind+":"+row.id)}}
    rowActions={row=>row.entityHref?
     <Link href={row.entityHref}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open item →</Link>:
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">Open item →</Link>:
     row.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(row.jobId)}
-      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Open job →</Link>:
+      className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">Open job →</Link>:
      <span aria-label="No linked item" className="text-xs text-muted-foreground">—</span>}
   />
   {notice?<p role="status" className="text-xs text-muted-foreground">{notice}</p>:null}
