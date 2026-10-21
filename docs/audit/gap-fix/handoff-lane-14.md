@@ -47,3 +47,7 @@
 - `src/components/projects/project-admin-workspace-list.tsx` and status filters (projects UI owner) | G2-7-019-054/-089/-090/-091/-092, G2-7-020-103/-105/-106 | Render historic READY/BLOCKED as separate readiness flags; explicit old title/slug cap and migration collision feedback.
 - `src/modules/projects/mentor-reassignment-service.ts` (projects owner) | G2-7-021-091 | Legacy mentor userId -> faculty membership/primary mentor with archived exclusion and CAS; no bare int role grant.
 - `drizzle/meta/_journal.json` (lane 15 only) | G2-5-017-047 | Register 0210/0211 only after review/replay and historical event conflict checks.
+
+- `src/modules/projects/mentor-reassignment-service.ts` / at-risk UI (projects owner) | G2-7-021-093, G2-7-029-093 | Scope status/blocked/readiness derived from legacy status before mentor workload calculations, exclude ARCHIVED.
+- `src/modules/projects/project-meeting-service.ts` (projects owner) | G2-19-028-022, G2-20-017-020 | Convert legacyMeetingsList to tenant-safe relational meetings, only show calendar error if a real sync producer exists.
+- `src/modules/projects/template-service.ts` (projects owner) | G2-6-017-017 | Preserve exact duplicate college-template assignment wording for verified unique conflict.

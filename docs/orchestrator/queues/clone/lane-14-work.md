@@ -25,7 +25,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part3of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part4of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part5of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part6of6.md` (edit src/db/schema/projects.ts; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part6of6.md` (edit src/db/schema/projects.ts; 5 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_activity.ts.part1of3.md` (edit src/db/schema/activity.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_activity.ts.part2of3.md` (edit src/db/schema/activity.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_activity.ts.part3of3.md` (edit src/db/schema/activity.ts; 16 findings; best P1)

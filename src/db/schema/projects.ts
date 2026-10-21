@@ -237,6 +237,8 @@ export const projectInstances = pgTable(
     legacyRecoverableContent: boolean("legacy_recoverable_content"),
     legacyOverview: jsonb("legacy_overview").$type<Record<string, unknown>>(),
     legacyTemplateSnapshot: jsonb("legacy_template_snapshot").$type<Record<string, unknown>>(),
+    // Source-only serialized meeting list; current meetings remain relational.
+    legacyMeetingsList: jsonb("legacy_meetings_list").$type<unknown[]>(),
     legacyOrganizationId: integer("legacy_organization_id"),
     legacyClassId: integer("legacy_class_id"),
     legacyRevision: integer("legacy_revision"),
@@ -1287,6 +1289,7 @@ export const projectMeetings = pgTable(
     facilitation: jsonb("facilitation").$type<MentorMeetingFacilitation>()
       .notNull().default(sql`'{}'::jsonb`),
     cancellationNote: text("cancellation_note"),
+    calendarSyncError: varchar("calendar_sync_error", { length: 500 }),
     createdByUserId: uuid("created_by_user_id")
       .notNull()
       .references(() => users.id, {
