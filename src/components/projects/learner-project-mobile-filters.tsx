@@ -29,14 +29,14 @@ export function LearnerProjectMobileFilters({
           </span>
         </span>}>
         <form method="get" action="/learn/projects" className="grid min-w-0 gap-3 border-t border-border py-3">
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Search Projects
             <Input type="search" name="search" maxLength={100}
               defaultValue={query.search ?? ""}
               placeholder="Search project title, course or slug"
               className="min-h-11 w-full" />
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Project status
             <Select name="status" defaultValue={query.status ?? ""}
               className="min-h-11 w-full">
@@ -46,7 +46,7 @@ export function LearnerProjectMobileFilters({
               ))}
             </Select>
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Attention
             <Select name="attention" defaultValue={query.attention ?? ""}
               className="min-h-11 w-full">
@@ -55,7 +55,7 @@ export function LearnerProjectMobileFilters({
               <option value="BLOCKED">Blocked</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Work attention
             <Select name="work" defaultValue={query.work ?? ""}
               className="min-h-11 w-full">
@@ -64,7 +64,7 @@ export function LearnerProjectMobileFilters({
               <option value="NO_TASKS">No tracked tasks yet</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Sort projects
             <Select name="sort" defaultValue={query.sort ?? "RECENT"}
               className="min-h-11 w-full">
@@ -73,7 +73,7 @@ export function LearnerProjectMobileFilters({
               <option value="PROGRESS">Least progress first</option>
             </Select>
           </label>
-          <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-foreground leading-4">
+          <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Results per page
             <Select name="pageSize" defaultValue={String(query.pageSize ?? 25)}
               className="min-h-11 w-full">

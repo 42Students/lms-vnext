@@ -83,28 +83,28 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       }catch{setError("Could not add backlog task");}
       finally{setBusy(false);}
     }} className="grid gap-3 border-t border-border pt-3 min-[768px]:grid-cols-2">
-      <label className="text-sm font-semibold">Title<Input required maxLength={200} value={title}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title<Input required maxLength={200} value={title}
         onChange={e=>setTitle(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Priority<Select value={priority}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Priority<Select value={priority}
         onChange={e=>setPriority(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
         {["LOW","MEDIUM","HIGH","CRITICAL"].map(v=><option key={v} value={v}>{v}</option>)}
       </Select></label>
       <Disclosure title="Additional task details" className="min-w-0 min-[768px]:col-span-2" contentClassName="grid min-w-0 gap-3 pt-3 min-[768px]:grid-cols-2">
-      <label className="text-sm font-semibold">Description<Textarea maxLength={4000}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description<Textarea maxLength={4000}
         value={description} onChange={e=>setDescription(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Approach (optional)<Textarea maxLength={4000}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Approach (optional)<Textarea maxLength={4000}
         value={approach} onChange={event=>setApproach(event.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Done when<Textarea maxLength={4000}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Done when<Textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Estimate points<Input type="number" min={0} max={1000}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimate points<Input type="number" min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
         className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="text-sm font-semibold">Task type
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task type
         <Select value={taskType} onChange={e=>setTaskType(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
           <option value="">Not specified</option>
@@ -112,11 +112,11 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           <option value="CHORE">Chore</option><option value="SPIKE">Spike</option>
         </Select>
       </label>
-      <label className="text-sm font-semibold">Due date
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Due date
         <Input type="date" value={dueDate} onChange={e=>setDueDate(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
-      <label className="text-sm font-semibold min-[768px]:col-span-2">What&apos;s blocking this task?
+      <label className="font-semibold min-[768px]:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">What&apos;s blocking this task?
         <Textarea value={blockerReason} maxLength={4000} onChange={e=>setBlockerReason(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
       </label>
@@ -148,7 +148,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           taskType={task.taskType} estimatePoints={task.estimatePoints}
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
-    {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4">Pull into sprint
+    {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Pull into sprint
      <Select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       <option value="">Choose sprint</option>

@@ -231,18 +231,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/components/placements/tpo-week-hour-calendar.tsx`
 - [x] `src/components/profile/learner-profile-workspace.tsx`
 - [x] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/college-project-summary-editor-full.tsx`
-- [ ] `src/components/projects/learner-own-task-controls.tsx`
-- [ ] `src/components/projects/learner-project-activity.tsx`
-- [ ] `src/components/projects/learner-project-board-search.tsx`
-- [ ] `src/components/projects/learner-project-mobile-filters.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/projects/mentor-sprint-write.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
-- [ ] `src/components/projects/mentor-task-details-edit.tsx`
+- [x] `src/components/projects/college-project-summary-editor-full.tsx`
+- [x] `src/components/projects/learner-own-task-controls.tsx`
+- [x] `src/components/projects/learner-project-activity.tsx`
+- [x] `src/components/projects/learner-project-board-search.tsx`
+- [x] `src/components/projects/learner-project-mobile-filters.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-sprint-write.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/projects/mentor-task-details-edit.tsx`
 - [ ] `src/components/projects/project-activity-filtered-list.tsx`
 - [ ] `src/components/projects/project-admin-audit-page.tsx`
 - [ ] `src/components/projects/project-admin-collection-controls.tsx`
