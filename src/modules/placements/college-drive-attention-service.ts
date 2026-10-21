@@ -140,7 +140,7 @@ export async function getCollegeDriveAttention(context:RequestContext){
        where o.application_id=${placementApplications.id}
         and o.status in ('ISSUED','ACCEPTED')
         and (o.offer_letter_url is null or trim(o.offer_letter_url)=''))
-     )`,,
+     )`,
      lowConversionJobs.length?and(
       inArray(placementApplications.jobId,lowConversionJobs),
       sql`coalesce(${placementCollegeApplicationStages.stage},
