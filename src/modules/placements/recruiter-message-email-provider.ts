@@ -100,6 +100,10 @@ export async function sendRecruiterMessageDigest(
  fetchImpl:typeof fetch=fetch,
 ):Promise<boolean>{
  if(env.RECRUITER_MESSAGE_EMAIL_BRIDGE_ENABLED!=="true")return false;
+ // The legacy provider key appeared in source. No production digest may send
+ // until the operator attests that leaked credentials were revoked.
+ if((env.APP_ENV==="production"||env.STAGE==="prod"||env.STAGE==="production")&&
+    env.ZEPTOMAIL_LEGACY_KEY_REVOKED!=="confirmed")return false;
  const recipient=normalizeRecipient("EMAIL",digest.recipient);
  if(!canContactRecipientAtRuntime("EMAIL",recipient,env))return false;
  const config=readZeptoMailConfig(env);
@@ -128,13 +132,16 @@ export async function sendRecruiterMessageDigest(
  const subjectJob=(digest.jobTitle??"").trim();
  const mailSubject=safeRecruiterEmailMergeText(
   subjectJob?digest.companyName+" · "+subjectJob:"Your recruitment with us",180);
- const earlierCount=Number.isSafeInteger(digest.earlierMessageCount)&&
-  (digest.earlierMessageCount??0)>0?digest.earlierMessageCount!:0;
+ const earlierCount=typeof digest.earlierMessageCount==="number"&&
+  Number.isSafeInteger(digest.earlierMessageCount)&&digest.earlierMessageCount>0
+   ?Math.min(digest.earlierMessageCount,1_000_000):0;
  const earlierSummary=earlierCount>0?
   earlierCount+" earlier "+(earlierCount===1?"message":"messages")+" omitted":"";
  const workspaceUrl=recruiterDigestWorkspaceUrl(env,digest.collegeId);
  try{
   const excerpts=safeRecruiterDigestMessages(digest.messages);
+  // Keep excerpt date labels aligned with the same last-three slice.
+  const recent=digest.messages.slice(-3);
   const response=await outboundFetch(config.apiUrl,{
    method:"POST",
    // Reject redirects; the provider Authorization header and private digest
@@ -157,9 +164,9 @@ export async function sendRecruiterMessageDigest(
       message1:excerpts[0]??"",
       message2:excerpts[1]??"",
       message3:excerpts[2]??"",
-      message1When:safeRecruiterMessageDate(digest.messages.at(-3)?.createdAt),
-      message2When:safeRecruiterMessageDate(digest.messages.at(-2)?.createdAt),
-      message3When:safeRecruiterMessageDate(digest.messages.at(-1)?.createdAt),
+      message1When:safeRecruiterMessageDate(recent[0]?.createdAt),
+      message2When:safeRecruiterMessageDate(recent[1]?.createdAt),
+      message3When:safeRecruiterMessageDate(recent[2]?.createdAt),
       workspaceCta:workspaceUrl?"Open recruiter messages":
        "Sign in to your recruiter workspace to review messages",
       ...(workspaceUrl?{workspaceUrl}:{}),
