@@ -12,12 +12,12 @@ import { driveApplicationsHref, driveApplicationsParams, DRIVE_APPLICATION_EXPOR
 import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
 import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
 import { listCollegeDriveApplicationFilters } from "@/modules/placements/college-drive-applications-options-service";
-import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Tabs} from "@/components/ui/tabs";
 import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
+import {CollegeApplicationsDebouncedSearch} from "@/components/placements/college-applications-debounced-search";
 import { StatusBadge } from "@/components/ui/status-badge";
 
 export default async function CollegeDriveApplicationsPage({ params, searchParams }: {
@@ -84,9 +84,18 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     {key:"screening",header:"Screening",cell:row=>row.screening??"Not recorded"},
   ];
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-    <PageHeader title={"Applications · " + data.drive.title}
-      description="Review applications, move candidates through hiring stages and notify them about decisions."
+    <PageHeader title={"Applications ("+data.total.toLocaleString("en-IN")+")"}
+      description={data.drive.title+" · Review applications, move candidates through hiring stages and notify them about decisions."}
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Drive overview</Link>} />
+    <nav aria-label="Drive sections" className="min-w-0">
+      <Tabs ariaLabel="Drive sections" renderPanel={false} value="applications"
+        items={[
+          {value:"overview",label:"Overview",href:"/college/placements/jobs/"+jobId+"/overview"},
+          {value:"applications",label:"Applications",href:"/college/placements/jobs/"+jobId+"/applications"},
+          {value:"schedule",label:"Schedule",href:"/college/placements/jobs/"+jobId+"/interviews"},
+          {value:"settings",label:"Settings",href:"/college/placements/jobs/"+jobId+"/settings"},
+        ]}/>
+    </nav>
     <section aria-label="Drive and application summary" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
       <div className="flex flex-wrap items-center gap-3 text-[var(--lms-font-sm)]">
         <strong className="font-semibold">{job?.title ?? data.drive.title}</strong>
@@ -96,7 +105,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       <div className="flex flex-wrap gap-2 text-[var(--lms-font-sm)]">
         <span className="font-semibold">Pipeline:</span>
         {Object.entries(data.stageCounts).map(([stage,count])=>
-          <span key={stage} className="rounded-md border border-[var(--lms-canvas-border)] px-2 py-1">
+          <span key={stage} className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1 text-sm font-semibold">
             {stage}: {count.toLocaleString("en-IN")}
           </span>)}
       </div>
@@ -108,9 +117,21 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
       Department, program and batch choices could not be refreshed. Existing filters and the applicant register are still available.
       {" "}<Link href={driveApplicationsHref(jobId,query)} className="font-semibold underline underline-offset-4">Retry filter choices</Link>
     </Alert> : null}
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
+      <span>{data.total.toLocaleString("en-IN")} matching applications</span>
+      <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] hover:bg-primary-subtle min-[768px]:min-h-9 min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">↓ Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
+    </div>
+    <Tabs ariaLabel="Application pipeline stages" renderPanel={false} value={query.stage}
+      items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","REJECTED","OFFERED","HIRED","WITHDRAWN"] as const).map(stage=>({
+        value:stage,
+        label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
+        count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
+        href:driveApplicationsHref(jobId,{...query,stage,page:1}),
+      }))}/>
     <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email, roll or role
-        <Input type="search" name="q" defaultValue={query.q} maxLength={100} />
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search by name or email
+        <CollegeApplicationsDebouncedSearch initialValue={query.q} placeholder="Search by name or email"/>
       </label>
       <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
         <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
@@ -141,18 +162,6 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
         </div>
       </Disclosure>
     </form>
-    <Tabs ariaLabel="Application pipeline stages" renderPanel={false} value={query.stage}
-      items={(["ALL","APPLIED","SHORTLISTED","ASSESSMENT","INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"] as const).map(stage=>({
-        value:stage,
-        label:stage==="ALL"?"All":stage.charAt(0)+stage.slice(1).toLowerCase(),
-        count:stage==="ALL"?Object.values(data.stageCounts).reduce((sum,num)=>sum+num,0):data.stageCounts[stage]??0,
-        href:driveApplicationsHref(jobId,{...query,stage,page:1}),
-      }))}/>
-    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-[var(--lms-font-sm)] text-[var(--lms-body-text)]">
-      <span>{data.total.toLocaleString("en-IN")} matching applications</span>
-      <a href={`/api/college/placements/jobs/${encodeURIComponent(jobId)}/applications/export${driveApplicationsHref(jobId,query,true).split("/export")[1] ?? ""}`}
-        className="inline-flex min-h-11 items-center text-[var(--lms-font-sm)] font-semibold text-[var(--lms-link-text)] underline min-[768px]:min-h-9 min-h-[var(--lms-control-height)] hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
-    </div>
     {!data.storageReady?<section className="space-y-3">
       <p role="status" className="border-b border-[var(--lms-canvas-border)] pb-5 text-[var(--lms-font-base)] leading-[1.6]">
         Application stage actions are awaiting migration registration. You can still review the scoped applicant register.

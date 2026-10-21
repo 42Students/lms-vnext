@@ -149,7 +149,7 @@ export default async function CollegeBatchPromotionPage({
             row.currentAcademicYearStart===null?"-":formatPromotionAcademicYear(row.currentAcademicYearStart)},
           {key:"students",header:"Students",cell:row=>row.activeLearners},
           {key:"status",header:"Status",cell:row=>
-            <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="COMPLETED"?"neutral":"warning"}>{row.status==="COMPLETED"?"Completed":row.status==="ACTIVE"?"Active":row.status==="INACTIVE"?"Inactive":row.status||"Status unavailable"}</StatusBadge>},
+            <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="COMPLETED"?"neutral":"warning"}>{row.status==="COMPLETED"?"Completed":row.status==="ACTIVE"?"Active":String(row.status)==="INACTIVE"?"Inactive":row.status||"Status unavailable"}</StatusBadge>},
           {key:"action",header:"Action",mobilePriority:"action",cell:row=>row.status==="ACTIVE"?
             <Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Preview promotion</Link>:
             <span className="text-xs text-muted-foreground">No action available</span>},
