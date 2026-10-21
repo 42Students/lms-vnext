@@ -100,10 +100,10 @@ export function ProjectAdminWorkspaceList({
   if (!items.length) {
     return (
       <EmptyState
-        title={emptyTitle==="No Projects match these filters"?"No projects yet":emptyTitle}
+        title={emptyTitle}
         description={emptyDescription}
         action={<div className="flex flex-wrap gap-3">
-          <Link href={basePath+"/create"}
+          <Link href={basePath.startsWith("/admin/")?basePath+"/workspaces/new":basePath+"/create"}
             className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
             Create project
           </Link>
@@ -155,12 +155,12 @@ export function ProjectAdminWorkspaceList({
         <div className="min-w-0">
           <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
             <Link href={workspaceSummaryHref(item,basePath)} className="inline-flex min-h-11 max-w-full items-center break-words text-base font-semibold text-primary-text underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">{workspaceTitle(item)}</Link>
-            <StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>
+            <StatusBadge tone={tone(item.status,item.riskReasons)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>
           </div>
           <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.summary ?? "Project workspace."}</p>
           <div className="mt-2"><TemplateLink item={item} basePath={basePath}/></div>
           <dl className="mt-2 grid min-w-0 gap-x-4 gap-y-2 text-xs md:grid-cols-3">
-            <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Mentor</dt><dd className="break-words text-foreground">{item.mentorName??"Unassigned"}</dd></div>
+            <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Mentor</dt><dd className="break-words text-foreground">{item.mentorName?.trim()||"—"}</dd></div>
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Members</dt><dd className="text-foreground">{item.memberCount}</dd></div>
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Progress</dt><dd className="text-foreground">{safeProjectProgressPercent(item.progressPercent)===null?"Unavailable":safeProjectProgressPercent(item.progressPercent)+"%"}</dd></div>
           </dl>
@@ -193,7 +193,7 @@ export function ProjectAdminWorkspaceList({
               </h2>
             </div>
             <StatusBadge
-              tone={tone(item.status)}
+              tone={tone(item.status,item.riskReasons)}
             >
               {collegeWorkspaceStatusLabel(item.status,item.riskReasons)}
             </StatusBadge>

@@ -16,6 +16,7 @@ import { moveMemberBalanced } from "@/modules/projects/class-team-balanced-move"
 import { swapClassTeamMembers } from "@/modules/projects/class-team-swap-model";
 import { previewVersion } from "@/modules/projects/class-team-preview-token";
 import {classTeamCreationOutcomeCsv,type ClassTeamCreationResultRow} from "@/modules/projects/class-team-creation-outcome-export";
+import {projectWorkspaceCsvCell} from "@/modules/projects/admin-workspace-page-export-model";
 import {classTeamCreatorEmptyMessages} from "@/modules/projects/class-team-creator-empty-model";
 import {canRefreshClassTeamRoster} from "@/modules/projects/class-team-roster-refresh-model";
 import {isValidClassTeamBaseSlug} from "@/modules/projects/class-team-slug-model";
@@ -27,6 +28,18 @@ import type { AssignedProjectTemplateChoice } from "./project-create-control";
 type ClassChoice = { id:string;name:string;code:string };
 type Learner = {membershipId:string;rollNumber:string;displayName:string};
 type Roster = {classId:string;className:string;revision:string;members:Learner[]};
+
+/** Keep the three-column legacy cohort export for downstream audit imports.
+ * Detailed learner membership and recovery information stays in the on-screen
+ * report and can be exported separately if a reconciliation is needed.
+ */
+function legacyCohortOutcomeCsv(rows:readonly ClassTeamCreationResultRow[]):string{
+  const values=[["Outcome","Workspace ID","Details"],...rows.map(row=>[
+    row.status==="CREATED"?"Created":row.status==="ALREADY_COVERED"?"Already covered":"Not confirmed",
+    row.projectId??"",row.reason??row.title??row.membershipId,
+  ])];
+  return values.map(columns=>columns.map(projectWorkspaceCsvCell).join(",")).join("\r\n")+"\r\n";
+}
 type CohortCreationOutcome={
  created:{projectId:string;title:string;learnerMembershipId:string}[];
  alreadyCovered:number;requested:number;
@@ -637,7 +650,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
           let url:string|null=null;
           let link:HTMLAnchorElement|null=null;
           try {
-            const csv=classTeamCreationOutcomeCsv(outcome.individualResults,names);
+            const csv=legacyCohortOutcomeCsv(outcome.individualResults);
             const blob=new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"});
             url=URL.createObjectURL(blob);
             link=document.createElement("a");
@@ -653,6 +666,26 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
             if(disposableUrl)window.setTimeout(()=>URL.revokeObjectURL(disposableUrl),0);
           }
         }}>Export outcome CSV</Button>
+      <Button type="button" variant="secondary" className="min-h-11 md:min-h-9"
+        onClick={()=>{
+          let url:string|null=null;
+          let link:HTMLAnchorElement|null=null;
+          try{
+            const csv=classTeamCreationOutcomeCsv(outcome.individualResults,names);
+            url=URL.createObjectURL(new Blob(["\uFEFF"+csv],{type:"text/csv;charset=utf-8"}));
+            link=document.createElement("a");
+            link.href=url;
+            link.download="project-cohort-outcome-detailed.csv";
+            document.body.appendChild(link);
+            link.click();
+          }catch{
+            setError("Could not export the detailed report. Review the outcome rows and try again.");
+          }finally{
+            link?.remove();
+            const disposableUrl=url;
+            if(disposableUrl)window.setTimeout(()=>URL.revokeObjectURL(disposableUrl),0);
+          }
+        }}>Export detailed learner CSV</Button>
     </section>:null}
     {mode==="INDIVIDUAL"&&unconfirmedRows.length>0?<section className="space-y-3 border-y border-warning-border py-4">
       <h3 className="font-semibold text-foreground">Learner creation results not confirmed</h3>
