@@ -12,14 +12,22 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
  if(!recruiterInviteAcceptReady({db09:process.env.DB09_TPO_API_READY,
   otp:process.env.TPO_RECRUITER_OTP_READY,delivery:process.env.TPO_RECRUITER_OTP_DELIVERY_READY}))
    return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503});
+ let deliveryAttempted=false;
+ let deliverySucceeded=false;
  try{
-  await requestRecruiterInviteOtp(token,deliverPublicRecruiterJoinCode);
+  await requestRecruiterInviteOtp(token,async(email,code)=>{
+   // Track the outcome without echoing the recipient or OTP. Provider
+   // rejection is operational unavailability, not an invalid invitation.
+   deliveryAttempted=true;
+   deliverySucceeded=await deliverPublicRecruiterJoinCode(email,code);
+   return deliverySucceeded;
+  });
   // The code is delivered only to the persisted college-company mailbox.
   // Never echo an arbitrary email supplied by the unauthenticated caller.
   return NextResponse.json({status:"CODE_SENT",sent:true},{headers:{"Cache-Control":"no-store"}});
  }catch(error){
   const code=error instanceof Error?error.message:"";
-  if(code==="RECRUITER_OTP_NOT_REGISTERED"||code==="RECRUITER_OTP_STORE_FAILED")
+  if((deliveryAttempted&&!deliverySucceeded)||code==="RECRUITER_OTP_NOT_REGISTERED"||code==="RECRUITER_OTP_STORE_FAILED")
     return NextResponse.json({error:"CODE_NOT_SENT"},{status:503,headers:{"Cache-Control":"no-store"}});
   // Invalid/expired/used tokens and per-link rate limits deliberately share
   // one generic response to avoid public enumeration of invitation state.

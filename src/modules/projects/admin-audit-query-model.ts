@@ -57,7 +57,13 @@ export function projectLegacyAuditLink(params:ProjectAdminAuditSearchParams,now:
  }
  const legacyPage=validPage?Number(page):0;
  return {params:translated,legacyPage,
+  // Cursor pagination cannot jump to a legacy offset without replaying
+  // preceding pages. Give the caller an explicit safe reset, never silently
+  // display page one while claiming it is a deep-linked page.
   needsCursorReplay:legacyPage>0,
+  recoveryMessage:legacyPage>0
+    ?"This older audit link uses page numbers. Start from the latest results and use Next to reach older records."
+    :null,
   invalidLegacyLink:(range!==undefined&&!validRange)||
    (entityId!==undefined&&!validEntity)||(page!==undefined&&!validPage)};
 }

@@ -1,4 +1,6 @@
 import { NextResponse } from "next/server";
+import {z} from "zod";
+import {projectTemplateBlueprintSchema} from "@/modules/projects/validation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
@@ -53,7 +55,30 @@ export async function PATCH(
   try {
     const context = await getCurrentRequestContext();
     const { templateId } = await params;
-    const body = await request.json();
+    const body:unknown = await request.json();
+    // Legacy resource-only PUT/PATCH preserves every unrelated blueprint
+    // section from the current immutable version. The version CAS in the
+    // writer rejects concurrent edits instead of overwriting them.
+    if(body && typeof body==="object" && !Array.isArray(body) &&
+      "resources" in body && !("blueprint" in body)){
+      const input=z.strictObject({
+        expectedVersion:z.number().int().positive(),
+        resources:z.array(z.unknown()).max(200),
+        changeNote:z.string().trim().min(1).max(1000).optional(),
+      }).parse(body);
+      const detail=await getProjectTemplateDetail(context,templateId);
+      if(!detail.currentVersion ||
+         detail.template.currentVersion!==input.expectedVersion)
+        return NextResponse.json({error:"PROJECT_TEMPLATE_STALE_VERSION"},{status:409});
+      const current=projectTemplateBlueprintSchema.parse(detail.currentVersion.blueprint);
+      const blueprint=projectTemplateBlueprintSchema.parse({...current,resources:input.resources});
+      const result=await reviseProjectTemplate(context,templateId,{
+        expectedVersion:input.expectedVersion,title:detail.template.title,
+        summary:detail.template.summary??undefined,
+        blueprint,changeNote:input.changeNote??"Updated template resources",
+      });
+      return NextResponse.json({...result,message:"Project template updated"});
+    }
     const result = await reviseProjectTemplate(
       context,
       templateId,
@@ -66,8 +91,8 @@ export async function PATCH(
   }
 }
 
-/** Version-checked PUT alias. Older clients must supply the current
- * expectedVersion and complete blueprint; never perform a blind overwrite.
+/** Version-checked PUT alias. Resource-only legacy updates merge all
+ * other sections from the current version; never perform a blind overwrite.
  */
 export async function PUT(request:Request,context:RouteContext) {
  return PATCH(request,context);

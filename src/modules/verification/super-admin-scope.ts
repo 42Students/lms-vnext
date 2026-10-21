@@ -4,6 +4,7 @@ import type {RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {CollegeServiceError} from "@/modules/colleges/service";
 import {getSuperAdminTenantLifecycleDetail} from "@/modules/colleges/admin-tenant-lifecycle-service";
+export const SUPER_ADMIN_VERIFICATION_DENIED_COPY="You cannot verify profiles here";
 /** Distinct retryable access-read failure; never leak exception or tenant data. */
 export class VerificationAccessCheckError extends Error {
  readonly code="VERIFICATION_ACCESS_UNAVAILABLE";

@@ -265,7 +265,11 @@ export function applyBugWorkflowUpdate(
   return { next, events };
 }
 
-/** Retest is a privileged mutation in the legacy Super Admin controller. */
+/** Retest is a privileged mutation in the legacy Super Admin controller.
+ * The historic manager/admin label is not a grant: only an active persisted
+ * Super Admin may mutate global DB10 workflow state. INVALID_STATE retains
+ * the exact legacy text "Issue is not ready for retest." above.
+ */
 export function applyBugWorkflowRetest(
   current: BugWorkflowSnapshot,
   change: BugWorkflowRetest,

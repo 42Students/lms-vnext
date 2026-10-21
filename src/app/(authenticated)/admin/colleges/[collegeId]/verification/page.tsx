@@ -15,7 +15,7 @@ import {CollegeServiceError} from "@/modules/colleges/service";
 import {listCollegeVerificationQueue,VerificationQueueLimitError} from "@/modules/verification/staff-queue-service";
 import {VerificationUnavailableError} from "@/modules/verification/staff-auth";
 import {verificationQueueFilters} from "@/modules/verification/queue-filters";
-import {requireSuperAdminVerificationCollege,VerificationAccessCheckError} from "@/modules/verification/super-admin-scope";
+import {requireSuperAdminVerificationCollege,VerificationAccessCheckError,SUPER_ADMIN_VERIFICATION_DENIED_COPY} from "@/modules/verification/super-admin-scope";
 import {AuthorizationError} from "@/modules/permissions/policy";
 
 export const dynamic="force-dynamic";
@@ -35,7 +35,7 @@ export default async function AdminCollegeVerification({
   if(e instanceof CollegeServiceError&&e.code==="COLLEGE_NOT_FOUND")notFound();
   if(e instanceof AuthorizationError)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
    <PageHeader title="Profile verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
-   <ErrorState title="Verification access denied" description="Your current account and college scope do not permit reviewing this verification queue."/>
+   <ErrorState title={SUPER_ADMIN_VERIFICATION_DENIED_COPY} description="Your current account and college scope do not permit reviewing this verification queue."/>
   </div>;
   if(e instanceof VerificationAccessCheckError)return <div className="min-w-0 space-y-[var(--lms-space-6)]">
    <PageHeader title="Profile verification" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>

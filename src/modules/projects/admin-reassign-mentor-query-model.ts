@@ -14,7 +14,7 @@ const schema=z.strictObject({
   q:z.string().trim().max(120).optional(),
   status:z.enum(["PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).optional(),
   page:decimal(1,10000,1),
-  pageSize:decimal(10,100,25),
+  pageSize:decimal(10,100,10),
 });
 
 /** A guessed mentor/project UUID is never enough to read project records.
@@ -46,7 +46,7 @@ export function projectAdminReassignMentorHref(
   if(query.q)params.set("q",query.q);
   if(query.status)params.set("status",query.status);
   if(query.page>1)params.set("page",String(query.page));
-  if(query.pageSize!==25)params.set("pageSize",String(query.pageSize));
+  if(query.pageSize!==10)params.set("pageSize",String(query.pageSize));
   const suffix=params.toString();
   return basePath+"/reassign-mentor"+(suffix?"?"+suffix:"");
 }
