@@ -14,6 +14,8 @@ import {
   courses,
   departments,
   membershipRoles,
+  programTerms,
+  programTermCourses,
   programs,
   sections,
   users,
@@ -60,6 +62,7 @@ export async function listCollegeSemesterCourseMappings(
   const db = getDb();
   const source = db.select({
     id: aliasedColumn(courseOfferings.id, "sc_id"),
+    courseId: aliasedColumn(courses.id, "sc_course_id"),
     courseName: aliasedColumn(courses.name, "sc_course_name"),
     courseCode: aliasedColumn(courses.code, "sc_course_code"),
     cohortName: aliasedColumn(cohorts.name, "sc_cohort_name"),
@@ -99,7 +102,10 @@ export async function listCollegeSemesterCourseMappings(
       ) : undefined,
     )).as("scoped_semester_courses");
 
-  const [totals, items, programChoices, periodChoices] = await Promise.all([
+  // The old semester is an ordinal program term, not an academic period.
+  // Present both identities: mapping edits occur in the term editor while
+  // class delivery is managed as a separate, scoped course offering.
+  const [totals, items, programChoices, periodChoices, termMappings] = await Promise.all([
     db.select({ total: count() }).from(source),
     db.select().from(source)
       .orderBy(asc(source.programName), asc(source.periodName), asc(source.courseName), asc(source.id))
@@ -116,10 +122,39 @@ export async function listCollegeSemesterCourseMappings(
       .from(academicPeriods)
       .where(eq(academicPeriods.collegeId, collegeId))
       .orderBy(asc(academicPeriods.name), asc(academicPeriods.id)),
+    db.select({
+      id: programTermCourses.id,
+      programId: programTerms.programId,
+      courseId: programTermCourses.courseId,
+      semesterId: programTerms.id,
+      semesterNumber: programTerms.termNumber,
+      semesterName: programTerms.name,
+    }).from(programTermCourses)
+      .innerJoin(programTerms, eq(programTerms.id, programTermCourses.programTermId))
+      .innerJoin(programs, eq(programs.id, programTerms.programId))
+      .innerJoin(programDepartment, and(
+        eq(programDepartment.id, programs.departmentId),
+        eq(programDepartment.collegeId, collegeId),
+      ))
+      .where(query.programId ? eq(programs.id, query.programId) : undefined)
+      .orderBy(asc(programTerms.termNumber)),
   ]);
   const total = totals[0]?.total ?? 0;
+  const termByCourse = new Map<string, typeof termMappings>();
+  for (const term of termMappings) {
+    const key = term.programId + ":" + term.courseId;
+    const current = termByCourse.get(key) ?? [];
+    current.push(term);
+    termByCourse.set(key, current);
+  }
   return {
-    query, items, total,
+    query,
+    items: items.map(item => ({
+      ...item,
+      programSemesterMappings: termByCourse.get(item.programId + ":" + item.courseId) ?? [],
+      semesterEditorHref: "/college/semester-courses",
+    })),
+    total,
     programs: programChoices, periods: periodChoices,
     totalPages: mappingPageCount(total),
   };
