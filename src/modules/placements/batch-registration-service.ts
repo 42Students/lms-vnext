@@ -25,7 +25,11 @@ import {
 import { resolvePlacementParticipation } from "./batch-eligibility-policy";
 
 const selfRegistrationInput = z.object({
-  choice: z.enum(["PLACEMENTS", "HIGHER_STUDIES", "NOT_INTERESTED"]),
+  choice: z.enum(["PLACEMENTS", "HIGHER_STUDIES", "NOT_INTERESTED"], {
+    error: issue => issue.input === undefined || issue.input === null || issue.input === ""
+      ? "Choose Placements, Higher studies or Not interested"
+      : "Unknown registration choice",
+  }),
   acceptedConsent: z.boolean(),
 }).strict();
 
@@ -35,9 +39,23 @@ export class PlacementRegistrationError extends Error {
     | "DB08_REGISTRATION_MODULE_DISABLED"
     | "DB08_REGISTRATION_ENROLLMENT_INVALID"
     | "DB08_REGISTRATION_NOT_ELIGIBLE"
-    | "DB08_REGISTRATION_WINDOW_CLOSED") {
+    | "DB08_REGISTRATION_WINDOW_CLOSED",
+    public readonly alreadyRegistered = false) {
     super(code);
     this.name = "PlacementRegistrationError";
+  }
+
+  /** Safe user-facing copy; the stable code is retained for API consumers. */
+  get userMessage(): string {
+    switch (this.code) {
+      case "DB08_REGISTRATION_FORBIDDEN": return "You cannot register for placements with this account.";
+      case "DB08_REGISTRATION_MODULE_DISABLED": return "Placements is not enabled for your college.";
+      case "DB08_REGISTRATION_ENROLLMENT_INVALID": return "Ask your college to check your batch.";
+      case "DB08_REGISTRATION_NOT_ELIGIBLE": return "Ask the placement cell about your eligibility.";
+      case "DB08_REGISTRATION_WINDOW_CLOSED": return this.alreadyRegistered
+        ? "Registration is closed. Ask the placement cell to change your choice."
+        : "Registration is closed. Ask the placement cell to register you.";
+    }
   }
 }
 
@@ -182,16 +200,16 @@ export async function registerOwnPlacementChoice(
       finishedAt: batch.finishedAt,
       deadline: batch.registrationDeadline,
     } : null, now);
-    if (!window.open) {
-      throw new PlacementRegistrationError("DB08_REGISTRATION_WINDOW_CLOSED");
-    }
-
-    const payload = createRegistrationWrite({ ...input, now });
     const [existing] = await tx.select().from(placementBatchRegistrations)
       .where(and(
         eq(placementBatchRegistrations.membershipId, membership.id),
         eq(placementBatchRegistrations.cohortId, enrollment.cohortId),
       )).limit(1);
+    if (!window.open) {
+      throw new PlacementRegistrationError("DB08_REGISTRATION_WINDOW_CLOSED", Boolean(existing));
+    }
+
+    const payload = createRegistrationWrite({ ...input, now });
 
     // Duplicate submission must not manufacture a second consent timestamp.
     if (existing && existing.choice === payload.choice &&
