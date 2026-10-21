@@ -37,8 +37,13 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
     locations: placementJobs.locations,
     publishedAt: placementJobs.publishedAt,
     createdAt: placementJobs.createdAt,
+    // The legacy Applicants column is the historical application count,
+    // including subsequently withdrawn records. Keep the operational active
+    // count separate so other flows do not mistake it for total history.
     applicants: sql<number>`(select count(*)::integer from placement_applications pa
-      where pa.job_id = ${placementJobs.id} and pa.status = 'SUBMITTED')`.as("applicants"),
+      where pa.job_id = ${placementJobs.id})`.as("applicants"),
+    activeApplicants: sql<number>`(select count(*)::integer from placement_applications pa
+      where pa.job_id = ${placementJobs.id} and pa.status = 'SUBMITTED')`.as("active_applicants"),
 
     seasonId: sql<string>`${placementSeasons.id}`.as("season_id"),
     seasonName: sql<string>`${placementSeasons.name}`.as("season_name"),
@@ -76,7 +81,7 @@ export async function listCollegeDrives(context: RequestContext, raw: unknown) {
   const [totals, items, seasons, companies] = await Promise.all([
     db.select({ total: count() }).from(source).where(applicantsFilter),
     db.select().from(source).where(applicantsFilter).orderBy(query.sort==="DEADLINE"?asc(source.applicationDeadline):
-        query.sort==="NEWEST"?desc(source.createdAt):
+        query.sort==="NEWEST"?desc(sql`coalesce(${source.publishedAt}, ${source.createdAt})`):
         query.sort==="APPLICANTS"?desc(source.applicants):asc(source.title),asc(source.id))
       .limit(COLLEGE_DRIVE_PAGE_SIZE).offset((query.page - 1) * COLLEGE_DRIVE_PAGE_SIZE),
     db.select({ id: placementSeasons.id, name: placementSeasons.name }).from(placementSeasons)

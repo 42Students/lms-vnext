@@ -24,7 +24,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_report-model.ts.md` (edit src/modules/placements/report-model.ts; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-schedule-reschedule.tsx.md` (edit src/components/placements/learner-schedule-reschedule.tsx; 9 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-drive-read-service.ts.md` (edit src/modules/placements/college-drive-read-service.ts; 9 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_public-recruiter-join-form.tsx.md` (edit src/components/placements/public-recruiter-join-form.tsx; 8 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_public-recruiter-join-form.tsx.md` (edit src/components/placements/public-recruiter-join-form.tsx; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_company-curation-domain-model.ts.md` (edit src/modules/placements/company-curation-domain-model.ts; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_placement-operations-workspace.tsx.md` (edit src/components/placements/placement-operations-workspace.tsx; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_recruiter-drive-request-service.ts.md` (edit src/modules/placements/recruiter-drive-request-service.ts; 8 findings; best P1)
