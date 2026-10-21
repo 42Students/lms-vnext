@@ -640,7 +640,9 @@ export async function getProjectInstanceWorkspace(
   const project = scope.project;
 
   const db = getDb();
-  const [releases, sprints, tasks, resources] =
+  // A failed releases query must not erase the usable tasks, resources,
+  // meetings and Team tabs. Keep the error distinct from an empty plan.
+  const [releaseResult, sprints, tasks, resources] =
     await Promise.all([
       db
         .select()
@@ -648,7 +650,9 @@ export async function getProjectInstanceWorkspace(
         .where(
           eq(projectReleases.projectId, projectId),
         )
-        .orderBy(asc(projectReleases.sequence)),
+        .orderBy(asc(projectReleases.sequence))
+        .then(rows => ({ rows, failed: false }))
+        .catch(() => ({ rows: [] as (typeof projectReleases.$inferSelect)[], failed: true })),
       db
         .select()
         .from(projectSprints)
@@ -679,7 +683,8 @@ export async function getProjectInstanceWorkspace(
 
   return {
     project,
-    releases,
+    releases: releaseResult.rows,
+    releasesLoadError: releaseResult.failed,
     sprints,
     tasks,
     resources,
