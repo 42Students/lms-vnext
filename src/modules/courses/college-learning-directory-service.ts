@@ -1,6 +1,7 @@
 import "server-only";
 
-import { and, asc, count, eq, exists, inArray, not, sql, type Column } from "drizzle-orm";
+import { and, asc, count, eq, exists, ilike, inArray, isNull, ne, not, or, sql, type Column } from "drizzle-orm";
+import { z } from "zod";
 import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {
@@ -449,4 +450,182 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
   }));
   const total = countRows[0]?.total ?? 0;
   return { kind: "PROGRESS" as const, query, items, total, totalPages: collegeLearningPageCount(total,query.pageSize) };
+}
+
+/** Lesson search is a LIVE, college-scoped vNext read. The legacy cache and
+ * numeric lesson/course IDs are not interchangeable with tenant-scoped UUIDs.
+ * It must never resolve a numeric ID to the first matching course.
+ */
+const scopedLessonSearchInput = z.strictObject({
+  query: z.string().trim().max(100).default(""),
+  courseId: z.string().uuid().optional(),
+  limit: z.coerce.number().int().min(1).max(200).default(15),
+});
+const LESSON_SEARCH_CANDIDATE_CAP = 750;
+
+/** Distance is relevant only for a short typo fallback. Avoid unbounded
+ * quadratic work on arbitrary page content and never search private fields. */
+function lessonSearchEditDistanceAtMostTwo(left: string, right: string) {
+  if (Math.abs(left.length - right.length) > 2 || left.length > 120 || right.length > 120)
+    return false;
+  let previous = Array.from({ length: right.length + 1 }, (_, index) => index);
+  for (let i = 1; i <= left.length; i++) {
+    const current = [i];
+    for (let j = 1; j <= right.length; j++) {
+      current[j] = Math.min(
+        previous[j]! + 1,
+        current[j - 1]! + 1,
+        previous[j - 1]! + (left[i - 1] === right[j - 1] ? 0 : 1),
+      );
+    }
+    previous = current;
+  }
+  return previous[right.length]! <= 2;
+}
+
+function lessonSearchScore(term: string, name: string, courseName: string) {
+  if (!term) return 1;
+  const fields = [name.toLocaleLowerCase(), courseName.toLocaleLowerCase()];
+  let score = 0;
+  for (const field of fields) {
+    if (field === term) score = Math.max(score, 100);
+    else if (field.startsWith(term)) score = Math.max(score, 80);
+    else if (field.includes(" " + term)) score = Math.max(score, 60);
+    else if (field.includes(term)) score = Math.max(score, 40);
+  }
+  if (score === 0 && term.length >= 3 && lessonSearchEditDistanceAtMostTwo(term, fields[0]!))
+    score = 20;
+  return score;
+}
+
+function scopedLessonSearchConditions(collegeId: string, courseId?: string) {
+  // Unlike the old global in-memory LessonRepository cache, this query
+  // excludes archived/deleted parents and enforces offering cohort/period
+  // ancestry within the explicitly selected college.
+  return and(
+    eq(departments.collegeId, collegeId),
+    eq(cohortDepartment.collegeId, collegeId),
+    eq(academicPeriods.collegeId, collegeId),
+    eq(courseLessons.status, "ACTIVE"),
+    isNull(courseLessons.deletedAt),
+    ne(courseLearningPaths.status, "ARCHIVED"),
+    eq(courseOfferings.status, "ACTIVE"),
+    eq(courses.status, "ACTIVE"),
+    isNull(courses.deletedAt),
+    courseId ? eq(courses.id, courseId) : undefined,
+  );
+}
+
+function scopedLessonSearchRows(db: ReturnType<typeof getDb>) {
+  return db.select({
+    id: courseLessons.id,
+    lessonName: courseLessons.name,
+    courseId: courses.id,
+    courseCode: courses.code,
+    courseSlug: courses.slug,
+    courseName: courses.name,
+    sequence: courseLessons.sequence,
+    offeringId: courseOfferings.id,
+  }).from(courseLessons)
+    .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
+    .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
+    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(cohortDepartment, eq(cohortDepartment.id, programs.departmentId))
+    .innerJoin(academicPeriods, and(
+      eq(academicPeriods.id, courseOfferings.academicPeriodId),
+      eq(academicPeriods.collegeId, departments.collegeId),
+    ));
+}
+
+/** Separate indexed-name suggestion surface. Query is never global:
+ * selected-college Super Admin may search that college, while other
+ * College Admin actors must explicitly identify a UUID course.
+ * The bounded candidate window is reported, not hidden, if incomplete.
+ */
+export async function searchCollegeLessons(
+  context: RequestContext,
+  rawInput: unknown,
+) {
+  const input = scopedLessonSearchInput.parse(rawInput);
+  const collegeId = requireCollegeCoursesRead(context);
+  if (!isSuperAdmin(context) && !input.courseId)
+    throw new AuthorizationError("courses.read");
+  const db = getDb();
+  const term = input.query.toLocaleLowerCase();
+  const scoped = scopedLessonSearchConditions(collegeId, input.courseId);
+  // Exact/prefix/substring matches must be found by SQL across the entire
+  // authorized scope BEFORE the candidate cap, not only among its first 750
+  // alphabetically ordered lessons.
+  const matched = await scopedLessonSearchRows(db)
+    .where(and(scoped, term ? or(
+      ilike(courseLessons.name, searchLike(term)),
+      ilike(courses.name, searchLike(term)),
+    ) : undefined))
+    .orderBy(asc(courseLessons.name), asc(courseLessons.id))
+    .limit(LESSON_SEARCH_CANDIDATE_CAP + 1);
+  let incomplete = matched.length > LESSON_SEARCH_CANDIDATE_CAP;
+  const candidates = matched.slice(0, LESSON_SEARCH_CANDIDATE_CAP);
+  // Fuzzy fallback is deliberately bounded and only supplements a sparse
+  // result; an incomplete candidate window is explicitly reported.
+  if (term.length >= 3 && candidates.length < 5) {
+    const fallback = await scopedLessonSearchRows(db)
+      .where(scoped)
+      .orderBy(asc(courseLessons.name), asc(courseLessons.id))
+      .limit(LESSON_SEARCH_CANDIDATE_CAP + 1);
+    if (fallback.length > LESSON_SEARCH_CANDIDATE_CAP) incomplete = true;
+    const seen = new Set(candidates.map(row => row.id));
+    for (const row of fallback.slice(0, LESSON_SEARCH_CANDIDATE_CAP)) {
+      if (!seen.has(row.id)) {
+        candidates.push(row);
+        seen.add(row.id);
+      }
+    }
+  }
+  const ranked = candidates
+    .map(row => ({ row, score: lessonSearchScore(term, row.lessonName, row.courseName) }))
+    .filter(item => item.score > 0)
+    .sort((left, right) =>
+      right.score - left.score ||
+      left.row.lessonName.localeCompare(right.row.lessonName) ||
+      left.row.id.localeCompare(right.row.id));
+  return {
+    items: ranked.slice(0, input.limit).map(({ row }) => ({
+      id: row.id,
+      lessonName: row.lessonName,
+      courseId: row.courseId,
+      courseSlug: row.courseSlug,
+      courseName: row.courseName,
+      courseCode: row.courseCode,
+      offeringId: row.offeringId,
+      active: true as const,
+    })),
+    incomplete,
+    scanned: candidates.length,
+  };
+}
+
+/** Selected-college Super Admin stats only. There is no cross-tenant
+ * unscoped GLOBAL mode and no lesson-search cache to refresh. */
+export async function getCollegeLessonSearchStats(context: RequestContext) {
+  if (!isSuperAdmin(context) || !context.adminScope?.collegeId)
+    throw new AuthorizationError("courses.read");
+  const collegeId = requireCollegeCoursesRead(context);
+  const [result] = await getDb().select({ totalLessons: count() })
+    .from(courseLessons)
+    .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
+    .innerJoin(courseOfferings, eq(courseOfferings.id, courseLearningPaths.offeringId))
+    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .innerJoin(cohorts, eq(cohorts.id, courseOfferings.cohortId))
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(cohortDepartment, eq(cohortDepartment.id, programs.departmentId))
+    .innerJoin(academicPeriods, and(
+      eq(academicPeriods.id, courseOfferings.academicPeriodId),
+      eq(academicPeriods.collegeId, departments.collegeId),
+    ))
+    .where(scopedLessonSearchConditions(collegeId));
+  return { totalLessons: result?.totalLessons ?? 0 };
 }
