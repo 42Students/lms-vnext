@@ -120,6 +120,7 @@ export function ProjectParticipantListControls({
             {mentor ? (
               <>
                 <option value="MENTOR_REVIEW">Needs my review</option>
+                <option value="BLOCKED">Blocked</option>
                 <option value="MENTOR_REQUESTED">Meeting requests</option>
                 <option value="MENTOR_STALLED">Stalled projects</option>
                 <option value="MENTOR_MEETING_SOON">Meeting soon</option>
