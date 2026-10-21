@@ -320,3 +320,6 @@
 
 - work2 #43 `api/admin/faculty-assignment/batch/route.ts` | G2-14-027-016/020: kept 401 session error vs 403 CSRF integrity and added exact single-association success message while preserving atomic batch and counted plural success.
 - work2 #44 `tracker-cloud-logs.ts` | G2-12-024-006: explicit safe log detail projection of redacted/whitelisted identifier, time, event, message, path, request ID, component. Raw provider JSON omitted intentionally to prevent authentication/PII leakage.
+
+- work2 #45 `project-audit-page-export.tsx` | G2-7-036-012/017: switched export to legacy Action/Entity type/Entity ID/Actor/When headers; row inputs represent ungrouped authorized activity events, optional missing actor/entity IDs left blank rather than invented. Parent audit page source mapping handoff.
+- work2 #46 `public-work-email-policy.ts` | G2-13-012-028/G2-12-012-007: added known legacy academic suffixes and rejected IPv4 shorthand/numeric octal/hex/IPv6 address forms before invalid-host path. Full legacy resource-backed personal/disposable blocklists unavailable in source snapshot: owner must restore centrally refreshed rules; marked partial.
