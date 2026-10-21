@@ -1,6 +1,7 @@
 "use client";
 import { Alert } from "@/components/ui/alert";
 import {useMemo,useState} from "react";
+import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Drawer} from "@/components/ui/drawer";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -12,7 +13,8 @@ type LessonChoice=Awaited<ReturnType<typeof getFacultyAssessmentOverview>>["less
 
 /** Same course → lesson entry sequence as the legacy Faculty create dialog.
  * The authoritative ownership check still runs when saving the assessment. */
-export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ";lessons:readonly LessonChoice[]}){
+export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{kind:"ASSIGNMENT"|"QUIZ";lessons:readonly LessonChoice[];lessonsLoadError?:string|null}){
+ const router=useRouter();
  const [open,setOpen]=useState(false),[courseKey,setCourseKey]=useState("");
  const [lessonKey,setLessonKey]=useState(""),[continued,setContinued]=useState(false);
  const [error,setError]=useState<string|null>(null);
@@ -35,7 +37,11 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
  function discardDraft(){
    setDiscardConfirm(false);setDraftDirty(false);setOpen(false);setContinued(false);setError(null);
  }
- function start(){if(!course||!lesson){setError("Select a course and lesson first.");return;}setContinued(true);setError(null);}
+ function start(){
+  if(!course){setError("Select course");return;}
+  if(!lesson){setError("Select lesson");return;}
+  setContinued(true);setError(null);
+ }
  return <>
   <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
    <div><h2 className="font-semibold text-[var(--lms-heading)]">Create {name}</h2>
@@ -43,11 +49,14 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
    </div>
    <Button className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
   </div>
-  {!courses.length?<Alert tone="info">No assigned courses found. Assign yourself to a course before creating a {name.toLowerCase()}.</Alert>:null}
+  {lessonsLoadError?<div className="flex flex-wrap items-center gap-2">
+    <Alert tone="error">{lessonsLoadError==="SESSION_EXPIRED"?"Session expired. Please sign in again.":"Assigned courses could not be loaded"}</Alert>
+    <Button type="button" size="sm" variant="secondary" onClick={()=>router.refresh()}>Retry</Button>
+   </div>:!courses.length?<Alert tone="info">No assigned courses found. Assign yourself to a course before creating a {name.toLowerCase()}.</Alert>:null}
   <Drawer open={open} onOpenChange={closeDrawer}
    title={kind==="QUIZ"?"Create quiz":"Create Assignment"}
    description="Choose your assigned course and lesson before opening the assessment builder."
-   footer={!continued?<Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={start} disabled={!course||!lesson}>Continue</Button>:undefined}>
+   footer={!continued?<Button className="min-h-11 md:min-h-[var(--lms-control-height)]" onClick={start}>Continue</Button>:undefined}>
    <div className="space-y-4">
     <label className="grid gap-2 text-[var(--lms-font-sm)] leading-4 font-semibold text-[var(--lms-neutral-400)]">Select course and class
      <Select value={course?.deliveryId??""} aria-label="Select course and class" onChange={e=>selectCourse(e.target.value)}>
@@ -62,7 +71,11 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
       {lessonChoices.map(item=><option key={item.lessonId} value={item.lessonId}>{item.lessonName}</option>)}
      </Select>
     </label>
-    {!lessonChoices.length?<Alert tone="info">No lessons in this course yet. Create a lesson before attaching a {name.toLowerCase()} to this course.</Alert>:null}
+    {!lessonChoices.length&&course?<div className="flex flex-wrap items-center gap-2">
+      <Alert tone="info">No lessons in this course yet. Create a lesson before attaching a {name.toLowerCase()} to this course.</Alert>
+      <Button type="button" size="sm" variant="secondary" onClick={()=>router.refresh()}>Retry lessons</Button>
+    </div>:null}
+    {kind==="QUIZ"?<Alert tone="info">Set a future due date and at least one valid question before publishing. Publish now is selected by default in the builder; clear it to save a Draft.</Alert>:null}
     <div className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface-subtle p-3 text-sm">
       <strong>Quizzes are attached to lessons</strong>
       <p>This keeps faculty creation and learner attempts under the same course structure.</p>

@@ -310,6 +310,27 @@ export function registeredNoticeSmsTemplate(
  * The provider deliberately has no database/tenant context: it cannot
  * manufacture authorization, consent, or a persisted recipient attempt.
  */
+/** Attendance notices have three DLT-approved substitution slots.
+ * Values are plain text from authorized schedule/course data, not HTML.
+ */
+export function registeredAttendanceSmsTemplate(
+ purpose:"attendance.absence"|"attendance.correction",
+ env:Record<string,string|undefined>=process.env,
+):OutboundTemplate|null {
+ const key=purpose==="attendance.absence"?"ABSENCE":"CORRECTION";
+ const dltId=(env["EXOTEL_ATTENDANCE_"+key+"_DLT_TEMPLATE_ID"]??"").trim();
+ const senderId=(env.EXOTEL_ATTENDANCE_SENDER_ID??"FLERNR").trim();
+ const body=(env["EXOTEL_ATTENDANCE_"+key+"_TEMPLATE_BODY"]??"").trim();
+ if(!safeDltId(dltId)||!safeSenderId(senderId)||body.length>1500 ||
+    (body.match(/%s/g)??[]).length!==3)return null;
+ return {exotelDltTemplateId:dltId,exotelSenderId:senderId,
+  renderSms:variables=>{
+   const cleaned=(raw:string|undefined)=>String(raw??"").replace(/[\\r\\n<>]/g," ").trim().slice(0,80);
+   let index=0;
+   const values=[cleaned(variables.courseName),cleaned(variables.startTime),cleaned(variables.endTime)];
+   return body.replace(/%s/g,()=>values[index++]??"");
+  }};
+}
 export function legacyEventSmsTemplateKey(event: LegacyMailEvent): string | null {
   if (!LEGACY_NOTIFICATION_CHANNELS[event].includes("SMS")) return null;
   return "job.update";

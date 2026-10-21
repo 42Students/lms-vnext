@@ -18,7 +18,7 @@ import { learnerCourseCardDueLabel } from "@/modules/courses/learner-course-card
 import { learnerCourseCreditSummary } from "@/modules/courses/learner-course-credit-summary-model";
 import { learnerCourseCardProgress } from "@/modules/courses/learner-course-card-progress-model";
 import { learnerCourseCardDate } from "@/modules/courses/learner-course-card-date-model";
-import { Fragment, useMemo, useState } from "react";
+import { Fragment, useMemo, useState, useEffect, useTransition } from "react";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {learnerCourseSetupCopy,type LearnerCourseSetupStatus} from "@/modules/courses/learner-course-setup-copy";
@@ -86,11 +86,12 @@ export type LearnerCourseListRow = {
 
 
 export function LearnerCourseList({
-  rows,setupStatus=null,programSemesters=[],
+  rows,setupStatus=null,programSemesters=[],semestersLoadError=null,
 }: {
   rows: readonly LearnerCourseListRow[];
   setupStatus?:LearnerCourseSetupStatus|null;
   programSemesters?:readonly LearnerProgramSemester[];
+  semestersLoadError?:"SESSION_EXPIRED"|"LOAD_FAILED"|null;
 }) {
   const periods = useMemo(() => {
     const map = new Map<string, {
@@ -111,7 +112,19 @@ export function LearnerCourseList({
 
   const preferredPeriodId = learnerCoursePreferredPeriod(rows);
   const [periodId, setPeriodId] = useState(preferredPeriodId);
+  const [requestedSemesterId,setRequestedSemesterId]=useState<string|null>(null);
+  const [isUpdating,startSemesterChange]=useTransition();
+  useEffect(()=>{
+    const url=new URL(window.location.href);
+    const requested=url.searchParams.get("academicPeriodId")??url.searchParams.get("semesterId");
+    if(requested){
+      setRequestedSemesterId(requested);
+      if(periods.some(option=>option.id===requested))setPeriodId(requested);
+    }
+  },[periods]);
   const selectedPeriodId = resolveLearnerCoursePeriod(periodId, periods, preferredPeriodId);
+  const semesterFallbackApplied=Boolean(requestedSemesterId&&
+    !periods.some(item=>item.id===requestedSemesterId));
   const [query, setQuery] = useState("");
   const [typeFilter, setTypeFilter] = useState<"all" | "core" | "elective">("all");
   const [continueOnly, setContinueOnly] = useState(false);
@@ -170,6 +183,23 @@ export function LearnerCourseList({
 
   return (
     <div className="min-w-0 space-y-[16px]">
+      {semestersLoadError?<Alert tone="error">
+        {semestersLoadError==="SESSION_EXPIRED"
+          ?"Session expired. Please sign in again.":"Could not load semesters."}
+        {" "}<Button type="button" variant="secondary" size="sm" onClick={()=>window.location.reload()}>Retry</Button>
+      </Alert>:null}
+      {semesterFallbackApplied?<Alert tone="info">
+        The requested semester is unavailable. Showing your current authorized semester.
+        {" "}<Button type="button" size="sm" variant="secondary" onClick={()=>{
+          setRequestedSemesterId(null);setPeriodId(preferredPeriodId);
+          const url=new URL(window.location.href);
+          url.searchParams.delete("semesterId");url.searchParams.delete("academicPeriodId");
+          window.history.replaceState(null,"",url.pathname+url.search+url.hash);
+        }}>Use current semester</Button>
+      </Alert>:null}
+      {isUpdating?<p role="status" className="text-xs text-muted-foreground">
+        Updating courses for the selected semester…
+      </p>:null}
       <section className="py-1">
         <div className="grid gap-[16px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="grid gap-[8px] md:grid-cols-2">
@@ -179,7 +209,8 @@ export function LearnerCourseList({
                 value={selectedPeriodId}
                 onChange={(event) => {
                   const reset = learnerCourseSemesterFilterReset();
-                  setPeriodId(event.target.value);
+                  startSemesterChange(()=>setPeriodId(event.target.value));
+                  setRequestedSemesterId(null);
                   setQuery(reset.search);
                   setTypeFilter(reset.type);
                   setContinueOnly(false);
