@@ -229,6 +229,9 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                 {notice.audienceLabel ? " · For "+notice.audienceLabel : ""}
               </p>
               <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">{notice.message}</p>
+               {notice.bodyLinks.length ? <div className="mt-2 flex flex-wrap gap-2" aria-label="Links in notice">
+                 {notice.bodyLinks.map(href => <ThirdPartyLink key={href} href={href} label={href+" ↗"} />)}
+               </div> : null}
               {notice.driveHref?<Link href={notice.driveHref} className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Open the drive</Link>:null}
                {notice.buttonUrl && notice.buttonLabel ? (
                  <div className="mt-3 min-w-0">
@@ -242,9 +245,11 @@ export default async function LearnerPlacementAnnouncementsPage({ searchParams }
                   Link to this notice
                 </Link>
               ) : null}
-              <time dateTime={notice.createdAt} className="mt-3 block text-xs text-muted-foreground">
-                {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.createdAt))}
-              </time>
+              {notice.publicationDateUnavailable
+                ? <span className="mt-3 block text-xs text-muted-foreground">Publication date unavailable</span>
+                : <time dateTime={notice.createdAt} className="mt-3 block text-xs text-muted-foreground">
+                    {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.createdAt))}
+                  </time>}
               {notice.updatedAt ? <time dateTime={notice.updatedAt} className="mt-1 block text-xs text-muted-foreground">
                 Updated {new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", dateStyle: "medium" }).format(new Date(notice.updatedAt))}
               </time> : null}
