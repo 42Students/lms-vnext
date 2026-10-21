@@ -40,7 +40,7 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
   const router = useRouter();
   const { showToast } = useToast();
   const saving = useRef(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
   const [pending, setPending] = useState(false);
   const [search, setSearch] = useState("");
   const [draft, setDraft] = useState<ProjectTaskPlanRow[]>(() => tasks.map(fields));
@@ -130,28 +130,16 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
       <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Work breakdown</p>
       <h3 className="mt-1 text-base font-semibold text-foreground">Task plan</h3>
       <p className="mt-1 text-sm leading-6 text-body">
-        Define the work, estimate each task, and assign work to a sprint—or leave Sprint
-        blank for the product backlog. Task workflow status and assignee are managed separately.
+        Keep each task small enough to own, link it to the right sprint,
+        and make “done” explicit. Assignee, status and submission state are not changed here.
       </p>
     </div>
-    <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
-      {([
-        ["Total tasks", tasks.length],
-        ["Backlog", tasks.filter(task => task.sprintId === null).length],
-        ["In progress", tasks.filter(task => task.status === "IN_PROGRESS").length],
-        ["Completed", tasks.filter(task => task.status === "DONE").length],
-      ] as const).map(([title, count]) => <div key={title}
-        className="min-w-0 border-b border-[var(--lms-canvas-border)] py-2">
-        <dt className="text-xs text-body">{title}</dt>
-        <dd className="mt-1 text-xl font-semibold tabular-nums text-foreground">{count}</dd>
-      </div>)}
-    </dl>
     <div className="flex flex-wrap items-center gap-3">
       <Button size="sm" variant="secondary" aria-expanded={open} disabled={!tasks.length || activeRows.length === 0}
         onClick={() => { if (open) guard.requestClose(); else { setDraft(tasks.map(fields)); setOpen(true); } }}>
         {open ? "Close task plan" : "Edit task plan"}
       </Button>
-      {!tasks.length ? <p className="text-xs text-body">No tasks yet. Create a task to start the plan.</p> : null}
+      {!tasks.length ? <p className="text-xs text-body">No tasks yet. Add the first task when the work breakdown is ready.</p> : null}
       {tasks.length > 0 && activeRows.length === 0 ? <p className="text-xs text-body">
         Completed and in-review tasks cannot be edited in the plan.</p> : null}
     </div>
@@ -191,6 +179,7 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
             </label>
             <label className="text-xs font-semibold text-body md:col-span-2">Title
               <Input className="mt-1" required maxLength={200} value={row.title}
+                placeholder="e.g. Draft submission checklist"
                 onChange={event => setField(row.id, "title", event.target.value)} />
             </label>
             <label className="text-xs font-semibold text-body">Sprint
@@ -238,6 +227,7 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
               </label>)}
             <div className="md:col-span-2">
               <Button size="sm" variant="ghost" disabled={!rowDirty || pending}
+                aria-label={"Undo changes for "+(row.title||"Task "+(index+1))}
                 onClick={() => undo(row.id)}>Undo row</Button>
             </div>
           </fieldset>
@@ -256,7 +246,7 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
     </div> : null}
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard task plan changes?"
-      description="You have unsaved project changes. Leave this page and discard them?"
+      description="You have unsaved changes. Leave without saving them?"
       confirmLabel="Discard changes" pending={pending} onConfirm={guard.confirmDiscard} />
   </section>;
 }
