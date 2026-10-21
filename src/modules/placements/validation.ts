@@ -48,6 +48,8 @@ export const createPlacementCompanyInputSchema = z
     name: z.string().trim().min(2,"Company name must be between 2 and 150 characters").max(150,"Company name must be between 2 and 150 characters"),
     websiteUrl: corporateWebsiteSchema.optional(),
     primaryDomain: placementCompanyDomainSchema.optional(),
+    industry: z.string().trim().max(100).optional(),
+    about: z.string().trim().max(2000).optional(),
     isTrusted: z.boolean().optional().default(false),
   })
   .strict()

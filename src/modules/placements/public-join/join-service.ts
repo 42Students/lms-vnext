@@ -197,12 +197,23 @@ export async function acceptPublicRecruiterJoin(
         eq(placementRecruiterCollegeGrants.companyRelationshipId, relationship.id)))
       .orderBy(desc(placementRecruiterCollegeGrants.createdAt))
       .for("update").limit(1);
-    if (grant && grant.status === "REVOKED") throw new PublicJoinAcceptError("REMOVED");
+    if(grant && (grant.status==="REVOKED"||grant.revokedAt||grant.revokedByUserId))
+      throw new PublicJoinAcceptError("REMOVED");
     let outcome: "JOINED" | "ALREADY_JOINED" = "JOINED";
-    if (grant) {
-      if (!recruiterGrantEffectiveAt(grant, now, "DRIVES")) throw new PublicJoinAcceptError("REMOVED");
-      outcome = "ALREADY_JOINED";
-    } else {
+    if(grant){
+      if(grant.status!=="ACTIVE")throw new PublicJoinAcceptError("REMOVED");
+      if(recruiterGrantEffectiveAt(grant,now,"DRIVES")){
+       outcome="ALREADY_JOINED";
+      }else if(grant.verificationStatus==="VERIFIED"&&grant.capabilities.includes("DRIVES")
+       &&grant.validUntil&&grant.validUntil.getTime()<=now.getTime()){
+       // Verified public link + fresh one-time code permits renewed validity.
+       // Explicitly revoked or removed grants can never self-reactivate.
+       await tx.update(placementRecruiterCollegeGrants).set({
+        validUntil:recruiterGrantValidUntil(now,accessMonths),updatedAt:now,
+        version:sql`${placementRecruiterCollegeGrants.version}+1`,
+       }).where(eq(placementRecruiterCollegeGrants.id,grant.id));
+      }else throw new PublicJoinAcceptError("REMOVED");
+    }else{
       await tx.insert(placementRecruiterCollegeGrants).values({
         recruiterUserId: user.id,
         companyRelationshipId: relationship.id,
