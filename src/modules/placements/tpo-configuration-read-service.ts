@@ -7,6 +7,7 @@ import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {AuthorizationError} from "@/modules/permissions/policy";
+import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
 import { placementTpoBlockedDates as tpoBlockedDates, placementTpoJobTypes as tpoJobTypes, placementTpoPrepReadiness as tpoPrepReadiness } from "@/db/schema/tpo-configuration";
 
 export async function getTpoJobTypes(ctx:RequestContext){
@@ -81,5 +82,35 @@ export async function listTpoPrepCourses(ctx:RequestContext){
    .innerJoin(departments,eq(departments.id,courses.departmentId))
    .where(and(eq(departments.collegeId,collegeId),isNull(departments.archivedAt),eq(courses.status,"ACTIVE")))
    .orderBy(asc(courses.name),asc(courses.id));
+ });
+}
+
+/** Authoritative choices for college members who can read placements.
+ * A caller without a college gets only the five safe built-in defaults.
+ * Hidden types can be retained on existing drives by the write service,
+ * but must not be offered for a new selection.
+ */
+export async function listPlacementJobTypeChoices(ctx:RequestContext,collegeId:string|null){
+ if(!collegeId)return TPO_BUILTIN_JOB_TYPES.map(row=>({...row}));
+ const ready=await placementTableExists("placement_tpo_job_types");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("share").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new AuthorizationError("placements.read");
+  await assertPersistedPlatformPermission(tx,ctx,"placements.read",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const rows=ready?await tx.select({
+   label:tpoJobTypes.label,active:tpoJobTypes.active,
+   countsAsPlaced:tpoJobTypes.countsAsPlaced,isBuiltin:tpoJobTypes.isBuiltin,
+  }).from(tpoJobTypes).where(eq(tpoJobTypes.collegeId,collegeId))
+   .orderBy(asc(tpoJobTypes.sortOrder),asc(tpoJobTypes.id)):[];
+  const defaults=TPO_BUILTIN_JOB_TYPES.filter(fixed=>
+   rows.find(row=>row.label.toLowerCase()===fixed.label.toLowerCase())?.active??true)
+   .map(row=>({label:row.label,countsAsPlaced:row.countsAsPlaced}));
+  const fixedNames=new Set(TPO_BUILTIN_JOB_TYPES.map(row=>row.label.toLowerCase()));
+  return [...defaults,...rows.filter(row=>row.active&&!row.isBuiltin&&
+   !fixedNames.has(row.label.toLowerCase()))
+   .map(row=>({label:row.label,countsAsPlaced:row.countsAsPlaced??true}))];
  });
 }
