@@ -3,6 +3,8 @@ import {
   asc,
   eq,
   inArray,
+  ilike,
+  isNull,
   ne,
   isNotNull,
   or,
@@ -179,9 +181,16 @@ async function validateMeetingLinks(
   };
 }
 
+export type ProjectMeetingListOptions={
+ q?:string;
+ state?:"ALL"|"DRAFT"|"REQUESTED"|"SCHEDULED"|"RESCHEDULED"|"COMPLETED"|"CANCELLED";
+ archive?:"ACTIVE"|"INACTIVE"|"ALL";
+ page?:number;pageSize?:number;
+};
 export async function listProjectMeetings(
   context: RequestContext,
   projectIdInput: string,
+  options:ProjectMeetingListOptions={},
 ) {
   if(!(await resolveOptionalModuleAccess(context)).projects.enabled)
     throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
@@ -191,7 +200,13 @@ export async function listProjectMeetings(
       projectIdInput,
     );
 
-  const rows = await getDb()
+  const moderator=scope.access==="MENTOR"||scope.access==="ADMIN";
+  const archive=options.archive??"ACTIVE";
+  if(!moderator&&(archive!=="ACTIVE"||options.state==="DRAFT"))
+    throw new ProjectsServiceError("PROJECT_MEETING_ACCESS_DENIED");
+  const search=(options.q??"").trim();
+  if(search.length>120)throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  const keyword=search.replace(/[\\%_]/g,"\\  const rows = await getDb()
     .select()
     .from(projectMeetings)
     .where(
@@ -208,7 +223,32 @@ export async function listProjectMeetings(
     .orderBy(
       asc(projectMeetings.startsAt),
       asc(projectMeetings.createdAt),
+    );");
+  if(options.page!==undefined&&(!Number.isSafeInteger(options.page)||options.page<1||options.page>100000))
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  if(options.pageSize!==undefined&&(!Number.isSafeInteger(options.pageSize)||options.pageSize<1||options.pageSize>100))
+    throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+  const q=getDb().select().from(projectMeetings)
+    .where(and(eq(projectMeetings.projectId,scope.project.id),
+      archive==="ACTIVE"?isNull(projectMeetings.deletedAt):
+      archive==="INACTIVE"?isNotNull(projectMeetings.deletedAt):undefined,
+      options.state&&options.state!=="ALL"?eq(projectMeetings.status,options.state):undefined,
+      search?or(ilike(projectMeetings.title,"%"+keyword+"%"),
+        ilike(projectMeetings.agenda,"%"+keyword+"%")):undefined,
+      ...(!moderator?[
+        ne(projectMeetings.status,"DRAFT"),
+        or(ne(projectMeetings.status,"CANCELLED"),
+          isNotNull(projectMeetings.requestedByMembershipId),
+          isNotNull(projectMeetings.scheduledByUserId))!,
+      ]:[]),
+    )).orderBy(
+      asc(projectMeetings.startsAt),
+      asc(projectMeetings.createdAt),
+      asc(projectMeetings.id),
     );
+  const rows=options.page!==undefined||options.pageSize!==undefined
+    ?await q.limit(options.pageSize??25).offset(((options.page??1)-1)*(options.pageSize??25))
+    :await q;
   // MEN-projects-meetings-27: facilitator notes belong to managers, not the
   // learner/observer workspace payload (even if the UI hides the panel).
   return scope.access==="MENTOR" || scope.access==="ADMIN" ? rows :
