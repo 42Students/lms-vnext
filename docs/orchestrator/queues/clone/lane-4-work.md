@@ -1,0 +1,71 @@
+# Gap FIX queue, wave 1 (by file): lane chat-4
+
+You own 58 work packets (737 findings, 4 P0, 601 P1) in: placements*. No other lane edits these files.
+
+For EACH packet below, in order (highest severity first), strictly one at a time:
+1. Open the packet. It lists the audit findings for ONE file (or one new-feature group). Read the target file in the repo, then apply ALL findings of the packet in a single editing pass so vNext matches the old LMS (old source: docs/legacy-source/frontend/src and docs/legacy-source/backend/src). Wording parity with docs/audit/legacy-copy-A.md and legacy-copy-B.md is mandatory. Packets of the same file come in parts (part 1 of N, ...): do the parts in order.
+2. Edit ONLY files in your areas. If a finding needs a change in a file another lane owns, append one line to docs/audit/gap-fix/handoff-lane-4.md (target file, finding ID, change needed) and go on.
+3. Keep the intentional vNext model: one workspace per role, college x role switcher, membership model. Skip UNKNOWN, conflicting or already-fixed findings with a one-line note in your proof file.
+4. TypeScript strict, valid syntax. You cannot run code, so re-read each edited file for matching tags, imports, props and exports. No new packages. Never reformat untouched code. Never rename or change the signature of shared exports without checking every caller you can find with search.
+5. Tick [x] in this queue and append one line per packet to docs/audit/gap-fix/lane-4.md (packet | findings applied | skipped and why). Push to chatgpt/chat-4-b with commits tagged [chat-4] after every 2 packets (git fetch first; on conflict keep the other lane's lines and re-apply yours). If the merge robot restores one of your files because of a syntax error, you will be told: redo that packet.
+
+Packets:
+
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-operations-service.ts.md` (edit src/modules/placements/tpo-operations-service.ts; 17 findings; best P0)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-offer-lifecycle-service.ts.md` (edit src/modules/placements/tpo-offer-lifecycle-service.ts; 13 findings; best P0)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-calendar-workspace.tsx.md` (edit src/components/placements/placement-calendar-workspace.tsx; 11 findings; best P0)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_public-join_send-code-service.ts.part1of2.md` (edit src/modules/placements/public-join/send-code-service.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_public-join_send-code-service.ts.part2of2.md` (edit src/modules/placements/public-join/send-code-service.ts; 3 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-published-drive-edit.tsx.part1of2.md` (edit src/components/placements/super-admin-published-drive-edit.tsx; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-published-drive-edit.tsx.part2of2.md` (edit src/components/placements/super-admin-published-drive-edit.tsx; 2 findings; best P2)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-round-slot-action-service.ts.md` (edit src/modules/placements/college-round-slot-action-service.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_college-application-detail-drawer.tsx.md` (edit src/components/placements/college-application-detail-drawer.tsx; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-draft-edit-form.tsx.md` (edit src/components/placements/placement-draft-edit-form.tsx; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-applicant-pipeline-service.ts.md` (edit src/modules/placements/tpo-applicant-pipeline-service.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_college-interview-appointments.tsx.md` (edit src/components/placements/college-interview-appointments.tsx; 19 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-drive-attention-service.ts.md` (edit src/modules/placements/college-drive-attention-service.ts; 19 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-drive-workspace.tsx.md` (edit src/components/placements/placement-drive-workspace.tsx; 18 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_public-recruit-from-us.tsx.md` (edit src/components/placements/public-recruit-from-us.tsx; 18 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-jobs-browse.tsx.md` (edit src/components/placements/learner-jobs-browse.tsx; 18 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-bulk-drive-actions.tsx.md` (edit src/components/placements/super-admin-bulk-drive-actions.tsx; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_eligibility-service.ts.md` (edit src/modules/placements/eligibility-service.ts; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_tpo-round-drive-day-read-only.tsx.md` (edit src/components/placements/tpo-round-drive-day-read-only.tsx; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-bulk-application-stage-service.ts.md` (edit src/modules/placements/tpo-bulk-application-stage-service.ts; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_screening-service.ts.md` (edit src/modules/placements/screening-service.ts; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-hiring-funnel-service.ts.md` (edit src/modules/placements/college-hiring-funnel-service.ts; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_admin-company-merge-service.ts.md` (edit src/modules/placements/admin-company-merge-service.ts; 16 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_super-admin-company-identities-service.ts.md` (edit src/modules/placements/super-admin-company-identities-service.ts; 16 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_public-recruiter-invite-accept-service.ts.md` (edit src/modules/placements/public-recruiter-invite-accept-service.ts; 15 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-needs-attention.tsx.md` (edit src/components/placements/super-admin-needs-attention.tsx; 15 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-interview-slot-service.ts.md` (edit src/modules/placements/tpo-interview-slot-service.ts; 15 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-drive-change-request-model.ts.md` (edit src/modules/placements/tpo-drive-change-request-model.ts; 15 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-drive-applications-service.ts.md` (edit src/modules/placements/college-drive-applications-service.ts; 14 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_hr-drive-draft-model.ts.md` (edit src/modules/placements/hr-drive-draft-model.ts; 14 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-applications-browse.tsx.md` (edit src/components/placements/learner-applications-browse.tsx; 13 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-public-join-link-service.ts.md` (edit src/modules/placements/tpo-public-join-link-service.ts; 13 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_admin-drive-directory-model.ts.md` (edit src/modules/placements/admin-drive-directory-model.ts; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-drive-archive.tsx.md` (edit src/components/placements/super-admin-drive-archive.tsx; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-drive-lifecycle-list-service.ts.md` (edit src/modules/placements/tpo-drive-lifecycle-list-service.ts; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-drive-edit-service.ts.md` (edit src/modules/placements/tpo-drive-edit-service.ts; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_tpo-drive-lifecycle-controls.tsx.md` (edit src/components/placements/tpo-drive-lifecycle-controls.tsx; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-placement-student-lookup-service.ts.md` (edit src/modules/placements/college-placement-student-lookup-service.ts; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_recruiter-message-email-dispatch-service.ts.md` (edit src/modules/placements/recruiter-message-email-dispatch-service.ts; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_tpo-drive-change-requests.tsx.md` (edit src/components/placements/tpo-drive-change-requests.tsx; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_route.ts.md` (edit src/app/api/placements/jobs/route.ts; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_result-service.ts.md` (edit src/modules/placements/result-service.ts; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-audit-service.ts.md` (edit src/modules/placements/tpo-audit-service.ts; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-company-domain-service.ts.md` (edit src/modules/placements/tpo-company-domain-service.ts; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_learner-placement-event-delivery.ts.md` (edit src/modules/placements/learner-placement-event-delivery.ts; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-placements-dashboard.tsx.md` (edit src/components/placements/learner-placements-dashboard.tsx; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-round-apply-service.ts.md` (edit src/modules/placements/tpo-round-apply-service.ts; 10 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_placement-operations-overview.tsx.md` (edit src/components/placements/placement-operations-overview.tsx; 10 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-stage-action-model.ts.md` (edit src/modules/placements/college-stage-action-model.ts; 10 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_public-page_read-service.ts.md` (edit src/modules/placements/public-page/read-service.ts; 10 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_recruiter-placement-portfolio.tsx.md` (edit src/components/placements/recruiter-placement-portfolio.tsx; 10 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_learner-general-requests.tsx.md` (edit src/components/placements/learner-general-requests.tsx; 10 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_eligibility_membershipId_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/eligibility/[membershipId]/route.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/route.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_change-requests_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/change-requests/route.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_status_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/status/route.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_applications_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/applications/route.ts; 4 findings; best P2)
+- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_app_api_placements_jobs_jobId_tpo-lifecycle_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/tpo-lifecycle/route.ts; 1 findings; best P2)
