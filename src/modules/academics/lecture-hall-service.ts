@@ -196,7 +196,7 @@ export async function listLectureHalls(
   // Exact and prefix name matches sort above other substrings. This improves
   // relevance without an unapproved pg_trgm/fuzzystrmatch extension.
   // The legacy typo-distance=2 matcher is not available in this DB contract.
-  const escapedSearch = query.q?.replace(/[\\%_]/g, "\\  const scheduledFuture = sql<boolean>`exists (select 1 from ${sectionScheduleEvents} future where future.lecture_hall_id = ${lectureHalls.id} and future.status = 'SCHEDULED' and future.ends_at > now())`;") ?? "";
+  const escapedSearch = query.q?.replace(/[\\%_]/g, "\\$&") ?? "";
   const containsSearch = escapedSearch ? "%" + escapedSearch + "%" : null;
   const prefixSearch = escapedSearch ? escapedSearch + "%" : null;
   const filters = [
