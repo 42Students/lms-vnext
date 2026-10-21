@@ -10,7 +10,11 @@ import { createHash, randomBytes, timingSafeEqual } from "node:crypto";
  * issue tokens in the UI until that full workflow is available.
  */
 export const RECRUITER_INVITE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
-const TOKEN_SHAPE = /^[a-zA-Z0-9_-]{43}$/;
+// Issued credentials remain 32 random bytes / 43 base64url characters.
+ // Previously issued persisted legacy tokens may have varied in length.
+ // Shape acceptance alone never grants entry: all requests still require a
+ // matching stored 256-bit digest and active, unexpired lead.
+const TOKEN_SHAPE = /^[a-zA-Z0-9_-]{16,200}$/;
 
 const HASH_SHAPE = /^[a-f0-9]{64}$/;
 
@@ -47,6 +51,14 @@ export function isRecruiterInviteTokenShape(
   return typeof token === "string" && TOKEN_SHAPE.test(token);
 }
 
+/** Expiry matches legacy LocalDateTime.isBefore: equality is still usable.
+ * Absolute UTC milliseconds are used, so seven days do not depend on IST
+ * midnight or daylight savings. Future-dated issuedAt is always invalid.
+ */
+export function recruiterInviteWithinWindow(issuedAt:Date,now:Date){
+ return validDate(issuedAt)&&validDate(now)&&now.getTime()>=issuedAt.getTime()&&
+  now.getTime()-issuedAt.getTime()<=RECRUITER_INVITE_TTL_MS;
+}
 /** Hash lookup key. Never persist or log the raw invitation token. */
 export function recruiterInviteTokenHash(token: string): string {
   if (!isRecruiterInviteTokenShape(token)) {
@@ -100,8 +112,7 @@ export function isRecruiterInviteUsable(
     !HASH_SHAPE.test(lead.inviteTokenHash) ||
     !validDate(lead.inviteSentAt) ||
     !validDate(now) ||
-    now.getTime() < lead.inviteSentAt.getTime() ||
-    now.getTime() >= lead.inviteSentAt.getTime() + RECRUITER_INVITE_TTL_MS ||
+    !recruiterInviteWithinWindow(lead.inviteSentAt,now) ||
     !canIssueRecruiterInvite(lead)
   ) {
     return false;

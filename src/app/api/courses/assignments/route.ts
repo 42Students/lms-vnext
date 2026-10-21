@@ -9,6 +9,14 @@ import {
 } from "@/modules/courses/assignment-service";
 
 export const runtime = "nodejs";
+/** Legacy FacultyLessonContent ASSIGNMENT dispatch crosswalk:
+ * the lesson-content authoring UI selects /api/courses/assignments, not the
+ * generic lesson-content writer. Assignment content remains attached through
+ * lessonId and a scoped deliveryId; the assignment entity lives separately
+ * from reusable lesson_content rows. Validation and ownership remain in
+ * assignment-service (no generic bypass of assessment authoring).
+ */
+export const legacyAssignmentContentRoute="/api/courses/assignments" as const;
 
 export async function GET(request: Request) {
   try {
