@@ -1,11 +1,11 @@
 import "server-only";
 
-import { and, count, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, eq, inArray, isNull, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, departments, electiveOfferings,
-  electiveSlots, lmsGroupMembers, programs,
+  electiveSlots, lmsGroupMembers, lmsGroupMemberEvents, programs,
 } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
@@ -26,7 +26,7 @@ export class CollegeElectiveSlotMutationError extends Error {
     "ELECTIVE_SLOT_NOT_FOUND" | "ELECTIVE_PROGRAM_NOT_FOUND" |
     "ELECTIVE_PERIOD_INVALID" | "ELECTIVE_SEMESTER_INVALID" |
     "ELECTIVE_SLOT_STALE" | "ELECTIVE_SELECTION_LOCKED" |
-    "ELECTIVE_YEAR_INVALID") {
+    "ELECTIVE_YEAR_INVALID" | "ELECTIVE_SLOT_ARCHIVED") {
     super(code); this.name = "CollegeElectiveSlotMutationError";
   }
 }
@@ -127,21 +127,64 @@ export async function updateCollegeElectiveSlot(
         isNull(electiveSlots.deletedAt)))
       .for("update").limit(1);
     if (!slot) throw new CollegeElectiveSlotMutationError("ELECTIVE_SLOT_NOT_FOUND");
-    if (slot.status !== "ACTIVE" || slot.version !== input.expectedVersion)
+    if (slot.status !== "ACTIVE")
+      throw new CollegeElectiveSlotMutationError("ELECTIVE_SLOT_ARCHIVED");
+    if (slot.version !== input.expectedVersion)
       throw new CollegeElectiveSlotMutationError("ELECTIVE_SLOT_STALE");
     await assertPersistedGroupActor(tx, context, { collegeId: member.collegeId, mode: "MANUAL" });
-    if (slotSelectionChanged(slot, input)) {
-      const [roster] = await tx.select({ total: count() })
-        .from(lmsGroupMembers)
-        .innerJoin(electiveOfferings, eq(electiveOfferings.groupId, lmsGroupMembers.groupId))
-        .where(and(eq(electiveOfferings.slotId, slot.id),
-          eq(electiveOfferings.status, "ACTIVE"),
-          isNull(electiveOfferings.deletedAt),
-          inArray(lmsGroupMembers.state, ["ACTIVE", "WAITLISTED", "REQUESTED"])));
-      if ((roster?.total ?? 0) > 0)
+    const nextProgramId = input.programId ?? slot.programId;
+    const nextSemesterNumber = input.semesterNumber ?? slot.semesterNumber;
+    const nextPeriodId = input.academicPeriodId === undefined
+      ? slot.academicPeriodId : input.academicPeriodId;
+    const nextAcademicYear = input.academicYear === undefined
+      ? slot.academicYear : academicYear(input.academicYear);
+    const identityChanged =
+      nextProgramId !== slot.programId ||
+      nextSemesterNumber !== slot.semesterNumber ||
+      nextPeriodId !== slot.academicPeriodId ||
+      nextAcademicYear !== slot.academicYear;
+    if (nextProgramId !== slot.programId || nextSemesterNumber !== slot.semesterNumber) {
+      const [program] = await tx.select({ durationTerms: programs.durationTerms })
+        .from(programs)
+        .innerJoin(departments, and(
+          eq(departments.id, programs.departmentId),
+          eq(departments.collegeId, member.collegeId),
+        ))
+        .where(and(eq(programs.id, nextProgramId), eq(programs.status, "ACTIVE")))
+        .for("share", { of: programs }).limit(1);
+      if (!program) throw new CollegeElectiveSlotMutationError("ELECTIVE_PROGRAM_NOT_FOUND");
+      if (nextSemesterNumber > program.durationTerms)
+        throw new CollegeElectiveSlotMutationError("ELECTIVE_SEMESTER_INVALID");
+    }
+    if (input.academicPeriodId !== undefined && nextPeriodId !== null) {
+      const [period] = await tx.select({ id: academicPeriods.id })
+        .from(academicPeriods)
+        .where(and(eq(academicPeriods.id, nextPeriodId),
+          eq(academicPeriods.collegeId, member.collegeId),
+          inArray(academicPeriods.status, ["PLANNED", "ACTIVE"])))
+        .for("share").limit(1);
+      if (!period) throw new CollegeElectiveSlotMutationError("ELECTIVE_PERIOD_INVALID");
+    }
+    if (identityChanged || slotSelectionChanged(slot, input)) {
+      // Membership events are immutable evidence: a learner who removed their
+      // last choice must still lock academic identity, credits and pick rules.
+      // Check ALL offering histories, including archived/deleted offerings.
+      const [[roster], [history]] = await Promise.all([
+        tx.select({ id: lmsGroupMembers.id })
+          .from(lmsGroupMembers)
+          .innerJoin(electiveOfferings, eq(electiveOfferings.groupId, lmsGroupMembers.groupId))
+          .where(eq(electiveOfferings.slotId, slot.id)).limit(1),
+        tx.select({ id: lmsGroupMemberEvents.id })
+          .from(lmsGroupMemberEvents)
+          .innerJoin(electiveOfferings, eq(electiveOfferings.groupId, lmsGroupMemberEvents.groupId))
+          .where(eq(electiveOfferings.slotId, slot.id)).limit(1),
+      ]);
+      if (roster || history)
         throw new CollegeElectiveSlotMutationError("ELECTIVE_SELECTION_LOCKED");
     }
     const [saved] = await tx.update(electiveSlots).set({
+      programId: nextProgramId, semesterNumber: nextSemesterNumber,
+      academicPeriodId: nextPeriodId, academicYear: nextAcademicYear,
       name: input.name, description: input.description,
       credits: input.credits, minPick: input.minPick, maxPick: input.maxPick,
       version: sql`${electiveSlots.version} + 1`, updatedAt: new Date(),
@@ -154,7 +197,11 @@ export async function updateCollegeElectiveSlot(
       organizationId: member.organizationId, collegeId: member.collegeId,
       subjectType: "elective_slot", subjectId: slot.id,
       summary: "Elective slot updated",
-      metadata: { previousVersion: slot.version, version: saved.version },
+      metadata: { previousVersion: slot.version, version: saved.version,
+        previousProgramId: slot.programId, programId: saved.programId,
+        previousSemester: slot.semesterNumber, semester: saved.semesterNumber,
+        previousAcademicYear: slot.academicYear, academicYear: saved.academicYear,
+      },
     });
     return saved;
   });
