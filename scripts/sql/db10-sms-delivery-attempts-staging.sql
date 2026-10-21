@@ -161,3 +161,72 @@ FOR EACH ROW EXECUTE FUNCTION db31_block_sms_attempt_mutation();
 -- * no delivery claim when the provider only accepted the request
 -- * no queue/claim/retry semantics: those belong to outbound command models
 -- * no numbered migration, Drizzle export or runtime producer in this stage
+
+
+-- Proposed privileged support read. This is still STAGING, not an installed
+-- API, migration, send recorder or a permission grant. Strictly exact suffix
+-- + purpose predicates are applied BEFORE cursor pagination. No wildcard
+-- phone searches, body text, OTP values or unredacted recipient are returned.
+CREATE OR REPLACE FUNCTION db31_list_sms_attempts_for_support(
+  p_recipient_suffix varchar DEFAULT NULL,
+  p_purpose varchar DEFAULT NULL,
+  p_before_created_at timestamptz DEFAULT NULL,
+  p_before_id uuid DEFAULT NULL,
+  p_limit integer DEFAULT 50
+)
+RETURNS TABLE (
+  id uuid,
+  purpose text,
+  recipient_suffix text,
+  provider text,
+  outcome text,
+  safe_failure_code text,
+  safe_failure_summary text,
+  created_at timestamptz,
+  provider_accepted_at timestamptz
+)
+LANGUAGE sql STABLE SECURITY INVOKER
+SET search_path=pg_catalog,public AS $$
+  SELECT
+    a.id, a.purpose::text, a.recipient_suffix::text, a.provider::text,
+    a.outcome::text, a.safe_failure_code::text,
+    a.safe_failure_summary::text, a.created_at, a.provider_accepted_at
+  FROM public.sms_delivery_attempts a
+  WHERE (p_recipient_suffix IS NULL OR a.recipient_suffix = p_recipient_suffix)
+    AND (p_purpose IS NULL OR a.purpose = p_purpose)
+    AND (
+      p_before_created_at IS NULL
+      OR a.created_at < p_before_created_at
+      OR (a.created_at = p_before_created_at AND p_before_id IS NOT NULL AND a.id < p_before_id)
+    )
+    AND (p_recipient_suffix IS NULL OR p_recipient_suffix ~ '^[0-9]{1,4}$')
+    AND (p_purpose IS NULL OR length(btrim(p_purpose)) BETWEEN 1 AND 64)
+  ORDER BY a.created_at DESC, a.id DESC
+  LIMIT GREATEST(1,LEAST(COALESCE(p_limit,50),100));
+$$;
+
+-- PostgreSQL grants EXECUTE ON FUNCTION to PUBLIC by default. This helper
+-- must remain inaccessible until the DB owner grants table SELECT and
+-- function EXECUTE only to a dedicated verified global SMS support DB role.
+-- A College Admin or tenant-scoped service role MUST NOT receive that grant.
+REVOKE ALL ON FUNCTION db31_list_sms_attempts_for_support(
+  varchar,varchar,timestamptz,uuid,integer
+) FROM PUBLIC;
+REVOKE ALL ON TABLE sms_delivery_attempts FROM PUBLIC;
+
+-- Legacy support translation (no legacy data transfer is needed for vNext):
+--   sms_delivery_log.status = SENT -> PROVIDER_ACCEPTED (not DELIVERED)
+--   sms_delivery_log.status = FAILED -> FAILED with sanitized code/summary
+--   sms_delivery_log.college_id NULL -> organization_id and college_id NULL
+--   each retry -> one additional append-only row (attempt_number increments)
+--   sms_delivery_log.recipient_suffix -> exact suffix, never full phone
+--
+-- Deployment gates (all must be verified independently):
+-- 1. Register via schema lane's numbered migration / journal, replay on dev.
+-- 2. Grant INSERT to an authenticated producer and SELECT plus function
+--    EXECUTE only to a global support actor; enforce role at HTTP boundary.
+-- 3. Exotel recorder stores provider acceptance or sanitized failure once per
+--    attempted send, including an OTP send without a college membership.
+-- 4. Read API uses this function, no unscoped arbitrary tenant option.
+-- 5. Confirm index scans for suffix+purpose and descending recent view, and
+--    verify redaction and append-only behavior. No CI/runtime check here.
