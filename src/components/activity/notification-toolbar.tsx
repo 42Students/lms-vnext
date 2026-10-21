@@ -18,6 +18,8 @@ export function NotificationToolbar({
   markAllEndpoint = "/api/notifications/read-all",
   confirmMarkAll = false,
   confirmMessage = "Mark all unread Mentor notifications in this college as read?",
+  categories = [],
+  selectedCategory,
 }: {
   view: "all" | "unread";
   unreadCount: number;
@@ -26,6 +28,8 @@ export function NotificationToolbar({
   markAllEndpoint?: string;
   confirmMarkAll?: boolean;
   confirmMessage?: string;
+  categories?: readonly {id:string;label:string;unread:number}[];
+  selectedCategory?: string;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -53,14 +57,14 @@ export function NotificationToolbar({
     <div className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
       <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-2 min-[768px]:flex min-[768px]:w-auto min-[768px]:flex-wrap" role="group" aria-label="Notification filter">
         <Link
-          href={baseHref + "?view=all"}
+          href={baseHref + "?view=all" + (selectedCategory?"&category="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "all" ? "page" : undefined}
           className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           {allLabel}
         </Link>
         <Link
-          href={baseHref + "?view=unread"}
+          href={baseHref + "?view=unread" + (selectedCategory?"&category="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "unread" ? "page" : undefined}
           className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
@@ -76,6 +80,24 @@ export function NotificationToolbar({
       >
         {pending ? "Marking…" : "Mark all as read"}
       </Button>
+      {categories.length?(
+        <nav aria-label="Notification categories" className="flex min-w-0 flex-wrap gap-2">
+          {categories.map(item=>{
+            const link=baseHref+"?"+new URLSearchParams({
+              view,...(item.id===selectedCategory?{}:{category:item.id}),
+            }).toString();
+            const active=item.id===selectedCategory;
+            return <Link key={item.id} href={link}
+              aria-current={active?"page":undefined}
+              className={"inline-flex min-h-11 items-center gap-2 border-b-2 px-2 text-sm font-semibold md:min-h-9 "+(
+                active?"border-primary text-primary-text":"border-transparent text-body hover:border-border"
+              )}>
+              {item.label}
+              <span className="tabular-nums text-xs text-muted-foreground">{item.unread}</span>
+            </Link>;
+          })}
+        </nav>
+      ):null}
       {confirmMarkAll ? <ConfirmActionDialog
         open={confirmOpen}
         title="Mark all as read"
