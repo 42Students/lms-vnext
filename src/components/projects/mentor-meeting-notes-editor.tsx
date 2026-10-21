@@ -67,7 +67,7 @@ export function MentorMeetingNotesEditor(props:{
       title="Save meeting outcome notes?" confirmLabel="Save notes"
       description="The current outcome will be replaced for this meeting. The change is audited without exposing note contents in activity history."
       pending={pending} onConfirm={submit}>
-      <p tabIndex={0} className="max-h-44 overflow-auto whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">
+      <p tabIndex={0} className="max-h-44 overflow-auto whitespace-pre-wrap break-words border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         {notes.trim()}</p>
       {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     </ConfirmDialog>
