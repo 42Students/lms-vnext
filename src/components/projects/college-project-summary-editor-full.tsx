@@ -8,7 +8,7 @@ import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 import { useProjectEditorDiscardGuard } from "./project-editor-discard-guard";
-import {useEffect,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {usePathname,useRouter} from "next/navigation";
 import Link from "next/link";
 export type SummaryProject={
@@ -39,14 +39,19 @@ export function CollegeProjectSummaryEditorFull({
   estimationUnit:p.estimationUnit??"POINTS",
  };
  const [form,setForm]=useState(sourceForm);
- const dirty=JSON.stringify(form)!==JSON.stringify(sourceForm);
+ const [stale,setStale]=useState(false);
+ const baselineRef=useRef({version:new Date(p.updatedAt).toISOString(),form:sourceForm});
+ const dirty=JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
  useEffect(()=>{
-  if(!dirty)setForm(sourceForm);
-  // A colleague's save must not overwrite an unsaved local draft.
-  // Both the UI and server reject the old token if this form is stale.
+  const incoming=new Date(p.updatedAt).toISOString();
+  if(incoming===baselineRef.current.version)return;
+  const wasDirty=JSON.stringify(form)!==JSON.stringify(baselineRef.current.form);
+  if(wasDirty){setStale(true);return;}
+  baselineRef.current={version:incoming,form:sourceForm};
+  setForm(sourceForm);setStale(false);setError("");
  },[p.updatedAt]);
  const discard=useProjectEditorDiscardGuard(open,dirty,busy,()=>{
-  setForm(sourceForm);setOpen(false);setError("");
+  setForm(baselineRef.current.form);setOpen(false);setError("");setStale(false);
  });
  const hasTaskData=(taskProgress?.total??0)>0;
  const legacyStatus=(()=>{
@@ -70,6 +75,7 @@ export function CollegeProjectSummaryEditorFull({
  async function save(){
   if(busy)return;
   if(!dirty){showToast({tone:"info",title:"No changes to save"});return;}
+  if(stale){setError("Workspace changed since this edit started. Refresh and reopen the summary.");return;}
   if(!hasMentor&&p.status!=="ACTIVE"&&form.status==="ACTIVE"){
     setError("Assign a mentor before activating this workspace.");return;
   }
