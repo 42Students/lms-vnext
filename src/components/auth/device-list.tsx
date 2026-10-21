@@ -87,7 +87,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
                   ask(
                     device.id,
                     `/api/auth/devices/${device.id}`,
-                    "Device signed out",
+                    "Session revoked",
                     "Sign out",
                   )
                 }
@@ -112,7 +112,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
               ask(
                 "all",
                 "/api/auth/devices",
-                "Signed out everywhere else",
+                "Other sessions revoked; this device stays signed in.",
                 "Sign out everywhere else",
               )
             }
@@ -127,8 +127,8 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
         onOpenChange={open=>{if(!open&&!pending&&!busy)setConfirmation(null);}}
         title={confirmation?.label??"Sign out"}
         description={confirmation?.key==="all"
-          ? "Sign out everywhere else. This device stays signed in."
-          : "Sign out this device. You can sign in again later."}
+          ? "Revoke all other sessions. This device stays signed in."
+          : "Revoke this session. You can sign in again later."}
         confirmLabel={confirmation?.label??"Sign out"}
         confirmVariant="danger"
         pending={pending||busy!==null}
