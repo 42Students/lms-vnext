@@ -9,7 +9,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {can} from "@/modules/permissions/policy";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireDeliveryContentMutation,requireLearningReadAccess} from "./learning-access";
-import {loadLessonContentScope} from "./scope";
+import {loadCourseOfferingScope,loadCourseScope,loadLessonContentScope} from "./scope";
 import {CoursesServiceError} from "./errors";
 import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {StorageFileError} from "@/modules/storage/file-errors";
@@ -29,8 +29,14 @@ async function authorizeMaterial(context:RequestContext,contentId:string,deliver
    throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
  }else{
   const role=await requireLearningReadAccess(context,content.offeringId,deliveryId);
-  if(role==="LEARNER"&&(content.status!=="PUBLISHED"||content.learningPathStatus!=="PUBLISHED"||!content.lessonVisibleToStudents||!content.visibleToStudents))
-   throw new CoursesServiceError("LESSON_CONTENT_NOT_PUBLISHED");
+  if(role==="LEARNER"){
+   const offering=await loadCourseOfferingScope(content.offeringId);
+   const course=await loadCourseScope(offering.courseId);
+   if(!course.enabled||course.legacyAllowedForDisplay===0||
+      content.status!=="PUBLISHED"||content.learningPathStatus!=="PUBLISHED"||
+      !content.lessonVisibleToStudents||!content.visibleToStudents)
+    throw new CoursesServiceError("LESSON_CONTENT_NOT_PUBLISHED");
+  }
  }
  return content;
 }
