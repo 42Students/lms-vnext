@@ -5,6 +5,7 @@ import {
   desc,
   eq,
   inArray,
+  isNotNull,
   isNull,
 } from "drizzle-orm";
 import { z } from "zod";
@@ -42,6 +43,7 @@ import {
   summarizePlacementReportDetails,
   type PlacementReportPoolLearner,
   type PlacementReportDetailedOffer,
+  type PlacementReportDetailedSelection,
   type PlacementReportApplication,
   type PlacementReportBranch,
   type PlacementReportFacts,
@@ -637,7 +639,7 @@ export async function getPlacementReportDetails(
     "placement_batch_registrations",
   );
 
-  const [poolRows, enrollmentRows, offerRows] = await Promise.all([
+  const [poolRows, enrollmentRows, offerRows, selectionDetailRows] = await Promise.all([
     registrationsAvailable
       ? db
           .select({
@@ -717,6 +719,7 @@ export async function getPlacementReportDetails(
         status: placementOffers.status,
         kind: placementOffers.kind,
         annualCtcInr: placementOffers.annualCtcInr,
+        releasedAt: placementOffers.releasedAt,
         expiresAt: placementOffers.expiresAt,
         joiningStatus: placementJoiningOutcomes.status,
       })
@@ -769,8 +772,41 @@ export async function getPlacementReportDetails(
           eq(placementJobs.seasonId, selectedSeasonId),
           isNull(placementJobs.archivedAt),
           inArray(placementJobs.id, workspace.selectedReportJobIds),
+          isNotNull(placementOffers.releasedAt),
         ),
       ),
+    db
+      .select({
+        membershipId: placementApplications.membershipId,
+        status: placementDriveSelections.status,
+        employmentType: placementJobs.employmentType,
+        countsAsPlaced: placementJobs.countsAsPlaced,
+      })
+      .from(placementDriveSelections)
+      .innerJoin(
+        placementApplications,
+        eq(placementApplications.id, placementDriveSelections.applicationId),
+      )
+      .innerJoin(
+        placementJobs,
+        and(
+          eq(placementJobs.id, placementDriveSelections.jobId),
+          eq(placementJobs.id, placementApplications.jobId),
+        ),
+      )
+      .innerJoin(
+        collegeMemberships,
+        and(
+          eq(collegeMemberships.id, placementApplications.membershipId),
+          eq(collegeMemberships.collegeId, query.collegeId),
+        ),
+      )
+      .where(and(
+        eq(placementJobs.collegeId, query.collegeId),
+        eq(placementJobs.seasonId, selectedSeasonId),
+        isNull(placementJobs.archivedAt),
+        inArray(placementJobs.id, workspace.selectedReportJobIds),
+      )),
   ]);
 
   // Prefer an ACTIVE program enrollment, then the most recently admitted
@@ -833,16 +869,27 @@ export async function getPlacementReportDetails(
       status: row.status,
       kind: row.kind,
       annualCtcInr: row.annualCtcInr,
+      releasedAt: row.releasedAt,
       expiresAt: row.expiresAt?.toISOString() ?? null,
       joiningStatus: row.joiningStatus,
     }),
   );
+
+  const detailedSelections: PlacementReportDetailedSelection[] =
+    selectionDetailRows.filter((row) => inBranch(row.membershipId))
+      .map((row) => ({
+        membershipId: row.membershipId,
+        status: row.status,
+        employmentType: row.employmentType,
+        countsAsPlaced: row.countsAsPlaced,
+      }));
 
   return {
     ...workspace,
     details: summarizePlacementReportDetails({
       registeredLearners,
       offers,
+      selections: detailedSelections,
       countsAsPlacedAt,
       asOf: new Date().toISOString(),
     }),

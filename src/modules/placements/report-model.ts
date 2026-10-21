@@ -618,6 +618,13 @@ export type PlacementReportPoolLearner = {
   departmentName: string;
 };
 
+export type PlacementReportDetailedSelection = {
+  membershipId: string;
+  status: string;
+  employmentType: string;
+  countsAsPlaced: boolean | null;
+};
+
 export type PlacementReportDetailedOffer = {
   countsAsPlaced?: boolean;
   id: string;
@@ -630,6 +637,7 @@ export type PlacementReportDetailedOffer = {
   status: string;
   kind?: string;
   annualCtcInr: number | null;
+  releasedAt?: Date | null;
   expiresAt: string | null;
   joiningStatus: string | null;
 };
@@ -777,6 +785,7 @@ function countJoining(
 export function summarizePlacementReportDetails(input: {
   registeredLearners: readonly PlacementReportPoolLearner[];
   offers: readonly PlacementReportDetailedOffer[];
+  selections?: readonly PlacementReportDetailedSelection[];
   countsAsPlacedAt?: "SELECTED" | "OFFER_RELEASED" | "OFFER_ACCEPTED";
   asOf: string;
 }): PlacementReportDetails {
@@ -802,15 +811,25 @@ export function summarizePlacementReportDetails(input: {
   ];
 
   const placedMemberships = new Set(
-    offers
-      .filter((offer) => countsAsPlacedByCollegeRule({
-        employmentType: offer.employmentType,
-        countsAsPlaced: offer.countsAsPlaced,
-        offerStatus: offer.status,
-        offerKind: offer.kind,
-        countsAsPlacedAt: input.countsAsPlacedAt ?? "OFFER_ACCEPTED",
-      }))
-      .map((offer) => offer.membershipId),
+    input.countsAsPlacedAt === "SELECTED"
+      ? (input.selections ?? [])
+          .filter((selection) =>
+            (selection.status === "SELECTED" ||
+              selection.status === "VERIFIED" ||
+              selection.status === "RELEASED") &&
+            (selection.countsAsPlaced ??
+              (selection.employmentType === "FULL_TIME")))
+          .map((selection) => selection.membershipId)
+      : offers
+          .filter((offer) => countsAsPlacedByCollegeRule({
+            employmentType: offer.employmentType,
+            countsAsPlaced: offer.countsAsPlaced,
+            offerStatus: offer.status,
+            offerKind: offer.kind,
+            releasedAt: offer.releasedAt,
+            countsAsPlacedAt: input.countsAsPlacedAt ?? "OFFER_ACCEPTED",
+          }))
+          .map((offer) => offer.membershipId),
   );
 
   const unplaced = registeredLearners
