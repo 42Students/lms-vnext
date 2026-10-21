@@ -70,6 +70,8 @@ export function validateIndependentAuditInboxFile(path:string,content:string):
   reasons.push("File exceeds the 32KB limit");
  let raw:unknown=null;
  try{raw=JSON.parse(content);}catch{reasons.push("Invalid JSON");}
+ if(raw===null&&!reasons.includes("Invalid JSON"))
+  reasons.push("The file must contain one JSON object");
  if(raw!==null){
   const parsed=payload.safeParse(raw);
   if(!parsed.success)
