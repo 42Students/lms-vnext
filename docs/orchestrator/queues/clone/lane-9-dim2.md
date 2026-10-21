@@ -153,16 +153,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/placements/learner-placement-offers.tsx`
 - [x] `src/components/placements/learner-placement-requests.tsx`
 - [x] `src/components/placements/learner-support-cancel.tsx`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-job-lifecycle-controls.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
-- [ ] `src/components/placements/placement-role-options.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-job-lifecycle-controls.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/placement-role-options.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
 - [ ] `src/components/placements/report-interactive-table.tsx`
 - [ ] `src/components/placements/super-admin-bulk-drive-actions.tsx`
 - [ ] `src/components/placements/super-admin-drive-archive.tsx`
