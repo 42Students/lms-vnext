@@ -116,7 +116,7 @@ export function NotificationList({
               }}
               aria-label={"Open notification: "+item.title}
               loading={pendingId===item.id}
-              className="w-full min-h-12 justify-start rounded-none border-x-0 border-t-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-left whitespace-normal shadow-none hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:py-5">
+              className="w-full min-h-12 justify-start rounded-none border-x-0 border-t-0 border-b border-[var(--lms-canvas-border)] bg-transparent px-0 py-4 text-left whitespace-normal shadow-none hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:py-5">
               <div className="flex min-w-0 items-start gap-3">
                <div className="min-w-0 flex-1">
                 <div className="flex flex-wrap items-center gap-2">
@@ -167,7 +167,7 @@ export function NotificationList({
                     item.readAt ? (
                       <Link
                         href={item.actionHref}
-                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9 min-[768px]:flex-none"
+                        className="inline-flex min-h-11 min-w-0 flex-1 items-center justify-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9 min-[768px]:flex-none"
                       >
                         {item.actionLabel??"Open"}
                       </Link>
