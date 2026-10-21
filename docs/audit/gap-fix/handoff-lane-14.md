@@ -171,3 +171,7 @@
 - Wave3 DB07 bulk project owner G2-4-017-019/-048/-073: schema and 0303 provide class x learner uniqueness and active membership FKs; integrate class-scoped bulk creation to populate `projectInstances.bulkLearnerMembershipId` and register/replay SQL before enabling bulk generation.
 
 - Wave3 DB09 scoped TPO/recruiter quote events: `drizzle/0304_chat14_tpo_change_request_event_scope.sql` guards quoted request vs thread job and forbids reparenting a referenced thread; lane 15 must journal/replay/negative-test, TPO messaging service owner must persist kind=EVENT and request ID from authorized same-job decision context (G2-19-031-021). Unregistered trigger is not runtime protection yet.
+
+- Wave3 P0 G2-16-025-052: `prepareSafeDriveChangeJobPatch` supports only job-wide DEADLINE and LOCATION as strictly parsed candidate effects; `drizzle/0305_chat14_drive_change_accept_receipt_guard.sql` adds fail-closed ACCEPTED receipt constraint. TPO change-request mutation service owner must implement atomic college/job CAS, role/eligibility-specific handlers, receipt write, and event before lane 15 journals 0305; otherwise status-only ACCEPT will be rejected. Do not enable the constraint independently.
+
+- Wave3 DB05 lesson order G2-17-018-020/-040: `0306_chat14_lesson_delivery_offering_fk.sql` upgrades staged 0243 sequence with composite `(delivery_id,offering_id)` FK and source mapping; lane 15 must register/replay 0243 then 0306, and verify DB05 same-offering trigger and negative tests before activating authoring reorder API.

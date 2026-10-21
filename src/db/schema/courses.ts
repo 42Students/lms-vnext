@@ -238,6 +238,9 @@ export const courseSectionDeliveries = pgTable(
     uniqueIndex("course_section_deliveries_active_uq")
       .on(table.offeringId, table.sectionId)
       .where(sql`${table.endedAt} is null`),
+    // Composite parent identity for exact delivery/offering scope witnesses.
+    uniqueIndex("course_section_deliveries_id_offering_uq")
+      .on(table.id, table.offeringId),
     index("course_section_deliveries_section_idx").on(
       table.sectionId,
     ),
