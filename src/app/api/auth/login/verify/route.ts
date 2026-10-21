@@ -16,16 +16,25 @@ import { getAuthConfig } from "@/modules/auth/config";
 
 export const runtime = "nodejs";
 
+// Old GET /verifyOTP exposed secrets in URL logs. Only a guarded POST attempt
+// may verify now. An old POST client can send 'otp' while it migrates to 'code'.
+// The server never issues a legacy JWT pair or a synthetic E2E administrator.
+const loginOtp = z.string().trim().regex(/^[0-9]{4,8}$/, "Enter the 4-8 digit OTP");
 const schema = z.strictObject({
-  attemptId: z.string().uuid(),
-  code: z.string({ error: "OTP is required" })
-    .trim()
-    .min(1, "OTP is required")
-    .regex(/^[0-9]{4,8}$/, "Enter the 4-8 digit OTP"),
-  secondCode: z
-    .string()
+  attemptId: z.string({ error: "attemptId required" }).trim()
+    .min(1, "attemptId required").uuid("Invalid attemptId"),
+  code: loginOtp.optional(),
+  otp: loginOtp.optional(),
+  secondCode: z.string().trim()
     .regex(/^[0-9]{4,8}$/, "Enter the 4-8 digit second verification code")
     .optional(),
+}).superRefine((data,ctx)=>{
+  if(!data.code&&!data.otp)ctx.addIssue({
+    code:"custom",path:["code"],message:"otp required",
+  });
+  if(data.code&&data.otp&&data.code!==data.otp)ctx.addIssue({
+    code:"custom",path:["otp"],message:"The two supplied OTP values must match",
+  });
 });
 
 function previousToken(request: Request) {
@@ -49,7 +58,7 @@ export async function POST(request: Request) {
   try {
     const verified = await verifyLoginWithRuntime({
       attemptId: guarded.body.attemptId,
-      code: guarded.body.code,
+      code: guarded.body.code ?? guarded.body.otp!,
       secondCode: guarded.body.secondCode,
       tenantCollegeId: guarded.tenantCollegeId,
       // Session is created in the same transaction as the code consume, and
@@ -99,6 +108,7 @@ export async function POST(request: Request) {
       // Clients must use the new cookie-scoped endpoints after verification.
       nextAction: autoMembershipId ? "OPEN_DASHBOARD" : "SELECT_COLLEGE_AND_ROLE",
       loginProtocol: "COOKIE_SESSION_V2",
+      verificationMethod: "POST_ATTEMPT_ID_CODE",
       membershipsEndpoint: "/api/auth/memberships",
       sessionEndpoint: "/api/auth/session",
     });
