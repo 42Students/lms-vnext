@@ -77,7 +77,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_app_api_notifications_route.ts.md` (edit src/app/api/notifications/route.ts; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_super-admin-course-bulk-visibility.tsx.md` (edit src/components/courses/super-admin-course-bulk-visibility.tsx; 5 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_notifications_types.ts.md` (edit src/modules/notifications/types.ts; 5 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_messaging_service.ts.md` (edit src/modules/messaging/service.ts; 5 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_messaging_service.ts.md` (edit src/modules/messaging/service.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_components_courses_faculty-course-list.tsx.md` (edit src/components/courses/faculty-course-list.tsx; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_college-content-authoring-service.ts.md` (edit src/modules/courses/college-content-authoring-service.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-9/W2_src_modules_courses_super-admin-content-directory-service.ts.md` (edit src/modules/courses/super-admin-content-directory-service.ts; 5 findings; best P2)
