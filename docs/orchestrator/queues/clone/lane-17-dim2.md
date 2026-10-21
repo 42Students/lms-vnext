@@ -420,19 +420,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/placements/placement-drive-day-overview.tsx`
 - [x] `src/components/placements/report-interactive-table.tsx`
 - [x] `src/components/placements/tpo-drive-selection-manager.tsx`
-- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-selection-import.tsx`
-- [ ] `src/components/placements/tpo-waitlist-promotion-control.tsx`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/project-admin-readiness-page.tsx`
-- [ ] `src/components/projects/project-admin-submissions-page.tsx`
-- [ ] `src/components/projects/project-admin-workspace-list.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
-- [ ] `src/components/tpo/grid/tpo-grid.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-selection-import.tsx`
+- [x] `src/components/placements/tpo-waitlist-promotion-control.tsx`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/project-admin-readiness-page.tsx`
+- [x] `src/components/projects/project-admin-submissions-page.tsx`
+- [x] `src/components/projects/project-admin-workspace-list.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/tpo/grid/tpo-grid.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
 - [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
