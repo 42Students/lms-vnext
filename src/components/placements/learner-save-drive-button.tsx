@@ -19,7 +19,7 @@ export function LearnerSaveDriveButton({
  const router=useRouter();
  const pathname=usePathname();
  const surface=explicitSurface??(
-  /\\/(?:jobs|drives)\\/[0-9a-f-]{36}(?:\\/|$)/i.test(pathname)?"DETAIL":"LIST"
+  /\/(?:jobs|drives)\/[0-9a-f-]{36}(?:\/|$)/i.test(pathname)?"DETAIL":"LIST"
  );
  const {showToast}=useToast();
  const [saved,setSaved]=useState(initialSaved);
