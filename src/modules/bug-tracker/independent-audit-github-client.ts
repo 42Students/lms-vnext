@@ -22,10 +22,12 @@ async function githubJson(path:string,token:string,method:"GET"|"POST"="GET") {
  try{
   const response=await fetch(API+path,{
    method,signal:controller.signal,cache:"no-store",
+   ...(method==="POST"?{body:JSON.stringify({repositories:["lms-findings"],permissions:{contents:"read"}})}:{}),
    headers:{
     Authorization:"Bearer "+token,
     Accept:"application/vnd.github+json",
     "X-GitHub-Api-Version":"2022-11-28",
+    ...(method==="POST"?{"Content-Type":"application/json"}:{}),
    },
   });
   if(!response.ok)throw new Error("Findings GitHub request failed: HTTP "+response.status);
