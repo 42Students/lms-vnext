@@ -957,3 +957,5 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-1-012-009 | `src/modules/auth/http.ts` | Shared guard should emit per-field safe Zod errors for missing attemptId without weakening host/rate checks; route cannot infer reason from generic 400.
 - G2-7-021-081 | `src/modules/projects/member-service.ts` | Paginate tenant-scoped eligible mentor query beyond 100; current limit100 search only.
+
+- G2-3-011-024 | `src/modules/placements/tpo-job-type-write-service.ts` | Provide read-only preview of affected drive count and affected placed reports before setting countsAsPlaced; UI now states actual cascade.
