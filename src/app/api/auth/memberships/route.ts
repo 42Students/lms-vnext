@@ -9,7 +9,7 @@ import {
   SessionAuthenticationError,
 } from "@/auth/session";
 import { MEMBERSHIP_ROLES } from "@/modules/identity/constants";
-import { headers } from "next/headers";
+import { cookies, headers } from "next/headers";
 import {
   getCurrentIdentityUid,
 } from "@/auth/request-context";
@@ -99,7 +99,30 @@ export async function GET() {
       ? choices.filter((choice) => choice.collegeId === collegeScope)
       : choices;
 
-    return privateAuthJson({ memberships });
+    const cookieStore=await cookies();
+    // Cookies are only *claims* about the user's last selection. Resolve the
+    // active choice from this authenticated identity's live, host-filtered list
+    // before displaying currentMembershipKey or currentRole. Old targetKey
+    // bookmarks never authorize a role or a cross-host session handoff.
+    const activeId=cookieStore.get(MEMBERSHIP_COOKIE_NAME)?.value??null;
+    const selected=memberships.find(choice=>choice.id===activeId&&choice.status==="ACTIVE")??null;
+    const requestedRole=cookieStore.get(ROLE_COOKIE_NAME)?.value??null;
+    const currentRole=selected?
+      selected.roles.find(role=>role===requestedRole)??selected.roles[0]??null:null;
+    return privateAuthJson({
+      memberships:memberships.map(choice=>({...choice,
+        label:choice.collegeName+" · "+choice.organizationName,
+        selectable:choice.status==="ACTIVE",
+        selected:choice.id===selected?.id,
+      })),
+      currentMembershipKey:selected?.id??null,
+      currentMembership:selected,
+      currentRole,
+      membershipSelectionRequired:!selected,
+      // Domain authority is checked by the server, not a client boolean flag.
+      hostNavigation:"FIRST_PARTY_COOKIE",
+      adminScopeEndpoint:"/api/auth/admin-scope",
+    });
   } catch (error) {
     return authErrorResponse(error);
   }
@@ -167,6 +190,8 @@ export async function POST(request: Request) {
       membership,
       sessionTransport:"FIRST_PARTY_COOKIE",
       hostChange:false,
+      selectedRole:parsed.data.role??membership.roles[0]??null,
+      next:"/dashboard",
     });
 
     response.cookies.set(

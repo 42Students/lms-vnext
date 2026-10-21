@@ -19,8 +19,8 @@ export function parseLegacyTpoNoticeSchedule(raw:unknown):{
  if(typeof raw!=="string")return {ok:false,message:"Choose a valid schedule date and time."};
  const value=raw.trim();
  if(!value)return {ok:true,scheduledAt:null};
- const local=value.match(/^(\\d{4}-\\d{2}-\\d{2})[ T](\\d{2}:\\d{2})(?::(\\d{2}))?$/);
- const iso=/^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}(?::\\d{2}(?:\\.\\d{1,3})?)?(?:Z|[+-]\\d{2}:\\d{2})$/i;
+ const local=value.match(/^([0-9]{4}-[0-9]{2}-[0-9]{2})[ T]([0-9]{2}:[0-9]{2})(?::([0-9]{2}))?$/);
+ const iso=/^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}(?::[0-9]{2}(?:[.][0-9]{1,3})?)?(?:Z|[+-][0-9]{2}:[0-9]{2})$/i;
  const parsed=local?new Date(local[1]+"T"+local[2]+":"+(local[3]??"00")+"+05:30"):
   iso.test(value)?new Date(value):null;
  if(!parsed||!Number.isFinite(parsed.getTime()))
