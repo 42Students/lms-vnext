@@ -7,6 +7,7 @@ import { Pagination } from "@/components/ui/pagination";
 export type ProjectAdminCollectionQuery = {
   view?:"cards"|"table";
   fromMentorId?: string;
+  focusedProjectId?:string;
   riskBucket?: "STALLED" | "BLOCKER" | "REVIEW";
   riskSort?: "INACTIVE" | "WORKSPACE" | "SEVERITY";
   q?: string;
@@ -113,6 +114,7 @@ export function ProjectAdminFilters({
       </p>:null}
       {filterView?<input type="hidden" name="view" value={filterView}/>:query.view?<input type="hidden" name="view" value={query.view}/>:null}
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
+      {query.focusedProjectId ? <input type="hidden" name="projectId" value={query.focusedProjectId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {query.sort&&query.sort!=="SUBMITTED_DESC"?
         <input type="hidden" name="sort" value={query.sort}/>:null}
@@ -196,6 +198,7 @@ export function ProjectAdminPagination({
     if (query.q) params.set(basePath === "/admin/projects" ? "search" : "q", query.q);
     if (query.view) params.set("view", query.view);
     if (query.fromMentorId) params.set("fromMentorId", query.fromMentorId);
+    if (query.focusedProjectId) params.set("projectId",query.focusedProjectId);
     if (query.riskBucket) params.set("riskBucket", query.riskBucket);
     if (query.riskSort) params.set("riskSort", query.riskSort);
     if (query.status) {

@@ -1,4 +1,5 @@
 import "server-only";
+import {z} from "zod";
 import {and,asc,count,eq,ilike,ne,notExists,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {projectInstances,projectSubmissions} from "@/db/schema";
@@ -24,10 +25,19 @@ export async function listProjectAdminUnsubmitted(context:RequestContext,college
    organizationId:college.organizationId,collegeId:college.id,
   });
  const searchPattern=adminUnsubmittedLiteralSearchPattern(q.q??"");
+ const focus=q.focusedProjectId;
+ const focusUuid=focus&&z.string().uuid().safeParse(focus).success?focus:null;
+ const focusLegacy=focus&&/^[0-9]+$/.test(focus)&&Number.isSafeInteger(Number(focus))&&Number(focus)>0?Number(focus):null;
+ const focusCondition=focus?or(
+    focusUuid?eq(projectInstances.id,focusUuid):undefined,
+    eq(projectInstances.slug,focus),
+    focusLegacy!==null?eq(projectInstances.legacyProjectId,focusLegacy):undefined,
+ ):undefined;
  // The subquery must reference the parent project's qualified ID. Plain
  // column interpolation inside nested SQL can resolve to an inner "id".
  const parentProjectId=sql.raw('"project_instances"."id"');
  const where=and(eq(projectInstances.collegeId,college.id),
+  focusCondition,
   ne(projectInstances.status,"ARCHIVED"),
   q.status?eq(projectInstances.status,q.status):undefined,
   notExists(db.select({id:projectSubmissions.id}).from(projectSubmissions)

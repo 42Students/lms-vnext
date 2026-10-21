@@ -773,6 +773,7 @@ const projectSubmissionQueueQuerySchema =
       ])
       .optional(),
     sort:z.enum(["SUBMITTED_DESC","PENDING_DESC","REVISIONS_DESC"]).default("SUBMITTED_DESC"),
+    focusedProjectId: z.string().trim().min(1).max(120).regex(/^[a-zA-Z0-9_-]+$/).optional(),
   });
 
 /** COL-projects-13: whole-college cards reflect the latest delivery only. */
@@ -845,6 +846,14 @@ export async function listProjectAdminSubmissionQueue(
   // Keep the outer project ID qualified inside the mentor subquery.
   const instanceId = sql.raw('"project_instances"."id"');
   const searchPattern=adminUnsubmittedLiteralSearchPattern(query.q??"");
+  const focus=query.focusedProjectId;
+  const focusUuid=focus&&z.string().uuid().safeParse(focus).success?focus:null;
+  const focusLegacy=focus&&/^[0-9]+$/.test(focus)&&Number.isSafeInteger(Number(focus))&&Number(focus)>0?Number(focus):null;
+  const focusCondition=focus?or(
+    focusUuid?eq(projectInstances.id,focusUuid):undefined,
+    eq(projectInstances.slug,focus),
+    focusLegacy!==null?eq(projectInstances.legacyProjectId,focusLegacy):undefined,
+  ):undefined;
   const search = query.q
     ? or(
         ilike(
@@ -861,6 +870,7 @@ export async function listProjectAdminSubmissionQueue(
   const where = and(
     eq(projectInstances.collegeId, college.id),
     isNull(projectInstances.deletedAt),
+    focusCondition,
     // The unfiltered All view intentionally includes revision history.
     // Operational status shortcuts must never show superseded versions.
     query.submissionStatus?isCurrentProjectSubmissionSql():undefined,

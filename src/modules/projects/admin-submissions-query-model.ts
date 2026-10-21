@@ -10,6 +10,7 @@ const decimalPage = (min: number, max: number, fallback: number) => z.union([
 const schema = z.strictObject({
   view: z.enum(["ALL", "NOT_SUBMITTED"]).default("ALL"),
   q: z.string().trim().max(120).optional(),
+  focusedProjectId: z.string().trim().min(1).max(120).regex(/^[a-zA-Z0-9_-]+$/).optional(),
   status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
   submissionStatus: z.enum([
     "DRAFT", "SUBMITTED", "CHANGES_REQUESTED", "APPROVED",
@@ -47,7 +48,7 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
   const legacySubmission=rawStatus && !workspaceStatus ? normalizeSubmissionStatus(rawStatus) : undefined;
   const entries = {
     view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
-    q:first(params.q)??first(params.projectId),status:workspaceStatus,
+    q:first(params.q),focusedProjectId:first(params.projectId),status:workspaceStatus,
     submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
     sort:first(params.sort),page:first(params.page),pageSize:first(params.pageSize),
   };
@@ -61,13 +62,14 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
  * filter; never carry one across as though it were applied. */
 export function projectAdminUnsubmittedHref(
   basePath:string,
-  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number;
+  query:{q?:string;focusedProjectId?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number;
     sort?:"SUBMITTED_DESC"|"PENDING_DESC"|"REVISIONS_DESC"},
   page=1,
 ):string {
   const params=new URLSearchParams();
   params.set("view","NOT_SUBMITTED");
   if(query.q)params.set("q",query.q);
+  if(query.focusedProjectId)params.set("projectId",query.focusedProjectId);
   if(query.status)params.set("status",query.status);
   if(query.pageSize)params.set("pageSize",String(query.pageSize));
   if(query.sort&&query.sort!=="SUBMITTED_DESC")params.set("sort",query.sort);
@@ -81,13 +83,14 @@ export function projectAdminUnsubmittedHref(
  */
 export function projectAdminSubmissionHref(
   basePath:string,
-  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number;
+  query:{q?:string;focusedProjectId?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number;
     sort?:"SUBMITTED_DESC"|"PENDING_DESC"|"REVISIONS_DESC"},
   submissionStatus?:"SUBMITTED"|"UNDER_REVIEW"|"LOCKED"|"DRAFT_REVISING"|
     "CHANGES_REQUESTED"|"APPROVED",
 ):string {
   const params=new URLSearchParams();
   if(query.q)params.set("q",query.q);
+  if(query.focusedProjectId)params.set("projectId",query.focusedProjectId);
   if(query.status)params.set("status",query.status);
   if(query.pageSize)params.set("pageSize",String(query.pageSize));
   if(query.sort&&query.sort!=="SUBMITTED_DESC")params.set("sort",query.sort);
