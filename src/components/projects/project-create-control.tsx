@@ -40,6 +40,9 @@ export function CreateProjectControl({
   const [templateId, setTemplateId] = useState("");
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
+  const [slugEdited, setSlugEdited] = useState(false);
+  const [templateQuery, setTemplateQuery] = useState("");
+  const [attempted, setAttempted] = useState(false);
   const [summary, setSummary] = useState("");
   const [phase, setPhase] = useState("Planning");
   const [progressPercent, setProgressPercent] = useState(0);
@@ -66,6 +69,7 @@ export function CreateProjectControl({
   const [learnerMembershipIds,setLearnerMembershipIds]=useState<string[]>([]);
   const [rosterSearch,setRosterSearch]=useState("");
   const [initialStatus,setInitialStatus]=useState<"PLANNED"|"ACTIVE">("PLANNED");
+  const [displayStatus,setDisplayStatus]=useState<"PLANNED"|"ACTIVE"|"IN_PROGRESS"|"READY"|"BLOCKED">("PLANNED");
   const submitLock = useRef(false);
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -82,13 +86,14 @@ export function CreateProjectControl({
   function openDialog() {
     setTemplateId("");
     setTitle("");
-    setSlug("");
+    setSlug("");setSlugEdited(false);setTemplateQuery("");setAttempted(false);
     setSummary("");
     setPhase("Planning");setProgressPercent(0);
     setDueLabel("");setBlocker("");setNextAction("");
     setMentorMembershipId("");
     setMentorQuery("");setRosterSearch("");setClassQuery("");setShowClassSelector(false);
-    setSectionId("");setRoster([]);setLearnerMembershipIds([]);setInitialStatus("PLANNED");
+    setSectionId("");setRoster([]);setLearnerMembershipIds([]);
+    setInitialStatus("PLANNED");setDisplayStatus("PLANNED");
     setLoadedRosterSectionId(null);setRosterError(false);setClassesError(false);
     setMentorsError(null);
     setMentorsLoading(true);
@@ -174,6 +179,7 @@ export function CreateProjectControl({
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (submitLock.current) return;
+    setAttempted(true);
     if (!templateId || !templates.some(item => item.templateId === templateId)) {
       setError("Select a template to start from its sprint and task plan.");
       return;
@@ -184,6 +190,10 @@ export function CreateProjectControl({
     }
     if (title.trim().length > 160) {
       setError("Title must be 160 characters or fewer");
+      return;
+    }
+    if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+      setError("Slug must contain lowercase letters, numbers and single hyphens.");
       return;
     }
     if (learnerMembershipIds.length > 500) {
@@ -265,6 +275,7 @@ export function CreateProjectControl({
   }
 
   const dirty = Boolean(templateId || title || slug || summary || mentorMembershipId ||
+    templateQuery || slugEdited || displayStatus !== "PLANNED" ||
     sectionId || learnerMembershipIds.length || showClassSelector || initialStatus !== "PLANNED" ||
     phase !== "Planning" || progressPercent !== 0 || dueLabel || blocker || nextAction);
   const discard = useProjectEditorDiscardGuard(open, dirty, pending, () => {
@@ -288,12 +299,16 @@ export function CreateProjectControl({
 
 
   const form = (
-        <form onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4 md:grid-cols-2">
+        <form noValidate onSubmit={submit} className="grid min-w-0 grid-cols-1 items-start gap-4 md:grid-cols-2">
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Assigned template
             </span>
+            <Input type="search" className="mb-2" maxLength={120}
+              aria-label="Find assigned template" placeholder="Search assigned templates"
+              value={templateQuery} onChange={event=>setTemplateQuery(event.target.value)}/>
             <Select
+              aria-invalid={attempted&&!templateId}
               required
               value={templateId}
               onChange={(event) =>
@@ -301,7 +316,8 @@ export function CreateProjectControl({
               }
             >
               <option value="">Select a template</option>
-              {templates.map((template) => (
+              {templates.filter(template=>template.templateId===templateId||!templateQuery.trim()||
+                template.title.toLowerCase().includes(templateQuery.trim().toLowerCase())).map((template) => (
                 <option
                   key={template.templateId}
                   value={template.templateId}
@@ -310,6 +326,9 @@ export function CreateProjectControl({
                 </option>
               ))}
             </Select>
+            {attempted&&!templateId?<span role="alert" className="mt-1 block text-xs text-error">
+              Select a template to start from its sprint and task plan.
+            </span>:null}
           </label>
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -318,24 +337,35 @@ export function CreateProjectControl({
             <Input
               required
               maxLength={160}
+              aria-invalid={attempted&&!title.trim()}
               value={title}
-              onChange={(event) => setTitle(event.target.value)}
+              onChange={(event) => {
+                const next=event.target.value;
+                setTitle(next);
+                if(!slugEdited)setSlug(next.toLowerCase().normalize("NFKD")
+                  .replace(/[\u0300-\u036f]/g,"").replace(/[^a-z0-9]+/g,"-")
+                  .replace(/^-|-$/g,"").slice(0,64).replace(/-$/g,""));
+              }}
               placeholder="Campus Event Coordination"
             />
             <span className="mt-1 block text-xs text-muted-foreground">{title.length}/160</span>
+            {attempted&&!title.trim()?<span role="alert" className="mt-1 block text-xs text-error">
+              Title is required
+            </span>:null}
           </label>
           <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Slug
+              Slug (automatically suggested)
             </span>
             <Input
               required
               maxLength={64}
               pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               value={slug}
-              onChange={(event) =>
-                setSlug(event.target.value.toLowerCase())
-              }
+              onChange={(event) => {
+                setSlugEdited(true);
+                setSlug(event.target.value.toLowerCase());
+              }}
               placeholder="campus-placement-portal"
             />
             <span className="mt-1 block text-xs text-muted-foreground">
@@ -444,11 +474,30 @@ export function CreateProjectControl({
           </label>:null}
           {showClassSelector&&classesError?<p role="alert" className="text-sm text-error md:col-span-2">Classes could not load. <Button variant="ghost" type="button" className="underline" onClick={()=>{setClassesError(false);setClassesRetry(value=>value+1);}}>Try Again</Button></p>:null}
           <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
-            <Select value={initialStatus} onChange={e=>setInitialStatus(e.target.value as "PLANNED"|"ACTIVE")}
-              className="w-full">
-              <option value="PLANNED">Planned</option>
+            <Select value={displayStatus} onChange={event=>{
+              const next=event.target.value as typeof displayStatus;
+              const previous=displayStatus;
+              setDisplayStatus(next);
+              setInitialStatus(next==="BLOCKED"||next==="PLANNED"?"PLANNED":"ACTIVE");
+              if(phase==="Planning"||phase===previous.replace("_"," ")){
+                setPhase(next==="IN_PROGRESS"?"In progress":next==="READY"?"Ready":
+                  next==="BLOCKED"?"Blocked":"Planning");
+              }
+            }} className="w-full">
+              <option value="PLANNED">Planning</option>
               <option value="ACTIVE">Active</option>
+              <option value="IN_PROGRESS">In progress</option>
+              <option value="READY">Ready</option>
+              <option value="BLOCKED">Blocked</option>
+              <option value="ARCHIVED" disabled>Archived (use Archive after creating)</option>
             </Select>
+            <span className="text-xs text-body">
+              {displayStatus==="READY"||displayStatus==="IN_PROGRESS"
+                ?"The workspace is saved as Active, with the historical stage in Phase.":
+                displayStatus==="BLOCKED"
+                ?"The workspace is saved as Planned, with Blocked recorded in Phase.":
+                "Archive is available after the workspace is created."}
+            </span>
           </label>
           {!mentorMembershipId?<p className="text-xs text-warning md:col-span-2">
             {initialStatus === "ACTIVE" ? "A mentor is required before a workspace can be Active" :
@@ -509,9 +558,6 @@ export function CreateProjectControl({
               loading={pending}
               disabled={
                 pending ||
-                !templateId ||
-                !title.trim() ||
-                !slug.trim() ||
                 (Boolean(sectionId) && loadedRosterSectionId!==sectionId)
               }
             >
