@@ -332,7 +332,7 @@ export function AdminAttendanceWorkspace({
         }}
         className="grid min-w-0 items-end gap-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]"
       >
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Class
           <Select className="w-full" value={sectionId}
             onChange={(event) => {
@@ -347,7 +347,7 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Course
           <Select className="w-full" value={courseId}
             disabled={!sectionId}
@@ -364,7 +364,7 @@ export function AdminAttendanceWorkspace({
             ))}
           </Select>
         </label>
-        {termDeliveries.length>1?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        {termDeliveries.length>1?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic term
           <Select className="w-full" value={deliveryId||termDeliveries[0]?.deliveryId||""}
             onChange={event=>setDeliveryId(event.target.value)}>

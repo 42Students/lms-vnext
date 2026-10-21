@@ -404,7 +404,7 @@ export function LoginForm({
           <div id="login-method-panel"
             role={allowedChannels.length>1?"tabpanel":undefined}
             aria-labelledby={allowedChannels.length>1?`login-tab-${channel.toLowerCase()}`:undefined}>
-          <label className="block">
+          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1 block text-sm font-medium text-foreground">
               {channel === "PHONE" ? "Mobile number" : "Email"}
             </span>
@@ -464,7 +464,7 @@ export function LoginForm({
             </p>
           )}
 
-          <label className="block">
+          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1 block text-sm font-medium text-foreground">
               {attempt.requiresSecondFactor
                 ? "Code from the text message"
@@ -487,7 +487,7 @@ export function LoginForm({
           </label>
 
           {attempt.requiresSecondFactor ? (
-            <label className="block">
+            <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <span className="mb-1 block text-sm font-medium text-foreground">
                 Code from the email
               </span>

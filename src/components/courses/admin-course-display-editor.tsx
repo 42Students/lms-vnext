@@ -142,7 +142,7 @@ export function AdminCourseDisplayEditor({
       </div>
 
       <div className="mt-[var(--lms-space-4)] grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)]">
-        <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-neutral-400)]">
+        <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
           Introduction
           <Input
             className="mt-[var(--lms-space-2)] w-full"
@@ -154,7 +154,7 @@ export function AdminCourseDisplayEditor({
           />
         </label>
 
-        <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-neutral-400)]">
+        <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
           What learners will take away
           <Textarea
             className="mt-[var(--lms-space-2)] min-h-32 w-full"
@@ -178,10 +178,10 @@ export function AdminCourseDisplayEditor({
           <p className="m-0 max-w-prose text-xs leading-5 text-muted-foreground">
             Rich HTML is sanitized to a strict attribute-free formatting allowlist before storage.
           </p>
-          <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-neutral-400)]">
+          <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
             Rich description HTML
             <Textarea
-              className="mt-[var(--lms-space-2)] min-h-40 w-full font-mono text-sm"
+              className="mt-[var(--lms-space-2)] min-h-40 w-full font-mono text-[var(--lms-font-base)]"
               value={bodyHtml}
               maxLength={20000}
               placeholder="<p>Describe the course...</p>"
@@ -193,7 +193,7 @@ export function AdminCourseDisplayEditor({
               stripped; simple formatting/list/table tags are retained.
             </span>
           </label>
-          <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-neutral-400)]">
+          <label className="block min-w-0 text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] text-[13px] leading-4">
             Thumbnail URL
             <Input
               className="mt-[var(--lms-space-2)] w-full"
