@@ -56,7 +56,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/TenantDomain.java`
 - [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/QuizAnswer.java`
 - [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectMeetingHistory.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LectureHall.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LectureHall.java`
 - [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyTeachingAssignment.java`
 - [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BugTrackerAccess.java`
 - [ ] U021 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/dto/request/ApplyToJobRequest.java`
