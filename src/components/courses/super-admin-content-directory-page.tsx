@@ -40,14 +40,19 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
 }) {
  const raw=await searchParams;
  const invalidKeys=Object.keys(raw).some(key=>
-  !["q","status","page","offeringId","lessonId","deliveryId","scope"].includes(key));
+  !["q","status","page","offeringId","lessonId","deliveryId","scope","lessonSearch","lessonPage"].includes(key));
  const duplicated=Object.values(raw).some(Array.isArray);
  const parsed=(invalidKeys||duplicated)
   ?adminContentQuerySchema.safeParse(null)
   :adminContentQuerySchema.safeParse({q:raw.q,status:raw.status,page:raw.page,
     offeringId:raw.offeringId,lessonId:raw.lessonId,deliveryId:raw.deliveryId,scope:raw.scope});
  const title=ADMIN_CONTENT_LABELS[kind];
- if(!parsed.success)return <div className="min-w-0 space-y-4">
+ const lessonSearch=typeof raw.lessonSearch==="string"?raw.lessonSearch.trim():"";
+ const rawLessonPage=typeof raw.lessonPage==="string"?raw.lessonPage:"1";
+ const lessonPage=/^[1-9][0-9]{0,3}$/.test(rawLessonPage)?Number(rawLessonPage):1;
+ const invalidLessonQuery=lessonSearch.length>100||
+   (raw.lessonPage!==undefined&&!/^[1-9][0-9]{0,3}$/.test(rawLessonPage));
+ if(!parsed.success||invalidLessonQuery)return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
   <ErrorState title="Invalid content filters" description="Review search, status and page."
    action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Clear filters</Link>}/>
@@ -75,7 +80,8 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  // authoring picker or Section-filter options service is temporarily down.
  const [dataResult,lessonsResult,sectionsResult]=await Promise.allSettled([
   listSuperAdminContentDirectory(context,kind,parsed.data),
-  listSuperAdminContentAuthoringLessons(context),
+  listSuperAdminContentAuthoringLessons(context,{search:lessonSearch,pageSize:51,
+    offset:(lessonPage-1)*50}),
   listSuperAdminContentSectionOptions(context),
  ]);
  if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
@@ -86,7 +92,16 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Retry loading content</Link>}/>
  </div>;
  const data=dataResult.value;
- const lessons=lessonsResult.status==="fulfilled"?lessonsResult.value:[];
+ const authoringRows=lessonsResult.status==="fulfilled"?lessonsResult.value:[];
+ const lessons=authoringRows.slice(0,50);
+ const hasNextLessons=authoringRows.length>50;
+ const authoringPageHref=(targetPage:number)=>{
+   const base=adminContentHref(kind,parsed.data);
+   const query=new URLSearchParams({
+     lessonSearch,lessonPage:String(targetPage),
+   });
+   return base+(base.includes("?")?"&":"?")+query.toString();
+ };
  const sections=sectionsResult.status==="fulfilled"?sectionsResult.value:[];
  const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
@@ -125,12 +140,34 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     <h2 className="mb-3 text-lg font-semibold text-foreground">
       {kind==="VIDEOS"?"Add Video":kind==="LIVE_CLASSES"?"Add Live Class":"Add Resource"}
     </h2>
+  <form method="get" className="mb-3 flex min-w-0 flex-wrap items-end gap-2" role="search">
+    {Object.entries({
+      q:data.query.q,status:data.query.status,page:String(data.query.page),
+      offeringId:data.query.offeringId??"",lessonId:data.query.lessonId??"",
+      deliveryId:data.query.deliveryId??"",scope:data.query.scope,
+    }).filter(([,value])=>Boolean(value)).map(([key,value])=>
+      <input key={key} type="hidden" name={key} value={value}/>)}
+    <label className="grid min-w-[12rem] flex-1 gap-1 text-sm font-semibold text-body">
+      Find a course or lesson
+      <Input name="lessonSearch" type="search" maxLength={100}
+        defaultValue={lessonSearch} placeholder="Search course, code or lesson"/>
+    </label>
+    <Button type="submit" variant="secondary">Find lessons</Button>
+  </form>
   {lessonsResult.status==="fulfilled"
    ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} sections={sections} allowVideoUpload/>
    :<Banner tone="warning">Course and lesson authoring choices could not be loaded.
     Existing content remains available. <Link href={adminContentHref(kind,parsed.data)}
       className="font-semibold underline">Retry loading course and lesson choices</Link>
    </Banner>}
+  {lessonsResult.status==="fulfilled"?
+    <nav aria-label="Authoring lesson pages" className="mt-2 flex items-center justify-between gap-3 text-sm">
+      {lessonPage>1?<Link href={authoringPageHref(lessonPage-1)}
+        className="font-semibold text-primary-text underline">Previous lessons</Link>:<span/>}
+      <span>Lesson page {lessonPage} · Up to 50 lessons per page</span>
+      {hasNextLessons?<Link href={authoringPageHref(lessonPage+1)}
+        className="font-semibold text-primary-text underline">Next lessons</Link>:<span/>}
+    </nav>:null}
   {sectionsResult.status==="rejected"?<Banner tone="warning">Classes could not be loaded.
    Your selected filters still apply. <Link href={adminContentHref(kind,parsed.data)}
      className="font-semibold underline">Retry loading classes</Link>

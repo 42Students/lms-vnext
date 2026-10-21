@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, eq, ilike, ne, sql } from "drizzle-orm";
+import { and, asc, eq, ilike, ne, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { courseLearningPaths, courseLessons, courseOfferings, courses, departments, lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -9,13 +9,15 @@ import { resolveActingCollege } from "@/modules/permissions/acting-college";
 /** The authoring picker is restricted to persisted lessons of the selected college. */
 export async function listSuperAdminContentAuthoringLessons(
   context: RequestContext,
-  options: { search?: string; page?: number; pageSize?: number } = {},
+  options: { search?: string; page?: number; pageSize?: number; offset?: number } = {},
 ) {
   const search = (options.search ?? "").trim().slice(0, 100);
   const page = typeof options.page === "number" && Number.isSafeInteger(options.page) && options.page > 0
     ? Math.min(options.page, 10000) : 1;
   const pageSize = typeof options.pageSize === "number" && Number.isSafeInteger(options.pageSize) && options.pageSize > 0
     ? Math.min(options.pageSize, 500) : 500;
+  const offset=options.offset!==undefined&&Number.isSafeInteger(options.offset)&&
+    options.offset>=0?options.offset:(page-1)*pageSize;
   // Escape SQL LIKE wildcard characters without broadening the search.
   const pattern = "%" + search.replaceAll("\\", "\\\\").replaceAll("%", "\\%").replaceAll("_", "\\_") + "%";
   const acting = await resolveActingCollege(context, "courses.manage");
@@ -34,9 +36,10 @@ export async function listSuperAdminContentAuthoringLessons(
     .where(and(eq(departments.collegeId, acting.collegeId),
       eq(courses.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
       eq(courseLessons.status,"ACTIVE"),ne(courseLearningPaths.status,"ARCHIVED"),
-      ...(search ? [ilike(courseLessons.name, pattern)] : [])))
+      ...(search ? [or(ilike(courseLessons.name, pattern),
+        ilike(courses.name, pattern),ilike(courses.code, pattern))] : [])))
     .orderBy(asc(courses.name), asc(courseLessons.name), asc(courseLessons.id))
-    .limit(pageSize).offset((page - 1) * pageSize);
+    .limit(pageSize).offset(offset);
 }
 
 /** Old lesson authoring starts at sequence zero and permits an explicit
