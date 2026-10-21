@@ -4,6 +4,7 @@ export const adminAssessmentQuerySchema = z.strictObject({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "DRAFT", "PUBLISHED", "CLOSED", "ARCHIVED"]).default("ALL"),
   courseCode:z.preprocess(value=>value===""?undefined:value,z.string().trim().min(1).max(64).optional()),
+  deliveryId:z.string().uuid().optional(),
   scope:z.enum(["ALL","SHARED","SECTION"]).default("ALL"),
   results:z.enum(["ALL","PUBLISHED","HIDDEN"]).default("ALL"),
   page: z.coerce.number().int().min(1).max(1000).default(1),
@@ -15,6 +16,7 @@ export function adminAssessmentHref(kind: AdminAssessmentKind, query: z.infer<ty
   if (query.q) params.set("q", query.q);
   if (query.status !== "ALL") params.set("status", query.status);
   if (query.courseCode) params.set("courseCode",query.courseCode);
+  if (query.deliveryId) params.set("deliveryId",query.deliveryId);
   if (query.scope!=="ALL") params.set("scope",query.scope);
   if (kind==="QUIZ"&&query.results!=="ALL") params.set("results",query.results);
   if (query.page > 1) params.set("page", String(query.page));
