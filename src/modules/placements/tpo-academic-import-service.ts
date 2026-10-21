@@ -137,6 +137,28 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
     let updated = 0, newlyIneligible = 0;
     for (const row of input.rows) {
       if (!eligible.has(row.studentCode)) continue;
+      const nextFields:Record<string,number|boolean>={
+        ...(row.cgpa!==undefined?{cgpaHundredths:Math.round(row.cgpa*100)}:{}),
+        ...(row.activeBacklogs!==undefined?{activeBacklogs:row.activeBacklogs}:{}),
+        ...(row.pastBacklogs!==undefined?{pastBacklogs:row.pastBacklogs}:{}),
+        ...(row.tenthPercentage!==undefined?{tenthPctBasisPoints:Math.round(row.tenthPercentage*100)}:{}),
+        ...(row.twelfthPercentage!==undefined?{twelfthPctBasisPoints:Math.round(row.twelfthPercentage*100)}:{}),
+        ...(row.diplomaPercentage!==undefined?{diplomaPctBasisPoints:Math.round(row.diplomaPercentage*100)}:{}),
+        ...(row.undergraduatePercentage!==undefined?{undergraduatePctBasisPoints:Math.round(row.undergraduatePercentage*100)}:{}),
+        ...(row.postgraduatePercentage!==undefined?{postgraduatePctBasisPoints:Math.round(row.postgraduatePercentage*100)}:{}),
+        ...(row.gapYears!==undefined?{gapYears:row.gapYears}:{}),
+        ...(row.isLateralEntry!==undefined?{isLateralEntry:row.isLateralEntry}:{}),
+        ...(row.passingYear!==undefined?{passingYear:row.passingYear}:{}),
+      };
+      const [before]=await tx.select().from(placementCandidateAcademicEvidence)
+        .where(eq(placementCandidateAcademicEvidence.membershipId,row.studentCode))
+        .for("update").limit(1);
+      const valuesBefore=before as Record<string,unknown>|undefined;
+      // An identical VERIFIED correction is not a new import event. Preserve
+      // its original verification/import provenance and do no downstream work.
+      if(before?.source==="VERIFIED"&&
+        Object.entries(nextFields).every(([key,value])=>valuesBefore?.[key]===value))
+        continue;
       // Re-evaluate every open application before and after the verified evidence
       // update in the same transaction; never withdraw or delete it.
       const applications=await tx.select({
@@ -153,17 +175,7 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
       // A single persisted VERIFIED source wins over SELF evidence during
       // placement eligibility, and source provenance remains auditable.
       const evidence = {
-        ...(row.cgpa!==undefined?{cgpaHundredths:Math.round(row.cgpa*100)}:{}),
-        ...(row.activeBacklogs!==undefined?{activeBacklogs:row.activeBacklogs}:{}),
-        ...(row.pastBacklogs!==undefined?{pastBacklogs:row.pastBacklogs}:{}),
-        ...(row.tenthPercentage!==undefined?{tenthPctBasisPoints:Math.round(row.tenthPercentage*100)}:{}),
-        ...(row.twelfthPercentage!==undefined?{twelfthPctBasisPoints:Math.round(row.twelfthPercentage*100)}:{}),
-        ...(row.diplomaPercentage!==undefined?{diplomaPctBasisPoints:Math.round(row.diplomaPercentage*100)}:{}),
-        ...(row.undergraduatePercentage!==undefined?{undergraduatePctBasisPoints:Math.round(row.undergraduatePercentage*100)}:{}),
-        ...(row.postgraduatePercentage!==undefined?{postgraduatePctBasisPoints:Math.round(row.postgraduatePercentage*100)}:{}),
-        ...(row.gapYears!==undefined?{gapYears:row.gapYears}:{}),
-        ...(row.isLateralEntry!==undefined?{isLateralEntry:row.isLateralEntry}:{}),
-        ...(row.passingYear!==undefined?{passingYear:row.passingYear}:{}),
+        ...nextFields,
         source: "VERIFIED" as const,
         // Direct correction is not an import batch, even if later reached
         // from a single-row form. Imported rows have a traceable timestamp.
