@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 import {useToast} from "@/components/ui/toast";
 import { Textarea } from "@/components/ui/textarea";
 import {DataTable} from "@/components/ui/data-table";
@@ -9,15 +10,15 @@ import {EmptyState} from "@/components/ui/empty-state";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Dialog} from "@/components/ui/dialog";
-import {useRef,useState} from "react";
-import {useRouter} from "next/navigation";
+import {useEffect,useRef,useState} from "react";
+import {usePathname,useRouter} from "next/navigation";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import { Disclosure } from "@/components/ui/disclosure";
 import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 type Round={id:string;name:string;status:string;kind:string};
-type Candidate={applicationId:string;name:string|null;screening:string};
+type Candidate={applicationId:string;name:string|null;screening:string;departmentName?:string|null;rollNumber?:string|null};
 type Appointment={id:string;roundId:string;applicationId:string;status:string;scheduledAt:string;
  durationMinutes:number;mode:string;venue:string|null;meetingUrl:string|null;
  interviewer:string|null;outcomeNote:string|null;version:number;
@@ -30,11 +31,34 @@ const toLocal=(iso:string)=>new Intl.DateTimeFormat("sv-SE",{
  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",
  hourCycle:"h23",timeZone:"Asia/Kolkata",
 }).format(new Date(iso)).replace(" ","T");
-export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments,preferredApplicationId,onCommitted}:{
+export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments,preferredApplicationId,onCommitted,jobTitle,companyName}:{
  jobId:string;rounds:Round[];candidates:Candidate[];appointments:Appointment[];preferredApplicationId?:string;
- onCommitted?:()=>void;
+ onCommitted?:()=>void;jobTitle?:string;companyName?:string;
 }){
- const router=useRouter();const {showToast}=useToast();
+ const router=useRouter(),pathname=usePathname();const {showToast}=useToast();
+ const appRoot=(pathname?.startsWith("/admin/")?"/admin":"/college")+
+  "/placements/jobs/"+encodeURIComponent(jobId)+"/applications";
+ const applicant=(id:string)=>candidates.find(item=>item.applicationId===id);
+ const applicationHref=(id:string)=>{
+  const person=applicant(id);
+  return appRoot+"?applicationId="+encodeURIComponent(id)+
+   (pathname?.startsWith("/admin/")&&person?.name?"&q="+encodeURIComponent(person.name):"");
+ };
+ useEffect(()=>{
+  let lastRefresh=Date.now();
+  const onFocus=()=>{
+   if(document.visibilityState!=="visible"||Date.now()-lastRefresh<30000)return;
+   lastRefresh=Date.now();
+   router.refresh();
+  };
+  window.addEventListener("focus",onFocus);
+  return ()=>window.removeEventListener("focus",onFocus);
+ },[router]);
+ const eventTitle=(row:Appointment)=>{
+  const round=rounds.find(item=>item.id===row.roundId);
+  return [row.interviewType??"Interview",jobTitle??round?.name??"Placement drive",
+   companyName,applicant(row.applicationId)?.name??"Candidate"].filter(Boolean).join(" · ");
+ };
  const savingLock=useRef(false);
  const [editing,setEditing]=useState<Appointment|null>(null);
  const [dirty,setDirty]=useState(false);const [confirmDiscard,setConfirmDiscard]=useState(false);
@@ -208,6 +232,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    <div><h2 className="text-lg font-semibold">Candidate interviews</h2>
     <p className="mt-1 text-sm text-body">Schedule, edit, cancel, mark Completed or No Show. Actions are audited and notify the learner.</p></div>
    <div className="flex flex-col gap-2 sm:flex-row">
+    <Link href={appRoot} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
+      View applications
+    </Link>
     <a download="drive-interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(appointmentsCsv)}
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
      Export CSV
