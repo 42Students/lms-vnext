@@ -59,6 +59,19 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   return [row.interviewType??"Interview",jobTitle??round?.name??"Placement drive",
    companyName,applicant(row.applicationId)?.name??"Candidate"].filter(Boolean).join(" · ");
  };
+ const eventIcsHref=(row:Appointment)=>"data:text/calendar;charset=utf-8,"+
+  encodeURIComponent(collegeInterviewIcs({id:row.id,title:eventTitle(row),
+   date:row.scheduledAt,durationMinutes:row.durationMinutes,
+   location:row.venue??row.meetingUrl}));
+ const hasConflict=(row:Appointment)=>{
+  const began=Date.parse(row.scheduledAt),ended=began+row.durationMinutes*60_000;
+  return appointments.some(other=>other.id!==row.id&&other.status==="SCHEDULED"&&
+   Date.parse(other.scheduledAt)<ended+15*60_000&&
+   Date.parse(other.scheduledAt)+other.durationMinutes*60_000>began-15*60_000&&
+   (other.applicationId===row.applicationId||
+    (Boolean(row.venue??row.meetingUrl)&&(other.venue??other.meetingUrl)===(row.venue??row.meetingUrl))||
+    (Boolean(row.interviewer)&&other.interviewer===row.interviewer)));
+ };
  const savingLock=useRef(false);
  const [editing,setEditing]=useState<Appointment|null>(null);
  const [dirty,setDirty]=useState(false);const [confirmDiscard,setConfirmDiscard]=useState(false);
@@ -82,6 +95,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const [feedbackExisting,setFeedbackExisting]=useState<{
   rating:number;recommendation:string;comments:string;createdAt:string
  }|null>(null);
+ const [showConflictsOnly,setShowConflictsOnly]=useState(false);
+ const visibleAppointments=showConflictsOnly?appointments.filter(hasConflict):appointments;
  const [feedbackBusy,setFeedbackBusy]=useState(false);
  const [feedbackError,setFeedbackError]=useState("");
  function feedbackUrl(id:string){
@@ -124,7 +139,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
  const appointmentsCsv=[
   ["Candidate","Round","Interview Type","Scheduled (IST)","Duration minutes",
    "Mode","Location","Interviewer","Status"].map(quoteCsv).join(","),
-  ...appointments.map(row=>[
+  ...visibleAppointments.map(row=>[
    candidates.find(c=>c.applicationId===row.applicationId)?.name??"Applicant",
    rounds.find(r=>r.id===row.roundId)?.name??"Interview round",
    row.interviewType??"",display(row.scheduledAt),String(row.durationMinutes),
@@ -235,6 +250,10 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <Link href={appRoot} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
       View applications
     </Link>
+    <Button type="button" variant="secondary" aria-pressed={showConflictsOnly}
+      onClick={()=>setShowConflictsOnly(value=>!value)} className="min-h-11 md:min-h-9">
+      {showConflictsOnly?"Show all interviews":"Conflicts only ("+appointments.filter(hasConflict).length+")"}
+    </Button>
     <a download="drive-interviews.csv" href={"data:text/csv;charset=utf-8,"+encodeURIComponent(appointmentsCsv)}
      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-[var(--lms-link-text)] md:min-h-9">
      Export CSV
@@ -246,7 +265,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   {!available.length||!candidates.length?<Banner tone="info">Schedule an interview when a pending or scheduled round and a candidate are available.</Banner>:null}
   <DataTable<(typeof appointments)[number]>
     caption="Candidate interviews"
-    rows={appointments}
+    rows={visibleAppointments}
     getRowKey={row=>row.id}
     columns={[
       {key:"candidate",header:"Candidate",mobilePriority:"primary",
@@ -271,17 +290,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
         cell:row=>(row.mode==="VIRTUAL"?"Virtual":"On campus")+" · "+(row.venue??row.meetingUrl??"—")},
       {key:"interviewer",header:"Interviewer",mobilePriority:"secondary",
         cell:row=>row.interviewer??"Not recorded"},
-      {key:"clash",header:"Conflicts",mobilePriority:"secondary",cell:row=>{
-       const began=Date.parse(row.scheduledAt);
-       const ended=began+row.durationMinutes*60_000;
-       const conflict=appointments.some(other=>other.id!==row.id&&other.status==="SCHEDULED"&&
-        Date.parse(other.scheduledAt)<ended+15*60_000&&
-        Date.parse(other.scheduledAt)+other.durationMinutes*60_000>began-15*60_000&&
-        (other.applicationId===row.applicationId||
-         (Boolean(row.venue??row.meetingUrl)&&(other.venue??other.meetingUrl)=== (row.venue??row.meetingUrl))||
-         (Boolean(row.interviewer)&&other.interviewer===row.interviewer)));
-       return conflict?<StatusBadge tone="error">Conflict</StatusBadge>:"—";
-      }},
+      {key:"clash",header:"Conflicts",mobilePriority:"secondary",
+        cell:row=>hasConflict(row)?<StatusBadge tone="error">Conflict</StatusBadge>:"—"},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="COMPLETED"?"success":row.status==="SCHEDULED"?"info":row.status==="CANCELLED"?"neutral":"warning"}>{row.status}</StatusBadge>},
       {key:"actions",header:"Actions",mobilePriority:"action",
         cell:row=><Disclosure title="Actions" className="min-w-0 md:min-w-40">
@@ -292,10 +302,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        View application
      </Link>
      {row.status!=="CANCELLED"?<a download={"interview-"+row.id+".ics"}
-      href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(collegeInterviewIcs({
-       id:row.id,title:eventTitle(row),date:row.scheduledAt,
-       durationMinutes:row.durationMinutes,location:row.venue??row.meetingUrl,
-      }))} aria-label={"Download calendar file for "+eventTitle(row)}
+      href={eventIcsHref(row)} aria-label={"Download calendar file for "+eventTitle(row)}
        className="inline-flex min-h-11 min-[768px]:min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-[14px] font-[650] text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-teal-deep)]">
       <svg aria-hidden="true" width="16" height="16" viewBox="0 0 24 24" stroke="currentColor"
         fill="none" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
@@ -316,7 +323,8 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
           </div>
          </Disclosure>},
     ]}
-    empty={<EmptyState title="No candidate interviews" description="No interviews scheduled for this drive yet."/>}
+    empty={showConflictsOnly?<EmptyState title="No conflicting candidate interviews" description="No scheduling conflicts were found in the current filtered interview rows."/>:
+      <EmptyState title="No candidate interviews" description="No interviews scheduled for this drive yet."/>}
   />
   {success?<Banner tone="success">{success}</Banner>:null}
   {error&&!show?<Banner tone="error">{error}</Banner>:null}
