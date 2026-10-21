@@ -1,4 +1,5 @@
 import { DateInput } from "@/components/ui/date-input";
+import { TpoTeamMessagesDirectory } from "@/components/tpo/tpo-team-messages-directory";
 import { StatTile } from "@/components/ui/stat-tile";
 import tpoTileStyles from "@/components/placements/legacy-tpo-report-stats.module.css";
 import {DataTable} from "@/components/ui/data-table";
@@ -30,6 +31,7 @@ import {
 } from "@/modules/placements/tpo-messages-service";
 
 type SearchParams = {
+  tab?: string | string[];
   status?: string | string[];
   from?: string | string[];
   to?: string | string[];
@@ -69,6 +71,25 @@ export default async function TpoMessagesPage({
 
   const now = new Date();
   const raw = await searchParams;
+  const selectedTab=first(raw.tab)?.toLowerCase()??"recruiters";
+  const tabs=(selected:"recruiters"|"team")=><nav role="tablist" aria-label="Messages" className="flex gap-2 border-b border-border pb-2">
+    {(["recruiters","team"] as const).map(value=><Link role="tab" key={value}
+      aria-selected={selected===value} href={"/tpo/messages?tab="+value}
+      className={"inline-flex min-h-11 items-center border-b-[3px] px-4 text-sm font-semibold md:min-h-9 "+
+        (selected===value?"border-primary text-link":"border-transparent text-body hover:text-link")}>
+      {value==="recruiters"?"Recruiters":"Team"}
+    </Link>)}
+  </nav>;
+  if(selectedTab==="team")return <div className="min-w-0 space-y-5">
+    <PageHeader title="Messages" description="Recruiter conversations and private placement-team conversations in one place."/>
+    {tabs("team")}
+    <TpoTeamMessagesDirectory context={context} query={first(raw.q)??""}/>
+  </div>;
+  if(selectedTab!=="recruiters")return <div className="min-w-0 space-y-4">
+    <PageHeader title="Messages"/>
+    <ErrorState title="Invalid Messages tab" description="Choose Recruiters or Team."
+      action={<Link href="/tpo/messages" className="font-semibold text-link underline">Recruiters</Link>}/>
+  </div>;
 
   const parsed = tpoMessagesQuerySchema.safeParse({
     status: first(raw.status) || undefined,
@@ -131,6 +152,7 @@ export default async function TpoMessagesPage({
   if(!isRecruiterInbox)return <div className="min-w-0 space-y-6">
    <PageHeader title="Messages"
     description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
+   {tabs("recruiters")}
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
     action={<Link href="/tpo/notifications"
@@ -176,6 +198,7 @@ export default async function TpoMessagesPage({
           </div>
         }
       />
+      {tabs("recruiters")}
       <TpoLiveRefresh intervalMs={4000}/>
 
       <section
