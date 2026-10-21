@@ -514,3 +514,80 @@ export async function archiveCourse(
     return archived;
   });
 }
+
+/** Restores a previously archived course without changing its immutable UUID
+ * or its archived offering/history records. Route and recycle-tab UI are
+ * separate handoffs owned by the API and page packets. */
+export async function restoreCourse(
+  context: RequestContext,
+  courseIdInput: string,
+) {
+  const courseId = courseIdSchema.parse(courseIdInput);
+  const scope = await loadCourseScope(courseId, true);
+  requireCourseWrite(context, scope.organizationId, scope.collegeId);
+
+  try {
+    return await getDb().transaction(async (tx) => {
+      const [locked] = await tx
+        .select({
+          id: courses.id,
+          name: courses.name,
+          code: courses.code,
+          shortTitle: courses.shortTitle,
+          departmentId: courses.departmentId,
+          status: courses.status,
+        })
+        .from(courses)
+        .innerJoin(departments, and(
+          eq(departments.id, courses.departmentId),
+          eq(departments.collegeId, scope.collegeId),
+          isNull(departments.archivedAt),
+        ))
+        .where(and(
+          eq(courses.id, courseId),
+          eq(courses.departmentId, scope.departmentId),
+        ))
+        .for("update", { of: courses })
+        .limit(1);
+
+      if (!locked || locked.status !== "ARCHIVED") {
+        throw new CoursesServiceError("COURSE_NOT_FOUND");
+      }
+      // The existing database unique indexes guard concurrent restores that
+      // conflict with a new active name or code in the same department.
+      await assertCourseShortTitleUnique(
+        tx, scope.departmentId,
+        locked.shortTitle ?? locked.name.slice(0, 120),
+        courseId,
+      );
+      const [restored] = await tx
+        .update(courses)
+        .set({ status: "ACTIVE", updatedAt: new Date() })
+        .where(and(
+          eq(courses.id, courseId),
+          eq(courses.departmentId, scope.departmentId),
+          eq(courses.status, "ARCHIVED"),
+        ))
+        .returning();
+      if (!restored) throw new CoursesServiceError("COURSE_STALE_VERSION");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_UPDATED,
+        collegeId: scope.collegeId,
+        organizationId: scope.organizationId,
+        subjectType: "course",
+        subjectId: restored.id,
+        subjectLabel: restored.name,
+        summary: "Course restored",
+        metadata: {
+          restoredFromArchive: true,
+          departmentId: restored.departmentId,
+          code: restored.code,
+        },
+      });
+      return restored;
+    });
+  } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
+    throw mapCourseConstraint(error);
+  }
+}
