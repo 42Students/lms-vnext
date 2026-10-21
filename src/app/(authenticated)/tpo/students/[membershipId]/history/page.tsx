@@ -95,7 +95,7 @@ export default async function TpoLearnerPlacementHistoryPage({
       ) : (
         <div className="space-y-4">
           {history.items.map((item) => (
-            <article key={item.id} className="min-w-0 space-y-4 border-b border-border py-5">
+            <article key={item.id} className="min-w-0 space-y-4 border-b border-border py-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
                   <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.jobTitle}</h2>

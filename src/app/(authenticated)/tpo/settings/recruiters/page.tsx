@@ -162,7 +162,7 @@ export default async function TpoRecruiterAccessPage({
           method="get"
           className="mt-4 grid min-w-0 gap-3 border-b border-[var(--lms-canvas-border)] pb-4 sm:grid-cols-2 xl:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto] xl:items-end"
         >
-          <label className="grid min-w-0 md:min-w-55 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 md:min-w-55 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Grant status
             <Select
               name="status"
@@ -186,7 +186,7 @@ export default async function TpoRecruiterAccessPage({
             </Select>
           </label>
 
-          <label className="grid min-w-0 md:min-w-55 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 md:min-w-55 flex-1 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Search name, designation or company
             <Input type="search" name="q" defaultValue={query.q} maxLength={80}
               placeholder="Recruiter, role or company"

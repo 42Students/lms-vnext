@@ -138,7 +138,7 @@ export default async function TpoPlacementRulesSettingsPage({
           </StatusBadge>
         </div>
 
-        <dl className="mt-5 grid gap-5 min-[768px]:grid-cols-2">
+        <dl className="mt-5 grid gap-4 min-[768px]:grid-cols-2">
           <RuleValue
             label="Count learner as placed at"
             value={placedTriggerLabel(
@@ -255,7 +255,7 @@ export default async function TpoPlacementRulesSettingsPage({
             {result.jobs.map((job) => (
               <article
                 key={job.id}
-                className="border-b border-border py-5"
+                className="border-b border-border py-4"
               >
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
