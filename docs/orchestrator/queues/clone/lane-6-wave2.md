@@ -31,7 +31,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_components_placements_tpo-drive-edit-form.tsx.part2of2.md` (edit src/components/placements/tpo-drive-edit-form.tsx; 4 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_components_placements_college-application-pipeline-controls.tsx.part1of2.md` (edit src/components/placements/college-application-pipeline-controls.tsx; 40 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_components_placements_college-application-pipeline-controls.tsx.part2of2.md` (edit src/components/placements/college-application-pipeline-controls.tsx; 1 findings; best P3)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_admin_students_page.tsx.md` (edit src/app/(authenticated)/admin/students/page.tsx; 38 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_admin_students_page.tsx.md` (edit src/app/(authenticated)/admin/students/page.tsx; 38 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_tpo_reports_page.tsx.md` (edit src/app/(authenticated)/tpo/reports/page.tsx; 32 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_app_authenticated_college_faculty-assignment_page.tsx.md` (edit src/app/(authenticated)/college/faculty-assignment/page.tsx; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-6/W2_src_modules_placements_college-application-stage-service.ts.md` (edit src/modules/placements/college-application-stage-service.ts; 29 findings; best P2)
