@@ -17,9 +17,10 @@ export function ProjectAdminNav({
     | "templates"
     | "audit";
 }) {
-  // College Admin already has the identical legacy group strip in its layout.
-  // Keep the shared Super Admin navigation, but never render two college strips.
-  if (basePath === "/college/projects" || basePath === "/admin/projects") return null;
+  // The College Admin shell already displays this Projects tab strip.
+  // Super Admin must keep it here, including when no acting college has
+  // been selected: hiding it removes the legacy recovery navigation.
+  if (basePath === "/college/projects") return null;
 
   const activePath =
     active === "workspaces"
