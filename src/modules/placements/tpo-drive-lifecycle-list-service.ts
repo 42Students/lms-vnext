@@ -90,7 +90,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     const counts = {total:0,drafts:0,live:0,closed:0,deadlinesNextSevenDays:0};
     const common = {seasons,season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
       companyId:filters.companyId,view:selectedView,search:filters.search,
-      deadline:filters.deadline,workMode:filters.workMode,
+      deadline:filters.deadline,workMode:filters.workMode,recruiterDriveMode:filters.recruiterDriveMode,
       employmentType:filters.employmentType,jobTypeLabel:filters.jobTypeLabel,sort:filters.sort,display:filters.display,
       minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
       attentionCounts,needsReviewCount,statusCounts,asOf:now.toISOString()};
@@ -212,6 +212,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     )`:undefined,
     deadlineCondition,
     filters.workMode!=="ALL"?eq(placementJobs.workMode,filters.workMode):undefined,
+    filters.recruiterDriveMode!=="ALL"?eq(placementJobs.recruiterDriveMode,filters.recruiterDriveMode):undefined,
     filters.employmentType!=="ALL"?eq(placementJobs.employmentType,filters.employmentType):undefined,
     filters.jobTypeLabel?sql`lower(${placementJobs.jobTypeLabel}) = lower(${filters.jobTypeLabel}::text)`:undefined,
     filters.minApplied!==undefined?sql`(select count(*) from placement_applications ap
@@ -268,6 +269,8 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
     id: placementJobs.id, title: placementJobs.title,
     company: placementCompanies.name, status: placementJobs.status,
     workMode: placementJobs.workMode, employmentType: placementJobs.employmentType,
+    recruiterDriveMode:placementJobs.recruiterDriveMode,
+    recordedOutside:placementJobs.recordedOutside,
     jobTypeLabel:placementJobs.jobTypeLabel,
     minimumAnnualCtcInr: placementJobs.minimumAnnualCtcInr,
     maximumAnnualCtcInr: placementJobs.maximumAnnualCtcInr,
@@ -308,7 +311,7 @@ export async function getTpoDriveLifecycleList(context: RequestContext, raw: unk
   },{isolationLevel:"repeatable read",accessMode:"read only"});
   return {
     ...projection, seasons, season,companies,batches,cohortId:filters.cohortId,owners,ownerUserId:filters.ownerUserId,
-    companyId:filters.companyId, view: selectedView,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,employmentType:filters.employmentType,jobTypeLabel:filters.jobTypeLabel,sort:filters.sort,display:filters.display,
+    companyId:filters.companyId, view: selectedView,search:filters.search,deadline:filters.deadline,workMode:filters.workMode,recruiterDriveMode:filters.recruiterDriveMode,employmentType:filters.employmentType,jobTypeLabel:filters.jobTypeLabel,sort:filters.sort,display:filters.display,
     minApplied:filters.minApplied,maxApplied:filters.maxApplied,minOffers:filters.minOffers,maxOffers:filters.maxOffers,payCategory:filters.payCategory,attention:filters.attention,journey:filters.journey,
     attentionCounts,needsReviewCount,statusCounts,asOf: now.toISOString(),
     requestsAvailable: false as const,
