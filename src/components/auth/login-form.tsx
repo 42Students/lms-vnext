@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {FRIENDLY_MESSAGES} from "@/lib/friendly-error";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -148,10 +149,12 @@ export function LoginForm({
   collegeName,
   defaultChannel = "EMAIL",
   allowedChannels = ["EMAIL", "PHONE"],
+  legacySuperAdmin = false,
 }: {
   collegeName?: string | null;
   defaultChannel?: Channel;
   allowedChannels?: readonly Channel[];
+  legacySuperAdmin?: boolean;
 }) {
   const [channel, setChannel] = useState<Channel>(defaultChannel);
   const [recruiterEntry, setRecruiterEntry] = useState(false);
@@ -169,6 +172,7 @@ export function LoginForm({
   const [contact, setContact] = useState("");
   const [contactError, setContactError] = useState<string | null>(null);
   const [code, setCode] = useState("");
+  const [acceptedTerms,setAcceptedTerms]=useState(false);
   const [secondCode, setSecondCode] = useState("");
   const [attempt, setAttempt] = useState<StartResult | null>(null);
   const [busy, setBusy] = useState(false);
@@ -220,7 +224,7 @@ export function LoginForm({
       ?(channel==="EMAIL"?"This college signs in with a mobile number. Use your phone number instead.":
         "This college signs in with email. Use your email instead."):
        errorCode?ERROR_MESSAGES[errorCode]:undefined;
-    setError(errorCode==="TOO_MANY_REQUESTS" && safeRetry !== null
+    setError(legacySuperAdmin&&errorCode==="INCORRECT_OTP"?"OTP InValid!":errorCode==="TOO_MANY_REQUESTS" && safeRetry !== null
       ? "Too many codes were requested. Try again in about "+
         (safeRetry < 120 ? safeRetry+" seconds." : Math.ceil(safeRetry/60)+" minutes.")
       : known ?? "Something went wrong. Try again in a moment.");
@@ -273,6 +277,7 @@ export function LoginForm({
       setNotice(channel === "PHONE" ? "Your code is on its way." :
         "We sent a code to " + result.data.maskedContact + ". It expires in 5 minutes.");
       setAttempt(result.data);
+      setAcceptedTerms(false);
       saveLoginAttempt({
         attempt: result.data,
         expiresAt: Date.now() + Math.min(300, Math.max(1,result.data.expiresInSeconds)) * 1000,
@@ -292,7 +297,7 @@ export function LoginForm({
 
   async function verify(event: React.FormEvent) {
     event.preventDefault();
-    if (busy || !attempt) return;
+    if (busy || !attempt || (legacySuperAdmin&&!acceptedTerms)) return;
     if(!code.trim()){
       setError("OTP is required");codeRef.current?.focus();return;
     }
@@ -355,6 +360,7 @@ export function LoginForm({
   }
 
   function reset() {
+    setAcceptedTerms(false);
     saveLoginAttempt(null);
     setAttempt(null);
     setCode("");
@@ -365,12 +371,13 @@ export function LoginForm({
   }
 
   return (
-    <div className="login-form w-full max-w-md" data-step={attempt ? "code" : "contact"} aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
+    <div className="login-form w-full max-w-md" data-legacy-superadmin={legacySuperAdmin||undefined} data-step={attempt ? "code" : "contact"} aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
       <h1 className="m-0 text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">
-        {attempt?"Enter your code":"Sign in"}
+        {legacySuperAdmin?(attempt?"OTP sent to your Mobile Number":"Mobile Number"):(attempt?"Enter your code":"Sign in")}
       </h1>
       <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
-        {attempt ? "We sent a code to "+attempt.maskedContact+".":
+        {legacySuperAdmin?(attempt?"Use the code sent to your registered mobile number.":"Enter your registered mobile number to receive an OTP."):
+         attempt ? "We sent a code to "+attempt.maskedContact+".":
           channel==="PHONE"?"Use your registered mobile number.":
           recruiterEntry ? "Recruiter? Sign in with email." : "Use your registered email address."}
       </p>
@@ -398,11 +405,14 @@ export function LoginForm({
           role="status"
           className="mt-4 rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle p-3 text-sm text-body"
         >
-          {notice}
+          {legacySuperAdmin&&attempt?"OTP Sent!":notice}
         </div>
       ) : null}
 
-      {!attempt ? (
+      {legacySuperAdmin&&busy?<div role="status" aria-live="polite" className="flex min-h-52 items-center justify-center gap-3 text-sm font-medium text-body">
+        <span aria-hidden="true" className="size-6 animate-spin rounded-full border-2 border-border border-t-primary"/>
+        {attempt?"Verifying your code…":"Sending OTP…"}
+       </div>:!attempt ? (
         <form onSubmit={start} className="mt-5 space-y-4" noValidate>
           {allowedChannels.length>1?<div
             role="tablist"
@@ -461,7 +471,7 @@ export function LoginForm({
             aria-labelledby={allowedChannels.length>1?`login-tab-${channel.toLowerCase()}`:undefined}>
           <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1 block text-sm font-medium text-foreground">
-              {channel === "PHONE" ? "Mobile number" : "Email"}
+              {channel === "PHONE" ? (legacySuperAdmin?"Mobile Number":"Mobile number") : "Email"}
             </span>
             <div className="relative">
               {channel === "PHONE" ? <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 z-10 inline-flex items-center border-r border-border pr-3 text-sm font-semibold text-foreground">+91</span> : null}
@@ -470,9 +480,11 @@ export function LoginForm({
               aria-invalid={Boolean(contactError)}
               aria-describedby={contactError ? "login-contact-error" : undefined}
               value={contact}
-              onChange={(event) => { setContact(event.target.value); setContactError(null); }}
+              onChange={(event) => { setContact(legacySuperAdmin&&channel==="PHONE"?event.target.value.replace(/\D/g,"").slice(0,10):event.target.value); setContactError(null); }}
               type={channel === "PHONE" ? "tel" : "email"}
-              inputMode={channel === "PHONE" ? "tel" : "email"}
+              inputMode={channel === "PHONE" ? "numeric" : "email"}
+              maxLength={legacySuperAdmin&&channel==="PHONE"?10:undefined}
+              onWheel={legacySuperAdmin?event=>event.currentTarget.blur():undefined}
               autoComplete={channel === "PHONE" ? "tel" : "email"}
               placeholder={
                 channel === "PHONE" ? "Enter mobile number" : "you@example.com"
@@ -492,7 +504,7 @@ export function LoginForm({
             className="min-h-11 w-full md:min-h-9"
             disabled={busy}
           >
-            {busy ? "Sending code…" : "Send code"}
+            {busy ? "Sending code…" : legacySuperAdmin?"Send OTP":"Send code"}
           </Button>
           <LoginConsent />
         </form>
@@ -526,7 +538,7 @@ export function LoginForm({
             <span className="mb-1 block text-sm font-medium text-foreground">
               {attempt.requiresSecondFactor
                 ? "Code from the text message"
-                : "One-time code"}
+                : legacySuperAdmin?"OTP sent to your Mobile Number":"One-time code"}
             </span>
             <Input
               name="code"
@@ -569,17 +581,22 @@ export function LoginForm({
           ) : null}
 
           <p className="text-xs text-muted-foreground">The code is 4 to 6 digits. Codes expire after five minutes. You have up to five verification attempts; email resend limit is five.</p>
+          {legacySuperAdmin?<label className="flex min-h-11 items-center gap-2 text-sm text-body">
+           <Checkbox checked={acceptedTerms} onChange={event=>setAcceptedTerms(event.target.checked)}/>
+           <span>By clicking here, I agree to 42 LMS&apos; <a href="/assets/static/terms-and-conditions-view.html" target="_blank" rel="noopener noreferrer" className="text-primary-text underline">Terms &amp; Conditions</a>.</span>
+          </label>:null}
           <Button
             type="submit"
             className="min-h-11 w-full md:min-h-9"
             disabled={
               busy ||
+              (legacySuperAdmin&&!acceptedTerms) ||
               Boolean(errorCode && RESTART_ERRORS.has(errorCode)) ||
               code.length < 4 ||
               (attempt.requiresSecondFactor === true && secondCode.length < 4)
             }
           >
-            {busy ? "Verifying…" : "Verify and sign in"}
+            {busy ? "Verifying…" : legacySuperAdmin?"Login":"Verify and sign in"}
           </Button>
 
           <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
@@ -611,7 +628,7 @@ export function LoginForm({
           >
             Change
           </Button>
-          <LoginConsent />
+          {!legacySuperAdmin?<LoginConsent />:null}
         </form>
       )}
     </div>
