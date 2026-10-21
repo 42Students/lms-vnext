@@ -99,7 +99,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     <p className="mt-1 min-w-0 break-words text-xs text-muted-foreground">{student.cohortName} · {tpoStudentDisplayLabel(student.journeyState)}</p>
     <p className="mt-2 min-w-0 break-words text-sm font-semibold">After college: {afterCollegeDisplay(recordedOutcome)}</p>
    </section>
-   <nav aria-label="Student placement snapshots" className="mt-4 grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4">
+   <div role="group" aria-label="Student placement snapshots" className="mt-4 grid min-w-0 grid-cols-2 gap-2 sm:grid-cols-4">
      {([
        ["Applications",student.applicationCount,"Placement"],
        ["Offers",student.offerCount,"Placement"],
@@ -111,7 +111,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
          <span className="text-xs font-semibold text-muted-foreground">{name}</span>
          <strong className="text-lg font-semibold text-foreground">{count}</strong>
        </Button>)}
-   </nav>
+   </div>
    <Tabs ariaLabel="Student panel pages" className="mt-4" value={tab} renderPanel={false} controlledOnly
     onValueChange={next=>{void chooseTab(next as Tab);}}
     items={tabs.map(t=>({

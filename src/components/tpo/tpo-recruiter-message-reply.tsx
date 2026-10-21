@@ -39,6 +39,15 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   setDiscardReview(false);setBody(value);
   try{if(value)sessionStorage.setItem(draftKey,value);else sessionStorage.removeItem(draftKey);}catch{/* Storage is optional. */}
  }
+ function addQuickReply(value:string){
+  const text=body?body+" "+value:value;
+  if(text.length>4000){
+   setError("Message must be 4000 characters or fewer.");
+   return;
+  }
+  setError("");
+  persistDraft(text);
+ }
  function restoreDraft(){
   if(body)return;
   try{const saved=sessionStorage.getItem(draftKey);
@@ -72,10 +81,10 @@ export function TpoRecruiterMessageReply({threadId,unread,actorUserId}:{
   <div role="group" aria-label="Quick replies" className="flex min-w-0 flex-wrap gap-2">
     {TPO_QUICK_REPLIES.map(reply=><Button variant="secondary" key={reply} type="button" disabled={busy}
       className="min-h-11 md:min-h-9 shrink-0 rounded-[var(--lms-control-radius)] px-3 text-sm font-[650]"
-      onClick={()=>persistDraft(body?body+" "+reply:reply)}>{reply}</Button>)}
+      onClick={()=>addQuickReply(reply)}>{reply}</Button>)}
    </div>
   </Disclosure>
-  <form onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
+  <form aria-busy={busy} onSubmit={event=>{event.preventDefault();void post("messages");}} className="space-y-3">
    <label className="block text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Message
     <Textarea className="mt-1 min-h-28 w-full"
       maxLength={4000} required aria-label="Message" placeholder="Write a message" value={body}
