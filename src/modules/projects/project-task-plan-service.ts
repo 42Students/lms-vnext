@@ -108,8 +108,9 @@ export async function saveProjectTaskPlan(
         const group = task.sprintId ?? "__BACKLOG__";
         nextSequence.set(group, Math.max(nextSequence.get(group) ?? -1, task.sequence));
       }
-      const now = new Date(Math.max(Date.now(),
-        ...current.map(task => task.updatedAt.getTime())) + 1);
+      const latestTimestamp = current.reduce(
+        (latest, task) => Math.max(latest, task.updatedAt.getTime()), Date.now());
+      const now = new Date(latestTimestamp + 1);
       const updatedTaskIds: string[] = [];
       for (const { prior, next } of changed) {
         const task = prior!;
