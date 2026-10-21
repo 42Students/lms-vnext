@@ -19,7 +19,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
-import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards,alphabetizeTpoReportGallery} from "@/modules/placements/tpo-report-gallery-filter-model";
+import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards} from "@/modules/placements/tpo-report-gallery-filter-model";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -110,7 +110,7 @@ export default async function TpoReportsPage({
         {
           title: "After college",
           description:"Student-reported higher studies, entrepreneurship, competitive examinations and job-search destinations, by batch and branch.",
-          path:"/tpo/reports/after-college",
+          path:"/tpo/reports/outcomes",
         },
         {
           title: "Offer expiry watchlist",
@@ -152,7 +152,7 @@ export default async function TpoReportsPage({
           title: "Leads report",
           description:
             "College-wide recruiter leads by manual stage and source, with observed invite and recruiter-account linkage counts.",
-          path: "/tpo/reports/leads",
+          path: "/tpo/reports/recruiter-leads",
         },
         {
           title: "Accreditation export",
@@ -178,7 +178,8 @@ export default async function TpoReportsPage({
   }
 
   const legacyGroups=groups.map(group=>({...group,cards:group.cards.map(legacyTpoReportCard)}));
-  const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data));
+  // Keep legacy's intentional report order: placement health, outcomes, relationships.
+  const visibleGroups = filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data);
   if (!workspace) {
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Reports" description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
@@ -241,22 +242,21 @@ export default async function TpoReportsPage({
           Clear
         </Link>
       </form>
-      <ReportMetrics metrics={workspace.report.metrics} />
       <nav aria-label="Placement journey" className="space-y-3 border-y border-border py-4">
         <h2 className="text-lg font-semibold">Placement journey</h2>
         <p className="text-sm text-body">The college&apos;s placement journey: {workspace.report.metrics.offers} {workspace.report.metrics.offers === 1 ? "offer" : "offers"} made. Click any number for its report.</p>
-        <div className="grid gap-3 sm:grid-cols-3">
+        <div className="grid gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-border sm:grid-cols-3">
           {([
             {label:"Looking for a job",count:workspace.report.metrics.registered,href:"/tpo/reports/by-branch"},
             {label:"Placed",count:workspace.report.metrics.studentsPlaced,href:"/tpo/reports/placement-summary"},
             {label:"Accepted",count:workspace.report.metrics.studentsAccepted,href:"/tpo/reports/offers-acceptance"},
           ] as const).map(step => <Link key={step.label} href={reportHref(step.href,workspace)}
-            className="block border-b border-border p-3 hover:bg-primary-subtle focus-visible:outline-2">
+            className="block min-w-0 bg-surface p-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px]">
             <span className="block text-sm text-body">{step.label}</span>
             <strong className="mt-1 block text-2xl tabular-nums text-link">{step.count.toLocaleString("en-IN")}</strong>
           </Link>)}
         </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Placement journey gaps">
           <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="font-semibold text-link underline">
             Unplaced · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)}
           </Link>
@@ -267,8 +267,7 @@ export default async function TpoReportsPage({
         </div>
         <p className="text-xs text-muted-foreground">Each stage counts unique students; the number of offers made is shown separately. A stage gap is not a verified historical transition.</p>
       </nav>
-
-
+      <ReportMetrics metrics={workspace.report.metrics} />
 
       {workspace.noSeason ? (
         <EmptyState

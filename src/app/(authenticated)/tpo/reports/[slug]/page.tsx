@@ -25,7 +25,7 @@ export default async function UnknownTpoReportPage({
     packages: "ctc", package: "ctc",
     "unplaced-students": "unplaced",
     offers: "offers-acceptance", acceptance: "offers-acceptance",
-    joining: "joining-status", outcomes: "joining-status",
+    joining: "joining-status", outcomes: "after-college",
     reasons: "failure-reasons", failure: "failure-reasons",
     "recruiter-leads": "leads", "recruiter-engagement": "leads",
     "lead-funnel": "leads", naac: "accreditation", nirf: "accreditation",
@@ -35,7 +35,7 @@ export default async function UnknownTpoReportPage({
   if (destination) {
     const query = await searchParams;
     const safe = new URLSearchParams();
-    for (const key of ["seasonId", "jobId"] as const) {
+    for (const key of ["seasonId", "jobId", "batchId", "branchId", "companyId"] as const) {
       const value = query[key];
       if (typeof value === "string" && /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value)) safe.set(key,value);
     }
