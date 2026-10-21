@@ -60,7 +60,7 @@ export default async function TpoApplicationsExportPage({params,searchParams}:{
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Order by
     <Select name="sort" defaultValue={result.sort} className="block min-h-11 w-full min-[768px]:min-h-9">
      <option value="NEWEST">Recently submitted</option><option value="OLDEST">Earliest submitted</option>
-     <option value="LEARNER_NAME">Learner name</option>
+     <option value="LEARNER_NAME">Learner Name</option>
     </Select></label>
    <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submitted window
     <Select name="submittedWithin" defaultValue={result.submittedWithin} className="block min-h-11 w-full min-[768px]:min-h-9">
