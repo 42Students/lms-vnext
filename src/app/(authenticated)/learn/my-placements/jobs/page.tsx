@@ -1,4 +1,5 @@
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { Banner } from "@/components/ui/banner";
 import { PageLoading } from "@/components/ui/page-loading";
 import Link from "next/link";
@@ -69,6 +70,17 @@ export default async function LearnerPlacementJobsPage() {
 
   return (
     <div className="min-w-0 space-y-5">
+      <PageHeader title="My Placements" description="Find current job opportunities, manage your applications and track placement steps."/>
+      <Tabs ariaLabel="Placements sections" renderPanel={false} value="/learn/my-placements/jobs"
+        items={[
+          {value:"/learn/my-placements",label:"Home",href:"/learn/my-placements"},
+          {value:"/learn/my-placements/jobs",label:"Jobs",href:"/learn/my-placements/jobs"},
+          {value:"/learn/my-placements/applications",label:"Applications",href:"/learn/my-placements/applications"},
+          {value:"/learn/my-placements/calendar",label:"Schedule",href:"/learn/my-placements/calendar"},
+          {value:"/learn/my-placements/offers",label:"Offers",href:"/learn/my-placements/offers"},
+          {value:"/learn/my-placements/announcements",label:"Announcements",href:"/learn/my-placements/announcements"},
+          {value:"/learn/my-placements/rules",label:"Placements",href:"/learn/my-placements/rules"},
+        ]}/>
       <PageHeader title="Drives" actions={(
         <Link href="/learn/my-placements/rules?from=drives"
         className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center text-sm font-semibold text-primary-text hover:underline">
@@ -98,7 +110,7 @@ export default async function LearnerPlacementJobsPage() {
                 <strong className="block text-sm font-semibold text-foreground">
                   {row.company.name} · {row.job.title}
                 </strong>
-                <span className="block text-xs text-body">{row.roleOption.title}</span>
+                <span className="block text-xs text-body">{row.roleOption.title} · {row.roleOption.locations.length?row.roleOption.locations.join(", "):"Not specified"}</span>
                 {href ? <Link href={href} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">
                   Review drive details →
                 </Link> : null}
@@ -110,7 +122,7 @@ export default async function LearnerPlacementJobsPage() {
           </p> : null}
         </section>
       ) : (
-        <Suspense fallback={<PageLoading label="Loading drive filters" variant="form" count={2} />}>
+        <Suspense fallback={<PageLoading label="Loading placement job cards" variant="card" count={5} />}>
           <LearnerJobsBrowse items={rows.map(toItem)} snapshotNowIso={snapshotNowIso}
             savedJobIds={savedJobs.map(job=>job.jobId)} />
         </Suspense>
