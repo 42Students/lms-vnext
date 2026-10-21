@@ -5,6 +5,7 @@ import {
   eq,
   inArray,
   ne,
+  sql,
 } from "drizzle-orm";
 
 import { getDb } from "@/db/client";
@@ -14,6 +15,7 @@ import {
   placementJobRounds,
   placementJobs,
   placementRoundResults,
+  users,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -55,10 +57,10 @@ import {
  * applicant population, previous-round progression rules,
  * learner membership checks and attendance states.
  *
- * This service returns only names, roll numbers, application
- * statuses and current result states. Email, phone numbers,
- * internal result comments and candidate messages are
- * deliberately excluded from its return value.
+ * Only this TPO-authorized projection also reads candidate business-call
+ * phone and branch; the LEARNER coordinator roster remains redacted.
+ * Raw document/avatar paths, private emails, result comments and
+ * candidate messages remain deliberately excluded.
  */
 export async function getTpoRoundDriveDay(
   context: RequestContext,
@@ -145,6 +147,18 @@ export async function getTpoRoundDriveDay(
               placementRoundResults.status,
             resultOutcome:
               placementRoundResults.outcome,
+            phoneE164:users.phoneE164,
+            branchName:sql<string|null>`(select d.name from learner_program_enrollments e
+              join cohorts c on c.id=e.cohort_id join programs p on p.id=c.program_id
+              join departments d on d.id=p.department_id
+              where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+                and d.college_id=${scope.collegeId}
+              order by e.admitted_at desc,e.id desc limit 1)`,
+            assignedRoom:sql<string|null>`(select slot.room from placement_round_candidate_slots slot
+              where slot.application_id=${placementApplications.id}
+                and slot.round_id=${roundId}::uuid and slot.job_id=${scope.jobId}::uuid
+                and slot.status='BOOKED'
+              order by slot.starts_at desc,slot.id desc limit 1)`,
           })
           .from(placementApplications)
           .innerJoin(
@@ -154,6 +168,7 @@ export async function getTpoRoundDriveDay(
               placementApplications.membershipId,
             ),
           )
+          .innerJoin(users,eq(users.id,collegeMemberships.userId))
           .leftJoin(
             placementRoundResults,
             and(
@@ -227,7 +242,19 @@ export async function getTpoRoundDriveDay(
       title: roster.round.jobTitle,
     },
     companyName: roster.round.company,
-    rows: projected.rows,
+    rows: projected.rows.map(row=>{
+      const detail=details.find(item=>item.applicationId===row.applicationId);
+      const phone=detail?.phoneE164??null;
+      const callHref=phone&&/^\+[1-9]\d{1,14}$/.test(phone)?"tel:"+phone:null;
+      return {...row,
+        branchName:detail?.branchName??null,
+        phoneE164:callHref?phone:null,
+        callHref,
+        assignedRoom:detail?.assignedRoom??null,
+        currentRoom:null as string|null,
+        avatarUrl:null as string|null,
+      };
+    }),
     counts: projected.counts,
   };
 }
