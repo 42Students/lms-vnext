@@ -48,6 +48,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         title={title}
+        description={classes ? "Create teaching sections within a batch, manage capacity and schedule recurring sessions from the same roster." : undefined}
         actions={<Link href="/college/academics"
           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Academic workspace

@@ -14,6 +14,7 @@ import { LearnerCourseOverview } from "@/components/courses/learner-course-overv
 import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learner-course-tabs";
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
@@ -79,7 +80,7 @@ export default async function LearnerCourseTabPage({
       context,
       { includeHistorical: true },
     ),
-    listLearnerCourseInstructors(context, deliveryId),
+    activeTab === "home" ? listLearnerCourseInstructors(context, deliveryId) : Promise.resolve([]),
   ]);
 
   const courseMeta = deliveries.find(
@@ -87,7 +88,11 @@ export default async function LearnerCourseTabPage({
   );
 
   if (!courseMeta) {
-    notFound();
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Course unavailable" description="This course is not assigned to your current class or semester." />
+      <EmptyState title="Could not load course" description="This course is unavailable in your current learner workspace."
+        action={<Link href="/learn/courses" className="inline-flex min-h-11 items-center font-semibold text-link underline">Back to courses</Link>} />
+    </div>;
   }
 
   const readOnly =
@@ -96,6 +101,14 @@ export default async function LearnerCourseTabPage({
     courseMeta.programEnrollmentStatus !== "ACTIVE" ||
     courseMeta.periodStatus === "CLOSED";
 
+  // Legacy links use lowercase roadmap filter names. Preserve known categories
+  // without trusting the parameter as a path or database identifier.
+  const rawRoadmapFilter = first(query.filter)?.trim().toLowerCase() ?? "all";
+  const roadmapFilter = ({
+    lectures: "lectures", resources: "resources", assessments: "assessments",
+    "live-sessions": "live-sessions", all: "all",
+  } as Record<string, string>)[rawRoadmapFilter] ?? "all";
+  const courseTitle = workspace.course.name?.trim() || "Unnamed Course";
   let content: ReactNode;
 
   if (activeTab === "home") {
@@ -157,7 +170,7 @@ export default async function LearnerCourseTabPage({
       <LearnerCourseWorkspace
         deliveryId={deliveryId}
         workspace={workspace}
-        filter={first(query.filter) ?? "all"}
+        filter={roadmapFilter}
         focusLessonId={first(query.lesson) ?? null}
         focusContentId={first(query.content) ?? null}
         readOnly={readOnly}
@@ -190,7 +203,7 @@ export default async function LearnerCourseTabPage({
   }
 
   return (
-    <div className="min-w-0 max-w-full space-y-4">
+    <div className={"learn-projects learn-course-layout learn-course-layout--" + activeTab + " min-w-0 max-w-full space-y-4"}>
       <nav aria-label="Course navigation" className="flex flex-wrap items-center gap-3">
         <Link
               href="/learn/courses"
@@ -199,11 +212,12 @@ export default async function LearnerCourseTabPage({
               {LEARNER_BACK_TO_COURSES}
             </Link>
       </nav>
-      <PageHeader title={workspace.course.name} description="Course workspace" />
+      <PageHeader title={activeTab === "roadmap" ? "Learning Path" : courseTitle}
+        description={activeTab === "roadmap" ? courseTitle : "Course workspace"} />
       {readOnly?<Banner tone="info">
         Past semester course · Read only. Submitted work remains accessible.
       </Banner>:null}
-      <LearnerCourseDocumentTitle courseName={workspace.course.name}
+      <LearnerCourseDocumentTitle courseName={courseTitle}
         tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
        <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
         persistentQuery={learnerCourseTabPersistentQuery(query)}/>
@@ -224,7 +238,9 @@ export default async function LearnerCourseTabPage({
             </Link>
         </nav>
       </details>
-      {content}
+      <div key={deliveryId + ":" + activeTab} className="learn-course-tab-page min-w-0">
+        {content}
+      </div>
     </div>
   );
 }
