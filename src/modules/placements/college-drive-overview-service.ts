@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, count, countDistinct, eq } from "drizzle-orm";
+import { and, count, countDistinct, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships, placementApplications, placementApplicationScreenings,
@@ -9,7 +9,15 @@ import {
 import type { RequestContext } from "@/modules/identity/context";
 import { PlacementsServiceError } from "./errors";
 import { requireCollegePlacementAdmin } from "./college-drive-read-service";
+import { placementDriveSelections } from "@/db/schema/placement-drive-selections";
+import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import { collegeDriveIdSchema } from "./college-drive-read-model";
+
+/** SELECTED/VERIFIED/RELEASED all represent persisted selection history,
+ * excluding cancelled selections. */
+function sqlSelectedStatus(){
+ return inArray(placementDriveSelections.status,["SELECTED","VERIFIED","RELEASED"]);
+}
 
 /** Every metric is a separate scoped SQL query, so joins cannot inflate counts. */
 export async function getCollegeDriveOverview(context: RequestContext, jobIdInput: unknown) {
@@ -34,7 +42,7 @@ export async function getCollegeDriveOverview(context: RequestContext, jobIdInpu
     .innerJoin(placementCompanies, eq(placementCompanies.id, placementCompanyRelationships.companyId))
     .where(and(eq(placementJobs.id, jobId), eq(placementJobs.collegeId, collegeId))).limit(1);
   if (!drive) throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
-  const [applications, shortlisted, offers] = await Promise.all([
+  const [applications, shortlisted, offers, selections, withdrawn, external] = await Promise.all([
     db.select({ total: count() }).from(placementApplications)
       .innerJoin(collegeMemberships, and(
         eq(collegeMemberships.id, placementApplications.membershipId),
@@ -55,11 +63,35 @@ export async function getCollegeDriveOverview(context: RequestContext, jobIdInpu
         eq(collegeMemberships.id, placementApplications.membershipId),
         eq(collegeMemberships.collegeId, collegeId),
       )).where(eq(placementApplications.jobId, jobId)),
+    db.select({total:countDistinct(placementDriveSelections.applicationId)})
+      .from(placementDriveSelections)
+      .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
+      .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+        eq(collegeMemberships.collegeId,collegeId)))
+      .where(and(eq(placementDriveSelections.jobId,jobId),
+        eq(placementApplications.jobId,jobId),
+        sqlSelectedStatus())),
+    db.select({total:count()}).from(placementApplications)
+      .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+        eq(collegeMemberships.collegeId,collegeId)))
+      .where(and(eq(placementApplications.jobId,jobId),eq(placementApplications.status,"WITHDRAWN"))),
+    db.select({total:count()}).from(placementApplications)
+      .innerJoin(collegeMemberships,and(eq(collegeMemberships.id,placementApplications.membershipId),
+        eq(collegeMemberships.collegeId,collegeId)))
+      .where(and(eq(placementApplications.jobId,jobId),eq(placementApplications.channel,"EXTERNAL"))),
   ]);
-  return { drive, counts: {
+  return { drive: {
+    ...drive,
+    legacyStatus: drive.status==="DRAFT"?"Draft":
+      drive.status!=="PUBLISHED"?"Closed":
+      isPlacementApplicationDeadlinePassed(drive.applicationDeadline,new Date())?"Applications closed":"Active",
+    legacyJobType: drive.employmentType,
+  }, counts: {
     applications: applications[0]?.total ?? 0,
     shortlisted: shortlisted[0]?.total ?? 0,
-    selected: null as number | null,
+    selected: selections[0]?.total ?? 0,
     offered: offers[0]?.total ?? 0,
-  } };
+    withdrawn: withdrawn[0]?.total ?? 0,
+    external: external[0]?.total ?? 0,
+  }, notFoundFallback:{title:"Could not load this drive",backHref:"/college/placements/jobs",backLabel:"Back to drives"} };
 }
