@@ -27,14 +27,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/academics/college-term-mapping-manager.tsx`
 - [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [x] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/admin-revoke-sessions.tsx`
-- [ ] `src/components/admin/college-admin-lifecycle-action.tsx`
-- [ ] `src/components/admin/college-archive-button.tsx`
-- [ ] `src/components/admin/college-bulk-import.tsx`
-- [ ] `src/components/admin/college-edit-dialog.tsx`
-- [ ] `src/components/admin/college-feature-rule-editor.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/admin/college-signin-method-form.tsx`
+- [x] `src/components/admin/admin-revoke-sessions.tsx`
+- [x] `src/components/admin/college-admin-lifecycle-action.tsx`
+- [x] `src/components/admin/college-archive-button.tsx`
+- [x] `src/components/admin/college-bulk-import.tsx`
+- [x] `src/components/admin/college-edit-dialog.tsx`
+- [x] `src/components/admin/college-feature-rule-editor.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/admin/college-signin-method-form.tsx`
 - [ ] `src/components/admin/department-actions.tsx`
 - [ ] `src/components/admin/inbound-mail-list.tsx`
 - [ ] `src/components/admin/learner-module-access-drawer.tsx`
