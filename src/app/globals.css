@@ -721,7 +721,7 @@ input[type="checkbox"], input[type="radio"], [data-slot="checkbox"], [data-slot=
 }
 [data-slot="table"] { border-radius: 10px; border-color: var(--lms-neutral-200); }
 [data-slot="table"] table { font-size: 13px; line-height: 20px; }
-[data-slot="table"] tbody tr:hover { background: rgba(38,186,199,.045); }
+[data-slot="table"] tbody tr:hover { background: transparent; }
 [data-slot="avatar"] { border-color: var(--lms-neutral-200); }
 [data-slot="stat-tile"] {
   border: 1px solid var(--lms-neutral-200);
