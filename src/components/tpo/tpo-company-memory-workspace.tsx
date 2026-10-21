@@ -286,9 +286,9 @@ export function TpoCompanyMemoryWorkspace({
         ))}
       </div>
 
-      {company.studentsHired == null || countsWarning ? (
+      {company.studentsHired == null || countsWarning || company.driveCountsWarning ? (
         <div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-muted-foreground">
-          {countsWarning || "Students-placed counts are unavailable for this college's selected placement rule. No estimated zero is shown."}
+          {company.driveCountsError || countsWarning || "Students-placed counts are unavailable for this college's selected placement rule. No estimated zero is shown."}
           <Button variant="secondary" type="button" disabled={phase!=="ready"}
             onClick={retryCounts} className="ml-3 min-h-11 md:min-h-9">Retry counts</Button>
         </div>

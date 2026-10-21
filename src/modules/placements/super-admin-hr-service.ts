@@ -1051,13 +1051,19 @@ export async function grantSuperAdminHrCollegeAccess(
       rawInput,
     );
 
-  // Unspecified expiry uses a clearly disclosed, fail-closed three-month grant.
+  // Legacy indefinite grants are never silently reactivated: vNext requires
+  // explicit validity. Blank on NEW grants is a finite three-month default.
   const now=new Date();
-  const expiration=input.validUntil?new Date(input.validUntil):
-    new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+3,now.getUTCDate(),now.getUTCHours()));
+  const validUntilString=input.validUntil??"";
+  // A date-only value means THROUGH that college-local day, not midnight UTC.
+  const dateOnly=/^\\d{4}-\\d{2}-\\d{2}$/.test(validUntilString);
+  const expiration=validUntilString
+    ?dateOnly?new Date(Date.parse(validUntilString+"T00:00:00+05:30")+86_400_000)
+      :new Date(validUntilString)
+    :new Date(Date.UTC(now.getUTCFullYear(),now.getUTCMonth()+3,now.getUTCDate(),now.getUTCHours()));
   if(!Number.isFinite(expiration.getTime())||expiration<=now||
       expiration.getTime()>now.getTime()+5*366*24*60*60*1000)
-    throw new Error("GRANT_EXPIRY_INVALID");
+    throw new Error("INVALID_VALID_UNTIL: enter YYYY-MM-DD in Asia/Kolkata or an ISO timestamp such as 2026-12-31T23:59:00+05:30");
   const relationship =
     await loadActiveRelationship(
       input.companyRelationshipId,
@@ -1382,6 +1388,7 @@ export async function terminateSuperAdminHrSessions(
   return {
     userId,
     terminated: true,
+    message:"All sessions revoked",
   };
 }
 

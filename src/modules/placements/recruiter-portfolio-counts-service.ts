@@ -7,7 +7,13 @@ import {hasActiveRecruiter} from "@/modules/identity/context";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {requirePermission,AuthorizationError} from "@/modules/permissions/policy";
 
-/** Only counts records which have already been shared by a TPO shortlist.
+/**
+ * Legacy offer RELEASED / ACCEPTED => current ISSUED / ACCEPTED. Legacy
+ * "live applications" included non-withdrawn applications before employer
+ * consent. vNext intentionally narrows that metric to shared SHORTLISTED,
+ * active SUBMITTED candidates; never label it "all applicants".
+ *
+ * Only counts records which have already been shared by a TPO shortlist.
  * The caller supplies job IDs from listOwnRecruiterPlacementJobs and a granted
  * college; private applications and screening decisions never enter this count. */
 export async function recruiterVisiblePortfolioCounts(context:RequestContext,
