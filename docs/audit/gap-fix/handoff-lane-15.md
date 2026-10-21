@@ -163,3 +163,6 @@
 
 - Project audit page G2-7-036-012/017: pass `actorName`, `entityType`, `entityId` from authorized ungrouped activity rows into ProjectAuditPageExport, not event ID as entity ID. Current caller only passes summary/label, so missing values export blank until integrated.
 - Company email policy G2-13-012-028: bundled old personal-mail-domains.txt/disposable-mail-domains.txt not found under legacy-source; retrieve authoritative resource lists, review/refresh central policy, prevent send until MX/tenancy provider checks. Local inline sets are incomplete by design.
+
+- DB05 lesson order owner G2-3-027-083: promote lessonContentDeliverySequences only after verified old content_id/class_id→new contentId/deliveryId/college crosswalk and same-offering ownership, full-order transaction and SQL replay; do not use fabricated group-backed delivery.
+- Faculty roster directory owner G2-3-009-054: resolve legacy learnerId/classId to authorized collegeMembership and courseSectionDelivery with role/college verification; map legacy contact_mobile/contact_mail only through masked-to-role disclosure policy.

@@ -323,3 +323,6 @@
 
 - work2 #45 `project-audit-page-export.tsx` | G2-7-036-012/017: switched export to legacy Action/Entity type/Entity ID/Actor/When headers; row inputs represent ungrouped authorized activity events, optional missing actor/entity IDs left blank rather than invented. Parent audit page source mapping handoff.
 - work2 #46 `public-work-email-policy.ts` | G2-13-012-028/G2-12-012-007: added known legacy academic suffixes and rejected IPv4 shorthand/numeric octal/hex/IPv6 address forms before invalid-host path. Full legacy resource-backed personal/disposable blocklists unavailable in source snapshot: owner must restore centrally refreshed rules; marked partial.
+
+- work2 #47 `lesson-content-order-service.ts` | G2-3-027-083: documented authenticated old class/content integer→verified delivery/content UUID crosswalk and active staged per-delivery order; existing full-order enforcement and runtime gate preserved. Migration/replay and group-backed class mapping handoff.
+- work2 #48 `faculty-student-detail-service.ts` | G2-3-009-054: mapped historical learner/class numeric IDs to authorized membership/section delivery UUIDs and name, roll, contact fields; existing active faculty + roster checks already restrict scope, no unsafe identity coercion. Future data import handoff.
