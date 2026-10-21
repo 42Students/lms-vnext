@@ -1114,6 +1114,13 @@
       "when": 1792350851266,
       "tag": "0158_lane15_assignment_legacy_term_snapshot",
       "breakpoints": true
+    },
+    {
+      "idx": 159,
+      "version": "7",
+      "when": 1792350911266,
+      "tag": "0159_lane15_tenant_domain_diagnostics",
+      "breakpoints": true
     }
   ]
 }

@@ -26,15 +26,21 @@ export const tenantDomains = pgTable(
     verifiedAt: timestamp("verified_at", { withTimezone: true }),
     lastCheckedAt: timestamp("last_checked_at", { withTimezone: true }),
     lastCheckResult: text("last_check_result"),
+    /** Redacted DNS TXT diagnostics; service must remove verification secrets. */
+    lastFoundValues: varchar("last_found_values", { length: 512 }),
+    /** Tombstone preserves ownership and historical verification audit. */
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("tenant_domains_host_uq").on(sql`lower(${table.host})`),
+    uniqueIndex("tenant_domains_host_uq")
+      .on(sql`lower(${table.host})`)
+      .where(sql`${table.deletedAt} is null`),
     index("tenant_domains_college_idx").on(table.collegeId),
     uniqueIndex("tenant_domains_college_primary_uq")
       .on(table.collegeId)
-      .where(sql`${table.isPrimary} = true`),
+      .where(sql`${table.isPrimary} = true and ${table.deletedAt} is null`),
     check(
       "tenant_domains_primary_verified_ck",
       sql`not ${table.isPrimary} or ${table.isVerified}`,

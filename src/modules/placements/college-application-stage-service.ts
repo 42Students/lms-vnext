@@ -91,8 +91,11 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
     if(input.action==="REINSTATE"&&from!=="REJECTED")
      throw Error("Only a rejected application can be reinstated.");
     if(next===from)throw Error("Application is already in the selected stage.");
-    if(input.action==="MOVE" && !(COLLEGE_APPLICATION_TRANSITIONS[from]??[]).includes(next))
-     throw Error(`Invalid transition: ${from} to ${next}`);
+    if(input.action==="MOVE" && !(COLLEGE_APPLICATION_TRANSITIONS[from]??[]).includes(next)){
+     const allowed=COLLEGE_APPLICATION_TRANSITIONS[from]??[];
+     throw Error("Cannot move from "+from+" to "+next+
+      ". Allowed next stages: "+(allowed.length?allowed.join(", "):"none")+".");
+    }
     if(["OFFERED","HIRED"].includes(next)){
      const offers=await tx.select({
       status:placementOffers.status,joining:placementJoiningOutcomes.status,

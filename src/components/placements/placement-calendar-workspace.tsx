@@ -37,6 +37,7 @@ import {
 
 import { listPlacementCalendarEvents } from "@/modules/placements/placement-calendar-service";
 import {getTpoBlockedDates} from "@/modules/placements/tpo-configuration-read-service";
+import {tpoCrmTablesReady} from "@/modules/placements/tpo-crm-storage-readiness";
 import {toTpoBlockedCalendarEvents} from "@/modules/placements/tpo-blocked-calendar-model";
 import {summarizeTpoCalendarNeeds} from "@/modules/placements/tpo-calendar-needs-model";
 import {tpoLegacyCalendarEventTitle,TPO_CALENDAR_SUBTITLE,TPO_EMPTY_AGENDA} from "@/modules/placements/tpo-calendar-display-model";
@@ -54,6 +55,8 @@ type CalendarSearchParams = {
   kinds?: string | string[];
   roundKind?: string | string[];
   job?: string | string[];
+  jobId?: string | string[];
+  focus?: string | string[];
 };
 
 type CalendarState = {
@@ -64,6 +67,8 @@ type CalendarState = {
   kinds: TpoCalendarChip[];
   roundKind: (typeof placementRoundKinds)[number] | undefined;
   job: string;
+  jobId: string;
+  focus: "OVERDUE" | "BLOCKED" | "BUSY" | null;
 };
 
 const VIEWS: readonly PlacementCalendarView[] = [
@@ -179,6 +184,11 @@ function normalizedState(
             ?.trim()
             .slice(0, 150) ?? ""
         : "",
+    jobId: audience !== "TPO" && /^[a-f0-9-]{36}$/i.test(first(searchParams.jobId) ?? "")
+      ? first(searchParams.jobId)! : "",
+    focus: audience === "TPO" && ["OVERDUE","BLOCKED","BUSY"].includes(first(searchParams.focus) ?? "")
+      ? first(searchParams.focus) as "OVERDUE" | "BLOCKED" | "BUSY"
+      : null,
   };
 }
 
@@ -187,7 +197,7 @@ function calendarHref(
   audience: CalendarAudience,
   state: CalendarState,
   overrides: Partial<
-    Pick<CalendarState, "anchor" | "view" | "kind" | "kinds" | "company">
+    Pick<CalendarState, "anchor" | "view" | "kind" | "kinds" | "company" | "focus" | "jobId">
   > = {},
 ): string {
   const params = new URLSearchParams();
@@ -206,6 +216,8 @@ function calendarHref(
   if(company)params.set("company",company);
 
   if (audience === "TPO") {
+    const focus = "focus" in overrides ? overrides.focus : state.focus;
+    if (focus) params.set("focus", focus);
     const requestedKind="kind" in overrides?overrides.kind:state.kind;
     const selectedKinds = "kinds" in overrides ? overrides.kinds : state.kinds;
     if (selectedKinds?.length) params.set("kinds", selectedKinds.join(","));
@@ -219,6 +231,8 @@ function calendarHref(
     if (state.job) {
       params.set("job", state.job);
     }
+    const selectedJobId = "jobId" in overrides ? overrides.jobId : state.jobId;
+    if (selectedJobId) params.set("jobId", selectedJobId);
   }
 
   return `${basePath}?${params.toString()}`;
@@ -240,7 +254,9 @@ function eventHref(
       base + encodeURIComponent(event.jobId);
 
     return event.roundId
-      ? `${jobHref}#round-${event.roundId}`
+      ? audience === "TPO"
+        ? `${jobHref}/rounds#round-${encodeURIComponent(event.roundId)}`
+        : `${jobHref}#round-${encodeURIComponent(event.roundId)}`
       : jobHref;
   }
 
@@ -488,13 +504,12 @@ export async function PlacementCalendarWorkspace({
   // job-name filter is a view-level refinement of
   // already authorized rows.
   const events =
-    audience !== "TPO" && state.job
+    audience !== "TPO" && (state.job || state.jobId)
       ? response.events.filter((event) =>
-          event.jobTitle
+          (!state.jobId || event.jobId === state.jobId) &&
+          (!state.job || Boolean(event.jobTitle
             ?.toLocaleLowerCase("en-IN")
-            .includes(
-              state.job.toLocaleLowerCase("en-IN"),
-            ),
+            .includes(state.job.toLocaleLowerCase("en-IN")))),
         )
       : response.events;
 
@@ -556,8 +571,21 @@ export async function PlacementCalendarWorkspace({
   const nextSeven=needsEvents.filter(event=>event.startsAt>=now &&
    placementCalendarDayKey(event.startsAt)<=sevenDayEnd);
   const isTpo = audience === "TPO";
+  // The follow-up POST/PATCH APIs use this exact persisted-table readiness
+  // check, not a deployment string. Never show editing against absent DB09.
   const calendarFollowupsWritable =
-    isTpo && process.env.DB09_TPO_API_READY === "DB09_VERIFIED";
+    isTpo && await tpoCrmTablesReady().catch(() => false);
+  const focusedNeeds = state.focus === "OVERDUE" ? overdue :
+    state.focus === "BLOCKED" ? blockedRounds :
+    state.focus === "BUSY"
+      ? needsEvents.filter(event => busyDays.some(([day]) =>
+          day === placementCalendarDayKey(event.startsAt)))
+      : [];
+  const partialSummarySources = [
+    !needsWindow ? "today/next 7 days and overdue follow-ups" : null,
+    !eventTypeCountsSource ? "event-type counts" : null,
+    !blockedDays?.ready ? "blocked dates and conflicts" : null,
+  ].filter((value): value is string => value !== null);
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
@@ -590,7 +618,7 @@ export async function PlacementCalendarWorkspace({
       />
 
       {partialCalendar?<Banner tone="warning" role="alert" action={<Link href={calendarHref(basePath,audience,state,{})} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
-        <p className="font-semibold text-warning-text">Calendar summary is partially unavailable. The events shown are from the successful calendar read; unavailable counts are not shown as zero.</p>
+        <p className="font-semibold text-warning-text">Could not refresh {partialSummarySources.join(", ")}. The successful events remain visible; unavailable counts are not zero. Retry summary.</p>
       </Banner>:null}
 
       {calendarFollowupsWritable ? (
@@ -598,10 +626,12 @@ export async function PlacementCalendarWorkspace({
          <TpoNewFollowupModal collegeId={collegeId}/>
         </div>
       ) : isTpo ? (
-        <p role="status" className="text-sm text-muted-foreground">
-          Calendar follow-up editing is unavailable until the DB09 CRM
-          write gate is verified. Existing calendar events remain read-only.
-        </p>
+        <Banner tone="warning" role="alert"
+          action={<Link href={calendarHref(basePath,audience,state,{})}
+            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text md:min-h-9">Retry</Link>}>
+          Follow-up editing is unavailable because DB09 recruiter CRM storage could not be verified.
+          Ask your administrator to apply the DB09 CRM migration. Existing calendar events are read-only.
+        </Banner>
       ) : null}
 
       {isTpo?<section aria-label="Today and next 7 days" className="border-b border-border pb-4">
@@ -616,19 +646,40 @@ export async function PlacementCalendarWorkspace({
       {isTpo?<section aria-label="Needs doing" className="space-y-3 border-b border-border pb-4">
        <h2 className="text-base font-semibold">Needs doing</h2>
        <div className="grid min-w-0 gap-0 divide-y divide-border border-y border-border sm:grid-cols-3 sm:divide-y-0 sm:divide-x">
-        <Link href={overdue.length?basePath+"?view=week&date="+placementCalendarDayKey(overdue[0].startsAt)+"&kind=FOLLOW_UP":basePath}
-         className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-         <strong className="block text-lg">{needsWindow?overdue.length:"Unavailable"}</strong>Follow-ups overdue (last 90 days)
-        </Link>
-        <Link href={blockedRounds.length?basePath+"?view=week&date="+placementCalendarDayKey(blockedRounds[0].startsAt):basePath}
-         className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-         <strong className="block text-lg">{needsWindow&&blockedDays?.ready?blockedRounds.length:"Unavailable"}</strong>Rounds on a blocked date
-        </Link>
-        <Link href={busyDays.length?basePath+"?view=week&date="+busyDays[0][0]:basePath}
-         className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-         <strong className="block text-lg">{needsWindow?busyDays.length:"Unavailable"}</strong>Busy days (3 or more)
-        </Link>
+        {([
+          {focus:"OVERDUE" as const,label:"Follow-ups overdue (last 90 days)",value:needsWindow?overdue.length:null},
+          {focus:"BLOCKED" as const,label:"Rounds on a blocked date",value:needsWindow&&blockedDays?.ready?blockedRounds.length:null},
+          {focus:"BUSY" as const,label:"Busy days (3 or more)",value:needsWindow?busyDays.length:null},
+        ]).map(item=><Link key={item.focus}
+          href={calendarHref(basePath,audience,state,{focus:state.focus===item.focus?null:item.focus})}
+          aria-current={state.focus===item.focus?"true":undefined}
+          className="flex min-h-11 min-w-0 flex-col justify-center gap-1 p-3 text-sm text-[var(--lms-link-text)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+          <strong className="block text-lg">{item.value===null?"Unavailable":item.value}</strong>
+          {item.label}{state.focus===item.focus?" · Selected":""}
+        </Link>)}
        </div>
+       {state.focus ? <div className="border-b border-border py-3" aria-label="Needs doing details">
+         <div className="flex flex-wrap items-center justify-between gap-2">
+          <h3 className="text-sm font-semibold">
+           {state.focus==="OVERDUE"?"Overdue follow-ups":state.focus==="BLOCKED"?"Rounds on blocked dates":"Busy day events"}
+          </h3>
+          <Link href={calendarHref(basePath,audience,state,{focus:null})}
+           className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+           Close
+          </Link>
+         </div>
+         {!needsWindow || (state.focus==="BLOCKED"&&!blockedDays?.ready)
+          ? <p role="status" className="mt-2 text-sm text-warning-text">This list is unavailable. Retry the calendar summary.</p>
+          : focusedNeeds.length===0
+            ? <p className="mt-2 text-sm text-body">Nothing needs attention in this category.</p>
+            : <div className="divide-y divide-border">
+              {focusedNeeds.slice(0,15).map(event=><CalendarEventCard key={event.id}
+                event={event} audience="TPO" allowFollowupEditing={calendarFollowupsWritable}/>)}
+              {focusedNeeds.length>15?<p className="py-2 text-xs text-muted-foreground">
+                Showing 15 of {focusedNeeds.length} events. Choose the relevant calendar week to view more.
+              </p>:null}
+             </div>}
+        </div> : null}
        {!blockedDays?.ready?<p role="status" className="text-xs text-warning-text">
         Blocked-day storage is unavailable; conflict counts cannot be verified.</p>:null}
       </section>:null}
@@ -756,6 +807,7 @@ export async function PlacementCalendarWorkspace({
             state.kind,
             state.roundKind,
             state.job,
+            state.jobId,
           ].join(":")}
           action={basePath}
           method="get"
@@ -825,7 +877,7 @@ export async function PlacementCalendarWorkspace({
               </Select>
             </label>
           ) : (
-            <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
+            <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(state.job || state.jobId || (state.roundKind && state.roundKind!=="INTERVIEW"))}>
               <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
               <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
               <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
@@ -846,6 +898,7 @@ export async function PlacementCalendarWorkspace({
                 </Select>
               </label>
 
+              {state.jobId?<Input type="hidden" name="jobId" value={state.jobId}/>:null}
               <label className="flex min-w-0 flex-col gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
                 Job
                 <Input
@@ -867,13 +920,18 @@ export async function PlacementCalendarWorkspace({
               Apply filters
             </Button>
           </div>
-          {!isTpo && (state.company || state.job || (state.roundKind && state.roundKind !== "INTERVIEW")) ? (
+          {!isTpo && (state.company || state.job || state.jobId || (state.roundKind && state.roundKind !== "INTERVIEW")) ? (
             <Link href={basePath + "?" + new URLSearchParams({date:state.anchor,view:state.view}).toString()}
               className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
               Clear filters
             </Link>
           ) : null}
         </form>
+        {!isTpo && state.jobId?<p role="status" className="mt-2 text-sm text-body">
+          Job filter: <span className="font-semibold">{state.jobId}</span>{" "}
+          <Link href={calendarHref(basePath,audience,state,{jobId:""})}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Remove job filter</Link>
+        </p>:null}
         {isTpo && (state.company || state.kind || state.kinds.length) ? (
           <Link href={basePath} className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline">Show everything</Link>
         ) : null}

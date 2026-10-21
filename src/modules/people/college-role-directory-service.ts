@@ -1,5 +1,6 @@
 import "server-only";
 
+import { z } from "zod";
 import { and, asc, count, desc, eq, exists, gte, ilike, inArray, isNull, lt, not, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -22,6 +23,8 @@ import {
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
+import { listFacultyCourseDeliveries } from "@/modules/courses/faculty-course-service";
+import { listActiveDeliveryLearners } from "@/modules/courses/delivery-roster";
 import {
   collegeRoleDirectoryQuerySchema,
   assertCompatibleCollegeRoleDirectoryFilters,
@@ -434,4 +437,59 @@ export async function listCollegeRoleDirectory(
     totalPages: Math.max(1, Math.ceil(total / filter.pageSize)),
   };
   });
+}
+
+
+/**
+ * A Faculty class-picker is NOT the College Admin people directory. The
+ * authenticated teacher must have a persisted, live teaching assignment for
+ * this exact delivery before any learner IDs are resolved. Never accept a raw
+ * legacy classId or use an unscoped people.manage bypass.
+ *
+ * Contacts are deliberately omitted: teaching a class is not permission to
+ * browse every learner's personal mobile/email or other private profile fields.
+ * A downstream grading workflow can fetch only the data it independently needs.
+ */
+export async function listFacultyAssignedClassLearners(
+  context: RequestContext,
+  raw: unknown,
+) {
+  const input = z.strictObject({
+    deliveryId: z.string().uuid(),
+    query: z.string().trim().max(120).default(""),
+    limit: z.number().int().min(1).max(100).default(25),
+  }).parse(raw);
+  if (
+    context.user.platformStatus !== "ACTIVE" ||
+    context.membership?.status !== "ACTIVE" ||
+    !hasMembershipRole(context, "FACULTY")
+  ) {
+    throw new AuthorizationError("people.read");
+  }
+  const deliveries = await listFacultyCourseDeliveries(context);
+  const delivery = deliveries.find(row => row.deliveryId === input.deliveryId);
+  if (!delivery || !context.membership) {
+    throw new AuthorizationError("people.read");
+  }
+  const roster = await listActiveDeliveryLearners({
+    deliveryId: delivery.deliveryId,
+    sectionId: delivery.sectionId,
+    academicPeriodId: delivery.academicPeriodId,
+    collegeId: context.membership.collegeId,
+  });
+  const needle = input.query.toLocaleLowerCase("en");
+  return {
+    deliveryId: delivery.deliveryId,
+    sectionId: delivery.sectionId,
+    courseId: delivery.courseId,
+    items: roster.filter(row =>
+      !needle ||
+      (row.displayName ?? "").toLocaleLowerCase("en").includes(needle) ||
+      (row.rollNumber ?? "").toLocaleLowerCase("en").includes(needle)
+    ).slice(0,input.limit).map(row => ({
+      membershipId: row.membershipId,
+      displayName: row.displayName ?? "Learner",
+      rollNumber: row.rollNumber,
+    })),
+  };
 }
