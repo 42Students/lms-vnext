@@ -7,7 +7,7 @@ import {useRef,useState,useTransition,type FormEvent} from "react";
 import {useToast} from "@/components/ui/toast";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { apiFetch } from "@/lib/api-fetch";
+import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import {Dialog} from "@/components/ui/dialog";
 import {Disclosure} from "@/components/ui/disclosure";
 import {Select} from "@/components/ui/select";
@@ -98,6 +98,11 @@ export function CollegeClassCreate({ cohorts, periods,
          description:"Next, register or move students into this section."});
         router.refresh();
       } catch (error) {
+        if (error instanceof FriendlyFetchError && Object.keys(error.fieldErrors).length) {
+          setFieldErrors(error.fieldErrors);
+          const firstField = Object.keys(error.fieldErrors)[0];
+          formRef.current?.querySelector<HTMLElement>('[name="'+(firstField==="name"?"className":firstField)+'"]')?.focus();
+        }
         setNotice(academicSetupErrorMessage(error, "Class creation failed."));
       }
     });
@@ -113,7 +118,7 @@ export function CollegeClassCreate({ cohorts, periods,
             <Link href={academicSetupHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Set up academic periods</Link>
           </>}
       </p>
-      : <form ref={formRef} onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
+      : <form ref={formRef} noValidate onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
           <Input type="search" value={programSearch} onChange={event=>setProgramSearch(event.target.value)}
             aria-label="Search programs" placeholder="Search programs" className="min-h-9" />
@@ -122,6 +127,7 @@ export function CollegeClassCreate({ cohorts, periods,
            <option value="">Select program</option>
            {visiblePrograms.map(program=><option key={program.id} value={program.id}>{program.name}</option>)}
           </Select>
+          {fieldErrors.programId ? <span role="alert" className="text-xs text-error">{fieldErrors.programId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
           <Select required name="cohortId" disabled={!programId} aria-invalid={Boolean(fieldErrors.cohortId)} value={cohortId} onChange={event => setCohortId(event.target.value)}
@@ -131,6 +137,7 @@ export function CollegeClassCreate({ cohorts, periods,
               {c.programName} · {c.name} ({c.code})
             </option>)}
           </Select>
+          {fieldErrors.cohortId ? <span role="alert" className="text-xs text-error">{fieldErrors.cohortId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Academic period
           <Select required name="academicPeriodId" aria-invalid={Boolean(fieldErrors.academicPeriodId)} value={academicPeriodId}
@@ -141,11 +148,13 @@ export function CollegeClassCreate({ cohorts, periods,
               {p.name} ({p.code})
             </option>)}
           </Select>
+          {fieldErrors.academicPeriodId ? <span role="alert" className="text-xs text-error">{fieldErrors.academicPeriodId}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section Name
           <Input required name="className" placeholder="e.g. CSE-A or Section 1" maxLength={255} value={name}
            aria-invalid={Boolean(fieldErrors.name)} onChange={event => setName(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
+          {fieldErrors.name ? <span role="alert" className="text-xs text-error">{fieldErrors.name}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class code (optional; generated from name)
           <Input name="code" maxLength={64} value={code} onChange={event => setCode(event.target.value)}
@@ -155,10 +164,12 @@ export function CollegeClassCreate({ cohorts, periods,
           <Input required name="capacity" aria-invalid={Boolean(fieldErrors.capacity)} type="number" min={1} max={200} step={1} value={capacity}
             onChange={event => setCapacity(event.target.value)}
             className="min-h-11 w-full md:min-h-9" />
+          {fieldErrors.capacity ? <span role="alert" className="text-xs text-error">{fieldErrors.capacity}</span> : null}
         </label>
         <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Minimum students (0–200)
           <Input name="minSize" aria-invalid={Boolean(fieldErrors.minSize)} type="number" min={0} max={200} step={1} value={minSize}
             onChange={event => setMinSize(event.target.value)} className="min-h-11 w-full md:min-h-9" />
+          {fieldErrors.minSize ? <span role="alert" className="text-xs text-error">{fieldErrors.minSize}</span> : null}
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] md:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description (optional)
           <Textarea maxLength={2000} rows={2} value={description} onChange={e => setDescription(e.target.value)}
