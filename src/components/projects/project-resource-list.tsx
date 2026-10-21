@@ -17,7 +17,7 @@ type ResourceRow={
  id:string;title:string;description:string|null;url:string|null;required:boolean;
  visibility:string;status:string;createdAt:Date;updatedAt:Date;sequence:number;
  resourceType?:string;pinned?:boolean;accessNotes?:string|null;
- sprintId?:string|null;taskId?:string|null;templateKey?:string|null;
+ sprintId?:string|null;taskId?:string|null;
 };
 export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tasks=[]}:{
  projectId:string;rows:readonly ResourceRow[];mode:"MENTOR"|"ADMIN"|"LEARNER";readOnly:boolean;
@@ -30,11 +30,6 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const [pinned,setPinned]=useState(false);
  const [sprint,setSprint]=useState("");
  const [task,setTask]=useState("");
- const [expandedIds,setExpandedIds]=useState<string[]>([]);
- const [hiddenIds,setHiddenIds]=useState<string[]>([]);
- const [lastHidden,setLastHidden]=useState<string|null>(null);
- const legacySummary=mode==="ADMIN";
- const grouped=legacySummary&&rows.length>12;
  const activeRows=rows.filter(row=>row.status==="ACTIVE");
  const sourceOrder=[...activeRows].sort((a,b)=>a.sequence-b.sequence).map(row=>row.id);
  const sourceKey=sourceOrder.join("|");
@@ -97,10 +92,8 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const filtered=rows.filter(row=>{
   const link=Boolean(row.url&&safeProjectExternalHref(row.url));
   const kind=row.resourceType??(link?"LINK":"NOTE");
-  return !hiddenIds.includes(row.id)&&(!search.trim()||(
-    row.title+" "+(row.description??"")+" "+(row.url??"")+" "+(row.accessNotes??"")+" "+
-    (row.resourceType??"")+" "+(row.templateKey??"")
-   ).toLocaleLowerCase("en-IN").includes(search.trim().toLocaleLowerCase("en-IN")))
+  return (!search.trim()||(row.title+" "+(row.description??"")).toLocaleLowerCase("en-IN")
+     .includes(search.trim().toLocaleLowerCase("en-IN")))
     &&(type==="ALL"||(type==="LINK"&&link)||(type==="OTHER"&&!link)||
       type===kind)
     &&(visibility==="ALL"||row.visibility===visibility)
@@ -116,33 +109,22 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
  const archive=rows.filter(row=>row.status==="ARCHIVED").length;
  const drafts=rows.filter(row=>row.status==="DRAFT").length;
  const pinnedCount=rows.filter(row=>row.pinned).length;
- const withAccessNotes=rows.filter(row=>Boolean(row.accessNotes?.trim())).length;
  const currentOrder=(row:ResourceRow)=>row.status==="ACTIVE"?
    stableOrder.indexOf(row.id):rows.length+row.sequence;
  return <section aria-label="Project resource directory" className="space-y-3">
-  {legacySummary?<div className="min-w-0 space-y-2">
-    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Project references</p>
-    <h3 className="text-lg font-semibold leading-[26px] text-[var(--lms-heading)]">Keep everything the team needs in one curated place</h3>
-    <p className="text-sm leading-[22px] text-body">Add only useful project references, label them clearly, and include access notes when a link or file needs a college account, permission request, or other prerequisite.</p>
-  </div>:null}
-  <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 md:grid-cols-4"
-    aria-label={legacySummary?"Resource library summary":"Resource counts"}>
-   {(legacySummary?([["Resources",rows.length],["Links",links],["Files & media",rows.length-links],
-     ["With access notes",withAccessNotes]] as const):([["Total",rows.length],["Showing",filtered.length],
-     ["Links",links],["Files",files],["Other",other],["Drafts",drafts],["Archived",archive],["Pinned",pinnedCount]] as const))
+  <div className="grid grid-cols-2 gap-2 sm:grid-cols-4" aria-label="Resource counts">
+   {([["Total",rows.length],["Showing",filtered.length],["Links",links],
+     ["Files",files],["Other",other],["Drafts",drafts],["Archived",archive],
+     ["Pinned",pinnedCount]] as const)
      .map(([label,value])=><div key={label} className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm">
        <strong>{label}</strong><p className="mt-1 tabular-nums">{value}</p>
      </div>)}
   </div>
-  {legacySummary?<details className="text-sm text-body"><summary className="min-h-9 cursor-pointer font-semibold text-link">Additional resource counts</summary>
-    <p className="mt-2 text-xs text-muted-foreground">Showing {filtered.length} · Drafts {drafts} · Archived {archive} · Pinned {pinnedCount}</p>
-  </details>:null}
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-    {(!legacySummary||grouped)?<label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
+    <label className="grid min-w-40 flex-1 gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search
       <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
-       aria-label={legacySummary?"Find an item in this section":"Search resources"}
-       placeholder={legacySummary?"Find an item by title or content":"Search title, description, file name, or link"} className=""/>
-    </label>:null}
+       aria-label="Search resources" placeholder="Search title, description, file name, or link" className=""/>
+    </label>
     <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Type
       <Select value={type} onChange={event=>setType(event.target.value)}
         className="">
@@ -189,11 +171,6 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
     <Button variant="secondary" type="button" onClick={()=>{setSearch("");setType("ALL");setVisibility("ALL");setStatus("ACTIVE");setPinned(false);setSprint("");setTask("");}}
       className="min-h-10 text-sm font-[650] text-link underline">Clear filters</Button>
   </div>
-  {legacySummary&&grouped?<p role="status" className="text-xs text-muted-foreground">Showing {filtered.length} of {rows.length} items. Expand only the items you need to edit.</p>:null}
-  {activeRows.length>250&&mode!=="LEARNER"?<p role="status" className="text-xs text-muted-foreground">This library has {activeRows.length} active resources. Existing order is preserved; reordering requires at most 250 active rows per save.</p>:null}
-  {lastHidden?<div role="status" className="flex flex-wrap items-center gap-2 text-sm">Resource hidden from this view only; no changes were saved.
-    <Button type="button" variant="secondary" onClick={()=>{setHiddenIds(ids=>ids.filter(id=>id!==lastHidden));setLastHidden(null);}}>Undo remove</Button>
-  </div>:null}
   {mode!=="LEARNER"&&!readOnly?<p role="status" className="text-xs text-muted-foreground leading-[20px]">
     {canReorder?"Drag resources to arrange a draft, then select Save order.":
       "Resource reordering is available when no filters are active."}
@@ -207,12 +184,11 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
   {reorderError?<p role="alert" className="text-sm text-error leading-[22px]">{reorderError}</p>:null}
   {rows.length===0?<EmptyState title="No resources yet" description={mode==="LEARNER"
     ?"Share the first link or file with your team."
-    :"No resources yet. Add only the references the team will actually use."}
+    :"Add the briefs, templates and reference links your team will need."}
   />:filtered.length===0?<EmptyState title="No matching resources"
     description="No resources match these filters. Clear filters to see all resources." />:<div className="space-y-3">{[...filtered].sort((a,b)=>
       Number(Boolean(b.pinned))-Number(Boolean(a.pinned))||currentOrder(a)-currentOrder(b)).map(resource=>{
     const safe=resource.url?safeProjectExternalHref(resource.url):null;
-    const expanded=!grouped||expandedIds.includes(resource.id);
     return <article key={resource.id}
       draggable={canReorder&&resource.status==="ACTIVE"}
       onDragStart={event=>{if(canReorder&&resource.status==="ACTIVE")event.dataTransfer.setData("text/plain",resource.id);}}
@@ -220,20 +196,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
       onDrop={event=>{if(!canReorder||resource.status!=="ACTIVE")return;event.preventDefault();
         dropOnto(event.dataTransfer.getData("text/plain"),resource.id);}}
       className="border-b border-border py-4">
-     {grouped?<div className="mb-2 flex flex-wrap items-center gap-2">
-       <Button type="button" variant="link" aria-expanded={expanded}
-         aria-label={(expanded?"Collapse ":"Expand ")+resource.title}
-         onClick={()=>setExpandedIds(ids=>expanded?ids.filter(id=>id!==resource.id):[...ids,resource.id])}
-         className="min-h-11 px-0 text-left font-semibold text-link md:min-h-9">
-         {resource.title} · {expanded?"Collapse":"Expand"}
-       </Button>
-       <span className="text-xs text-muted-foreground">Order {resource.sequence+1}</span>
-      </div>:null}
-     {expanded?<div className="flex flex-wrap items-start justify-between gap-3">
+     <div className="flex flex-wrap items-start justify-between gap-3">
       <div className="min-w-0">
-       {!grouped?<p className="font-semibold text-foreground">{resource.title}</p>:null}
+       <p className="font-semibold text-foreground">{resource.title}</p>
        {resource.description?<p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{resource.description}</p>:null}
-       {resource.templateKey&&mode!=="LEARNER"?<p className="mt-1 text-xs text-muted-foreground">Resource key: <code>{resource.templateKey}</code></p>:null}
        {mode!=="LEARNER"&&resource.accessNotes?
          <p className="mt-2 whitespace-pre-wrap break-words text-xs text-body leading-[20px]">
            Access notes: {resource.accessNotes}
@@ -258,10 +224,10 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
      <ProjectResourceOpenLink url={resource.url} linkText={mode==="LEARNER"?"Open resource ↗":"Open link"}/>
      {canReorder&&resource.status==="ACTIVE"?<div className="mt-2 flex flex-wrap gap-2">
        <Button variant="secondary" type="button" disabled={stableOrder[0]===resource.id}
-         aria-label={"Move "+resource.title+" up"} className="text-xs"
+         className="text-xs"
          onClick={()=>moveRelative(resource.id,-1)}>Move up</Button>
        <Button variant="secondary" type="button" disabled={stableOrder.at(-1)===resource.id}
-         aria-label={"Move "+resource.title+" down"} className="text-xs"
+         className="text-xs"
          onClick={()=>moveRelative(resource.id,1)}>Move down</Button>
      </div>:null}
      {mode!=="LEARNER"&&!readOnly&&resource.status!=="ARCHIVED"?<ProjectResourceActions
@@ -275,12 +241,6 @@ export function ProjectResourceList({projectId,rows,mode,readOnly,sprints=[],tas
          updatedAt:resource.updatedAt,
          sprintId:resource.sprintId,taskId:resource.taskId}}
         sprints={sprints} tasks={tasks}/>:null}
-      {legacySummary&&!readOnly?<Button type="button" variant="ghost"
-        aria-label={"Remove "+resource.title+" from view"} className="mt-2 text-xs"
-        onClick={()=>{setHiddenIds(ids=>[...ids,resource.id]);setLastHidden(resource.id);}}>
-        Remove from view (unsaved)
-      </Button>:null}
-     </div>:null}
     </article>;
   })}</div>}
  </section>;
