@@ -334,16 +334,16 @@ code, kbd, samp, pre { font-family: var(--font-jetbrains-mono), ui-monospace, SF
  * and page-specific content. Shell navigation and header are owned separately.
  */
 :root {
-  --lms-heading: var(--lms-heading);
-  --lms-header-border: var(--lms-header-border);
-  --lms-topbar-ink: var(--lms-topbar-ink);
-  --lms-topbar-search: var(--lms-topbar-search);
+  --lms-heading: #172033;
+  --lms-header-border: #e7ecf2;
+  --lms-topbar-ink: #334155;
+  --lms-topbar-search: #f8fafc;
   --lms-topbar-muted: #5b6b82;
-  --lms-topbar-placeholder: var(--lms-topbar-placeholder);
+  --lms-topbar-placeholder: #64748b;
   --lms-topbar-key-border: var(--lms-header-border); /* legacy header border */
   --lms-topbar-unread: var(--lms-calendar-sunday);
   --lms-topbar-avatar-bg: var(--lms-primary-subtle); /* legacy $status-info-bg */
-  --lms-topbar-avatar-border: var(--lms-topbar-avatar-border); /* legacy form border teal */
+  --lms-topbar-avatar-border: #d1f1f1; /* legacy form border teal */
   --lms-topbar-avatar-hover: #d4f0f2;
   --lms-topbar-heading: #18212f;
   --lms-canvas-border: var(--lms-neutral-200);
