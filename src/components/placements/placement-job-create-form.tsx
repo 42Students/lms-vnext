@@ -21,7 +21,6 @@ import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placemen
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {TPO_DRIVE_ROUND_PRESETS,isTpoRoundPresetKey,plannedTpoRoundRows,type TpoRoundPresetKey} from "@/modules/placements/tpo-drive-round-presets";
-import {parseLegacyPairs} from "@/modules/placements/placement-legacy-posting-model";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
@@ -64,6 +63,8 @@ export type PlacementCompanyChoice = {
 
 const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 const textareaClass = "min-h-28 w-full min-w-0";
+type ImportantDateRow = {id:number;label:string;date:string};
+type CustomRuleRow = {id:number;label:string;value:string};
 
 function splitList(value: string) {
   return value
@@ -142,6 +143,12 @@ export function PlacementJobCreateForm({
   );
   const [companySearch,setCompanySearch]=useState("");
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
+  const nextRowId=useRef(1000);
+  const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:""}]);
+  const [customRuleRows,setCustomRuleRows]=useState<CustomRuleRow[]>([{id:1,label:"",value:""}]);
+  const [assessmentUrlLength,setAssessmentUrlLength]=useState(0);
+  const [saveError,setSaveError]=useState<string|null>(null);
+  const [roundRows,setRoundRows]=useState<Array<{id:number;kind:string;name:string}>>([]);
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
   const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   // TPO-drives-25: recent-role highlights must not cap duplicate-drive checks.
@@ -217,10 +224,12 @@ export function PlacementJobCreateForm({
         }else values[field.name]=field.value;
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
-        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset,partialDraft:createdJobRef.current}));
+        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,
+        eligibilityPreset,importantDateRows,customRuleRows,roundRows,partialDraft:createdJobRef.current}));
       setLastLocalSaveAt(Date.now());
     }catch{/* Storage may be unavailable in private mode; form still works. */}
-  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset]);
+  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,
+    selectedSectionIds,eligibilityPreset,importantDateRows,customRuleRows,roundRows]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
     const task=window.setTimeout(()=>{
@@ -231,6 +240,8 @@ export function PlacementJobCreateForm({
           companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
           selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
           departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset;
+          importantDateRows?:ImportantDateRow[];customRuleRows?:CustomRuleRow[];
+          roundRows?:Array<{id:number;kind:string;name:string}>;
           partialDraft?:{jobId:string;relationshipId:string;fingerprint:string}};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
         // TPO-drives-43: recover a saved partial draft before allowing another POST.
@@ -252,9 +263,27 @@ export function PlacementJobCreateForm({
         if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
           setEligibilityPreset(saved.eligibilityPreset!);
         if(isTpoRoundPresetKey(saved.values.roundPreset))setRoundPreset(saved.values.roundPreset);
+        if(Array.isArray(saved.importantDateRows)&&saved.importantDateRows.length<=20){
+          const dates=saved.importantDateRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.label==="string"&&typeof row.date==="string");
+          if(dates.length)setImportantDateRows(dates);
+        }
+        if(Array.isArray(saved.customRuleRows)&&saved.customRuleRows.length<=20){
+          const rules=saved.customRuleRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.label==="string"&&typeof row.value==="string");
+          if(rules.length)setCustomRuleRows(rules);
+        }
+        if(Array.isArray(saved.roundRows)&&saved.roundRows.length<=20){
+          setRoundRows(saved.roundRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.kind==="string"&&typeof row.name==="string"));
+        }
+        const restoredIds=[...(saved.importantDateRows??[]),...(saved.customRuleRows??[]),...(saved.roundRows??[])]
+          .map(row=>row.id).filter(id=>Number.isInteger(id)&&id>=0);
+        nextRowId.current=Math.max(nextRowId.current,...restoredIds.map(id=>id+1));
         setEnteredDriveTitle(String(saved.values.title??""));
         setNewEmployerName(String(saved.values.companyName??""));
         setNewEmployerDomain(String(saved.values.companyDomain??""));
+        setAssessmentUrlLength(String(saved.values.assessmentUrl??"").length);
         for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
           else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
@@ -303,6 +332,7 @@ export function PlacementJobCreateForm({
     const reviewPublish = submitter?.getAttribute("value") === "review-publish";
     await run(async()=>{
     try {
+      setSaveError(null);
       if (!activeSeason) {
         throw new Error(
           "Start an active placement season before creating an opportunity",
@@ -321,6 +351,7 @@ export function PlacementJobCreateForm({
       // TPO-drives-45: datetime-local is IST regardless of browser timezone.
       const deadlineRaw=String(data.get("applicationDeadline")??"").trim();
       const deadlineIso=deadlineRaw?driveDeadlineIstToIso(deadlineRaw):null;
+      if (!title) throw new Error("Please enter a job title.");
       if (title.length < 3) throw new Error("Job title: At least 3 characters.");
       if (title.length > 100) throw new Error("Job title must be no longer than 100 characters.");
       const minimumLpa = nullableDecimal(String(data.get("minimumLpa") ?? ""));
@@ -418,13 +449,38 @@ export function PlacementJobCreateForm({
         throw new Error("Check the host college and travel instructions.");
       const reportingRaw=String(data.get("poolReportingTime")??"").trim();
       const reportingTime=reportingRaw?driveDeadlineIstToIso(reportingRaw):null;
-      const importantDates=parseLegacyPairs(String(data.get("importantDates")??""),"date")
-       .map(entry=>({label:entry.label,at:driveDeadlineIstToIso(entry.value)}));
-      const customEligibilityRules=parseLegacyPairs(String(data.get("customEligibilityRules")??""),"rule");
+      const importantDates=importantDateRows.filter(row=>row.label.trim()||row.date.trim())
+        .map(row=>{
+          const label=row.label.trim();
+          if(!label)throw new Error("Label required when date is set");
+          if(!row.date)throw new Error("Date required when label is set");
+          if(label.toLowerCase()==="application deadline")
+            throw new Error("This label is reserved — use the Application deadline field above");
+          if(label.length>100)throw new Error("Important date labels must be at most 100 characters.");
+          return {label,at:driveDeadlineIstToIso(row.date+"T23:59")};
+        });
+      if(new Set(importantDates.map(row=>row.label.toLowerCase())).size!==importantDates.length)
+        throw new Error("Important date labels must be unique.");
+      const customEligibilityRules=customRuleRows.filter(row=>row.label.trim()||row.value.trim())
+        .map(row=>{
+          const label=row.label.trim(),value=row.value.trim();
+          if(!label||!value)throw new Error("Rule label and rule value are both required.");
+          if(label.length>160||value.length>200)
+            throw new Error("Rules must have labels at most 160 characters and values at most 200 characters.");
+          return {label,value};
+        });
+      const assessmentUrl=String(data.get("assessmentUrl")??"").trim();
+      if(assessmentUrl.length>2048)throw new Error("Assessment URL cannot exceed 2048 characters.");
+      if(assessmentUrl&&!/^https?:\/\//i.test(assessmentUrl))
+        throw new Error("Assessment URL must begin with http:// or https://.");
+      if(deadlineIso&&Date.parse(deadlineIso)<Date.now())
+        throw new Error("Application deadline cannot be in the past.");
       const assessmentRaw=String(data.get("assessmentDeadline")??"").trim();
       const assessmentDeadline=assessmentRaw?driveDeadlineIstToIso(assessmentRaw):null;
-      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)))
-       throw new Error("Assessment deadline must be after application deadline.");
+      if(assessmentDeadline&&Date.parse(assessmentDeadline)<Date.now())
+        throw new Error("Assessment deadline cannot be in the past.");
+      if(assessmentDeadline&&deadlineIso&&Date.parse(assessmentDeadline)<=Date.parse(deadlineIso))
+        throw new Error("Assessment deadline must be after application deadline.");
       const graduationYearRaw=String(data.get("preferredGraduationYear")??"").trim();
       const gpaRaw=String(data.get("preferredMinimumGpa")??"").trim();
       const years = splitList(String(data.get("passingYears") ?? ""));
@@ -450,7 +506,7 @@ export function PlacementJobCreateForm({
         selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...effectiveCohortIds].sort(),
         selectedSectionIds:[...effectiveSectionIds].sort(),
-        companyMode,companyRelationshipId,roundPreset,
+        companyMode,companyRelationshipId,roundPreset,importantDateRows,customRuleRows,roundRows,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
         throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
@@ -528,7 +584,7 @@ export function PlacementJobCreateForm({
               url:studentsRegisterSeparately?portalUrl:""},
             skillsWanted,
             responsibilities:String(data.get("responsibilities")??"").trim(),
-            assessmentUrl:String(data.get("assessmentUrl")??"").trim()||null,
+            assessmentUrl:assessmentUrl||null,
             assessmentDeadline,importantDates,customEligibilityRules,
             candidatePreferences:{
               preferredDegree:String(data.get("preferredDegree")??"").trim(),
@@ -670,7 +726,11 @@ export function PlacementJobCreateForm({
 
       // TPO-drives-39 / TPO-drives-43: read server rounds before retrying
       // individual creates; a lost POST response must not duplicate a round.
-      const planned=plannedTpoRoundRows(roundPreset);
+      const planned=roundRows.length?roundRows.map((row,index)=>({
+        sequence:index+1,kind:row.kind,name:row.name.trim()
+      })):plannedTpoRoundRows(roundPreset);
+      if(planned.some(row=>!row.name||row.name.length>160))
+        throw new Error("Each interview round requires a name of at most 160 characters.");
       if(planned.length){
         const saved=await apiFetch<{rounds:Array<{kind:string;name:string}>}>(
           `/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
@@ -702,6 +762,7 @@ export function PlacementJobCreateForm({
       setPartialJobId(null);
       router.refresh();
     } catch (error) {
+      setSaveError(tpoDriveFormErrorMessage(error));
       showToast({
         tone: "error",
         title: "Could not create opportunity",
@@ -731,10 +792,20 @@ export function PlacementJobCreateForm({
     >
       <p role="status" aria-live="polite" className="max-w-[75ch] break-words text-xs leading-5 text-body">
         {pending?"Saving changes…":lastLocalSaveAt?
-          "Local draft saved at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST — not yet submitted to the server.":
-          "Draft form changes are saved locally on this device. Create draft to save them to the server."}
+          "Changes not saved to the server · Browser backup at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
+          "Not saved yet · Your changes are backed up locally until you create the draft."}
       </p>
-      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+
+      {saveError?<div role="alert" className="rounded-lg border border-danger p-3 text-sm text-danger">
+        <strong>Changes not saved.</strong> {saveError}
+      </div>:null}
+      {existingDrive?<div role="alert" className="flex flex-wrap items-center gap-2 rounded-lg border border-warning p-3 text-sm">
+        <span>A drive for {selectedEmployer?.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).</span>
+        <Link href={basePath+"/jobs/"+encodeURIComponent(existingDrive.jobId)} className="font-semibold text-primary-text underline">Open it</Link>
+      </div>:null}
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <div className="min-w-0 space-y-4">
+      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)] lg:hidden">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
         <ol className="grid gap-3 border-y border-border sm:grid-cols-2 lg:grid-cols-4">
@@ -756,7 +827,7 @@ export function PlacementJobCreateForm({
         </nav>
       </details>
       <details open={!activeSeason} className="min-w-0 border-b border-border pb-3">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Placement season</summary>
+       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Start from · Placement season</summary>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <p className="pb-[var(--lms-space-3)] text-sm text-body">
           Every drive belongs to the current operating season. Historical seasons remain read-only.
@@ -841,7 +912,7 @@ export function PlacementJobCreateForm({
               </label>
               <label>
               <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                Employer
+                Company Name
               </span>
               <Select
                 className={inputClass}
@@ -893,7 +964,7 @@ export function PlacementJobCreateForm({
             <div className="grid min-w-0 gap-4 sm:grid-cols-2">
               <label>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                  Company name
+                  Company Name
                 </span>
                 <Input
                   className={inputClass}
@@ -950,7 +1021,7 @@ export function PlacementJobCreateForm({
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
-            Opportunity
+            The drive
           </h2>
           <p className="mt-1 text-sm text-body">
             Create the learner-facing job opportunity and application window.
@@ -959,7 +1030,7 @@ export function PlacementJobCreateForm({
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2">
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Job title
+              Job Title
             </span>
             <Input
               className={inputClass}
@@ -969,12 +1040,12 @@ export function PlacementJobCreateForm({
               required
               minLength={3}
               maxLength={100}
-              placeholder="Software Development Engineer"
+              placeholder="e.g., Software Engineer"
             />
           </label>
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Description
+              Job Description
             </span>
             <Textarea
               className={textareaClass}
@@ -985,7 +1056,7 @@ export function PlacementJobCreateForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Employment type
+              Job Type
             </span>
             <Select
               className={inputClass}
@@ -1020,7 +1091,7 @@ export function PlacementJobCreateForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Locations
+              Location
             </span>
             <Input
               className={inputClass}
@@ -1041,6 +1112,8 @@ export function PlacementJobCreateForm({
               step={1}
             />
           </label>
+          <h3 className="sm:col-span-2 mt-2 border-t border-border pt-4 text-base font-semibold text-foreground">Pay packages</h3>
+          <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">The default pay package is shown to students. Salary amounts are in LPA unless labelled otherwise.</p>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
@@ -1051,7 +1124,7 @@ export function PlacementJobCreateForm({
               type="number"
               min={0}
               max={1000}
-              step="0.1"
+              step="0.5"
             />
           </label>
           <label>
@@ -1064,15 +1137,15 @@ export function PlacementJobCreateForm({
               type="number"
               min={0}
               max={1000}
-              step="0.1"
+              step="0.5"
             />
           </label>
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Fixed CTC (LPA)
-          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></label>
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Variable CTC (LPA)
-          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.01"/></label>
+          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></label>
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Stipend per month (INR)
           </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
@@ -1199,18 +1272,44 @@ export function PlacementJobCreateForm({
             <span className="text-xs font-normal text-muted-foreground">Skill tags are informational until applicant matching explicitly uses them.</span>
           </label>
           <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Responsibilities
-            <Textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
+            <Textarea name="responsibilities" rows={6} maxLength={15000} className={textareaClass} placeholder="Responsibilities, duties and expectations"/>
           </label>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment URL
-            <Input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
+            <Input name="assessmentUrl" type="url" maxLength={2048} className={inputClass} placeholder="https://..."
+              onChange={event=>setAssessmentUrlLength(event.target.value.length)}/>
+            <span className="text-xs font-normal text-muted-foreground">{assessmentUrlLength}/2048 characters · HTTP or HTTPS</span>
           </label>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment deadline (IST)
             <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
           </label>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-            Important dates (up to 20; one Label | YYYY-MM-DDTHH:MM per line, IST)
-            <Textarea name="importantDates" rows={3} className={inputClass}/>
-          </label>
+          <fieldset className="grid gap-3 sm:col-span-2">
+            <legend className="text-sm font-semibold text-foreground">Important dates</legend>
+            <p className="text-xs text-muted-foreground">Add up to 20 dates. The Application deadline field above is reserved.</p>
+            {importantDateRows.map(row=>(
+              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Label
+                  <Input aria-label="Important date label" maxLength={100} placeholder="e.g. Screening round, Technical round"
+                    value={row.label} onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Date (IST)
+                  <Input aria-label="Important date" type="date" value={row.date}
+                    onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,date:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <Button type="button" variant="secondary" disabled={importantDateRows.length<=1}
+                  title={importantDateRows.length<=1?"At least one row required":"Remove important date"}
+                  aria-label="Remove important date"
+                  onClick={()=>{setImportantDateRows(current=>current.filter(item=>item.id!==row.id));markDirty();}}
+                  className="min-h-11 text-danger md:min-h-9">Remove</Button>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" disabled={importantDateRows.length>=20}
+              onClick={()=>{setImportantDateRows(current=>[...current,{id:nextRowId.current++,label:"",date:""}]);markDirty();}}
+              className="min-h-11 border-dashed md:min-h-9">
+              Add date{importantDateRows.length>=20?" (max 20)":""}
+            </Button>
+          </fieldset>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred degree
             <Input name="preferredDegree" maxLength={160} className={inputClass}/>
           </label>
@@ -1226,10 +1325,32 @@ export function PlacementJobCreateForm({
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred city
             <Input name="preferredCity" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-            Custom eligibility rules (up to 20; one Label | Value per line; informational)
-            <Textarea name="customEligibilityRules" rows={3} className={inputClass}/>
-          </label>
+          <fieldset className="grid gap-3 sm:col-span-2">
+            <legend className="text-sm font-semibold text-foreground">Custom eligibility rules</legend>
+            <p className="text-xs text-muted-foreground">Add your own rules (e.g. Work permit, Experience). Displayed to students, informational only. Max 20.</p>
+            {customRuleRows.map(row=>(
+              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule label
+                  <Input aria-label="Rule label" maxLength={160} placeholder="Label (e.g. Work permit)"
+                    value={row.label} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule value
+                  <Input aria-label="Rule value" maxLength={200} placeholder="Value (e.g. Required)"
+                    value={row.value} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,value:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <Button type="button" variant="secondary" disabled={customRuleRows.length<=1}
+                  title={customRuleRows.length<=1?"At least one row required":"Remove custom rule"}
+                  aria-label="Remove custom rule"
+                  onClick={()=>{setCustomRuleRows(current=>current.filter(item=>item.id!==row.id));markDirty();}}
+                  className="min-h-11 text-danger md:min-h-9">Remove</Button>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" disabled={customRuleRows.length>=20}
+              onClick={()=>{setCustomRuleRows(current=>[...current,{id:nextRowId.current++,label:"",value:""}]);markDirty();}}
+              className="min-h-11 border-dashed md:min-h-9">Add custom rule{customRuleRows.length>=20?" (max 20)":""}</Button>
+          </fieldset>
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
       </details>
@@ -1460,21 +1581,57 @@ export function PlacementJobCreateForm({
       </section>
 
       <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <h2 className="font-semibold text-foreground">Interview rounds</h2>
+        <h2 className="font-semibold text-foreground">Rounds</h2>
         <label className="mt-3 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
           Round template
           <Select name="roundPreset" value={roundPreset}
             onChange={event=>{
-              if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);markDirty();}
+              if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);setRoundRows([]);markDirty();}
             }} className={inputClass}>
             {Object.entries(TPO_DRIVE_ROUND_PRESETS).map(([key,preset])=>
               <option key={key} value={key}>{preset.label}</option>)}
           </Select>
         </label>
-        <p role="status" className="mt-3 text-sm font-semibold text-body">{plannedTpoRoundRows(roundPreset).length} rounds planned</p>
-        <ol className="mt-2 list-decimal space-y-1 pl-6 text-sm text-body">
-          {plannedTpoRoundRows(roundPreset).map(round=><li key={round.sequence}>{round.name} · {round.kind}</li>)}
-        </ol>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Round presets">
+          {Object.entries(TPO_DRIVE_ROUND_PRESETS).filter(([key])=>key!=="NONE").map(([key,preset])=>(
+            <Button key={key} variant="secondary" type="button"
+              onClick={()=>{setRoundPreset(key as TpoRoundPresetKey);setRoundRows([]);markDirty();}}>
+              {preset.label}
+            </Button>
+          ))}
+        </div>
+        <p role="status" className="mt-3 text-sm font-semibold text-body">
+          {roundRows.length||plannedTpoRoundRows(roundPreset).length} rounds planned
+        </p>
+        <div className="mt-2 space-y-2">
+          {(roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}))).map((round,index)=>(
+            <div key={round.id} className="grid items-center gap-2 rounded-lg border border-border p-2 sm:grid-cols-[150px_minmax(0,1fr)_auto]">
+              <Select aria-label={"Round "+(index+1)+" kind"} value={round.kind}
+                onChange={event=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
+                  setRoundRows(rows.map(item=>item.id===round.id?{...item,kind:event.target.value}:item));markDirty();
+                }}>
+                {["TALK","TEST","GD","INTERVIEW","HR","OTHER"].map(kind=><option key={kind} value={kind}>{kind}</option>)}
+              </Select>
+              <Input aria-label={"Round "+(index+1)+" name"} value={round.name} maxLength={160}
+                placeholder="Round name" onChange={event=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
+                  setRoundRows(rows.map(item=>item.id===round.id?{...item,name:event.target.value}:item));markDirty();
+                }}/>
+              <Button type="button" variant="secondary" aria-label="Remove this round" title="Remove this round"
+                onClick={()=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
+                  setRoundRows(rows.filter(item=>item.id!==round.id));setRoundPreset("NONE");markDirty();
+                }}>Remove</Button>
+            </div>
+          ))}
+        </div>
+        <Button variant="secondary" type="button" className="mt-3 min-h-11 border-dashed md:min-h-9"
+          disabled={roundRows.length>=20}
+          onClick={()=>{
+            const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
+            setRoundRows([...rows,{id:nextRowId.current++,kind:"INTERVIEW",name:""}]);markDirty();
+          }}>Add round</Button>
         <p className="mt-2 text-xs text-muted-foreground">
           The selected round template creates pending rounds with the draft. Review each round's
           name, kind and mode in the saved drive before sending any candidate invitations.
@@ -1488,6 +1645,27 @@ export function PlacementJobCreateForm({
       </section>
 
       </details>
+      </div>
+      <aside aria-label="Setup review" className="sticky top-24 hidden rounded-xl border border-border bg-background p-4 lg:block">
+        <h2 className="m-0 text-base font-semibold text-foreground">Setup review</h2>
+        <p className="mt-1 text-xs text-body">Your milestones remain visible as you build the opportunity.</p>
+        <ol className="mt-4 space-y-4 border-l-2 border-border pl-4 text-sm">
+          {["Company","The drive","Eligibility","Publish review"].map((label,index)=>(
+            <li key={label} className="relative">
+              <span className="absolute -left-[23px] top-1 h-3 w-3 rounded-full border-2 border-primary bg-background" aria-hidden="true"/>
+              <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
+              <span className="mt-1 block font-semibold text-foreground">{label}</span>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-4 border-t border-border pt-3 text-xs text-body">
+          <p>No students are notified until you confirm publication.</p>
+          {plannedTpoRoundRows(roundPreset).length===0&&roundRows.length===0?<p className="mt-2">No interview rounds added yet</p>:null}
+          {!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"?
+            <p className="mt-2">Open eligibility · verify reach after saving.</p>:null}
+        </div>
+      </aside>
+      </div>
       {publishMissing.length>0?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm">
         <p className="font-semibold">Complete {publishMissing.length} item(s) before reviewing publication</p>
         <ul className="mt-2 list-disc pl-5">{publishMissing.map(label=><li key={label}>{label}</li>)}</ul>
