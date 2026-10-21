@@ -33,7 +33,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_tpo-bulk-application-stage-service.ts.md` (edit src/modules/placements/tpo-bulk-application-stage-service.ts; 17 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_screening-service.ts.md` (edit src/modules/placements/screening-service.ts; 17 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_college-hiring-funnel-service.ts.md` (edit src/modules/placements/college-hiring-funnel-service.ts; 17 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_admin-company-merge-service.ts.md` (edit src/modules/placements/admin-company-merge-service.ts; 16 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_admin-company-merge-service.ts.md` (edit src/modules/placements/admin-company-merge-service.ts; 16 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_super-admin-company-identities-service.ts.md` (edit src/modules/placements/super-admin-company-identities-service.ts; 16 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-4/src_modules_placements_public-recruiter-invite-accept-service.ts.md` (edit src/modules/placements/public-recruiter-invite-accept-service.ts; 15 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-4/src_components_placements_super-admin-needs-attention.tsx.md` (edit src/components/placements/super-admin-needs-attention.tsx; 15 findings; best P1)

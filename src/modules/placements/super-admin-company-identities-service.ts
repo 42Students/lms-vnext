@@ -13,8 +13,10 @@ import {companyDomainCommandSchema,companyAliasCommandSchema,
 import {canonicalCompanyAlias} from "./company-curation-alias-model";
 
 function requireGlobal(context:RequestContext){
- if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)
-  throw new AuthorizationError("admin-scope.select");
+ // Domain/alias registry mutations target a platform company identity, not
+ // the acting college. A selected college must not silently narrow a global
+ // catalogue operation, nor prevent a verified Super Admin from doing it.
+ if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  requirePermission(context,"admin-scope.select");
 }
 export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:unknown){
