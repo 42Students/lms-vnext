@@ -6,7 +6,8 @@ import {
   collegeMemberships,courseSectionDeliveries,courseTeachingAssignments,
   membershipRoles,courseOfferings,courses,departments,colleges,organizations,sections,academicPeriods,
 } from "@/db/schema";
-import type {RequestContext} from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -17,13 +18,26 @@ import {CoursesServiceError,postgresConstraintName} from "./errors";
 import {createCourseTeachingAssignmentsBatchInputSchema} from "./validation";
 import {COURSE_TEACHING_ROLES} from "./constants";
 
+/** Legacy ADMIN and administrative Faculty grants map to the explicit
+ * courses.manage permission in their active college membership. A global
+ * Super Admin must still choose a college before mutating its assignments. */
+function requireTeachingAssignmentManager(context:RequestContext){
+ if(isSuperAdmin(context))return requireSuperAdminSelectedCollege(context,"courses.manage");
+ const member=context.membership;
+ if(!member||member.status!=="ACTIVE")throw new AuthorizationError("courses.manage");
+ requirePermission(context,"courses.manage",{
+  collegeId:member.collegeId,organizationId:member.organizationId,
+ });
+ return {collegeId:member.collegeId,organizationId:member.organizationId};
+}
+
 /** SA-academics-people-101: selected courses share one class and period.
  * All teaching grants and their audit records commit or roll back together. */
 export async function createCourseTeachingAssignmentsBatch(
  context:RequestContext,rawInput:unknown,
 ){
  // Fail closed before fetching the requested delivery IDs or faculty identity.
- const selected=requireSuperAdminSelectedCollege(context,"courses.manage");
+ const selected=requireTeachingAssignmentManager(context);
  const input=createCourseTeachingAssignmentsBatchInputSchema.parse(rawInput);
  const ids=[...input.deliveryIds].sort();
  const [deliveries,member]=await Promise.all([
@@ -162,7 +176,7 @@ export async function createPartitionedCourseTeachingAssignments(
   deliveryIds:z.array(z.string().uuid()).min(1).max(100),
   membershipId:z.string().uuid(),role:z.enum(COURSE_TEACHING_ROLES),
  })).min(1).max(50).parse(rawInput);
- const selected=requireSuperAdminSelectedCollege(context,"courses.manage");
+ const selected=requireTeachingAssignmentManager(context);
  const succeeded:Array<{membershipId:string;deliveryIds:string[];createdIds:string[]}>=[];
  const failed:Array<{membershipId:string;deliveryIds:string[];reason:string}>=[];
  for(const batch of batches){

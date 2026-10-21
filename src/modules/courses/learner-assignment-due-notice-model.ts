@@ -62,10 +62,36 @@ export function interviewTomorrowReminders(
  })).sort((a,b)=>a.dueAt.localeCompare(b.dueAt)||a.key.localeCompare(b.key))
   .filter(notice=>{if(seen.has(notice.key))return false;seen.add(notice.key);return true});
 }
+/** Quiz reminders share the 09:00 IST daily run but never leak answers or
+ * count an already-submitted attempt as pending. */
+export type LearnerQuizReminderSource = {
+ id:string;title:string;deliveryId:string;dueAt:Date|null;submittedAt:Date|null;
+};
+export function quizDueSoonReminders(
+ rows:readonly LearnerQuizReminderSource[],now:Date,hours=24,
+):LearnerDueNotice[]{
+ const begin=now.getTime(),end=begin+hours*3600000;
+ if(!Number.isFinite(begin)||!Number.isFinite(end)||hours<=0)return [];
+ const seen=new Set<string>();
+ return rows.filter(row=>!row.submittedAt&&row.dueAt&&
+  Number.isFinite(row.dueAt.getTime())&&row.dueAt.getTime()>begin&&
+  row.dueAt.getTime()<=end).map(row=>({
+   key:"quiz:"+row.id+":"+row.deliveryId,
+   title:"Quiz due soon",
+   body:row.title+" · Due "+new Intl.DateTimeFormat("en-IN",{
+    timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+   }).format(row.dueAt!),
+   href:"/learn/allQuizzes?deliveryId="+encodeURIComponent(row.deliveryId),
+   dueAt:row.dueAt!.toISOString(),
+ })).sort((a,b)=>a.dueAt.localeCompare(b.dueAt)||a.key.localeCompare(b.key))
+ .filter(notice=>{if(seen.has(notice.key))return false;seen.add(notice.key);return true});
+}
+
 /** Callback is the authenticated, durable delivery adapter. Never send from
  * a page render; retry safety depends on the supplied idempotent dispatch. */
 export async function dispatchDailyLearnerReminders(args:{
  now:Date;assignments:readonly LearnerDueSource[];
+ quizzes?:readonly LearnerQuizReminderSource[];
  interviews:readonly LearnerInterviewReminderSource[];
  dispatch:(notice:LearnerDueNotice)=>Promise<void>;
 }):Promise<{kind:"ASSIGNMENT"|"INTERVIEW"|null;count:number}>{
@@ -75,9 +101,14 @@ export async function dispatchDailyLearnerReminders(args:{
  const interviewRun=clock.hour==="19"&&clock.minute==="00";
  if(!assignmentRun&&!interviewRun)return {kind:null,count:0};
  const notices=assignmentRun
-  ?learnerDueSoonNotices(args.assignments,args.now,24).map(notice=>({
-    ...notice,key:"assignment:"+clock.day+":"+notice.key,
-  }))
+  ?[
+    ...learnerDueSoonNotices(args.assignments,args.now,24).map(notice=>({
+     ...notice,key:"assignment:"+clock.day+":"+notice.key,
+    })),
+    ...quizDueSoonReminders(args.quizzes??[],args.now,24).map(notice=>({
+     ...notice,key:clock.day+":"+notice.key,
+    })),
+   ]
   :interviewTomorrowReminders(args.interviews,args.now);
  for(const notice of notices)await args.dispatch(notice);
  return {kind:assignmentRun?"ASSIGNMENT":"INTERVIEW",count:notices.length};
