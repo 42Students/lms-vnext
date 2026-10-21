@@ -477,3 +477,43 @@ Learner Placement schedule and booking storage/permission checks belong to Place
 - G2-8-017-029 | `src/app/(authenticated)/admin/projects/templates/page.tsx` | Match error copy and surface underlying cause without leaking unsafe details.
 
 Project templates already retain some legacy course label, phase and status provenance in current schema, but normalized blueprint/version semantics are not a proven migration of all seven legacy sections. Projects/schema owner must decide fields, CAS and full filtered export. **16/16 handed off, not fixed**.
+
+## Recruiter college overview/controller — lane-7 wave-1 handoff (2026-10-21)
+
+- G2-15-025-002 | `src/app/(authenticated)/hr/home/page.tsx + scoped college overview` | Restore privacy-banded college overview as a separate authorized read view.
+- G2-15-025-008 | `src/modules/placements/recruiter-drive-request-service.ts` | Build recruiter request response projection for every listed field including salary and eligibility details.
+- G2-15-025-009 | `src/modules/placements/recruiter-company-overview-model.ts` | Separate college demographics aggregate from drive summary and preserve asOf timestamp.
+- G2-15-025-013 | `src/modules/placements/recruiter-drive-request-model.ts` | Provide explicit field-by-field DTO map and unambiguous defaults for imported legacy drafts.
+- G2-15-025-024 | `src/modules/placements/recruiter-company-overview-model.ts` | Add scoped non-identifying demographic query returning legacy fields.
+- G2-15-025-025 | `src/modules/placements/recruiter-drive-request-service.ts` | Plan migration from Job lifecycle REQUEST/SENT_BACK into new request row preserving ID backlinks.
+- G2-15-025-026 | `src/modules/placements/recruiter-drive-request-service.ts` | Map legacy job id to new request id and approvedJobId without loss of edit history.
+- G2-15-025-050 | `src/modules/placements/recruiter-company-overview-model.ts` | Implement exact nearest5 rounding including ties and small-group withholding.
+- G2-15-025-051 | `src/modules/placements/recruiter-drive-request-service.ts` | Cross-check no-auto-publish behavior and approval policy; preserve TPO ownership.
+- G2-15-025-052 | `src/modules/placements/recruiter-company-overview-model.ts` | Restore read-only aggregation and query-time privacy gate separate from drive pipeline.
+- G2-15-025-053 | `src/db/schema/placement-drive-requests.ts` | Migrate old requests to typed request rows with lifecycle and legacy Job ID mapping.
+- G2-15-025-017 | `src/modules/placements/recruiter-drive-request-service.ts` | Show specific missing employer identity message separate from revoked grant.
+- G2-15-025-019 | `src/app/api/placements/recruiter/drives/requests/route.ts` | Map exact legacy human-readable validation errors for UI while preserving structured codes.
+- G2-15-025-021 | `src/modules/placements/recruiter-drive-request-model.ts` | Implement exact five status labels for request + published job composite, avoid status collisions.
+- G2-15-025-020 | `src/app/api/placements/recruiter/drives/requests/route.ts` | Ensure recruiter UI success wording distinguishes create/resubmit/replayed POST.
+
+Existing recruiter grants are scoped to a company/college and do not authorize arbitrary identifiable learner data. Legacy college aggregate requires dedicated privacy-banded query, suppression, and TPO-reviewed field mapping. **15/15 handed off, not fixed**.
+
+## Public company-share page — lane-7 owned page edit and backend handoff (2026-10-21)
+
+- G2-1-029-011 | `src/modules/placements/company-share/public-service.ts + audited ZIP export route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-028 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-038 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-067 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-011 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-024 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-027 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-031-036 | `src/modules/placements/company-share/public-service.ts + audited ZIP export route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-025-003 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-033 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-034 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-035 | `src/modules/placements/company-share/access-service.ts + new anti-pumping send-code route` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-20-025-007 | `src/modules/placements/company-share/public-service.ts` | Server action is absent; do not enable public email code/ZIP controls until token+recipient authorization, throttling, least-privilege file signing and durable access/audit are implemented.
+- G2-1-029-029 | `src/app/company-share/[token]/page.tsx` | Page now keeps the exact accessible invalid-code text and presents CSV directly; true legacy toast is intentionally not fabricated on a server-only page.
+- G2-20-031-022 | `src/app/company-share/[token]/page.tsx` | Page now keeps the exact accessible invalid-code text and presents CSV directly; true legacy toast is intentionally not fabricated on a server-only page.
+
+Page ownership change: surfaced code resend unavailability and included direct CSV action with explicit unavailable ZIP note. Existing protected code gate, 10/hour lockout and CSV audit stay intact. Actual resend and ZIP remain **unfixed** and must be implemented by Placements/company-share owner, with strict authorization. Do not create email send or download links to nonexistent routes. No tests/CI.

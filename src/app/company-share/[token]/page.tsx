@@ -30,6 +30,7 @@ export default async function CompanySharePage({
   <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
    <PageHeader title="Enter the 6-digit share code" />
    <p className="max-w-prose break-words text-sm text-body leading-[22px]">Ask the placement cell for the code sent separately with this company share link.</p>
+   <p className="max-w-prose break-words text-xs text-muted-foreground leading-[20px]">A code cannot be emailed or resent from this page yet. If the invitation did not include one, ask the placement cell for access rather than retrying guessed codes.</p>
    {access==="invalid"?<p role="alert" className="text-sm text-error leading-[22px]">
     That code did not work, or this share is no longer available.</p>:null}
    <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
@@ -101,13 +102,18 @@ export default async function CompanySharePage({
    </div>}/>
   <Pagination page={result.page} pageCount={result.totalPages}
    hrefForPage={href} label="Share pages"/>
-  <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2">
-   <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Download options</summary>
-   <a className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-    href={publicApplicantExportHref(token,result.search)}>
-    Download list (CSV, up to 500 applicants)
-   </a>
-  </details>
+  <section aria-label="Download options" className="min-w-0 space-y-2 border-t border-[var(--lms-canvas-border)] pt-3">
+   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+    <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Download options</h2>
+    <a className="inline-flex min-h-11 max-w-full items-center break-words font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+     href={publicApplicantExportHref(token,result.search)}>
+     Download list (CSV, up to 500 applicants)
+    </a>
+   </div>
+   <p role="note" className="max-w-3xl text-xs text-muted-foreground leading-[20px]">
+    Resume ZIP download is not available for this protected share. Ask the placement cell about separately authorized applicant documents.
+   </p>
+  </section>
   </div>
  </main>;
 }
