@@ -399,3 +399,16 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/tpo/announcements/page.tsx` | instances H3/B0/T1/F1/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: filter spacing 1 × 12/16→8px
 - `src/app/(authenticated)/tpo/audit/actors/page.tsx` | instances H2/B0/T0/F1/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
 - `src/app/(authenticated)/tpo/audit/error.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=shared PageHeader; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/audit/loading.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/audit/page.tsx` | instances H2/B0/T1/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/batches/[batchId]/classes/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/batches/[batchId]/history/page.tsx` | instances H2/B0/T0/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx` | instances H2/B0/T0/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/batches/[batchId]/registrations/page.tsx` | instances H1/B0/T0/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/batches/[batchId]/rules/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx` | instances H3/B0/T0/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/batches/page.tsx` | instances H8/B0/T0/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/calendar/export/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/calendar/interviews/page.tsx` | instances H1/B0/T0/F1/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/calendar/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: page h1 30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
