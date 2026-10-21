@@ -85,7 +85,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-1_l11-u031-cross-forms.md.md` (new; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_learner-contact-model.ts.md` (edit src/modules/people/learner-contact-model.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_people_learner-profile-document-edit-service.ts.md` (edit src/modules/people/learner-profile-document-edit-service.ts; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-1_log-alert-signature-account.md.md` (new; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_NEW_docs_audit_gap2_lane-1_log-alert-signature-account.md.md` (new; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_components_groups_college-group-detail-writes.tsx.md` (edit src/components/groups/college-group-detail-writes.tsx; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_groups_college-rule-preview-service.ts.md` (edit src/modules/groups/college-rule-preview-service.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-13/W2_src_modules_announcements_tpo-notice-target-options-service.ts.md` (edit src/modules/announcements/tpo-notice-target-options-service.ts; 2 findings; best P2)
