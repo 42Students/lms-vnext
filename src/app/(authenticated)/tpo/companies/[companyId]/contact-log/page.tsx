@@ -114,7 +114,7 @@ export default async function TpoCompanyContactLogPage({
             caption="Recorded company contact interactions"
             rows={log.rows}
             getRowKey={(row)=>row.id}
-            empty={<EmptyState title="No recorded contact interactions match this filter." description="Calls, emails and messages are not inferred from invitations or drives." action={<Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
+            empty={<EmptyState title="No recorded contact interactions match this filter." description="Calls, emails and messages are not inferred from invitations or drives." action={<Link href={path} className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">Filter</Link>}/>}
             columns={[
               {key:"contact",header:"Contact",mobileLabel:"Contact",mobilePriority:"primary",cell:(row)=>row.contactName},
               {key:"type",header:"Type",mobileLabel:"Type",mobilePriority:"secondary",cell:(row)=>row.type},

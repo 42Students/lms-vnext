@@ -72,7 +72,7 @@ export default async function TpoCompanyFeedbackPage({
               Recorded internal notes {data.total === null ? "" : "(" + data.total + ")"}
             </h2>
             {data.notes.length === 0 ? (
-              <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred." action={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">← Company details</Link>}/>
+              <EmptyState title="No saved NOTE-type CRM activities appear on this page." description="Calls, meetings, external communications and unstored feedback are not inferred." action={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)} className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">← Company details</Link>}/>
             ) : (
               <ul className="divide-y divide-[var(--lms-canvas-border)]">
                 {data.notes.map((item) => (

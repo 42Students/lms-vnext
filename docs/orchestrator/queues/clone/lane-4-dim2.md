@@ -344,20 +344,20 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/calendar/export/page.tsx`
 - [x] `src/app/(authenticated)/tpo/calendar/interviews/error.tsx`
 - [x] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/calendar/rounds/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/manage/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/people/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/archived/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/companies/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/error.tsx`
+- [x] `src/app/(authenticated)/tpo/calendar/rounds/error.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/error.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/contact-log/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/error.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/error.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/feedback/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/manage/error.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/people/error.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/[companyId]/people/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/archived/error.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/archived/page.tsx`
+- [x] `src/app/(authenticated)/tpo/companies/error.tsx`
+- [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/drive-day/error.tsx`

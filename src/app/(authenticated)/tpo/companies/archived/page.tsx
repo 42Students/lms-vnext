@@ -24,7 +24,7 @@ export default async function ArchivedCompanyRelationshipsPage() {
         actions={<Link href="/tpo/companies?directory=1" className={directoryLinkClasses}>← Companies directory</Link>}
       />
       {truncated ? (
-        <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[22px] text-body">
+        <p role="status" className="min-w-0 border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm leading-[1.6] text-body">
           Showing only the first 100 archived relationships. This is not a complete list.
         </p>
       ) : null}
