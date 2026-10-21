@@ -4,7 +4,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
-import {useState} from "react";
+import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Disclosure} from "@/components/ui/disclosure";
@@ -20,15 +20,17 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  const existing=new Map(entries.map(row=>[row.key,row]));
  const [draft,setDraft]=useState<Record<string,string>>(()=>Object.fromEntries(
   keys.map(spec=>[spec.key,existing.get(spec.key)?.value??""])));
+ const inFlight=useRef(false);
  const [saving,setSaving]=useState(false),[results,setResults]=useState<Result[]>([]),
   [error,setError]=useState("");
  const changed=keys.filter(item=>draft[item.key]!== (existing.get(item.key)?.value??""));
  const impact=changed.some(item=>item.dangerous);
  const [impactConfirm,setImpactConfirm]=useState(false);
  async function save(confirmedHighImpact=false){
-  if(!ready||saving||changed.length===0)return;
+  if(!ready||saving||inFlight.current||changed.length===0)return;
   if(impact&&!confirmedHighImpact){setImpactConfirm(true);return;}
   setImpactConfirm(false);
+  inFlight.current=true;
   setSaving(true);setResults([]);setError("");
   try{
    const response=await fetch("/api/admin/settings/overrides",{method:"PATCH",credentials:"same-origin",
@@ -40,10 +42,20 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
     const body=await response.json().catch(()=>({error:"FAILED"})) as {error?:string};
     throw Error(body.error==="SETTINGS_STORAGE_PENDING"?"Tenant settings migration is not registered.":"Could not save settings.");
    }
-   const data=await response.json() as {results:Result[];saved:number;failed:number};
-   setResults(data.results);router.refresh();
+   const data:unknown=await response.json().catch(()=>null);
+   const receipt=data&&typeof data==="object"&&!Array.isArray(data)
+     ?data as {results?:unknown;saved?:unknown;failed?:unknown}:null;
+   if(!receipt||!Array.isArray(receipt.results)||
+      receipt.results.length!==changed.length||
+      !receipt.results.every(row=>row&&typeof row==="object"&&
+        typeof row.key==="string"&&changed.some(spec=>spec.key===row.key)&&
+        ["SAVED","DELETED","FAILED"].includes(row.status)&&typeof row.message==="string")||
+      typeof receipt.saved!=="number"||typeof receipt.failed!=="number"||
+      receipt.saved+receipt.failed!==changed.length)
+     throw Error("Settings response could not be verified. Refresh before retrying.");
+   setResults(receipt.results as Result[]);router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Save failed");}
-  finally{setSaving(false);}
+  finally{inFlight.current=false;setSaving(false);}
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
  return <section aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
