@@ -166,50 +166,50 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/admin/tenant-settings-other-keys.tsx`
 - [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
 - [x] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-faculty-reassign-action.tsx`
-- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
-- [ ] `src/components/college/college-offering-metadata-action.tsx`
-- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/courses/admin-course-display-editor.tsx`
-- [ ] `src/components/courses/admin-offering-learning-overview.tsx`
-- [ ] `src/components/courses/assignment-multipart-parts-editor.tsx`
-- [ ] `src/components/courses/college-assignment-review.tsx`
-- [ ] `src/components/courses/college-content-authoring-control.tsx`
-- [ ] `src/components/courses/college-lesson-visibility-controls.tsx`
-- [ ] `src/components/courses/faculty-assignment-material-links.tsx`
-- [ ] `src/components/courses/faculty-content-editor.tsx`
-- [ ] `src/components/courses/faculty-course-tab-navigation.tsx`
-- [ ] `src/components/courses/faculty-report-student-table.tsx`
-- [ ] `src/components/courses/learner-rich-response-editor.tsx`
-- [ ] `src/components/courses/super-admin-course-bulk-visibility.tsx`
-- [ ] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
-- [ ] `src/components/courses/super-admin-lesson-create.tsx`
-- [ ] `src/components/electives/college-slot-manager.tsx`
-- [ ] `src/components/hr/recruiter-notification-bell.tsx`
-- [ ] `src/components/hr/recruiter-profile-details-editor.tsx`
-- [ ] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
-- [ ] `src/components/people/faculty-profile-text-section.tsx`
-- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
-- [ ] `src/components/placements/college-company-create.tsx`
-- [ ] `src/components/placements/drive-day-roster.tsx`
-- [ ] `src/components/placements/hr-recruiter-drives-grid.tsx`
-- [ ] `src/components/placements/learner-application-detail-withdraw.tsx`
-- [ ] `src/components/placements/learner-interview-withdrawal-request.tsx`
-- [ ] `src/components/placements/learner-own-drive-journey.tsx`
-- [ ] `src/components/placements/learner-placement-academic-evidence.tsx`
-- [ ] `src/components/placements/learner-placement-alerts.tsx`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
-- [ ] `src/components/placements/learner-placement-preferences.tsx`
-- [ ] `src/components/placements/learner-recent-placement-activity.tsx`
-- [ ] `src/components/placements/learner-schedule-reschedule.tsx`
-- [ ] `src/components/placements/learner-support-cancel.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-faculty-reassign-action.tsx`
+- [x] `src/components/college/college-faculty-schedule-reassign.tsx`
+- [x] `src/components/college/college-offering-metadata-action.tsx`
+- [x] `src/components/college/college-person-profile-overview-modal.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/college/student-class-move-action.tsx`
+- [x] `src/components/courses/admin-course-display-editor.tsx`
+- [x] `src/components/courses/admin-offering-learning-overview.tsx`
+- [x] `src/components/courses/assignment-multipart-parts-editor.tsx`
+- [x] `src/components/courses/college-assignment-review.tsx`
+- [x] `src/components/courses/college-content-authoring-control.tsx`
+- [x] `src/components/courses/college-lesson-visibility-controls.tsx`
+- [x] `src/components/courses/faculty-assignment-material-links.tsx`
+- [x] `src/components/courses/faculty-content-editor.tsx`
+- [x] `src/components/courses/faculty-course-tab-navigation.tsx`
+- [x] `src/components/courses/faculty-report-student-table.tsx`
+- [x] `src/components/courses/learner-rich-response-editor.tsx`
+- [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
+- [x] `src/components/courses/super-admin-lesson-bulk-visibility.tsx`
+- [x] `src/components/courses/super-admin-lesson-create.tsx`
+- [x] `src/components/electives/college-slot-manager.tsx`
+- [x] `src/components/hr/recruiter-notification-bell.tsx`
+- [x] `src/components/hr/recruiter-profile-details-editor.tsx`
+- [x] `src/components/people/faculty-profile-editor.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/people/faculty-profile-text-section.tsx`
+- [x] `src/components/placements/college-application-pipeline-controls.tsx`
+- [x] `src/components/placements/college-company-create.tsx`
+- [x] `src/components/placements/drive-day-roster.tsx`
+- [x] `src/components/placements/hr-recruiter-drives-grid.tsx`
+- [x] `src/components/placements/learner-application-detail-withdraw.tsx`
+- [x] `src/components/placements/learner-interview-withdrawal-request.tsx`
+- [x] `src/components/placements/learner-own-drive-journey.tsx`
+- [x] `src/components/placements/learner-placement-academic-evidence.tsx`
+- [x] `src/components/placements/learner-placement-alerts.tsx`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-preferences.tsx`
+- [x] `src/components/placements/learner-recent-placement-activity.tsx`
+- [x] `src/components/placements/learner-schedule-reschedule.tsx`
+- [x] `src/components/placements/learner-support-cancel.tsx`
 - [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
 - [ ] `src/components/placements/placement-drive-day-overview.tsx`
 - [ ] `src/components/placements/placement-employer-relationships.tsx`
