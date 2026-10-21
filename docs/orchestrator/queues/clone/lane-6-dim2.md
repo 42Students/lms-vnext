@@ -323,30 +323,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/shell/mobile-navigation.tsx`
 - [x] `src/components/shell/sidebar-nav.tsx`
 - [x] `src/components/shell/topbar/command-search.tsx`
-- [ ] `src/components/shell/topbar/legacy-topbar.tsx`
-- [ ] `src/components/shell/topbar/tpo-quick-create.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-preview.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
-- [ ] `src/components/tpo/tpo-company-visibility-editor.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
-- [ ] `src/components/tpo/tpo-mobile-footer.tsx`
-- [ ] `src/components/tpo/tpo-notice-read-progress.tsx`
-- [ ] `src/components/tpo/tpo-optional-emails-editor.tsx`
-- [ ] `src/components/tpo/tpo-outcome-labels-editor.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/shell/topbar/legacy-topbar.tsx`
+- [x] `src/components/shell/topbar/tpo-quick-create.tsx`
+- [x] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/recruiter-saved-view-controls.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-preview.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [x] `src/components/tpo/tpo-company-visibility-editor.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-keyboard-shortcuts.tsx`
+- [x] `src/components/tpo/tpo-mobile-footer.tsx`
+- [x] `src/components/tpo/tpo-notice-read-progress.tsx`
+- [x] `src/components/tpo/tpo-optional-emails-editor.tsx`
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
 - [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
 - [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
