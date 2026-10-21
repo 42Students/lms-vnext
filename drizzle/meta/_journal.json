@@ -1086,6 +1086,13 @@
       "when": 1792350611266,
       "tag": "0154_lane15_legacy_application_status_archive",
       "breakpoints": true
+    },
+    {
+      "idx": 155,
+      "version": "7",
+      "when": 1792350671266,
+      "tag": "0155_lane15_membership_audit_version",
+      "breakpoints": true
     }
   ]
 }
