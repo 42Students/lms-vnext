@@ -50,7 +50,8 @@ export function safeExternalAssessmentUrl(
     ) {
       return null;
     }
-    return parsed.toString();
+    const normalized = parsed.toString();
+    return normalized.length <= 2048 ? normalized : null;
   } catch {
     return null;
   }

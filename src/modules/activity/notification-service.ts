@@ -1300,7 +1300,7 @@ export async function createStaffNotification(
       collegeId: audience.collegeId,
       organizationId: audience.organizationId,
       actorUserId: context.user.id,
-      actorMembershipId: context.membership?.collegeId === audience.collegeId
+      actorMembershipId: context.membership && context.membership.collegeId === audience.collegeId
         ? context.membership.id : null,
       module: "COURSES",
       eventType: "courses.notification.published",
