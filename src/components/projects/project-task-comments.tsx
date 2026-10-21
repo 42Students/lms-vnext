@@ -4,6 +4,8 @@ import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Select} from "@/components/ui/select";
+import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 import {projectMutation} from "./project-api";
 import {PROJECT_TASK_COMMENT_KINDS,PROJECT_TASK_COMMENT_KIND_LABELS,
  type ProjectTaskCommentKind,projectTaskActivityLabel} from "@/modules/projects/task-comment-kind-staged";
@@ -19,6 +21,9 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
  const [busy,setBusy]=useState(false);const [error,setError]=useState<string|null>(null);
  const [lastPosted,setLastPosted]=useState<{taskId:string;updatedAt:string}|null>(null);
+ const discard=useProjectEditorDiscardGuard(open,Boolean(body.trim()),busy,()=>{
+   setBody("");setOpen(false);setError(null);
+ });
  const currentToken=lastPosted?.taskId===taskId&&Date.parse(lastPosted.updatedAt)>Date.parse(updatedAt)
    ? lastPosted.updatedAt : updatedAt;
  const url="/api/projects/"+encodeURIComponent(projectId)+"/tasks/"+encodeURIComponent(taskId)+"/comments";
@@ -48,21 +53,12 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
   finally{setBusy(false);}
  }
  return <div className="mt-[var(--lms-space-2)] min-w-0 space-y-[var(--lms-space-3)]">
-   <div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
-     <h3 className="text-base font-semibold text-heading">Activity</h3>
-     <p className="text-xs text-muted-foreground leading-[20px]">Task activity and comments, most recent first.</p>
-     {busy && rows.length===0 ? <p role="status" className="text-sm text-muted-foreground">Loading comments…</p> : null}
-     <div className="max-h-40 overflow-y-auto rounded border border-border p-3">
-       {rows.filter(row=>row.commentKind!=="NOTE").length===0
-         ? <p className="text-sm text-muted-foreground">No activity yet.</p>
-         : rows.filter(row=>row.commentKind!=="NOTE").map(row=>(
-           <p key={row.id} className="mb-2 text-sm last:mb-0">
-             <strong>{row.authorName || "Unknown"}</strong> · {PROJECT_TASK_COMMENT_KIND_LABELS[row.commentKind] ?? "Update"} ·
-             {" "}{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(row.createdAt))}
-           </p>
-         ))}
-     </div>
-     <h3 className="pt-3 text-base font-semibold text-heading">Comments</h3>
+   <Button size="sm" variant="secondary"
+    onClick={()=>open?discard.requestClose():void show()}>
+     Comments
+   </Button>
+   {open?<div className="space-y-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]" aria-label="Task comments">
+     <p className="text-xs text-muted-foreground leading-[20px]">Task activity timeline with notes and progress updates.</p>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter comments
        <Select value={filter} onChange={event=>setFilter(event.target.value as typeof filter)}
          className="w-full">
@@ -111,7 +107,12 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
        message is required
      </p> : null}
      {canPost?<Button className="w-full md:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
-   </div>
-   {error?<div role="alert" className="flex flex-wrap items-center gap-2 text-sm text-error leading-[22px]"><p>{error}</p><Button size="sm" variant="secondary" onClick={()=>void show()} disabled={busy}>Retry</Button></div>:null}
+   </div>:null}
+   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+   <ConfirmDialog open={discard.discardOpen} onOpenChange={discard.setDiscardOpen}
+    title="Discard unsaved comment?"
+    description="The task comment you typed has not been posted."
+    confirmLabel="Discard comment" pending={busy}
+    onConfirm={discard.confirmDiscard}/>
  </div>;
 }
