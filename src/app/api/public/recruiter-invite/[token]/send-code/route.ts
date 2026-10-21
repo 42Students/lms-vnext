@@ -14,9 +14,15 @@ export async function POST(request:Request,{params}:{params:Promise<{token:strin
    return NextResponse.json({error:"RECRUITER_INVITE_NOT_READY"},{status:503});
  try{
   await requestRecruiterInviteOtp(token,deliverPublicRecruiterJoinCode);
-  return NextResponse.json({sent:true},{headers:{"Cache-Control":"no-store"}});
- }catch{
-  // Do not distinguish invalid, used, throttled or expired invitations.
+  // The code is delivered only to the persisted college-company mailbox.
+  // Never echo an arbitrary email supplied by the unauthenticated caller.
+  return NextResponse.json({status:"CODE_SENT",sent:true},{headers:{"Cache-Control":"no-store"}});
+ }catch(error){
+  const code=error instanceof Error?error.message:"";
+  if(code==="RECRUITER_OTP_NOT_REGISTERED"||code==="RECRUITER_OTP_STORE_FAILED")
+    return NextResponse.json({error:"CODE_NOT_SENT"},{status:503,headers:{"Cache-Control":"no-store"}});
+  // Invalid/expired/used tokens and per-link rate limits deliberately share
+  // one generic response to avoid public enumeration of invitation state.
   return NextResponse.json({error:"INVITE_INVALID"},{status:404,headers:{"Cache-Control":"no-store"}});
  }
 }
