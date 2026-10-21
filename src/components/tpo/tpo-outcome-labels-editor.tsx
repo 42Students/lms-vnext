@@ -51,13 +51,13 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
   {labels.length===0?<p className="text-sm text-muted-foreground">No labels yet.</p>:null}
   <ul className="space-y-3">{labels.map((row,index)=><li key={row.id??"draft-"+index}
    className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-3)] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="min-w-0 text-sm">Label {index+1}
+   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Label {index+1}
     <Input value={row.label} maxLength={60} disabled={busy}
      onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,label:event.target.value}:item))}
      className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
     {validate(row.label,labels,index)?<span className="block text-xs text-error">{validate(row.label,labels,index)}</span>:null}
    </label>
-   <label className="min-w-0 text-sm">Counts as
+   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Counts as
     <Select value={row.outcome} disabled={busy}
      onChange={event=>setLabels(rows=>rows.map((item,i)=>i===index?{...item,outcome:event.target.value as AfterCollegeOutcome}:item))}
      className="mt-1 min-h-11 min-[768px]:min-h-9 w-full">
@@ -69,13 +69,13 @@ export function TpoOutcomeLabelsEditor({initial,version}:{initial:readonly Label
     className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto text-sm">Remove</Button>
   </li>)}</ul>
   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-4)] min-[768px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
-   <label className="min-w-0 text-sm">New label
+   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New label
     <Input value={draft} onChange={event=>setDraft(event.target.value)} maxLength={60}
      placeholder="New label, e.g. Family business" disabled={busy}
      className="mt-1 min-h-11 min-[768px]:min-h-9 w-full"/>
     {draft&&problem?<span className="block text-xs text-error">{problem}</span>:null}
    </label>
-   <label className="min-w-0 text-sm">Counts as
+   <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Counts as
     <Select value={outcome} disabled={busy} onChange={e=>setOutcome(e.target.value as AfterCollegeOutcome)}
      className="mt-1 min-h-11 min-[768px]:min-h-9">
      {MANUAL_AFTER_COLLEGE_OUTCOMES.map(value=><option key={value} value={value}>{AFTER_COLLEGE_LABELS[value]}</option>)}

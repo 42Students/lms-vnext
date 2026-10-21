@@ -100,26 +100,26 @@ function KnownErrorCard({ item }: { item: KnownError }) {
       </div>
       <Disclosure title="Triage and diagnostic actions" className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
       <div className="grid min-w-0 gap-3 md:grid-cols-3">
-        <label className="block min-w-0 text-xs font-semibold text-body">
+        <label className="block min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Triage note
           <Input
-            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={note} maxLength={500}
+            className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={note} maxLength={500}
             onChange={(event) => setNote(event.target.value)}
             placeholder="Reason / owner update"
           />
         </label>
-        <label className="block min-w-0 text-xs font-semibold text-body">
+        <label className="block min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Fix commit (optional)
           <Input
-            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={commit} maxLength={64}
+            className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={commit} maxLength={64}
             onChange={(event) => setCommit(event.target.value)}
             placeholder="Git commit SHA"
           />
         </label>
-        <label className="block min-w-0 text-xs font-semibold text-body">
+        <label className="block min-w-0 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Tracker issue ID
           <Input
-            className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={issuePublicId} maxLength={32}
+            className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={issuePublicId} maxLength={32}
             onChange={(event) => setIssuePublicId(event.target.value)}
             placeholder="e.g. BT-123"
           />
@@ -208,9 +208,9 @@ function KnownErrorCard({ item }: { item: KnownError }) {
             </Button>
           </div>}>
         <div className="min-w-0 space-y-3">
-          <label className="block text-sm text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Reason (optional)
-            <Input className="mt-1 min-h-11 w-full min-w-0 md:min-h-9" value={muteReason} maxLength={255}
+            <Input className="mt-[6px] min-h-11 w-full min-w-0 md:min-h-9" value={muteReason} maxLength={255}
               onChange={(event) => setMuteReason(event.target.value)}
               placeholder="Why this error is expected"
             />
