@@ -1,5 +1,7 @@
 import { DateInput } from "@/components/ui/date-input";
 import { Tabs } from "@/components/ui/tabs";
+import {StatusBadge} from "@/components/ui/status-badge";
+import {TpoNoticeMessageCount} from "@/components/tpo/tpo-notice-message-count";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
 import {Input} from "@/components/ui/input";
@@ -131,14 +133,18 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {query.success&&query.data.targetId?<Input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     {query.success?query.data.targetIds?.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>):null}
     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
-     <Input name="title" required maxLength={200} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]" />
+     <Input name="title" required maxLength={200} placeholder="Omega pre-placement talk on Monday"
+      className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]" />
     </label>
-    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
-     <Textarea name="message" required maxLength={8000} rows={5} className="" />
+    <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Announcement
+     <Textarea name="message" required maxLength={8000} rows={5}
+      placeholder="What, when, where, and what they should do. Links starting with https:// become clickable."
+      aria-describedby="tpo-notice-create-count" />
     </label>
-    <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
+    <TpoNoticeMessageCount formId="tpo-notice-create" outputId="tpo-notice-create-count"/>
+    <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
      <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
-     <div className="mt-3 grid min-w-0 gap-3">
+     <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
      <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
       <Input name="buttonLabel" maxLength={60} placeholder="Register"
        className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
@@ -153,7 +159,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Show until (IST, optional)
       <DateInput mode="datetime-local" name="showUntil" min={formMinDateTime} className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
     </label>
-    <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin this notice</label>
+    <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
+    <label className="flex items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4"><Checkbox name="pinned" /> Pin it to the top</label>
+    <p className="text-xs text-muted-foreground">Students get a notice in the app. You can undo for 30 seconds after sending. Email and SMS are unavailable.</p>
     <TpoNoticeScheduleControls minDateTime={formMinDateTime} count={audience?.potentiallyVisibleMemberships??null}
       enabled={Boolean(query.success&&audience&&audience.potentiallyVisibleMemberships>0&&
        canPublishTpoNoticeWithCurrentStorage(query.data.audience,targetedReady))}/>
@@ -167,7 +175,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
   <Tabs ariaLabel="Announcement tabs" renderPanel={false} value={tab.data} items={([
     ["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]
   ] as const).map(([value,label])=>({
-    value,label:value==="from-42"&&from42Unread!==null?label+" ("+from42Unread+")":label,
+    value,label:value==="from-42"&&from42Unread!==null&&from42Unread>0&&tab.data!=="from-42"?label+" ("+from42Unread+")":label,
     href:"/tpo/announcements?tab="+value,
   }))}/>
   {tab.data!=="from-42"?<nav aria-label="Announcement author scope"
@@ -189,22 +197,25 @@ export default async function TpoAnnouncements({searchParams}:Props){
   </Alert>:result.status==="NOT_REGISTERED"?<Alert tone="warning">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
-  </Alert>:result.items.length?<ol aria-label="tpo announcements entries" className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">
-   {result.items.map(row=><li key={row.id} className="min-w-0 py-6 first:pt-0">
-    <h2 className="m-0 break-words text-[var(--lms-font-xl)] font-semibold leading-[30px] text-[var(--lms-heading)] md:text-[22px] md:leading-[32px]">{row.title}{row.isPinned?" · Pinned":""}
-     {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs text-primary-text">New</span>:null}
-    </h2>
+  </Alert>:result.items.length?<ol aria-label="tpo announcements entries" className="min-w-0 space-y-3">
+   {result.items.map(row=><li key={row.id} id={"announcement-"+row.id}
+    className={"min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-5 "+(row.isPinned?"border-l-[3px] border-l-[var(--lms-primary)] ":"")+(row.expiresAt&&new Date(row.expiresAt)<=new Date()?"opacity-75":"")}>
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
+     {row.isPinned?<svg role="img" aria-label="Pinned" viewBox="0 0 24 24" width="16" height="16" fill="currentColor" className="shrink-0 text-primary-text">
+      <path d="M15.7 3.3a1 1 0 0 0-1.4 0l-.8.8 1.5 1.5-3.1 3.1-4.2-.4-1.6 1.6 3.4 3.4-5.8 5.8 1.4 1.4 5.8-5.8 3.4 3.4 1.6-1.6-.4-4.2 3.1-3.1 1.5 1.5.8-.8a1 1 0 0 0 0-1.4z"/>
+     </svg>:null}
+     <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] font-semibold leading-[30px] text-[var(--lms-heading)] md:text-[22px] md:leading-[32px]">{row.title}</h2>
+     {tab.data==="from-42"&&result.readStateReady&&!row.readAt?<StatusBadge tone="info">New</StatusBadge>:null}
+     {tab.data==="yours"&&row.scheduledAt&&new Date(row.scheduledAt)>new Date()?<StatusBadge tone="warning">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</StatusBadge>:null}
+     {row.expiresAt&&new Date(row.expiresAt)<=new Date()?<StatusBadge tone="neutral">Ended</StatusBadge>:null}
+     {row.updatedAt.getTime()>row.createdAt.getTime()+1000?<StatusBadge tone="neutral">Updated</StatusBadge>:null}
+    </div>
     <p className="mt-1 text-xs text-muted-foreground leading-5">
       By {row.senderName?.trim()||"Placement team"} ·
       {" "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit"}).format(row.createdAt)} IST
       {" · For "+({COLLEGE:"whole college",PLACEMENTS:"students in placements",BATCHES:"selected batches",BRANCHES:"selected branches",DRIVE:"selected drive"} as Record<string,string>)[row.audienceKind]}
-      {row.updatedAt.getTime()>row.createdAt.getTime()+1000?" · Updated":""}
-      {row.expiresAt?" · Shows until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.expiresAt):""}
+      {row.expiresAt&&new Date(row.expiresAt)>new Date()?" · shows until "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(row.expiresAt):""}
     </p>
-    {tab.data==="yours" && row.scheduledAt && new Date(row.scheduledAt)>new Date()?
-      <p role="status" className="mt-2 text-[var(--lms-font-sm)] font-semibold leading-5 text-[var(--lms-warning-text)]">Scheduled for {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(new Date(row.scheduledAt))} IST</p>:
-      tab.data==="yours"&&row.expiresAt&&new Date(row.expiresAt)<=new Date()?
-      <p role="status" className="mt-2 text-sm font-semibold text-muted-foreground leading-[1.6]">Ended</p>:null}
     <p className="mt-3 max-w-[72ch] whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
      {tpoNoticeTextParts(row.message).map((part,index)=>part.kind==="link"?
       <a key={index} href={part.value} rel="noopener noreferrer"
@@ -222,19 +233,22 @@ export default async function TpoAnnouncements({searchParams}:Props){
     {tab.data!=="from-42"?<div className="mt-4 flex min-w-0 flex-wrap items-center gap-2">
     {tab.data==="yours" ?
      <TpoNoticeComposerDialog mode="EDIT">
-      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="grid min-w-0 gap-4">
+      <form id={"tpo-notice-edit-"+row.id} method="post" action={"/api/placements/tpo/announcements/"+row.id+"/edit"} className="grid min-w-0 gap-4">
        <Input type="hidden" name="expectedVersion" value={row.version}/>
        <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
         <Input name="title" required maxLength={200} defaultValue={row.title}
+         placeholder="Omega pre-placement talk on Monday"
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
-       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
+       <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Announcement
         <Textarea name="message" rows={5} required maxLength={8000} defaultValue={row.message}
-         className=""/>
+         placeholder="What, when, where, and what they should do. Links starting with https:// become clickable."
+         aria-describedby={"tpo-notice-edit-"+row.id+"-count"}/>
        </label>
-       <details open={Boolean(row.buttonLabel||row.buttonUrl)} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
+       <TpoNoticeMessageCount formId={"tpo-notice-edit-"+row.id} outputId={"tpo-notice-edit-"+row.id+"-count"}/>
+       <details open className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-[var(--lms-body-text)] md:min-h-[var(--lms-control-height)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
-        <div className="mt-3 grid min-w-0 gap-3">
+        <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-[36%_minmax(0,1fr)]">
         <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Button label
          <Input name="buttonLabel" maxLength={60} defaultValue={row.buttonLabel??""}
           className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
@@ -256,12 +270,13 @@ export default async function TpoAnnouncements({searchParams}:Props){
          defaultValue={row.expiresAt?new Date(new Date(row.expiresAt).getTime()+330*60000).toISOString().slice(0,16):""}
          className="min-h-11 min-[768px]:min-h-[var(--lms-control-height)]"/>
        </label>
+       <p className="text-xs text-muted-foreground">After this, students no longer see it. You still do.</p>
        <label className="flex items-center gap-2 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
-        <Checkbox name="pinned" defaultChecked={row.isPinned}/> Pinned
+        <Checkbox name="pinned" defaultChecked={row.isPinned}/> Pin it to the top
        </label>
        <label className="flex items-start gap-2 text-[var(--lms-font-sm)] text-[var(--lms-neutral-400)] font-semibold leading-4">
         <Checkbox name="notifyChanged" className="mt-1"/>
-        <span>Tell them it changed
+        <span>Tell them it changed (a short notice to the same students)
          <span className="block text-xs text-muted-foreground">Notify only people who received the original announcement. Leave unchecked to edit without another notification.</span>
         </span>
        </label>
@@ -309,7 +324,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       status={row.scheduledAt&&new Date(row.scheduledAt)>new Date()?"SCHEDULED":
        row.expiresAt&&new Date(row.expiresAt)<=new Date()?"ENDED":"SENT"}/>:null}
    </li>)}
-  </ol>:<EmptyState title="No announcements from this sender yet"/>}
+  </ol>:<EmptyState title={tab.data==="from-42"?"Nothing from 42 yet.":tab.data==="yours"?"Nothing yet. Tell students about a talk, a deadline or a change; pick who it is for, and see who has read it.":"No recently removed announcements."}/>}
   {result.status==="READY"&&(result.page>1||result.hasMore)?<nav aria-label="Announcement pages"
     className="flex min-w-0 flex-col items-stretch gap-3 text-sm sm:flex-row sm:items-center sm:justify-between">
    <span>Page {result.page}{result.hasMore?" · More announcements available":""}</span>
