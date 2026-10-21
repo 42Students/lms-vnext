@@ -734,9 +734,11 @@ export async function gradeAssignmentSubmission(
   if(current.assignmentStatus!=="PUBLISHED") {
     throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   }
-  if(!facultyGradeHasChanges(current,input))
+  const gradeChanged=facultyGradeHasChanges(current,input);
+  const hideOnly=input.hidePublished===true && current.gradePublished && !gradeChanged;
+  if(!gradeChanged&&!hideOnly)
     throw new CoursesServiceError("ASSIGNMENT_GRADE_NO_CHANGE");
-  if(!facultyRegradeFeedbackAllowed(current.gradePublished,input.feedback))
+  if(!hideOnly&&!facultyRegradeFeedbackAllowed(current.gradePublished,input.feedback))
     throw new CoursesServiceError("ASSIGNMENT_REGRADE_FEEDBACK_REQUIRED");
   if (
     input.pointsAwarded > current.maxPoints
@@ -772,6 +774,7 @@ export async function gradeAssignmentSubmission(
       .where(and(
         eq(assignmentSubmissions.id, submissionId),
         eq(assignmentSubmissions.version, input.expectedVersion),
+        hideOnly ? eq(assignmentSubmissions.gradePublished,true) : undefined,
       ))
       .returning();
     if (!updated) {
@@ -792,6 +795,7 @@ export async function gradeAssignmentSubmission(
         version: updated.version,
         gradePublished: false,
         wasPublished:current.gradePublished,
+        hiddenWithoutRegrade:hideOnly,
         feedbackProvided:Boolean(input.feedback?.trim()),
       },
       groupKey: `course-assignment:${updated.assignmentId}:grading`,
