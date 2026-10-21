@@ -37,7 +37,9 @@ const collegeIdSchema = z.string().uuid();
 const userIdSchema = z.string().uuid();
 const jobIdSchema = z.string().uuid();
 const threadIdSchema = z.string().uuid();
-const bodySchema = z.string().trim().min(1).max(4000);
+const bodySchema = z.string().trim()
+  .min(1, "Write a message first")
+  .max(4000, "Keep a message under 4000 characters");
 
 type Db = ReturnType<typeof getDb>;
 type Tx = Parameters<Parameters<Db["transaction"]>[0]>[0];
