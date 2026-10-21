@@ -23,7 +23,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
   if (!query) return <div className="space-y-4">
     <PageHeader title="Drives" />
     <ErrorState title="Invalid drive filters" description="Search, status, season, company or page is invalid."
-      action={<Link href="/college/placements/drives" className="hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+      action={<Link href="/college/placements/drives" className="inline-flex min-h-11 md:min-h-9 items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
   </div>;
   const data = await listCollegeDrives(context, query);
   const formatter = new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
@@ -108,7 +108,7 @@ export default async function CollegeDrivesPage({ searchParams }: {
     </form>
     <CollegeDriveBulkActions key={JSON.stringify(query)} drives={data.items}/>
     <section className="space-y-2" aria-label="Persisted drives">
-      <p role="status" className="text-sm text-body">{data.total.toLocaleString("en-IN")} matching persisted drives</p>
+      <p role="status" className="text-sm text-body leading-[1.6]">{data.total.toLocaleString("en-IN")} matching persisted drives</p>
       <DataTable caption="College placement drives" columns={columns} rows={data.items}
         getRowKey={item=>item.id}
         empty={<div className="min-w-0 space-y-2 text-sm text-body" role="status">
