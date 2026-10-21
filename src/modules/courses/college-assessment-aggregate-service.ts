@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, countDistinct, desc, eq, ilike, inArray, isNull, isNotNull, sql } from "drizzle-orm";
+import { and, asc, count, countDistinct, desc, eq, exists, ilike, inArray, isNull, isNotNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { alias } from "drizzle-orm/pg-core";
 import {
@@ -51,6 +51,8 @@ export async function listCollegeAssessmentAggregate(
 ) {
   const query = parseCollegeAssessmentQuery(kind, rawQuery);
   let collegeId: string;
+  if (isSuperAdmin(context) && !context.adminScope?.collegeId)
+    throw new AuthorizationError("courses.read");
   if (isSuperAdmin(context) && context.adminScope?.collegeId) {
     // Read-only Super Admin path; never resolve from a stale membership.
     collegeId = context.adminScope.collegeId;
@@ -109,7 +111,15 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseAssignments.status, query.status as "DRAFT" | "PUBLISHED" | "ARCHIVED"),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
-      query.deliveryId ? eq(courseAssignments.deliveryId,query.deliveryId) : undefined,
+      query.deliveryId ? or(
+        eq(courseAssignments.deliveryId,query.deliveryId),
+        and(isNull(courseAssignments.deliveryId),exists(
+          db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries)
+            .where(and(eq(courseSectionDeliveries.id,query.deliveryId),
+              eq(courseSectionDeliveries.offeringId,courseOfferings.id),
+              isNull(courseSectionDeliveries.endedAt))),
+        )),
+      ) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
@@ -158,7 +168,15 @@ export async function listCollegeAssessmentAggregate(
       query.status === "ALL" ? undefined :
         eq(courseQuizzes.status, query.status),
       query.courseCode ? eq(courses.code,query.courseCode) : undefined,
-      query.deliveryId ? eq(courseQuizzes.deliveryId,query.deliveryId) : undefined,
+      query.deliveryId ? or(
+        eq(courseQuizzes.deliveryId,query.deliveryId),
+        and(isNull(courseQuizzes.deliveryId),exists(
+          db.select({id:courseSectionDeliveries.id}).from(courseSectionDeliveries)
+            .where(and(eq(courseSectionDeliveries.id,query.deliveryId),
+              eq(courseSectionDeliveries.offeringId,courseOfferings.id),
+              isNull(courseSectionDeliveries.endedAt))),
+        )),
+      ) : undefined,
       query.periodCode ? eq(academicPeriods.code,query.periodCode) : undefined,
       query.cohortCode ? eq(cohorts.code,query.cohortCode) : undefined,
       query.programCode ? eq(programs.code,query.programCode) : undefined,
@@ -183,6 +201,7 @@ export async function listCollegeAssessmentAggregate(
       deliveryId: courseQuizzes.deliveryId,
       points: courseQuizzes.totalPoints,
       resultsPublished: courseQuizzes.resultsPublished,
+      createdAt: courseQuizzes.createdAt,
     }).from(courseQuizzes)
       .innerJoin(courseLessons, eq(courseLessons.id, courseQuizzes.lessonId))
       .innerJoin(courseLearningPaths, eq(courseLearningPaths.id, courseLessons.learningPathId))
@@ -197,7 +216,7 @@ export async function listCollegeAssessmentAggregate(
     const [totals, items] = await Promise.all([
       db.select({ total: count() }).from(scoped),
       db.select().from(scoped)
-        .orderBy(desc(scoped.dueAt), asc(scoped.title), asc(scoped.id))
+        .orderBy(desc(scoped.createdAt), desc(scoped.id))
         .limit(COLLEGE_ASSESSMENT_PAGE_SIZE)
         .offset((query.page - 1) * COLLEGE_ASSESSMENT_PAGE_SIZE),
     ]);
@@ -386,8 +405,13 @@ export async function listCollegeAssessmentAggregate(
     submittedLearners:statsById.get(row.id)?.submitted??0,
     gradedLearners:statsById.get(row.id)?.graded??0,
     resultsPublished: kind==="QUIZ" ? row.resultsPublished ?? false : null,
-    resultsReleaseReady:kind==="QUIZ"&&(row.status==="CLOSED"||
-      (row.status==="PUBLISHED"&&row.dueAt!==null&&row.dueAt<=reportInstant)),
+    // Releasing grades before the deadline would reveal protected answers.
+    // A previously published CLOSED quiz can still be hidden by its manager.
+    resultsReleaseReady:kind==="QUIZ"&&(
+      (row.status==="CLOSED"&&row.resultsPublished===true) ||
+      (row.dueAt!==null&&row.dueAt<=reportInstant&&
+        (row.status==="CLOSED"||row.status==="PUBLISHED"))
+    ),
   }));
   return {
     kind,
