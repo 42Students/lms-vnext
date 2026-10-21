@@ -3,6 +3,42 @@ import type { MembershipStatus } from "@/modules/identity/constants";
 import { COURSE_TEACHING_ROLES } from "@/modules/courses/constants";
 
 export const COLLEGE_ROLE_DIRECTORY_PAGE_SIZE = 25;
+/** Legacy /api/v2/learners/search autocomplete uses 15, whereas program,
+ * class and college lookups traditionally start at 50. The visible roster
+ * retains its separate 25-row default and up to 200 rows/page.
+ */
+export const COLLEGE_LEGACY_LEARNER_SEARCH_DEFAULT=15;
+export const COLLEGE_LEGACY_LEARNER_GROUP_DEFAULT=50;
+export const COLLEGE_LEGACY_LEARNER_SEARCH_MAX=50;
+export function collegeLegacyLearnerSearchLimit(
+ input:unknown,kind:"SEARCH"|"COLLEGE"|"PROGRAM"|"CLASS"|"CATEGORY"="SEARCH",
+):number {
+ const fallback=kind==="SEARCH"?COLLEGE_LEGACY_LEARNER_SEARCH_DEFAULT:
+  COLLEGE_LEGACY_LEARNER_GROUP_DEFAULT;
+ if(input===null||input===undefined||input==="")return fallback;
+ const parsed=typeof input==="number"?input:
+  typeof input==="string"&&/^[0-9]+$/.test(input)?Number(input):NaN;
+ if(!Number.isSafeInteger(parsed))return fallback;
+ return Math.min(COLLEGE_LEGACY_LEARNER_SEARCH_MAX,Math.max(1,parsed));
+}
+/** Imported numeric identifiers are resolved by an approved tenant-scoped
+ * legacy ID mapping. Raw IDs are never treated as vNext membership UUIDs. */
+export function collegeLegacyLearnerFilterId(raw:unknown,approved:ReadonlyMap<number,string>):string|null {
+ const source=typeof raw==="number"?raw:
+  typeof raw==="string"&&/^[1-9][0-9]*$/.test(raw)?Number(raw):NaN;
+ if(!Number.isSafeInteger(source)||source<=0)return null;
+ const uuid=approved.get(source);
+ return uuid&&z.string().uuid().safeParse(uuid).success?uuid:null;
+}
+export const COLLEGE_LEGACY_LEARNER_ROUTE_FILTERS={
+ "/search":{mode:"SEARCH",q:"q"},
+ "/college/{id}":{mode:"COLLEGE",scope:"selected-college"},
+ "/program/{id}":{mode:"PROGRAM",param:"programId"},
+ "/class/{id}":{mode:"CLASS",param:"sectionId"},
+ "/categories":{mode:"CATEGORY",scope:"categories"},
+ "/category/{id}":{mode:"CATEGORY",param:"facultyDepartmentId"},
+} as const;
+
 export const collegeDirectoryKindSchema = z.enum(["FACULTY", "LEARNER"]);
 export type CollegeDirectoryKind = z.infer<typeof collegeDirectoryKindSchema>;
 
