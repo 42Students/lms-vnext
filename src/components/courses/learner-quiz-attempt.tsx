@@ -368,17 +368,15 @@ export function LearnerQuizAttempt() {
           description="Quiz review"
           actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 md:min-h-9">← Back</Button>}
         />
-        <p className="mt-2 text-sm text-body">
-              {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
-                ? learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))
-                : latestAttempt
+        {!learnerQuizReviewQuestionNotice(questions.length, Boolean(latestAttempt)) ? <p className="mt-2 text-sm text-body">
+              {latestAttempt
                 ? latestAttempt.resultsVisible
                   ? `Attempt ${latestAttempt.attemptNumber} · ${learnerAttemptResultLabel(latestAttempt)}`
                   : "Your attempt is submitted. Results will appear after Faculty publishes them."
                 : duePassed || quiz.quiz.status === "CLOSED"
                   ? "Not attempted before this quiz closed."
                   : "No attempt is available to review."}
-        </p>
+        </p> : null}
         {deadlineMissing && !latestAttempt ? (
           <Alert tone="warning" className="mt-4">
             Unavailable · Quiz deadline is not configured. Ask your faculty to set a due date.
@@ -447,12 +445,12 @@ export function LearnerQuizAttempt() {
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" confirmVariant="primary" onConfirm={() => void submit()} />
       <div className={styles.header+" pb-4"}>
-        <p className="mb-2 text-xs font-semibold text-muted-foreground">
-          Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
-        </p>
         <PageHeader title={quiz.quiz.title}
           actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 md:min-h-9">Back</Button>}
         />
+        <p className="mt-2 text-xs font-semibold text-muted-foreground">
+          Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
+        </p>
         <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
         {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
           <Alert tone="warning" className="mt-2 font-semibold">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</Alert>
@@ -473,7 +471,7 @@ export function LearnerQuizAttempt() {
       <div className="grid min-w-0 lg:grid-cols-[220px_minmax(0,1fr)]">
         <aside className="order-2 min-w-0 border-t border-border p-4 lg:order-1 lg:border-r lg:border-t-0">
           <p className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Progress</p>
-          <div className="mt-3 grid grid-cols-5 gap-2 lg:grid-cols-3">
+          <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-3">
             {questions.map((question, index) => (
               <Button
                 key={question.id}
@@ -555,7 +553,7 @@ export function LearnerQuizAttempt() {
             ) : null}
           </div>
           {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
-          <div className="mt-7 grid min-w-0 grid-cols-2 gap-2">
+          <div className="sticky bottom-0 z-10 mt-7 grid min-w-0 grid-cols-2 gap-2 border-t border-[var(--lms-canvas-border)] bg-white py-3 lg:static lg:border-t-0 lg:bg-transparent lg:py-0">
             <Button variant="secondary" className="min-h-11 w-full md:min-h-9" disabled={step === 0} onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>
             {step < questions.length - 1 ? (
               <Button className="min-h-11 w-full md:min-h-9" disabled={!current || (answers[current.id]??[]).length===0}
