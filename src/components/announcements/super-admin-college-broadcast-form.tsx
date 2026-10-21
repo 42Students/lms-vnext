@@ -121,8 +121,8 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   {!timing.valid?<p role="alert" className="text-sm text-danger-text">Give a date and time.</p>:null}
   {timing.expiresAt&&new Date(timing.expiresAt).getTime()<Date.now()-60_000?<p role="alert" className="text-sm text-danger-text">The end date has passed</p>:null}
   <p className="border-t border-border pt-[var(--lms-space-3)] text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,false)}</p>
-  {feedback?<p role={feedback.startsWith("Sent to ")?"status":"alert"} className="text-sm text-body">{feedback}</p>:null}
   </Dialog>
+  {feedback?<p role={feedback.startsWith("Sent to ")?"status":"alert"} aria-live="polite" className="text-sm text-body">{feedback}</p>:null}
   <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmDisabled={!valid}
    title="Approve announcement to placement cells" description={broadcastConsentSummary(mode,count,false)}
    confirmLabel="Consent and publish" confirmVariant="danger" onConfirm={()=>{void submit();}}>

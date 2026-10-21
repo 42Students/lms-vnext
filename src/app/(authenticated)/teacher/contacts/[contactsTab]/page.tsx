@@ -2,7 +2,7 @@ import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import {parseFacultyContactsQuery} from "@/modules/courses/faculty-contacts-filter-model";
+import {parseFacultyContactsQuery,FACULTY_CONTACTS_SEARCH_PLACEHOLDER} from "@/modules/courses/faculty-contacts-filter-model";
 import {facultyContactDirectoryQuery} from "@/modules/courses/faculty-contact-detail-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -88,14 +88,51 @@ export default async function FacultyContactsPage({
           value:key,label:tab.label,href:`/teacher/contacts/${key}`,
         }))} />
 
-      <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
-        <p className="mb-3 text-xs text-muted-foreground">Contact fields are masked for this role. The legacy Email and Contact columns remain visible as Private; no other learner or teacher phone number is disclosed.</p>
-        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-          <div className="flex min-w-0 flex-wrap items-center gap-3">
-            <h2 className="m-0 text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">{selected.label}</h2>
-            <span role="status" aria-live="polite" className="inline-flex items-center gap-2 rounded-full border border-[var(--lms-field-hover-border)] bg-surface px-3 py-1 text-sm text-body">
-              <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 11a3 3 0 1 0 0-6m0 9a5 5 0 0 1 4 4v2"/></svg>
-              {result.total} {result.total === 1 ? "contact" : "contacts"}
+      <section className="min-w-0 border-b border-border pb-4">
+        <div className="flex min-w-0 flex-col gap-3">
+          <div>
+            <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
+            <p className="mt-1 text-sm text-body leading-[22px]" role="status" aria-live="polite">
+              {result.total}{" "}
+              {result.total === 1
+                ? "contact"
+                : "contacts"}
+            </p>
+          </div>
+          <form
+            key={result.search + ":" + result.pageSize}
+            action={baseHref}
+            className="grid w-full min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]"
+          >
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Search contacts
+              <Input
+                type="search"
+                name="q"
+                maxLength={200}
+                defaultValue={result.search}
+                placeholder={FACULTY_CONTACTS_SEARCH_PLACEHOLDER}
+              />
+            </label>
+            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Contacts per page
+              <Select name="pageSize" aria-label="Contacts per page"
+                defaultValue={String(result.pageSize)}
+                className="block">
+                <option value="10">10</option>
+                <option value="20">20</option>
+                <option value="50">50</option>
+              </Select>
+            </label>
+            <Button type="submit" variant="primary" className="min-h-11 w-full sm:col-span-2 lg:col-span-1 lg:w-auto lg:min-h-9">
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m16 16 5 5"/></svg> Search
+            </Button>
+          </form>
+        </div>
+        {result.search ? (
+          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+            <span>
+              Results for “{result.search}”
             </span>
           </div>
           <FacultyContactsLiveSearch baseHref={baseHref} initialSearch={result.search} pageSize={result.pageSize}/>
