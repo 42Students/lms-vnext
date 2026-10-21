@@ -236,7 +236,7 @@ export default async function ActivityPage({
       </p>:null}
       {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="min-w-0 space-y-3">
        <details className="min-w-0 border-b border-border pb-3" open={Boolean(moduleValue||importanceValue)||undefined}>
-       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Activity Log category presets</summary>
+       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Activity Log category presets</summary>
        <div className="mt-2 flex min-w-0 flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-[650] text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] md:min-h-9">{link.name}</Link>)}</div>
        <p className="mt-2 text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important activity shows high-priority events.</p>
@@ -335,7 +335,7 @@ export default async function ActivityPage({
         </label>
         <details open={Boolean(one(params.eventType)||one(params.subjectType)||one(params.subjectId)||one(params.actorName)||one(params.q)||one(params.actorUserId)) || undefined}
           className="group min-w-0 border-t border-[var(--lms-canvas-border)] md:col-span-2 xl:col-span-4">
-          <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">More filters<span aria-hidden="true">⌄</span></summary>
+          <summary className="flex min-h-11 cursor-pointer items-center justify-between text-sm font-semibold text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">More filters<span aria-hidden="true">⌄</span></summary>
           <div className="grid min-w-0 gap-[var(--lms-space-3)] pb-[var(--lms-space-4)] md:grid-cols-2 xl:grid-cols-4">
         <label>
           <span className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold leading-4 text-body">
