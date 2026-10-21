@@ -254,7 +254,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         ]}
       />}
     {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
-    {error ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
+    {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
     <ConfirmDialog open={confirm !== null} onOpenChange={value => { if (!value && !pending) setConfirm(null); }}
       title={confirm?.type === "REMOVE"
         ? TERM_MAPPING_COPY.removeTitle(data.mapped.find(row => row.id === confirm.id)?.courseName ?? "course")
@@ -264,6 +264,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         : "Confirm the new curriculum association. Duplicate mappings are rejected."}
       confirmVariant={confirm?.type === "REMOVE" ? "danger" : "primary"}
       confirmLabel={confirm?.type === "REMOVE" ? TERM_MAPPING_COPY.removeButton : TERM_MAPPING_COPY.addButton}
-      pending={pending} onConfirm={send} />
+      pending={pending} onConfirm={send}>
+      {error ? <p role="alert" className="min-w-0 break-words text-sm text-[var(--lms-error-text)]">{error}</p> : null}
+    </ConfirmDialog>
   </section>;
 }
