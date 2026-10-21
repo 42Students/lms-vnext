@@ -451,7 +451,7 @@ export default async function HrCalendarPage({
                   </article>
                 ))}
                 {mobileDays.length === 0 && eventCount > 0 ? (
-                  <p role="status" className="p-4 text-sm text-muted-foreground">
+                  <p role="status" className="p-4 text-sm text-muted-foreground leading-[1.6]">
                     No rounds, deadlines or results due in this calendar period.
                   </p>
                 ) : null}
