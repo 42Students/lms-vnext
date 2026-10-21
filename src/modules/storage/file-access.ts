@@ -47,6 +47,11 @@ export async function authorizeLegacyFileReadGrant(
       // Old clients called this publicUrl. It is deliberately a short-lived
       // private grant, NOT an anonymously reusable public R2 object URL.
       access: "PRIVATE_SIGNED" as const,
+      // Selected resource metadata is returned only after feature-context
+      // authorization. Never include bucket keys, owner IDs, or list/search.
+      fileName:options.fileName,
+      sizeBytes:file.sizeBytes,
+      contentType:file.contentType,
     };
   });
 }
