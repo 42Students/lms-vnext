@@ -51,8 +51,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/EmailVariableValidator.java`
 - [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/NotificationServiceImpl.java`
 - [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/SmsService.java`
-- [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/learners/LearnerSearchController.java`
-- [ ] U014 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/tpo/JobRoundRepository.java`
+- [x] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/learners/LearnerSearchController.java`
+- [x] U014 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/tpo/JobRoundRepository.java`
 - [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/tpo/JobEligibilityOverride.java`
 - [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Recruiter.java`
 - [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectResourceAudit.java`
