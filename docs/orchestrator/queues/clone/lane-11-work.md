@@ -95,7 +95,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_profile_data-access_page.tsx.md` (edit src/app/(authenticated)/learn/profile/data-access/page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_profile_verification_page.tsx.md` (edit src/app/(authenticated)/learn/profile/verification/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_allAssignments_page.tsx.md` (edit src/app/(authenticated)/learn/allAssignments/page.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_projects_projectId_page.tsx.md` (edit src/app/(authenticated)/learn/projects/[projectId]/page.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_learn_projects_projectId_page.tsx.md` (edit src/app/(authenticated)/learn/projects/[projectId]/page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_teacher_profile_contacts_page.tsx.md` (edit src/app/(authenticated)/teacher/profile/contacts/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_teacher_report_assignment_contentId_page.tsx.md` (edit src/app/(authenticated)/teacher/report/assignment/[contentId]/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-11/src_app_authenticated_teacher_report_assignment_contentId_error.tsx.md` (edit src/app/(authenticated)/teacher/report/assignment/[contentId]/error.tsx; 3 findings; best P1)

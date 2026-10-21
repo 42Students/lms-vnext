@@ -58,6 +58,25 @@ export default async function LearnerVerificationPage() {
             <dd><time dateTime={row.decidedAt??undefined}>{learnerVerificationDateLabel(row.decidedAt)}</time></dd>
           </div> : null}
         </dl>
+        {item.section==="EDUCATION"&&row.changedSinceVerification?<Banner tone="warning" className="mt-3">
+          Your current education details differ from the last verified record. Submit an update for college review.
+        </Banner>:null}
+        {item.section==="EDUCATION"&&row.submittedEducation.length>0?<section className="mt-4 border-t border-border pt-3"
+          aria-label="Education submitted for review">
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Education submitted for review</h3>
+          <ul className="mt-2 divide-y divide-border">{row.submittedEducation.map((entry,index)=><li key={index} className="space-y-1 py-3 text-sm text-body">
+            <p className="font-semibold text-foreground">{entry.qualification||"Qualification not recorded"}</p>
+            <p>{[entry.program,entry.specialization,entry.institution].filter(Boolean).join(" · ")||"Institution not recorded"}</p>
+            <p>{[entry.year&&"Year "+entry.year,entry.grading,entry.grade&&"Grade "+entry.grade,entry.maximum&&"Maximum "+entry.maximum].filter(Boolean).join(" · ")}</p>
+            <p className="text-xs text-muted-foreground">{entry.marksheetRecorded?"Marksheet receipt linked (private)":"No marksheet link in submitted snapshot"}</p>
+          </li>)}</ul>
+        </section>:null}
+        {item.section==="EDUCATION"&&row.verifiedEducation.length>0?<details className="mt-3 border-t border-border pt-3">
+          <summary className="cursor-pointer text-sm font-semibold text-link">Last verified education snapshot</summary>
+          <ul className="mt-2 list-disc pl-5 text-sm text-body">{row.verifiedEducation.map((entry,index)=><li key={index}>
+            {entry.qualification||"Qualification"} · {[entry.institution,entry.grade].filter(Boolean).join(" · ")||"No recorded details"}
+          </li>)}</ul>
+        </details>:null}
         {row.status === "SENT_BACK" ? <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body">
           Reason: {row.reason ?? "Contact the placement cell for the review reason."}
         </p> : null}
