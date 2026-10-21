@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
 import { Drawer } from "@/components/ui/drawer";
+import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Alert } from "@/components/ui/alert";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -544,14 +545,16 @@ export function FacultyAssignmentReview({
   const loadSequence = useRef(0);
   const [selectedSubmissionId,setSelectedSubmissionId]=useState<string|null>(null);
 
+  const ReviewOverlay=reviewScope==="COLLEGE"?Dialog:Drawer;
   if(status==="ARCHIVED")return null;
   if(status==="DRAFT")return <div className="mt-3">
     <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
       onClick={()=>setOpen(true)}>View submissions</Button>
-    <Drawer open={open} onOpenChange={setOpen} title="Assignment submissions"
+    <ReviewOverlay open={open} onOpenChange={setOpen} title="Assignment submissions"
+      className={reviewScope==="COLLEGE"?"max-w-[760px]":undefined}
       description="Draft assignments are hidden from learners.">
       <EmptyState title="No submissions yet" description="Publish this assignment to allow students to submit work." />
-    </Drawer>
+    </ReviewOverlay>
   </div>;
 
   async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
@@ -693,7 +696,7 @@ export function FacultyAssignmentReview({
           onClick={()=>void load({filter,page:pagination.page+1})}>Next</Button>
       </nav> : null}
       </div>
-      </Drawer>
+      </ReviewOverlay>
     </>
   );
 }
