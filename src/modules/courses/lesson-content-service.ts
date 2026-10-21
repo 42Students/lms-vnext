@@ -260,6 +260,9 @@ function mergedContentInput(
   }
 }
 
+/** Writer roles are constrained by requireDeliveryContentMutation for faculty
+ * deliveries and courses.manage for shared admin content. Delegated authorship
+ * is intentionally not accepted without a scoped faculty membership model. */
 async function authorizeContentMutation(
   context: RequestContext,
   content: Awaited<
@@ -348,6 +351,11 @@ export async function listLessonContents(
     eq(lessonContents.lessonId, lessonId),
     audienceCondition,
   ];
+  // Legacy faculty author lists do not enumerate colleagues' content.
+  // College managers retain the full authorized directory.
+  if(access==="FACULTY"&&!can(context,"courses.manage",{
+    organizationId:lesson.organizationId,collegeId:lesson.collegeId,
+  }))conditions.push(eq(lessonContents.createdByUserId,context.user.id));
 
   if (access === "LEARNER") {
     conditions.push(
@@ -380,9 +388,13 @@ export async function listLessonContents(
   // This also keeps disposable browser fixture setup on the registered path.
   // Until the optional migration exists, all previously published rows retain
   // their legacy default. Once registered, the admin visibility flag is real.
-  const visibleRows = access === "LEARNER"
+  const audienceRows = access === "LEARNER"
     ? await (await import("./faculty-lesson-visibility-staged")).filterStagedStudentVisibleLessonContents(lessonId, rows)
     : rows;
+  // Never expose an opaque private R2 object key to a learner even when a
+  // lesson is published. Grants are separately scoped, signed on Open.
+  const visibleRows = access === "LEARNER"
+    ? audienceRows.map(row=>({...row,storageKey:null})) : audienceRows;
   if (!deliveryId || visibleRows.length <= 1 || !lessonContentOrderRuntimeEnabled()) {
     return visibleRows;
   }
