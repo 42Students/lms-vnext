@@ -90,7 +90,16 @@ export default async function LearnerPlacementsPage({
   const offerRows=offersRead.status==="fulfilled"?offersRead.value:null;
   const requestWorkspace=requestsRead.status==="fulfilled"?requestsRead.value:null;
   const journeyRows=journeyBundle?.rows ?? [];
-
+  // An accepted internship or other non-counting job cannot make a learner
+  // "placed" in the dashboard, even if the official offer is accepted.
+  // Job type eligibility is sourced only from an authorized persisted row.
+  const countingAcceptedOffer=offerRows && rows
+    ?offerRows.find(offer=>offer.offer.status==="ACCEPTED"&&
+      rows.some(row=>row.job.id===offer.job.id&&row.job.countsAsPlaced===true))
+    :null;
+  const countingOfferKnown=offerRows!==null&&rows!==null;
+  const overviewUnavailable=!availability.jobs&&!availability.journey&&
+    !availability.offers&&!availability.rounds;
 
   const items: LearnerPlacementJobItem[] =
     (rows ?? []).map((row) => ({
@@ -264,9 +273,39 @@ export default async function LearnerPlacementsPage({
           <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-11 md:min-h-9 items-center text-primary-text underline">Retry registration</Link>
         </Alert>
       )}
+      {overviewUnavailable ? <Alert tone="error" role="alert">
+        <h2 className="font-semibold text-foreground">We could not load your placements</h2>
+        <p className="mt-2 text-sm text-body">
+          Your placement results have not been changed. Some account and registration
+          information may still be visible, but your journey and schedule could not be verified.
+        </p>
+        <Link href="/learn/my-placements" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Retry
+        </Link>
+      </Alert> : null}
+      {!availability.rounds || !availability.journey ? <Alert tone="warning" role="status">
+        {availability.rounds
+          ?"Your schedule and application history could not both be checked. Missing timeline entries are unknown, not proof of no events."
+          :"Your scheduled placement rounds could not be loaded. No upcoming event count has been assumed."}
+        <Link href="/learn/my-placements" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Retry
+        </Link>
+      </Alert> : null}
       <LearnerPlacementPartialAlert missing={display.failed} />
+      {countingAcceptedOffer ? <Alert tone="info" role="status">
+        <p className="font-semibold text-foreground">
+          You're placed with {countingAcceptedOffer.company.name}
+        </p>
+        <p className="mt-2 text-sm text-body">
+          This accepted offer is recorded as counting toward placement. You may
+          still be eligible for other drives under your college's policy and each drive's eligibility rules.
+        </p>
+        <Link href="/learn/my-placements/jobs" className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Browse other eligible drives →
+        </Link>
+      </Alert> : null}
       <LearnerPlacementsDashboard snapshot={dashboard} availability={availability} learnerName={learnerName} applicationFunnel={applicationFunnel} registration={registrationRead.status==="fulfilled"?registrationRead.value:null}
-        profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={offerRows?offerRows.some(row=>row.offer.status==="ACCEPTED"):null} />
+        profileFixes={verificationCue?.editHrefs??[]} acceptedOffer={countingOfferKnown?Boolean(countingAcceptedOffer):null} />
 
 
       <section aria-labelledby="learner-placement-verification"
