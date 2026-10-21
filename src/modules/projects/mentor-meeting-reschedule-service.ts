@@ -44,8 +44,13 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
     if(!meeting)throw new ProjectsServiceError("PROJECT_MEETING_NOT_FOUND");
     if(!project||!mentorMeetingCanReschedule(meeting.status,project.status))
       throw new ProjectsServiceError("PROJECT_MEETING_INVALID_STATE");
+    // Legacy @Version Long becomes persisted updatedAt with millisecond CAS.
+    // JPA's fresh-row null version is not a valid client token here: the
+    // selected persisted meeting must supply expectedUpdatedAt.
     // Stale version wins over the unchanged-time no-op check so a replayed
     // request reports a stale version rather than a generic invalid state.
+    // Equality compares epoch milliseconds (not DB microsecond precision);
+    // the UPDATE predicate must use the same truncated precision.
     if(meeting.updatedAt.getTime()!==expected.getTime())
       throw new ProjectsServiceError("PROJECT_MEETING_STALE_VERSION");
     if(meeting.startsAt.getTime()===start.getTime()&&
@@ -83,6 +88,9 @@ export async function rescheduleMentorMeeting(context:RequestContext,rawParams:u
         timeZone:meeting.timeZone},
       groupKey:"project:"+scope.project.id+":meetings",
     });
+    // Notify active members inside the same transaction; this is an in-app
+    // notification, NOT a synced external calendar or email invitation.
+    // Old calendar sync metadata is intentionally not copied into vNext.
     await notifyActiveProjectMembers(tx,event.id,{
       projectId:scope.project.id,collegeId:scope.collegeId,roles:["LEARNER"],
       title:"Project meeting",body:"The time of "+updated.title+" has changed.",
