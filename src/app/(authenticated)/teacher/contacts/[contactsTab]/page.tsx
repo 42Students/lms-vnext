@@ -101,7 +101,6 @@ export default async function FacultyContactsPage({
             <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Search contacts
               <Input
-                className="mt-1.5"
                 type="search"
                 name="q"
                 maxLength={200}
@@ -113,7 +112,7 @@ export default async function FacultyContactsPage({
               Contacts per page
               <Select name="pageSize" aria-label="Contacts per page"
                 defaultValue={String(result.pageSize)}
-                className="mt-1.5 block">
+                className="block">
                 <option value="10">10</option>
                 <option value="20">20</option>
                 <option value="50">50</option>
