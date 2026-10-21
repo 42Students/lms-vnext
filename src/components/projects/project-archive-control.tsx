@@ -6,17 +6,20 @@ import { Button } from "@/components/ui/button";
 import { Dialog } from "@/components/ui/dialog";
 import { useToast } from "@/components/ui/toast";
 import { projectMutation } from "./project-api";
+import { ProjectSoftDeleteControl } from "./project-soft-delete-control";
 
 export function ProjectArchiveControl({
   projectId,
   projectTitle,
   status,
   expectedUpdatedAt,
+  deleted = false,
 }: {
   projectId: string;
   projectTitle: string;
   status: string;
   expectedUpdatedAt: string;
+  deleted?: boolean;
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -78,6 +81,11 @@ export function ProjectArchiveControl({
     }
   }
 
+  if (deleted) {
+    return <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
+      expectedUpdatedAt={expectedUpdatedAt} deleted />;
+  }
+
   if (status === "ARCHIVED") {
     return (
       <>
@@ -100,6 +108,8 @@ export function ProjectArchiveControl({
             Archived workspaces can be reopened with all of their content.
           </p>
         </Dialog>
+        <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
+          expectedUpdatedAt={expectedUpdatedAt} deleted={false} />
       </>
     );
   }
@@ -131,6 +141,8 @@ export function ProjectArchiveControl({
           This is an archive action, not the separate recoverable-delete workflow.
         </p>
       </Dialog>
+      <ProjectSoftDeleteControl projectId={projectId} projectTitle={projectTitle}
+        expectedUpdatedAt={expectedUpdatedAt} deleted={false} />
     </>
   );
 }

@@ -137,6 +137,10 @@ export default async function CollegeProjectsPage({
          {value:"table",label:"List",href:viewHref("table")},
          {value:"archived",label:"Archived workspaces",href:"/college/projects?status=ARCHIVED"},
         ]}/>
+        <Link href="/college/projects/deleted"
+          className="inline-flex min-h-9 items-center font-semibold text-link underline">
+          Deleted workspaces
+        </Link>
       </div>
       {!templatesResult.ok && <Banner tone="warning">Template names are unavailable right now. Workspaces are still listed; try refreshing this page.</Banner>}
       <FilterBar title="Filters"><ProjectAdminFilters query={query} /></FilterBar>
