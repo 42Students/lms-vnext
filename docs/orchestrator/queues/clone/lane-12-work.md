@@ -25,7 +25,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_activity_page.tsx.part2of2.md` (edit src/app/(authenticated)/activity/page.tsx; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-7_u002-college-admin-projects-audit.md.part1of2.md` (new; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-12/NEW_docs_audit_gap2_lane-7_u002-college-admin-projects-audit.md.part2of2.md` (new; 2 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_placements_lifecycle_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/lifecycle/page.tsx; 17 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_placements_lifecycle_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/lifecycle/page.tsx; 17 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-job-types-editor.tsx.md` (edit src/components/tpo/tpo-job-types-editor.tsx; 17 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_components_activity_learner-notifications-inbox.tsx.md` (edit src/components/activity/learner-notifications-inbox.tsx; 16 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_team_page.tsx.md` (edit src/app/(authenticated)/tpo/team/page.tsx; 15 findings; best P1)
