@@ -29,6 +29,20 @@ import {
   type TpoDriveCancelImpact,
 } from "./tpo-drive-cancel-model";
 
+/** Lifecycle contract is shared by the impact preview and locked mutation:
+ * cancellation stops a live drive and may withdraw unaccepted issued offers;
+ * archive only hides an already stopped record from normal lists. Never use
+ * an archive preview to authorize CANCEL or vice versa. */
+export const TPO_CANCEL_VS_ARCHIVE_COPY={
+ cancel:"Cancel drive",
+ cancelImpact:"Cancelling stops pending rounds, withdraws issued offers and removes live learner applications. Accepted offers and the audit history remain.",
+ archive:"Archive drive",
+ archiveImpact:"Archiving keeps existing placements and history but hides the drive from active lists.",
+} as const;
+function canCancelTpoDrive(status:string,seasonStatus:string|null,pendingPromotions:number){
+ return (status==="DRAFT"||(status==="PUBLISHED"&&seasonStatus==="ACTIVE"))&&
+   pendingPromotions===0;
+}
 /** Legacy lifecycle is split between recruiter requests and real drives.
  * REQUEST, SENT_BACK and REJECTED have request IDs, never phantom Job IDs.
  * CANCELLED is persisted separately from CLOSED with irreversible stop effects.
@@ -126,7 +140,7 @@ export async function getTpoDriveCancelPreview(
       .limit(1);
     const counts = await impact(tx, job.id);
     const pendingPromotions=await pendingWaitlistReservations(tx,job.id);
-    const cancellable = (job.status === "DRAFT" || (job.status === "PUBLISHED" && season?.status === "ACTIVE")) && pendingPromotions===0;
+    const cancellable = canCancelTpoDrive(job.status,season?.status??null,pendingPromotions);
     return {
       id: job.id,
       title: job.title,
@@ -135,6 +149,10 @@ export async function getTpoDriveCancelPreview(
       cancellable,
       blockedByAcceptedOffers: false,
       pendingPromotions,
+      action:"CANCEL" as const,
+      actionLabel:TPO_CANCEL_VS_ARCHIVE_COPY.cancel,
+      impactDescription:TPO_CANCEL_VS_ARCHIVE_COPY.cancelImpact,
+      archiveAlternative:TPO_CANCEL_VS_ARCHIVE_COPY.archiveImpact,
       impact: counts,
     };
   });
@@ -176,7 +194,7 @@ export async function cancelTpoDriveWithPreview(
     // offer issuance. Job-row locking serializes with the reservation
     // transaction; cancellation must not strand its immutable PENDING row.
     const pendingPromotions=await pendingWaitlistReservations(tx,job.id);
-    if(pendingPromotions>0)
+    if(!canCancelTpoDrive(job.status,season?.status??null,pendingPromotions))
       throw new PlacementsServiceError("PLACEMENT_JOB_NOT_CLOSABLE");
     const decision = evaluateTpoDriveCancellation(
       job.status,

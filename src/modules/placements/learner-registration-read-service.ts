@@ -50,10 +50,29 @@ export async function getOwnLearnerRegistration(context: RequestContext) {
     cohortId,
     // False is the semantic equivalent of legacy GET mine's empty 204 case.
     hasRegistration: registration !== null,
+    noBatchAvailable:batch===null,
+    registrationMessage:batch===null
+      ?"Registration opens when the placement cell invites your batch. You'll get a notice."
+      : null,
+    // Older GET /mine returned an empty result for an unregistered learner.
+    // Current response keeps the batch state visible instead of claiming a 204.
+    legacyRegistration:registration?{registered:true,choice:registration.choice}:null,
     priorCohortRegistration: previous ? {
       cohortId: previous.cohortId,
       choice: previous.choice,
       recordedAt: previous.recordedAt.toISOString(),
     } : null,
   };
+}
+
+/** Old registration GET /mine returned an optional registration object.
+ * Expose a same-learner projection without copying session/consent internals. */
+export function legacyLearnerRegistrationResponse(
+ value:Awaited<ReturnType<typeof getOwnLearnerRegistration>>,
+){
+ return value.hasRegistration?{
+  status:"OK" as const,
+  data:{choice:value.choice,cohortId:value.cohortId,registered:true},
+ }:{status:"OK" as const,data:null,
+  message:value.registrationMessage??"No placement registration for this batch"};
 }

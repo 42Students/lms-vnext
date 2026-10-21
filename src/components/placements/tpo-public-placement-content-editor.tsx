@@ -11,10 +11,14 @@ import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,
 const ALL=Object.keys(PUBLIC_METRIC_LABELS) as PublicPlacementMetricKey[];
 export function TpoPublicPlacementContentEditor({initial}:{initial:{
  ready:boolean;about:string;metricKeys:PublicPlacementMetricKey[];updatedAt:string|null;
+ /** Server-authorized public preview keys, after minimum-sample suppression. */
+ previewMetricKeys?:PublicPlacementMetricKey[];
 }}){
  const router=useRouter();
  const [retrying,setRetrying]=useState(false);
  const initialMetricKeys=initial.metricKeys.length?initial.metricKeys:DEFAULT_PUBLIC_METRICS;
+ const visibleKeys=new Set(initial.previewMetricKeys??[]);
+ const hasPreview=Array.isArray(initial.previewMetricKeys);
  const [saved,setSaved]=useState({about:initial.about,metricKeys:initialMetricKeys});
  const [about,setAbout]=useState(initial.about);
  const [metricKeys,setMetricKeys]=useState(initialMetricKeys);
@@ -59,19 +63,19 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
  return <section className="mt-6 space-y-4 border-t border-border pt-5" aria-label="Public placements content">
   <h2 className="font-semibold">About your placements</h2>
   <label className="grid gap-[6px] text-[13px]">About your placements
-   <Textarea rows={5} maxLength={4000} value={about} disabled={!initial.ready||busy}
+   <Textarea rows={4} maxLength={4000} value={about} disabled={!initial.ready||busy}
     onChange={e=>setAbout(e.target.value)}
-    placeholder="Tell recruiters about your placement cell and your students."
+    placeholder="A few lines companies read first: your programmes, batch sizes, when your season runs."
     className="min-h-28 w-full"/>
   </label>
-  <p className="text-xs">{about.length}/4000 characters</p>
+  <p className="text-right text-xs text-muted-foreground" aria-live="polite">{about.length} / 4000</p>
   <fieldset className="space-y-3">
    <legend className="font-semibold">Numbers to show</legend>
-   <p className="text-xs text-muted-foreground">Choose the public numbers and their order. Small or unavailable values stay hidden.</p>
+   <p className="text-xs text-muted-foreground">Live, over the last 12 months. A number built on fewer than 5 students or offers is never shown.</p>
    <div className="grid min-w-0 gap-x-6 gap-y-1 sm:grid-cols-2">
    {ALL.map(key=><label key={key} className="flex min-h-11 md:min-h-9 items-center gap-2 text-sm">
     <Checkbox checked={metricKeys.includes(key)} disabled={!initial.ready||busy}
-     onChange={()=>toggle(key)}/>{PUBLIC_METRIC_LABELS[key]}
+     onChange={()=>toggle(key)}/>{PUBLIC_METRIC_LABELS[key]}{hasPreview&&!visibleKeys.has(key)?" (not enough data yet)":""}
    </label>)}
    </div>
   </fieldset>
@@ -87,7 +91,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    </li>)}
   </ol>
   </details>
-  {dirty?<InlineNotice tone="info" message="Unsaved changes"/>:null}
+  {dirty?<InlineNotice tone="info" message="Unsaved changes. Use Save to publish. The old LMS saved number selections immediately."/>:null}
   {!initial.ready?<Alert tone="warning"><div className="space-y-2">
    <p>Couldn't load the placements page</p>
    <Button type="button" variant="secondary" disabled={retrying} onClick={()=>{

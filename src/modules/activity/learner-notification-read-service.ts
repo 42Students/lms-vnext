@@ -99,3 +99,11 @@ export async function listStaffNotificationSubjects(
     collegeId:audience.collegeId,classId:audience.classId,courseId:audience.courseId,
   }};
 }
+
+/** Deliberately separate the authenticated recipient's archive from a
+ * staff-authored announcement delete. Legacy in-app text is preserved. */
+export const LEARNER_NOTIFICATION_ARCHIVE_COPY={
+ action:"Delete notification",
+ success:"Notification deleted successfully",
+ unavailable:"Notification not found or no longer available.",
+} as const;

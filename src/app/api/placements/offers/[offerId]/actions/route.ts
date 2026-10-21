@@ -27,11 +27,23 @@ export async function POST(
     const context =
       await getCurrentRequestContext();
     const { offerId } = await params;
+    const raw=await readTpoBulkRequestBody(request);
+    let actionInput:unknown=raw;
+    if(typeof raw==="object"&&raw!==null&&!Array.isArray(raw)){
+      const source=raw as Record<string,unknown>;
+      if(typeof source.accept==="boolean"&&source.action===undefined){
+        // Old learner offer response {accept:boolean}. We deliberately retain
+        // the typed server permission, offer UUID and issued-state CAS checks.
+        const {accept,reason,...rest}=source;
+        actionInput={...rest,action:accept?"ACCEPT":"DECLINE",
+          ...(!accept&&typeof reason==="string"?{reason}:{})};
+      }
+    }
     const offer =
       await actOnPlacementOffer(
         context,
         offerId,
-        placementOfferActionSchema.parse(await readTpoBulkRequestBody(request)),
+        placementOfferActionSchema.parse(actionInput),
         new Date(),
         context.membership?.roles.includes("LEARNER") ? "ISSUED" : undefined,
       );
@@ -39,7 +51,8 @@ export async function POST(
     // the offer object directly. Legacy integrations must unwrap response.offer
     // at their adapter boundary; changing this authenticated route would break
     // active clients and does not add server-side security.
-    return NextResponse.json({ offer });
+    return NextResponse.json({offer,status:offer.status},
+      {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     if(error instanceof TpoBulkBodyError)return NextResponse.json({error:error.message},{
       status:error.status,headers:{"Cache-Control":"private, no-store"},

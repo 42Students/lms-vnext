@@ -19,6 +19,8 @@ export const LECTURE_HALL_COPY = {
   departmentLabel: "Department (Optional)",
   departmentPlaceholder: "Select department",
   descriptionLabel: "Description",
+  descriptionRows: 2,
+  existingTitle: "Existing Lecture Halls / Rooms",
   descriptionPlaceholder: "e.g., AC room, projector available",
   createdMessage: "Lecture hall created successfully!",
   createFailureMessage: "Could not create the room. Try again.",
