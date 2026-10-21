@@ -172,26 +172,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/tpo/settings/blocked-dates/loading.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/branding/error.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/job-types/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/job-types/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/verification/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/loading.tsx`
-- [ ] `src/app/quiz/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/job-types/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/prep-readiness/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/prep-readiness/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/see/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/error.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/history/error.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/participation/error.tsx`
+- [x] `src/app/(authenticated)/tpo/students/preparation-plan/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/error.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/error.tsx`
+- [x] `src/app/(authenticated)/tpo/team/page.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/error.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/verification/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/loading.tsx`
+- [x] `src/app/quiz/page.tsx`
 - [ ] `src/components/academics/college-hall-cancellation-action.tsx`
 - [ ] `src/components/academics/college-recurring-preview.tsx`
 - [ ] `src/components/academics/college-section-lifecycle-action.tsx`
