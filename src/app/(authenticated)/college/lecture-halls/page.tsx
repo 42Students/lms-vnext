@@ -2,7 +2,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import Link from "next/link";
-import { redirect } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
 import { ErrorState } from "@/components/ui/error-state";
@@ -38,7 +38,11 @@ export default async function CollegeLectureHallsPage({
 }) {
   const context = await getCurrentRequestContext();
   const membership = context.membership;
-  if (!membership) redirect("/dashboard");
+  if (!membership) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Lecture Halls" />
+    <ErrorState title="Admin not assigned to a college"
+      description="Your account is not assigned to an active college. Contact your Super Admin to restore lecture hall management access." />
+  </div>;
 
   // This dedicated management surface must not become available through the
   // broader college/academics read permission used by other roles.
@@ -67,7 +71,7 @@ export default async function CollegeLectureHallsPage({
     );
   }
 
-  const [result, departments] = await Promise.all([
+  const [hallsResult, departmentsResult] = await Promise.allSettled([
     listLectureHalls(context, {
       collegeId: membership.collegeId,
       q: query.q || undefined,
@@ -83,6 +87,28 @@ export default async function CollegeLectureHallsPage({
     listDepartments(context, membership.collegeId),
   ]);
 
+  for (const part of [hallsResult, departmentsResult]) {
+    if (part.status==="rejected" && part.reason instanceof AuthorizationError) throw part.reason;
+  }
+  if (hallsResult.status==="rejected") return <div className="min-w-0 space-y-4">
+    <PageHeader title="Lecture Halls" />
+    <Alert tone="error" title="Could not load lecture halls">
+      The hall directory could not be refreshed. Your filters and existing room records were not changed.
+    </Alert>
+    <ErrorState title="Lecture halls unavailable"
+      description="Retry the same college-scoped room search or clear filters."
+      action={<Link href={collegeLectureHallHref(query)} className="font-semibold text-link underline underline-offset-4">Retry lecture halls</Link>} />
+  </div>;
+  const result=hallsResult.value;
+  const departments=departmentsResult.status==="fulfilled"?departmentsResult.value:[];
+  // When department choices fail, preserve any department referenced by a
+  // loaded row so editing that hall never silently clears its current link.
+  const managerDepartments=[...departments.map(dept=>({id:dept.id,name:dept.name}))];
+  for (const hall of result.items) {
+    if (hall.departmentId && !managerDepartments.some(dept=>dept.id===hall.departmentId)) {
+      managerDepartments.push({id:hall.departmentId,name:hall.departmentName??"Current hall department"});
+    }
+  }
   const total = result.pagination.total;
   const totalPages = collegeLectureHallTotalPages(total);
   const filtered = hasCollegeLectureHallFilters(query);
@@ -100,6 +126,11 @@ export default async function CollegeLectureHallsPage({
           className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</Link>}
       />
 
+      {departmentsResult.status==="rejected" ? <Alert tone="warning" title="Departments could not be loaded">
+        The lecture hall register is available. Department is optional when adding a room; leave it blank until the department list is restored.
+        {" "}<Link href={collegeLectureHallHref(query)} className="font-semibold text-link underline underline-offset-4">Retry departments</Link>.
+        An existing hall's recorded department remains intact when edited.
+      </Alert> : null}
       <section aria-label="Lecture hall filters" className="min-w-0 border-t border-border pt-3">
         <form action="/college/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -131,6 +162,8 @@ export default async function CollegeLectureHallsPage({
             <Select name="departmentId" defaultValue={query.departmentId ?? ""}
               className="min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-foreground">
               <option value="">All departments</option>
+              {query.departmentId && !departments.some(dept=>dept.id===query.departmentId) ?
+                <option value={query.departmentId}>Selected department (unavailable in lookup)</option> : null}
               {departments.map((dept) =>
                 <option key={dept.id} value={dept.id}>{dept.name}</option>)}
             </Select>
@@ -182,7 +215,7 @@ export default async function CollegeLectureHallsPage({
         <LectureHallManager
           collegeId={membership.collegeId}
           halls={result.items}
-          departments={departments.map((dept) => ({ id: dept.id, name: dept.name }))}
+          departments={managerDepartments}
           emptyState={total > 0
             ? {
                 title: "No halls on this page",
