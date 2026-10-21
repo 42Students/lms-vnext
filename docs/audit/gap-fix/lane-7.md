@@ -211,3 +211,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-12/src_components_tpo_tpo-draft-drive-step-one-form.tsx.md` | Clarified draft employment type vs custom job-type catalogue to prevent false selection; full five built-ins/custom types require backend draft validation and college-scoped job-type source. Handoff, partial only; no CI.
 - `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_recruiter-self-grants-service.ts.md` | Pending invites cannot be safely inferred from ACTIVE recruiter grants. Left existing strict self-grant checks intact and recorded pending authentication/lead association design; no leak of another user's invites. Handoff, not fixed; no CI.
+
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-drive-archive-preview-service.ts.md` | Clarified close-before-archive and current absence of automatic legacy interview cancellation/notices before confirmation. Cascade and postcommit notifications remain unimplemented, handoff, no CI.
+- `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-drive-read-model.ts.md` | Restored ALL status, NEWEST sort, page size20 defaults with graceful invalid status/sort fallbacks and URL parity. Draft/active enum translation intentionally not guessed. No CI.

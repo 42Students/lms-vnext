@@ -1006,3 +1006,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-3-011-033/-048 | `src/modules/placements/tpo-draft-drive-model.ts + job types API + draft form` | Support five built-ins, active custom types, and hidden historical selected labels with authoritative college grant; current draft employment enum only three types.
 - G2-13-025-005/-021/-025/-036 | `src/modules/placements/recruiter-self-grants-service.ts + public pending-invite service/shell` | Independently verify pending invite belongs to logged-in recruiter contact/user without requiring an existing ACTIVE grant, expose only four safe identity fields and route outside grant-only shell.
+
+- G2-9-013-056/-077/-078 | `src/modules/placements/job-service.ts + notification service` | Archive cascade must cancel nonterminal interviews, postcommit notify learners, audit once, preserve tenant scope and idempotency; preview now warns omission.
+- G2-9-015-067 | `src/modules/placements/college-drive-read-service.ts` | Explicitly map legacy isDraft/isActive categories to vNext statuses, include archived only with authorized filter.
