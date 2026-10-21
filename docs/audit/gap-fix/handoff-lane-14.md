@@ -179,3 +179,5 @@
 - Wave3 lane-12 notification query regression: `src/modules/activity/notification-service.ts` listOwnNotificationPage uses a replacement literal containing `appendNotificationContextFilters(conditions, options);` instead of the intended escaped wildcard replacement, and references `options.category` absent from its options TypeScript type. Lane 12 owns this file; repair the malformed query, duplicate context filter and strict type before release-worker certification.
 
 - G2-16-025-052: src/modules/placements/tpo-drive-change-request-service.ts (lane 6): on ACCEPT use atomicSafeDriveChangeAcceptanceStatement for verified DEADLINE/LOCATION, audit the versioned job patch in the same transaction, and block unsupported fields rather than marking ACCEPTED without applying.
+
+- Wave3 DB05: migration 0200 now includes the staged legacy content/class/parent/sequence provenance columns; lane 15 must register/journal/replay with DB negative/race tests before enabling DB05 lesson discussion writes.
