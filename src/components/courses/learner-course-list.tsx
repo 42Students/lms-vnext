@@ -6,10 +6,9 @@ import { Alert } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { FilterChip } from "@/components/ui/filter-chip";
-import { Disclosure } from "@/components/ui/disclosure";
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { useId } from "react";
+import { useId, type ReactNode } from "react";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 
 import Link from "next/link";
@@ -41,6 +40,19 @@ import { sortLearnerCourseCards, type LearnerCourseSortMode } from "@/modules/co
 import {learnerCourseCardNextLabel} from "@/modules/courses/learner-course-card-next-label-model";
 
 const PAGE_SIZE = 48;
+const MAX_COURSE_SEARCH_CHARS = 200;
+
+/** Compact keyboard-openable, anchored legacy metric pills. */
+function LearnerMetricPopover({title,children}:{title:string;children:ReactNode}){
+ return <details className="group relative">
+  <summary className="inline-flex min-h-9 cursor-pointer items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-1.5 text-xs font-semibold text-primary-text marker:hidden hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
+   {title} <span className="ml-2 text-muted-foreground" aria-hidden="true">⌄</span>
+  </summary>
+  <div className="absolute left-0 top-full z-30 mt-1 w-[min(20rem,calc(100vw-3rem))] max-w-[calc(100vw-3rem)] rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm shadow-lg">
+   {children}
+  </div>
+ </details>;
+}
 
 export type LearnerCourseListRow = {
   course: {
@@ -53,6 +65,10 @@ export type LearnerCourseListRow = {
     courseStatus?:string;
     courseAllowedForDisplay?:number|null;
     offeringType: string;
+    electiveSlotName?: string | null;
+    isMandatory?: boolean | null;
+    electiveOfferingId?: string | null;
+    legacyCourseId?: number | null;
     credits: number | null;
     sectionName: string;
     sectionCode: string;
@@ -139,6 +155,7 @@ export function LearnerCourseList({
   const [progressFilter,setProgressFilter]=useState<LearnerCourseProgressFilter>("ALL");
   const [termState,setTermState]=useState<LearnerCourseTermState>("ALL");
   const [sortMode,setSortMode] = useState<LearnerCourseSortMode>("NAME");
+  const [sortWasChosen,setSortWasChosen]=useState(false);
   const [visibleLimit, setVisibleLimit] = useState(PAGE_SIZE);
 
   const periodRows = useMemo(
@@ -157,7 +174,7 @@ export function LearnerCourseList({
 
   const visibleRows = useMemo(() => {
     const needle = query.trim().toLowerCase();
-    return sortLearnerCourseCards(periodRows
+    const matches=periodRows
       .filter(row => !continueOnly || learnerCourseHasContinueAction(row))
       .filter(row => learnerCourseMatchesProgress(row,progressFilter))
       .filter(row => learnerCourseMatchesTermState(row,termState))
@@ -167,9 +184,15 @@ export function LearnerCourseList({
         if (effectiveTypeFilter === "core" && elective) return false;
         if (effectiveTypeFilter === "elective" && !elective) return false;
         return learnerCourseMatchesSearch(row, needle);
-      })
-      ,sortMode);
-  }, [periodRows, query, effectiveTypeFilter, continueOnly,sortMode,progressFilter,termState]);
+      });
+    // Legacy preserves source order inside regular/elective groups until the
+    // learner intentionally chooses an explicit sort mode.
+    return sortWasChosen?sortLearnerCourseCards(matches,sortMode):
+      matches.map((row,index)=>({row,index})).sort((a,b)=>
+        Number(a.row.course.offeringType.toUpperCase()==="ELECTIVE")-
+        Number(b.row.course.offeringType.toUpperCase()==="ELECTIVE")||a.index-b.index
+      ).map(item=>item.row);
+  }, [periodRows, query, effectiveTypeFilter, continueOnly,sortMode,sortWasChosen,progressFilter,termState]);
 
   if (rows.length === 0 && periods.length===0) {
     return (
@@ -238,7 +261,7 @@ export function LearnerCourseList({
               Search courses
               <Input
                 value={query}
-                maxLength={100}
+                maxLength={MAX_COURSE_SEARCH_CHARS}
                 onChange={(event) => {
                   setQuery(event.target.value);
                   setSearchWasTruncated(false);
@@ -247,14 +270,14 @@ export function LearnerCourseList({
                 onPaste={event=>{
                  const pasted=event.clipboardData.getData("text");
                  const target=event.currentTarget;
-                 if(target.value.length-(target.selectionEnd-target.selectionStart)+pasted.length>100)
+                 if(target.value.length-(target.selectionEnd-target.selectionStart)+pasted.length>MAX_COURSE_SEARCH_CHARS)
                    setSearchWasTruncated(true);
                 }}
                 placeholder="Search courses by name or code…"
                 className="mt-1.5 min-h-[var(--lms-control-height)] max-md:min-h-11"
               />
             </label>
-            {searchWasTruncated?<p role="alert" className="text-xs text-warning">Search is limited to 100 characters. Shorten your text to search.</p>:null}
+            {searchWasTruncated?<p role="alert" className="text-xs text-warning">Search is limited to 200 characters. Shorten your text to search.</p>:null}
             {query?<Button variant="secondary" type="button" className="min-h-11 w-fit md:min-h-9" onClick={()=>{setQuery("");setSearchWasTruncated(false);}}>Clear search</Button>:null}
           </div>
 
@@ -304,7 +327,7 @@ export function LearnerCourseList({
           </label>
           <label className="grid min-w-0 w-full gap-[6px] font-semibold sm:w-44 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Sort Courses
-            <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
+            <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setSortWasChosen(true);setVisibleLimit(PAGE_SIZE);}}
               className="min-h-[var(--lms-control-height)] max-md:min-h-11">
               <option value="NAME">Course name</option><option value="PROGRESS">Least progress first</option>
               <option value="DUE">Next assessment due</option>
@@ -321,7 +344,7 @@ export function LearnerCourseList({
          </div>:null}
         </div>
         {learnerCourseHasActiveFilters({query,typeFilter:effectiveTypeFilter,continueOnly,progressFilter,termState,sortMode}) ? (
-          <Button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setVisibleLimit(PAGE_SIZE);}}
+          <Button type="button" onClick={() => {setQuery("");setTypeFilter("all");setContinueOnly(false);setProgressFilter("ALL");setTermState("ALL");setSortMode("NAME");setSortWasChosen(false);setVisibleLimit(PAGE_SIZE);}}
             variant="secondary" className="mt-3 min-h-[var(--lms-control-height)] max-md:min-h-11">
             Clear Course filters
           </Button>
@@ -340,7 +363,7 @@ export function LearnerCourseList({
           <Badge tone="neutral">
             {periodRows.length} {periodRows.length === 1 ? "Course" : "Courses"}
           </Badge>
-          {creditSummary.recordedCount > 0 ? (
+          {creditSummary.recordedCount > 0 || (periodRows.length>0&&creditSummary.missingCount===0) ? (
             <Badge tone="neutral">
               {creditSummary.credits} {creditSummary.credits===1?"Credit":"Credits"}
               {creditSummary.missingCount > 0
@@ -354,24 +377,23 @@ export function LearnerCourseList({
              (!Number.isFinite(row.course.credits)||row.course.credits<0))?
             <Badge tone="warning">Invalid Credits — excluded from total</Badge>:null}
         </div>
-        <Disclosure title="Semester information" className="mt-3 border-t border-border" contentClassName="pt-2">
-          <div className="flex flex-wrap gap-2 text-xs">
-          <Disclosure title="Semester Details" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
+        <div aria-label="Semester summary details" className="relative mt-3 flex min-w-0 flex-wrap gap-2 border-t border-border pt-3 text-xs">
+          <LearnerMetricPopover title="Semester Details">
             <div className="mt-2 space-y-1 text-body">
               <div>Program: {periodRows[0]?.course.programName??"Not recorded"}</div>
               <div>Batch: {periodRows[0]?.course.cohortName??"Not recorded"}</div>
               <div>Academic Year: {selectedPeriod?.startDate?.slice(0,4)??"Not recorded"}</div>
               <div>Semester: {selectedPeriod?.name??"Not recorded"}</div>
             </div>
-          </Disclosure>
-          <Disclosure title="All Courses" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
+          </LearnerMetricPopover>
+          <LearnerMetricPopover title="All Courses">
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
               className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{periodRows.slice(0,100).map((row,i)=>
               <li key={row.course.deliveryId+"-"+i}>{row.course.courseName}</li>)}</ul>
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for more courses.</p>:null}
             {periodRows.length>100?<p>Showing first 100; search the full list below.</p>:null}
-          </Disclosure>
-          {creditSummary.recordedCount>0?<Disclosure title="Credits Breakdown" className="rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 [&>summary]:px-0">
+          </LearnerMetricPopover>
+          {creditSummary.recordedCount>0?<LearnerMetricPopover title="Credits Breakdown">
             <ul role="region" aria-label="Scrollable course list" tabIndex={0}
               className="mt-2 max-h-64 space-y-1 overflow-y-auto overscroll-contain pr-2 text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               {periodRows.slice(0,100).map((row,i)=><li key={row.course.deliveryId+"-"+i}>
@@ -381,9 +403,8 @@ export function LearnerCourseList({
             {periodRows.length>8?<p className="mt-1 text-muted-foreground">Scroll inside the list for the credits breakdown.</p>:null}
             {periodRows.length>100?<p className="mt-1 text-warning">Showing first 100 courses; use search to narrow the rest.</p>:null}
             <p className="mt-2 font-semibold">Total {creditSummary.credits} Credits</p>
-          </Disclosure>:null}
-          </div>
-        </Disclosure>
+          </LearnerMetricPopover>:null}
+        </div>
       </section>
 
       {rows.some(row => row.unavailable) ? (
@@ -393,7 +414,7 @@ export function LearnerCourseList({
         </Alert>
       ) : null}
       <p role="status" aria-live="polite" className="text-xs font-semibold text-muted-foreground leading-[20px]">{learnerCourseResultSummary(Math.min(visibleLimit, visibleRows.length), visibleRows.length, periodRows.length)}</p>
-      <section role="region" aria-label="Course list" className="min-w-0">
+      <section role="region" aria-label="Course list" aria-busy={isUpdating} className="min-w-0">
       {visibleRows.length === 0 ? (
         <EmptyState title={
             periodRows.length===0&&selectedPeriod?("No courses found for "+selectedPeriod.name+"."):
@@ -405,6 +426,7 @@ export function LearnerCourseList({
             {visibleRows.slice(0, visibleLimit).map((row, index, renderedRows) => {
               const elective =
                 String(row.course.offeringType).toUpperCase() === "ELECTIVE";
+              const blocked=row.course.courseEnabled===false||row.course.courseAllowedForDisplay===0;
               const previousElective =
                 index > 0 &&
                 String(renderedRows[index - 1]?.course.offeringType).toUpperCase() === "ELECTIVE";
@@ -433,9 +455,9 @@ export function LearnerCourseList({
                   <div className="min-w-0">
                     <Link
                     href={`/learn/courses/${encodeURIComponent(row.course.deliveryId)}/home`}
-                    aria-disabled={row.readOnly}
-                    tabIndex={row.readOnly?-1:undefined}
-                    onClick={event=>{if(row.readOnly)event.preventDefault();}}
+                    aria-disabled={blocked}
+                    tabIndex={blocked?-1:undefined}
+                    onClick={event=>{if(blocked)event.preventDefault();}}
                     className="group flex min-h-72 flex-col overflow-hidden rounded-xl border border-border bg-surface transition hover:border-primary hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 min-h-11 text-sm"
                   >
                     <div className="relative flex min-h-24 items-end overflow-hidden bg-primary-subtle px-5 py-4">
@@ -453,7 +475,7 @@ export function LearnerCourseList({
                             </StatusBadge>
                           ) : null}
                           {elective ? (
-                            <StatusBadge tone="info">Elective</StatusBadge>
+                            <StatusBadge tone="info">{row.course.electiveSlotName?.trim()||"Elective"}</StatusBadge>
                           ) : null}
                         </div>
                       </div>

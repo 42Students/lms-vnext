@@ -63,26 +63,25 @@ export function SuperAdminLessonBulkVisibility({
    inFlight.current=false;setPending(false);
   }
  }
- return <details aria-label="Lesson bulk published content visibility"
+ return <section aria-label="Lesson bulk published content visibility"
   className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-  <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-   Bulk published content visibility
-  </summary>
+  <h3 className="mb-2 text-sm font-semibold text-body">Bulk published content visibility</h3>
   <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
    <p role="status" className="text-sm text-muted-foreground">
-    {selectedInScope.length} of {lessons.length} lessons selected
+    {selectedInScope.length} selected · {lessons.length} lessons on this page
    </p>
    <p className="text-sm text-body leading-[22px]">
     Show or hide currently published lesson content for students. This operation
     does not change a lesson&apos;s own active status, or unpublished and future content.
     It does not delete any files.
    </p>
+   <p className="text-xs text-muted-foreground">Selection applies to this filtered page only, not lessons on other pages. Change search or course to start a new selection. This bulk control changes published content visibility, not the lesson&apos;s own “Visible to students” setting.</p>
    {listIncomplete?<Alert tone="warning">The lesson list is incomplete. Refresh it before changing visibility.</Alert>:null}
    <label className="inline-flex min-h-11 items-center gap-2 text-sm font-semibold md:min-h-10">
     <Checkbox checked={lessons.length>0&&selectedInScope.length===lessons.length}
      onChange={event=>setSelected(event.target.checked?lessons.map(item=>item.id):[])}
      disabled={!canChange}/>
-    Select all on this page
+    Select all on this page (up to 25 per action)
    </label>
    <ScrollCue axis="y" label="Lesson bulk selection" viewportClassName="max-h-48">
     <div className="grid gap-2 md:grid-cols-2">
@@ -101,18 +100,29 @@ export function SuperAdminLessonBulkVisibility({
      </label>)}
     </div>
    </ScrollCue>
-   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row">
+   {selectedInScope.length>0?<div role="group" aria-label="Actions on selected lessons" className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
     <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
-     disabled={!canChange||!selectedInScope.length} onClick={()=>plan(true)}>
-     {pending?"Saving…":"Show published content"}
+     disabled={!canChange} onClick={()=>plan(true)}>
+     {pending?"Saving…":"Show to students"}
     </Button>
     <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
-     disabled={!canChange||!selectedInScope.length} onClick={()=>plan(false)}>
-     Hide published content
+     disabled={!canChange} onClick={()=>plan(false)}>
+     Hide from students
     </Button>
-   </div>
+    <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9"
+     disabled={!canChange} onClick={()=>{setSelected([]);setError(null);setReport(null);}}>
+     Clear selection
+    </Button>
+   </div>:null}
    {error?<Alert tone="error">{error}</Alert>:null}
    {report?<Alert tone={report.failures.length?"warning":"success"} role="status">
+    <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
+     <strong>{report.failures.length
+      ? (lastAction?"Show to students":"Hide from students")+" was only partially completed"
+      : "Selected lesson content visibility updated"}</strong>
+     <Button type="button" variant="secondary" onClick={()=>setReport(null)}
+      aria-label="Dismiss bulk update results" className="min-h-9">Dismiss</Button>
+    </div>
     <p>
      {report.selectedLessons-failedLessonIds.length} of {report.selectedLessons} lesson(s) processed without reported errors.
      {" "}{report.changed} published content item(s) changed · {report.unchanged} unchanged · {report.failures.length} failed.
@@ -126,8 +136,9 @@ export function SuperAdminLessonBulkVisibility({
     </p>
     {report.failures.length?<ul className="list-disc pl-5">
      {report.failures.slice(0,5).map(row=><li key={row.id}>
-      {lessons.find(lesson=>lesson.id===row.lessonId)?.name??"Selected lesson"}: {row.reason}
+      {lessons.find(lesson=>lesson.id===row.lessonId)?.name??("Lesson "+row.lessonId)}: {row.reason.slice(0,200)}
      </li>)}
+     {report.failures.length>5?<li>{report.failures.length-5} more failed records. Retry failed to review them.</li>:null}
     </ul>:null}
     {failedLessonIds.length>0&&lastAction!==null?
      <Button type="button" variant="secondary" disabled={!canChange}
@@ -138,11 +149,18 @@ export function SuperAdminLessonBulkVisibility({
   </div>
   <ConfirmDialog open={planned!==null} onOpenChange={open=>{if(!open&&!pending)setPlanned(null);}}
    title={planned?.show?"Show published lesson content?":"Hide published lesson content?"}
-   description={"Update currently published content in "+(planned?.ids.length??0)+
-    " selected lesson(s). No files will be deleted. Lesson active status and draft content stay unchanged."}
-   confirmLabel={planned?.show?"Show content":"Hide content"}
+   description="Selected lessons across the current list will be updated. No files are deleted by this action."
+   confirmLabel={planned?.show?"Show to students":"Hide from students"}
    confirmVariant={planned?.show?"primary":"danger"} pending={pending}
    confirmDisabled={!planned||listIncomplete}
-   onConfirm={()=>{if(planned)void mutate(planned);}}/>
- </details>;
+   onConfirm={()=>{if(planned)void mutate(planned);}}>
+   <div className="space-y-2 text-sm">
+    <p>{planned?.ids.length??0} selected lesson(s); this updates their published content only. Lesson active status and draft content stay unchanged.</p>
+    {planned?.ids.length?<ul className="list-disc pl-5">
+     {planned.ids.slice(0,5).map(id=><li key={id}>{lessons.find(item=>item.id===id)?.name??("Lesson "+id)}</li>)}
+     {planned.ids.length>5?<li>and {planned.ids.length-5} more</li>:null}
+    </ul>:null}
+   </div>
+  </ConfirmDialog>
+ </section>;
 }
