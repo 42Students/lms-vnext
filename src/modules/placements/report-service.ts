@@ -98,6 +98,27 @@ function reportFilterKey(query: PlacementReportQuery): string {
   ]);
 }
 
+/**
+ * The legacy batch filter restricts both the student population and the
+ * drive outcomes. Registrations alone cannot be used for that purpose:
+ * an applicant may have applied before (or without) opting into the current
+ * registration row. Resolve the actual academic cohort, within the selected
+ * college, when filtering applications, selections and offers.
+ */
+function batchReportMemberships(collegeId: string, cohortId: string) {
+  return getDb()
+    .select({ membershipId: learnerProgramEnrollments.membershipId })
+    .from(learnerProgramEnrollments)
+    .innerJoin(
+      collegeMemberships,
+      and(
+        eq(collegeMemberships.id, learnerProgramEnrollments.membershipId),
+        eq(collegeMemberships.collegeId, collegeId),
+      ),
+    )
+    .where(eq(learnerProgramEnrollments.cohortId, cohortId));
+}
+
 export async function getPlacementReportWorkspace(
   context: RequestContext,
   rawQuery: unknown,
@@ -288,6 +309,12 @@ export async function getPlacementReportWorkspace(
     ...jobConditions,
     selectedJobCondition,
     inArray(placementJobs.id, jobs.map((job) => job.id)),
+    query.batchId
+      ? inArray(
+          placementApplications.membershipId,
+          batchReportMemberships(college.id, query.batchId),
+        )
+      : undefined,
   );
 
   const registrationsAvailable = await placementTableExists(
@@ -559,8 +586,9 @@ export async function getPlacementReportWorkspace(
       ? "Placement registration data is not available in this environment yet, so the registered pool and placement rate are shown as empty rather than estimated."
       : "Registrations are current batch-level choices, not season snapshots. " +
       "The placement-rate denominator can therefore differ from historical " +
-      "legacy season reports. A drive filter narrows outcomes, not the " +
-      "registered cohort denominator. Accepted offers count offers; accepted " +
+      "legacy season reports. Academic batch and branch filters narrow the " +
+      "learner population and outcomes; drive/company/mode/category filters " +
+      "narrow outcomes but not the registered cohort. Accepted offers count offers; accepted " +
       "and placed learners count distinct students. No registration data " +
       "means an unknown rate, not zero. Annual CTC uses INR; legacy CTC " +
       "in LPA maps at 1 LPA = 100,000 INR (two-decimal legacy precision). " +
@@ -772,6 +800,12 @@ export async function getPlacementReportDetails(
           eq(placementJobs.seasonId, selectedSeasonId),
           isNull(placementJobs.archivedAt),
           inArray(placementJobs.id, workspace.selectedReportJobIds),
+          query.batchId
+            ? inArray(
+                placementApplications.membershipId,
+                batchReportMemberships(query.collegeId, query.batchId),
+              )
+            : undefined,
           isNotNull(placementOffers.releasedAt),
         ),
       ),
@@ -806,6 +840,12 @@ export async function getPlacementReportDetails(
         eq(placementJobs.seasonId, selectedSeasonId),
         isNull(placementJobs.archivedAt),
         inArray(placementJobs.id, workspace.selectedReportJobIds),
+        query.batchId
+          ? inArray(
+              placementApplications.membershipId,
+              batchReportMemberships(query.collegeId, query.batchId),
+            )
+          : undefined,
       )),
   ]);
 
@@ -895,7 +935,9 @@ export async function getPlacementReportDetails(
     }),
     detailScopeNote:
       "The unplaced pool uses current batch registration choices, not a " +
-      "historical season snapshot. A learner is unplaced here when no " +
+      "historical season snapshot. An academic batch filter also restricts " +
+      "offer and selection evidence to enrolled members of that batch. " +
+      "A learner is unplaced here when no " +
       "qualifying full-time offer reaches the college's placed-count stage " +
       "in the selected season and drive scope; other offers may exist. " +
       "Branches use current program enrollment. Expired outstanding offers " +
