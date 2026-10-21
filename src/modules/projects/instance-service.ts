@@ -387,7 +387,8 @@ export async function createProjectInstance(
           return {
             projectId: project.id,
             sprintId,
-            templateKey: task.key,
+            templateKey:task.key,
+            legacyTaskKey:task.legacyKey??null,
             title: task.title,
             description:task.description??null,
             dueLabel:task.dueLabel??null,
