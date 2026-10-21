@@ -3,6 +3,7 @@ import {
   desc,
   eq,
   and,
+  isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { readProjectReadinessOverride } from "./readiness-override-service";
@@ -54,7 +55,7 @@ export async function getProjectReadiness(
     db
       .select({ status: projectTasks.status })
       .from(projectTasks)
-      .where(eq(projectTasks.projectId, projectId))
+      .where(and(eq(projectTasks.projectId, projectId),isNull(projectTasks.deletedAt)))
       .orderBy(asc(projectTasks.sequence)),
     db
       .select({

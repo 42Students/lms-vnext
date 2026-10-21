@@ -98,7 +98,8 @@ export async function listCollegeReadinessReleases(context:RequestContext,colleg
   committed:sql<number>`coalesce(sum(${projectTasks.estimatePoints}),0)::int`,
   completed:sql<number>`coalesce(sum(case when ${projectTasks.status}='DONE'
     then ${projectTasks.estimatePoints} else 0 end),0)::int`,
- }).from(projectTasks).where(eq(projectTasks.projectId,id))
+ }).from(projectTasks).where(and(eq(projectTasks.projectId,id),
+     isNull(projectTasks.deletedAt)))
    .groupBy(projectTasks.sprintId);
  const bySprint=new Map(points.map(row=>[row.sprintId,row]));
  return releases.map(release=>{
