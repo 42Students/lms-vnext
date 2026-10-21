@@ -118,16 +118,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/courses/learner-course-list.tsx`
 - [x] `src/components/courses/learner-quiz-attempt.tsx`
 - [x] `src/components/courses/learner-rich-response-editor.tsx`
-- [ ] `src/components/courses/lesson-resource-materials-control.tsx`
-- [ ] `src/components/courses/quiz-attempt-control.tsx`
-- [ ] `src/components/courses/super-admin-content-actions.tsx`
-- [ ] `src/components/courses/super-admin-course-bulk-visibility.tsx`
-- [ ] `src/components/electives/college-elective-offering-manager.tsx`
-- [ ] `src/components/electives/college-slot-manager.tsx`
-- [ ] `src/components/groups/college-group-actions.tsx`
-- [ ] `src/components/groups/college-study-member-actions.tsx`
-- [ ] `src/components/hr/hr-drive-draft-form.tsx`
-- [ ] `src/components/hr/hr-recruiter-bell.tsx`
+- [x] `src/components/courses/lesson-resource-materials-control.tsx`
+- [x] `src/components/courses/quiz-attempt-control.tsx`
+- [x] `src/components/courses/super-admin-content-actions.tsx`
+- [x] `src/components/courses/super-admin-course-bulk-visibility.tsx`
+- [x] `src/components/electives/college-elective-offering-manager.tsx`
+- [x] `src/components/electives/college-slot-manager.tsx`
+- [x] `src/components/groups/college-group-actions.tsx`
+- [x] `src/components/groups/college-study-member-actions.tsx`
+- [x] `src/components/hr/hr-drive-draft-form.tsx`
+- [x] `src/components/hr/hr-recruiter-bell.tsx`
 - [ ] `src/components/hr/recruiter-notification-bell.tsx`
 - [ ] `src/components/hr/recruiter-round-inline-editor.tsx`
 - [ ] `src/components/people/faculty-profile-metadata.tsx`
