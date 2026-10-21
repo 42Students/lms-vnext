@@ -8,7 +8,7 @@ import {Banner} from "@/components/ui/banner";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
-import { useState, type FormEvent, type KeyboardEvent } from "react";
+import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { useFormDraft } from "@/hooks/use-form-draft";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
@@ -27,6 +27,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   const {page,screen}=draft;
   const patch=(key:keyof typeof initial,value:string)=>setDraft(current=>({...current,[key]:value}));
   const [pending, setPending] = useState(false);
+  const submitLock=useRef(false);
+  const [fieldErrors,setFieldErrors]=useState<Record<string,string>>({});
   const [error, setError] = useState("");
   const [created, setCreated] = useState("");
   const [linkIssueError,setLinkIssueError]=useState("");
@@ -56,7 +58,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
 
   async function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pending) return;
+    if (pending||submitLock.current) return;
     const form = event.currentTarget;
     const data = new FormData(form);
     const value = (name: string) => String(data.get(name) ?? "");
@@ -73,9 +75,17 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       evidenceLink: value("evidenceLink") || null,
     });
     if (!parsed.success) {
-      setError(parsed.error.issues[0]?.message ?? "Check your report details.");
+      const errors:Record<string,string>={};
+      for(const issue of parsed.error.issues){
+        const key=String(issue.path[0]??"");
+        if(key&&!errors[key])errors[key]=issue.message;
+      }
+      setFieldErrors(errors);
+      setError("Check the highlighted report fields.");
       return;
     }
+    setFieldErrors({});
+    submitLock.current=true;
     setPending(true); setError("");
     try {
       const payload=await apiFetch<{issue:{publicId:string}}>("/api/tracker/issues", {
@@ -86,8 +96,10 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       setCreated(payload.issue.publicId);
       await linkCreatedIssue(payload.issue.publicId);
     } catch (caught) {
-      setError(caught instanceof FriendlyFetchError ? caught.message : friendlyApiError({}));
+      setError(caught instanceof FriendlyFetchError ? caught.message :
+        "The issue could not be reported. Your text is still here — please try again.");
     } finally {
+      submitLock.current=false;
       setPending(false);
     }
   }
@@ -145,18 +157,21 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             <option value="" disabled>Select reporter</option>
             {REPORTER_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
+        {fieldErrors.reporterName?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.reporterName}</span>:null}
         </label>
         <label className={label}>Account used
           <Select className={field} name="accountRole" required value={draft.accountRole} onChange={event=>patch("accountRole",event.target.value)}>
             <option value="" disabled>Select account</option>
             {ACCOUNT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
+        {fieldErrors.accountRole?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.accountRole}</span>:null}
         </label>
         <label className={label}>Environment
           <Select className={field} name="environment" required value={draft.environment} onChange={event=>patch("environment",event.target.value)}>
             <option value="" disabled>Select environment</option>
             {ENVIRONMENT_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
+        {fieldErrors.environment?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.environment}</span>:null}
         </label>
       </div>
       <fieldset className="grid min-w-0 gap-3 border-y border-border py-4">
@@ -169,6 +184,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               <option value="" disabled>Search or select page → screen → section</option>
               {LOCATION_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
+            {fieldErrors.page?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.page}</span>:null}
           </label>
           <label className={label}>Screen
             <Select className={field} required={Boolean(selectedPage?.children?.length)}
@@ -177,6 +193,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               <option value="">Select screen</option>
               {selectedPage?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
+            {fieldErrors.screen?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.screen}</span>:null}
           </label>
           <label className={label}>Section
             <Select className={field} name="section" key={page + ":" + screen}
@@ -185,6 +202,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
               <option value="">Select section</option>
               {selectedScreen?.children?.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
             </Select>
+            {fieldErrors.section?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.section}</span>:null}
           </label>
         </div>
       </fieldset>
@@ -199,6 +217,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           <Select className={field} name="severity" value={draft.severity} onChange={event=>patch("severity",event.target.value)} required>
             {SEVERITY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
+        {fieldErrors.severity?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.severity}</span>:null}
         </label>
       </div>
       <label className={label}>What went wrong?
@@ -206,6 +225,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           value={draft.description} onChange={event=>patch("description",event.target.value)}
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground">Up to 4000 characters</span>
+        {fieldErrors.description?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.description}</span>:null}
       </label>
       <details className="min-w-0 border-b border-border pb-4" open={Boolean(draft.evidenceLink)}>
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Optional evidence link</summary>
@@ -245,7 +265,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       </> : null}
       {error ? <InlineNotice tone="error" message={error}/> : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground leading-[20px]">Ctrl/⌘ + Enter to submit</p>
+        <p className="text-xs text-muted-foreground leading-[20px]">Draft saves automatically on this device. Ctrl/⌘ + Enter to submit. Private screenshot uploads are not yet enabled.</p>
         <Button disabled={pending} loading={pending} type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
           {pending ? "Reporting…" : "Report issue"}
         </Button>

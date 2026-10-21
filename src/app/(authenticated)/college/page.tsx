@@ -14,6 +14,8 @@ import { getCollegeDashboardUnstaffedCourses, getCollegeDashboardUnstaffedDelive
 import { getCollegeDashboardPendingGrades, getCollegeDashboardPendingGradesCount } from "@/modules/admin-ui/college-dashboard-grading-service";
 import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { listColleges } from "@/modules/colleges/service";
@@ -24,10 +26,20 @@ export default async function CollegeOverviewPage() {
   const context = await getCurrentRequestContext();
   const membership = context.membership;
 
-  if (!membership) {
-    return <EmptyState title="Admin not assigned to a college"
-      description="Your account does not have an active college assignment. Contact a platform administrator." />;
-  }
+  const limitedAccess=<div className="min-w-0 space-y-4">
+    <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.dashboard}/>
+    <Alert tone="warning">
+      Admin not assigned to a college. Some features are limited. Contact your administrator.
+    </Alert>
+    <section aria-label="Quick Actions" className="space-y-2 border-t border-border pt-3">
+      <h2 className="text-base font-semibold text-[var(--lms-heading)]">Quick Actions</h2>
+      <Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Choose an available workspace
+      </Link>
+      <p className="text-xs text-muted-foreground">College-specific changes remain disabled until your membership is verified.</p>
+    </section>
+  </div>;
+  if (!membership) return limitedAccess;
 
   const colleges = await listColleges(
     context,
@@ -35,14 +47,7 @@ export default async function CollegeOverviewPage() {
   );
   const college = colleges.find((item) => item.id === membership.collegeId);
 
-  if (!college) {
-    return (
-      <EmptyState
-        title="Admin not assigned to a college"
-        description="Your active membership no longer resolves to an active college."
-      />
-    );
-  }
+  if (!college) return limitedAccess;
 
   // A secondary feed failing must not hide other dashboard sections or suggest
   // that missing data is a real zero. Keep each result independently visible.
@@ -133,11 +138,20 @@ export default async function CollegeOverviewPage() {
           </p>
         </div>
       </section>
-      {dashboard?<CollegeDashboardCards cards={dashboard.cards}/>:<CollegeDashboardSectionFailure title="At a glance"/>}
+      {dashboard?<CollegeDashboardCards cards={dashboard.cards}/>:<div className="space-y-2">
+        <CollegeDashboardSectionFailure title="At a glance"/>
+        <p className="text-xs text-muted-foreground">Summary is temporarily unavailable. Refresh to try again. Previous counts are not inferred.</p>
+        <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+      </div>}
       {closingQuizzes?<CollegeClosingQuizzesCard data={closingQuizzes}/>:<CollegeDashboardSectionFailure title="Closing quizzes"/>}
       {attendance?<>
       <section aria-label="Today" className="space-y-3">
-        <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Today</h2>
+        <div className="flex min-w-0 items-center justify-between gap-3">
+          <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Today</h2>
+          <form method="get" action="/college">
+            <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Refresh</Button>
+          </form>
+        </div>
         <div className="grid gap-[8px] md:grid-cols-3">
           {[
             { label: "Classes scheduled today", value: attendance.today.scheduled },
@@ -152,7 +166,11 @@ export default async function CollegeOverviewPage() {
           </div>)}
         </div>
       </section>
-      </>:<CollegeDashboardSectionFailure title="Today"/>}
+      </>:<div className="space-y-2">
+        <CollegeDashboardSectionFailure title="Today"/>
+        <p className="text-xs text-muted-foreground">Couldn&apos;t load this. Refresh to try again.</p>
+        <Link href="/college" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+      </div>}
       {attendance?<>
       <section aria-label="Attendance not taken" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-3">
@@ -300,6 +318,11 @@ export default async function CollegeOverviewPage() {
         <CollegeAdminQuickActions />
       </details>
       {dashboard?<CollegeSetupChecklist phases={dashboard.setup.phases}/>:<CollegeDashboardSectionFailure title="College setup checklist"/>}
+      {attendance&&lowAttendance&&pendingGradesCount!==null&&unstaffedDeliveriesCount!==null&&setupGaps
+        &&attendance.unattendedCount===0&&lowAttendance.total===0
+        &&pendingGradesCount===0&&unstaffedDeliveriesCount===0
+        &&setupGaps.every(item=>item.count===0)
+        ?<Alert tone="success">Nothing needs you right now.</Alert>:null}
     </div>
   );
 }
