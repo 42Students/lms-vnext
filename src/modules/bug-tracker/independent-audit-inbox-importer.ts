@@ -62,10 +62,21 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
   const historical=await tx.select().from(db10AuditFindingFiles)
    .where(eq(db10AuditFindingFiles.source,SOURCE))
    .orderBy(desc(db10AuditFindingFiles.checkedAt)).limit(20000);
+  // A history cap must be detected: treating a truncated ledger as empty
+  // could re-import an accepted file and destroy append-only provenance.
+  if(historical.length>=20000)
+   throw new Error("Audit import ledger exceeds the safe scan bound");
   const accepted=new Map<string,(typeof historical)[number]>();
   const seen=new Set<string>();
+  const previousProblems=new Map<string,string>();
   for(const row of historical){
    seen.add(row.sourcePath+"|"+row.blobSha+"|"+row.action);
+   if(!previousProblems.has(row.sourcePath)){
+    previousProblems.set(row.sourcePath,row.result==="REFUSED"
+     ?"REJECTED: invalid or unsafe inbox file":row.result==="TAMPERED"
+     ?"TAMPERED: changed after import":row.result==="DELETED"
+     ?"DELETED: source file removed after import":"");
+   }
    if(row.result==="ACCEPTED"&&!accepted.has(row.sourcePath))
     accepted.set(row.sourcePath,row);
   }
@@ -213,7 +224,16 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
   const incomplete=ordered.some(file=>
    !seen.has(file.path+"|"+file.sha+"|"+(file.path.includes(".u")?"UPDATE":"IMPORT"))&&
    !accepted.has(file.path));
-  const result=incomplete||stats.refused||stats.tampered||stats.deleted?"PARTIAL":"SUCCESS";
+  // Retain outstanding older refusals, changes and deletes until a later
+  // accepted correction actually supersedes them. A no-op rerun is not
+  // success merely because its previously rejected files were skipped.
+  const mentioned=new Set(problems.map(item=>item.path));
+  for(const [path,reason] of previousProblems){
+   if(!reason||mentioned.has(path))continue;
+   if(reason.startsWith("REJECTED") && accepted.has(path))continue;
+   problems.push({path,reason});
+  }
+  const result=incomplete||problems.length?"PARTIAL":"SUCCESS";
   // Only the committed transaction may publish a sync receipt.
   await tx.insert(db10AuditFindingSyncs).values({
    source:SOURCE,repo:SOURCE,lastCommit:inbox.commit,
