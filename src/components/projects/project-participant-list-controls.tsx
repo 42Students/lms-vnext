@@ -2,7 +2,7 @@
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import {useEffect,useRef} from "react";
+import {useEffect,useRef,type FormEvent} from "react";
 import Link from "next/link";
 
 export type ProjectParticipantListQuery = {
@@ -54,22 +54,26 @@ export function ProjectParticipantListControls({
   const liveForm = useRef<HTMLFormElement | null>(null);
   const liveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(()=>()=>{if(liveTimer.current)clearTimeout(liveTimer.current);},[]);
-  function liveRefresh(){
+  function liveRefresh(event:FormEvent<HTMLFormElement>){
     if(!mentor)return;
     if(liveTimer.current)clearTimeout(liveTimer.current);
-    liveTimer.current=setTimeout(()=>liveForm.current?.requestSubmit(),350);
+    // Select/clear operations in the original footer applied immediately.
+    // Only typed search text should debounce; Enter can still submit now.
+    if(event.target instanceof HTMLSelectElement){
+      liveForm.current?.requestSubmit();
+    }else{
+      liveTimer.current=setTimeout(()=>liveForm.current?.requestSubmit(),350);
+    }
   }
-  const hasFilters = Boolean(query.search || query.status || query.attention || query.assignment ||
-    query.work || (query.sort && query.sort !== "RECENT") ||
-    (query.page && query.page>1) || (query.pageSize && query.pageSize!==25));
+  const hasFilters = Boolean(query.search || query.status || query.attention ||
+    (!mentor&&(query.assignment||query.work||(query.sort&&query.sort!=="RECENT"))));
   return (
     <form
       ref={liveForm}
-      onInput={mentor?liveRefresh:undefined}
       onChange={mentor?liveRefresh:undefined}
       method="get"
       action={basePath}
-      className={mentor?"grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4 [&_label]:min-w-0":"grid min-w-0 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 lg:grid-cols-4 [&_label]:min-w-0"}
+      className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4 [&_label]:min-w-0"
     >
       <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
         Search
@@ -79,7 +83,7 @@ export function ProjectParticipantListControls({
           defaultValue={query.search ?? ""}
           aria-label="Search my projects"
           placeholder="Search project title, course or slug"
-          className="w-full"
+          className="w-full sm:w-[300px]"
         />
       </label>
 
@@ -88,7 +92,7 @@ export function ProjectParticipantListControls({
         <Select
           name="status"
           defaultValue={query.status ?? ""}
-          className="w-full"
+          className="w-full sm:w-[170px]"
         >
           <option value="">All statuses</option>
           {(mentor || learner ? mentorStatusOptions : statusOptions).map(
@@ -112,7 +116,7 @@ export function ProjectParticipantListControls({
             defaultValue={
               query.attention ?? ""
             }
-            className="w-full"
+            className="w-full sm:w-[210px]"
           >
             <option value="">
               All attention states
@@ -137,6 +141,9 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
 
+      <details className="w-full min-w-0" open={Boolean(query.assignment||query.work||(query.sort&&query.sort!=="RECENT")||(query.pageSize&&query.pageSize!==25))}>
+        <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-link md:min-h-9">More filters</summary>
+        <div className="mt-2 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-4">
       {mentor ? (<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Sort
         <Select name="sort" defaultValue={query.sort ?? "RECENT"} className="w-full">
           <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option><option value="OPEN_TASKS">Most open tasks first</option><option value="TEAM_SIZE_DESC">Largest active team first</option><option value="TEAM_SIZE_ASC">Smallest active team first</option>
@@ -203,10 +210,12 @@ export function ProjectParticipantListControls({
         </Select>
       </label>
 
-      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
+        </div>
+      </details>
+      {!mentor?<Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">
         Apply
-      </Button>
-      {!mentor || hasFilters ? <Link
+      </Button>:null}
+      {hasFilters ? <Link
         href={basePath}
         className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-body hover:bg-primary-subtle"
       >
@@ -264,15 +273,18 @@ export function ProjectParticipantPagination({
       : basePath;
   }
 
+  const start=Math.max(1,Math.min(page-2,Math.max(1,totalPages-4)));
+  const pages=Array.from({length:Math.min(totalPages,5)},(_,index)=>start+index);
+  if(totalPages<=1)return null;
   return (
-    <div className="flex flex-wrap items-center justify-between gap-3 text-sm text-body">
-      <p className="m-0">
+    <div className="flex flex-wrap items-center justify-center gap-3 text-sm text-body">
+      <p className="w-full text-center m-0">
         {(basePath==="/learn/projects"||basePath==="/mentor/projects")
           ? ((total===0?0:(page-1)*(query.pageSize??25)+1)+"–"+
              Math.min(total,page*(query.pageSize??25))+" of "+total+" projects")
           : <>{total} result{total===1?"":"s"} · Page {page} of {totalPages}</>}
       </p>
-      {totalPages>1?<div className="flex gap-2">
+      <nav aria-label="Project pages" className="flex flex-wrap items-center justify-center gap-2">
         <Link
           href={href(
             Math.max(1, page - 1),
@@ -288,6 +300,13 @@ export function ProjectParticipantPagination({
         >
           Previous
         </Link>
+        {pages.map(value=><Link key={value} href={href(value)}
+          aria-current={value===page?"page":undefined}
+          aria-label={"Page "+value}
+          className={"inline-flex min-h-11 min-w-11 items-center justify-center rounded-lg border px-3 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-teal-deep)] "+
+            (value===page?"border-primary bg-primary-subtle text-primary-text":"border-border hover:bg-muted")}>
+          {value}
+        </Link>)}
         <Link
           href={href(
             Math.min(
@@ -308,7 +327,7 @@ export function ProjectParticipantPagination({
         >
           Next
         </Link>
-      </div> : null}
+      </nav>
     </div>
   );
 }
