@@ -274,7 +274,8 @@ export function LectureHallManager({
                 aria-invalid={Boolean(createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must"))}
                 aria-describedby={createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ? "create-hall-name-error" : undefined}
                 placeholder={LECTURE_HALL_COPY.namePlaceholder} value={createDraft.name}
-                onChange={(event) => setCreateDraft({ ...createDraft, name: event.target.value })}/>
+                onChange={(event) => {setCreateDraft({ ...createDraft, name: event.target.value });if(createError?.startsWith("Please enter room name"))setCreateError(null);}}
+                onBlur={()=>{if(!createDraft.name.trim())setCreateError("Please enter room name");}}/>
               {createError?.startsWith("Please enter room name") || createError?.startsWith("Room name must") ?
                 <p id="create-hall-name-error" role="alert" className="mt-1 text-xs text-error">{createError}</p> : null}
             </div>
@@ -390,7 +391,8 @@ export function LectureHallManager({
               aria-invalid={Boolean(formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must"))}
               aria-describedby={formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ? "edit-hall-name-error" : undefined}
               placeholder={LECTURE_HALL_COPY.namePlaceholder}
-              onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+              onChange={(e) => {setDraft({ ...draft, name: e.target.value });if(formError?.startsWith("Please enter room name"))setFormError(null);}}
+              onBlur={()=>{if(!draft.name.trim())setFormError("Please enter room name");}} />
             {formError?.startsWith("Please enter room name") || formError?.startsWith("Room name must") ?
               <p id="edit-hall-name-error" role="alert" className="mt-1 text-xs text-error">{formError}</p> : null}
           </div>
