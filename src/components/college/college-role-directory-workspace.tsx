@@ -15,6 +15,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import { StudentClassMoveAction } from "@/components/college/student-class-move-action";
 import { CollegeFacultyLifecycleAction } from "@/components/college/college-faculty-lifecycle-action";
 import { CollegeFacultyScheduleReassign } from "@/components/college/college-faculty-schedule-reassign";
+import { CollegeStudentBulkModuleAccess } from "@/components/college/college-student-bulk-module-access";
 import { CollegePersonEditAction } from "@/components/college/college-person-edit-action";
 import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
 import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
@@ -217,6 +218,11 @@ export async function CollegeRoleDirectoryWorkspace({
           </div>
         </details>
       </div> : null}
+      {kind === "LEARNER" ? <CollegeStudentBulkModuleAccess
+        students={result.items.map(item=>({
+          membershipId:item.membershipId,name:item.name,
+          active:item.membershipStatus==="ACTIVE"&&item.userStatus==="ACTIVE",
+        }))} /> : null}
       {kind === "LEARNER" ? <nav aria-label="Student directory tools"
         className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/students/import"
