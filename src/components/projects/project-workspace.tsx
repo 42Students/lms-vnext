@@ -34,6 +34,7 @@ import {CollegeProjectMentorDialog} from "./college-project-mentor-dialog";
 import {CollegeProjectStudentRosterDialog} from "./college-project-student-roster-dialog";
 import {ProjectResourceList} from "./project-resource-list";
 import { ProjectRosterTable } from "./project-roster-table";
+import { ProjectTeamRosterReconcile } from "./project-team-roster-reconcile";
 import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
 import { ProjectTaskPlanEditor } from "./project-task-plan-editor";
 import { projectTaskPlanToken } from "@/modules/projects/project-task-plan-token";
@@ -906,12 +907,16 @@ export function ProjectWorkspace({
           </p>;
         })() : null}
         {workspace.project.teamGroupId ? (
-          <p className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
-            <strong className="block font-semibold text-foreground">This workspace is a team</strong>
-            Its learners are kept by the team it was created with. Only College Admin or
-            Super Admin may change team membership in the class team workspace; mentors
-            can review Project work but cannot edit team membership.
-          </p>
+          <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-y border-info-border bg-info-subtle px-3 py-3 text-sm text-body">
+            <div className="min-w-0">
+              <strong className="block font-semibold text-foreground">This workspace is a team</strong>
+              Its learners are kept by the team it was created with. Only College Admin or
+              Super Admin may change team membership in the class team workspace;
+              mentors can review Project work but cannot edit team membership.
+            </div>
+            {mode === "ADMIN" && !readOnly ?
+              <ProjectTeamRosterReconcile projectId={workspace.project.id} /> : null}
+          </div>
         ) : null}
         {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
           const assigned=workspace.tasks.filter(task=>task.assigneeMembershipId===member.membershipId);
