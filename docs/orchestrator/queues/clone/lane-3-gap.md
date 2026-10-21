@@ -47,8 +47,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U006 (FE page) `docs/legacy-source/frontend/src/pages/teacher/allQuizzes.js`
 - [x] U007 (FE page) `docs/legacy-source/frontend/src/pages/teacher/report/quiz/[quizId].js`
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/courses.js`
-- [ ] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Sudent/student.js`
-- [ ] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java`
+- [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Sudent/student.js`
+- [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java`
 - [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobTypes.java`
 - [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java`
 - [ ] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/JobApplicationStatusHistoryService.java`
