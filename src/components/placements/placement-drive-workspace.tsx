@@ -23,7 +23,7 @@ import {TpoDriveRefreshControl} from "./tpo-drive-refresh-control";
 import { getPlacementDriveDay } from "@/modules/placements/drive-day-service";
 import { getJobEligibilityPolicy } from "@/modules/placements/eligibility-service";
 import { getPlacementEvaluationConfig } from "@/modules/placements/evaluation-config-service";
-import { getPlacementJob } from "@/modules/placements/job-service";
+import { getPlacementJobLegacyDetail } from "@/modules/placements/job-service";
 import { listPlacementOfferCandidates } from "@/modules/placements/offer-service";
 import { listPlacementScreeningQueue } from "@/modules/placements/screening-service";
 import { getTpoScheduleConflicts } from "@/modules/placements/tpo-schedule-conflicts-service";
@@ -32,6 +32,7 @@ import { getTpoDriveShortlist } from "@/modules/placements/tpo-shortlist-service
 import {countUnreleasedTpoSelections} from "@/modules/placements/tpo-drive-selection-service";
 import { projectTpoDriveNextStep } from "@/modules/placements/tpo-drive-next-step-model";
 import {projectTpoDriveHeader} from "@/modules/placements/tpo-drive-header-model";
+import {tpoDriveLegacyInnerTabs} from "@/modules/placements/tpo-drive-tab-model";
 import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service";
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
@@ -53,6 +54,23 @@ import {
   type PlacementDriveControlData,
 } from "./placement-drive-controls";
 
+/** A company avatar shows deterministic initials below its public HTTPS logo. */
+function DriveCompanyAvatar({name,logoUrl}:{name:string;logoUrl:string|null}){
+ const words=name.trim().split(/\s+/).filter(Boolean);
+ const initials=(words.length>1?words[0][0]+words[1][0]:name.slice(0,2)).toUpperCase()||"?";
+ const colors=["#e6f4ff","#f6ffed","#fff7e6","#f9f0ff","#fff1f0"];
+ const hash=Array.from(name).reduce((sum,char)=>(sum*31+char.charCodeAt(0))>>>0,0);
+ return <span className="relative inline-flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border text-lg font-bold text-[#172033]"
+  style={{backgroundColor:colors[hash%colors.length]}} aria-label={name+" logo"}>
+  <span aria-hidden="true">{initials}</span>
+  {logoUrl&&/^https:\/\//i.test(logoUrl)?<img src={logoUrl} alt="" loading="lazy"
+   referrerPolicy="no-referrer" className="absolute inset-0 h-full w-full object-contain text-transparent"/>:null}
+ </span>;
+}
+function formatDriveIst(date:Date|null){
+ return date?new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",hour:"numeric",
+  minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"}).format(date)+" IST":"Date to be decided";
+}
 export async function PlacementDriveWorkspace({
   context,
   jobId,
@@ -70,8 +88,7 @@ export async function PlacementDriveWorkspace({
 }) {
   // The drive identity is required; panel counts, staff tooling and previews
   // are independent reads and must not turn an unavailable section into "0".
-  const job=await getPlacementJob(context,jobId);
-  const optional=await Promise.allSettled([
+  const [job,optional]=await Promise.all([getPlacementJobLegacyDetail(context,jobId),Promise.allSettled([
     getPlacementDriveDay(context,jobId),
     getPlacementEvaluationConfig(context,jobId),
     listPlacementScreeningQueue(context,jobId),
@@ -79,7 +96,7 @@ export async function PlacementDriveWorkspace({
     listPlacementOfferCandidates(context,jobId),
     listPlacementRoleOptions(context,jobId),
     listPlacementJobRequests(context,jobId),
-  ] as const);
+  ] as const)]);
   for(const result of optional){
    if(result.status==="rejected"&&result.reason instanceof AuthorizationError)
     throw result.reason;
@@ -104,8 +121,6 @@ export async function PlacementDriveWorkspace({
   </div>;
 
   const jobTypes=job.status==="DRAFT"?await listPlacementJobTypeChoices(context,job.collegeId).catch(()=>null):[];
-  const expiredPublished=job.status==="PUBLISHED"&&job.applicationDeadline!==null&&
-    job.applicationDeadline.getTime()<Date.now();
   // Read optional panels concurrently. Their failure must not misrepresent
   // a safe-to-publish state or hide the primary drive page.
   const [lifecycleReadiness,collisionAssessment,shortlist,roundOrder,deadlineState,bulkCandidates]=
@@ -248,6 +263,7 @@ export async function PlacementDriveWorkspace({
     maximumAnnualCtcInr:job.maximumAnnualCtcInr,
     applicationDeadline:job.applicationDeadline,
     isDream:job.isDream,stipendPerMonthInr:job.stipendPerMonthInr,
+    recordedOutside:job.recordedOutside,
   });
 
   const journey=isTpo?await getTpoDriveJourney(context,jobId).catch(()=>null):null;
@@ -285,21 +301,18 @@ export async function PlacementDriveWorkspace({
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
       <PageHeader
         eyebrow={eyebrow}
-        title={driveDay.job.company.name + " · " + driveDay.job.title}
-        description={
-          driveDay.job.company.name +
-          " · " + (job.status==="PUBLISHED"?(expiredPublished?"Expired":"Open"):headerFacts.status)
-        }
+        title={job.title}
+        description={job.companyName+" · "+headerFacts.status+(job.applicationDeadline?" · Deadline "+formatDriveIst(job.applicationDeadline):"")}
         actions={
-          <div className="flex min-w-0 w-full flex-col gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:items-center">
+          <div className="flex min-w-0 w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap sm:items-center">
           {!isTpo ? <Link href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">{isSuperAdminDrive?"View applications":"Applications"}</Link> : null}
-          {isSuperAdminDrive?<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/settings"}
+          {isSuperAdminDrive?<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/settings"+(applicationsHref?.includes("?returnTo=")?"?"+applicationsHref.split("?")[1]:"")}
              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Edit drive</Link>:null}
           {isTpo&&nextStep?<Link href={nextStep.primary.href}
              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">{nextStep.primary.label}</Link>:null}
           {isTpo?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Discussion</Link>:null}
-          <Dropdown mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full sm:w-auto">
+          <Dropdown mobileSheet align="end" label="Drive actions" trigger={isTpo?"More":"Actions"} className="w-full sm:w-auto">
             <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden leading-[20px]">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}
               className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
@@ -333,21 +346,21 @@ export async function PlacementDriveWorkspace({
                 Extend deadline
               </Link>
             ) : null}
-            {isTpo ? <Dropdown align="end" label="More drive actions" trigger="More ▾">
+            {isTpo ? <div role="group" aria-label="More drive actions">
               <div className="grid min-w-[min(14rem,calc(100vw_-_5rem))] max-w-full gap-2">
                 <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/applications-export"}
                   className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
                   Export applicants
                 </Link>
-                {job.status!=="DRAFT"?<Link
+                <Link
                   href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/share-preview"}
                   className="min-h-11 rounded-[6px] px-2 py-2 text-sm font-semibold text-[var(--lms-link-text)] hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none">
                   Share with company
-                </Link>:null}
-                {["CLOSED","CANCELLED"].includes(job.status)
+                </Link>
+                {["CLOSED","CANCELLED","REJECTED"].includes(job.status)
                   ? <TpoDriveCloneAction jobId={jobId} label="Run it again" /> : null}
               </div>
-            </Dropdown>:null}
+            </div>:null}
             {isTpo && job.status === "DRAFT" ? (
               <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
@@ -413,7 +426,7 @@ export async function PlacementDriveWorkspace({
        <Link href={driveHref} className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
       </Alert>:null}
       {nextStep ? (
-        <section aria-label="Next step" className="border-b border-border pb-4">
+        <section aria-label="Next step" className="rounded-[var(--lms-canvas-radius)] border border-primary bg-primary-subtle p-4" data-testid="drive.next-step">
           <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Next step</h2>
           <p className="mt-2 text-sm text-body leading-[22px]">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
@@ -421,27 +434,26 @@ export async function PlacementDriveWorkspace({
             {nextStep.primary.label}
           </Link>
           {nextStep.more.length > 0 ? (
-            <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-              {nextStep.more.map(step => (
-                <Link key={step.href} href={step.href}
-                  className="group inline-flex min-h-11 min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
-                  <span className="block font-semibold">{step.label}</span>
-                  <span className="mt-1 block break-words text-xs text-body group-hover:text-white">{step.description}</span>
+            <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
+              <span className="font-semibold text-body">Also waiting:</span>
+              {nextStep.more.slice(0,3).map(step => (
+                <Link key={step.href} href={step.href} title={step.description}
+                  className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                  {step.label} →
                 </Link>
               ))}
             </div>
           ) : null}
         </section>
       ) : null}
-      <nav aria-label="Drive sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm">
-       {([
-        ["Overview",driveHref],["Applicants",applicationsHref??driveHref+"/applications"],
-        ["Rounds",isTpo?driveHref+"/candidate-schedule":driveHref+"/schedule"],
-        ["Offers",isTpo?driveHref+"/offers":driveHref+"/applications"],
-        ["Requests","#drive-request-actions"],["Settings",isSuperAdminDrive?driveHref+"/settings":"#draft-drive-editor"],
-       ] as const).map(([label,href])=><Link key={label} href={href}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-link hover:bg-primary-subtle md:min-h-9">{label}</Link>)}
-      </nav>
+      {isTpo?<nav aria-label="Drive sections" className="flex min-w-0 flex-wrap gap-2 border-b border-border pb-3 text-sm">
+        {tpoDriveLegacyInnerTabs(jobId,{
+          applicants:screening?.length,rounds:driveDay.rounds.length,
+          offers:offerCandidates?.filter(item=>item.offer?.status==="ISSUED"||
+            item.offer?.status==="ACCEPTED").length,
+        }).map(tab=><Link key={tab.href} href={tab.href}
+          className="inline-flex min-h-11 items-center border-b-2 border-transparent px-3 font-semibold text-link hover:border-primary hover:bg-primary-subtle md:min-h-9">{tab.label}</Link>)}
+      </nav>:null}
       {isTpo?<TpoDriveRefreshControl/>:null}
       {isTpo&&job.status==="DRAFT"?
        <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
@@ -450,24 +462,41 @@ export async function PlacementDriveWorkspace({
         Could not load: Publication readiness. Publishing is unavailable until these checks recover.
         Refresh the drive to try again.
        </Alert>:null}
-      <section aria-label="Drive status and details" className="min-w-0 border-b border-l-[3px] border-border pb-[var(--lms-space-4)] pl-3"
-        style={{borderLeftColor:headerFacts.heroAccent}}>
-        <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm">
-          <span className="font-semibold text-muted-foreground">Status</span>
-          <StatusBadge tone={headerFacts.statusTone}>{headerFacts.status}</StatusBadge>
-          <span className="font-semibold text-muted-foreground">Job type</span>
-          <span>{headerFacts.legacyFacts[1]?.value}</span>
-          <span>{headerFacts.applicationMode}</span>
-          <span>· {headerFacts.workMode}</span>
-          <span>· {headerFacts.employmentType}</span>
-          <StatusBadge tone="info">{headerFacts.category}</StatusBadge>
-          {headerFacts.recordedOutside?<strong>Recorded: happened outside</strong>:null}
-        </div>
-        <div className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap gap-x-[var(--lms-space-4)] gap-y-[var(--lms-space-2)] text-sm text-body">
-          <span>Pay: {headerFacts.ctc}</span>
-          <span>Applications close: {headerFacts.deadline}</span>
-        </div>
-      </section>
+      <section aria-label="Drive status and details"
+         className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-l-[3px] border-border p-4"
+         style={{borderLeftColor:headerFacts.heroAccent}}>
+         <div className="flex flex-wrap items-start gap-3">
+           <DriveCompanyAvatar name={job.companyName} logoUrl={job.companyLogoUrl}/>
+           <div className="min-w-0 flex-1">
+             <h2 className="break-words text-lg font-semibold leading-6 text-[var(--lms-heading)]">{job.title}</h2>
+             <p className="text-sm text-muted-foreground">{job.companyName}</p>
+             <div className="mt-2 flex flex-wrap items-center gap-2 text-sm">
+               <span className="font-semibold text-muted-foreground">Status</span>
+               <StatusBadge tone={headerFacts.statusTone}>{headerFacts.status}</StatusBadge>
+               <span className="font-semibold text-muted-foreground">Job type</span>
+               <span>{job.jobTypeLabel??headerFacts.legacyFacts[1]?.value}</span>
+               <span className="font-semibold text-muted-foreground">Mode</span>
+               <span>{job.recruiterDriveMode==="POOL"?"Pool":job.recruiterDriveMode==="OFF_CAMPUS"?"Off campus":"On campus"}</span>
+               <span>{headerFacts.applicationMode}</span>
+               <span>· {headerFacts.workMode}</span>
+               <StatusBadge tone="info">{headerFacts.category}</StatusBadge>
+               {job.recordedOutside?<strong>Recorded: happened outside</strong>:null}
+             </div>
+             <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm text-body">
+               <span>CTC: {headerFacts.ctc}</span>
+               <span>Deadline: {job.applicationDeadline?formatDriveIst(job.applicationDeadline):headerFacts.deadline}</span>
+             </div>
+           </div>
+         </div>
+         {job.description?<div className="mt-4 border-t border-border pt-3">
+           <details className="group text-sm text-body">
+             <summary className="float-right ml-3 inline-flex min-h-11 cursor-pointer items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-primary md:min-h-9">
+               <span className="group-open:hidden">Show more</span><span className="hidden group-open:inline">Show less</span>
+             </summary>
+             <p className="line-clamp-3 whitespace-pre-wrap break-words leading-[22px] group-open:line-clamp-none">{job.description}</p>
+           </details>
+         </div>:null}
+       </section>
       {overview}
       {job.legacyPostingDetails&&(job.legacyPostingDetails.portal?.studentsRegisterSeparately||
         job.legacyPostingDetails.campusPool?.hostCollege||
@@ -509,7 +538,7 @@ export async function PlacementDriveWorkspace({
           </Disclosure>
         </section>
       ):null}
-      {journey?<section aria-label="Drive applicant journey" className="min-w-0 border-b border-border pb-4">
+      {journey&&!isTpo?<section aria-label="Drive applicant journey" className="min-w-0 border-b border-border pb-4">
         <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Journey</h2>
         <p className="mt-1 text-xs text-body leading-[20px]">{journey.definition}</p>
         <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">
@@ -523,7 +552,7 @@ export async function PlacementDriveWorkspace({
       </section>:null}
       {isTpo && driveDay.rounds.length > 0 ? (
         <section aria-label="Round journey" className="min-w-0 border-b border-border pb-4">
-          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Rounds</h2>
+          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Rounds ({driveDay.rounds.length})</h2>
           <p className="mt-1 text-sm text-body leading-[22px]">Round status, schedule and outcome progress. Open a round to see who has reached it.</p>
           <div className="mt-3 divide-y divide-border">
             {driveDay.rounds.map(round => {
@@ -540,7 +569,7 @@ export async function PlacementDriveWorkspace({
                   </div>
                   <dl className="mt-3 grid min-w-0 gap-3 text-sm text-body sm:grid-cols-2">
                     <div><dt className="font-semibold">When</dt><dd>{round.scheduledAt
-                      ? new Intl.DateTimeFormat("en-IN", {timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(round.scheduledAt)+" IST"
+                      ? formatDriveIst(round.scheduledAt)
                       : "Date to be decided"}</dd></div>
                     <div><dt className="font-semibold">Mode and place</dt>
                       <dd>{round.mode==="VIRTUAL"?"Online":round.mode==="ON_CAMPUS"?"On campus":(round.mode??"").replaceAll("_"," ")}
@@ -549,7 +578,7 @@ export async function PlacementDriveWorkspace({
                       </dd>
                     </div>
                     <div><dt className="font-semibold">Students in round</dt><dd>{round.participants.length}</dd></div>
-                    <div><dt className="font-semibold">Results</dt><dd>{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
+                    <div><dt className="font-semibold">Results</dt><dd>{round.status==="COMPLETED"?"Results applied · ":""}{applied} applied · {staged} awaiting apply · {Math.max(0,round.participants.length-applied-staged)} not recorded</dd></div>
                     <div><dt className="font-semibold">Reschedule requests</dt><dd>{rescheduleRequests===null?"Unable to load":rescheduleRequests}
                       {rescheduleRequests!==null&&rescheduleRequests>0?<Link href="#drive-request-actions"
                         className="ml-2 font-semibold text-[var(--lms-link-text)] underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Review pending →</Link>:null}
@@ -564,7 +593,7 @@ export async function PlacementDriveWorkspace({
                   {round.whatToBring ? <p className="mt-1 text-sm text-body leading-[22px]">Bring: {round.whatToBring}</p> : null}
                   <div className="mt-3 flex min-w-0 flex-col gap-2 text-sm sm:flex-row sm:flex-wrap">
                     <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/candidate-schedule?roundId="+encodeURIComponent(round.id)}
-                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">See who reached this round →</Link>
+                      className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">{round.status==="COMPLETED"?"See attendance":"Open drive day"} →</Link>
                     {round.kind !== "TALK" ? <Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/rounds/"+encodeURIComponent(round.id)+"/results"}
                       className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 font-semibold text-[var(--lms-link-text)] underline sm:w-auto md:min-h-9">Enter results →</Link> : null}
                   </div>
@@ -823,9 +852,10 @@ export async function PlacementDriveWorkspace({
       )}
       <details className="group min-w-0 border-b border-border pb-4">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">
-          Drive day overview <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
+          Drive day operations <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span>
         </summary>
-        <div className="pt-3"><PlacementDriveDayOverview driveDay={driveDay} embedded /></div>
+        <p className="py-2 text-sm text-muted-foreground">Open a round to take attendance and record results on your phone on the day.</p>
+         <div className="pt-3"><PlacementDriveDayOverview driveDay={driveDay} embedded /></div>
       </details>
       {roundOrder?<TpoRoundReorder jobId={jobId} readiness={roundOrder}/>:null}
       <section id="drive-round-actions" className="min-w-0">
