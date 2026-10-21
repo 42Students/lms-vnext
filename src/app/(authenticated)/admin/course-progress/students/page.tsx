@@ -29,13 +29,20 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
  const back=<Link href="/admin/course-progress" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Back to Course Progress</Link>;
  if(!offeringId)return <div className="space-y-6">
   <PageHeader title="Student Course Progress"/>
-  <ErrorState title="Choose a course offering" description="Select a class and taught course from Course Progress first; a course offering is required." action={back}/>
+  <ErrorState title="Choose a course offering" description="Course and class are required. Select a valid class and its taught course from Course Progress first; this page uses their authorized course offering, not separate legacy numeric IDs." action={back}/>
  </div>;
  let report:Awaited<ReturnType<typeof getSuperAdminStudentCourseProgress>>;
  try{report=await getSuperAdminStudentCourseProgress(context,{offeringId});}
- catch{return <div className="space-y-6">
+ catch(error){
+  // Do not expose SQL, stack traces or another tenant's identifiers in the error surface.
+  const detail=error instanceof Error&&error.name==="AuthorizationError"
+    ?"The selected course offering is not accessible in your current college scope."
+    :error instanceof Error&&error.name==="ZodError"
+      ?"The selected course offering ID is invalid."
+      :"The progress service could not return this course and class report.";
+  return <div className="space-y-6">
   <PageHeader title="Student Course Progress"/>
-  <ErrorState title="Could not load course progress" description="Check your selected college, the active class and the taught course. Retry the selected offering or choose another." action={
+  <ErrorState title="Could not load course progress" description={detail+" Check your selected college, class and taught course, then retry."} action={
     <div className="flex flex-wrap gap-3">
       <Link href={"/admin/course-progress/students?offeringId="+encodeURIComponent(offeringId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry course progress</Link>
       {back}
@@ -77,8 +84,8 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
      highestMeasured:lowestMeasured+"–"+highestMeasured+" per learner"}</dd></div>
   </dl>
   <p className="text-sm text-body">Video completions, submitted assignments and attempted quizzes are counted from persisted learner records. No completion percentage is inferred when there are no measurable items.</p>
-  {!report.rows.length?<Alert tone="info" role="status">No active students are enrolled in this class and course.</Alert>:
-    !hasMeasuredWork?<Alert tone="info" role="status">There are no measurable published videos, assignments or quizzes for this course yet.</Alert>:null}
+  {!report.rows.length?<Alert tone="info" role="status">This class has no active learners.</Alert>:
+    !hasMeasuredWork?<Alert tone="info" role="status">This course has no videos, assignments or quizzes for this class yet, so there is nothing measurable to report.</Alert>:null}
   {report.truncated?<Alert tone="warning" role="alert">Only the first 500 active students were returned by the progress service. Statistics and percentage sorting are based on that sample, not the full class. Export may also be limited.</Alert>:null}
   <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-3 sm:flex-row sm:flex-wrap sm:items-end sm:justify-between">
     <p className="text-sm text-body">Showing {allRows.length===0?0:(page-1)*pageSize+1}–{Math.min(page*pageSize,allRows.length)} of {allRows.length}{report.truncated?" returned":""} students</p>
