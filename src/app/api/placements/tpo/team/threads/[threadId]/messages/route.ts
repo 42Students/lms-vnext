@@ -13,8 +13,7 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  const parsed=internalMessageSchema.safeParse({threadId,body:form?.get("body"),
   idempotencyKey:form?.get("idempotencyKey")||undefined,
   markDecision:form?.get("markDecision")==="true",
-  mentionMembershipIds:typeof form?.get("mentionMembershipIds")==="string"
-   ?String(form.get("mentionMembershipIds")).split(",").filter(Boolean):[],
+  mentionMembershipIds:String(form?.get("mentionMembershipIds")??"").split(",").filter(Boolean),
   addMentionedMembers:form?.get("addMentionedMembers")==="true"});
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
