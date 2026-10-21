@@ -1,6 +1,7 @@
 import "server-only";
 
-import { and, count, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, inArray } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   collegeMemberships,
@@ -31,6 +32,37 @@ import {
   projectTpoStudentPlacementHistory,
   tpoStudentHistoryQuerySchema,
 } from "./tpo-student-history-model";
+
+/** Legacy bulk status transitions: bounded, sorted, and college-scoped. */
+const transitionQuery=z.object({
+ applicationIds:z.array(z.string().uuid()).min(1).max(200)
+  .refine(ids=>new Set(ids).size===ids.length,"Duplicate application ID"),
+ toStatus:z.enum(["SUBMITTED","WITHDRAWN","APPLIED","SHORTLISTED",
+  "ASSESSMENT","INTERVIEW","OFFERED","HIRED","REJECTED","WAITLISTED"]).optional(),
+}).strict();
+export async function listTpoApplicationStatusTransitions(context:RequestContext,raw:unknown){
+ if(!context.membership||!hasMembershipRole(context,"TPO"))
+  throw new AuthorizationError("placements.manage");
+ const collegeId=await requireTpoBatchActor(context);
+ await requirePlacementManageScope(context,collegeId);
+ const input=transitionQuery.parse(raw);
+ const events=await getDb().select({
+  id:placementApplicationStatusHistory.id,
+  applicationId:placementApplicationStatusHistory.applicationId,
+  fromStatus:placementApplicationStatusHistory.fromStatus,
+  toStatus:placementApplicationStatusHistory.toStatus,
+  createdAt:placementApplicationStatusHistory.createdAt,
+ }).from(placementApplicationStatusHistory)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementApplicationStatusHistory.applicationId))
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .where(and(inArray(placementApplicationStatusHistory.applicationId,input.applicationIds),
+   eq(placementJobs.collegeId,collegeId),
+   input.toStatus?eq(placementApplicationStatusHistory.toStatus,input.toStatus):undefined))
+  .orderBy(asc(placementApplicationStatusHistory.applicationId),
+   asc(placementApplicationStatusHistory.createdAt),asc(placementApplicationStatusHistory.id))
+  .limit(2001);
+ return {items:events.slice(0,2000),hasMore:events.length>2000};
+}
 
 /**
  * All seasons, including archived drives. The requested membership must
@@ -193,7 +225,10 @@ export async function getTpoStudentPlacementHistory(
           inArray(placementApplicationStatusHistory.applicationId, applicationIds),
           eq(placementApplications.membershipId, learner.membershipId),
           eq(placementJobs.collegeId, college.id),
-        )),
+        ))
+        .orderBy(asc(placementApplicationStatusHistory.applicationId),
+          asc(placementApplicationStatusHistory.createdAt),
+          asc(placementApplicationStatusHistory.id)),
     ]);
 
   const offerIds = offers.map((offer) => offer.id);

@@ -38,7 +38,8 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
         if (response.ok) {
           showToast({ title: success, tone: "success" });
           setConfirmation(null);
-          router.refresh();
+          if(key==="all-including-current"||key==="current")router.replace("/login");
+          else router.refresh();
         } else {
           showToast({ title: "That didn't work. Try again.", tone: "error" });
         }
@@ -77,10 +78,18 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
                 {when(device.lastSeenAt)}
               </p>
             </div>
-            {device.current ? null : (
+            {device.current ? (
+              <Button variant="secondary" size="sm" aria-label={"Sign out this device: "+device.label}
+                className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
+                disabled={pending||busy!==null}
+                onClick={()=>ask("current","/api/auth/session","Logged out","Sign out this device")}>
+                Sign out this device
+              </Button>
+            ) : (
               <Button
                 variant="secondary"
                 size="sm"
+                aria-label={"Sign out device: "+device.label}
                 className="min-h-11 w-full justify-center min-[768px]:min-h-9 min-[768px]:w-auto"
                 disabled={pending || busy!==null}
                 onClick={() =>
@@ -88,7 +97,7 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
                     device.id,
                     `/api/auth/devices/${device.id}`,
                     "Session revoked",
-                    "Sign out",
+                    "Sign out "+device.label,
                   )
                 }
               >
@@ -119,6 +128,12 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
           >
             {busy === "all" ? "Signing out…" : "Sign out everywhere else"}
           </Button>
+          <Button variant="danger" size="sm" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto"
+            disabled={pending||busy!==null}
+            onClick={()=>ask("all-including-current","/api/auth/devices?scope=all",
+              "All sessions revoked","Sign out all devices")}>
+            Sign out all devices
+          </Button>
           </div>
         </details>
       ) : null}
@@ -128,6 +143,8 @@ export function DeviceList({ devices }: { devices: readonly DeviceRow[] }) {
         title={confirmation?.label??"Sign out"}
         description={confirmation?.key==="all"
           ? "Revoke all other sessions. This device stays signed in."
+          : confirmation?.key==="all-including-current"
+          ? "All sessions will be revoked, including this device. You must sign in again."
           : "Revoke this session. You can sign in again later."}
         confirmLabel={confirmation?.label??"Sign out"}
         confirmVariant="danger"

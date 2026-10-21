@@ -1,4 +1,3 @@
-import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeAssessmentAggregate } from "@/components/courses/college-assessment-aggregate";
 import {CollegeAssignmentCreate} from "@/components/courses/college-assignment-create";
@@ -19,7 +18,13 @@ export default async function CollegeAssignmentsPage({
   searchParams,
 }: { searchParams: Promise<SearchParams> }) {
   const context = await getCurrentRequestContext();
-  if(!context.membership)return <CollegeCourseMissingScope area="college"/>;
+  if(!context.membership)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Assignments"/>
+    <Alert tone="warning" role="alert">
+      <strong>Admin not assigned to a college</strong>
+      <p>Contact your administrator to be assigned to a college before managing assignments.</p>
+    </Alert>
+  </div>;
   const params = await searchParams;
   const raw = { q: one(params.q), status: one(params.status), courseCode: one(params.courseCode)||undefined,deliveryId: one(params.deliveryId)||undefined,periodCode:one(params.periodCode)||undefined,cohortCode:one(params.cohortCode)||undefined,programCode:one(params.programCode)||undefined, scope:one(params.scope),duePresence:one(params.duePresence),dueWindow:one(params.dueWindow), page: one(params.page) };
   const validation = collegeAssessmentListQuerySchema.safeParse(
@@ -50,12 +55,21 @@ export default async function CollegeAssignmentsPage({
       </Link>}/>
   </div>;
   const data=dataResult.value;
-  return <div className="min-w-0 overflow-x-clip">
+  return <div className="min-w-0 overflow-x-clip space-y-4">
+    <nav aria-label="Courses & Content" className="flex items-center gap-2 text-sm text-body">
+      <Link href="/college/courses" className="font-semibold text-primary-text hover:underline">Courses & Content</Link>
+      <span aria-hidden="true">›</span><span aria-current="page">Assignments</span>
+    </nav>
     <CollegeAssessmentAggregate data={data}
       leading={lessonsResult.status==="fulfilled"?
         <CollegeAssignmentCreate lessons={lessonsResult.value.lessons} deliveries={lessonsResult.value.deliveries}/>:
         <Alert tone="warning" role="status">
-          Assignment creation options are temporarily unavailable. Existing assignments remain visible.
+          <strong>Course list unavailable</strong>
+          <p>Assignment creation options could not be loaded. Existing assignments remain visible.</p>
+          <Link href={collegeAssessmentHref("ASSIGNMENT",query)}
+            className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+            Retry courses
+          </Link>
         </Alert>}/>
   </div>;
 }

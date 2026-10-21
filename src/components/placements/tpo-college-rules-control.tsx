@@ -8,7 +8,6 @@ import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-import {Disclosure} from "@/components/ui/disclosure";
 
 type Rules = {
   countsAsPlacedAt: string;
@@ -118,13 +117,14 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
   }
   return (
     <section className="min-w-0 border-b border-border pb-5">
-      <h3 className="text-base font-semibold text-[var(--lms-heading)]">Offers and placed</h3>
+      <h3 className="flex flex-wrap items-center gap-2 text-base font-semibold text-[var(--lms-heading)]">Offers and placed
+        {dirty?<span role="status" aria-live="polite" className="rounded-full border border-warning px-2 py-0.5 text-xs font-semibold">Unsaved changes</span>:null}
+      </h3>
       <p className="mt-2 text-sm text-body leading-[22px]">
         The placed numbers (Home, Students, Reports) follow the first rule as soon as you save; the offer rules apply to offers released from then on.
       </p>
-      <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
-        {dirty?<div className="min-w-0 sm:col-span-2"><InlineNotice tone="info" message="Unsaved changes"/></div>:null}
-        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+      <div className="mt-4 flex min-w-0 flex-wrap items-end gap-3">
+        <label className="inline-flex min-w-[180px] flex-1 flex-col gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
           A student counts as placed when the offer is
           <Select value={form.countsAsPlacedAt} disabled={busy}
             onChange={(event) => {setError(null);setNotice("");setForm(current=>({...current,countsAsPlacedAt:event.target.value}));}}
@@ -134,7 +134,7 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
           </Select>
         </label>
         {(["maxHeldOffers", "upliftPct", "minResponseHours"] as const).map((key) => (
-          <label key={key} className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          <label key={key} className="inline-flex min-w-[130px] flex-1 flex-col gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)]">
             {key === "maxHeldOffers" ? "Maximum held offers" : key === "upliftPct" ? "Offer uplift %" : "Minimum response hours"}
             <Input type="number" min={TPO_RULE_LIMITS[key].min} max={TPO_RULE_LIMITS[key].max} step={1}
               value={form[key]} disabled={busy}
@@ -146,11 +146,11 @@ export function TpoCollegeRulesControl({ rules }: { rules: Rules }) {
       <section role="status" className="mt-4 min-w-0 space-y-1 border-t border-border pt-4 text-sm text-body">
         <p>A student may hold {Number.isFinite(held)?held:0} offers (released or accepted) before the next rule applies.</p>
         <p className="mt-1">After that, another offer needs a CTC at least {form.upliftPct}% higher than their best offer, or a Dream drive. Internships never count.</p>
-        <Disclosure title="For example" className="mt-3 border-t border-border py-2"><p className="pt-2">A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p></Disclosure>
+        <p className="mt-3 border-t border-border pt-2">For example: A student holding a 5 LPA offer can take another only if it is at least {nextLpa} LPA, or from a Dream drive.</p>
       </section>
-      <Button type="button" disabled={busy} onClick={() => void save()}
+      <Button type="button" disabled={busy||!dirty} onClick={() => void save()}
         className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
-        {busy ? "Saving..." : "Review and confirm rules"}
+        {busy ? "Saving..." : "Save changes"}
       </Button>
       {notice?<InlineNotice tone="success" message={notice}/>:null}
       {error ? <InlineNotice tone="error" message={error}/> : null}

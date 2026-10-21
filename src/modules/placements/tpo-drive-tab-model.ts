@@ -33,7 +33,8 @@ export function tpoDriveMoreTabs(jobId:string):TpoDriveTab[]{
   {label:"Selections",href:root+"/selections"},
   {label:"Waitlist",href:root+"/waitlist"},
   {label:"Joining",href:root+"/joining"},
-  {label:"Change requests",href:root+"/change-requests#new"},
+  {label:"Change requests",href:root+"/change-requests"},
+  {label:"Request a change",href:root+"/change-requests#new"},
   {label:"Company sharing",href:root+"/share-preview"},
  ];
 }
