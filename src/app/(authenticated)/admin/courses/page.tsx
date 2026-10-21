@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { AdminCourseOverview } from "@/components/courses/admin-course-overview";
+import { AdminCourseRecycleBin } from "@/components/courses/admin-course-recycle-bin";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Banner } from "@/components/ui/banner";
 import { CourseProgressPolicyEditor } from "@/components/admin/course-progress-policy-editor";
@@ -142,6 +143,7 @@ export default async function SuperAdminCoursesPage({searchParams}:{searchParams
         lessonCountByCourse={lessonCountByCourse}
         offeringBasePath="/admin/courses/offerings"
       />
+      <AdminCourseRecycleBin collegeId={collegeId}/>
     </div>
   );
 }
