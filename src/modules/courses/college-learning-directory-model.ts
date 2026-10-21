@@ -2,13 +2,24 @@ import { z } from "zod";
 import {LEARNING_PATH_STATUSES} from "@/modules/courses/constants";
 
 export const COLLEGE_LEARNING_PAGE_SIZE = 25;
+export const MAX_LEARNING_DIRECTORY_PAGE = 1000;
+export const LESSON_AUTOCOMPLETE_DEFAULT_LIMIT = 15;
+export const LESSON_AUTOCOMPLETE_MAX_LIMIT = 200;
+/** Autocomplete is a separate bounded contract from 25-row directory paging.
+ * Old numeric course IDs cannot be accepted as UUIDs without an import map. */
+export const collegeLessonAutocompleteQuerySchema = z.strictObject({
+  query: z.string().trim().max(100).default(""),
+  courseId: z.string().uuid().optional(),
+  limit: z.coerce.number().int().min(1).max(LESSON_AUTOCOMPLETE_MAX_LIMIT)
+    .default(LESSON_AUTOCOMPLETE_DEFAULT_LIMIT),
+});
 export const collegeLearningKindSchema = z.enum(["LESSONS", "PROGRESS"]);
 export type CollegeLearningKind = z.infer<typeof collegeLearningKindSchema>;
 
 export const collegeLearningQuerySchema = z.object({
   q: z.string().trim().max(100).default(""),
   status: z.enum(["ALL", "ACTIVE", "ARCHIVED"]).default("ACTIVE"),
-  page: z.coerce.number().int().min(1).max(1000).default(1),
+  page: z.coerce.number().int().min(1).max(MAX_LEARNING_DIRECTORY_PAGE).default(1),
   pageSize:z.coerce.number().int().refine(value=>[10,25,50,100].includes(value)).default(25),
 }).strict();
 export type CollegeLearningQuery = z.infer<typeof collegeLearningQuerySchema>;
@@ -155,8 +166,13 @@ export function collegeOfferingLessonsHref(offeringId:string) {
     offeringId:z.string().uuid().parse(offeringId), status:"ALL",
   }));
 }
+/** Pagination cannot address beyond page 1000: the UI must disclose this
+ * when an unusually large scoped course catalogue is truncated. */
+export function collegeLearningDirectoryHasPageCap(total:number,pageSize=COLLEGE_LEARNING_PAGE_SIZE){
+  return total > MAX_LEARNING_DIRECTORY_PAGE*pageSize;
+}
 export function collegeLearningPageCount(total: number,pageSize=COLLEGE_LEARNING_PAGE_SIZE) {
-  return Math.max(1, Math.ceil(total / pageSize));
+  return Math.min(MAX_LEARNING_DIRECTORY_PAGE, Math.max(1, Math.ceil(total / pageSize)));
 }
 
 export type CollegeLessonRecord = {

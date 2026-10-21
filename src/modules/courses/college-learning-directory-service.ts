@@ -25,6 +25,7 @@ import { hasMembershipRole, isSuperAdmin } from "@/modules/identity/context";
 import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
 import {
   COLLEGE_LEARNING_PAGE_SIZE,
+  collegeLessonAutocompleteQuerySchema,
   collegeLearningPageCount,
   collegeLessonQuerySchema,
   collegeProgressQuerySchema,
@@ -456,11 +457,7 @@ export async function listCollegeCourseProgress(context: RequestContext, raw: un
  * numeric lesson/course IDs are not interchangeable with tenant-scoped UUIDs.
  * It must never resolve a numeric ID to the first matching course.
  */
-const scopedLessonSearchInput = z.strictObject({
-  query: z.string().trim().max(100).default(""),
-  courseId: z.string().uuid().optional(),
-  limit: z.coerce.number().int().min(1).max(200).default(15),
-});
+const scopedLessonSearchInput = collegeLessonAutocompleteQuerySchema;
 const LESSON_SEARCH_CANDIDATE_CAP = 750;
 
 /** Distance is relevant only for a short typo fallback. Avoid unbounded

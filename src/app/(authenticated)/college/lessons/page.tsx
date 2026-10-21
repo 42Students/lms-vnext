@@ -1,4 +1,5 @@
 import {CollegeCourseMissingScope} from "@/components/courses/college-course-missing-scope";
+import {LessonPageSizePreference} from "@/components/courses/lesson-page-size-preference";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeLearningDirectory } from "@/components/courses/college-learning-directory";
@@ -62,7 +63,9 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
   );
   const authoringOptions=await getCollegeLessonAuthoringOptions(context);
   const courseChoices=[...new Map(authoringOptions.map(row=>[row.courseCode,{code:row.courseCode,name:row.courseName}])).values()];
-  return <CollegeLearningDirectory
+  return <>
+    <LessonPageSizePreference storageKey="college-lessons-page-size" />
+    <CollegeLearningDirectory
     data={await listCollegeLessons(context, parsed.data)}
     courseChoices={courseChoices}
     prepend={<div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:flex-wrap md:items-start">
@@ -77,5 +80,6 @@ export default async function CollegeLessonsPage({ searchParams }: { searchParam
       View college live classes
     </Link>
     </div>}
-  />;
+  />
+  </>;
 }

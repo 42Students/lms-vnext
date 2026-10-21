@@ -11,7 +11,8 @@ import { COLLEGE_COURSE_TAB_COPY, collegeLessonVisibilityLabel } from "@/modules
 import { PageHeader } from "@/components/ui/page-header";
 import { DataTable } from "@/components/ui/data-table";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { collegeLearningHref, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
+import { collegeLearningHref,
+  collegeLearningDirectoryHasPageCap, collegeOfferingLessonsHref, collegeOfferingProgressHref, collegeProgressDescription } from "@/modules/courses/college-learning-directory-model";
 import type {
   listCollegeCourseProgress,
   listCollegeLessons,
@@ -685,6 +686,7 @@ export function CollegeLearningDirectory({ data, courseChoices=[], prepend, show
             label={title+" pagination"} showBoundaryLinks={false}/>
         </div>
       </div>
+      {collegeLearningDirectoryHasPageCap(data.total,data.query.pageSize)?<p role="status" className="text-sm text-warning-text">Only the first 1,000 pages are accessible. Narrow your filters to reach older records.</p>:null}
       <p className="text-xs leading-5 text-muted-foreground">
         {lessons
           ? "This catalogue is based on registered lesson and content rows. Edit and Archive actions use the authorized lesson API; Archive retains history and files. Bulk selection remains in the separate visibility picker; no signed media URLs are queried."
