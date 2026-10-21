@@ -25,6 +25,7 @@ type PageProps = {
     need?: string | string[];
     attention?: string | string[];
     drives?: string | string[];
+    placed?: string | string[];
     due?: string | string[];
   }>;
 };
@@ -45,7 +46,7 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
     const params=new URLSearchParams();
     const accepted=["view","add","company","page","purpose","q","stage","owner","invite",
       "status","source","reach","designation","nextFollowup","lastActivity","added",
-      "need","attention","drives"] as const;
+      "need","attention","drives","placed"] as const;
     for(const key of accepted){
       const value=first(query[key]);
       if(typeof value==="string"&&value.length<=100)params.set(key,value);
@@ -78,7 +79,7 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
         nextFollowup:first(query.nextFollowup)??(first(query.due)==="1"?"DUE":"ALL"),
         lastActivity:first(query.lastActivity)??"ALL",added:first(query.added)??"ALL",
         need:first(query.need)??"ALL",attention:first(query.attention)??"ALL",
-        drives:first(query.drives)??"ALL",
+        drives:first(query.drives)??"ALL",placed:first(query.placed)??"ALL",
       }}
     />
   );

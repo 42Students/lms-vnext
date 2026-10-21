@@ -217,10 +217,10 @@ export function TpoGrid<Row>({
    ):undefined,
    tooltipValueGetter:p=>p.data?col.tooltip?.(p.data):undefined,
    cellRenderer:openPrimary?.columnKey===col.key
-    ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="px-0 text-left underline"
+    ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="min-h-9 px-0 text-left underline"
       aria-label={openPrimary.ariaLabel(p.data)} onClick={()=>openPrimary.onOpen(p.data!)}>
-      {cellValue(col.read(p.data))}</Button>:null
-    :undefined,
+      {col.render?col.render(p.data):cellValue(col.read(p.data))}</Button>:null
+    :col.render?(p:{data?:Row})=>p.data?col.render!(p.data):null:undefined,
   });
   if(rowActions)result.push({
    colId:"__actions",headerName:"Actions",width:220,minWidth:160,sortable:false,
