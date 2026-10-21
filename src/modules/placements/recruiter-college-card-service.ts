@@ -1,13 +1,16 @@
 import "server-only";
-import {and,asc,countDistinct,eq,isNull,sql} from "drizzle-orm";
+import {and,asc,eq,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,membershipRoles,users,placementJobs,collegeBranding,
-  learnerProgramEnrollments,programs,departments,placementCompanyRelationships} from "@/db/schema";
+  placementCompanyRelationships} from "@/db/schema";
+import {getRecruiterCollegeDemographics} from "./recruiter-college-demographics-service";
 import {type RequestContext,hasActiveRecruiter} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
 export type RecruiterCollegeCard={
  collegeId:string;studentCount:number|null;branches:string[]|null;
+ branchCounts:{branch:string;roundedCount:number}[]|null;
+ verifiedCgpaBands:{label:string;roundedCount:number}[]|null;
  allDriveCount:number|null;liveDriveCount:number|null;
  tpoContact:{name:string;email:string|null}|null;
  logoUrl:string|null;memberKey:string;errors:string[];
@@ -25,22 +28,8 @@ export async function recruiterCollegeCardDetail(context:RequestContext,collegeI
   collegeId,placementCompanyRelationshipId:grant.companyRelationshipId,
  });
  const db=getDb();
- const [students,branches,drives,tpo,branding]=await Promise.allSettled([
-  db.select({total:countDistinct(collegeMemberships.id)})
-   .from(collegeMemberships)
-   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
-   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"LEARNER")))
-   .where(and(eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE"))),
-  db.selectDistinct({name:departments.name}).from(learnerProgramEnrollments)
-   .innerJoin(collegeMemberships,and(
-     eq(collegeMemberships.id,learnerProgramEnrollments.membershipId),
-     eq(collegeMemberships.collegeId,collegeId),eq(collegeMemberships.status,"ACTIVE")))
-   .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
-   .innerJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
-   .innerJoin(departments,and(eq(departments.id,programs.departmentId),
-     eq(departments.collegeId,collegeId),isNull(departments.archivedAt)))
-   .where(eq(learnerProgramEnrollments.status,"ACTIVE"))
-   .orderBy(asc(departments.name)).limit(100),
+ const [demographics,drives,tpo,branding]=await Promise.allSettled([
+  getRecruiterCollegeDemographics(context,collegeId),
   db.select({all:sql<number>`count(*)::int`,
    live:sql<number>`count(*) filter (where ${placementJobs.status}='PUBLISHED')::int`})
    .from(placementJobs).innerJoin(placementCompanyRelationships,and(
@@ -62,11 +51,12 @@ export async function recruiterCollegeCardDetail(context:RequestContext,collegeI
   if(value.status==="fulfilled")return value.value;
   errors.push(name);return null;
  };
- const a=get(students,"Learner count"),br=get(branches,"Branches"),
+ const d=get(demographics,"College demographics"),
   j=get(drives,"Drive count"),c=get(tpo,"TPO contact"),logo=get(branding,"College logo");
  const result:RecruiterCollegeCard={
-  collegeId,studentCount:a?.[0]?.total??null,
-  branches:br?.map(row=>row.name)??null,
+  collegeId,studentCount:d?.totalLearners??null,
+  branches:d?.byBranch.map(row=>row.branch)??null,
+  branchCounts:d?.byBranch??null,verifiedCgpaBands:d?.verifiedCgpaBands??null,
   allDriveCount:j?.[0]?.all??null,liveDriveCount:j?.[0]?.live??null,
   tpoContact:c?.[0]?{name:c[0].name,email:c[0].email}:null,
   logoUrl:logo?.[0]?.logoUrl??null,

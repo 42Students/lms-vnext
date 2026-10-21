@@ -74,6 +74,11 @@ export default async function CollegeDrivesPage({ searchParams }: {
       <Link href={`/college/placements/jobs/${item.id}/settings`}
         className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Edit</Link>
       <CollegeDriveRowLifecycleAction jobId={item.id} title={item.title} status={item.status}/>
+      {item.status!=="PUBLISHED"&&item.status!=="ARCHIVED"?
+        <Link href={`/college/placements/jobs/${item.id}/settings#drive-archive-heading`}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Review archive
+        </Link>:null}
       {item.status==="PUBLISHED"?<CollegeDriveDeadlineAction jobId={item.id}
         title={item.title} currentDeadline={item.applicationDeadline?.toISOString()??null}/>:null}
     </div>},
@@ -82,7 +87,16 @@ export default async function CollegeDrivesPage({ searchParams }: {
   return <div className="space-y-6">
     <PageHeader title="Jobs"
       description="College-owned placement drives. This list is independent of cross-college recruiter access."
-      actions={<Link href="/college/placements" className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Operations workspace</Link>} />
+      actions={<div className="flex flex-wrap items-center gap-3">
+        <Link href="/college/placements/new"
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)]">
+          New drive
+        </Link>
+        <Link href="/college/placements"
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+          Operations workspace
+        </Link>
+      </div>} />
     <form method="get" role="search" aria-label="Drive filters" className="grid md:grid-cols-2 lg:grid-cols-4 xl:grid-cols-6 min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] max-[767px]:grid-cols-1">
       <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title or company
         <Input type="search" name="q" defaultValue={query.q} maxLength={100}
