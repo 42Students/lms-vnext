@@ -7,7 +7,7 @@ import { friendlyReference } from "@/lib/friendly-error";
 import styles from "./public-screen.module.css";
 
 /** Shared error, forbidden, offline and maintenance screen; copy and recovery stay intact. */
-export function GracefulScreen({ title, message, homeHref = "/", retry, requestId, homeLabel = "Go to home" }: {
+export function GracefulScreen({ title, message, homeHref = "/dashboard", retry, requestId, homeLabel = "Go to home" }: {
   title: string;
   message: string;
   homeHref?: string;
@@ -19,7 +19,7 @@ export function GracefulScreen({ title, message, homeHref = "/", retry, requestI
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Link href="/" className={styles.brand} aria-label="42LMS home">
+        <Link href={homeHref} className={styles.brand} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
         </Link>
