@@ -77,8 +77,8 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)]">
    <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
    <fieldset className="min-w-0 space-y-[var(--lms-space-3)]"><legend className="sr-only">Button (optional)</legend>
-   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Button label
-    <Input disabled={pending} value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="View details"/>
+   <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Button label
+    <Input disabled={pending} value={buttonLabel} maxLength={60} onChange={e=>setButtonLabel(e.target.value)} placeholder="View Details"/>
    </label>
    <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">HTTPS link
     <Input disabled={pending} type="url" value={buttonUrl} maxLength={500} onChange={e=>setButtonUrl(e.target.value)} placeholder="https://example.com"/>
