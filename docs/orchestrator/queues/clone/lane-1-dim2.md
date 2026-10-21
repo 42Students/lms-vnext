@@ -203,16 +203,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/hr/profile/page.tsx`
 - [x] `src/app/(authenticated)/hr/round-results/error.tsx`
 - [x] `src/app/(authenticated)/hr/round-results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allAssignments/error.tsx`
-- [ ] `src/app/(authenticated)/learn/allAssignments/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/error.tsx`
-- [ ] `src/app/(authenticated)/learn/allQuizzes/page.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/error.tsx`
+- [x] `src/app/(authenticated)/learn/allAssignments/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/error.tsx`
+- [x] `src/app/(authenticated)/learn/allQuizzes/page.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/learn/attendance/error.tsx`
 - [ ] `src/app/(authenticated)/learn/attendance/page.tsx`
 - [ ] `src/app/(authenticated)/learn/calendar/error.tsx`
