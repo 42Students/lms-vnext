@@ -91,13 +91,13 @@ export default async function TpoActorAuditPage({
           ["actorId", "Actor user UUID", "00000000-0000-4000-8000-000000000000"],
           ["entityType", "Entity type", "placement_offer"],
         ] as const).map(([name, label, placeholder]) => <label key={name}
-          className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {label}
           <Input name={name} defaultValue={parsed.data[name] ?? ""} placeholder={placeholder}
           className="min-h-11 md:min-h-9 w-full"/>
         </label>)}
         {(["from", "to"] as const).map((name) => <label key={name}
-          className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {name === "from" ? "From (IST)" : "Through (IST)"}
           <DateInput mode="date" name={name} defaultValue={parsed.data[name] ?? ""}
           className="min-h-11 md:min-h-9 w-full"/>
@@ -107,19 +107,19 @@ export default async function TpoActorAuditPage({
         defaultOpen={Boolean(parsed.data.entityId || parsed.data.sort !== "NEWEST" || parsed.data.pageSize !== 25)}
         className="border-t border-[var(--lms-canvas-border)]" contentClassName="pt-3">
         <div className="grid min-w-0 grid-cols-1 items-end gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Entity ID
             <Input name="entityId" defaultValue={parsed.data.entityId ?? ""} placeholder="Stored subject ID"
               className="min-h-11 w-full md:min-h-9"/>
           </label>
-          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Sort date
             <Select name="sort" defaultValue={parsed.data.sort}
         className="min-h-11 md:min-h-9 w-full">
         <option value="NEWEST">Newest first</option><option value="OLDEST">Oldest first</option>
        </Select>
       </label>
-          <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Page size
             <Select name="pageSize" defaultValue={String(parsed.data.pageSize)}
           className="min-h-11 md:min-h-9 w-full">
