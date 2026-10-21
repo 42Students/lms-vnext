@@ -158,6 +158,7 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
     const now = new Date();
     const [revoked] = await tx.update(placementRecruiterCollegeGrants).set({
       status: "REVOKED", revokedByUserId: actorUserId,
+      revokeReason: input.reason?.trim() || null,
       revokedAt: now, updatedAt: sql`greatest(date_trunc('milliseconds',clock_timestamp()),date_trunc('milliseconds',${placementRecruiterCollegeGrants.updatedAt}) + interval '1 millisecond')`,
     }).where(and(eq(placementRecruiterCollegeGrants.id, input.grantId),
       eq(placementRecruiterCollegeGrants.status, "ACTIVE"))).returning();
@@ -168,7 +169,8 @@ export async function changeTpoRecruiterGrant(context: RequestContext, raw: unkn
       subjectType: "placement_recruiter_college_grant", subjectId: revoked.id,
       subjectLabel: "Recruiter access grant", summary: "TPO revoked recruiter college access",
       metadata: { companyRelationshipId: revoked.companyRelationshipId,
-        recruiterUserId: revoked.recruiterUserId },
+        recruiterUserId: revoked.recruiterUserId,
+        ...(input.reason?.trim() ? {revokeReason:input.reason.trim()} : {}) },
       occurredAt: now,
     });
     return { outcome: "revoked" as const, grantId: revoked.id };
