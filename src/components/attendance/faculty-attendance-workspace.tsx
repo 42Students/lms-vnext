@@ -185,6 +185,11 @@ export function FacultyAttendanceWorkspace({
   const [error, setError] =
     useState<string | null>(null);
   const [savedNotice,setSavedNotice]=useState<string|null>(null);
+  useEffect(() => {
+    if (!savedNotice) return;
+    const timeout = window.setTimeout(() => setSavedNotice(null), 4000);
+    return () => window.clearTimeout(timeout);
+  }, [savedNotice]);
   const [correctionReason,setCorrectionReason]=useState("");
   const [selectedLearnerId, setSelectedLearnerId] = useState<string | null>(null);
   const [scheduleOpen, setScheduleOpen] =
@@ -192,6 +197,7 @@ export function FacultyAttendanceWorkspace({
   const [scheduling, setScheduling] =
     useState(false);
   const [confirmScheduleOpen,setConfirmScheduleOpen]=useState(false);
+  const [confirmScheduleDiscardOpen,setConfirmScheduleDiscardOpen]=useState(false);
   const [scheduleError, setScheduleError] =
     useState<string | null>(null);
   const [scheduleTitle, setScheduleTitle] =
@@ -202,6 +208,19 @@ export function FacultyAttendanceWorkspace({
     useState("");
   const [location, setLocation] =
     useState("");
+  const scheduleDirty = Boolean(scheduleTitle.trim() || startsAt || endsAt || location.trim());
+
+  function closeScheduleDrawer() {
+    if (scheduling || scheduleLock.current) {
+      setScheduleError("Wait for the class schedule to finish saving.");
+      return;
+    }
+    if (scheduleDirty) {
+      setConfirmScheduleDiscardOpen(true);
+      return;
+    }
+    setScheduleOpen(false);
+  }
 
   const recordsByKey = useMemo(
     () =>
@@ -259,11 +278,11 @@ export function FacultyAttendanceWorkspace({
   const unsavedMarks=facultyAttendanceMarksDirty(workspace.roster,
     initialAbsencesForSession(workspace.roster,workspace.records,selectedSessionId),absent);
   useEffect(()=>{
-    if(!unsavedMarks)return;
+    if(!unsavedMarks && !(scheduleOpen && scheduleDirty))return;
     const warn=(event:BeforeUnloadEvent)=>{event.preventDefault();event.returnValue="";};
     window.addEventListener("beforeunload",warn);
     return ()=>window.removeEventListener("beforeunload",warn);
-  },[unsavedMarks]);
+  },[unsavedMarks,scheduleOpen,scheduleDirty]);
   function confirmDiscardMarks(next:()=>void){
     if(!unsavedMarks){next();return;}
     nextAfterDiscard.current=next;setDiscardOpen(true);
@@ -300,6 +319,22 @@ export function FacultyAttendanceWorkspace({
         monthSessions,
       ),
     [monthSessions],
+  );
+  // Legacy monthly view includes no-class dates, not only scheduled days.
+  const calendarDays = useMemo(() => {
+    const [year, monthNumber] = month.split("-").map(Number);
+    if (!year || !monthNumber || monthNumber < 1 || monthNumber > 12) return [];
+    const count = new Date(Date.UTC(year, monthNumber, 0)).getUTCDate();
+    const sessionsByDay = new Map(monthDays.map((day) => [day.dayKey, day.sessions] as const));
+    return Array.from({ length: count }, (_, index) => {
+      const dayKey = month + "-" + String(index + 1).padStart(2, "0");
+      return { dayKey, sessions: sessionsByDay.get(dayKey) ?? [] };
+    });
+  }, [month, monthDays]);
+  // A future class is scheduled, not a class that has been held.
+  const heldMonthSessions = monthSessions.filter((session) =>
+    new Date(session.endsAt).getTime() <= clock.getTime() &&
+    session.eventStatus !== "CANCELLED",
   );
 
   const selectedLearner = selectedLearnerId
@@ -357,7 +392,9 @@ export function FacultyAttendanceWorkspace({
       setError("Explain this attendance correction in at least 8 characters."); return;
     }
     if (!attendanceConfirmation) {
-      setError("Change at least one recorded mark before submitting a correction."); return;
+      setError(selectedSession.attendanceStatus === "MARKED"
+        ? "Change at least one recorded mark before submitting a correction."
+        : "Nothing to submit — mark at least one student present or absent."); return;
     }
     setConfirmingAttendance(true);
   }
@@ -377,10 +414,11 @@ export function FacultyAttendanceWorkspace({
       setError("Explain this attendance correction in at least 8 characters.");return;
     }
     if (!attendanceConfirmation) {
-      setError("Change at least one recorded mark before submitting a correction.");
+      setError(selectedSession.attendanceStatus === "MARKED"
+        ? "Change at least one recorded mark before submitting a correction."
+        : "Nothing to submit — mark at least one student present or absent.");
       return;
     }
-    setConfirmingAttendance(false);
     submitLock.current = true;
     setSubmitting(true);
     try {
@@ -436,6 +474,7 @@ export function FacultyAttendanceWorkspace({
     } finally {
       submitLock.current = false;
       setSubmitting(false);
+      setConfirmingAttendance(false);
     }
   }
 
@@ -447,6 +486,8 @@ export function FacultyAttendanceWorkspace({
     if (scheduling || scheduleLock.current) return;
 
     setScheduleError(null);
+    if (!startsAt.trim()) { setScheduleError("Select Date"); return; }
+    if (!endsAt.trim()) { setScheduleError("Select End Time"); return; }
     try {
       const timing = facultyScheduleInstants(startsAt, endsAt);
       if(!confirmed){setConfirmScheduleOpen(true);return;}
@@ -525,12 +566,12 @@ export function FacultyAttendanceWorkspace({
             <div className="flex flex-wrap items-end justify-between gap-3">
               <div className="flex flex-wrap gap-2">
                 <StatusBadge tone="info">
-                  {monthSessions.length} sessions
+                  {heldMonthSessions.length} held sessions
                 </StatusBadge>
                 <StatusBadge
                   tone={
-                    monthSummary.markedSessions === monthSessions.length &&
-                    monthSessions.length > 0
+                    monthSummary.markedSessions === heldMonthSessions.length &&
+                    heldMonthSessions.length > 0
                       ? "success"
                       : "warning"
                   }
@@ -589,7 +630,7 @@ export function FacultyAttendanceWorkspace({
                   {monthSummary.averagePercent === null ? "—" : monthSummary.averagePercent + "%"}
                 </p>
                 <p className="mt-2 max-w-xl text-xs leading-5 text-muted-foreground">
-                  {monthSummary.presentMarks} present marks across {monthSummary.sessionCount} scheduled sessions.
+                  {monthSummary.presentMarks} present marks across {heldMonthSessions.length} held sessions.
                   {" "}{monthSummary.unmarkedSessions} session(s) not yet marked, excluded from this percentage.
                 </p>
               </div>
@@ -634,10 +675,10 @@ export function FacultyAttendanceWorkspace({
             </div>
             <SummaryStrip label="Faculty monthly attendance summary" steps={[
               {label:"Students",value:monthSummary.learnerCount},
-              {label:"Sessions",value:monthSummary.sessionCount},
+              {label:"Sessions",value:heldMonthSessions.length},
               {label:"Absences",value:monthSummary.absentMarks},
               {label:"Not marked",value:monthSummary.unmarkedMarks},
-              {label:"Active days",value:monthDays.filter(day=>day.sessions.length>0).length},
+              {label:"Active days",value:new Set(heldMonthSessions.map(session=>indiaAttendanceDayKey(session.startsAt))).size},
               {label:"Upcoming",value:monthSummary.upcomingSessions},
             ]}/>
             <section aria-label="Attendance threshold guidance" className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
@@ -675,10 +716,10 @@ export function FacultyAttendanceWorkspace({
             </section>
           </section>
 
-          {monthSessions.length === 0 ? (
+          {allLearners.length === 0 ? (
             <EmptyState
-              title="No scheduled classes this month"
-              description="Choose another month or schedule a class for this Course."
+              title="No learners to display"
+              description="There are no enrolled learners or historical attendance rows for this Course and Section."
             />
           ) : (
             <section className="min-w-0">
@@ -689,7 +730,7 @@ export function FacultyAttendanceWorkspace({
                     <th className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-3">
                       Learner
                     </th>
-                    {monthDays.map((day) => (
+                    {calendarDays.map((day) => (
                       <th
                         key={day.dayKey}
                         className="min-w-28 px-3 py-3 text-center"
@@ -705,7 +746,7 @@ export function FacultyAttendanceWorkspace({
                             month: "short",
                           },
                         ).format(
-                          new Date(day.sessions[0]!.startsAt),
+                          new Date(day.dayKey + "T12:00:00+05:30"),
                         )}
                         {day.sessions.length > 1 ? (
                           <span className="ml-1 text-[10px] font-normal text-muted-foreground">
@@ -742,7 +783,10 @@ export function FacultyAttendanceWorkspace({
                             "Contact details unavailable"}
                         </p>
                       </td>
-                      {monthDays.map((day) => {
+                      {calendarDays.map((day) => {
+                        if (day.sessions.length === 0) {
+                          return <td key={day.dayKey} aria-label="No class" className="px-3 py-3 text-center"><StatusBadge tone="neutral">✖</StatusBadge></td>;
+                        }
                         const bySession = new Map(
                           day.sessions.flatMap((session) => {
                             const record = recordsByKey.get(
@@ -846,6 +890,11 @@ export function FacultyAttendanceWorkspace({
                     <p className="m-0 font-semibold text-foreground">
                       {selectedSession.title}
                     </p>
+                    <div className="mt-2">
+                      <StatusBadge tone={markingWindow === "OPEN" ? "success" : "warning"}>
+                        {markingWindow === "OPEN" ? "Ready to mark" : "Marking unavailable"}
+                      </StatusBadge>
+                    </div>
                     <p className="mt-1">
                       {sessionTime(selectedSession)}
                       {selectedSession.location
@@ -1073,7 +1122,9 @@ export function FacultyAttendanceWorkspace({
         open={confirmingAttendance}
         onOpenChange={setConfirmingAttendance}
         title="Submit Attendance"
-        description={attendanceConfirmation ?? "Review attendance marks before submitting."}
+        description={selectedSession?.attendanceStatus === "MARKED"
+          ? (attendanceConfirmation ?? "Review attendance corrections before submitting.")
+          : ("Mark " + absent.size + " students absent and " + (workspace.roster.length - absent.size) + " students present?")}
         confirmLabel="Confirm"
         cancelLabel="Cancel"
         confirmVariant="primary"
@@ -1179,18 +1230,15 @@ export function FacultyAttendanceWorkspace({
 
       <Drawer
         open={scheduleOpen}
-        dismissible={!scheduling}
-        onOpenChange={value=>{if(!scheduling)setScheduleOpen(value);}}
+        dismissible
+        onOpenChange={value=>{if(!value)closeScheduleDrawer();}}
         title="Schedule Class"
         description="Create a class session for this exact Course and Section. It will appear in learner and Faculty calendars."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
               variant="secondary"
-              disabled={scheduling}
-              onClick={() =>
-                setScheduleOpen(false)
-              }
+              onClick={closeScheduleDrawer}
             >
               Cancel
             </Button>
@@ -1235,7 +1283,6 @@ export function FacultyAttendanceWorkspace({
               onChange={(event) =>
                 setStartsAt(event.target.value)
               }
-              required
             />
           </label>
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
@@ -1247,7 +1294,6 @@ export function FacultyAttendanceWorkspace({
               onChange={(event) =>
                 setEndsAt(event.target.value)
               }
-              required
             />
           </label>
           <label className="grid min-w-0 gap-2 font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
@@ -1279,6 +1325,17 @@ export function FacultyAttendanceWorkspace({
         onConfirm={()=>{
           const next=nextAfterDiscard.current;
           nextAfterDiscard.current=null;setDiscardOpen(false);next?.();
+        }}/>
+      <ConfirmDialog open={confirmScheduleDiscardOpen}
+        onOpenChange={setConfirmScheduleDiscardOpen}
+        title="Discard class schedule changes?"
+        confirmLabel="Discard changes" cancelLabel="Keep editing"
+        confirmVariant="danger"
+        onConfirm={() => {
+          setConfirmScheduleDiscardOpen(false);
+          setScheduleOpen(false);
+          setScheduleTitle("");setStartsAt("");setEndsAt("");setLocation("");
+          setScheduleError(null);
         }}/>
       <ConfirmDialog open={confirmScheduleOpen} onOpenChange={setConfirmScheduleOpen}
         title={"Confirm attendance session from "+startsAt.replace("T"," ")+" to "+endsAt.replace("T"," ")+" IST?"}

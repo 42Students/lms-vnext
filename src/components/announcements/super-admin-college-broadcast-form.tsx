@@ -13,13 +13,12 @@ import {broadcastLocalTiming} from "@/modules/announcements/super-admin-broadcas
 type CollegeTarget={id:string;label:string};
 export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly CollegeTarget[]}){
  const router=useRouter();
- const [mode,setMode]=useState<"ALL_COLLEGES"|"SELECTED_COLLEGES">("SELECTED_COLLEGES");
+ const [mode,setMode]=useState<"ALL_COLLEGES"|"SELECTED_COLLEGES">("ALL_COLLEGES");
  const [selected,setSelected]=useState<string[]>([]);
  const [title,setTitle]=useState("");
  const [message,setMessage]=useState("");
  const [buttonLabel,setButtonLabel]=useState("");
  const [buttonUrl,setButtonUrl]=useState("");
- const [scheduledAt,setScheduledAt]=useState("");
  const [expiresAt,setExpiresAt]=useState("");
  const [pinned,setPinned]=useState(false);
  const [review,setReview]=useState(false);
@@ -27,9 +26,9 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  const publishing=useRef(false);
  const [feedback,setFeedback]=useState("");
  const count=mode==="ALL_COLLEGES"?colleges.length:selected.length;
- const timing=broadcastLocalTiming(scheduledAt,expiresAt);
- const buttonValid=(!buttonLabel.trim()&&!buttonUrl.trim())||(buttonLabel.trim().length>0&&buttonLabel.length<=60&&/^https:\/\/[^\s]+$/i.test(buttonUrl));
- const valid=buttonValid&&count>0&&Boolean(title.trim())&&title.length<=200&&Boolean(message.trim())&&message.length<=8000&&timing.valid&&!pending;
+ const timing=broadcastLocalTiming("",expiresAt);
+ const buttonValid=(!buttonLabel.trim()&&!buttonUrl.trim())||(buttonLabel.trim().length<=60&&buttonUrl.trim().length<=500&&/^https:\/\/[^\s]+$/i.test(buttonUrl.trim()));
+ const valid=buttonValid&&count>0&&Boolean(title.trim())&&title.length<=200&&Boolean(message.trim())&&message.length<=8000&&timing.valid&&(!timing.expiresAt||new Date(timing.expiresAt).getTime()>=Date.now()-60_000)&&!pending;
  async function submit(){
   if(!valid||publishing.current)return;
   publishing.current=true;
@@ -39,7 +38,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
     method:"POST",headers:{"content-type":"application/json"},
     body:JSON.stringify({audienceMode:mode,collegeIds:mode==="ALL_COLLEGES"?[]:selected,
      reviewedCollegeIds:mode==="ALL_COLLEGES"?colleges.map(c=>c.id):selected,
-     title,message,buttonLabel:buttonLabel.trim()||null,buttonUrl:buttonUrl.trim()||null,scheduledAt:timing.scheduledAt,expiresAt:timing.expiresAt,
+     title,message,buttonLabel:buttonUrl.trim()?(buttonLabel.trim()||"Open"):null,buttonUrl:buttonUrl.trim()||null,scheduledAt:null,expiresAt:timing.expiresAt,
      isPinned:pinned,publishConsent:true}),
    });
    const data:unknown=await response.json().catch(()=>null);
@@ -49,13 +48,13 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    }
    const published=data&&typeof data==="object"&&"result" in data&&data.result&&typeof data.result==="object"&&"count" in data.result?Number(data.result.count):null;
    if(published===null||!Number.isSafeInteger(published)||published<=0){setFeedback("Publication confirmation was incomplete. Check the notice list.");return;}
-   setFeedback("Sent to "+published+" placement cell(s). "+(scheduledAt?"Scheduled announcements will be visible at their planned time.":"Active placement-cell users receive a bell notice."));setTitle("");setMessage("");setButtonLabel("");setButtonUrl("");setSelected([]);
+   setFeedback("Sent to "+published+" placement cell"+(published===1?"":"s")+". Active placement-cell users receive a bell notice.");setTitle("");setMessage("");setButtonLabel("");setButtonUrl("");setSelected([]);
    router.refresh();
   }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
   finally{publishing.current=false;setPending(false);setReview(false);}
  }
  return <Disclosure title={<h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>} className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]">
-  <p className="text-sm text-body">Send an in-app announcement from 42 to selected placement cells. Immediate announcements also create a bell for active TPO members; scheduled announcements appear at their planned time. No SMS or email is sent.</p>
+  <p className="text-sm text-body">Send an in-app announcement from 42 to placement cells. Active TPO members receive a bell notice immediately. No SMS or email is sent.</p>
   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Audience
    <Select disabled={pending} value={mode} onChange={e=>{setMode(e.target.value as typeof mode);setSelected([]);}} className="min-h-11">
     <option value="SELECTED_COLLEGES">Selected placement cells</option>
@@ -72,7 +71,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   </details>:null}
   <p className="text-xs text-muted-foreground">Placement-cell messages use the legacy 200-character title and 8,000-character body limits.</p>
   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Title<Input disabled={pending} value={title} maxLength={200} onChange={e=>setTitle(e.target.value)}/></label>
-  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Message<Textarea disabled={pending} value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)}/></label>
+  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Announcement<Textarea disabled={pending} value={message} maxLength={8000} onChange={e=>setMessage(e.target.value)} placeholder="Links starting with https:// become clickable."/></label>
   <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Message {message.length}/8000</p>
   <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)]">
    <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
@@ -83,26 +82,24 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">HTTPS link
     <Input disabled={pending} type="url" value={buttonUrl} maxLength={500} onChange={e=>setButtonUrl(e.target.value)} placeholder="https://example.com"/>
    </label>
-   <p className="text-xs text-muted-foreground">Provide both fields or leave both blank. Label must be 60 characters or fewer.</p>
+   <p className="text-xs text-muted-foreground">A secure HTTPS link is required with a button label. A link without a label uses "Open".</p>
    <p role="status" className="text-xs text-muted-foreground">Button label {buttonLabel.length}/60 · HTTPS link {buttonUrl.length}/500</p>
-   {!buttonValid?<p role="alert" className="text-sm text-danger-text">Provide a button label and a valid HTTPS link.</p>:null}
+   {!buttonValid?<p role="alert" className="text-sm text-danger-text">The link has to start with https://</p>:null}
    </fieldset>
   </details>
-  <div className="grid min-w-0 gap-[var(--lms-space-4)] md:grid-cols-2">
-   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Schedule (local)<Input disabled={pending} type="datetime-local" value={scheduledAt} onChange={e=>setScheduledAt(e.target.value)}/></label>
-   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Show until (local)<Input disabled={pending} type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
-  </div>
+  <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Show until (local)<Input disabled={pending} type="datetime-local" value={expiresAt} onChange={e=>setExpiresAt(e.target.value)}/></label>
   <label className="flex min-h-11 items-center gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:min-h-9">
    <Checkbox disabled={pending} checked={pinned} onChange={e=>setPinned(e.target.checked)}/> Pin for recipients
   </label>
-  {!timing.valid?<p role="alert" className="text-sm text-danger-text">Enter valid local schedule and expiry values; expiry must follow the schedule.</p>:null}
-  <p className="border-t border-border pt-[var(--lms-space-3)] text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,Boolean(scheduledAt))}</p>
+  {!timing.valid?<p role="alert" className="text-sm text-danger-text">Give a date and time.</p>:null}
+  {timing.expiresAt&&new Date(timing.expiresAt).getTime()<Date.now()-60_000?<p role="alert" className="text-sm text-danger-text">The end date has passed</p>:null}
+  <p className="border-t border-border pt-[var(--lms-space-3)] text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,false)}</p>
   <Button className="min-h-11 w-full md:w-auto md:min-h-9" disabled={!valid} onClick={()=>setReview(true)}>Review placement-cell announcement</Button>
   {feedback?<p role={feedback.startsWith("Sent to ")?"status":"alert"} className="text-sm text-body">{feedback}</p>:null}
   <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmDisabled={!valid}
-   title="Approve announcement to placement cells" description={broadcastConsentSummary(mode,count,Boolean(scheduledAt))}
+   title="Approve announcement to placement cells" description={broadcastConsentSummary(mode,count,false)}
    confirmLabel="Consent and publish" confirmVariant="danger" onConfirm={()=>{void submit();}}>
-   <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, recipient rows are persisted atomically and become visible according to their schedule.</p>
+   <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, the placement-cell announcement is sent immediately.</p>
   </ConfirmDialog>
  </Disclosure>;
 }
