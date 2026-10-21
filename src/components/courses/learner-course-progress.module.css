@@ -8,11 +8,11 @@
   min-width: 0;
   height: 8px;
   border-radius: 999px;
-  background: #f1f4f9 !important;
+  background: var(--lms-neutral-100) !important;
 }
 .track > div {
   border-radius: inherit;
-  background: #6b7280 !important;
+  background: var(--lms-neutral-500) !important;
 }
 @media (max-width: 767px) {
   .track { width: 100%; min-width: 0; }

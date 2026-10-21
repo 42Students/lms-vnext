@@ -12,12 +12,12 @@
   height: 8px !important;
   border-radius: 999px !important;
   overflow: hidden;
-  background: #9ee4e8 !important;
+  background: var(--lms-primary-light) !important;
 }
 .upload > div {
   height: 100%;
   border-radius: inherit;
-  background: #26bac7 !important;
+  background: var(--lms-primary) !important;
 }
 @media (max-width: 767px) {
   .upload { width: 100%; min-width: 0; }
