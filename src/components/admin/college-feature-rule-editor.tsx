@@ -125,7 +125,7 @@ export function CollegeFeatureRuleEditor({collegeId,module,stored,ancestorLocked
     setFeedbackTone("error");setFeedback("Write accepted but the latest stored rule was not verified. Recheck before editing again.");return;
    }
    setObserved(current);setChoice(collegeRuleSelection(current));setLocked(current?.locked??false);
-   showToast({tone:"success",title:lockChanged?(choice!=="INHERIT"&&locked?"Locked ":"Unlocked ")+moduleLabel+" for "+collegeName
+   showToast({tone:"success",title:"Module access updated",description:lockChanged?(choice!=="INHERIT"&&locked?"Locked ":"Unlocked ")+moduleLabel+" for "+collegeName
     :moduleLabel+" updated for "+collegeName});
    setFeedbackTone("success");setFeedback("Stored policy verified for "+collegeName+".");
    setConfirm(false);

@@ -25,7 +25,7 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
  const nextHref=baseHref&&scopes.length===500?academicScopePageHref(baseHref,safePage+1):null;
  const columns:DataTableColumn<AcademicModuleScope>[]=[
   {key:"level",header:"Level",mobilePriority:"primary",
-   cell:scope=>scope.scopeType==="COHORT"?"Batch":scope.scopeType},
+   cell:scope=>scope.scopeType==="COHORT"?"Batch":scope.scopeType==="SECTION"?"Class":scope.scopeType==="PROGRAM"?"Program":"Department"},
   {key:"path",header:"Academic path",mobilePriority:"secondary",cell:scope=>scope.label},
   {key:"projects",header:"Projects",mobilePriority:"secondary",cell:scope=><>
     <span className={scope.projectsShadowed?"line-through text-muted-foreground":""}>{scope.projectsRule}</span>
@@ -45,6 +45,7 @@ export function AcademicModuleScopeInventory({scopes,page=1,baseHref}:{
  return <section aria-label="Academic scope inventory" className="mt-4 space-y-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
    <h3 className="font-semibold text-[var(--lms-heading)]">Academic hierarchy</h3>
+   <a href="#academic-module-rules" className="min-h-9 inline-flex items-center text-sm font-semibold text-primary-text underline">Edit inherited rules</a>
    <div className="flex flex-wrap gap-2 text-sm print:hidden">
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={expanded || scopes.length<=15} onClick={()=>setExpanded(true)}>Expand all</Button>
     <Button type="button" variant="ghost" className="min-h-11 md:min-h-9 underline" disabled={!expanded} onClick={()=>setExpanded(false)}>Collapse all</Button>

@@ -18,8 +18,9 @@ import { StudentRuleConflict } from "./admin-student-rule-write";
 /** No placement overrides: placement decisions ignore membership rules.
  * Remain bounded to 25 IDs until a bulk 1000-learner SQL preflight exists. */
 const inputSchema = z.strictObject({
-  membershipIds: z.array(z.uuid()).min(1).max(25).refine(
-    (ids) => new Set(ids).size === ids.length,
+  membershipIds: z.preprocess(
+    (value) => Array.isArray(value) ? [...new Set(value)] : value,
+    z.array(z.uuid()).min(1).max(25),
   ),
   module: z.enum(["projects", "electives"]),
   action: z.enum(["ENABLE", "DISABLE", "INHERIT"]),

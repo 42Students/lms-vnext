@@ -67,7 +67,7 @@ export function writeStructuredLog(
       createStructuredLogRecord(
         severity,
         event,
-        fields,
+        severity === "INFO" ? privacySafeInfoLogFields(fields) : fields,
       ),
     ) + "\n";
 
@@ -143,6 +143,14 @@ export function stableOperationalEvent(event:string):string {
  return /^[a-z][a-z0-9_.-]{0,119}$/.test(event)
   ? event : "legacy.request_message";
 }
+/** Compatibility with BaseController.logRequest(message, object): only a stable
+ * event name and allowlisted operational fields reach INFO logs. Jackson
+ * valueToTree/printf formatting is intentionally not reproduced; Dates become
+ * an ISO timestamp at the envelope level, enums use stable strings, and raw
+ * request bodies, identities, secret headers and nested values are dropped.
+ * Platform log collectors should map INFO from stdout, WARNING/ERROR from
+ * stderr, and correlate events by requestId and event, not a freeform message.
+ */
 /** GR-05: informational lines have a safe request reference and no raw payload. */
 export function logInfo(event: string, fields: Record<string, unknown> = {}) {
   writeStructuredLog("INFO", stableOperationalEvent(event),privacySafeInfoLogFields(fields));

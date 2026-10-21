@@ -1,0 +1,16 @@
+# Deterministic E2E fixture setup (development only)
+
+The legacy endpoint `POST /api/v1/superadmin/e2e/seed` performed privileged multi-entity writes. vNext deliberately **does not** expose an auto-seed HTTP mutation: fixture provisioning is an **operator-driven deployment/setup substitute**. `GET /api/dev/e2e/manifest` only reads the typed identity map of fixtures **already provisioned** in the development database. It never impersonates a user, creates domain rows, uploads media, sends notifications, emails or SMS, or returns arbitrary records.
+
+## Operator setup
+
+1. Use a disposable development database, **never** production/UAT with personal data. Verify migration state and that test identity directory uses sandbox contacts.
+2. In one migration-safe transaction, upsert two independent test organization/college trees, one department/program/batch/class each, course/lesson, faculty + learner user and active role membership, in-app announcement, notification and discussion, placement job, interview and project. Use immutable fixture keys/unique college IDs; normalize names case-insensitively; ensure foreign keys, active enrollment and tenant isolation. Reuse identities on reruns. If anything fails, roll back the entire fixture graph; do not publish a partial manifest.
+3. Upload a sample video to private dev storage and produce a short-lived *signed* playback URL for this test run, or use an explicitly approved external HTTPS public sample. Include a tested YouTube HTTPS fixture. Verify playback before publishing. Do not bake expired signed URLs into long-lived CI settings.
+4. Disable outbound production email/SMS adapters and seed **in-app** notification/announcement/discussion rows only, using non-real sandbox recipients. No production gateway or notifications should be invoked.
+5. Publish the full verified ID map as `APP_E2E_SEED_MANIFEST_JSON` according to `devFixtureManifestSchema` in `src/modules/e2e/dev-fixture-manifest.ts`, including two independent tenant graph IDs, `revision: 1`, an immutable `fixtureKey`, `outboundDeliverySuppressed: true`, media URLs. An ID manifest is a receipt of existing fixtures, **not** permission to create anything.
+6. Enable `APP_E2E_SEED_ENABLED=true` **separately from the E2E identity cookie flag**, set `APP_ENV=development`, `NODE_ENV=development`, and a private `APP_E2E_SEED_SECRET` of at least 32 characters. Authenticate as a named global Super Admin. Read `GET /api/dev/e2e/manifest` with `x-e2e-seed-secret`. Never put the secret in URLs or logs.
+
+The endpoint requires a live Super Admin permission and selected global scope in addition to its secret. A disabled environment returns 503 `E2E_SEED_DISABLED`; a missing or malformed manifest 503 `E2E_FIXTURE_UNAVAILABLE`; unauthorised access 403; production routes respond 404. All results are no-store, and never contain secret/config values. Failure is never “fixtures seeded.”
+
+The manifest is idempotent to read, not to provision. Rerun deterministic operator provisioners only under database transactions and unique constraints, and verify each fixture belongs to the intended tenant before publishing IDs. This setup does not itself implement the old one-click seeder, but supplies its stable typed harness IDs with stronger privilege boundaries.
