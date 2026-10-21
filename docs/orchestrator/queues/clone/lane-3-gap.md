@@ -49,26 +49,26 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/courses.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Sudent/student.js`
 - [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/PrivateDocStorage.java`
-- [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobTypes.java`
-- [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java`
-- [ ] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/JobApplicationStatusHistoryService.java`
-- [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/courses/CourseSearchController.java`
-- [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobRepository.java`
-- [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/StudentAssignment.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Qualification.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDeliveryEvent.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LearnerSavedJob.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java`
-- [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BugReportActivity.java`
-- [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoTeamThreadController.java`
-- [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoDriveController.java`
-- [ ] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/StudentCourseController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicRecruiterInviteController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LessonContentController.java`
-- [ ] U028 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CollegeController.java`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/delivery.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Organizations.js`
-- [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/RecruiterAccounts.js`
-- [ ] U032 (Cross-cutting area) `cross/03: College / organization / domain model, multi-college people, workspace switching`
-- [ ] U033 (Cross-cutting area) `cross/23: Mobile and responsive behaviour differences (legacy mobile app contract if any)`
+- [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobTypes.java`
+- [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/ExotelSmsServiceImpl.java`
+- [x] U013 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/JobApplicationStatusHistoryService.java`
+- [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/courses/CourseSearchController.java`
+- [x] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobRepository.java`
+- [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/StudentAssignment.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Qualification.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDeliveryEvent.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LearnerSavedJob.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyCourseAssociation.java`
+- [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BugReportActivity.java`
+- [x] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoTeamThreadController.java`
+- [x] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoDriveController.java`
+- [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/StudentCourseController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicRecruiterInviteController.java`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LessonContentController.java`
+- [x] U028 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/CollegeController.java`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/delivery.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Organizations.js`
+- [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/RecruiterAccounts.js`
+- [x] U032 (Cross-cutting area) `cross/03: College / organization / domain model, multi-college people, workspace switching`
+- [x] U033 (Cross-cutting area) `cross/23: Mobile and responsive behaviour differences (legacy mobile app contract if any)`
