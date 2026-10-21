@@ -244,46 +244,46 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/projects/class-team-workspace-creator.tsx`
 - [x] `src/components/projects/mentor-lane-board.tsx`
 - [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/mentor-release-editor.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx`
-- [ ] `src/components/projects/project-admin-collection-controls.tsx`
-- [ ] `src/components/projects/project-admin-readiness-page.tsx`
-- [ ] `src/components/projects/project-admin-workspace-list.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/super-admin-template-create-form.tsx`
-- [ ] `src/components/projects/super-admin-template-overview-editor.tsx`
-- [ ] `src/components/projects/super-admin-template-resource-editor.tsx`
-- [ ] `src/components/shell/sidebar-legacy.css`
-- [ ] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
-- [ ] `src/components/tpo/recruiter-inline-owner.tsx`
-- [ ] `src/components/tpo/recruiter-inline-stage.tsx`
-- [ ] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
-- [ ] `src/components/tpo/tpo-after-college-editor.tsx`
-- [ ] `src/components/tpo/tpo-audit-grid.tsx`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-campaign-compose.tsx`
-- [ ] `src/components/tpo/tpo-communication-settings-editors.tsx`
-- [ ] `src/components/tpo/tpo-company-create-form.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
-- [ ] `src/components/tpo/tpo-grid-column-chooser.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-audience-picker.tsx`
-- [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
-- [ ] `src/components/tpo/tpo-participation-decision-form.tsx`
-- [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-student-clipboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/projects/project-admin-at-risk-page.tsx`
+- [x] `src/components/projects/project-admin-collection-controls.tsx`
+- [x] `src/components/projects/project-admin-readiness-page.tsx`
+- [x] `src/components/projects/project-admin-workspace-list.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/super-admin-template-create-form.tsx`
+- [x] `src/components/projects/super-admin-template-overview-editor.tsx`
+- [x] `src/components/projects/super-admin-template-resource-editor.tsx`
+- [x] `src/components/shell/sidebar-legacy.css`
+- [x] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+- [x] `src/components/tpo/recruiter-inline-owner.tsx`
+- [x] `src/components/tpo/recruiter-inline-stage.tsx`
+- [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`
+- [x] `src/components/tpo/tpo-audit-grid.tsx`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
+- [x] `src/components/tpo/tpo-campaign-compose.tsx`
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
+- [x] `src/components/tpo/tpo-company-create-form.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/tpo/tpo-grid-column-chooser.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/tpo/tpo-notice-audience-picker.tsx`
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- [x] `src/components/tpo/tpo-participation-decision-form.tsx`
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-debar.tsx`
 - [ ] `src/components/tpo/tpo-team-away-form.tsx`
 - [ ] `src/components/tpo/tpo-team-forms.tsx`
 - [ ] `src/components/tpo/tpo-team-message-actions.tsx`
