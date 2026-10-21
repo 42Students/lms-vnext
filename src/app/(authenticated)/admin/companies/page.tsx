@@ -111,6 +111,10 @@ export default async function SuperAdminCompaniesPage({
      {context.adminScope?.collegeId===row.collegeId?<SuperAdminCollegeCompanyRelationshipActions
       relationshipId={row.relationshipId} name={row.name} trusted={row.trusted}
       status={row.relationshipStatus} driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}
+     {context.adminScope?.collegeId===row.collegeId&&row.companyStatus==="ACTIVE"?
+      <Disclosure title="Merge" className="min-w-0">
+       <SuperAdminCompanyMerge companies={[{id:row.companyId,name:row.name}]}/>
+      </Disclosure>:null}
      <Link href={"/admin/companies/"+encodeURIComponent(row.companyId)+"/drives"}
       target="_blank" rel="noopener noreferrer"
       className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">History</Link>
