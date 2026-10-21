@@ -18,6 +18,7 @@ import {Button} from "@/components/ui/button";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 type Draft={id:string;title:string;description:string;updatedAt:string;status:string;
+ recruiterOwned:boolean;recruiterOwnershipSource:string;
  applicantCount:number;applicationDeadline:string|null;minCgpaHundredths:number|null;
  locations:string[];openings:number|null;minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
  fixedCtcLpa:string|null;variableCtcLpa:string|null;stipendPerMonthInr:number|null;isDream:boolean;
@@ -184,6 +185,17 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    <span className="text-xs text-muted-foreground">steps ready · rounds reviewed separately</span>
   </div>
  </header>
+ {job.recruiterOwned ? <div role="note"
+   className="space-y-1 border-l-[3px] border-info-border bg-info-subtle px-4 py-3 text-sm">
+   <p className="font-semibold">Recruiter-originated drive</p>
+   <p className="text-body">
+     This drive originated from a recruiter{job.recruiterOwnershipSource==="APPROVED_RECRUITER_REQUEST"
+       ?" request approved by the college":""}. The company relationship and recruiter ownership
+     stay attached to the approved request; this form cannot transfer them to another recruiter.
+     Edit only college-authorized job terms. Company and recruiter access changes require
+     their separate audited workflows.
+   </p>
+ </div> : null}
  <div className="grid min-w-0 items-start gap-[18px] lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
  <form onSubmit={submit} onChange={event=>{
   markDirty();setSaved(null);
