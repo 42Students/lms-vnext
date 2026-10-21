@@ -9,25 +9,27 @@ import {logAlertsRuntimeEnabled} from "./readiness";
 
 export type ManualAlertKind="TEST"|"DIGEST";
 export async function sendManualTelegramAlertForAdmin(
-  context:RequestContext,kind:ManualAlertKind,now=new Date(),
+  context:RequestContext,kind:ManualAlertKind,now=new Date(),requestedHours=24,
 ):Promise<{sent:boolean;reason:"SENT"|"UNCONFIGURED"|"RATE_LIMITED"|"DELIVERY_FAILED"}>{
   requireGlobalLogAdmin(context);
   if(!logAlertsRuntimeEnabled()||!telegramAlertsConfigured())
     return {sent:false,reason:"UNCONFIGURED"};
   let message="42 Tracker manual test alert. This is a test; no customer issue was detected.";
   if(kind==="DIGEST"){
+    const hours=Number.isFinite(requestedHours)?Math.max(1,Math.min(336,Math.trunc(requestedHours))):24;
+    const windowStart=now.getTime()-hours*60*60*1000;
     const environment=process.env.APP_ENV==="production"?"PRODUCTION":
       process.env.APP_ENV==="uat"?"UAT":"DEVELOPMENT";
     const latest=await listKnownErrorsForAdmin(context,{environment,limit:100});
     message=[
-      "42 Tracker manual error digest (latest 100 signatures)",
+      "42 Tracker manual error digest ("+hours+"h window; latest 100 signatures)",
       "Environment: "+environment,
       "Open: "+latest.filter(item=>item.fixStatus==="OPEN").length,
       "Marked fixed: "+latest.filter(item=>item.fixStatus==="FIXED").length,
       "Muted: "+latest.filter(item=>item.muted).length,
       "Regressions: "+latest.filter(item=>item.regressedAt).length,
-      "New error types in last 24h: "+latest.filter(item=>
-        item.firstSeenAt.getTime()>=now.getTime()-86_400_000).length,
+      "New error types in last "+hours+"h: "+latest.filter(item=>
+        item.firstSeenAt.getTime()>=windowStart).length,
       "Top signatures:",
       ...latest.slice(0,5).map(item=>
         item.signatureHash.slice(0,12)+": "+item.occurrenceCount+" occurrences"),

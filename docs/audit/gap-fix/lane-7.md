@@ -181,3 +181,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-workspace-readiness.tsx.md` | Exact 'Readiness could not be loaded' restored for safe error state; removed incorrect releases-as-blocker text, clarified override facts. Group-page canonical panel integration remains. No CI.
 - `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_public-join_domain-model.ts.md` | Tightened company-domain exact/subdomain matching against malformed labels and documented conservative PSL fallback. Full maintained PSL not installed and new packages forbidden, so complete registrable-domain parity remains a dependency. No CI.
+
+- `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_tpo_audit_page.tsx.md` | Added guidance to existing category/actor/date filter surfaces; legacy dynamic four-checklist option counts remain unimplemented without scoped faceting service. No CI.
+- `docs/audit/gap-fix-work/packets/lane-13/src_modules_log-alerts_manual-ops.ts.md` | DIGEST now accepts clamped 1..336 requested hours, uses that window for new-signature counts and labels capped latest100 sampling honestly. Full hour-window DB query remains pending; no CI.

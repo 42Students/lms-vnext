@@ -221,6 +221,7 @@ export default async function TpoAuditPage({
         ))}
       </section>
 
+      <p className="text-xs text-muted-foreground leading-5">About and What happened: use the category tabs. Who and When: use the actor/entity view and date filters. The actor view contains additional scoped audit filters.</p>
       <TpoAuditSavedViews
        filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
       <nav aria-label="Quick looks" className="flex flex-wrap gap-2">

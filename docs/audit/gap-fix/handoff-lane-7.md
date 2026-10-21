@@ -976,3 +976,6 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-7-004-008/-064 | `src/components/projects/project-admin-readiness-page.tsx` | Mount canonical ProjectWorkspaceReadiness details by selected workspace and preserve release/override context.
 - G2-13-012-027 / G2-12-012-015 / G2-12-012-031 | `src/modules/placements/public-join/domain-model.ts + approved PSL dataset` | Replace partial hand-maintained public suffix list with reviewed maintained PSL without unsafe registrable-domain guessing; new packages forbidden in lane.
+
+- G2-11-006-021 | `src/modules/placements/tpo-audit-service.ts + TpoAuditPage` | Implement scoped About/What happened/Who/When facet option count queries and checklist chips, not only links.
+- G2-12-024-021 | `src/modules/log-alerts/admin-service.ts` | Add hour-scoped query over full recorded incidents to avoid latest100 cutoff for manual digests, retaining bounded tenant and rate guards.
