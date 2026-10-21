@@ -158,20 +158,20 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/tpo/reports/joining-status/error.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/leads/error.tsx`
 - [x] `src/app/(authenticated)/tpo/reports/offers-acceptance/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/unplaced/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/after-college/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/after-college/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/blocked-dates/loading.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/branding/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/job-types/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/offers-expiry/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placed-branch/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/placement-summary/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/season-pipeline/error.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/unplaced/error.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/after-college/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/after-college/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/blocked-dates/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/blocked-dates/loading.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/branding/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/job-types/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/job-types/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/notifications/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/error.tsx`
