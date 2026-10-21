@@ -152,13 +152,13 @@ export default async function TpoCompanyDetailPage({
       ) : null}
 
       <section className="grid min-w-0 grid-cols-2 gap-3 xl:grid-cols-5">
-        {[
+        {([
           ["Contacts", company.contacts ?? "Unavailable"],
           ["Drives", company.drives],
           ["Offers", company.offers],
           ["Accepted offers", company.acceptedOffers],
           ["Confirmed joined learners", company.confirmedJoinedLearners],
-        ].map(([label, value]) => (
+        ] as const).map(([label, value]) => (
           <StatTile key={label} label={label} value={value} className={tpoTileStyles.tile} />
         ))}
       </section>
