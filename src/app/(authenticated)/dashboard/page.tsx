@@ -69,12 +69,12 @@ function MetricCard({
   return href ? (
     <Link
       href={href}
-      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-primary)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+      className="flex min-h-11 min-w-0 flex-col rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] min-[768px]:p-[var(--lms-canvas-padding)] transition-colors duration-[var(--lms-motion-fast)] motion-reduce:transition-none hover:border-[var(--lms-canvas-border)] hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
     >
       {content}
     </Link>
   ) : (
-    <section className="min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4">
+    <section className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-[var(--lms-space-4)] min-[768px]:p-[var(--lms-canvas-padding)]">
       {content}
     </section>
   );
