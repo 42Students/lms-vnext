@@ -107,3 +107,9 @@ export { learnerImportBatches, learnerImportBatchMembers } from "./db02-learner-
 
 // Audit storage registered; sync worker remains activation-gated.
 export { db10AuditFindings, db10AuditFindingEvents, db10AuditFindingSyncs } from "./db10-audit-findings.draft";
+
+// DB07 project-audit-staged must NOT be exported until the project-lane
+// migration and event writer are deployed together. The existing projects
+// ledger already owns task comments and delivery event identities; never
+// register duplicate staged tables. DB10 bug_report_activities uses immutable
+// UUID identities and RESTRICT retention, with no legacy integer migration.
