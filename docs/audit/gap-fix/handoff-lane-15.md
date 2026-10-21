@@ -12,3 +12,10 @@
 - `src/modules/placements/learner-application-detail-service.ts` and company sharing: G2-12-019-060. Expose public_ref, not internal UUID, to ATS; maintain per-role guarantees.
 - Joining and offer service: G2-16-031-040. Keep reversibility and joining history independent of ACCEPTED.
 - Drive/season importer and TPO drive service: G2-16-031-060. Crosswalk legacy Job fields/status to scoped season, job and company relationship; verify migrations.
+
+- `src/modules/placements/tpo-applicant-pipeline-service.ts`, status import/projector and search: G2-16-031-061, G2-13-014-028/056/057/059, G2-13-010-006/055/058/059, G2-14-011-010/012/079/080. Join placement_jobs.college_id; preserve imported soft-delete distinct from withdrawn, reconstruct nine-state label timeline and actor/date/messages, CAS reapply.
+- Round result service: G2-16-031-062. Existing round/application/version, current-result index and applied timestamp guards are present; enforce transactional waitlist/supersede semantics.
+- Offer selection/release/expiry/dispute service: G2-16-031-063, G2-13-015-001/002/007/008/012/013/014/028/030/033/039/053/055/058/059, G2-14-011-044. Use selection for pre-release, offer for release/response; atomically populate createdByType/verifiedByUserId/releasedAt, CAS rowVersion separately from issuance version, durable expiry sweep and EXTERNAL_IMPORT 48h dispute, reversal rollback. Preserve legacy money exact LPA/rounding policy and old ID crosswalk.
+- Import source validator: G2-14-010-044. Malformed legacy application source maps EXTERNAL only during import; never silently default incoming new rows.
+- Drive services/job status projection: G2-14-011-022/078/081, G2-14-015-003/004/008/022/028. Legacy EXTERNAL_ONLY targeting constraints and DRAFT_LIKE request workflow statuses must be handled outside learner-visible job lifecycle.
+- `drizzle/0138_job_type_drive_policy.sql` (separate lane's file on main, not ours): appears to have an unterminated regex SQL literal and malformed duplicated unique-index statement. DO NOT run migrations until its owner validates/corrects it. Lane 15 did not modify existing migration.

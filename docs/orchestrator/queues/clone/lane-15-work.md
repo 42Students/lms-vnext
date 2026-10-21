@@ -14,8 +14,8 @@ Packets:
 
 - [x] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part1of15.md` (edit src/db/schema/placements.ts; 20 findings; best P0)
 - [x] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part2of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part3of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part4of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part3of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part4of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part5of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part6of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-15/src_db_schema_placements.ts.part7of15.md` (edit src/db/schema/placements.ts; 20 findings; best P1)
