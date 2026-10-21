@@ -408,7 +408,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      </Button>}
     {["DRAFT","PUBLISHED","CLOSED"].includes(chosen.status)&&
      <details className="min-w-0 border-t border-border pt-2 sm:ml-auto sm:border-t-0 sm:pt-0">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Archive quiz</summary>
+      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Archive quiz</summary>
       <Button variant="danger" type="button" disabled={pending} onClick={()=>void submit("ARCHIVE")}
        className="mt-2 min-h-11 md:min-h-9">Archive quiz</Button>
      </details>}
