@@ -1,4 +1,5 @@
-import { redirect } from "next/navigation";
+import { Alert } from "@/components/ui/alert";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
@@ -17,7 +18,12 @@ export default async function CollegeHiringDashboardPage({
 }: { searchParams: Promise<Record<string,string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) {
-    redirect("/dashboard");
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Analytics"/>
+      <ErrorState title="Admin not assigned to a college"
+        description="Contact your administrator for a College Admin membership before viewing hiring reports."
+        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
+    </div>;
   }
   const query = collegeHiringAnalyticsQuery(await searchParams);
   if (!query.success) {
@@ -31,13 +37,24 @@ export default async function CollegeHiringDashboardPage({
         action={<Link href="/college/hiring-dashboard" className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto md:min-h-9">Clear filters</Link>} />
     </div>;
   }
-  const workspace = await getPlacementReportWorkspace(context, {
-    collegeId: context.membership.collegeId,
+  const workspaceRequest=getPlacementReportWorkspace(context,{
+    collegeId:context.membership.collegeId,
     seasonId:query.data.seasonId,jobId:query.data.jobId,
   });
-  const funnel=await getCollegeHiringFunnel(context,{
-    ...query.data,seasonId:query.data.seasonId??workspace.selectedSeasonId??undefined,
-  });
+  // Use independent reads when season is explicit; otherwise preserve the
+  // workspace's selected season instead of changing report scope.
+  const funnelRequest=query.data.seasonId
+    ?getCollegeHiringFunnel(context,query.data)
+    :workspaceRequest.then(workspace=>getCollegeHiringFunnel(context,{
+      ...query.data,seasonId:workspace.selectedSeasonId??undefined,
+    }));
+  const [workspaceResult,funnelResult]=await Promise.allSettled([workspaceRequest,funnelRequest]);
+  if(workspaceResult.status==="rejected"&&workspaceResult.reason instanceof AuthorizationError)
+    throw workspaceResult.reason;
+  if(funnelResult.status==="rejected"&&funnelResult.reason instanceof AuthorizationError)
+    throw funnelResult.reason;
+  const workspace=workspaceResult.status==="fulfilled"?workspaceResult.value:null;
+  const funnel=funnelResult.status==="fulfilled"?funnelResult.value:null;
   return <div className="min-w-0 space-y-4">
     <PageHeader title="Analytics"
       actions={<Link href="/college/placements/readiness-by-department"
@@ -45,13 +62,23 @@ export default async function CollegeHiringDashboardPage({
         Placement Evidence by Department
       </Link>} />
     <CollegeReportNavigation/>
-    <ReportFilters workspace={workspace} userId={context.user.id} path="/college/hiring-dashboard" />
-    <ReportMetrics metrics={workspace.report.metrics} />
-    <CollegeHiringFunnel data={funnel} selectedSeasonId={workspace.selectedSeasonId}
-      selectedJobId={workspace.selectedJobId}/>
+    {workspace?<ReportFilters workspace={workspace} userId={context.user.id} path="/college/hiring-dashboard" />:null}
+    {!workspace?<Alert tone="warning">
+      Could not load hiring metrics. The college report is unavailable.
+      <Link href="/college/hiring-dashboard" className="ml-2 font-semibold text-link underline">Retry</Link>
+    </Alert>:null}
+    {workspace?<ReportMetrics metrics={workspace.report.metrics}/>:null}
+    {!funnel?<Alert tone="warning">
+      Could not load hiring funnel. Other report sections remain available.
+      <Link href="/college/hiring-dashboard" className="ml-2 font-semibold text-link underline">Retry</Link>
+    </Alert>:null}
+    {funnel?<CollegeHiringFunnel data={funnel}
+      selectedSeasonId={workspace?.selectedSeasonId??query.data.seasonId??null}
+      selectedJobId={workspace?.selectedJobId??query.data.jobId??null}/>:null}
     <details className="min-w-0 border-t border-border pt-2">
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Reporting methodology</summary>
-      <ReportScopeNote note={workspace.registrationScopeNote} />
+      {workspace?<ReportScopeNote note={workspace.registrationScopeNote}/>:
+        <p className="text-sm text-muted-foreground">Methodology will appear after the report reloads.</p>}
     </details>
   </div>;
 }
