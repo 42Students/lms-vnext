@@ -4,16 +4,16 @@
 Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/requests/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/confirmed/page.tsx`
-- [ ] `src/components/academics/academics-section-page.tsx`
-- [ ] `src/components/auth/membership-recovery.tsx`
-- [ ] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/requests/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
+- [x] `src/components/academics/academics-section-page.tsx`
+- [x] `src/components/auth/membership-recovery.tsx`
+- [x] `src/components/courses/college-learning-directory.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
 - [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
 - [ ] `src/components/placements/tpo-round-result-recorder.tsx`
 - [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
