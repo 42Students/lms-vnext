@@ -99,7 +99,7 @@ function calendarHref(
   });
 
   if (collegeId) params.set("collegeId", collegeId);
-  return `/hr/calendar?${params.toString()}`;
+  return `/recruiter/calendar?${params.toString()}`;
 }
 
 function dateLabel(day: string) {
@@ -117,6 +117,12 @@ function shortDayLabel(day: string) {
     month: "short",
     timeZone: "UTC",
   }).format(new Date(`${day}T12:00:00.000Z`));
+}
+
+function fullDayLabel(day:string){
+  return new Intl.DateTimeFormat("en-IN",{
+    weekday:"long",day:"numeric",month:"short",timeZone:"UTC",
+  }).format(new Date(day+"T12:00:00Z"));
 }
 
 function monthLabel(day: string) {
@@ -235,7 +241,7 @@ export default async function HrCalendarPage({
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Calendar" />
       <ErrorState title="Invalid calendar filters" description="Review the selected date, view and event filters."
-        action={<Link href="/hr/calendar" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+        action={<Link href="/recruiter/calendar" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
     </div>;
   }
 
@@ -261,7 +267,7 @@ export default async function HrCalendarPage({
       <PageHeader title="Calendar"/>
       <ErrorState title="College calendar unavailable"
         description="Select a college where your recruiter access is active."
-        retryHref="/hr/calendar" retryLabel="Choose college"/>
+        retryHref="/recruiter/calendar" retryLabel="Choose college"/>
     </div>;
   }
   if (grants.length > 1 && !requestedCollegeId) {
@@ -395,7 +401,7 @@ export default async function HrCalendarPage({
                   <summary className="inline-flex min-h-11 w-full cursor-pointer items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                     Jump to date
                   </summary>
-                  <form action="/hr/calendar" method="get"
+                  <form action="/recruiter/calendar" method="get"
                     className="mt-3 grid min-w-0 gap-[8px] min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-end" aria-label="Filter recruiter calendar">
                     <Input type="hidden" name="view" value={view} />
                     {selectedCollegeId?<Input type="hidden" name="collegeId" value={selectedCollegeId}/>:null}
@@ -441,14 +447,16 @@ export default async function HrCalendarPage({
           ) : null}
 
           {view === "month" && eventCount > 0 ? (
-            <section
+            <details className="min-w-0 border-b border-border pb-3">
+              <summary className="min-h-11 cursor-pointer text-sm font-semibold text-primary-text">View month grid</summary>
+              <section
               aria-label={`${view} recruiter calendar`}
               className={styles.boardFrame}
             >
               <div className="space-y-3 min-[1100px]:hidden">
                 {mobileDays.map((day) => (
                   <article key={day.day} className={styles.mobileDay}>
-                    <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{dateLabel(day.day)}{day.day===today?" · Today":""}</h3>
+                    <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{fullDayLabel(day.day)}{day.day===today?" · Today":""}</h3>
                     <div className={styles.mobileEvents}>
                       {day.events.map((event) => (
                         <RecruiterCalendarEventCard key={event.id} event={event} />
@@ -569,10 +577,11 @@ export default async function HrCalendarPage({
                   );
                 })}
               </CalendarGrid>
-            </section>
+              </section>
+            </details>
           ) : null}
 
-          {view !== "month" && eventCount > 0 ? (
+          {eventCount > 0 ? (
             <section
               aria-label="Recruiter calendar agenda"
               className="space-y-6"
@@ -601,64 +610,32 @@ export default async function HrCalendarPage({
                   className="space-y-3"
                 >
                   <h3 className="border-b border-[var(--lms-canvas-border)] pb-2 font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">
-                    {new Intl.DateTimeFormat("en-IN",{weekday:"long",day:"numeric",month:"short",timeZone:"UTC"}).format(new Date(day.day+"T12:00:00Z"))}
+                    {fullDayLabel(day.day)}
                     {day.day === today
                       ? " · Today"
                       : ""}
                   </h3>
 
                   <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">
-                    {day.events.map((event) => (
-                      <RecruiterCalendarEventCard key={event.id} event={event} />
-                    ))}
-                    {day.resultsDue.map((item) => (
-                      <article key={"due:" + item.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-                        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due</p>
-                        <h4 className="mt-2 font-semibold text-foreground">{item.roundName}</h4>
-                        <p className="mt-1 text-sm text-body">{item.jobTitle} · {eventDateTime(item.dueAt)} IST</p>
-                        <Link href={hrResultsDueHref(item.jobId,item.id)} className="max-[767px]:min-h-11 mt-3 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-                          Open hiring rounds →
+                    {[
+                      ...day.events.map(event=>({kind:"EVENT" as const,when:event.startsAt.getTime(),event})),
+                      ...day.resultsDue.map(item=>({kind:"RESULTS_DUE" as const,when:item.dueAt.getTime(),item})),
+                    ].sort((left,right)=>left.when-right.when).map(entry=>
+                      entry.kind==="EVENT"?
+                        <RecruiterCalendarEventCard key={"event:"+entry.event.id} event={entry.event}/>:
+                        <Link key={"due:"+entry.item.id}
+                          href={hrResultsDueHref(entry.item.jobId,entry.item.id)}
+                          className="block min-w-0 rounded-[var(--lms-control-radius)] border-b border-[var(--lms-canvas-border)] px-3 py-3 transition-colors hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+                          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Results due · {eventTime(entry.item.dueAt)} IST</p>
+                          <h4 className="mt-1 font-semibold text-foreground">{entry.item.roundName}</h4>
+                          <p className="mt-1 text-sm text-body">{entry.item.jobTitle}</p>
                         </Link>
-                      </article>
-                    ))}
+                    )}
                   </div>
                 </div>
               ))}
             </section>
           ) : null}
-          {view === "month" && (category === "ALL" || category === "RESULTS_DUE") ? (
-            <section aria-label="Results due in this period"
-              className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
-              <div>
-                <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">
-                  Results due in this period
-                </h2>
-                <p className="mt-1 text-sm text-body">
-                  Persisted round results deadlines for your employer&apos;s authorized drives. These are not interview slots or notifications.
-                </p>
-              </div>
-              {calendar.resultsDue.length ? (
-                <ul className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
-                  {calendar.resultsDue.map(item => (
-                    <li key={item.id} className="min-w-0 py-3">
-                      <Link href={hrResultsDueHref(item.jobId,item.id)}
-                        className="flex min-h-11 min-w-0 flex-col justify-center gap-2 py-1 hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between min-[768px]:gap-4">
-                        <span className="min-w-0">
-                          <span className="block break-words font-semibold text-primary-text">{item.roundName}</span>
-                          <span className="block break-words text-sm text-body">{item.jobTitle}</span>
-                        </span>
-                        <span className="shrink-0 text-xs text-muted-foreground">
-                          Due {eventDateTime(item.dueAt)} IST · {item.status}
-                        </span>
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              ) : <EmptyState title="No results due"
-                description="No results deadlines are recorded in this calendar period." />}
-            </section>
-          ) : null}
-
           <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
             <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-body min-[768px]:min-h-9">
               Recruiter calendar summary
