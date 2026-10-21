@@ -12,7 +12,7 @@ export default function CollegeLectureHallsError({ reset }: {
       title="Lecture halls unavailable"
       description="The college lecture halls could not be loaded. No empty result is assumed."
       action={
-        <Button type="button" variant="secondary" onClick={reset}>Retry</Button>
+        <Button type="button" variant="secondary" onClick={reset} className="w-full md:w-auto">Retry</Button>
       }
     />
   );
