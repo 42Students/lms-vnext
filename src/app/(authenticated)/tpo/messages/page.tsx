@@ -168,7 +168,7 @@ export default async function TpoMessagesPage({
   // when the recruiter-thread tables are not available.
   if(!isRecruiterInbox)return <div className="min-w-0 space-y-6">
    <PageHeader title="Messages"
-    description="Keep recruiter conversations tied to the right drive and follow up without leaving the placement workspace."/>
+    description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
    {tabs("recruiters")}
    <ErrorState title="Could not load conversations"
     description="Recruiter conversations are unavailable. Placement notifications remain separate and this does not mean your conversations were deleted."
@@ -211,7 +211,8 @@ export default async function TpoMessagesPage({
     search.set("thread",id);
     return "/tpo/messages?"+search.toString();
   };
-  const narrowing=Boolean(query.q||query.from||query.to||query.status!=="ALL");
+  const searching=Boolean(query.q.trim());
+  const narrowing=Boolean(searching||query.from||query.to||query.status!=="ALL");
   return <div className="min-w-0 space-y-4">
     <PageHeader title="Messages" description="Conversations with recruiters, one for each drive and a general one. Inside a drive, the same conversation is its Discussion tab."/>
     <section className="min-w-0 rounded-xl border border-border bg-surface p-4 md:p-6">
@@ -246,7 +247,7 @@ export default async function TpoMessagesPage({
             </p>
           </div>
           {items.length===0?<div className="p-4">
-            <EmptyState title={narrowing?"No conversations match this search":"No conversations yet"}
+            <EmptyState title={searching?"No conversations match this search":narrowing?"No conversations match these filters":"No conversations yet"}
               description={narrowing?"Try a different search or choose All.":"Start a new message to a recruiter."}/>
           </div>:<ul className="max-h-[65vh] divide-y divide-border overflow-y-auto lg:max-h-[680px]">
             {items.map(item=><li key={item.id}>
