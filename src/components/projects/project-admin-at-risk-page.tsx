@@ -141,7 +141,7 @@ export async function ProjectAdminAtRiskPage({
              {project.status}</StatusBadge>},
           {key:"severity",header:"Severity",mobilePriority:"secondary",
            cell:project=><StatusBadge
-             tone={project.riskSeverity==="HIGH_RISK"?"danger":
+             tone={project.riskSeverity==="HIGH_RISK"?"error":
                project.riskSeverity==="AT_RISK"?"warning":"neutral"}>
              {project.riskSeverity==="HIGH_RISK"?"High risk":
                project.riskSeverity==="AT_RISK"?"At risk":"Watch"}</StatusBadge>},

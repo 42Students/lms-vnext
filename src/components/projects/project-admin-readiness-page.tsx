@@ -5,8 +5,8 @@ import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
-import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases} from "@/modules/projects/college-readiness-releases-service";
-import {z} from "zod";
+import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases,
+ resolveCollegeReadinessWorkspaceId} from "@/modules/projects/college-readiness-releases-service";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {effectiveProjectSubmissionReady} from "@/modules/projects/readiness-override-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -108,48 +108,33 @@ export async function ProjectAdminReadinessPage({
       description="Couldn't load workspaces. Check the selected college and retry."
       action={<Link href={basePath+"/readiness"} className="inline-flex min-h-11 items-center text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Retry readiness</Link>} />
   </div>;
-  // All reads succeeded; the settled tuple retains the individual results.
-  const result=(read[0] as PromiseFulfilledResult<Awaited<ReturnType<typeof listProjectAdminSnapshots>>>).value;
-  const activeOverrides=(read[1] as PromiseFulfilledResult<Awaited<ReturnType<typeof listCollegeActiveReadinessOverrides>>>).value;
-  const workspaceChoices=(read[2] as PromiseFulfilledResult<Awaited<ReturnType<typeof listCollegeReadinessWorkspaceChoices>>>).value;
-  const requested=one(searchParams.projectId) ?? one(searchParams.workspaceId);
-  const uuid=z.string().uuid().safeParse(requested);
-  // Old projectId bookmarks used a slug. Resolve it only inside the
-  // already-authorized selected-college scope. No global slug lookup.
-  const validSlug=typeof requested==="string"&&/^[a-z0-9][a-z0-9-]{0,95}$/i.test(requested);
-  const selectedProject=uuid.success||validSlug
-   ?(await getDb().select({id:projectInstances.id,title:projectInstances.title,
-      status:projectInstances.status,slug:projectInstances.slug})
-      .from(projectInstances).where(and(eq(projectInstances.collegeId,collegeId),
-       isNull(projectInstances.deletedAt),
-       uuid.success?eq(projectInstances.id,uuid.data):eq(projectInstances.slug,requested!)))
-      .limit(1))[0]??null:null;
-  const selected=selectedProject?.id??null;
+  const [result, activeOverrides, workspaceChoices] = read.value;
+  const requested=one(searchParams.projectId)??one(searchParams.workspaceId);
+  const chosenId=requested?await resolveCollegeReadinessWorkspaceId(
+    context,collegeId,requested).catch(()=>null):null;
+  const selectedScope=chosenId?await requireProjectManageAccess(context,chosenId)
+    .then(scope=>scope.collegeId===collegeId?scope:null).catch(()=>null):null;
+  const selected=selectedScope?.project.id??null;
   const outsideScope=Boolean(requested&&!selected);
-  const releaseRead=selected
-   ?await listCollegeReadinessReleases(context,collegeId,selected)
-      .then(rows=>({rows,error:false})).catch(()=>({rows:[],error:true}))
-   :{rows:[],error:false};
-  const releaseContext=releaseRead.rows;
-  const currentReadiness=selected ? await getProjectReadiness(context,selected)
-    .then(data=>({data,error:false as const})).catch(()=>({data:null,error:true as const})) : null;
-  const overridePageRaw=one(searchParams.overridePage)??"1";
-  const overridePage=/^[1-9][0-9]{0,3}$/.test(overridePageRaw)?Number(overridePageRaw):1;
-  const matchingOverrides=activeOverrides.filter(row=>!query.q||row.workspace.toLowerCase().includes(query.q.toLowerCase()));
-  const overridePageCount=Math.max(1,Math.ceil(matchingOverrides.length/25));
-  const displayedOverridePage=Math.min(overridePage,overridePageCount);
-  const overrideRows=matchingOverrides.slice((displayedOverridePage-1)*25,displayedOverridePage*25);
-  const overridePageHref=(nextPage:number)=>{
-    const url=new URLSearchParams();
-    if(query.q)url.set("q",query.q);
-    if(selected)url.set("workspaceId",selected);
-    url.set("overridePage",String(nextPage));
-    return basePath+"/readiness?"+url.toString();
-  };
-  const selectedSummary=result.items.find(item=>item.id===selected);
-  const selectedOverride=activeOverrides.find(item=>item.projectId===selected);
-  const readinessPath =
-    basePath + "/readiness";
+  const pickerChoices=selectedScope&&!workspaceChoices.some(item=>item.id===selected)
+    ?[{id:selectedScope.project.id,title:selectedScope.project.title,
+      status:selectedScope.project.status},...workspaceChoices]:workspaceChoices;
+  const [readinessRead,releasesRead]=selected?await Promise.allSettled([
+    getProjectReadiness(context,selected),
+    listCollegeReadinessReleases(context,collegeId,selected),
+  ]):[null,null];
+  const selectedReadiness=readinessRead?.status==="fulfilled"?readinessRead.value:null;
+  const releaseUnavailable=releasesRead?.status==="rejected";
+  const releaseContext=releasesRead?.status==="fulfilled"?releasesRead.value:[];
+  const readinessPath=basePath+"/readiness";
+  const rawOverridesPage=one(searchParams.overridePage)??"1";
+  const overridePage=/^[1-9][0-9]*$/.test(rawOverridesPage)&&Number.isSafeInteger(Number(rawOverridesPage))
+    ?Math.min(Number(rawOverridesPage),10000):1;
+  const matchingOverrides=activeOverrides.filter(row=>!query.q||
+    row.workspace.toLowerCase().includes(query.q.toLowerCase()));
+  const overrideTotalPages=Math.max(1,Math.ceil(matchingOverrides.length/25));
+  const currentOverridePage=Math.min(overridePage,overrideTotalPages);
+  const visibleOverrides=matchingOverrides.slice((currentOverridePage-1)*25,currentOverridePage*25);
 
   return (
     <div className="min-w-0 max-w-[1040px] space-y-4">
@@ -191,9 +176,15 @@ export async function ProjectAdminReadinessPage({
         className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a>
       </div>
       <Disclosure title="Select workspace" className="border-b border-border pb-4" defaultOpen contentClassName="space-y-3 pt-3">
-        {outsideScope ? <Banner tone="warning" role="alert">This workspace belongs to a different college — switch colleges in the header and try again.</Banner> : null}
-        <AdminReadinessWorkspacePicker items={workspaceChoices} selected={selected} action={readinessPath}/>
-        {!selected&&!outsideScope?<Banner tone="info" role="status">Select a workspace to view current readiness, releases, and manual overrides.</Banner>:null}
+        {outsideScope ? <Banner tone="warning" role="alert">
+          This workspace could not be found in the selected college. Check its
+          ID or slug, or switch colleges in the header and try again.
+        </Banner> : null}
+        {!selected?<Banner tone="info">Select a workspace to see current readiness,
+          its releases and any manual override. Choose a college workspace below.
+        </Banner>:null}
+        <AdminReadinessWorkspacePicker key={selected??"no-selection"}
+          items={pickerChoices} selected={selected} action={readinessPath}/>
         {selected ? <>
           {selectedProject?.status==="ARCHIVED"?<Banner tone="warning" role="status">This archived workspace is not in the active picker. You can still review its current manual override.</Banner>:null}
           <section aria-label="Current readiness" className="space-y-2 border-b border-border pb-3">
