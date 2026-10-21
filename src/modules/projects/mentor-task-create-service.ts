@@ -15,6 +15,20 @@ import {ProjectsServiceError,postgresConstraintName} from "./errors";
 import {mentorTaskCreateParamsSchema,mentorTaskCreateSchema} from "./mentor-task-create-model";
 import {notifyProjectMemberships} from "./project-notification-service";
 
+/** Legacy ProjectWorkspaceController accepted a complete tasks/resources array with
+ * one workspace update. The vNext contract is intentionally per-item and may
+ * update other authors' rows between requests.
+ * - Task create: lock the project, optionally CAS sprint.updatedAt.
+ * - Task reorder/edit: use projectTaskPlanToken over the complete task set.
+ * - Resource create/update/archive: use resource identity and item version.
+ * Never emulate legacy "replace all" by deleting omitted tasks/resources. An
+ * importer must compare an initial snapshot, reconcile each item, and report
+ * partial success/conflicts before claiming whole-section parity. */
+export const legacyProjectSectionWriteCrosswalk = {
+ tasks: {legacy:"REPLACE_ARRAY",vNext:"ITEM_COMMANDS",optimistic:"SPRINT_UPDATED_AT_OR_TASK_PLAN_TOKEN"},
+ resources: {legacy:"REPLACE_ARRAY",vNext:"ITEM_COMMANDS",optimistic:"RESOURCE_ITEM_VERSION"},
+} as const;
+
 /** PR-S2-04: create task metadata on registered 0090 fields. */
 export async function createMentorProjectTask(context:RequestContext,rawParams:unknown,rawInput:unknown){
   const {projectId}=mentorTaskCreateParamsSchema.parse(rawParams);

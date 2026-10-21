@@ -9,6 +9,7 @@ import {
 } from "@/modules/identity/context";
 import { AuthorizationError, can } from "@/modules/permissions/policy";
 import { requireLearnerPlacementAccess } from "./learner-participation-guard";
+import { getOwnLearnerProfileWithRuntime } from "@/modules/people/runtime";
 import {
   candidatePreferencesInputSchema,
   type CandidatePreferencesInput,
@@ -63,6 +64,27 @@ export async function getCandidatePreferences(
       updatedAt: null,
     }
   );
+}
+
+/** Legacy JobPreferencesDTO read, using the single existing owner for its
+ * six fields (the learner profile document). Matching/eligibility preferences
+ * below are separate placement-scoped choices and never overwrite this DTO.
+ * This adapter does not expose another learner's profile or make a second
+ * persisted copy of role/city/shift/notification preferences. */
+export async function getLegacyJobPreferencesForSelf(context: RequestContext) {
+  const member = requireLearnerMembership(context);
+  await requireLearnerPlacementAccess(context);
+  const own = await getOwnLearnerProfileWithRuntime(context);
+  if (own.profile.membershipId !== member.id) throw new AuthorizationError("placements.read");
+  const pref = own.profile.profileDocument.jobPreferences;
+  return {
+    rolePreference: pref.rolePreference || null,
+    specificRolePreference: pref.specificRolePreference || null,
+    workShiftPreference: pref.workShiftPreference || null,
+    preferredEmploymentCity: pref.preferredEmploymentCity || null,
+    examSlotPreference: pref.examSlotPreference || null,
+    jobNotificationsEnabled: pref.jobNotificationsEnabled,
+  };
 }
 
 export async function upsertCandidatePreferences(

@@ -72,9 +72,17 @@ export function LearnerFacultyMobileFooter({items}:{items:readonly ShellNavItem[
     void apiFetch<{notifications?: NotificationInboxRow[]}>(
       "/api/notifications?limit=40", {cache:"no-store"},
     ).then(response=>{
-      if (!active || !Array.isArray(response.notifications)) return;
+      if (!active) return;
+      if (!Array.isArray(response.notifications)) {
+        // Invalid/unavailable count is not proof that there are zero unread.
+        setUnread(null);
+        return;
+      }
       setUnread(response.notifications.filter(row=>row.notification.readAt===null).length);
-    }).catch(()=>{ /* Count failure must not block navigation. */ });
+    }).catch(()=>{
+      // Retire stale counts on failed refresh; keep navigation usable offline.
+      if (active) setUnread(null);
+    });
     return ()=>{active=false;};
   }, [learner, pathname]);
 

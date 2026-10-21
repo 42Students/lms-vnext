@@ -58,7 +58,17 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
  if(!programParsed.success)return <div className="min-w-0 space-y-4"><PageHeader title={TPO_OWNER_PAGE_COPY.placementEligibility}/><Alert tone="error">Invalid program filter. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/tpo/batches">Clear filters</Link></Alert></div>;
  if(!sortParsed.success)return <div className="min-w-0 space-y-4"><PageHeader title={TPO_OWNER_PAGE_COPY.placementEligibility}/><Alert tone="error">Invalid batch sorting. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/tpo/batches">Clear filters</Link></Alert></div>;
  if(!parsed.success)return <div className="min-w-0 space-y-4"><PageHeader title={TPO_OWNER_PAGE_COPY.placementEligibility}/><Alert tone="error">Invalid search. <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/tpo/batches">Clear search</Link></Alert></div>;
- const [data,unassigned]=await Promise.all([listTpoBatches(context),countTpoLearnersWithoutClass(context).catch(()=>null)]);
+ const [data,unassigned]=await Promise.all([
+  listTpoBatches(context).catch(()=>null),
+  countTpoLearnersWithoutClass(context).catch(()=>null),
+ ]);
+ if(data===null)return <div className="min-w-0 space-y-4">
+  <PageHeader eyebrow="TPO · Batches" title={TPO_OWNER_PAGE_COPY.placementEligibility}
+   description="Decide who is in placements, one passing-out batch at a time. New students follow their class."/>
+  <Alert tone="error">Could not load batches. The batch directory is temporarily unavailable.
+   <Link href="/tpo/batches" className="ml-2 inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link>
+  </Alert>
+ </div>;
  const eligibility=await listTpoBatchCardEligibility(context,data.batches.map(batch=>batch.id)).catch(()=>null);
  const selected=filterTpoBatchDepartment(filterTpoBatchProgram(
   filterTpoBatchDirectory(data.batches,{...parsed.data,state:"ALL"}),
@@ -127,7 +137,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
   {recent===null?<InlineNotice tone="info" message="Recent decisions could not load. Open a batch to view its history."/>:null}
   {!data.ready&&deadlineParsed.data!=="ALL"?<InlineNotice tone="info" message="Deadline details are temporarily unavailable. All matching batches are still shown."/>:null}
   {!data.ready&&parsed.data.state!=="ALL"?<InlineNotice tone="info" message="Batch state details are temporarily unavailable. All matching batches are still shown."/>:null}
-  {!data.ready?<Alert tone="warning">Some batch details are temporarily unavailable. Academic batches remain visible; try again later.</Alert>:null}
+  {!data.ready?<Alert tone="warning">Couldn't refresh batches. Some batch details are temporarily unavailable; academic batches remain visible. <Link href="/tpo/batches" className="lms-inline-link inline-flex min-h-9 items-center font-semibold text-link underline">Retry</Link></Alert>:null}
   <dl className="grid min-w-0 grid-cols-2 gap-0 overflow-hidden border-y border-[var(--lms-canvas-border)] md:grid-cols-4">{[
   ["Open for placements",activeCount],["Students eligible",eligibleCount],["Not decided yet",pendingCount],["Placed (offer evidence)",placedCount],
   ].map(([label,value])=><div key={label} className="min-w-0 border-b border-r border-[var(--lms-canvas-border)] p-3 last:border-r-0"><dt className="text-xs text-muted-foreground">{label}</dt><dd className="font-semibold">{data.ready&&value!==null?value:"—"}</dd></div>)}</dl>
