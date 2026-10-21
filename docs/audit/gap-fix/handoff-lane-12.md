@@ -43,3 +43,6 @@
 
 - `src/modules/placements/tpo-crm-service.ts` / G2-11-019-031/035: No-answer follow-up due currently two days; legacy tomorrow 10 AM IST. Keep transaction and existing-open-follow-up protections when aligning.
 - `src/modules/placements/tpo-recruiter-invite-service.ts` / G2-11-019-047: Public acceptance requires linked company relationship; legacy Invite permitted an email-only lead. Offer scoped relationship association before issuing, not an unverifiable invite.
+
+- `src/modules/announcements/tpo-notice-read-receipts-service.ts` / G2-11-005-033/075/132/138: return TPO-authorized unread recipients as stable {id,name,rollNumber,branchName}, not only string names; join school profile/department only in authorized college and maintain 500 limit. Lane-12 notice Drawer accepts these fields without fabricating values.
+- `src/app/(authenticated)/activity/page.tsx` raw forensic logs / G2-9-027-005/015/031: retain privacy-safe provenance with authorized actor details; currently raw table is six columns and does not retain IP. Restore full forensic 8 columns only for real persisted values, with explicit empty/error states.

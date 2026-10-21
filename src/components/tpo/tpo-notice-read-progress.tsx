@@ -8,7 +8,8 @@ import {useEffect,useRef,useState} from "react";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
 
-type Summary={delivered:number;read:number;unread:string[];notDelivered:boolean};
+type UnreadRecipient=string|{id?:string;name:string;rollNumber?:string|null;branchName?:string|null};
+type Summary={delivered:number;read:number;unread:UnreadRecipient[];notDelivered:boolean};
 export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SENT"|"SCHEDULED"|"DRAFT"|"ENDED"}){
  const [data,setData]=useState<Summary|null>(null);
  const [error,setError]=useState(""),[busy,setBusy]=useState(false);
@@ -67,11 +68,21 @@ export function TpoNoticeReadProgress({id,status="SENT"}:{id:string;status?:"SEN
    <Drawer open={unreadOpen} onOpenChange={setUnreadOpen} title="Who hasn't read"
      description={data.delivered-data.read+" students have not read this notice."}>
     {data.unread.length===0?<p className="text-sm text-body">Everyone has read it</p>:
-     <ul className="divide-y divide-border">{data.unread.map((name,index)=>
-       <li key={index} className="break-words py-3 text-sm">{name}</li>)}</ul>}
+     <ul className="divide-y divide-border">{data.unread.slice(0,500).map((recipient,index)=>{
+       const name=typeof recipient==="string"?recipient:recipient.name;
+       const roll=typeof recipient==="string"?null:recipient.rollNumber;
+       const branch=typeof recipient==="string"?null:recipient.branchName;
+       const key=typeof recipient==="string"?index:recipient.id??index;
+       return <li key={key} className="min-w-0 py-3 text-sm">
+         <p className="break-words font-semibold">{name}</p>
+         {roll||branch?<p className="mt-1 break-words text-xs text-muted-foreground">
+           {[roll,branch].filter(Boolean).join(" · ")}
+         </p>:null}
+       </li>;
+     })}</ul>}
     {data.delivered-data.read>data.unread.length?
      <p className="mt-3 text-xs text-muted-foreground">Showing the first {data.unread.length} of {data.delivered-data.read} unread recipients. The remaining names are not available in this view.</p>:null}
-    {data.unread.length===500?<p className="mt-2 text-xs text-muted-foreground">Showing the first 500.</p>:null}
+    {data.unread.length>=500?<p className="mt-2 text-xs text-muted-foreground">Showing the first 500.</p>:null}
    </Drawer>
   </div>:null}
   {error?<InlineNotice tone="error" message={error}/>:null}
