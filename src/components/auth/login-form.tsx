@@ -12,6 +12,35 @@ import {safeReturnTo} from "@/lib/return-to";
 
 type Channel = "PHONE" | "EMAIL";
 
+type AccountChoice = {
+  key: string; membershipId: string; role: string;
+  collegeName: string; organizationName: string; status: string;
+  selectable: boolean; lastUsed: boolean;
+};
+type MembershipListResponse = {
+  memberships: Array<{
+    id: string; collegeName: string; organizationName: string;
+    status: string; roles: string[]; selectable?: boolean; selected?: boolean;
+  }>;
+  currentRole?: string | null;
+  membershipSelectionRequired?: boolean;
+};
+
+function selectableLoginAccounts(result: MembershipListResponse): AccountChoice[] {
+  return result.memberships.flatMap(membership =>
+    membership.roles.map(role => ({
+      key: membership.id + ":" + role,
+      membershipId: membership.id, role,
+      collegeName: membership.collegeName,
+      organizationName: membership.organizationName,
+      status: membership.status,
+      selectable: membership.status === "ACTIVE" && membership.selectable !== false,
+      lastUsed: Boolean(membership.selected) &&
+        (!result.currentRole || result.currentRole === role),
+    })),
+  );
+}
+
 type StartResult = {
   attemptId: string;
   channel: Channel;
@@ -186,6 +215,9 @@ export function LoginForm({
   const [cooldown, setCooldown] = useState(0);
   const [emailCooldown, setEmailCooldown] = useState(0);
   const [emailResends,setEmailResends]=useState(0);
+  const [accountChoices,setAccountChoices]=useState<AccountChoice[]|null>(null);
+  const [selectedAccountKey,setSelectedAccountKey]=useState<string|null>(null);
+  const [accountLanding,setAccountLanding]=useState("/dashboard");
   const codeRef=useRef<HTMLInputElement>(null);
 
   useEffect(()=>{if(error)errorSummaryRef.current?.focus();},[error]);
@@ -312,7 +344,7 @@ export function LoginForm({
     setBusy(true);
     setError(null);
     try {
-      const result = await runGuarded(() => post<{ next?: string }>(
+      const result = await runGuarded(() => post<{ next?: string; membershipSelectionRequired?: boolean }>(
         "/api/auth/login/verify",
         {
           attemptId: attempt.attemptId,
@@ -327,12 +359,85 @@ export function LoginForm({
       saveLoginAttempt(null);
       const returnTo = safeReturnTo(new URLSearchParams(window.location.search).get("returnTo"));
       const defaultLanding = safeReturnTo(result.data.next) ?? "/dashboard";
-      window.location.assign(returnTo ?? defaultLanding);
+      const landing=returnTo??defaultLanding;
+      // This request is authenticated by the freshly issued HttpOnly session.
+      // Never display guessed colleges, raw legacy target keys or role claims
+      // from URL parameters. Each choice is confirmed server-side on switch.
+      try {
+        const listed=await apiFetch<MembershipListResponse>("/api/auth/memberships",{
+          method:"GET",timeoutMs:15_000,
+        });
+        const accounts=selectableLoginAccounts(listed);
+        if(accounts.length>1||result.data.membershipSelectionRequired){
+          if(!accounts.some(account=>account.selectable)){
+            setError("No active college account is available. Contact your administrator.");
+            return;
+          }
+          const last=accounts.find(account=>account.selectable&&account.lastUsed);
+          setAccountChoices(accounts);
+          setSelectedAccountKey((last??accounts.find(account=>account.selectable))?.key??null);
+          setAccountLanding(landing);
+          setCode("");setSecondCode("");setAttempt(null);
+          return;
+        }
+      } catch(reason) {
+        // A membership lookup failure must not silently choose a college when
+        // the login service explicitly requires a workspace selection.
+        if(result.data.membershipSelectionRequired){
+          reportAuthFailure(reason);
+          setError("Unable to load available accounts. Refresh to choose your college and role.");
+          return;
+        }
+      }
+      window.location.assign(landing);
     } catch (reason) {
       reportAuthFailure(reason);
       setError(reason instanceof FriendlyFetchError ? reason.message : FRIENDLY_MESSAGES.unexpected);
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function chooseAccount(event: React.FormEvent) {
+    event.preventDefault();
+    if(busy||!accountChoices)return;
+    const choice=accountChoices.find(account=>account.key===selectedAccountKey&&account.selectable);
+    if(!choice){setError("Choose an available account to continue.");return;}
+    setBusy(true);setError(null);
+    try{
+      const result=await runGuarded(()=>post<{ok?:boolean}>("/api/auth/memberships",{
+        membershipId:choice.membershipId,role:choice.role,
+      }));
+      if(!result)return;
+      if(!result.ok){
+        setError(result.data.error==="MEMBERSHIP_HOST_CHANGE_REQUIRED"
+          ?"Open the selected college's verified LMS address and sign in there."
+          :"This account is no longer available. Choose another college and role.");
+        return;
+      }
+      window.location.assign(accountLanding);
+    }catch(reason){
+      reportAuthFailure(reason);
+      setError("Could not select this account. Check your connection and try again.");
+    }finally{setBusy(false);}
+  }
+
+  function accountChoiceKeys(event: React.KeyboardEvent<HTMLButtonElement>, choice: AccountChoice) {
+    if(!accountChoices)return;
+    const available=accountChoices.filter(account=>account.selectable);
+    const index=available.findIndex(account=>account.key===choice.key);
+    if(index<0)return;
+    const keys=["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","Home","End"];
+    if(!keys.includes(event.key))return;
+    event.preventDefault();
+    const nextIndex=event.key==="Home"?0:event.key==="End"?available.length-1:
+      (index+(event.key==="ArrowLeft"||event.key==="ArrowUp"?-1:1)+available.length)%available.length;
+    const next=available[nextIndex];
+    setSelectedAccountKey(next.key);
+    const buttons=event.currentTarget.closest('[role="radiogroup"]')
+      ?.querySelectorAll<HTMLButtonElement>('[role="radio"]');
+    for(const button of buttons??[]){
+      if(button.dataset.accountKey===next.key){button.focus();break;}
     }
   }
 
@@ -374,15 +479,17 @@ export function LoginForm({
     setError(null);
     setErrorCode(null);
     setNotice(null);
+    setAccountChoices(null);
+    setSelectedAccountKey(null);
   }
 
   return (
-    <div className="login-form w-full max-w-md" data-legacy-superadmin={legacySuperAdmin||undefined} data-step={attempt ? "code" : "contact"} role="region" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
+    <div className="login-form w-full max-w-md" data-legacy-superadmin={legacySuperAdmin||undefined} data-step={accountChoices?"account":attempt ? "code" : "contact"} role="region" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
       <h1 className="m-0 text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">
-        {legacySuperAdmin?(attempt?"OTP sent to your Mobile Number":"Mobile Number"):(attempt?"Enter your code":"Sign in")}
+        {accountChoices?"Choose your account":legacySuperAdmin?(attempt?"OTP sent to your Mobile Number":"Mobile Number"):(attempt?"Enter your code":"Sign in")}
       </h1>
       <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
-        {legacySuperAdmin?(attempt?"Use the code sent to your registered mobile number.":"Enter your registered mobile number to receive an OTP."):
+        {accountChoices?"Available accounts for your verified sign-in. Select a college and role to continue.":legacySuperAdmin?(attempt?"Use the code sent to your registered mobile number.":"Enter your registered mobile number to receive an OTP."):
          attempt ? "We sent a code to "+attempt.maskedContact+".":
           channel==="PHONE"?"Use your registered mobile number.":
           recruiterEntry ? "Recruiter? Sign in with email." : "Use your registered email address."}
@@ -418,7 +525,42 @@ export function LoginForm({
         </div>
       ) : null}
 
-      {legacySuperAdmin&&busy?<div role="status" aria-live="polite" className="flex min-h-52 items-center justify-center gap-3 text-sm font-medium text-body">
+      {accountChoices ? <form onSubmit={chooseAccount} className="mt-5 space-y-4">
+        <div role="radiogroup" aria-label="Available accounts" className="space-y-4">
+          {(["Last used","Available accounts","Unverified","Suspended"] as const).map(group=>{
+            const items=accountChoices.filter(account=>{
+              if(group==="Last used")return account.lastUsed&&account.selectable;
+              if(group==="Available accounts")return account.selectable&&!account.lastUsed;
+              if(group==="Unverified")return account.status==="PENDING"||account.status==="UNVERIFIED";
+              return !account.selectable&&!["PENDING","UNVERIFIED"].includes(account.status);
+            });
+            return items.length?<div key={group} className="space-y-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{group}</p>
+              {items.map(choice=><Button key={choice.key} type="button" variant="secondary"
+                role="radio" data-account-key={choice.key}
+                aria-checked={selectedAccountKey===choice.key}
+                aria-label={choice.collegeName+" "+choice.role.replaceAll("_"," ")+
+                  " "+choice.organizationName+(choice.selectable?"":", "+choice.status)}
+                disabled={!choice.selectable||busy}
+                tabIndex={choice.selectable&&selectedAccountKey===choice.key?0:-1}
+                onClick={()=>setSelectedAccountKey(choice.key)}
+                onKeyDown={event=>accountChoiceKeys(event,choice)}
+                className={"flex min-h-14 w-full items-center justify-between gap-3 rounded-[var(--lms-control-radius)] p-3 text-left "+
+                  (selectedAccountKey===choice.key?"border-primary bg-primary-subtle":"")}>
+                <span className="min-w-0">
+                  <span className="block text-sm font-semibold">{choice.collegeName} · {choice.role.replaceAll("_"," ")}</span>
+                  <span className="block text-xs text-muted-foreground">{choice.organizationName}</span>
+                </span>
+                <span className="shrink-0 text-xs">{choice.selectable?"":choice.status==="PENDING"?"Unverified":choice.status}</span>
+              </Button>)}
+            </div>:null;
+          })}
+        </div>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9"
+          disabled={busy||!accountChoices.some(account=>account.selectable&&account.key===selectedAccountKey)}>
+          {busy?"Opening workspace…":"Continue"}
+        </Button>
+      </form> : legacySuperAdmin&&busy?<div role="status" aria-live="polite" className="flex min-h-52 items-center justify-center gap-3 text-sm font-medium text-body">
         <span aria-hidden="true" className="size-6 animate-spin rounded-full border-2 border-border border-t-primary"/>
         {attempt?"Verifying your code…":"Sending OTP…"}
        </div>:!attempt ? (

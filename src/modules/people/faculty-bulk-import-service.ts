@@ -22,12 +22,33 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
   const actor = await resolveActingCollege(context, "people.manage");
   if (actor.collegeId !== body.collegeId) throw new AuthorizationError("people.manage");
   // Validate the chosen academic department BEFORE creating any identities.
-  const [department] = await getDb().select({id:departments.id})
-    .from(departments).where(and(eq(departments.id,body.departmentId),
-      eq(departments.collegeId,actor.collegeId),isNull(departments.archivedAt)))
-    .limit(1);
+  const collegeDepartments = await getDb().select({
+    id:departments.id,name:departments.name,
+  }).from(departments).where(and(
+    eq(departments.collegeId,actor.collegeId),isNull(departments.archivedAt),
+  )).limit(1001);
+  if(collegeDepartments.length>1000)
+    throw new Error("Too many departments to resolve a faculty CSV safely.");
+  const department = collegeDepartments.find(item=>item.id===body.departmentId);
   if (!department) throw new Error("The selected department is unavailable in this college.");
   const rows = parseFacultyBulkCsv(body.csv);
+  // A CSV Department cell overrides the selected fallback only after
+  // resolving an unambiguous, non-archived department in this college.
+  // Preflight ALL rows before provisioning an identity: no partial import
+  // should occur merely because a later department name is invalid.
+  const names=new Map<string,string|null>();
+  for(const item of collegeDepartments){
+    const key=item.name.trim().toLocaleLowerCase("en");
+    if(names.has(key))names.set(key,null);
+    else names.set(key,item.id);
+  }
+  const rowDepartments=rows.map((entry,index)=>{
+    if(!entry.departmentName)return department.id;
+    const resolved=names.get(entry.departmentName.trim().toLocaleLowerCase("en"));
+    if(!resolved)throw new Error("Record "+(index+2)+
+      ": Department must match exactly one active department in this college.");
+    return resolved;
+  });
   const seen = new Set<string>();
   const seenEmails = new Set<string>();
   const results: Array<{
@@ -57,7 +78,7 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
       // its tenant-owned department and legacy faculty type are attached.
       try {
         await upsertFacultyProfileWithRuntime(context,person.membership.id,{
-          primaryDepartmentId:department.id,
+          primaryDepartmentId:rowDepartments[index]!,
           employmentType:entry.facultyType==="MENTOR"?"Mentor":"Lecturer",
           academicTitle:null,
         });
