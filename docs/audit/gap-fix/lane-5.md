@@ -253,3 +253,9 @@
 - Dirty Rename cancel, X and Escape request the exact discard confirmation and preserve unsaved field when declined (G2-6-018-020/032). Existing dynamic success "Updated organization X" was already parity-compliant.
 - Archive is intentionally non-destructive, so "Archived organization" is retained rather than falsely reporting legacy physical deletion. Archive currently blocks active colleges but not archived children; confirm legacy mapping and lifecycle with domain owner (G2-6-018-041/028). Read-only scope restriction remains service-driven, needs explicit parent access hint (G2-6-018-029).
 - No app execution, test or CI run.
+
+## Packet 52 — Hiring analytics failure recovery
+- Placement analytics error boundary now says "Couldn't refresh hiring metrics" while retaining visible retry; it does not claim cross-scope last-good rows. The analytics page displays precise failing jobs/departments/programs/batches filter names provided by existing settled filter service and retains verified metrics on partial filter failure. Full last-good report needs selected-college/filter-keyed client cache. No code/tests/CI run.
+
+## Packet 53 — Project template historical comparison
+- Historical comparison now marks unreadable snapshot specifically and never exposes rollback on failed comparison. The rollback control requires explicit "I reviewed these changes" acknowledgement, keyed to template+selected snapshot+current template version; mutation still sends expectedTemplateVersion to server and prompts again. Copy discloses that lifecycle publication/archive fields are not restored from blueprint snapshots. Full server-side compare digest token and historical full-snapshot migration require backend changes. No code/tests/CI run.

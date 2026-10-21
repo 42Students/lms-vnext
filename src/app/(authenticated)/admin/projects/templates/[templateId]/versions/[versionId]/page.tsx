@@ -34,7 +34,9 @@ export default async function TemplateVersionComparisonPage({ params }: {
     return <div className="min-w-0 space-y-6">
       <PageHeader title="Template version comparison"/>
       <ErrorState title="Template history unavailable"
-        description="The version comparison could not be loaded. No private version content is shown."
+        description={error instanceof SyntaxError || error instanceof TypeError
+          ? "Version snapshot could not be read. Do not roll back without a verified diff."
+          : "The version comparison could not be loaded. No private version content is shown and rollback is disabled."}
         action={<PageBackLink href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"} label="Back to version history" />}/>
     </div>;
   }
@@ -43,7 +45,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
     <PageHeader title={detail.template.title}
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}
     />
-    <Banner tone="info">This snapshot is read-only. Publication state and college assignments are managed separately.</Banner>
+    <Banner tone="info">This snapshot is read-only. Publication, deletion/archive state and college assignments are managed separately. Rolling back creates a new blueprint version; it does not restore legacy lifecycle fields.</Banner>
     {detail.changes.length ? <section aria-label="Changed fields" className="space-y-4">
       {detail.changes.map(change => <article key={change.label} className="min-w-0 border-b border-border py-4">
         <h2 className="m-0 break-words text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">{change.label}</h2>
@@ -55,6 +57,7 @@ export default async function TemplateVersionComparisonPage({ params }: {
       </article>)}
     </section> : <EmptyState title="No content differences" description="No content differences from the current version."/>}
     {can(context,"project-template.manage")?<SuperAdminTemplateRollbackControl
+      key={detail.template.id+":"+detail.selected.id+":"+detail.template.currentVersion}
       templateId={detail.template.id} selectedVersion={{
         id:detail.selected.id,version:detail.selected.version,title:detail.selected.title,
       }} currentVersion={detail.template.currentVersion} status={detail.template.status}/>:null}

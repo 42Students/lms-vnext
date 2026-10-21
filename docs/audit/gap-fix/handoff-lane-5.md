@@ -124,3 +124,6 @@
 
 - PlacementDriveWorkspace (G2-10-012-071) needs individual recovery for optional evaluation/eligibility/screening/role/options panels and a guaranteed authenticated drive header even when auxiliary backend fails. Packet 50 isolates overview metrics only.
 - Organization lifecycle and admin menu (G2-6-018-041/028/029): archive of organization with archived-but-owned colleges differs from legacy hard-delete rule. Clarify domain mapping before server behavioral change; show "Clear scope to manage organizations" for non-manageable entries without bypassing permissions.
+
+- Hiring analytics G2-10-008-080/053/058: last-good report snapshots require strict selected-college+exact query+permission cache identity, not a generic client error-boundary global value. Existing filter service exposes per-resource failures, surfaced in page.
+- Template version history G2-8-029-046/048/050: server should accept reviewed compare digest issued under same version read with immutable snapshot binding and enforce optimistic expectedTemplateVersion on rollback; old full JSON lifecycle states are intentionally outside current blueprint snapshots. UI now requires explicit acknowledgement but does not claim backend digest binding.
