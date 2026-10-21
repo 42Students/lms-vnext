@@ -41,7 +41,7 @@ Facets (all mandatory):
 One unit at a time: finish the unit file completely before opening the next. Tick [x] the unit here in the same push as its file. Push to chatgpt/chat-7-b with [chat-7] after every 2 units (git fetch and rebase right before). Units:
 - [x] U001 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/at-risk/index.js`
 - [x] U002 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/audit/index.js`
-- [ ] U003 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/index.js`
+- [x] U003 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/index.js`
 - [ ] U004 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/readiness/index.js`
 - [ ] U005 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/templates/[templateId].js`
 - [ ] U006 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/projects/templates/index.js`
