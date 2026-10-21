@@ -1,8 +1,11 @@
 import {
   and,
+  asc,
   desc,
   eq,
   inArray,
+  isNotNull,
+  ne,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -11,6 +14,8 @@ import {
   placementCompanyRelationships,
   placementCompanies,
   placementJobRoleOptions,
+  placementJobRounds,
+  placementRoundCandidateSlots,
   placementJobs,
   placementOffers,
 } from "@/db/schema";
@@ -53,6 +58,14 @@ export async function getLearnerPlacementJourney(
             driveTitle: placementJobs.title,
             driveStatus: placementJobs.status,
             closedAt: placementJobs.closedAt,
+            employmentType:placementJobs.employmentType,
+            workMode:placementJobs.workMode,
+            locations:placementJobs.locations,
+            applicationDeadline:placementJobs.applicationDeadline,
+            minimumAnnualCtcInr:placementJobs.minimumAnnualCtcInr,
+            maximumAnnualCtcInr:placementJobs.maximumAnnualCtcInr,
+            isDream:placementJobs.isDream,
+            legacyPostingDetails:placementJobs.legacyPostingDetails,
           },
           company: {
             id: placementCompanies.id,
@@ -110,6 +123,13 @@ export async function getLearnerPlacementJourney(
       getDb().select({
         applicationId: placementApplications.id,
         status: placementOffers.status,
+        id: placementOffers.id,
+        version:placementOffers.version,
+        roleTitle:placementOffers.roleTitle,
+        issuedAt:placementOffers.issuedAt,
+        releasedAt:placementOffers.releasedAt,
+        expiresAt:placementOffers.expiresAt,
+        annualCtcInr:placementOffers.annualCtcInr,
       }).from(placementOffers)
         .innerJoin(placementApplications,
           eq(placementApplications.id, placementOffers.applicationId))
@@ -119,9 +139,56 @@ export async function getLearnerPlacementJourney(
           eq(placementApplications.membershipId, membership.id),
           eq(placementJobs.collegeId, membership.collegeId),
           eq(placementOffers.kind, "OFFER"),
-          inArray(placementOffers.status, ["ISSUED", "ACCEPTED"]),
+          inArray(placementOffers.status, ["ISSUED", "ACCEPTED",
+            "DECLINED", "EXPIRED", "WITHDRAWN"]),
+          // A draft/verified-but-not-released offer must never leak into a
+          // learner journey merely because its status is still ISSUED.
+          isNotNull(placementOffers.releasedAt),
         )),
     ]);
+
+  const [bookings, roundCatalog] = await Promise.all([
+    getDb().select({
+      applicationId:placementApplications.id,
+      jobId:placementJobs.id,
+      roundId:placementJobRounds.id,
+      roundName:placementJobRounds.name,
+      roundSequence:placementJobRounds.sequence,
+      startsAt:placementRoundCandidateSlots.startsAt,
+      endsAt:placementRoundCandidateSlots.endsAt,
+      room:placementRoundCandidateSlots.room,
+      panel:placementRoundCandidateSlots.panel,
+      learnerConfirmedAt:placementRoundCandidateSlots.learnerConfirmedAt,
+    }).from(placementRoundCandidateSlots)
+     .innerJoin(placementApplications,
+       eq(placementApplications.id,placementRoundCandidateSlots.applicationId))
+     .innerJoin(placementJobs,
+       eq(placementJobs.id,placementApplications.jobId))
+     .innerJoin(placementJobRounds,and(
+       eq(placementJobRounds.id,placementRoundCandidateSlots.roundId),
+       eq(placementJobRounds.jobId,placementJobs.id)))
+     .where(and(
+       eq(placementApplications.membershipId,membership.id),
+       eq(placementJobs.collegeId,membership.collegeId),
+       eq(placementRoundCandidateSlots.status,"BOOKED"),
+     )).orderBy(asc(placementRoundCandidateSlots.startsAt)),
+    getDb().select({
+      id:placementJobRounds.id,
+      jobId:placementJobRounds.jobId,
+      sequence:placementJobRounds.sequence,
+      kind:placementJobRounds.kind,
+      name:placementJobRounds.name,
+      status:placementJobRounds.status,
+      scheduledAt:placementJobRounds.scheduledAt,
+      venue:placementJobRounds.venue,
+    }).from(placementJobRounds)
+     .innerJoin(placementJobs,eq(placementJobs.id,placementJobRounds.jobId))
+     .where(and(
+       eq(placementJobs.collegeId,membership.collegeId),
+       inArray(placementJobRounds.jobId,applications.map(row=>row.job.id)),
+       ne(placementJobRounds.status,"CANCELLED"),
+     )).orderBy(placementJobRounds.jobId,asc(placementJobRounds.sequence)),
+  ]);
 
   const resultsByApplication = new Map<
     string,
@@ -139,6 +206,24 @@ export async function getLearnerPlacementJourney(
     );
   }
 
+  const bookingsByApplication = new Map<string, typeof bookings>();
+  for(const booking of bookings){
+    const entries=bookingsByApplication.get(booking.applicationId)??[];
+    entries.push(booking);
+    bookingsByApplication.set(booking.applicationId,entries);
+  }
+  const roundsByJob = new Map<string, typeof roundCatalog>();
+  for(const round of roundCatalog){
+    const entries=roundsByJob.get(round.jobId)??[];
+    entries.push(round);
+    roundsByJob.set(round.jobId,entries);
+  }
+  const offersByApplication = new Map<string, typeof offers>();
+  for(const offer of offers){
+    const entries=offersByApplication.get(offer.applicationId)??[];
+    entries.push(offer);
+    offersByApplication.set(offer.applicationId,entries);
+  }
   const offerStatusByApplication = new Map<string,string>();
   for (const offer of offers) {
     if (offer.status === "ACCEPTED" ||
@@ -154,6 +239,11 @@ export async function getLearnerPlacementJourney(
       submittedByUserId:row.application.submittedByUserId,
       learnerUserId:context.user.id,now:snapshotNow,
     });
+    const appliedResults=resultsByApplication.get(row.application.id)??[];
+    const ownBookings=bookingsByApplication.get(row.application.id)??[];
+    const knownRounds=roundsByJob.get(row.job.id)??[];
+    const unresolvedRound=knownRounds.find(round=>round.kind!=="TALK" &&
+      !appliedResults.some(result=>result.roundId===round.id));
     const terminal =
       row.screening.status ===
         "SHORTLISTED" ||
@@ -184,10 +274,35 @@ export async function getLearnerPlacementJourney(
           ? row.screening.decidedAt
           : null,
       },
-      results:
-        resultsByApplication.get(
-          row.application.id,
-        ) ?? [],
+      results:appliedResults,
+      // These are verified current candidate bookings; expected round times
+      // below are informational and never presented as confirmed bookings.
+      schedule:ownBookings.map(booking=>({
+        roundId:booking.roundId,roundName:booking.roundName,
+        sequence:booking.roundSequence,
+        startsAt:booking.startsAt,endsAt:booking.endsAt,
+        room:booking.room,panel:booking.panel,
+        confirmed:true as const,learnerConfirmedAt:booking.learnerConfirmedAt,
+      })),
+      rounds:knownRounds.map(round=>{
+        const result=appliedResults.find(item=>item.roundId===round.id);
+        const state=result
+          ?result.outcome==="PASS"?"CLEARED"
+            :result.outcome==="FAIL"?"NOT_CLEARED"
+            :result.outcome==="ABSENT"?"ABSENT":"WAITLISTED"
+          :round.kind==="TALK"?"TALK"
+          :row.job.driveStatus==="CLOSED"?"ENDED"
+          :round.id===unresolvedRound?.id?"NEXT":"LATER";
+        return {roundId:round.id,sequence:round.sequence,kind:round.kind,
+          name:round.name,status:round.status,state,
+          expectedAt:round.scheduledAt,expectedVenue:round.venue,
+          confirmed:ownBookings.some(booking=>booking.roundId===round.id)};
+      }),
+      offerHistory:(offersByApplication.get(row.application.id)??[])
+        .sort((a,b)=>b.issuedAt.getTime()-a.issuedAt.getTime()),
+      withdrawalMode:row.application.status==="SUBMITTED"
+        ?ownBookings.length>0||appliedResults.length>0?"REQUEST" as const:"SELF" as const
+        :"NONE" as const,
     };
   });
 }
