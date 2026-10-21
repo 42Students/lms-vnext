@@ -51,3 +51,20 @@ export const tpoPublicJoinLinkToggleSchema=z.discriminatedUnion("scope", [
  z.strictObject({scope:z.literal("COLLEGE"),expectedLinkId:z.string().uuid(),enabled:z.boolean()}),
  z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid(),expectedLinkId:z.string().uuid(),enabled:z.boolean()}),
 ]);
+
+/** Legacy public URL slug format. Bad input is a non-throwing invalid link,
+ * not a TPO settings error or an opportunity to probe link-token hashes. */
+export function isLegacyJobSlug(value:unknown):boolean {
+ return typeof value==="string" && value.length>=4 && value.length<=32 &&
+  /^smr-[A-Za-z0-9\-_!@#$%&*]+$/.test(value);
+}
+
+/** Posting policy is independent of link enabled state. A null old-LMS
+ * field means "not changed"; acceptance alone must NEVER bypass review.
+ * Wiring requires a separate authenticated, versioned policy mutation. */
+export const tpoPublicJoinPostingPolicySchema=z.discriminatedUnion("scope",[
+ z.strictObject({scope:z.literal("COLLEGE"),expectedLinkId:z.string().uuid(),
+  postDirect:z.boolean().nullable()}),
+ z.strictObject({scope:z.literal("COMPANY"),companyId:z.string().uuid(),
+  expectedLinkId:z.string().uuid(),postDirect:z.boolean().nullable()}),
+]);

@@ -33,6 +33,20 @@ import {
   type CreateCourseSectionDeliveryInput,
 } from "./validation";
 
+/** Semester-course mapping → offering → section delivery → faculty chain:
+ * offering course/cohort/period is the tenant-scoped source of truth.
+ * A section from a different cohort, period or college must not receive
+ * teaching assignments through this delivery, even after a concurrent edit.
+ */
+export function courseDeliveryMatchesOffering(
+ offering:{collegeId:string;cohortId:string;academicPeriodId:string},
+ section:{collegeId:string;cohortId:string;academicPeriodId:string},
+):boolean {
+ return offering.collegeId===section.collegeId &&
+  offering.cohortId===section.cohortId &&
+  offering.academicPeriodId===section.academicPeriodId;
+}
+
 function mapDeliveryConstraint(error: unknown) {
   if (
     postgresConstraintName(error) ===
@@ -127,10 +141,7 @@ export async function createCourseSectionDelivery(
 
   if (
     section.status !== "ACTIVE" ||
-    offering.collegeId !== section.collegeId ||
-    offering.cohortId !== section.cohortId ||
-    offering.academicPeriodId !==
-      section.academicPeriodId
+    !courseDeliveryMatchesOffering(offering, section)
   ) {
     throw new CoursesServiceError(
       "SECTION_NOT_DELIVERABLE",
@@ -190,9 +201,7 @@ export async function createCourseSectionDelivery(
       if (
         !lockedSection ||
         lockedSection.status !== "ACTIVE" ||
-        lockedSection.cohortId !== activeOffering.cohortId ||
-        lockedSection.academicPeriodId !== activeOffering.academicPeriodId ||
-        lockedSection.collegeId !== activeOffering.collegeId
+        !courseDeliveryMatchesOffering(activeOffering, lockedSection)
       ) {
         throw new CoursesServiceError("SECTION_NOT_DELIVERABLE");
       }
