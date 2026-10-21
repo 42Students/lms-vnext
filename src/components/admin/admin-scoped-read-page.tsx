@@ -93,7 +93,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
   {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
   {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
-  {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
  ];
  const facultyColumns:DataTableColumn<SuperAdminReadRow>[]=[
   {key:"name",header:"Name",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
@@ -111,9 +111,9 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
   {key:"semester",header:"Semester",mobilePriority:"secondary",cell:row=>detailValue(row,"Semester")},
   {key:"year",header:"Year",mobilePriority:"secondary",cell:row=>detailValue(row,"Year")},
-  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>detailValue(row,"Teaching role")},
+  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=><StatusBadge tone={detailValue(row,"Teaching role")==="PRIMARY"?"success":"neutral"}>{humanStatus(detailValue(row,"Teaching role"))}</StatusBadge>},
   {key:"active",header:"Active",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status==="ACTIVE"?"Yes":"No"}</StatusBadge>},
-  {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
  ];
  const scopedColumns=peopleFilters?.kind==="LEARNER"?studentColumns:
   peopleFilters?.kind==="FACULTY"?facultyColumns:
@@ -143,7 +143,6 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
   {heading(peopleFilters?"People":"Super Admin · Read-only",description,
     <>{exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}{refreshAction}</>)}
-  {intro}
   {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
@@ -158,6 +157,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{stat.value}</p>
    </article>)}
   </section>:null}
+  {intro}
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Filters apply within your selected college. {data.total.toLocaleString("en-IN")} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
@@ -165,7 +165,9 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-    <AdminScopedLiveSearch initial={data.query.q} path={path} popularSuggestions={data.items.slice(0,15).map(row=>row.title)}/>
+    <AdminScopedLiveSearch initial={data.query.q} path={path}
+     placeholder={peopleFilters?.kind==="LEARNER"?"Search students by name, email, roll number, or mobile...":peopleFilters?.kind==="FACULTY"?"Search faculty by name, email, department, or type...":"Search by name or identifier"}
+     popularSuggestions={data.items.slice(0,15).map(row=>row.title)}/>
    </label>
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={data.query.status}
@@ -262,7 +264,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </p>:null}
   {compactReadLayout?
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{title==="Registered Faculty"?data.total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
@@ -270,7 +272,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
       </div>
     </div>
-   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{title==="Registered Faculty"?data.total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
   {compactReadLayout?<>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 py-4">
@@ -299,8 +301,9 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    {title==="Faculty Assignments"?<h2 className="text-lg font-semibold">Current teaching assignments</h2>:null}
     <DataTable columns={scopedColumns} rows={data.items} getRowKey={row=>row.id}
       caption={title} empty={<EmptyState title={emptyRosterTitle} description="Try changing the search or filters to see other records."/>}/>
-    <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear search</Link>
+    {data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.employmentType||data.query.sectionId?
+     <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear Search</Link>:null}
   </> : <>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
