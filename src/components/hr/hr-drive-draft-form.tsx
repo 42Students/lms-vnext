@@ -65,6 +65,8 @@ export function HrDriveDraftForm({
   const [branchInput,setBranchInput]=useState((initial.branches??[]).join(", "));
   const [showPreview, setShowPreview] = useState(false);
   const [notice, setNotice] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const formRootRef = useRef<HTMLDivElement>(null);
   const [pendingLeave,setPendingLeave]=useState<string|null>(null);
    const [draftDecision,setDraftDecision]=useState<"RESTORE"|"CLEAR"|null>(null);
   const router=useRouter();
@@ -85,6 +87,24 @@ export function HrDriveDraftForm({
   const roundKinds = [
     "TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW",
   ] as const;
+
+  function focusFirstInvalid(fields: Record<string, string>) {
+    const first = Object.keys(fields)[0];
+    if (!first) return;
+    window.requestAnimationFrame(() => {
+      const controls = formRootRef.current?.querySelectorAll<HTMLElement>("[data-draft-field]");
+      const target = Array.from(controls ?? []).find(element =>
+        element.dataset.draftField === first) ?? Array.from(controls ?? [])[0];
+      target?.focus();
+      target?.scrollIntoView({ block: "center", behavior: "smooth" });
+    });
+  }
+
+  function rememberFieldErrors(fields: Record<string, string>) {
+    setFieldErrors(fields);
+    focusFirstInvalid(fields);
+  }
+
 
   useEffect(()=>{
     if(fixRequestId||sourceJobId)return;
@@ -177,10 +197,17 @@ export function HrDriveDraftForm({
     if(submitting||submittingRef.current||submittedRef.current)return;
     const valid=hrDriveDraftSchema.safeParse(draft);
     if(!valid.success){
+      const fields: Record<string, string> = {};
+      for (const issue of valid.error.issues) {
+        const field = issue.path.join(".");
+        if (field && !fields[field]) fields[field] = issue.message;
+      }
+      rememberFieldErrors(fields);
       setShowPreview(true);
       setNotice("Complete the draft requirements before sending for review.");
       return;
     }
+    setFieldErrors({});
     const signature=JSON.stringify([collegeId,sourceJobId,valid.data,fixRequestId]);
     const next=nextHrProposalAttempt(attempted.current,signature,()=>crypto.randomUUID());
     attempted.current=next;
@@ -223,6 +250,17 @@ export function HrDriveDraftForm({
       catch{/* Successful server submit must not depend on browser storage. */ }
       setSavedRequestId((raw as {request:{id:string}}).request.id);
     }catch(error){
+      if (error instanceof FriendlyFetchError && Object.keys(error.fieldErrors).length) {
+        const alias: Record<string, string> = {
+          jobTitle: "title", job_title: "title", ctc_lpa: "ctcLpa",
+          minCgpa: "minimumCgpa", min_cgpa: "minimumCgpa",
+          passingYears: "passingYear", passing_years: "passingYear",
+        };
+        const fields: Record<string, string> = {};
+        for (const [key, value] of Object.entries(error.fieldErrors)) fields[alias[key] ?? key] = value;
+        rememberFieldErrors(fields);
+        setShowPreview(true);
+      }
       if(error instanceof FriendlyFetchError && (error.code==="STALE"||error.code==="INVALID_STATE")){
         setNotice("This request has changed. Refresh Drives before trying again.");
       }else if(error instanceof FriendlyFetchError && error.status===403){
@@ -254,7 +292,7 @@ export function HrDriveDraftForm({
   </section>;
 
   return (
-    <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
+    <div ref={formRootRef} className="min-w-0 max-w-full space-y-4 md:space-y-6">
       <ConfirmActionDialog open={pendingLeave!==null}
        title="Discard this drive draft?" consequence="Leave without these changes?"
        confirmLabel="Discard" onCancel={()=>setPendingLeave(null)}
@@ -286,8 +324,11 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Role title
-            <Input className="w-full" value={draft.title} maxLength={200}
-              onChange={(event) => setDraft((current) => ({ ...current, title: event.target.value }))} />
+            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)}
+              value={draft.title} maxLength={200}
+              onChange={(event) => { setFieldErrors(current => ({ ...current, title: "" }));
+                setDraft((current) => ({ ...current, title: event.target.value })); }} />
+            {fieldErrors.title ? <span role="alert" className="text-xs text-error">{fieldErrors.title}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Job description
@@ -342,8 +383,11 @@ export function HrDriveDraftForm({
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-3">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             CTC (LPA){draft.employmentType==="INTERNSHIP"?" after the internship (optional)":""}
-            <Input className="w-full" inputMode="decimal" value={draft.ctcLpa??""}
-              onChange={event=>setDraft(current=>({...current,ctcLpa:event.target.value}))}/>
+            <Input className="w-full" data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors.ctcLpa)}
+              inputMode="decimal" value={draft.ctcLpa??""}
+              onChange={event=>{setFieldErrors(current=>({...current,ctcLpa:""}));
+                setDraft(current=>({...current,ctcLpa:event.target.value}));}}/>
+            {fieldErrors.ctcLpa ? <span role="alert" className="text-xs text-error">{fieldErrors.ctcLpa}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Fixed (optional, LPA)
@@ -375,8 +419,11 @@ export function HrDriveDraftForm({
           ] as const).map(([field, label]) => (
             <label key={field} className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
               {label}
-              <Input className="w-full" inputMode="decimal" value={draft[field]}
-                onChange={(event) => setDraft((current) => ({ ...current, [field]: event.target.value }))} />
+              <Input className="w-full" data-draft-field={field} aria-invalid={Boolean(fieldErrors[field])}
+                inputMode="decimal" value={draft[field]}
+                onChange={(event) => { setFieldErrors(current=>({...current,[field]:""}));
+                  setDraft((current) => ({ ...current, [field]: event.target.value })); }} />
+              {fieldErrors[field] ? <span role="alert" className="text-xs text-error">{fieldErrors[field]}</span> : null}
             </label>
           ))}
         </div>
@@ -395,9 +442,12 @@ export function HrDriveDraftForm({
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Passing year
-            <Input className="w-full" inputMode="numeric" maxLength={4}
+            <Input className="w-full" data-draft-field="passingYear" aria-invalid={Boolean(fieldErrors.passingYear)}
+              inputMode="numeric" maxLength={4}
               value={draft.passingYear??""} placeholder="YYYY"
-              onChange={event=>setDraft(current=>({...current,passingYear:event.target.value}))}/>
+              onChange={event=>{setFieldErrors(current=>({...current,passingYear:""}));
+                setDraft(current=>({...current,passingYear:event.target.value}));}}/>
+            {fieldErrors.passingYear ? <span role="alert" className="text-xs text-error">{fieldErrors.passingYear}</span> : null}
           </label>
         </div>
         <p className="mt-3 text-xs text-muted-foreground">
@@ -477,7 +527,18 @@ export function HrDriveDraftForm({
         </p>
         <div className="mt-4 flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:flex-wrap min-[768px]:items-center">
           <Button type="button" variant="secondary"
-            onClick={() => { setShowPreview(true); setNotice(""); }}>Preview and validate</Button>
+            onClick={() => {
+              setShowPreview(true);
+              setNotice("");
+              if (!result.success) {
+                const fields: Record<string, string> = {};
+                for (const issue of result.error.issues) {
+                  const key = issue.path.join(".");
+                  if (key && !fields[key]) fields[key] = issue.message;
+                }
+                rememberFieldErrors(fields);
+              } else setFieldErrors({});
+            }}>Preview and validate</Button>
           <Button type="button" disabled={!result.success||submitting}
             loading={submitting} aria-busy={submitting}
             onClick={() => void sendFormalDriveRequest()}>
