@@ -14,6 +14,7 @@ import {SuperAdminCompanyIdentities} from "@/components/admin/super-admin-compan
 import {SuperAdminCollegeCompanyCreate,SuperAdminCollegeCompanyRelationshipActions}
   from "@/components/admin/super-admin-college-company-actions";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {SuperAdminCollegeCompanyEdit} from "@/components/admin/super-admin-college-company-edit";
 import {SuperAdminGlobalCompanyCatalogue,SuperAdminCompanyAvatar,safeCompanyWebsite} from "@/components/admin/super-admin-global-company-catalogue";
 import {SuperAdminCompanySearch} from "@/components/admin/super-admin-company-search";
 import { PageHeader } from "@/components/ui/page-header";
@@ -90,24 +91,24 @@ export default async function SuperAdminCompaniesPage({
       {row.aliases?.length?<p className="break-words text-xs text-muted-foreground">Also known as {row.aliases.join(", ")}</p>:null}
       <p className="break-all text-xs text-muted-foreground">Domains: {row.domains?.length?row.domains.join(", "):"None"}</p>
       <div className="flex flex-wrap gap-2">
+       <StatusBadge tone={row.relationshipStatus==="ACTIVE"?"success":"neutral"}>{row.relationshipStatus}</StatusBadge>
+       {row.trusted?<StatusBadge tone="success">Trusted</StatusBadge>:null}
        {row.companyStatus==="ARCHIVED"?<StatusBadge tone="neutral">Deleted</StatusBadge>:null}
        {row.verifiedAt?<StatusBadge tone="success">Verified by 42</StatusBadge>:<StatusBadge tone="neutral">Not verified</StatusBadge>}
       </div>
      </div>
     </div>},
-   {key:"industry",header:"Industry",cell:row=>row.industry??"—"},
+   {key:"contact",header:"Contact",mobilePriority:"secondary",cell:row=><span className="text-xs text-muted-foreground">Private college contact · Edit to view</span>},
+   {key:"website",header:"Website",cell:row=>safeCompanyWebsite(row.website)?<a href={safeCompanyWebsite(row.website)!} target="_blank" rel="noopener noreferrer" className="break-all font-semibold text-primary-text underline">Visit ↗</a>:"—"},
    {key:"drives",header:"Drives",className:"tabular-nums",sortable:true,
     sortDirection:data.query.sort==="DRIVES"?"descending":data.query.sort==="DRIVES_ASC"?"ascending":"none",cell:row=><span>{row.driveCount??0}</span>},
    {key:"active",header:"Last active",sortable:true,
     sortDirection:data.query.sort==="LAST_ACTIVE"?"descending":data.query.sort==="LAST_ACTIVE_ASC"?"ascending":"none",cell:row=><span>{row.lastActiveAt?
     new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric"}).format(new Date(row.lastActiveAt)):
     "Never posted"}</span>},
-   {key:"status",header:"Relationship",cell:row=><div className="space-y-1">
-     <StatusBadge tone={row.relationshipStatus==="ACTIVE"?"success":"neutral"}>{row.relationshipStatus}</StatusBadge>
-     {row.trusted?<StatusBadge tone="success">Trusted</StatusBadge>:null}
-     <p className="text-xs text-muted-foreground">{row.collegeName}</p>
-    </div>},
+
    {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><div className="min-w-0 space-y-2">
+     {context.adminScope?.collegeId===row.collegeId&&row.relationshipStatus==="ACTIVE"&&row.companyStatus==="ACTIVE"?<SuperAdminCollegeCompanyEdit relationshipId={row.relationshipId} name={row.name}/>:null}
      {context.adminScope?.collegeId===row.collegeId?<SuperAdminCollegeCompanyRelationshipActions
       relationshipId={row.relationshipId} name={row.name} trusted={row.trusted}
       status={row.relationshipStatus} driveCount={row.driveCount??0} companyStatus={row.companyStatus}/>:null}

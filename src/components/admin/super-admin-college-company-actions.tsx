@@ -193,7 +193,7 @@ export function SuperAdminCollegeCompanyRelationshipActions({relationshipId,name
   });
  }
  const archive=status==="ACTIVE";
- return <Disclosure title="Manage company relationship" className="mt-2 print:hidden" contentClassName="space-y-2 pt-2">
+ return <div aria-label={"Manage "+name+" relationship"} className="min-w-0 space-y-2 print:hidden">
   <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
    {archive?<Button type="button" variant="secondary" disabled={pending} onClick={()=>void trust()}
     className="min-h-11 w-full sm:w-auto md:min-h-9">
@@ -217,5 +217,5 @@ export function SuperAdminCollegeCompanyRelationshipActions({relationshipId,name
    {error?<Alert tone="error">{error}</Alert>:null}
   </ConfirmDialog>
   {error?<Alert tone="error">{error}</Alert>:null}
- </Disclosure>;
+ </div>;
 }
