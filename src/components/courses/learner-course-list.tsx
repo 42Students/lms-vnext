@@ -48,6 +48,9 @@ export type LearnerCourseListRow = {
     courseName: string;
     courseCode: string;
     courseDescription: string | null;
+    courseEnabled?:boolean;
+    courseStatus?:string;
+    courseAllowedForDisplay?:number|null;
     offeringType: string;
     credits: number | null;
     sectionName: string;
@@ -421,7 +424,11 @@ export function LearnerCourseList({
                         </span>
                         <div className="flex items-center gap-2">
                           {row.readOnly ? (
-                            <StatusBadge tone="neutral">Not your current semester</StatusBadge>
+                            <StatusBadge tone="neutral">
+                             {row.course.courseEnabled===false||row.course.courseAllowedForDisplay===0
+                              ?"Locked":row.course.courseStatus&&row.course.courseStatus!=="ACTIVE"
+                               ?"Inactive":"Past semester"}
+                            </StatusBadge>
                           ) : null}
                           {elective ? (
                             <StatusBadge tone="info">Elective</StatusBadge>
@@ -439,7 +446,11 @@ export function LearnerCourseList({
                           "No course description provided."}
                       </p>
                       {row.readOnly?<p role="status" className="mt-2 text-xs font-semibold text-warning">
-                       Not your current semester: shown for reference
+                       {row.course.courseEnabled===false||row.course.courseAllowedForDisplay===0
+                        ?"Content locked: not visible to students":
+                        row.course.courseStatus&&row.course.courseStatus!=="ACTIVE"
+                         ?"Course inactive: shown for reference":
+                        "Not your current semester: shown for reference"}
                       </p>:null}
                       <p className="mt-3 text-xs font-semibold text-muted-foreground leading-[20px]">
                         Instructor: {row.instructorNames.length > 0
@@ -491,7 +502,7 @@ export function LearnerCourseList({
                         </div>
                         <div className="mt-4 flex items-center justify-between gap-3">
                           <p className="m-0 line-clamp-1 text-sm font-semibold text-foreground leading-[22px]">
-                            {row.readOnly?"Course unavailable for this semester":learnerCourseCardNextLabel(row)}
+                            {row.readOnly?"Course unavailable":learnerCourseCardNextLabel(row)}
                           </p>
                           <span
                             aria-hidden="true"
