@@ -23,6 +23,8 @@ export async function GET(request:Request,{params}:{
     })(),
     from:url.searchParams.get("fromDate")??url.searchParams.get("from")??undefined,
     to:url.searchParams.get("toDate")??url.searchParams.get("to")??undefined,
+    sourceTab:url.searchParams.get("sourceTab")??undefined,
+    search:url.searchParams.get("search")??undefined,
     beforeTime:url.searchParams.get("beforeTime")??undefined,
     beforeId:url.searchParams.get("beforeId")??undefined,
     eventType:url.searchParams.get("eventType")??undefined,

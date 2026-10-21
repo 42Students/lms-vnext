@@ -87,3 +87,36 @@ export function friendlyApiError({ status, code, network = false }: FriendlyErro
 export function friendlyReference(requestId?: string | null): string | null {
   return requestId && /^[a-f0-9]{8}$/i.test(requestId) ? `Reference: ${requestId}` : null;
 }
+
+/** Legacy apiError.js presentation crosswalk. Intentionally separate from
+ * domain-specific friendlyApiError: page actions may display the exact old
+ * heading while the endpoint continues to redact private provider text.
+ */
+export type FriendlyErrorKind="canceled"|"timeout"|"offline"|"network"|"auth"|
+  "permission"|"not_found"|"conflict"|"validation"|"rate_limit"|"server"|"unknown";
+export function friendlyApiErrorPresentation(input:FriendlyErrorInput&{cancelled?:boolean}){
+ const {status,code,network,cancelled}=input;
+ const offline=network&&typeof navigator!=="undefined"&&navigator.onLine===false;
+ const kind:FriendlyErrorKind=cancelled||code==="REQUEST_CANCELLED"?"canceled":
+  status===504?"timeout":offline?"offline":network?"network":
+  status===401||Boolean(code&&sessionCodes.has(code))?"auth":
+  status===403?"permission":status===404?"not_found":
+  status===409||Boolean(code&&conflictCodes.has(code))?"conflict":
+  status===422||status===400?"validation":status===429?"rate_limit":
+  status!==undefined&&status!==null&&status>=500?"server":"unknown";
+ const copy:Record<FriendlyErrorKind,{title:string;message:string;retryable:boolean}>={
+  canceled:{title:"Request cancelled",message:"The request was cancelled.",retryable:false},
+  timeout:{title:"Request timed out",message:"The LMS took too long to respond. Try again.",retryable:true},
+  offline:{title:"You're offline",message:"Reconnect to the internet, then try again. Your current screen has not been cleared.",retryable:true},
+  network:{title:"Connection problem",message:"We couldn't reach the LMS. Check your connection and try again.",retryable:true},
+  auth:{title:"Session expired",message:"Please sign in again to continue.",retryable:false},
+  permission:{title:"Access not allowed",message:"You don't have permission to perform this action.",retryable:false},
+  not_found:{title:"No longer available",message:"This item could not be found. It may have been removed or moved.",retryable:false},
+  conflict:{title:"This changed elsewhere",message:"Refresh the latest data before trying again.",retryable:true},
+  validation:{title:"Some information needs attention",message:"Review the highlighted or entered information and try again.",retryable:false},
+  rate_limit:{title:"Too many requests",message:"Please wait a moment before trying again.",retryable:true},
+  server:{title:"LMS service problem",message:"The server couldn't complete the request. Try again shortly.",retryable:true},
+  unknown:{title:"Something went wrong",message:"We couldn't complete that request.",retryable:true},
+ };
+ return {kind,...copy[kind]};
+}

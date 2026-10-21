@@ -43,7 +43,18 @@ export async function provisionPlatformIdentity(
   rawInput: unknown,
   dependencies: IdentityProvisioningDependencies,
 ) {
-  const input = identityProvisionInputSchema.parse(rawInput);
+  // Legacy UserDto required a username/password pair. Central vNext auth
+  // intentionally retires local passwords: external identity UID and verified
+  // OTP/email sign-in replace them. Enforce the legacy 255-char email limit
+  // without converting an unverified profile into an authenticated session.
+  const input=identityProvisionInputSchema.superRefine((value,ctx)=>{
+    if(value.email&&value.email.length>255)
+      ctx.addIssue({code:"custom",path:["email"],message:"Email must be 255 characters or less"});
+    if(value.phoneE164&&value.phoneE164.length>20)
+      ctx.addIssue({code:"custom",path:["phoneE164"],message:"Phone must be 20 characters or less"});
+    if(value.displayName.length>255)
+      ctx.addIssue({code:"custom",path:["displayName"],message:"Name must be 255 characters or less"});
+  }).parse(rawInput);
   const identity = await resolveOrCreateIdentity(
     {
       phoneE164: input.phoneE164,
@@ -56,7 +67,7 @@ export async function provisionPlatformIdentity(
   // OTP delivery, session revocation and selected-college authorization are
   // enforced by their separate runtime services, not by provisioning. A
   // canonical identity alone must never grant an active college session.
-  return dependencies.repository.persistResolvedIdentity({
+  const persisted=await dependencies.repository.persistResolvedIdentity({
     identityUid: identity.uid,
     phoneE164:
       identity.phoneNumber ??
@@ -68,4 +79,7 @@ export async function provisionPlatformIdentity(
       undefined,
     displayName: input.displayName,
   });
+  // Persisting a user neither sends an invitation nor establishes that the
+  // learner may sign in; the college grant and OTP provider decide separately.
+  return {...persisted,notificationSent:false,signInAccess:"NOT_VERIFIED" as const};
 }
