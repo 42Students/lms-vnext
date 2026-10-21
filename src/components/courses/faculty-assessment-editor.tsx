@@ -270,10 +270,10 @@ export function FacultyAssessmentEditor({
           {titleOnly?<Banner tone="info">
             Learner submissions exist. Deadline, points, audience, resources and submission methods are locked. You can still correct the title.
           </Banner>:null}
-          <label className="block text-[13px] font-semibold leading-4 text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Title
             <Input
-              className="mt-1.5"
+              className="mt-[6px]"
               value={title}
               onChange={(event) =>
                 setTitle(event.target.value)
@@ -283,10 +283,10 @@ export function FacultyAssessmentEditor({
             />
           </label>
 
-          <label className="block text-[13px] font-semibold leading-4 text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Description
             <Textarea
-              className="mt-1.5"
+              className="mt-[6px]"
               disabled={titleOnly}
               value={description}
               onChange={(event) =>
@@ -298,10 +298,10 @@ export function FacultyAssessmentEditor({
             />
           </label>
 
-          <label className="block text-[13px] font-semibold leading-4 text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Due date (IST)
             <Input
-              className="mt-1.5"
+              className="mt-[6px]"
               type="datetime-local"
               disabled={titleOnly || (assessment.kind==="QUIZ" && assessment.status==="CLOSED")}
               value={dueAt}
@@ -311,12 +311,12 @@ export function FacultyAssessmentEditor({
             />
           </label>
 
-          <label className="block text-[13px] font-semibold leading-4 text-body">
+          <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {assessment.kind === "ASSIGNMENT"
               ? "Maximum points"
               : "Maximum attempts"}
             <Input
-              className="mt-1.5"
+              className="mt-[6px]"
               type="number"
               min={assessment.kind === "ASSIGNMENT" ? 0 : 1}
               max={

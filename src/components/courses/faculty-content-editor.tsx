@@ -124,41 +124,41 @@ export function FacultyContentEditor({ item }: { item: Item }) {
         </Button>}
       >
         <form id={"faculty-content-edit-" + item.id} onSubmit={save} className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-          <label className="block min-w-0 text-xs leading-4 font-semibold text-body md:col-span-2">
+          <label className="block min-w-0 leading-4 font-semibold md:col-span-2 text-[13px] text-[var(--lms-neutral-400)]">
             Title
-            <Input className="mt-1.5" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={255} required />
+            <Input className="mt-[6px]" value={title} onChange={(event) => setTitle(event.target.value)} maxLength={255} required />
           </label>
-          <label className="block min-w-0 text-xs leading-4 font-semibold text-body">
+          <label className="block min-w-0 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Points
-            <Input className="mt-1.5" type="number" min={0} max={1000}
+            <Input className="mt-[6px]" type="number" min={0} max={1000}
               value={points} onChange={(event)=>setPoints(event.target.value)} required/>
           </label>
-          <label className="block min-w-0 text-xs leading-4 font-semibold text-body md:col-span-2">
+          <label className="block min-w-0 leading-4 font-semibold md:col-span-2 text-[13px] text-[var(--lms-neutral-400)]">
             Notes
-            <Textarea className="mt-1.5 min-h-24" value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={5000} />
+            <Textarea className="mt-[6px] min-h-24" value={notes} onChange={(event) => setNotes(event.target.value)} maxLength={5000} />
           </label>
-          {item.contentType !== "VIDEO" ? <label className="block min-w-0 text-xs leading-4 font-semibold text-body md:col-span-2">
+          {item.contentType !== "VIDEO" ? <label className="block min-w-0 leading-4 font-semibold md:col-span-2 text-[13px] text-[var(--lms-neutral-400)]">
             {item.contentType === "YOUTUBE" ? "YouTube URL" : item.contentType === "LIVE_CLASS" ? "Meeting URL" : "Resource URL"}
-            <Input className="mt-1.5" type="url" value={url} onChange={(event) => setUrl(event.target.value)}
+            <Input className="mt-[6px]" type="url" value={url} onChange={(event) => setUrl(event.target.value)}
               required={item.contentType !== "RESOURCE"} placeholder="https://…" />
           </label>:null}
           {item.contentType === "YOUTUBE" ? (
-            <label className="block min-w-0 text-xs leading-4 font-semibold text-body">
+            <label className="block min-w-0 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
               Actual video duration (seconds)
-              <Input className="mt-1.5" type="number" min={1} max={86400} value={duration}
+              <Input className="mt-[6px]" type="number" min={1} max={86400} value={duration}
                 onChange={(event) => setDuration(event.target.value)} required />
             </label>
           ) : null}
           {item.contentType === "LIVE_CLASS" ? (
             <div className="grid min-w-0 gap-3 md:col-span-2 md:grid-cols-2">
-              <label className="text-xs leading-4 font-semibold text-body">
+              <label className="leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
                 Start (IST)
-                <Input className="mt-1.5" type="datetime-local" value={starts}
+                <Input className="mt-[6px]" type="datetime-local" value={starts}
                   onChange={(event) => setStarts(event.target.value)} required />
               </label>
-              <label className="text-xs leading-4 font-semibold text-body">
+              <label className="leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
                 End (IST)
-                <Input className="mt-1.5" type="datetime-local" value={ends}
+                <Input className="mt-[6px]" type="datetime-local" value={ends}
                   onChange={(event) => setEnds(event.target.value)} required />
               </label>
             </div>

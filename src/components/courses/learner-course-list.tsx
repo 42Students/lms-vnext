@@ -173,7 +173,7 @@ export function LearnerCourseList({
       <section className="py-1">
         <div className="grid gap-[16px] lg:grid-cols-[minmax(0,1fr)_auto] lg:items-end">
           <div className="grid gap-[8px] md:grid-cols-2">
-            <label className="text-xs font-semibold text-body">
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Semester
               <Select
                 value={selectedPeriodId}
@@ -199,7 +199,7 @@ export function LearnerCourseList({
               </Select>
             </label>
 
-            <label className="text-xs font-semibold text-body">
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Search courses
               <Input
                 value={query}
@@ -234,7 +234,7 @@ export function LearnerCourseList({
 
         <Disclosure title="More filters" className="mt-3 border-t border-border" contentClassName="pt-3">
           <div className="flex flex-wrap items-end gap-2">
-          <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body sm:w-44">
+          <label className="grid min-w-0 w-full gap-[6px] font-semibold sm:w-44 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Term access
             <Select value={termState} onChange={e=>{setTermState(e.target.value as LearnerCourseTermState);setVisibleLimit(PAGE_SIZE);}}
               className="min-h-[var(--lms-control-height)] max-md:min-h-11">
@@ -243,7 +243,7 @@ export function LearnerCourseList({
               <option value="HISTORY">Past semester (read-only)</option>
             </Select>
           </label>
-          <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body sm:w-44">
+          <label className="grid min-w-0 w-full gap-[6px] font-semibold sm:w-44 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Learning progress
             <Select value={progressFilter} onChange={event=>{setProgressFilter(event.target.value as LearnerCourseProgressFilter);setVisibleLimit(PAGE_SIZE);}}
               className="min-h-[var(--lms-control-height)] max-md:min-h-11">
@@ -254,7 +254,7 @@ export function LearnerCourseList({
               <option value="UNMEASURED">No tracked items</option>
             </Select>
           </label>
-          <label className="grid min-w-0 w-full gap-1 text-xs font-semibold text-body sm:w-44">
+          <label className="grid min-w-0 w-full gap-[6px] font-semibold sm:w-44 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Sort Courses
             <Select value={sortMode} onChange={event => {setSortMode(event.target.value as LearnerCourseSortMode);setVisibleLimit(PAGE_SIZE);}}
               className="min-h-[var(--lms-control-height)] max-md:min-h-11">

@@ -87,7 +87,7 @@ export function CollegeQuizQuestionsEditor({quizId}:{quizId:string}){
     <Textarea aria-label={"Question "+(i+1)+" prompt"} value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>update(i,{...q,prompt:e.target.value})} disabled={busy}
      className="w-full text-xs"/>
-    {q.options.map((o,j)=><label key={j} className="flex min-h-11 min-w-0 items-center gap-2 text-xs">
+    {q.options.map((o,j)=><label key={j} className="flex min-h-11 min-w-0 items-center gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
      <CorrectAnswerInput multiple={q.type==="MULTIPLE_CHOICE"} name={"correct-"+quizId+"-"+i}
       checked={o.correct} disabled={busy} onChange={e=>update(i,{...q,options:q.options.map((option,k)=>({
        ...option,correct:q.type==="SINGLE_CHOICE"?k===j:k===j?e.target.checked:option.correct}))})}/>

@@ -182,7 +182,7 @@ export function LearnerPlacementAcademicEvidence({
     ["passingYear", "Passing year", evidence.passingYear, "1", "2200"],
   ] as const;
   const renderEvidenceField = ([name, label, value, step, max]: typeof evidenceFields[number]) => (
-    <label key={name} className="min-w-0">
+    <label key={name} className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       <span className="mb-1.5 block text-xs font-semibold text-body">{label}</span>
       <Input className={inputClass+" w-full"} name={name} type="number" min={0} max={max}
         step={step} disabled={locked} defaultValue={value===null?"":String(value)} />

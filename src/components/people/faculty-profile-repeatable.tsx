@@ -68,7 +68,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">{description}</p>
       </div>
       {rows.length === 0 ? <p className="text-sm text-muted-foreground leading-[22px]">No records added yet.</p> : null}
-      {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find {title.toLowerCase()} records
+      {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find {title.toLowerCase()} records
         <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
           className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full" placeholder="Search section fields"/>
       </label>:null}
@@ -92,7 +92,7 @@ export function FacultyProfileRepeatable<T extends { id: string }>({
                 const value = row[field.name];
                 const currentDegreeEndYear = section === "education" && field.name === "endYear" &&
                   "isCurrentlyPursuing" in row && row.isCurrentlyPursuing === true;
-                return <label key={field.name} className="block min-w-0 text-[13px] font-semibold leading-4 text-body">
+                return <label key={field.name} className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   {field.label}
                   {field.kind === "checkbox" ? (
                     <Checkbox  className="ml-3" checked={value === true} disabled={pending}

@@ -81,7 +81,7 @@ export function TpoCompanyPersonEditor({
         Existing phone-only contacts can still be edited
         once an email is provided. No messages are sent.
       </p>
-      <label className="block text-sm font-medium">Contact
+      <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Contact
         <Select value={selected} onChange={event => select(event.target.value)}
           className="mt-1 block min-h-11 w-full md:min-h-9">
           <option value="NEW">Add new person</option>
@@ -91,16 +91,16 @@ export function TpoCompanyPersonEditor({
         </Select>
       </label>
       <div className="grid gap-3 md:grid-cols-2">
-        <label className="text-sm font-medium">Name
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name
           <Input value={name} maxLength={150} onChange={event => {setReviewing(false);setName(event.target.value);}}
             className="mt-1 block min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="text-sm font-medium">Email
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Email
           <Input type="email" value={email} maxLength={150}
             onChange={event => {setReviewing(false);setEmail(event.target.value);}}
             className="mt-1 block min-h-11 w-full md:min-h-9" />
         </label>
-        <label className="text-sm font-medium">Designation (optional)
+        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation (optional)
           <Input value={designation} maxLength={100}
             onChange={event => {setReviewing(false);setDesignation(event.target.value);}}
             className="mt-1 block min-h-11 w-full md:min-h-9" />

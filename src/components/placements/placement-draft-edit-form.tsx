@@ -364,7 +364,7 @@ export function PlacementDraftEditForm({
         className="grid min-w-0 gap-4 py-4"
       >
         <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-          <label className="sm:col-span-2">
+          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Job title
             </span>
@@ -376,7 +376,7 @@ export function PlacementDraftEditForm({
               defaultValue={value.job.title}
             />
           </label>
-          <label className="sm:col-span-2">
+          <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Description
             </span>
@@ -660,7 +660,7 @@ export function PlacementDraftEditForm({
                 />
               </label>
             ))}
-            <label className="sm:col-span-2">
+            <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Passing years
               </span>
@@ -671,7 +671,7 @@ export function PlacementDraftEditForm({
                 placeholder="2026, 2027"
               />
             </label>
-            <label className="sm:col-span-2">
+            <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 Missing evidence
               </span>

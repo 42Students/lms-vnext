@@ -90,14 +90,14 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   </div>
   {quiz.status==="DRAFT"?<CollegeQuizQuestionsEditor quizId={quiz.id}/>:null}
   {editing?<div className="grid gap-2 border-y border-border py-3">
-   <label className="grid gap-1 text-xs font-semibold text-body">Quiz title
+   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Quiz title
     <Input required maxLength={255} value={title} disabled={busy}
      onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-   <label className="grid gap-1 text-xs font-semibold text-body">Description
+   <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
     <Textarea maxLength={10000} rows={3} value={description} disabled={busy}
      onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/>
    </label>
-   {quiz.status==="DRAFT"?<label className="grid gap-1 text-xs font-semibold text-body">Maximum attempts
+   {quiz.status==="DRAFT"?<label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
     <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
      onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-11 md:min-h-9"/>
    </label>:null}

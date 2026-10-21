@@ -207,11 +207,11 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
  return <section className="min-w-0 w-full max-w-full space-y-4 max-[767px]:[&_button]:min-h-11">
   <h2 className="text-base font-semibold text-[var(--lms-heading)]">Choice-question quiz builder</h2>
   <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Find a quiz
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a quiz
    <Input type="search" value={quizSearch} onChange={e=>setQuizSearch(e.target.value)}
     placeholder="Title or state" className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
   </label>
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Quiz
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Quiz
    <Select value={selected} disabled={pending} onChange={e=>chooseWithDraftProtection(e.target.value)}
     className="min-h-11 min-w-0 max-w-full md:min-h-9">
     <option value="">Create new draft</option>
@@ -222,23 +222,23 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
   {chosen?<p className="text-xs text-body">State: {chosen.status}; published quizzes and attempted quizzes cannot change their questions.</p>:null}
   {facultyQuizCanCopyToDraft(chosen?.status,questions.length>0,pending,detailsFailed)?
    <Button variant="secondary" type="button" onClick={()=>copyToNewDraft()} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm font-[650]">Copy as new draft</Button>:null}
-  {!chosen?<label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Lesson
+  {!chosen?<label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
    <Select value={lessonId} onChange={e=>{setConfirmed(false);setDirtyDraft(true);setLessonId(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9">
     {lessons.map(l=><option key={l.id} value={l.id}>{l.name}</option>)}
    </Select></label>:null}
   <div className="grid min-w-0 grid-cols-1 gap-4 md:grid-cols-2">
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Quiz title
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Quiz title
    <Input value={title} disabled={!metadataEditable} maxLength={255} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,title,e.target.value));setDirtyDraft(true);setTitle(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4 md:col-span-2">Instructions
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 md:col-span-2 text-[var(--lms-neutral-400)]">Instructions
    <Textarea value={description} disabled={!metadataEditable} maxLength={10000} rows={2}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,description,e.target.value));setDirtyDraft(true);setDescription(e.target.value);}}
     className="min-w-0 max-w-full"/></label>
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Due date (IST, required before publishing)
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Due date (IST, required before publishing)
    <Input type="datetime-local" disabled={!metadataEditable} value={dueAt} onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,dueAt,e.target.value));setDirtyDraft(true);setDueAt(e.target.value);}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Maximum attempts
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
    <Input type="number" disabled={!editable} min={1} max={20} value={maxAttempts}
     onChange={e=>{setConfirmed(facultyQuizConfirmationAfterEdit(confirmed,maxAttempts,Number(e.target.value)));setDirtyDraft(true);setMaxAttempts(Number(e.target.value));}}
     className="min-h-11 min-w-0 max-w-full md:min-h-9"/></label>
@@ -281,7 +281,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     </fieldset>)}
    </div>:null}
   </section>
-  <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Find a question
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a question
    <Input type="search" value={questionSearch} onChange={e=>setQuestionSearch(e.target.value)}
     placeholder="Question number, prompt, or option" className="min-h-11 min-w-0 max-w-full md:min-h-9"/>
   </label>
@@ -293,26 +293,26 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
    <legend className="text-sm font-semibold">Question {i+1}</legend>
    {facultyQuizQuestionIssue(q)?<p role="status" className="text-xs text-error">Review question {i+1}: {facultyQuizQuestionIssue(q)}</p>:
     <p className="text-xs text-body">Question {i+1} is ready to save.</p>}
-   <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Prompt
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Prompt
     <Textarea value={q.prompt} maxLength={5000} rows={2}
      onChange={e=>updateQuestion(i,old=>({...old,prompt:e.target.value}))}
      className="min-w-0 max-w-full"/></label>
    <div className="grid min-w-0 grid-cols-2 gap-3">
-    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Type
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Type
      <Select value={q.type}
       onChange={e=>updateQuestion(i,old=>({...old,...facultyChangeQuizChoiceType(old,e.target.value as Question["type"])}))}
       className="min-h-11 min-w-0 max-w-full md:min-h-9">
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
      </Select></label>
-    <label className="grid min-w-0 gap-1 text-[13px] font-semibold leading-4">Points
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Points
      <Input type="number" min={1} max={100} value={q.points}
       onChange={e=>updateQuestion(i,old=>({...old,points:Number(e.target.value)}))}
       className="min-h-11 md:min-h-9 w-24 rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></label>
    </div>
    <p className="text-xs text-body" role="status">{facultyQuizAnswerSummary(q)}</p>
    {q.options.map((o,j)=><div key={j} className="grid min-w-0 grid-cols-2 items-end gap-2 border-b border-border pb-3 sm:flex sm:flex-wrap sm:items-center">
-    <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 sm:flex-[1_1_12rem]">Option {j+1}
+    <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 sm:flex-[1_1_12rem] text-[var(--lms-neutral-400)]">Option {j+1}
      <Input value={o.text} maxLength={2000}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}
       className="mt-1 block min-h-11 md:min-h-9 min-w-0 w-full max-w-full rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></label>
@@ -432,7 +432,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
         setError(null);setPasteQuestionIndex(null);
        }}>Paste choices</Button>
    </>}>
-   <label className="grid gap-2 text-[13px] font-semibold leading-4 text-body">Answer choices
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Answer choices
      <Textarea value={pastedChoices} onChange={event=>setPastedChoices(event.target.value)}
        rows={8} maxLength={40000} aria-label="Answer choices" />
    </label>

@@ -56,18 +56,18 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
   <Disclosure title={"Suggest a change or ask the "+(party==="TPO"?"company":"placement cell")} defaultOpen={requests.length===0} className="min-w-0 border-b border-border pb-3" contentClassName="min-w-0 space-y-3 pt-3">
    <p className="text-sm text-body leading-[22px]">Both sides can discuss, accept, answer or decline. Acceptance records agreement; the placement team must separately update the drive using the authorized edit action.</p>
    <div className="grid gap-3 min-[768px]:grid-cols-2">
-    <label className="grid gap-1 text-sm">Request type
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Request type
      <Select value={mode} onChange={e=>setMode(e.target.value as "SUGGEST"|"ASK")}
       className="min-h-11 min-[768px]:min-h-9"><option value="SUGGEST">Suggest a change</option><option value="ASK">Ask a question</option></Select></label>
-    <label className="grid gap-1 text-sm">Field
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Field
      <Select value={field} onChange={e=>setField(e.target.value as typeof field)}
       className="min-h-11 min-[768px]:min-h-9">
       {fields.map(([id,label])=><option key={id} value={id}>{label}</option>)}</Select></label>
    </div>
-   <label className="grid gap-1 text-sm">Change or question
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Change or question
     <Textarea value={value} onChange={e=>setValue(e.target.value)} minLength={2} maxLength={2000} rows={3}
      className="min-h-11 min-[768px]:min-h-9"/></label>
-   <label className="grid gap-1 text-sm">Why is this needed?
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Why is this needed?
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={1000} rows={2}
      className="min-h-11 min-[768px]:min-h-9"/></label>
    <Button type="button" disabled={busy||value.trim().length<2||reason.trim().length<3}
@@ -91,7 +91,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
       {item.messages.map(message=><p key={message.id} className="break-words [overflow-wrap:anywhere] border-b border-[var(--lms-canvas-border)] bg-transparent py-3 text-sm leading-[22px]">
        <strong>{message.senderParty==="TPO"?"Placement cell":"Company"}:</strong> {message.body}
       </p>)}
-      <label className="grid gap-1 text-sm">Reply or decision explanation
+      <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reply or decision explanation
        <Textarea maxLength={2000} value={notes[item.id]??""} onChange={e=>setNotes(p=>({...p,[item.id]:e.target.value}))}
         rows={2} className="min-h-11 min-[768px]:min-h-9"/></label>
       <div className="grid min-w-0 grid-cols-1 gap-2 sm:flex sm:flex-wrap">

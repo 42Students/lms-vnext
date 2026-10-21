@@ -146,29 +146,29 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
     <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={()=>setShow(false)}>Cancel</Button>
    </>}>
     <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Round<Select value={roundId} disabled={Boolean(editing)}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Round<Select value={roundId} disabled={Boolean(editing)}
      onChange={e=>setRoundId(e.target.value)} className="w-full">
      {available.map(r=><option key={r.id} value={r.id}>{r.name}</option>)}
     </Select></label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Candidate<Select value={applicationId} disabled={Boolean(editing)}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Candidate<Select value={applicationId} disabled={Boolean(editing)}
      onChange={e=>setApplicationId(e.target.value)} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date & time (IST)<Input type="datetime-local" required value={start}
+     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Date & time (IST)<Input type="datetime-local" required value={start}
       onChange={e=>setStart(e.target.value)} className="w-full"/></label>
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
+     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Duration (minutes)<Input type="number" min={5} max={480} value={duration}
       onChange={e=>setDuration(Number(e.target.value))} className="w-full"/></label>
     </div>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mode<Select value={mode} onChange={e=>setMode(e.target.value as "ON_CAMPUS"|"VIRTUAL")}
      className="w-full">
      <option value="ON_CAMPUS">On campus</option><option value="VIRTUAL">Virtual</option></Select></label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">{mode==="VIRTUAL"?"Secure meeting URL":"Interview location"}
      <Input value={mode==="VIRTUAL"?meetingUrl:venue} onChange={e=>mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value)}
       className="w-full"/></label>
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Interviewer (optional)<Input value={interviewer}
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Interviewer (optional)<Input value={interviewer}
      onChange={e=>setInterviewer(e.target.value)} className="w-full"/></label>
-    {editing?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason for change<Textarea rows={2} value={reason}
+    {editing?<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Reason for change<Textarea rows={2} value={reason}
      onChange={e=>setReason(e.target.value)} className="w-full"/></label>:null}
     {error?<Banner tone="error">{error}</Banner>:null}
 
@@ -178,7 +178,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    description="This action is recorded and the learner will be notified."
    confirmLabel="Save decision" pending={busy} confirmDisabled={decisionReason.trim().length<3}
    onConfirm={()=>void confirmDecision()}>
-   <label className="grid gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason or outcome note
+   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason or outcome note
     <Textarea rows={3} value={decisionReason} onChange={e=>setDecisionReason(e.target.value)}
      className="w-full" /></label>
   </ConfirmDialog>

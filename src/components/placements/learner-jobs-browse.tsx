@@ -190,7 +190,7 @@ export function LearnerJobsBrowse({
             />
             Closing in 7 days
           </label>
-          <label className="inline-flex min-h-11 w-full flex-col items-stretch gap-1 text-[length:var(--lms-font-sm)] text-body sm:ml-auto sm:w-auto sm:flex-row sm:items-center sm:gap-2 md:min-h-[var(--lms-control-height)] leading-4 font-semibold">
+          <label className="inline-flex min-h-11 w-full flex-col items-stretch gap-[6px] text-[length:var(--lms-font-sm)] sm:ml-auto sm:w-auto sm:flex-row sm:items-center sm:gap-2 md:min-h-[var(--lms-control-height)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Sort by
             <Select value={filters.sort}
               aria-label="Sort placement drives"
