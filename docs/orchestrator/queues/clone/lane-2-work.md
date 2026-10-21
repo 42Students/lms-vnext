@@ -58,7 +58,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-placement-jobs.tsx.md` (edit src/components/placements/learner-placement-jobs.tsx; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-jobs-browse-model.ts.md` (edit src/modules/placements/learner-jobs-browse-model.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_recruiter-grant-expiry-policy.ts.md` (edit src/modules/placements/recruiter-grant-expiry-policy.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-crm-service.ts.md` (edit src/modules/placements/tpo-crm-service.ts; 6 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-crm-service.ts.md` (edit src/modules/placements/tpo-crm-service.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-dashboard-model.ts.md` (edit src/modules/placements/learner-dashboard-model.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-interview-directory-service.ts.md` (edit src/modules/placements/college-interview-directory-service.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_super-admin-drive-pipeline-model.ts.md` (edit src/modules/placements/super-admin-drive-pipeline-model.ts; 5 findings; best P1)
