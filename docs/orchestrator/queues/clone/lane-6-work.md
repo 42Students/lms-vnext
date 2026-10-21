@@ -11,8 +11,8 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-6/src_modules_placements_tpo-drive-change-request-service.ts.part1of2.md` (edit src/modules/placements/tpo-drive-change-request-service.ts; 20 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-6/src_modules_placements_tpo-drive-change-request-service.ts.part2of2.md` (edit src/modules/placements/tpo-drive-change-request-service.ts; 8 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-6/src_modules_placements_tpo-drive-change-request-service.ts.part1of2.md` (edit src/modules/placements/tpo-drive-change-request-service.ts; 20 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-6/src_modules_placements_tpo-drive-change-request-service.ts.part2of2.md` (edit src/modules/placements/tpo-drive-change-request-service.ts; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_modules_placements_recruiter-message-email-inbound-service.ts.part1of2.md` (edit src/modules/placements/recruiter-message-email-inbound-service.ts; 20 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/src_modules_placements_recruiter-message-email-inbound-service.ts.part2of2.md` (edit src/modules/placements/recruiter-message-email-inbound-service.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-6/NEW_docs_audit_gap2_lane-15_u005-learner-placement-job-detail.md.md` (new; 18 findings; best P0)
