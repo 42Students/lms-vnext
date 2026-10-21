@@ -832,6 +832,18 @@ export async function applyToPlacementJob(
         const [existingRound] = await tx.select({ id: placementRoundResults.id })
           .from(placementRoundResults)
           .where(eq(placementRoundResults.applicationId, liveExisting.id)).limit(1);
+        // A booked interview or approved schedule exception is already a
+        // meaningful round commitment, even before any round result exists.
+        // Restoring SUBMITTED must never resurrect a stale booking silently.
+        const [bookedSlot] = await tx.select({id:placementRoundCandidateSlots.id})
+          .from(placementRoundCandidateSlots)
+          .where(and(eq(placementRoundCandidateSlots.applicationId,liveExisting.id),
+            eq(placementRoundCandidateSlots.status,"BOOKED"))).limit(1);
+        const [scheduledException] = await tx.select({id:placementApplicationRoundExceptions.id})
+          .from(placementApplicationRoundExceptions)
+          .innerJoin(placementJobRounds,eq(placementJobRounds.id,placementApplicationRoundExceptions.roundId))
+          .where(and(eq(placementApplicationRoundExceptions.applicationId,liveExisting.id),
+            eq(placementJobRounds.status,"SCHEDULED"))).limit(1);
         const [screening] = await tx.select({ status: placementApplicationScreenings.status })
           .from(placementApplicationScreenings)
           .where(eq(placementApplicationScreenings.applicationId, liveExisting.id))
@@ -839,7 +851,7 @@ export async function applyToPlacementJob(
         if (!canReapplyWithdrawnPlacementApplication({
           sameChannel: liveExisting.channel === channel,
           hasPriorOffer: Boolean(existingOffer),
-          hasPriorRound: Boolean(existingRound),
+          hasPriorRound: Boolean(existingRound || bookedSlot || scheduledException),
           screeningStatus: screening?.status ?? null,
         })) {
           throw new PlacementsServiceError("PLACEMENT_APPLICATION_ALREADY_WITHDRAWN");
@@ -1097,6 +1109,20 @@ export async function listPlacementJobApplications(
         email: users.email,
         phoneE164: users.phoneE164,
       },
+      // One indexed read per application, not a per-row SQL request.
+      nextInterviewAt: sql<Date | null>`(
+        select s.starts_at from placement_round_candidate_slots s
+        where s.application_id=${placementApplications.id}
+          and s.status='BOOKED' and s.starts_at>=now()
+        order by s.starts_at,s.id limit 1
+      )`,
+      nextInterviewRoundName: sql<string | null>`(
+        select r.name from placement_round_candidate_slots s
+        join placement_job_rounds r on r.id=s.round_id
+        where s.application_id=${placementApplications.id}
+          and s.status='BOOKED' and s.starts_at>=now()
+        order by s.starts_at,s.id limit 1
+      )`,
     })
     .from(placementApplications)
     .innerJoin(
@@ -1126,6 +1152,19 @@ export async function listPlacementJobApplications(
   return query.orderBy(desc(placementApplications.submittedAt),
    desc(placementApplications.id)).limit(pageSize).offset((page-1)*pageSize);
 }
+/** Job-scoped COUNT for summary badges. Applicant identities stay private. */
+export async function countPlacementJobApplications(
+ context:RequestContext,jobIdInput:string,
+):Promise<number>{
+ const jobId=placementJobIdSchema.parse(jobIdInput);
+ const job=await loadJob(jobId);
+ await requirePlacementManageScope(context,job.collegeId);
+ const [row]=await getDb().select({total:sql<number>`count(*)::integer`})
+  .from(placementApplications)
+  .where(eq(placementApplications.jobId,job.id));
+ return Number(row?.total??0);
+}
+
 /** A bounded admin projection; count and data share the exact same predicates.
  * The calling API must separately validate user-supplied filter strings/dates.
  */
@@ -1200,7 +1239,11 @@ export async function withdrawPlacementApplication(
 ) {
   // Older internal callers may omit a reason; confirmed UI writes must supply
   // one through the strict route schema. No invented default reason is stored.
-  const reason = learnerWithdrawalReasonSchema.optional().parse(reasonInput) ?? null;
+  // The status-history ledger has a 500-character CHECK constraint.
+  // Reject oversized reasons before starting a transaction.
+  const reason = learnerWithdrawalReasonSchema.max(
+    500,"Keep the withdrawal reason within 500 characters.",
+  ).optional().parse(reasonInput) ?? null;
   const applicationId =
     placementApplicationIdSchema.parse(
       applicationIdInput,
@@ -1287,7 +1330,11 @@ export async function withdrawPlacementApplication(
         .where(and(eq(placementApplications.id,applicationId),
           eq(placementApplications.membershipId,membership.id)))
         .for("update").limit(1);
-      if(!liveApplication||liveApplication.status!=="SUBMITTED")
+      if(!liveApplication)
+        throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+      // A retry after a lost response is a no-op: no second audit row/notice.
+      if(liveApplication.status==="WITHDRAWN")return null;
+      if(liveApplication.status!=="SUBMITTED")
         throw new PlacementsServiceError("PLACEMENT_APPLICATION_INELIGIBLE");
       const optOut=learnerStaffApplicationOptOut({
         submittedAt:liveApplication.submittedAt,

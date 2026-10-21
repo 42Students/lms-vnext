@@ -1,5 +1,5 @@
 import Link from "next/link";
-import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
+import {listMyTpoInternalThreads,type TpoTeamThreadFilter} from "@/modules/placements/tpo-team-internal-read-service";
 import {readTpoInternalConversation,tpoThreadIdSchema} from "@/modules/placements/tpo-team-conversation-service";
 import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
 import {TpoTeamThreadCreate,TpoTeamReplyComposer} from "@/components/tpo/tpo-team-forms";
@@ -14,7 +14,7 @@ const FILTERS = [
  ["decisions","Decisions"],["drives","Drives"],["companies","Companies"],
  ["topics","Topics"],
 ] as const;
-type TeamFilter = (typeof FILTERS)[number][0];
+type TeamFilter = TpoTeamThreadFilter;
 
 function selectedFilter(value:string):TeamFilter {
  return FILTERS.find(([key])=>key===value)?.[0]??"following";
@@ -42,47 +42,41 @@ function threadTime(value:Date, now:Date) {
  * on phone an explicit selection shows the conversation with a back link.
  */
 export async function TpoTeamMessagesDirectory({
- context,query,filter,selectedId,messageId,askId,
+ context,query,filter,selectedId,messageId,askId,page=1,
 }:{
  context:RequestContext;query:string;filter?:string;selectedId?:string;
- messageId?:string;askId?:string;
+ messageId?:string;askId?:string;page?:number;
 }){
  const member=context.membership;
  if(!member)return null;
  const safeQuery=query.trim().slice(0,120);
  const view=selectedFilter(filter??"following");
- const data=await listMyTpoInternalThreads(context,safeQuery).catch(()=>null);
+ const safePage=Number.isSafeInteger(page)?Math.min(1000,Math.max(1,page)):1;
+ const data=await listMyTpoInternalThreads(
+   context,safeQuery,safePage,safeQuery.length>=2?"all":view,
+ ).catch(()=>null);
  if(!data||data.status!=="READY")return <ErrorState title="Could not load conversations"
   description="Team conversations are temporarily unavailable. The Recruiters tab remains accessible."
   action={<Link href="/tpo/messages?tab=team" className="font-semibold text-link underline">Retry</Link>}/>;
  const all=data.items;
- const matches=(item:(typeof all)[number],key:TeamFilter)=>{
-  if(key==="all")return true;
-  if(key==="following")return item.following;
-  if(key==="me")return item.asksForMe>0||item.unreadCount>0;
-  if(key==="asks")return item.openAsks>0;
-  if(key==="decisions")return item.hasDecisions;
-  if(key==="drives")return item.kind==="DRIVE";
-  if(key==="companies")return item.kind==="COMPANY";
-  return item.kind==="TOPIC";
- };
- const visible=safeQuery.length>=2?all:all.filter(item=>matches(item,view));
+ const visible=all;
  const requested=selectedId&&tpoThreadIdSchema.safeParse(selectedId).success?selectedId:undefined;
  const explicit=Boolean(requested);
- const pickedId=requested??(all.find(item=>item.following&&item.unreadCount>0)?.id??visible[0]?.id);
+ const pickedId=requested??(visible.find(item=>item.following&&item.unreadCount>0)?.id??visible[0]?.id);
  const conversation=pickedId?await readTpoInternalConversation(context,pickedId).catch(()=>null):null;
  const active=conversation?.status==="READY"?conversation:null;
  const roster=await getTpoPlacementTeam(context,member.collegeId).catch(()=>null);
  const colleagues=roster?.members.filter(row=>row.membershipId!==member.id)
   .map(row=>({membershipId:row.membershipId,displayName:row.displayName}))??[];
- const href=(id?:string,nextFilter:TeamFilter=view)=>{
+ const href=(id?:string,nextFilter:TeamFilter=view,nextPage=1)=>{
   const params=new URLSearchParams({tab:"team"});
   if(safeQuery.length>=2)params.set("q",safeQuery);
   if(nextFilter!=="following")params.set("filter",nextFilter);
   if(id)params.set("c",id);
+  if(nextPage>1)params.set("page",String(nextPage));
   return "/tpo/messages?"+params.toString();
  };
- const counts=Object.fromEntries(FILTERS.map(([key])=>[key,all.filter(item=>matches(item,key)).length]));
+ const totalCount=data.totalCount;
  const today=new Date();
  return <section role="tabpanel" aria-label="Team conversations" className="min-w-0">
   <div className="grid min-w-0 overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-surface lg:grid-cols-[minmax(250px,300px)_minmax(0,1fr)] xl:grid-cols-[minmax(250px,290px)_minmax(0,1fr)_minmax(200px,240px)]">
@@ -98,10 +92,10 @@ export async function TpoTeamMessagesDirectory({
        aria-current={view===key?"page":undefined}
        className={"inline-flex min-h-9 items-center gap-1 rounded-full border px-3 py-1 text-xs font-semibold "+
         (view===key?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:bg-primary-subtle")}>
-       {label}{key!=="all"&&key!=="following"&&counts[key]>0?<span aria-label={String(counts[key])+" conversations"}>{counts[key]}</span>:null}
+       {label}{key===view?<span aria-label={String(totalCount)+" matching conversations"}>{totalCount}</span>:null}
       </Link>)}
      </nav>
-     {data.hasMore?<p className="text-xs text-muted-foreground">Filters show the latest 100 conversations. Search to find older ones.</p>:null}
+     <p className="text-xs text-muted-foreground">{totalCount} {totalCount===1?"conversation":"conversations"} in this view</p>
     </div>
     {visible.length===0?<div className="p-4"><EmptyState
       title={safeQuery.length>=2?"Nothing matches. Try other words.":view==="following"?"You follow nothing else yet. All shows every conversation.":"Nothing here. Try All."}
@@ -128,6 +122,11 @@ export async function TpoTeamMessagesDirectory({
       </Link>
      </li>)}
     </ul>}
+    {totalCount>100?<nav aria-label="Team conversation pages" className="flex items-center justify-between border-t border-border p-3 text-xs font-semibold">
+     {safePage>1?<Link href={href(undefined,view,safePage-1)} className="text-link underline">Previous</Link>:<span/>}
+     <span>Page {safePage} of {Math.ceil(totalCount/100)}</span>
+     {data.hasMore?<Link href={href(undefined,view,safePage+1)} className="text-link underline">Next</Link>:<span/>}
+    </nav>:null}
     <details id="new-team-conversation" className="border-t border-border p-3">
      <summary className="cursor-pointer text-sm font-semibold text-link">+ New conversation</summary>
      {colleagues.length>0?<TpoTeamThreadCreate members={colleagues} actorUserId={context.user.id}/>:

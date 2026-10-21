@@ -9,8 +9,15 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 import {tpoInternalThreads} from "./tpo-team-staged-schema";
-/** Read only threads where the active TPO membership is a named participant. */
-export async function listMyTpoInternalThreads(context:RequestContext,rawSearch="",page=1){
+export type TpoTeamThreadFilter =
+ "following"|"all"|"me"|"asks"|"decisions"|"drives"|"companies"|"topics";
+
+/** Thread filter conditions are evaluated inside the scoped SQL WHERE clause
+ * before LIMIT/OFFSET. This keeps counts and filters correct across pages.
+ */
+export async function listMyTpoInternalThreads(
+ context:RequestContext,rawSearch="",page=1,filter:TpoTeamThreadFilter="all",
+){
  const safePage=Number.isSafeInteger(page)?Math.max(1,Math.min(1000,page)):1;
  const search=rawSearch.trim().slice(0,120);
  const q=search.length>=2?search:"";
@@ -29,6 +36,70 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   const lastActivity=sql<Date>`coalesce((select max(m.created_at) from placement_tpo_internal_messages m
    where m.thread_id=${tpoInternalThreads.id} and m.college_id=${college.id}::uuid),
    ${tpoInternalThreads.createdAt})`;
+  const followed = readsReady ? sql`coalesce((select r.following
+     from placement_tpo_internal_reads r where r.thread_id=${tpoInternalThreads.id}
+       and r.membership_id=${membership.id}::uuid),true)` : sql`true`;
+  const unreadForMe = readsReady ? sql`exists(
+     select 1 from placement_tpo_internal_messages m
+     where m.thread_id=${tpoInternalThreads.id} and m.college_id=${college.id}::uuid
+       and m.author_membership_id<>${membership.id}::uuid
+       and m.created_at>coalesce((select r.read_through from placement_tpo_internal_reads r
+         where r.thread_id=${tpoInternalThreads.id}
+           and r.membership_id=${membership.id}::uuid),'-infinity'::timestamptz))` : sql`false`;
+  const openAsks = asksReady ? sql`exists(
+     select 1 from placement_tpo_team_asks a
+     where a.thread_id=${tpoInternalThreads.id} and a.college_id=${college.id}::uuid
+       and a.status='OPEN')` : sql`false`;
+  const asksForMe = asksReady ? sql`exists(
+     select 1 from placement_tpo_team_asks a
+     where a.thread_id=${tpoInternalThreads.id} and a.college_id=${college.id}::uuid
+       and a.assignee_membership_id=${membership.id}::uuid and a.status='OPEN')` : sql`false`;
+  const decisionExists = sql`exists(
+    select 1 from activity_events de
+    where de.college_id=${college.id}::uuid and de.subject_type='team_thread'
+      and de.subject_id=${tpoInternalThreads.id}::text
+      and de.event_type='placements.tpo_team.decision_marked'
+      and not exists (
+       select 1 from activity_events later
+       where later.college_id=${college.id}::uuid and later.subject_type='team_thread'
+        and later.subject_id=de.subject_id
+        and later.metadata->>'messageId'=de.metadata->>'messageId'
+        and later.event_type in ('placements.tpo_team.decision_marked',
+          'placements.tpo_team.decision_unmarked','placements.tpo_team.message_deleted')
+        and (later.occurred_at,later.id)>(de.occurred_at,de.id)
+      )
+   )`;
+  const filterCondition = filter==="following"?followed:
+    filter==="me"?sql`(${asksForMe} or ${unreadForMe})`:
+    filter==="asks"?openAsks:
+    filter==="decisions"?decisionExists:
+    filter==="drives"?(groupsReady?sql`${tpoInternalThreads.kind}='DRIVE'`:sql`false`):
+    filter==="companies"?(groupsReady?sql`${tpoInternalThreads.kind}='COMPANY'`:sql`false`):
+    filter==="topics"?(groupsReady?sql`${tpoInternalThreads.kind}='TOPIC'`:sql`false`):undefined;
+  const threadScope = and(eq(tpoInternalThreads.collegeId,college.id),
+    groupsReady
+     ? sql`((
+         ${tpoInternalThreads.kind} = 'DIRECT'
+         and (${tpoInternalThreads.startedByMembershipId} = ${membership.id}::uuid
+           or ${tpoInternalThreads.invitedMembershipId} = ${membership.id}::uuid)
+       ) or (
+         ${tpoInternalThreads.kind} <> 'DIRECT'
+         and exists (select 1 from placement_tpo_internal_thread_participants part
+           where part.thread_id=${tpoInternalThreads.id}
+             and part.college_id=${college.id}::uuid
+             and part.membership_id=${membership.id}::uuid and part.left_at is null)
+       ))`
+     : or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
+          eq(tpoInternalThreads.invitedMembershipId,membership.id)),
+    q?or(sql`position(lower(${q}) in lower(${tpoInternalThreads.topic}))>0`,
+      sql`exists(select 1 from placement_tpo_internal_messages m
+        where m.thread_id=${tpoInternalThreads.id}
+        and m.college_id=${college.id}::uuid
+        and position(lower(${q}) in lower(m.body))>0)`) : undefined,
+    filterCondition);
+  const [countRow]=await tx.select({total:sql<number>`count(*)::integer`})
+    .from(tpoInternalThreads).where(threadScope);
+  const totalCount=Number(countRow?.total??0);
   const items=await tx.select({
    id:tpoInternalThreads.id,topic:tpoInternalThreads.topic,
    createdAt:tpoInternalThreads.createdAt,
@@ -91,32 +162,13 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
        and position(lower(${q}) in lower(m.body))>0
      order by m.created_at desc,m.id desc limit 1)`:sql<string|null>`null`,
   }).from(tpoInternalThreads)
-   .where(and(eq(tpoInternalThreads.collegeId,college.id),
-    groupsReady
-     ? sql`((
-         ${tpoInternalThreads.kind} = 'DIRECT'
-         and (${tpoInternalThreads.startedByMembershipId} = ${membership.id}::uuid
-           or ${tpoInternalThreads.invitedMembershipId} = ${membership.id}::uuid)
-       ) or (
-         ${tpoInternalThreads.kind} <> 'DIRECT'
-         and exists (select 1 from placement_tpo_internal_thread_participants part
-           where part.thread_id=${tpoInternalThreads.id}
-             and part.college_id=${college.id}::uuid
-             and part.membership_id=${membership.id}::uuid and part.left_at is null)
-       ))`
-     : or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
-          eq(tpoInternalThreads.invitedMembershipId,membership.id)),
-    q?or(sql`position(lower(${q}) in lower(${tpoInternalThreads.topic}))>0`,
-      sql`exists(select 1 from placement_tpo_internal_messages m
-        where m.thread_id=${tpoInternalThreads.id}
-        and m.college_id=${college.id}::uuid
-        and position(lower(${q}) in lower(m.body))>0)`) : undefined))
+   .where(threadScope)
    .orderBy(desc(lastActivity),desc(tpoInternalThreads.id)).limit(101).offset((safePage-1)*100);
   const visibleItems=items.slice(0,100);
-  const hasMore=items.length>100;
+  const hasMore=safePage*100<totalCount;
   if(readsReady)return {status:"READY" as const,items:visibleItems.map(row=>({
    ...row,unreadCount:row.following&&!row.muted?Number(row.unreadMessages):0,
-  })),page:safePage,hasMore,asksReady};
+  })),page:safePage,hasMore,asksReady,totalCount};
   // Legacy fallback while the proposed read-receipt migration is not yet registered.
   // Unread counts are per original recipient: query results never change who may read a thread.
   const unread = await tx.select({

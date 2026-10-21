@@ -16,7 +16,9 @@ export const placementCompanyDomainSchema = z
   .string()
   .trim()
   .toLowerCase()
-  .transform((value) => value.replace(/^www\./, ""))
+  // Legacy forms accept "@company.com" and a fully qualified trailing dot.
+  // Canonicalize only syntax; domain ownership still needs verification.
+  .transform((value) => value.replace(/^@/, "").replace(/^www\./, "").replace(/\.$/, ""))
   .pipe(
     z
       .string()
@@ -26,7 +28,13 @@ export const placementCompanyDomainSchema = z
         /^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$/,
         "Enter a domain without protocol, path or email prefix",
       )
-      .refine((value) => value.includes("."), "Enter a complete domain"),
+      .refine((value) => {
+        const labels=value.split(".");
+        return labels.length>=2 &&
+          labels.every(label=>label.length>0&&label.length<=63&&
+            /^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/.test(label)) &&
+          /^[a-z]{2,63}$/.test(labels[labels.length-1]!);
+      }, "Enter a complete company domain with valid labels"),
   );
 
 const corporateWebsiteSchema=z.string().trim().max(500).url().refine(
@@ -325,10 +333,12 @@ export const createPlacementJobInputSchema =
   placementJobFieldsSchema.superRefine((value, ctx) => {
     const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
     if(assessmentDeadline){
-      if(Date.parse(assessmentDeadline)<=Date.now())
+      const cutoff=Date.parse(assessmentDeadline);
+      if(!Number.isFinite(cutoff)||cutoff<=Date.now())
         ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
           message:"Assessment deadline cannot be in the past"});
-      if(!value.applicationDeadline||Date.parse(assessmentDeadline)<=value.applicationDeadline.getTime())
+      if(!value.applicationDeadline||!Number.isFinite(cutoff)||
+        cutoff<=value.applicationDeadline.getTime())
         ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
           message:"Assessment deadline must be after application deadline"});
     }
@@ -376,6 +386,17 @@ export const updatePlacementJobInputSchema =
           code: "custom",
           message: "Provide at least one job field",
         });
+      }
+      const assessmentDeadline=value.legacyPostingDetails?.assessmentDeadline;
+      if(assessmentDeadline){
+        const cutoff=Date.parse(assessmentDeadline);
+        if(!Number.isFinite(cutoff)||cutoff<=Date.now())
+          ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
+            message:"Assessment deadline cannot be in the past"});
+        if(value.applicationDeadline&&(!Number.isFinite(cutoff)||
+           cutoff<=value.applicationDeadline.getTime()))
+          ctx.addIssue({code:"custom",path:["legacyPostingDetails","assessmentDeadline"],
+            message:"Assessment deadline must be after application deadline"});
       }
       if (
         value.minimumAnnualCtcInr != null &&
