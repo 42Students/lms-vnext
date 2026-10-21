@@ -3,6 +3,7 @@ import {useEffect,useRef,useState,type FormEvent} from "react";
 import {useRouter} from "next/navigation";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
+import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useToast} from "@/components/ui/toast";
@@ -11,7 +12,10 @@ import {superAdminPublishedDriveEditFeedback} from "@/modules/placements/super-a
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {driveDeadlineIstToIso} from "@/modules/placements/tpo-drive-deadline-ist";
 type Job={id:string;title:string;description:string;locations:string[];
- applicationDeadline:string|null;openings:number|null;minCtc:number|null;maxCtc:number|null;updatedAt:string};
+ applicationDeadline:string|null;openings:number|null;minCtc:number|null;maxCtc:number|null;updatedAt:string;
+ jobTypeLabel:string;employmentType:"FULL_TIME"|"INTERNSHIP"|"CONTRACT";
+ workMode:"ONSITE"|"HYBRID"|"REMOTE";responsibilities:string;
+ targeting:{programs:number;cohorts:number;sections:number}|null};
 function istLocal(value:string|null){
  if(!value)return "";
  return new Intl.DateTimeFormat("sv-SE",{
@@ -23,7 +27,9 @@ function nullableNumber(value:FormDataEntryValue|null){
  const s=String(value??"").trim();
  return s===""?null:Number(s);
 }
-export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
+export function SuperAdminPublishedDriveEdit({job,jobTypes,sourceReady=true}:{
+ job:Job;jobTypes:readonly {label:string}[];sourceReady?:boolean;
+}){
  const router=useRouter(),[open,setOpen]=useState(false),[error,setError]=useState("");
  const {showToast}=useToast();
  const [staleConflict,setStaleConflict]=useState(false);
@@ -64,7 +70,7 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
  }
  function reviewSave(event:FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(pending)return;
+  if(pending||!sourceReady){setError("Saved job details could not be verified. Reload before editing.");return;}
   const data=new FormData(event.currentTarget);
   const description=String(data.get("description")??"").trim();
   if(!description.replace(/<[^>]*>/g,"").trim()){
@@ -79,7 +85,7 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
   setConfirmSave(true);
  }
  async function save(){
-  if(!formRef.current||pending)return;
+  if(!formRef.current||pending||!sourceReady)return;
   const data=new FormData(formRef.current);
   const description=String(data.get("description")??"").trim();
   if(!description.replace(/<[^>]*>/g,"").trim()){
@@ -97,6 +103,10 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      body:JSON.stringify({confirmed:true,expectedUpdatedAt:job.updatedAt,
       reason:String(data.get("reason")??"").trim(),title:String(data.get("title")??"").trim(),
       description,
+      responsibilities:String(data.get("responsibilities")??"").trim(),
+      jobTypeLabel:String(data.get("jobTypeLabel")??"").trim(),
+      employmentType:String(data.get("employmentType")??""),
+      workMode:String(data.get("workMode")??""),
       locations:String(data.get("locations")??"").split(",").map(s=>s.trim()).filter(Boolean),
       applicationDeadline,
       openings:nullableNumber(data.get("openings")),
@@ -122,7 +132,8 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
  return <section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="font-semibold">Edit published drive</h2>
   <p className="text-xs text-body">Edits apply to future applicants. Existing applications and offer decisions remain unchanged.</p>
-  {!open?<Button type="button" variant="secondary" onClick={()=>{setDirty(false);setOpen(true);}}>
+  {!sourceReady?<p role="alert" className="text-sm text-error">Saved job options or eligibility details could not be loaded. Reload settings before editing; no partial changes can be saved.</p>:null}
+  {!open?<Button type="button" variant="secondary" disabled={!sourceReady} onClick={()=>{setDirty(false);setOpen(true);}}>
    Edit published drive</Button>:
    <form ref={formRef} className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] sm:grid-cols-2" onChange={()=>setDirty(true)} onSubmit={reviewSave}>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title<Input name="title" required minLength={3} maxLength={100}
@@ -131,6 +142,24 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      name="deadline" defaultValue={istLocal(job.applicationDeadline)} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Description<Textarea name="description" required
      maxLength={15000} defaultValue={job.description} rows={4} className={cls}/></label>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Responsibilities
+     <Textarea name="responsibilities" maxLength={15000} rows={3} defaultValue={job.responsibilities} className={cls}/></label>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job Type
+     <Select name="jobTypeLabel" required defaultValue={job.jobTypeLabel} className={cls}>
+      {jobTypes.map(type=><option key={type.label} value={type.label}>{type.label}</option>)}
+      {job.jobTypeLabel&&!jobTypes.some(type=>type.label===job.jobTypeLabel)?
+       <option value={job.jobTypeLabel}>{job.jobTypeLabel} (historic)</option>:null}
+     </Select></label>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment type
+     <Select name="employmentType" required defaultValue={job.employmentType} className={cls}>
+      <option value="FULL_TIME">Full-time</option><option value="INTERNSHIP">Internship</option>
+      <option value="CONTRACT">Contract</option>
+     </Select></label>
+    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Work mode
+     <Select name="workMode" required defaultValue={job.workMode} className={cls}>
+      <option value="ONSITE">Onsite</option><option value="HYBRID">Hybrid</option>
+      <option value="REMOTE">Remote</option>
+     </Select></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Locations (comma-separated)<Input name="locations"
      defaultValue={job.locations.join(", ")} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Openings<Input name="openings" type="number" min={1}
@@ -139,11 +168,16 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      type="number" min={0} defaultValue={job.minCtc??""} className={cls}/></label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Maximum annual CTC (INR)<Input name="maximumAnnualCtcInr"
      type="number" min={0} defaultValue={job.maxCtc??""} className={cls}/></label>
+    <div className="sm:col-span-2 border-y border-border py-3 text-sm">
+     <p className="font-semibold">Target Audience · Department / Program / Batch / Class</p>
+     <p className="mt-1 text-body">Published eligibility targeting is locked to protect existing applicant policy and historical evaluations. Duplicate this drive as a draft to change the dependent academic audience; blank restrictions mean all eligible students within the selected college.</p>
+     {job.targeting?<p className="mt-1 text-muted-foreground">Saved restrictions: {job.targeting.programs} programs · {job.targeting.cohorts} batches · {job.targeting.sections} classes.</p>:<p role="alert" className="text-error">Eligibility policy could not be verified.</p>}
+    </div>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:col-span-2">Reason for edit
      <Textarea name="reason" required minLength={10} maxLength={1000} rows={2} className={cls}/></label>
     {error?<p role="alert" className="text-sm text-error sm:col-span-2">{error}</p>:null}
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center sm:col-span-2">
-     <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending}>
+     <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending||!sourceReady}>
       {pending?"Saving…":"Review and save published changes"}</Button>
      <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={closeEditor}>Cancel</Button>
     </div>
