@@ -35,11 +35,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-4.md: file, number of 
 - [x] `src/app/(authenticated)/admin/electives/page.tsx`
 - [x] `src/app/(authenticated)/admin/faculty-assignment/error.tsx`
 - [x] `src/app/(authenticated)/admin/faculty/error.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/error.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/error.tsx`
-- [ ] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/error.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/history/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/error.tsx`
+- [x] `src/app/(authenticated)/admin/features/[collegeId]/trace/page.tsx`
 - [ ] `src/app/(authenticated)/admin/features/error.tsx`
 - [ ] `src/app/(authenticated)/admin/features/page.tsx`
 - [ ] `src/app/(authenticated)/admin/hr/page.tsx`
