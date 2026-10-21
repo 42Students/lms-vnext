@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
 import {AdminScopedLiveSearch} from "@/components/admin/admin-scoped-live-search";
+import {AdminScopedRowsPerPage} from "@/components/admin/admin-scoped-rows-per-page";
 import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv-model";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Alert } from "@/components/ui/alert";
@@ -268,18 +269,15 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
      </Select></label>:null}
    {compactReadLayout?null:<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
-    <Select name="pageSize" defaultValue={data.query.pageSize}
-     className="min-h-11 w-full md:min-h-9">
-     {[25,50,100,200].map(size=><option value={size} key={size}>{size}</option>)}
-    </Select>
+    <AdminScopedRowsPerPage initial={data.query.pageSize} path={path} scopeKey={context.adminScope.collegeId}
+    className="min-h-11 w-full md:min-h-9"/>
    </label>}
 
    {compactReadLayout?<details className="order-4 min-w-0 sm:col-span-2 lg:col-span-3">
      <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Rows per page</summary>
      <div className="max-w-[200px] pb-1">
-       <Select name="pageSize" aria-label="Rows per page" defaultValue={data.query.pageSize} className="min-h-11 w-full md:min-h-9">
-         {[25,50,100,200].map(size=><option value={size} key={size}>{size}</option>)}
-       </Select>
+       <AdminScopedRowsPerPage initial={data.query.pageSize} path={path} scopeKey={context.adminScope.collegeId}
+    className="min-h-11 w-full md:min-h-9"/>
      </div>
    </details>:null}
   </form>
