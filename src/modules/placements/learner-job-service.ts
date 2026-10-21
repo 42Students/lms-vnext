@@ -3,6 +3,8 @@ import {
   asc,
   desc,
   eq,
+  gt,
+  sql,
   inArray,
   isNotNull,
   isNull,
@@ -25,6 +27,12 @@ import {
   placementJobEligibilityPolicies,
   placementOffers,
   placementBatchRegistrations,
+  placementApplicationScreenings,
+  placementCompanyApplicantShares,
+  placementCompanyShareSelections,
+  collegeMemberships,
+  learnerProfiles,
+  users,
 } from "@/db/schema";
 import {
   hasMembershipRole,
@@ -41,6 +49,7 @@ import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy"
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {placementJobIdSchema} from "./validation";
 import {getOwnLearnerApplicationCompany} from "./learner-application-detail-service";
+import {COMPANY_SHARE_COLUMNS,projectCompanyShareRows,safeCompanyShareColumns} from "./company-share/column-model";
 import {
   evaluatePlacementEligibility,
   isPlacementJobTargetCohort,
@@ -404,8 +413,9 @@ export async function getOwnLearnerJobCompanySharePreview(
  const membership=requireLearner(context);
  await requireLearnerPlacementAccess(context);
  const jobId=placementJobIdSchema.parse(rawJobId);
- const [application]=await getDb().select({id:placementApplications.id})
-  .from(placementApplications).innerJoin(placementJobs,
+ const [application]=await getDb().select({
+  id:placementApplications.id,status:placementApplications.status,
+ }).from(placementApplications).innerJoin(placementJobs,
    eq(placementJobs.id,placementApplications.jobId))
   .where(and(eq(placementApplications.jobId,jobId),
    eq(placementApplications.membershipId,membership.id),
@@ -415,14 +425,67 @@ export async function getOwnLearnerJobCompanySharePreview(
  if(!application)return null;
  const detail=await getOwnLearnerApplicationCompany(context,application.id);
  if(!detail)return null;
- const projection=detail.companySharePreview;
+
+ // Resolve only this learner's data; the employer's shared-link read selects
+ // precisely these fields and passes them through projectCompanyShareRows.
+ // Full learner profiles, academic gates, debarment and staff notes must never
+ // be serialized as part of a company preview.
+ const [source]=await getDb().select({
+  displayName:users.displayName,email:users.email,phone:users.phoneE164,
+  rollNumber:learnerProfiles.rollNumber,
+  profileDocument:learnerProfiles.profileDocument,
+  stage:placementApplicationScreenings.status,
+  branch:sql<string|null>`(SELECT p.name FROM learner_program_enrollments lpe
+    JOIN programs p ON p.id=lpe.program_id
+    WHERE lpe.membership_id=${collegeMemberships.id} AND lpe.status='ACTIVE'
+    ORDER BY p.name,p.id LIMIT 1)`,
+ }).from(placementApplications)
+  .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+  .leftJoin(placementApplicationScreenings,
+   eq(placementApplicationScreenings.applicationId,placementApplications.id))
+  .where(and(eq(placementApplications.id,application.id),
+   eq(placementApplications.membershipId,membership.id),
+   eq(collegeMemberships.collegeId,membership.collegeId),
+   eq(collegeMemberships.userId,context.user.id))).limit(1);
+ if(!source)return null;
+ // The external share requires an explicit selected-applicant row; empty
+ // selection never broadens the share to every applicant. Use the actual
+ // live share's allowlisted column choices; no client-supplied columns.
+ const [shared]=await getDb().select({
+  selectedColumns:placementCompanyApplicantShares.selectedColumns,
+ }).from(placementCompanyShareSelections)
+  .innerJoin(placementCompanyApplicantShares,
+   eq(placementCompanyApplicantShares.id,placementCompanyShareSelections.shareId))
+  .where(and(
+   eq(placementCompanyShareSelections.applicationId,application.id),
+   eq(placementCompanyApplicantShares.collegeId,membership.collegeId),
+   eq(placementCompanyApplicantShares.jobId,jobId),
+   isNull(placementCompanyApplicantShares.revokedAt),
+   gt(placementCompanyApplicantShares.expiresAt,new Date()),
+  )).orderBy(desc(placementCompanyApplicantShares.createdAt)).limit(1);
+ const columns=safeCompanyShareColumns(shared?.selectedColumns);
+ const [projected]=projectCompanyShareRows([{
+  applicationId:detail.publicRef,displayName:source.displayName,
+  email:source.email,phone:source.phone,rollNumber:source.rollNumber,
+  profileDocument:source.profileDocument,branch:source.branch,
+  stage:source.stage,
+  // Private storage grants are minted only by the authorized share-link
+  // service. A self-preview never exposes a raw object path or bearer token.
+  resumeSignedUrl:null,resumeExpiresAt:null,
+ }],columns);
+ if(!projected)return null;
  return {
-  columns:projection.fields,
+  columns:columns.map(column=>COMPANY_SHARE_COLUMNS[column]),
+  columnKeys:columns,
   preview:{
-   applicantReference:projection.applicantReference,
-   learnerName:projection.learnerName,
-   email:projection.email,
+   applicantReference:detail.publicRef,
+   learnerName:projected.displayName,
+   email:projected.email,
+   cells:projected.cells,
   },
-  currentlyShared:projection.currentlyShared,
+  currentlyShared:Boolean(shared&&application.status==="SUBMITTED"&&
+   source.stage==="SHORTLISTED"),
  };
 }

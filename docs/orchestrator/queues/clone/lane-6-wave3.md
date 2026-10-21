@@ -11,9 +11,9 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_modules_placements_recruiter-message-email-inbound-service.ts.md` (edit src/modules/placements/recruiter-message-email-inbound-service.ts; 3 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_modules_placements_learner-job-service.ts.md` (edit src/modules/placements/learner-job-service.ts; 3 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_modules_placements_tpo-drive-change-request-service.ts.md` (edit src/modules/placements/tpo-drive-change-request-service.ts; 3 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_modules_placements_recruiter-message-email-inbound-service.ts.md` (edit src/modules/placements/recruiter-message-email-inbound-service.ts; 3 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_modules_placements_learner-job-service.ts.md` (edit src/modules/placements/learner-job-service.ts; 3 findings; best P0)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_modules_placements_tpo-drive-change-request-service.ts.md` (edit src/modules/placements/tpo-drive-change-request-service.ts; 3 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_components_placements_tpo-drive-edit-form.tsx.md` (edit src/components/placements/tpo-drive-edit-form.tsx; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_components_placements_college-application-pipeline-controls.tsx.md` (edit src/components/placements/college-application-pipeline-controls.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-6/W3_src_modules_placements_college-application-stage-service.ts.md` (edit src/modules/placements/college-application-stage-service.ts; 3 findings; best P1)
