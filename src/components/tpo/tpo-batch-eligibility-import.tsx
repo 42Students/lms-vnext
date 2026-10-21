@@ -102,7 +102,7 @@ export function TpoBatchEligibilityImport({batchId}:{batchId:string}){
       onClick={()=>void (preview?commit():previewChanges())}>
       {busy?"Working…":preview?"Confirm matched decisions":"Preview import"}
     </Button>}><div className="min-w-0 space-y-3">
-  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">CSV format and matching rules</summary>
+  <details className="min-w-0 border-b border-border pb-2"><summary className="min-h-11 cursor-pointer text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">CSV format and matching rules</summary>
     <p className="max-w-[70ch] break-words text-sm leading-6 text-muted-foreground">CSV columns: studentCode,decision,reason. studentCode may be an exact roll number or learner membership UUID; ambiguous rolls are skipped. Names and emails are never used for matching. Up to 5000 records. Supports quoted commas, legacy column names, Yes/No and clear/reset decisions.</p>
   </details>
   <p aria-label="Eligibility import steps" className="text-xs text-muted-foreground">Choose CSV or paste rows → Preview matched and unusable rows → Skip or resolve unmatched rows → Confirm matched decisions.</p>
