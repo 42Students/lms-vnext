@@ -27,8 +27,34 @@ export function summarizeRoundApply(rows:readonly RoundApplyRow[]){
  return {staged:rows.filter(r=>r.status==="STAGED").length,
   applied:rows.filter(r=>r.status==="APPLIED").length,outcomes};
 }
-/** Never send PostgreSQL errors, credentials or permission internals in per-learner result reports. */
-export function roundApplyFailureReason(_error:unknown):string{
+/** Return known actionable skip reasons; never expose SQL errors or arbitrary exception text. */
+export function roundApplyFailureReason(error:unknown):string{
+ if(error instanceof PlacementsServiceError){
+  switch(error.code){
+   case "PLACEMENT_RESULT_APPLICATION_INACTIVE":
+    return "This application is no longer active. Review its stage before applying the result.";
+   case "PLACEMENT_RESULT_SCREENING_NOT_SHORTLISTED":
+    return "This applicant has not cleared screening. Shortlist the applicant first.";
+   case "PLACEMENT_RESULT_NOT_PARTICIPANT":
+    return "This applicant is not a participant in this round. Check the round roster.";
+   case "PLACEMENT_RESULT_ALREADY_APPLIED":
+    return "This result was already applied. Refresh this round to see the latest stage.";
+   case "PLACEMENT_SCREENING_INVALID_TRANSITION":
+   case "PLACEMENT_ROUND_INVALID_TRANSITION":
+    return "Cannot move this applicant from the current stage to the next stage. Review the application history.";
+   case "PLACEMENT_RESULT_ROUND_NOT_READY":
+    return "This round is not completed yet. Complete it before applying results.";
+   case "PLACEMENT_JOB_READ_ONLY":
+    return "This drive is no longer writable. Review its status before retrying.";
+   case "PLACEMENT_RESULT_INVALID_ROUND_TYPE":
+    return "Results cannot be applied to a discussion-only round.";
+   case "PLACEMENT_RESULT_NOT_FOUND":
+    return "The staged result is missing. Refresh this round before retrying.";
+   case "PLACEMENT_JOB_PREVIEW_STALE":
+   case "PLACEMENT_SCREENING_STALE":
+    return "This round has changed. Refresh this round and retry.";
+  }
+ }
  return "Result was not applied. Refresh this round and try again.";
 }
 
