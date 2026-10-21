@@ -14,6 +14,7 @@ import {listTpoCampaignDrafts} from "@/modules/messaging/tpo-campaign-draft-serv
 import {tpoCampaignDispatchReady} from "@/modules/messaging/tpo-campaign-dispatch-service";
 import {CAMPAIGN_DRAFT_UNAVAILABLE,CAMPAIGN_DELIVERY_UNAVAILABLE} from "@/modules/messaging/tpo-campaign-draft-model";
 import {tpoCampaignHistoryTime,tpoCampaignHistoryStatus} from "@/modules/messaging/tpo-campaign-history-copy";
+import {TPO_CAMPAIGN_RECIPIENT_CAP_COPY,TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} from "@/modules/messaging/tpo-campaign-legacy-compat";
 
 type PageProps = {searchParams:Promise<{page?:string|string[];purpose?:string|string[]}>};
 function first(value:string|string[]|undefined){return Array.isArray(value)?value[0]:value;}
@@ -53,6 +54,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
   </form>
 
   <section aria-label="Email campaigns" className="space-y-3">
+   <p className="text-sm text-body">{TPO_CAMPAIGN_RECIPIENT_CAP_COPY}</p>
    <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Email campaigns</h2>
    {!drafts.ready?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 text-sm text-body leading-[22px]">
      {CAMPAIGN_DRAFT_UNAVAILABLE}
@@ -75,7 +77,7 @@ export default async function CampaignHistory({searchParams}:PageProps){
       <p className="mt-1 text-xs text-muted-foreground leading-5">Segment: {item.segment.replaceAll("_"," ")}</p>
      </li>)}
     </ul>}
-   {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body leading-[22px]"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE}</p>:null}
+   {!deliveryReady?<p role="alert" className="rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-body leading-[22px]"><strong>Campaign email is not set up yet, so nothing can be sent. Ask 42 to switch it on.</strong> {CAMPAIGN_DELIVERY_UNAVAILABLE} {TPO_CAMPAIGN_PROVIDER_DISABLED_COPY} <Link href="/tpo/recruiters/campaigns" className="font-semibold text-link underline">Check delivery readiness again</Link></p>:null}
   </section>
   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Delivery batch receipts</h2>
   <p role="status" className="text-sm text-body leading-[22px]">{result.total} recorded batches · Page {result.page} of {result.pages}</p>

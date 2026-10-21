@@ -164,14 +164,14 @@ export default async function AnnouncementsPage({
       <PageHeader
         title="Announcements"
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
-        actions={
-          <Link
+        actions={<div className="flex flex-wrap items-center gap-2">
+              <Link
             href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
             className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-foreground md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]"
           >
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
-        }
+        </div>}
       />
       <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}

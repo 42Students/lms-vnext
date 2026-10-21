@@ -3,7 +3,7 @@ import {useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
-import {Disclosure} from "@/components/ui/disclosure";
+import {Dialog} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Checkbox} from "@/components/ui/checkbox";
@@ -24,6 +24,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
  const [expiresAt,setExpiresAt]=useState("");
  const [pinned,setPinned]=useState(false);
  const [review,setReview]=useState(false);
+ const [open,setOpen]=useState(false);
  const [pending,setPending]=useState(false);
  const publishing=useRef(false);
  const [feedback,setFeedback]=useState("");
@@ -54,12 +55,20 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
    }
    const published=data&&typeof data==="object"&&"result" in data&&data.result&&typeof data.result==="object"&&"count" in data.result?Number(data.result.count):null;
    if(published===null||!Number.isSafeInteger(published)||published<=0){setFeedback("Publication confirmation was incomplete. Check the notice list.");return;}
+   setOpen(false);
    setFeedback("Sent to "+published+" placement cell"+(published===1?"":"s"));setTitle("");setMessage("");setButtonLabel("");setButtonUrl("");setSelected([]);setTitleTouched(false);setMessageTouched(false);setAudienceTouched(false);
    router.refresh();
   }catch{setFeedback("Connection failure. Publication could not be confirmed.");}
   finally{publishing.current=false;setPending(false);setReview(false);}
  }
- return <Disclosure title={<h2 className="m-0 text-lg font-semibold text-foreground">New announcement to placement cells</h2>} className="min-w-0" contentClassName="min-w-0 space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]">
+ return <>
+  <Button type="button" variant="primary" onClick={()=>setOpen(true)}>New announcement</Button>
+  <Dialog open={open} onOpenChange={setOpen} title="New announcement to placement cells" className="max-w-[600px]" dismissible={!pending}
+   bodyClassName="space-y-[var(--lms-space-4)]"
+   footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+    <Button type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
+    <Button type="button" disabled={!valid} onClick={()=>setReview(true)}>{mode==="ALL_COLLEGES"?"Send to every placement cell ("+count+")":"Send to the picked placement cells"}</Button>
+   </div>}>
   <p className="text-sm text-body">To placement cells. Each one gets a bell and reads it under Announcements &gt; From 42. No SMS or email is sent.</p>
   <fieldset className="min-w-0 space-y-2" disabled={pending}>
    <legend className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">To</legend>
@@ -88,7 +97,7 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   {titleTouched&&!title.trim()?<p role="alert" className="text-sm text-danger-text">Give it a title</p>:null}
   <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Announcement<Textarea disabled={pending} value={message} maxLength={8000} aria-invalid={messageTouched&&!message.trim()} onBlur={()=>setMessageTouched(true)} onChange={e=>setMessage(e.target.value)} placeholder="Links starting with https:// become clickable."/></label>
   {messageTouched&&!message.trim()?<p role="alert" className="text-sm text-danger-text">Write the announcement</p>:null}
-  <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Message {message.length}/8000</p>
+  <p role="status" className="text-xs text-muted-foreground">Title {title.length}/200 · Announcement {message.length}/8000</p>
   <details className="min-w-0 border-t border-border pt-[var(--lms-space-3)]">
    <summary className="min-h-11 cursor-pointer py-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Button (optional)</summary>
    <fieldset className="min-w-0 space-y-[var(--lms-space-3)]"><legend className="sr-only">Button (optional)</legend>
@@ -110,12 +119,12 @@ export function SuperAdminCollegeBroadcastForm({colleges}:{colleges:readonly Col
   {!timing.valid?<p role="alert" className="text-sm text-danger-text">Give a date and time.</p>:null}
   {timing.expiresAt&&new Date(timing.expiresAt).getTime()<Date.now()-60_000?<p role="alert" className="text-sm text-danger-text">The end date has passed</p>:null}
   <p className="border-t border-border pt-[var(--lms-space-3)] text-sm font-semibold text-body">{broadcastConsentSummary(mode,count,false)}</p>
-  <Button className="min-h-11 w-full md:w-auto md:min-h-9" disabled={!valid} onClick={()=>setReview(true)}>Review placement-cell announcement</Button>
   {feedback?<p role={feedback.startsWith("Sent to ")?"status":"alert"} className="text-sm text-body">{feedback}</p>:null}
+  </Dialog>
   <ConfirmDialog open={review} onOpenChange={setReview} pending={pending} confirmDisabled={!valid}
    title="Approve announcement to placement cells" description={broadcastConsentSummary(mode,count,false)}
    confirmLabel="Consent and publish" confirmVariant="danger" onConfirm={()=>{void submit();}}>
-   <p className="text-sm text-body">Confirm that this notice, its audience and expiry are correct. Once approved, the placement-cell announcement is sent immediately.</p>
+   <p className="text-sm text-body">Confirm the audience and expiry before immediate delivery. The target set is rechecked at publication.</p>
   </ConfirmDialog>
- </Disclosure>;
+ </>;
 }

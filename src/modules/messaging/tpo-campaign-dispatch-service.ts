@@ -18,6 +18,7 @@ import {tpoCampaignDraftStorageReady,getTpoCampaignDraft} from "./tpo-campaign-d
 import {previewTpoCampaignText} from "./tpo-campaign-draft-model";
 import {isCampaignTemplateKey} from "./template-boundary-model";
 import {canContactRecipientAtRuntime} from "./runtime-safety";
+import {verifiedTpoCampaignPublicOrigin} from "./tpo-campaign-legacy-compat";
 
 export class TpoCampaignDispatchError extends Error{
  constructor(readonly code:"NOT_READY"|"ALREADY_STARTED"|"NOT_FOUND"){super(code);}
@@ -26,16 +27,15 @@ function configuration(){
  const provider=process.env.TPO_CAMPAIGN_ZEPTO_TEMPLATE_KEY??"";
  const mail=readZeptoMailConfig();
  const key=resolveTpoCampaignRecipientSecret(process.env);
- const origin=process.env.APP_PUBLIC_URL??"";
- let url:URL;
- try{url=new URL(origin);}catch{throw new TpoCampaignDispatchError("NOT_READY");}
+ const origin=verifiedTpoCampaignPublicOrigin(process.env.APP_PUBLIC_URL??"");
+ if(!origin)throw new TpoCampaignDispatchError("NOT_READY");
  if(process.env.TPO_CAMPAIGNS_READY!=="VERIFIED"||
    !isCampaignTemplateKey(provider)||provider===mail.otpTemplateKey||
    !mail.token.trim()||!isSecureMailProviderEndpoint(mail.apiUrl)||
    Buffer.byteLength(key,"utf8")<32||
-   url.protocol!=="https:"||url.username||url.password||url.search||url.hash)
+   !origin)
    throw new TpoCampaignDispatchError("NOT_READY");
- return {provider,key,origin:url.origin};
+ return {provider,key,origin};
 }
 export async function tpoCampaignDispatchReady(){
  try{
