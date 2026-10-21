@@ -6,8 +6,8 @@ Packets:
 
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-followup-queue-service.ts.md` (edit src/modules/placements/tpo-followup-queue-service.ts; 1 findings; best P3)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_college-application-detail-service.ts.md` (edit src/modules/placements/college-application-detail-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_rounds_roundId_results_route.ts.md` (edit src/app/api/placements/rounds/[roundId]/results/route.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-general-request-service.ts.md` (edit src/modules/placements/tpo-general-request-service.ts; 2 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_app_api_placements_rounds_roundId_results_route.ts.md` (edit src/app/api/placements/rounds/[roundId]/results/route.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-general-request-service.ts.md` (edit src/modules/placements/tpo-general-request-service.ts; 2 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_debarment-service.ts.md` (edit src/modules/placements/debarment-service.ts; 3 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-calendar-url-model.ts.md` (edit src/modules/placements/tpo-calendar-url-model.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-my-notifications-service.ts.md` (edit src/modules/placements/tpo-my-notifications-service.ts; 1 findings; best P1)

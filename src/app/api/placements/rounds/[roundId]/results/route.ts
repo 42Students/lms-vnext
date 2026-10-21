@@ -7,6 +7,11 @@ import {
   stagePlacementRoundResult,
 } from "@/modules/placements/result-service";
 
+// HTTP status mapping (legacy mapped every IllegalArgumentException to 404):
+// invalid round ID / invalid outcome input -> 400 via ZodError;
+// missing round -> 404 via PLACEMENT_ROUND_NOT_FOUND;
+// wrong tenant -> 403 via AuthorizationError; invalid Origin -> 403.
+// State conflicts remain 409 through the shared apiErrorResponse.
 export const runtime = "nodejs";
 
 type RouteContext = {
