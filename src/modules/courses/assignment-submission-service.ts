@@ -60,6 +60,7 @@ import {
 } from "./validation";
 import {learnerAssignmentPublishedNotice} from "./learner-assignment-notification-model";
 import {
+  AssignmentFileReceiptFailure,
   prepareAssignmentFileReceipt,
 } from "./assignment-file-service";
 
@@ -318,10 +319,22 @@ export async function submitCourseAssignment(
         const checkedAt = new Date();
         for (const [sequence, prepared] of preparedFiles.entries()) {
           const receipt = receiptById.get(fileReceiptIds[sequence]!);
-          if (!receipt ||
-              receipt.revoked || receipt.deletedAt || receipt.consumedAt ||
-              receipt.expiresAt.getTime() <= checkedAt.getTime() ||
-              receipt.scanStatus !== "CLEAN" ||
+          if (!receipt) {
+            throw new CoursesServiceError("ASSIGNMENT_UPLOAD_RECEIPT_INVALID");
+          }
+          // Only reveal actionable receipt state after exact tenant, learner,
+          // assignment, delivery and purpose matches. A foreign receipt ID
+          // must continue to receive the generic no-leak failure.
+          if (receipt.revoked || receipt.deletedAt) {
+            throw new AssignmentFileReceiptFailure("REVOKED");
+          }
+          if (receipt.consumedAt) {
+            throw new AssignmentFileReceiptFailure("USED");
+          }
+          if (receipt.expiresAt.getTime() <= checkedAt.getTime()) {
+            throw new AssignmentFileReceiptFailure("EXPIRED");
+          }
+          if (receipt.scanStatus !== "CLEAN" ||
               receipt.scanAttestedBy !== "lms-vnext-privileged-scanner" ||
               !receipt.scanAttestedAt ||
               receipt.scanAttestedAt.getTime() > checkedAt.getTime() ||

@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import {
   and,
   asc,
@@ -12,6 +13,8 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import {
   colleges,
   courseOfferings,
+  courseLearningPaths,
+  courseLessons,
   courses,
   departments,
   organizations,
@@ -218,10 +221,19 @@ export async function listCourses(
       departmentName: departments.name,
       name: courses.name,
       code: courses.code,
+      slug: courses.slug,
+      enabled: courses.enabled,
+      legacyAllowedForDisplay: courses.legacyAllowedForDisplay,
       shortTitle:courses.shortTitle,officialCode:courses.officialCode,cardColor:courses.cardColor,
+      imageUrl: courses.imageUrl,
+      imageUrlLearningPath: courses.imageUrlLearningPath,
+      thumbnailUrl: courses.thumbnailUrl,
+      introductionHeading: courses.introductionHeading,
+      orderedTakeaways: courses.orderedTakeaways,
       takeaways:courses.takeaways,
       description: courses.description,
       status: courses.status,
+      version: courses.version,
       createdAt: courses.createdAt,
       updatedAt: courses.updatedAt,
     })
@@ -357,6 +369,10 @@ export async function createCourse(
           departmentId: input.departmentId,
           name: input.name,
           code: input.code,
+          // A generated immutable public slug is distinct from course code.
+          // Imported legacy slugs retain their original value and identity.
+          slug: `c-${randomUUID().replace(/-/g, "")}`,
+          createdByOrganizationId: department.organizationId,
           shortTitle:input.shortTitle??input.name.slice(0,120),
           officialCode:input.officialCode??null,
           cardColor:input.cardColor??null,
@@ -429,6 +445,7 @@ export async function updateCourse(
       .update(courses)
       .set({
         ...changes,
+        version: sql<number>`${courses.version} + 1`,
         // The persisted token MUST advance even for two edits within one
         // millisecond (or across app/DB clocks). The browser sends this exact
         // updatedAt back as the optimistic concurrency token.
@@ -514,10 +531,26 @@ export async function archiveCourse(
       throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
     }
 
+    // Legacy deletion was blocked by linked lesson content. Include closed
+    // historical offerings: archiving a catalogue course must not obscure
+    // a syllabus that still contains lessons.
+    const [linkedLesson] = await tx
+      .select({ id: courseLessons.id })
+      .from(courseLessons)
+      .innerJoin(courseLearningPaths, eq(courseLessons.learningPathId, courseLearningPaths.id))
+      .innerJoin(courseOfferings, eq(courseLearningPaths.offeringId, courseOfferings.id))
+      .where(eq(courseOfferings.courseId, courseId))
+      .limit(1);
+    if (linkedLesson) {
+      throw new CoursesServiceError("COURSE_HAS_ACTIVE_OFFERINGS");
+    }
+
     const [archived] = await tx
       .update(courses)
       .set({
         status: "ARCHIVED",
+        deletedAt: new Date(),
+        version: sql<number>`${courses.version} + 1`,
         updatedAt: sql`greatest(now(), ${courses.updatedAt} + interval '1 millisecond')`,
       })
       .where(and(
@@ -592,6 +625,8 @@ export async function restoreCourse(
         .update(courses)
         .set({
           status: "ACTIVE",
+          deletedAt: null,
+          version: sql<number>`${courses.version} + 1`,
           updatedAt: sql`greatest(now(), ${courses.updatedAt} + interval '1 millisecond')`,
         })
         .where(and(
