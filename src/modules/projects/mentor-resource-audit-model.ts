@@ -17,7 +17,9 @@ export function projectResourceAuditInput(
   summary:"Project resource "+verb,
   metadata:{
    projectId:scope.projectId,resourceId:resource.id,
-   ...(action==="CREATED"&&creatorRole ? {creatorRole} : {}),
+   ...(action==="CREATED"&&creatorRole ? {
+     creatorRole,originalActorType:creatorRole,
+   } : {}),
   },
   groupKey:"project:"+scope.projectId,
   dedupeKey:"project-resource:"+resource.id+":"+action.toLowerCase()+(nonce?":"+nonce:""),

@@ -3,6 +3,7 @@ import {
   asc,
   desc,
   eq,
+  isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -11,12 +12,14 @@ import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {notifyActiveProjectMembers} from "./project-notification-service";
 import {projectResourceAuditInput} from "./mentor-resource-audit-model";
 import {randomUUID} from "node:crypto";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {z} from "zod";
 import {
   projectInstances,
   projectResources,
   projectSprints,
   projectTasks,
+  projectMembers,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -128,6 +131,27 @@ export async function createProjectResource(
       ensureMutableProject(project.status);
       if(scope.access==="ADMIN"||scope.access==="MENTOR")
         await assertPersistedProjectMutationActor(tx,context,scope);
+      if(scope.access==="LEARNER"){
+        // A learner may have been removed between the route's read check
+        // and this transaction. Verify persisted account, role and project
+        // grant under SHARE locks before writing a private resource.
+        const persisted=await assertPersistedPlatformPermission(tx,context,"projects.read",{
+          collegeId:scope.collegeId,organizationId:scope.organizationId,
+        });
+        const membershipId=context.membership?.id;
+        if(!membershipId||persisted.membership?.id!==membershipId)
+          throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+        const [activeMember]=await tx.select({id:projectMembers.id})
+          .from(projectMembers).where(and(
+            eq(projectMembers.projectId,scope.project.id),
+            eq(projectMembers.membershipId,membershipId),
+            eq(projectMembers.role,"LEARNER"),
+            eq(projectMembers.roleKind,"LEARNER"),
+            eq(projectMembers.canMutate,true),
+            isNull(projectMembers.endedAt),
+          )).for("share").limit(1);
+        if(!activeMember)throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+      }
       if(scope.access==="LEARNER" && project.status!=="ACTIVE")
         throw new ProjectsServiceError("PROJECT_RESOURCE_INVALID_STATE");
 
@@ -176,7 +200,8 @@ export async function createProjectResource(
       if(!resource)throw new ProjectsServiceError("PROJECT_RESOURCE_NOT_FOUND");
       const event=await recordActivityEventInTransaction(tx,context,projectResourceAuditInput("CREATED",{
         projectId:scope.project.id,collegeId:scope.collegeId,organizationId:scope.organizationId,
-      },resource));
+      },resource,undefined,scope.access==="LEARNER"?"LEARNER":
+         scope.access==="MENTOR"?"MENTOR":"ADMIN"));
       await notifyActiveProjectMembers(tx,event.id,{
         projectId:scope.project.id,collegeId:scope.collegeId,
         roles:["MENTOR"],exceptUserId:context.user.id,
