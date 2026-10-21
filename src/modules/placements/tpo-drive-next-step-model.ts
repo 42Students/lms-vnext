@@ -38,6 +38,13 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
     // The request has no job identity until explicit approval. Link to its
     // college-scoped decision view; never send it to the job publish route.
     const requestsHref = "/tpo/placements/lifecycle?view=REQUESTS";
+    // Approve-and-publish belongs to the recruiter REQUEST decision flow:
+    // it is never a publish mutation on an uncreated job UUID.
+    if (input.status === "REQUEST") actions.push({
+      label: "Approve and publish",
+      description: "Approve this recruiter request and publish the drive after the eligibility checks.",
+      href: requestsHref,
+    });
     actions.push({
       label: "Approve for later",
       description: "Approve the recruiter request as a draft; no students are told until publishing.",

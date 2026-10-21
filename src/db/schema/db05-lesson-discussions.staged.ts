@@ -143,6 +143,7 @@ export function mapLegacyLessonDiscussions(
     const content=contentIdMap.get(row.legacyContentId);
     const parent=row.legacyParentId===null?null:discussionIdMap.get(row.legacyParentId);
     if(duplicateIds.has(row.legacyDiscussionId)||
+       (row.sequence!==null&&(!Number.isSafeInteger(row.sequence)||row.sequence<0))||
        !Number.isSafeInteger(row.legacyDiscussionId)||row.legacyDiscussionId<=0||
        !Number.isSafeInteger(row.legacyContentId)||row.legacyContentId<=0||
        !Number.isFinite(row.createdAt.getTime())||

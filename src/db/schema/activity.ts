@@ -344,3 +344,47 @@ export function claimDueNotificationOutboxStatement(
               outbox.delivery_attempts
   `;
 }
+
+/**
+ * Complete a claimed scheduled delivery by compare-and-swap. Call this in
+ * the SAME transaction that writes every authorized recipient inbox row;
+ * marking SENT alone does not grant visibility or dispatch notifications.
+ * Failed workers may retry only after nextRetryAt, and a stale worker cannot
+ * overwrite a later attempt or release a recalled outbox row.
+ */
+export function settleNotificationOutboxDeliveryStatement(
+  id: string,
+  expectedAttempt: number,
+  outcome:
+    | { status: "SENT"; at: Date }
+    | { status: "FAILED"; at: Date; error: string; nextRetryAt: Date | null },
+) {
+  if (!/^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(id))
+    throw new Error("Invalid notification outbox identifier");
+  if (!Number.isSafeInteger(expectedAttempt) || expectedAttempt < 1)
+    throw new Error("Invalid notification outbox attempt");
+  if (!Number.isFinite(outcome.at.getTime()))
+    throw new Error("Invalid notification delivery completion time");
+  if (outcome.status === "FAILED" &&
+      (outcome.error.trim().length === 0 || outcome.error.length > 500 ||
+       (outcome.nextRetryAt !== null &&
+        (!Number.isFinite(outcome.nextRetryAt.getTime()) ||
+         outcome.nextRetryAt.getTime() <= outcome.at.getTime()))))
+    throw new Error("Invalid notification delivery retry state");
+  const deliveredAt = outcome.status === "SENT" ? outcome.at : null;
+  const deliveryError = outcome.status === "FAILED" ? outcome.error : null;
+  const nextRetryAt = outcome.status === "FAILED" ? outcome.nextRetryAt : null;
+  return sql`
+    UPDATE notification_delivery_outbox
+       SET delivery_status = ${outcome.status},
+           delivered_at = ${deliveredAt},
+           delivery_error = ${deliveryError},
+           next_retry_at = ${nextRetryAt},
+           updated_at = ${outcome.at}
+     WHERE id = ${id}::uuid
+       AND delivery_status = 'PROCESSING'
+       AND delivery_attempts = ${expectedAttempt}
+       AND deleted_at IS NULL
+    RETURNING id, event_id, college_id, organization_id, delivery_status
+  `;
+}
