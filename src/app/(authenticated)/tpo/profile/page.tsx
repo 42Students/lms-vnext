@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/ui/page-header";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { Badge } from "@/components/ui/badge";
 import { TpoProfileRefresh } from "@/components/placements/tpo-profile-refresh";
+import { TpoProfileAvatar } from "@/components/tpo/tpo-profile-avatar";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getOwnTpoProfile } from "@/modules/placements/tpo-self-profile-service";
 import { formatTpoProfileRole } from "@/modules/placements/tpo-utility-model";
@@ -27,7 +28,6 @@ export default async function TpoProfilePage() {
   if (!hasMembershipRole(context, "TPO")) redirect("/dashboard");
   const profile = await getOwnTpoProfile(context);
   const displayName = profile.displayName?.trim() || "";
-  const initials = displayName.split(/\s+/).slice(0,2).map(part=>part.charAt(0).toUpperCase()).join("") || "T";
 
   return <div className="min-w-0 space-y-6" aria-label="Profile overview">
     <PageHeader title="Profile"
@@ -43,14 +43,11 @@ export default async function TpoProfilePage() {
       <section data-testid="tpo.profile.card" aria-labelledby="tpo-profile-card-heading"
         className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface">
         <div className="flex min-w-0 flex-col gap-4 border-b border-[var(--lms-canvas-border)] px-4 py-5 sm:flex-row sm:items-center sm:px-6">
-          <div className="flex h-[120px] w-[120px] shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-[#d2e7e7] bg-[#e9f6f5] text-[34px] font-semibold text-[#1a6872]"
-            role="img" aria-label={displayName ? displayName + "'s profile photo is unavailable" : "Profile photo is unavailable"}>
-            {initials}
-          </div>
+          <TpoProfileAvatar initials={profile.avatarInitials} name={displayName || "Profile"} />
           <div className="min-w-0">
             <p className="text-base font-semibold text-[var(--lms-heading)]">{displayName || "-"}</p>
             <p className="mt-1 text-sm text-[var(--lms-body-text)]">Placement officer</p>
-            <p className="mt-2 text-xs text-muted-foreground">Profile photos require a verified storage upload. Unverified image links are not accepted.</p>
+            <p className="mt-2 text-xs text-muted-foreground">You can change only your photo here. Your college admin manages your login details.</p>
           </div>
         </div>
         <div className="px-4 py-5 sm:px-6">

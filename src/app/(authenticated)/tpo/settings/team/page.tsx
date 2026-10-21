@@ -1,4 +1,6 @@
 import { Disclosure } from "@/components/ui/disclosure";
+import { TpoSettingsTeamManage, TpoSettingsTeamRemove } from "@/components/tpo/tpo-settings-team-manage";
+import { listTpoTeamAssignableStaff } from "@/modules/placements/tpo-settings-team-actions-service";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 
@@ -41,12 +43,15 @@ export default async function TpoPlacementTeamPage() {
   );
 
   const { members, summary, sources } = data;
+  const candidates = sources.teamAssignmentsAvailable
+    ? await listTpoTeamAssignableStaff(context)
+    : [];
 
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Placement team"
-        description="A read-only directory of active TPO memberships, persisted faculty team assignments and dated Drive Day student coordinators in your college."
+        description="Manage faculty coordinators and review active TPO memberships and dated Drive Day student coordinators in your college."
         actions={
           <Link
             href="/tpo/settings/trusted"
@@ -121,6 +126,8 @@ export default async function TpoPlacementTeamPage() {
       </section>
       </Disclosure>
 
+      <TpoSettingsTeamManage candidates={candidates} activeIds={members.map(member=>member.membershipId)} available={sources.teamAssignmentsAvailable}/>
+
       <section className="border-t border-border">
         <div className="border-b border-border py-4">
           <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
@@ -152,6 +159,11 @@ export default async function TpoPlacementTeamPage() {
                   </StatusBadge>)}</div>},
               {key:"status",header:"Membership status",mobilePriority:"secondary",cell:member=>
                 <StatusBadge tone="success">{member.status}</StatusBadge>},
+              {key:"manage",header:"Team access",cell:member=><TpoSettingsTeamRemove
+                membershipId={member.membershipId} displayName={member.displayName}
+                removable={sources.teamAssignmentsAvailable && (member.roles.includes("TPO_ADMIN") || member.roles.includes("FACULTY_COORDINATOR"))}
+                isSelf={member.membershipId===context.membership.id}
+                permanentRole={member.roles.includes("TPO") || member.roles.includes("COLLEGE_ADMIN")}/>},
               {key:"duties",header:"Student duties",mobilePriority:"secondary",cell:member=>
                 member.studentDuties.length===0?<span className="text-muted-foreground">—</span>:
                 <div className="min-w-0 space-y-2">
@@ -176,12 +188,10 @@ export default async function TpoPlacementTeamPage() {
 
       <Disclosure title="About placement team records" className="min-w-0" contentClassName="pt-2">
       <p className="text-xs leading-5 text-muted-foreground">
-        This page does not expose team-member email addresses or
-        phone numbers. It does not assign, reassign or remove
-        coordinators. The dedicated faculty-team source may
-        require a registered migration before its assignments
-        are available. Legacy role-management flows and browser
-        parity remain unverified.
+        Faculty coordinator assignments are scoped to your selected college.
+        Changing an assignment does not change the permanent TPO or College Admin
+        membership roles. Removing a team assignment cannot delete or hand over
+        other work automatically. Review the confirmation before removing someone.
       </p>
       </Disclosure>
     </div>
