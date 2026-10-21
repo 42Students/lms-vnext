@@ -33,6 +33,14 @@ export type RecruiterCalendarSlot = {
 };
 
 /**
+ * Legacy recruiter calendar projection: ROUND→ROUND (round:<UUID>), SLOT→
+ * INTERVIEW_SLOT (slot:<UUID>), DEADLINE→APPLICATION_DEADLINE (deadline:<job UUID>).
+ * Legacy RESULTS_DUE is kept in buildRecruiterResultsDueItems as distinct
+ * round-ID keyed reminders, not fabricated dated interview slots. Source
+ * jobId maps to an authorized placement job UUID; start→startsAt and optional
+ * end→endsAt (only if persisted duration), where→venue, status and timezone
+ * remain from persisted round/slot, not caller-supplied labels. Filtered-out
+ * canceled, draft, archived or cross-college events never receive IDs.
  * Project recruiter-visible jobs and their rounds into the shared
  * placement calendar model.
  *

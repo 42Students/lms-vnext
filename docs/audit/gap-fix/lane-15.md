@@ -263,3 +263,6 @@
 
 - work2 #5 `campaign-unsubscribe-confirm.tsx` | G2-20-031-023 confirmation result exact success title and message already exist at confirmed page, POST-only control preserved; G2-1-025-018 restored typographic apostrophe in error.
 - work2 #6 `tpo-crm-validation.ts` | G2-14-022-021/022/025 restored exact activity type, recruiter-name, and follow-up date validation wording through Zod4 field errors; existing shape, authorization, phone normalization preserved.
+
+- work2 #7 `recruiter-calendar-model.ts` | G2-5-005-067: documented stable type/ID/start/end/where/status/authorization mapping ROUND/SLOT/DEADLINE/RESULTS_DUE to new calendar plus separate results reminders. No unintended change in event visibility.
+- work2 #8 `tpo-team-asks-service.ts` | G2-3-022-014: verified same-college ACTIVE assignee now yields typed ADD_PEOPLE conflict with only safe membership ID if absent from private thread; actor/nonmember remains 404. HTTP serialization of typed 409 to existing route handed off since route not in this packet.
