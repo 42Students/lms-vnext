@@ -65,7 +65,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/mentor/fileExplorer.js`
 - [x] U025 (FE page) `docs/legacy-source/frontend/src/pages/mentor/index.js`
 - [x] U026 (FE page) `docs/legacy-source/frontend/src/pages/mentor/notifications.js`
-- [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/mentor/projects/[projectId].js`
+- [x] U027 (FE page) `docs/legacy-source/frontend/src/pages/mentor/projects/[projectId].js`
 - [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/mentor/projects/index.js`
 - [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/at-risk/index.js`
 - [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/audit/index.js`
