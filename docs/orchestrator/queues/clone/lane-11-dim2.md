@@ -237,30 +237,30 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/placements/learner-placements-dashboard.tsx`
 - [x] `src/components/placements/placement-calendar-workspace.tsx`
 - [x] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-day-overview.tsx`
-- [ ] `src/components/placements/placement-drive-workspace.tsx`
-- [ ] `src/components/placements/placement-job-create-form.tsx`
-- [ ] `src/components/placements/placement-offer-controls.tsx`
-- [ ] `src/components/placements/placement-operations-overview.tsx`
-- [ ] `src/components/placements/placement-role-options.tsx`
-- [ ] `src/components/placements/placement-season-manager.tsx`
-- [ ] `src/components/placements/public-recruit-from-us.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/placements/recruiter-placement-portfolio.tsx`
-- [ ] `src/components/placements/recruiter-result-controls.tsx`
-- [ ] `src/components/placements/super-admin-published-drive-edit.tsx`
-- [ ] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
-- [ ] `src/components/placements/tpo-calendar-followup-actions.tsx`
-- [ ] `src/components/placements/tpo-drive-edit-form.tsx`
-- [ ] `src/components/placements/tpo-interview-slot-planner.tsx`
-- [ ] `src/components/placements/tpo-round-apply-control.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/college-project-summary-editor-full.tsx`
-- [ ] `src/components/projects/learner-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/learner-own-task-controls.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-day-overview.tsx`
+- [x] `src/components/placements/placement-drive-workspace.tsx`
+- [x] `src/components/placements/placement-job-create-form.tsx`
+- [x] `src/components/placements/placement-offer-controls.tsx`
+- [x] `src/components/placements/placement-operations-overview.tsx`
+- [x] `src/components/placements/placement-role-options.tsx`
+- [x] `src/components/placements/placement-season-manager.tsx`
+- [x] `src/components/placements/public-recruit-from-us.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/placements/recruiter-placement-portfolio.tsx`
+- [x] `src/components/placements/recruiter-result-controls.tsx`
+- [x] `src/components/placements/super-admin-published-drive-edit.tsx`
+- [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
+- [x] `src/components/placements/tpo-calendar-followup-actions.tsx`
+- [x] `src/components/placements/tpo-drive-edit-form.tsx`
+- [x] `src/components/placements/tpo-interview-slot-planner.tsx`
+- [x] `src/components/placements/tpo-round-apply-control.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/college-project-summary-editor-full.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/learner-own-task-controls.tsx`
 - [ ] `src/components/projects/learner-project-activity.tsx`
 - [ ] `src/components/projects/learner-project-board-search.tsx`
 - [ ] `src/components/projects/learner-project-mobile-filters.tsx`
