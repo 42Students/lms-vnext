@@ -26,6 +26,9 @@ export type LearnerPlacementJobItem = {
     id: string;
     title: string;
     description: string;
+    responsibilities?: string | null;
+    targetDepartmentName?: string | null;
+    targetProgramName?: string | null;
     employmentType: string;
     jobTypeLabel?: string | null;
     workMode: string;

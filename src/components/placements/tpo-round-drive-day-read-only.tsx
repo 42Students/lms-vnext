@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import {useMemo,useRef,useState} from "react";
+import {useEffect,useMemo,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
@@ -106,6 +106,15 @@ export function TpoRoundDriveDayReadOnly({
   const [pasteBusy,setPasteBusy]=useState(false);
   const [pasteFeedback,setPasteFeedback]=useState("");
   const [pasteFailure,setPasteFailure]=useState("");
+  // Keep the operator's roster current while preserving draft gate and paste
+  // entries; React refresh does not reset these controlled inputs.
+  useEffect(()=>{
+    const timer=window.setInterval(()=>{
+      if(!inFlight.current&&!pasteOpen&&document.visibilityState==="visible")
+        router.refresh();
+    },20_000);
+    return ()=>window.clearInterval(timer);
+  },[pasteOpen,router]);
   const shownRows=useMemo(()=>{
     const q=rosterSearch.trim().toLocaleLowerCase("en-IN");
     return q?data.rows.filter(row=>
@@ -498,6 +507,8 @@ export function TpoRoundDriveDayReadOnly({
             {pastePreview.matched.length} matched · {pastePreview.unresolved.length} unmatched or ambiguous.
           </p>
           {pastePreview.tooMany?<InlineNotice tone="error" message="Paste at most 50 roll numbers per batch."/>:null}
+          {pasteFailure?<InlineNotice tone="error" message={pasteFailure}/>:null}
+          {pasteFeedback?<InlineNotice tone="success" message={pasteFeedback}/>:null}
           {pastePreview.unresolved.length>0?<p className="text-xs text-error">
             Type more of the roll number for ambiguous entries. Unresolved: {pastePreview.unresolved.slice(0,5).join(", ")}
           </p>:null}
