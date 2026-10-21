@@ -1056,7 +1056,7 @@ export async function grantSuperAdminHrCollegeAccess(
   const now=new Date();
   const validUntilString=input.validUntil??"";
   // A date-only value means THROUGH that college-local day, not midnight UTC.
-  const dateOnly=/^\\d{4}-\\d{2}-\\d{2}$/.test(validUntilString);
+  const dateOnly=/^\d{4}-\d{2}-\d{2}$/.test(validUntilString);
   const expiration=validUntilString
     ?dateOnly?new Date(Date.parse(validUntilString+"T00:00:00+05:30")+86_400_000)
       :new Date(validUntilString)
