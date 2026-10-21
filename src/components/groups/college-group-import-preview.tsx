@@ -62,7 +62,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
   }
   return <div className="min-w-0 space-y-4">
     <form onSubmit={preview} className="min-w-0 space-y-3 border-b border-border pb-4">
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         Upload a CSV with one column named <code>email</code>. Maximum 500 rows and 128 KiB.
         Only currently active learners in this college are eligible.
       </p>
@@ -82,7 +82,7 @@ export function CollegeGroupImportPreview({ groupId }: { groupId: string }) {
       {error ? <Alert tone="error">{error}</Alert> : null}
     </form>
     {result ? <section aria-label="Student group CSV validation report" className="min-w-0 space-y-3">
-      <h2 className="text-lg font-semibold text-foreground">
+      <h2 className="text-lg font-semibold text-[var(--lms-heading)]">
         Dry run: {result.ready} ready, {result.blocked} blocked, {result.total} examined
       </h2>
       {result.warning ? <Alert tone="warning">{result.warning}</Alert> : null}

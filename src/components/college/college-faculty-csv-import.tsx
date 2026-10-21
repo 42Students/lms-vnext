@@ -50,7 +50,7 @@ export function CollegeFacultyCsvImport(){
   return <div className="min-w-0 space-y-[16px]">
     <section className="min-w-0 space-y-3">
       <h2 className="text-lg font-semibold">Bulk register faculty</h2>
-      <p className="text-sm text-muted-foreground">
+      <p className="text-sm text-muted-foreground leading-[22px]">
         Choose CSV (up to 500 rows, 1 MB). Validate before creating faculty.
         Each row reports its own result; successful registrations are not rolled back.
       </p>
@@ -76,7 +76,7 @@ export function CollegeFacultyCsvImport(){
       <details className="min-w-0 border-t border-border pt-3 print:hidden">
         <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">CSV contents</summary>
         <div className="min-w-0 space-y-3 pt-3">
-          <p className="break-words font-mono text-xs">{header}</p>
+          <p className="break-words font-mono text-xs leading-5">{header}</p>
           <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">CSV contents
         <Textarea rows={10} value={csv} disabled={pending} onChange={event=>{
           csvRevision.current++;

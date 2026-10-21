@@ -22,19 +22,19 @@ export function CourseDisplayReadOnly({
       className="border-b border-border pb-5"
       aria-label="Course overview"
     >
-      <h2 className="m-0 text-lg font-semibold text-foreground">
+      <h2 className="m-0 text-lg font-semibold text-[var(--lms-heading)]">
         About this course
       </h2>
 
       {introductionText?.trim() ? (
-        <p className="mt-2 text-sm font-medium leading-6 text-foreground">
+        <p className="mt-2 text-sm font-medium leading-[22px] text-foreground">
           {introductionText}
         </p>
       ) : null}
 
       {takeaways.length > 0 ? (
         <div className="mt-4">
-          <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">
+          <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground leading-5">
             What you&apos;ll learn
           </p>
           <ul className="mt-2 grid gap-2 md:grid-cols-2">
@@ -59,7 +59,7 @@ export function CourseDisplayReadOnly({
           dangerouslySetInnerHTML={{ __html: bodyHtml }}
         />
       ) : fallbackDescription?.trim() ? (
-        <p className="mt-3 whitespace-pre-wrap text-sm leading-6 text-body">
+        <p className="mt-3 whitespace-pre-wrap text-sm leading-[22px] text-body">
           {fallbackDescription}
         </p>
       ) : null}
