@@ -17,7 +17,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_components_courses_college-content-authoring-control.tsx.md` (edit src/components/courses/college-content-authoring-control.tsx; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_components_courses_super-admin-content-directory-page.tsx.md` (edit src/components/courses/super-admin-content-directory-page.tsx; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_components_courses_admin-course-actions.tsx.md` (edit src/components/courses/admin-course-actions.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_components_courses_admin-course-overview.tsx.md` (edit src/components/courses/admin-course-overview.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_components_courses_admin-course-overview.tsx.md` (edit src/components/courses/admin-course-overview.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_modules_courses_discussion-service.ts.md` (edit src/modules/courses/discussion-service.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_modules_courses_course-service.ts.md` (edit src/modules/courses/course-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-3/W3_src_modules_courses_validation.ts.md` (edit src/modules/courses/validation.ts; 2 findings; best P1)

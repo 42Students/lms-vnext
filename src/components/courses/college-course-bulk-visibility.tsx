@@ -13,7 +13,7 @@ const MAX_SELECTED=100;
 
 /** The selection survives server-driven catalogue pagination but never crosses
  * an acting-college boundary or a browser session. The server still checks
- * college membership, permissions and each optimistic version on PATCH. */
+ * college membership, permissions and each selected ID during the bulk write. */
 export function CollegeCourseBulkVisibility({courses,collegeId,collegeName="this college"}:{
  courses:readonly Course[];collegeId:string;collegeName?:string;
 }){
@@ -80,28 +80,40 @@ export function CollegeCourseBulkVisibility({courses,collegeId,collegeName="this
   lock.current=true;setBusy(true);setWarning(false);setMessage("");
   const target=confirmTarget;
   setLastTarget(target);
-  const failed:string[]=[];
-  let updated=0;
-  for(const selected of candidates){
-   // Prefer the current page's optimistic token, but retain the selected
-   // snapshot for records on other pages. Never silently drop those records.
-   const course=courses.find(item=>item.id===selected.id)??selected;
-   if(course.enabled===target){updated++;continue;}
-   try{
-    await apiFetch("/api/courses/"+encodeURIComponent(course.id),{
-     method:"PATCH",headers:{"Content-Type":"application/json"},
-     body:JSON.stringify({expectedUpdatedAt:course.updatedAt,enabled:target}),
-    });
-    updated++;
-   }catch{failed.push(course.id);}
+  try{
+   const report=await apiFetch<{
+    operation:"COURSE_AND_PUBLISHED_CONTENT_VISIBILITY";
+    selectedCourses:number;matchedLessons:number;matchedContents:number;
+    changed:number;unchanged:number;changedCourses:number;
+    failures:{id:string;reason:string}[];failedCourseIds:string[];
+   }>("/api/courses/bulk-status",{
+    method:"POST",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({courseIds:candidates.map(row=>row.id),
+      visibleToStudents:target,confirmed:true}),
+   });
+   if(report.operation!=="COURSE_AND_PUBLISHED_CONTENT_VISIBILITY"||
+      report.selectedCourses!==candidates.length||
+      !Array.isArray(report.failedCourseIds)||
+      report.failedCourseIds.some(id=>!candidates.some(row=>row.id===id))){
+    throw new Error("The bulk update response was invalid. Refresh and retry.");
+   }
+   const failed=report.failedCourseIds;
+   setFailedIds(failed);
+   setSelectedRows(candidates.filter(row=>failed.includes(row.id)));
+   setWarning(failed.length>0);
+   setMessage((report.selectedCourses-failed.length)+" of "+report.selectedCourses+
+    " Courses updated; "+report.changed+" published content item(s) changed, "+
+    report.unchanged+" unchanged. "+(failed.length?
+     failed.length+" Course(s) could not be updated. Retry failed to re-check authorization and current scope.":
+     "All selected Courses updated."));
+   router.refresh();
+  }catch(cause){
+   setWarning(true);
+   setMessage(cause instanceof Error?cause.message:
+    "Bulk visibility could not be saved. Selections are retained for retry.");
+  }finally{
+   setConfirmTarget(null);setRetryOnly(false);setBusy(false);lock.current=false;
   }
-  setFailedIds(failed);
-  setSelectedRows(candidates.filter(row=>failed.includes(row.id)));
-  setWarning(failed.length>0);
-  setMessage(updated+" of "+candidates.length+" updated. "+
-   (failed.length?"Retry will target only failed courses. Refresh the original page if a course was changed by someone else.":"All selected courses updated."));
-  setConfirmTarget(null);setRetryOnly(false);setBusy(false);lock.current=false;
-  router.refresh();
  }
  return <div className="space-y-2 border-y border-border py-3">
   <div className="flex flex-wrap items-center justify-between gap-2">
