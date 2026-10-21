@@ -26,8 +26,12 @@ export async function GET() {
     await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
 
     return privateAuthJson({
-      scope: context.adminScope ?? null,
-      choices,
+      scope:context.adminScope??null,choices,
+      // Legacy /auth/memberships is now /api/auth/memberships; changing
+      // college x role uses the membership chooser, not platform admin scope.
+      navigation:{memberships:"/api/auth/memberships",
+       adminScope:"/api/auth/admin-scope",clearMethod:"DELETE"},
+      restoredFrom:"VERIFIED_SERVER_SCOPE",
     });
   } catch (error) {
     return privateAuthResponse(apiErrorResponse(error));
@@ -61,9 +65,13 @@ export async function POST(request: Request) {
       context,
       body,
     );
+    const cleared=!scope.organizationId&&!scope.collegeId;
     const response = privateAuthJson({
-      ok: true,
-      scope,
+      ok:true,scope:cleared?null:scope,
+      // Scope cookies are not login identities; authorization is checked
+      // against current persisted permissions for every following request.
+      requiresRouterRefresh:true,
+      activeScope:cleared?"GLOBAL":scope.collegeId?"COLLEGE":"ORGANIZATION",
     });
 
     response.cookies.set(
@@ -74,14 +82,14 @@ export async function POST(request: Request) {
         secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
-        maxAge: SESSION_MAX_AGE_SECONDS,
+        maxAge: cleared?0:SESSION_MAX_AGE_SECONDS,
       },
     );
 
     return response;
   } catch (error) {
     if(error instanceof AdminScopeServiceError)return privateAuthJson({
-      error:"ADMIN_SCOPE_NOT_FOUND",message:"Invalid collegeId or organization selection. Choose an active college in the selected organization.",
+      error:"ADMIN_SCOPE_NOT_FOUND",message:"Could not select that scope. It may no longer be available; reload the organization and college choices. Your previous scope was not changed.",
       status:400,type:"validation",
     },{status:400});
     if(error instanceof ZodError)return privateAuthJson({
@@ -106,8 +114,8 @@ export async function DELETE(request: Request) {
     await getDb().transaction(tx=>assertPersistedPlatformPermission(tx,context,"admin-scope.select"));
 
     const response = privateAuthJson({
-      ok: true,
-      scope: null,
+      ok:true,scope:null,activeScope:"GLOBAL",requiresRouterRefresh:true,
+      message:"Super Admin organization and college scope cleared.",
     });
 
     response.cookies.set(ADMIN_SCOPE_COOKIE_NAME, "", {
