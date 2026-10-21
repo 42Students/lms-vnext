@@ -48,7 +48,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_hr_drives_new_page.tsx.md` (edit src/app/(authenticated)/hr/drives/new/page.tsx; 18 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-6_public-company-join-controller.md.md` (new; 17 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-7_l12-u027-faculty-teaching-assignment-controller.md.md` (new; 16 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_courses_faculty-report-student-table.tsx.md` (edit src/components/courses/faculty-report-student-table.tsx; 15 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_components_courses_faculty-report-student-table.tsx.md` (edit src/components/courses/faculty-report-student-table.tsx; 15 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_src_app_authenticated_admin_audit_page.tsx.md` (edit src/app/(authenticated)/admin/audit/page.tsx; 15 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-2_zeptomail-template-id-resolver.md.md` (new; 12 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-5/W2_NEW_docs_audit_gap2_lane-6_superadmin-login.md.md` (new; 12 findings; best P2)
