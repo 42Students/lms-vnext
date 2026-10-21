@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   check,
+  boolean,
   date,
   index,
   pgTable,
@@ -95,6 +96,8 @@ export const placementRoundAttendance = pgTable(
       length: 24,
     }).notNull(),
     room: text("room"),
+    markedByRoleSnapshot: varchar("marked_by_role_snapshot",{length:32}),
+    legacyResetToWaiting: boolean("legacy_reset_to_waiting"),
     markedByUserId: uuid("marked_by_user_id")
       .notNull()
       .references(() => users.id, {
@@ -124,3 +127,13 @@ export const placementRoundAttendance = pgTable(
     ),
   ],
 );
+
+/** Legacy WAITING clears the attendance row instead of persisting a fifth status. */
+export function legacyRoundAttendanceCommand(raw:string):
+  {action:"DELETE"}|{action:"UPSERT";status:"PRESENT"|"IN_INTERVIEW"|"DONE"|"ABSENT"}|null {
+  const normalized=raw.trim().toUpperCase();
+  if(normalized==="WAITING")return {action:"DELETE"};
+  if(normalized==="PRESENT"||normalized==="IN_INTERVIEW"||normalized==="DONE"||normalized==="ABSENT")
+    return {action:"UPSERT",status:normalized};
+  return null;
+}

@@ -34,6 +34,10 @@ export const placementPublicJoinLinks = pgTable(
       sql`${table.legacyNonceDigest} is null or ${table.legacyNonceDigest} ~ '^[a-f0-9]{64}$'`),
     uniqueIndex("public_join_links_hash_uq").on(table.tokenHash),
     index("public_join_links_college_idx").on(table.collegeId, table.scope),
+    uniqueIndex("public_join_one_active_college_uq").on(table.collegeId)
+      .where(sql`${table.scope} = 'COLLEGE' and ${table.revokedAt} is null and ${table.enabled} = true`),
+    uniqueIndex("public_join_one_active_company_uq").on(table.collegeId,table.companyId)
+      .where(sql`${table.scope} = 'COMPANY' and ${table.revokedAt} is null and ${table.enabled} = true`),
     check("placement_public_join_links_token_ck", sql`${table.tokenHash} ~ '^[a-f0-9]{64}$'`),
     check("placement_public_join_links_scope_ck", sql`${table.scope} IN ('COLLEGE','COMPANY')`),
     check(
@@ -105,3 +109,10 @@ export const placementPublicEnquiryRateEvents = pgTable(
     check("public_enquiry_rate_action_ck", sql`${table.action} in ('SEND_CODE','RECRUIT')`),
   ],
 );
+
+/** Old slug is a lookup hint, never the modern secret-bearing join token. */
+export function parseLegacyPublicJoinSlug(raw:unknown):string|null {
+ if(typeof raw!=="string"||raw.length>120)return null;
+ const slug=raw.trim().toLowerCase();
+ return /^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)?slug:null;
+}

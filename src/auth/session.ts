@@ -33,16 +33,23 @@ export type SessionRecovery = {
   action: "SIGN_IN" | "STEP_UP";
   clearStoredSession: boolean;
   retryRefresh: false;
+  redirectHref: string;
+  message: string;
 };
 
 export function sessionRecoveryFor(
   code: SessionAuthenticationError["code"],
 ): SessionRecovery {
   if (code === "RECENT_SIGN_IN_REQUIRED") {
-    return { action: "STEP_UP", clearStoredSession: false, retryRefresh: false };
+    return { action: "STEP_UP", clearStoredSession: false, retryRefresh: false,
+      redirectHref:"/login?reason=step-up",message:"Please sign in again to continue this sensitive action."};
   }
   // Missing, invalid, expired, and revoked sessions require fresh sign-in.
-  return { action: "SIGN_IN", clearStoredSession: true, retryRefresh: false };
+  return { action: "SIGN_IN", clearStoredSession: true, retryRefresh: false,
+    redirectHref:"/login?reason=session-expired",
+    message: code==="SESSION_EXPIRED"?"Your session has expired. Sign in to continue.":
+      code==="SESSION_REVOKED"?"You were signed out of this device. Sign in again to continue.":
+      "Please sign in to continue."};
 }
 
 /**

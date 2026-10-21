@@ -33,3 +33,21 @@ export const lessonContentDeliverySequences = pgTable(
       sql`${table.legacySequence} is null or ${table.legacySequence} >= 0`),
   ],
 );
+
+/** Import rows only when both source identifiers belong to the same offering. */
+export type LegacyLessonSequenceSource={
+ classId:bigint;contentId:bigint;sequence:bigint;lessonId:string;
+};
+export function mapLegacyLessonDeliveryOrder(
+ source:LegacyLessonSequenceSource,
+ scopedClassMap:ReadonlyMap<bigint,{deliveryId:string;lessonId:string}>,
+ scopedContentMap:ReadonlyMap<bigint,{lessonContentId:string;lessonId:string}>,
+):{deliveryId:string;lessonContentId:string;lessonId:string;sequence:number}|null {
+ const delivery=scopedClassMap.get(source.classId);
+ const content=scopedContentMap.get(source.contentId);
+ if(!delivery||!content||delivery.lessonId!==source.lessonId||
+    content.lessonId!==source.lessonId)return null;
+ if(source.sequence<0n||source.sequence>2147483647n)return null;
+ return {deliveryId:delivery.deliveryId,lessonContentId:content.lessonContentId,
+    lessonId:source.lessonId,sequence:Number(source.sequence)};
+}
