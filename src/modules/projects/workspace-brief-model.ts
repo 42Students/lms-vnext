@@ -19,8 +19,15 @@ export const emptyWorkspaceBrief:WorkspaceBrief={
  * must not be sent as user-editable permissions or silently overwritten.
  */
 export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
- const raw=value&&typeof value==="object"&&!Array.isArray(value)
+ const envelope=value&&typeof value==="object"&&!Array.isArray(value)
   ?value as Record<string,unknown>:{};
+ // Historic workspaces sometimes carry the full, untouched template overview
+ // in an `overview` map, while vNext writes five native fields at top level.
+ // A top-level explicit empty value wins over inherited template defaults.
+ const nested=envelope.overview&&typeof envelope.overview==="object"&&
+  !Array.isArray(envelope.overview)
+  ?envelope.overview as Record<string,unknown>:{};
+ const raw={...nested,...envelope};
  const list=(data:unknown):string[]=>Array.isArray(data)
   ?data.filter((item):item is string=>typeof item==="string")
   :typeof data==="string"?data.split(/\r?\n/).map(s=>s.trim()).filter(Boolean):[];
@@ -39,6 +46,24 @@ export function parseWorkspaceBrief(value:unknown):WorkspaceBrief {
   completionConditions:fallback.completionConditions.map(s=>s.trim().slice(0,500)).filter(Boolean).slice(0,50),
   personas:fallback.personas.map(s=>s.trim().slice(0,500)).filter(Boolean).slice(0,50),
  };
+}
+/** Preserve legacy overviewFactsRef keys as opaque DB-sourced values.
+ * Never accept opaque fields from the editor in an update request. This helper
+ * is only for historical full-copy import/migration and must be used with
+ * a separately authorized persisted source, not unchecked client JSON.
+ */
+export function translateLegacyWorkspaceOverview(value:unknown):{
+ brief:WorkspaceBrief;opaqueFacts:Record<string,unknown>;
+}{
+ const source=value&&typeof value==="object"&&!Array.isArray(value)
+  ?value as Record<string,unknown>:{};
+ const nested=source.overview&&typeof source.overview==="object"&&
+  !Array.isArray(source.overview)?source.overview as Record<string,unknown>:{};
+ const original={...nested,...source};
+ const opaqueFacts=Object.fromEntries(Object.entries(original).filter(([key])=>
+  !["goal","description","deliverables","definitionOfDone","completionConditions",
+    "personas","overview"].includes(key)));
+ return {brief:parseWorkspaceBrief(original),opaqueFacts};
 }
 /** A planned draft can be empty; active/published projects cannot be cleared
  * to a zero-deliverable brief. Match the legacy field validation literally. */
