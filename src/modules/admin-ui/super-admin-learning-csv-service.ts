@@ -76,7 +76,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
   }
   const max=pageOnly?25:kind==="LESSONS"||kind==="PROGRESS"?2000:500;
   const items=rows.slice(0,max);
-  if(total>max)items.push(["TRUNCATED: first "+max+" records","Narrow filters to export remaining records."]);
+  if(!pageOnly&&total>max)items.push(["TRUNCATED: first "+max+" records","Narrow filters to export remaining records."]);
   const filename=pageOnly?
     "assignments-college-"+collegeId+"-page-"+params.data.page+".csv":
     kind.toLowerCase().replace("progress","course-progress")+".csv";
@@ -85,7 +85,7 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
    "Content-Disposition":'attachment; filename="'+filename+'"',
    "Cache-Control":"private, no-store",
    "X-Content-Type-Options":"nosniff",
-   "X-Export-Truncated":String(total>max),
+   "X-Export-Truncated":String(!pageOnly&&total>max),
   }});
  }catch(error){return apiErrorResponse(error);}
 }
