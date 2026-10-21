@@ -76,7 +76,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_videos_page.tsx.md` (edit src/app/(authenticated)/college/videos/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_resources_page.tsx.md` (edit src/app/(authenticated)/college/resources/page.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_course-progress_page.tsx.md` (edit src/app/(authenticated)/college/course-progress/page.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_courses_page.tsx.md` (edit src/app/(authenticated)/college/courses/page.tsx; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_courses_page.tsx.md` (edit src/app/(authenticated)/college/courses/page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_components_college_college-faculty-reassign-action.tsx.md` (edit src/components/college/college-faculty-reassign-action.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_electives_page.tsx.md` (edit src/app/(authenticated)/college/electives/page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_college_placements_interviews_page.tsx.md` (edit src/app/(authenticated)/college/placements/interviews/page.tsx; 3 findings; best P1)
