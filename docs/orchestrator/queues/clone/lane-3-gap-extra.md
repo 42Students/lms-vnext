@@ -6,21 +6,21 @@ Differences: each item is tagged L<origin lane>-U<unit>. Write docs/audit/gap2/l
 
 Order of work: finish the unit you are on in your main queue, then continue the main queue to the end, then do this extra queue top to bottom. Strictly one unit at a time.
 
-- [ ] L11-U013 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/new.js`
-- [ ] L11-U016 (FE page) `docs/legacy-source/frontend/src/pages/tpo/messages.js`
-- [ ] L11-U019 (FE page) `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js`
-- [ ] L11-U022 (FE page) `docs/legacy-source/frontend/src/pages/tpo/reports/index.js`
-- [ ] L11-U025 (FE page) `docs/legacy-source/frontend/src/pages/tpo/verification.js`
-- [ ] L11-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/deleted.js`
-- [ ] L12-U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Classroom/classroom.js`
-- [ ] L12-U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/applications/JobApplicationSearchController.java`
-- [ ] L12-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoAnnouncementController.java`
-- [ ] L13-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Job.java`
-- [ ] L13-U029 (FE page) `docs/legacy-source/frontend/src/pages/tpo/batches/index.js`
-- [ ] L14-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ProgramController.java`
-- [ ] L15-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Announcement.java`
-- [ ] L15-U031 (Cross-cutting area) `cross/15: Learning flow: courses, lessons, quizzes, assignments, attendance, grading, certificates`
-- [ ] L17-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DiscussionController.java`
-- [ ] L18-U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectMember.java`
-- [ ] L18-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DepartmentController.java`
-- [ ] L19-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java`
+- [x] L11-U013 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/new.js`
+- [x] L11-U016 (FE page) `docs/legacy-source/frontend/src/pages/tpo/messages.js`
+- [x] L11-U019 (FE page) `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js`
+- [x] L11-U022 (FE page) `docs/legacy-source/frontend/src/pages/tpo/reports/index.js`
+- [x] L11-U025 (FE page) `docs/legacy-source/frontend/src/pages/tpo/verification.js`
+- [x] L11-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/deleted.js`
+- [x] L12-U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Classroom/classroom.js`
+- [x] L12-U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/applications/JobApplicationSearchController.java`
+- [x] L12-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoAnnouncementController.java`
+- [x] L13-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Job.java`
+- [x] L13-U029 (FE page) `docs/legacy-source/frontend/src/pages/tpo/batches/index.js`
+- [x] L14-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/ProgramController.java`
+- [x] L15-U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Announcement.java`
+- [x] L15-U031 (Cross-cutting area) `cross/15: Learning flow: courses, lessons, quizzes, assignments, attendance, grading, certificates`
+- [x] L17-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DiscussionController.java`
+- [x] L18-U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectMember.java`
+- [x] L18-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/DepartmentController.java`
+- [x] L19-U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerAnnouncementController.java`
