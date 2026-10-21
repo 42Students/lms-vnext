@@ -1,0 +1,9 @@
+# Company domain trust crosswalk — lane 14
+
+The existing placement_company_domains child relation is distinct from placement_companies.verifiedAt. Each domain is now individually unverified by default: verified_by_42 FALSE. It may become TRUE only after a dedicated authorized manual attestation that records verifier and verifiedAt; adding a domain must never automatically unlock recruiter claims, invites, access or trusted-domain matching.
+
+Legacy company_domain id / company_id numeric keys resolve via approved globally canonical company and scoped legacy_id_map. added_by_user_id may map to users.id after provenance verification; original added_by_user_type and added_by_college_id are snapshots. The new nullable UUID addedByCollegeId is an authorized scoped relation and must not be fabricated from the source integer. Existing lower(domain) unique index prevents case-insensitive exact duplicates but does NOT ensure registrable-domain normalization, PSL semantics, or eliminate collision with college domains.
+
+Global admin company-domain mutation currently writes child rows; TPO mutation currently updates placement_companies.primaryDomain without a matching child row. Services must unify both through one transaction, require trusted company relationships, prevent cross-tenant duplication, verify primaryDomain belongs to a child, and explicitly preserve pending/unverified status. Do not create child FK to the primaryDomain text until existing source conflicts are reconciled.
+
+Migration 0226 is additive; existing rows default FALSE, including rows belonging to a parent company with prior verifiedAt. Existing data and curation workflows require validation. No SQL, application or CI execution.
