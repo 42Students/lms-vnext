@@ -28,7 +28,7 @@ export type CollegeApplicationDetail={
  notes:{id:string;body:string;createdAt:string}[];
  rounds:{id:string;name:string;testUrl:string|null;scheduledAt:string|null}[];
  offers:{id:string;status:string;issuedAt:string;offerLetterUrl:string|null;offerLetterAttachedAt:string|null}[];
- scoring:{available:boolean;reason:string};resume:{available:boolean;reason:string;url:string|null};
+ scoring:{available:boolean;scorePercent?:number|null;partial?:boolean;reason:string};resume:{available:boolean;reason:string;url:string|null};
 };
 const when=(v:string)=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
  timeZone:"Asia/Kolkata"}).format(new Date(v));
@@ -212,8 +212,22 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          Resume Preview
         </Button>
        ) : null}
+       {detail.scoring.available && typeof detail.scoring.scorePercent === "number" &&
+        Number.isFinite(detail.scoring.scorePercent) && detail.scoring.scorePercent >= 0 &&
+        detail.scoring.scorePercent <= 100 ? (
+        <div className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
+          <span className="text-sm font-semibold">Recorded assessment score</span>
+          <span className={"inline-flex rounded-full px-3 py-1 text-sm font-semibold tabular-nums " +
+           (detail.scoring.scorePercent >= 70 ? "bg-violet-50 text-violet-700" :
+            detail.scoring.scorePercent >= 40 ? "bg-cyan-50 text-cyan-700" :
+            "bg-slate-100 text-slate-700")}>
+            {Math.round(detail.scoring.scorePercent)}%
+            {detail.scoring.partial ? " · Partial" : ""}
+          </span>
+        </div>
+       ) : null}
        <p className="mt-2 text-sm text-body">{detail.scoring.reason}</p>
-       <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No fabricated public resume URL or match score is shown.</p>
+       <p className="text-xs text-muted-foreground">The private document endpoint checks access again. No public resume URL or automated match score is invented.</p>
        <Button variant="secondary" type="button" disabled={rescreening||detail.application.status!=="SUBMITTED"}
         onClick={()=>void rescreen()}
         className="mt-3">
