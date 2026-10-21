@@ -87,11 +87,15 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   offered:out.offered+row.offered,hired:out.hired+row.hired,
  }),{applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0});
  const funnel=hiringFunnel(funnelTotals);
- const observedShortlistHours=data.funnelRows
-  .map(row=>row.averageHoursToFirstShortlist)
-  .filter((hours):hours is number=>typeof hours==="number"&&Number.isFinite(hours)&&hours>=0);
- const meanShortlistHours=observedShortlistHours.length
-  ?Math.round(observedShortlistHours.reduce((sum,hours)=>sum+hours,0)/observedShortlistHours.length):null;
+ const shortlistObservations=data.funnelRows.filter(row=>
+  typeof row.averageHoursToFirstShortlist==="number"&&
+  Number.isFinite(row.averageHoursToFirstShortlist)&&
+  row.averageHoursToFirstShortlist>=0&&row.firstShortlistObservationCount>0);
+ const shortlistCount=shortlistObservations.reduce((sum,row)=>sum+row.firstShortlistObservationCount,0);
+ // Application-weighted mean prevents a tiny drive skewing the legacy metric.
+ const meanShortlistHours=shortlistCount>0
+  ?Math.round(shortlistObservations.reduce((sum,row)=>
+     sum+row.averageHoursToFirstShortlist!*row.firstShortlistObservationCount,0)/shortlistCount):null;
  const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
  const visibleRows=[...reportRows,...groups.map(group=>({
   ...group,companyId:"",jobId:"total:"+group.companyName,jobTitle:"Company total",

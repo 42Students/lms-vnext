@@ -11,14 +11,14 @@ This is wave 3 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_authenticated_admin_faculty_page.tsx.md` (edit src/app/(authenticated)/admin/faculty/page.tsx; 8 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_authenticated_admin_faculty_page.tsx.md` (edit src/app/(authenticated)/admin/faculty/page.tsx; 8 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_company-share_token_page.tsx.md` (edit src/app/company-share/[token]/page.tsx; 5 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_authenticated_hr_colleges_page.tsx.md` (edit src/app/(authenticated)/hr/colleges/page.tsx; 5 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_authenticated_hr_colleges_page.tsx.md` (edit src/app/(authenticated)/hr/colleges/page.tsx; 5 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_authenticated_admin_companies_page.tsx.md` (edit src/app/(authenticated)/admin/companies/page.tsx; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_modules_projects_pr-s2-04-task-fields-model.ts.md` (edit src/modules/projects/pr-s2-04-task-fields-model.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_modules_placements_tpo-configuration-read-service.ts.md` (edit src/modules/placements/tpo-configuration-read-service.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_NEW_docs_audit_gap2_lane-7_l14-u030-super-admin-interview-edit-form.md.md` (new; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_authenticated_admin_placements_analytics_page.tsx.md` (edit src/app/(authenticated)/admin/placements/analytics/page.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_authenticated_admin_placements_analytics_page.tsx.md` (edit src/app/(authenticated)/admin/placements/analytics/page.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_modules_projects_task-comment-service.ts.md` (edit src/modules/projects/task-comment-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_NEW_docs_audit_gap2_lane-7_u017-college-admin-workspace-team.md.md` (new; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-7/W3_src_app_api_placements_jobs_jobId_share-preview_export_route.ts.md` (edit src/app/api/placements/jobs/[jobId]/share-preview/export/route.ts; 1 findings; best P1)

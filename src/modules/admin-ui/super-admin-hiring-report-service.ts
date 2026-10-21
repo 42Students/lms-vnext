@@ -106,6 +106,11 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
       )
     )
   )::integer`.mapWith(Number),
+  firstShortlistCount:sql<number>`count((
+    select min(h.moved_at) from ${placementCollegeApplicationStageHistory} h
+    where h.stage_id = ${placementCollegeApplicationStages.id}
+      and h.to_stage = 'SHORTLISTED' and h.moved_at >= ${appliedAt}
+  ))::integer`.mapWith(Number),
   firstShortlistHours:sql<number|null>`avg((
     select extract(epoch from (min(h.moved_at)-${appliedAt}))/3600
     from ${placementCollegeApplicationStageHistory} h
@@ -158,6 +163,7 @@ export async function getSuperAdminCompanyHiringReport(context:RequestContext,ra
    assessment:row.funnelAssessment,interview:row.funnelInterview,
    offered:row.funnelOffered,hired:row.funnelHired,
    averageHoursToFirstShortlist:row.firstShortlistHours,
+   firstShortlistObservationCount:row.firstShortlistCount,
   })),
   truncated:result.length>SUPER_ADMIN_HIRING_EXPORT_CAP,
   reportSemantics:{
