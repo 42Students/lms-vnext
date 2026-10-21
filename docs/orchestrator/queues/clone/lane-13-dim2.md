@@ -193,16 +193,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/courses/admin-course-create-panel.tsx`
 - [x] `src/components/courses/admin-course-overview.tsx`
 - [x] `src/components/courses/assignment-file-submission-control.tsx`
-- [ ] `src/components/courses/assignment-submission-control.tsx`
-- [ ] `src/components/courses/college-assessment-aggregate.tsx`
-- [ ] `src/components/courses/college-assignment-actions.tsx`
-- [ ] `src/components/courses/college-assignment-create.tsx`
-- [ ] `src/components/courses/college-content-aggregate.tsx`
-- [ ] `src/components/courses/college-learner-progress-report.tsx`
-- [ ] `src/components/courses/college-learning-directory.tsx`
-- [ ] `src/components/courses/college-lesson-create-control.tsx`
-- [ ] `src/components/courses/college-live-classes-directory.tsx`
-- [ ] `src/components/courses/college-quiz-actions.tsx`
+- [x] `src/components/courses/assignment-submission-control.tsx`
+- [x] `src/components/courses/college-assessment-aggregate.tsx`
+- [x] `src/components/courses/college-assignment-actions.tsx`
+- [x] `src/components/courses/college-assignment-create.tsx`
+- [x] `src/components/courses/college-content-aggregate.tsx`
+- [x] `src/components/courses/college-learner-progress-report.tsx`
+- [x] `src/components/courses/college-learning-directory.tsx`
+- [x] `src/components/courses/college-lesson-create-control.tsx`
+- [x] `src/components/courses/college-live-classes-directory.tsx`
+- [x] `src/components/courses/college-quiz-actions.tsx`
 - [ ] `src/components/courses/college-quiz-attempts.tsx`
 - [ ] `src/components/courses/college-quiz-create.tsx`
 - [ ] `src/components/courses/college-quiz-questions-editor.tsx`
