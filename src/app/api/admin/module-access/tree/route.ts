@@ -1,20 +1,19 @@
 import {NextResponse} from "next/server";
 import {z} from "zod";
 import {getCurrentRequestContext} from "@/auth/request-context";
-import {listCollegeModuleScopePage} from "@/modules/module-access/admin-descendant-rule-write";
-import {getSuperAdminCollegeModuleAccess} from "@/modules/module-access/admin-read-service";
 import {apiErrorResponse} from "@/lib/api-error";
+import {readCompleteCollegeModuleTree} from "@/modules/module-access/admin-full-tree-read";
+
 export const runtime="nodejs";
 export const dynamic="force-dynamic";
 const query=z.strictObject({
- collegeId:z.string().uuid(),
+ collegeId:z.uuid(),
  page:z.coerce.number().int().min(1).max(10000).default(1),
 });
-/** Exact academic scope inventory, not merely persisted overrides.
- * Pages contain 500 authorized descendants, including nodes whose decisions
- * are wholly inherited. Clients follow hasMore to retrieve the full tree.
- * Learner-specific membership nodes stay behind the authorized trace flow
- * rather than materializing 10,000 students in one response.
+
+/** Return every academic scope, including Inherit-only scopes, in bounded
+ * 500-row pages with stable parent IDs so clients can assemble the full tree.
+ * Individual learners continue to use the authorized membership trace API.
  */
 export async function GET(request:Request){
  try{
@@ -23,19 +22,12 @@ export async function GET(request:Request){
    collegeId:url.searchParams.get("collegeId")??undefined,
    page:url.searchParams.get("page")??undefined,
   });
-  const context=await getCurrentRequestContext();
-  const [college,tree]=await Promise.all([
-   getSuperAdminCollegeModuleAccess(context,input.collegeId,{}),
-   listCollegeModuleScopePage(context,input.collegeId,input.page),
-  ]);
-  if(!college)return NextResponse.json({error:"COLLEGE_NOT_FOUND"},{status:404});
+  const tree=await readCompleteCollegeModuleTree(
+   await getCurrentRequestContext(),input.collegeId,input.page,
+  );
+  if(!tree)return NextResponse.json({error:"COLLEGE_NOT_FOUND"},{status:404});
   return NextResponse.json({
-   college:college.college,
-   modules:college.modules,ancestors:college.ancestors,
-   scopeTypes:{COHORT:"Batch",SECTION:"Class",MEMBERSHIP:"Learner"},
-   items:tree.items,
-   page:tree.page,total:tree.total,totalPages:tree.totalPages,
-   hasMore:tree.hasMore,pageSize:500,
+   ...tree,scopeTypes:{COHORT:"Batch",SECTION:"Class",MEMBERSHIP:"Learner"},
    description:"Every academic scope in the selected college, including inherited-only nodes.",
   },{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
