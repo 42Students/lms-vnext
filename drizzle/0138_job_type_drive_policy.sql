@@ -38,11 +38,8 @@ ALTER TABLE "placement_tpo_job_types"
 ALTER TABLE "placement_tpo_job_types" DROP CONSTRAINT IF EXISTS "placement_tpo_job_types_label_ck";
 --> statement-breakpoint
 ALTER TABLE "placement_tpo_job_types" ADD CONSTRAINT "placement_tpo_job_types_label_ck"
- CHECK (length(btrim("label")) between 2 and 40 AND "label" ~ '^[[:alnum:] +&/().,''-]{2,40}
-DROP INDEX IF EXISTS "placement_tpo_job_types_college_label_uq";
---> statement-breakpoint
-CREATE UNIQUE INDEX "placement_tpo_job_types_college_label_uq"
- ON "placement_tpo_job_types"("college_id", lower("label")););
+ CHECK (length(btrim("label")) BETWEEN 2 AND 40
+        AND "label" ~ '^[[:alnum:] +&/().,''-]{2,40}$');
 --> statement-breakpoint
 -- Prevent two custom types with names differing only by case from being persisted.
 DROP INDEX IF EXISTS "placement_tpo_job_types_college_label_uq";
