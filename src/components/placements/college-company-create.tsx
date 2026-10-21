@@ -48,7 +48,7 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
     aria-expanded={open} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
     Add company
   </Button>
-  {notice?<p role="status" className="text-sm text-body">{notice}</p>:null}
+  {notice?<p role="status" className="text-sm text-body leading-[22px]">{notice}</p>:null}
   {open?<form onSubmit={submit} className="grid min-w-0 max-w-[920px] gap-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] md:grid-cols-2">
     <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)] md:col-span-2">Add company</h2>
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-sm font-semibold">Company name
@@ -63,10 +63,10 @@ export function CollegeCompanyCreate({collegeId}:{collegeId:string}){
       <Input value={primaryDomain} maxLength={255} onChange={e=>setPrimaryDomain(e.target.value)}
         placeholder="example.com" className={field}/>
     </label>
-    <p className="text-sm text-muted-foreground sm:col-span-2">
+    <p className="text-sm text-muted-foreground sm:col-span-2 leading-[22px]">
       A company is shared across colleges by its canonical identity. Only this college&apos;s relationship may be edited here.
     </p>
-    {error?<p role="alert" className="sm:col-span-2 text-sm text-error">{error}</p>:null}
+    {error?<p role="alert" className="sm:col-span-2 text-sm text-error leading-[22px]">{error}</p>:null}
     <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row md:col-span-2">
       <Button variant="primary" type="submit" disabled={pending} className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">
         {pending?"Adding…":"Save company"}

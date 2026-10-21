@@ -32,8 +32,8 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
  }
  return <form id={facultyProfileAnchor("metadata")} aria-label="Additional metadata" onSubmit={submit}
   className="min-w-0 scroll-mt-6 space-y-[var(--lms-space-4)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-4)]">
-  <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg">Additional metadata</h2>
-  <p className="text-sm text-muted-foreground">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
+  <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)] md:text-lg">Additional metadata</h2>
+  <p className="text-sm text-muted-foreground leading-[22px]">Edit optional text fields. Existing non-text metadata is preserved unchanged. Never enter passwords or identity numbers.</p>
   {rows.length>5?<label className="block text-[13px] font-semibold leading-4 text-body">Find metadata
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      className="mt-1 min-h-11 w-full min-[768px]:min-h-9"/>
@@ -42,7 +42,7 @@ export function FacultyProfileMetadata({initial,pending,onSave}:{
     <span role="status">{facultyProfileSearchSummary(rows.length,visibleRows.length)}</span>
     <Button variant="secondary" type="button"  onClick={()=>setSearch("")}>Clear Metadata search</Button>
    </div>:null}
-  {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground">No metadata fields match. Clear the search to view all.</p>:null}
+  {rows.length>5&&visibleRows.length===0?<p role="status" className="text-sm text-muted-foreground leading-[22px]">No metadata fields match. Clear the search to view all.</p>:null}
   {visibleRows.map(({row,index})=><div key={row.id} className="grid min-w-0 gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)_auto] md:items-end">
    <label className="min-w-0 text-[13px] font-semibold leading-4 text-body">Field {index+1}
     <Input className="mt-[var(--lms-space-2)] min-h-11 min-[768px]:min-h-9 w-full min-w-0"

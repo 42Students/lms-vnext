@@ -111,10 +111,10 @@ export function CollegeContactProfileForm({ initial }: {
         value={privacy} onChange={event => setPrivacy(event.target.value)}
         placeholder="https://college.example.edu/privacy" />
     </label>
-    {error ? <p role="alert" className="min-w-0 break-words text-sm text-error md:col-span-2">
+    {error ? <p role="alert" className="min-w-0 break-words text-sm text-error md:col-span-2 leading-[22px]">
       {error}. If this profile changed elsewhere, refresh before retrying.
     </p> : null}
-    {success ? <p role="status" className="min-w-0 break-words text-sm text-success md:col-span-2">
+    {success ? <p role="status" className="min-w-0 break-words text-sm text-success md:col-span-2 leading-[22px]">
       {success}
     </p> : null}
     <div className="flex min-w-0 flex-col-reverse items-stretch gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)] sm:flex-row-reverse sm:items-center sm:justify-start md:col-span-2">

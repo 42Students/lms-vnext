@@ -59,8 +59,8 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
  return <section aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
-  <h2 className="text-lg font-semibold text-foreground">Edit Tenant Settings</h2>
-  <p className="max-w-prose text-sm leading-6 text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
+  <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit Tenant Settings</h2>
+  <p className="max-w-prose text-sm leading-[22px] text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
   {!ready?<Alert tone="warning">The tenant-settings migration is pending. This form is read-only.</Alert>:null}
   {groups.map((group,index)=><Disclosure key={group} title={<span className="flex min-w-0 flex-wrap items-center gap-2">
@@ -113,7 +113,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
     </div>
   </ConfirmDialog>
   {results.length>0?<div role="status" className="space-y-2">
-   <h3 className="font-semibold text-foreground">Save results</h3>
+   <h3 className="font-semibold text-[var(--lms-heading)]">Save results</h3>
    <ul role="region" aria-label="Tenant settings change results" tabIndex={0} className="max-h-60 divide-y divide-border overflow-auto overscroll-contain text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">{results.map(row=><li key={row.key} className="flex min-w-0 flex-wrap items-center gap-2 py-3">
     <strong className="break-all">{row.key}</strong><StatusBadge tone={row.status==="SAVED"?"success":row.status==="DELETED"?"info":"error"}>{row.status}</StatusBadge><span className="min-w-0 break-words text-body">{row.message}</span></li>)}</ul>
   </div>:null}

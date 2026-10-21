@@ -38,8 +38,8 @@ export function FacultyAssessmentCreate({kind,lessons}:{kind:"ASSIGNMENT"|"QUIZ"
  function start(){if(!course||!lesson){setError("Select a course and lesson first.");return;}setContinued(true);setError(null);}
  return <>
   <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
-   <div><h2 className="font-semibold text-foreground">Create {name}</h2>
-    <p className="mt-1 text-sm text-body">Quizzes and assignments are attached to lessons in your assigned courses.</p>
+   <div><h2 className="font-semibold text-[var(--lms-heading)]">Create {name}</h2>
+    <p className="mt-1 text-sm text-body leading-[22px]">Quizzes and assignments are attached to lessons in your assigned courses.</p>
    </div>
    <Button className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]" onClick={()=>setOpen(true)} disabled={!lessons.length}>Create {name}</Button>
   </div>

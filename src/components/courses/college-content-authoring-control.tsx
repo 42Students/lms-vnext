@@ -155,7 +155,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    <Button type="button" variant="secondary" size="sm" disabled={!lessons.length}
     onClick={fresh} className="w-full md:w-auto">{text}</Button>
   </div>
-  {!lessons.length&&<p className="text-sm">Create a course offering, learning path and lesson before adding content.</p>}
+  {!lessons.length&&<p className="text-sm leading-[22px]">Create a course offering, learning path and lesson before adding content.</p>}
   {open&&<div className="grid min-w-0 max-w-3xl gap-4 md:grid-cols-2">
    <label className="text-sm">Lesson
     <Select className="mt-1" value={selectedLesson?lessonId:""}
@@ -164,7 +164,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
      {lessons.map(lesson=><option key={lesson.id} value={lesson.id}>
       {lesson.courseCode} · {lesson.course} · {lesson.name}</option>)}
     </Select></label>
-   {editing&&!selectedLesson?<p role="status" className="text-xs text-muted-foreground md:col-span-2">
+   {editing&&!selectedLesson?<p role="status" className="text-xs text-muted-foreground md:col-span-2 leading-5">
     This saved Lesson is outside the first 250 authoring choices. Its Course and Section association cannot be changed; metadata can still be edited.
    </p>:null}
    <label className="text-sm">Section
@@ -220,11 +220,11 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
    </div>
   </div>}
   {existing.length>0&&<details className="group min-w-0 border-b border-border pb-4"><summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Existing Content</summary><div className="min-w-0 space-y-3 pt-3">
-   {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground">
+   {kind==="RESOURCE"&&!materialsEnabled?<p className="text-xs text-muted-foreground leading-5">
     Additional link and file materials are unavailable until the Resource Materials database runtime is verified.
     You can still edit Resource notes and its saved HTTPS link.
    </p>:null}
-   {existingTruncated?<p role="status" className="text-xs text-muted-foreground">
+   {existingTruncated?<p role="status" className="text-xs text-muted-foreground leading-5">
     Showing the first 250 saved items. Use the filtered catalogue to find additional content; the list below is not complete.
    </p>:null}
    <label className="grid gap-1 text-sm font-semibold">Search Existing Content
@@ -248,12 +248,12 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
       {row.sectionName} ({row.sectionCode})</option>)}
     </Select>
    </label>
-   {listSectionId?<p className="text-xs text-muted-foreground">
+   {listSectionId?<p className="text-xs text-muted-foreground leading-5">
     Showing shared offering items and content specific to the selected Section.
     The Order field below is the authored default order, not a Section-specific override.
    </p>:null}
-   <p className="text-xs text-muted-foreground">{matching.length} matching content items{existingTruncated?" among the first 250 saved items":""}.</p>
-   {matching.length===0?<p className="text-xs text-muted-foreground">No saved items match this Lesson and Section.</p>:null}
+   <p className="text-xs text-muted-foreground leading-5">{matching.length} matching content items{existingTruncated?" among the first 250 saved items":""}.</p>
+   {matching.length===0?<p className="text-xs text-muted-foreground leading-5">No saved items match this Lesson and Section.</p>:null}
    <ul className="space-y-1">{matching.map(item=><li key={item.id} className="flex flex-wrap items-center justify-between gap-2 border-b p-2 text-sm">
     <span className="break-words">{item.title} <span className="text-xs text-muted-foreground">({item.courseCode} · {item.lessonName} · {item.status} · {item.deliveryId?deliveries.find(row=>row.deliveryId===item.deliveryId)?
         ((deliveries.find(row=>row.deliveryId===item.deliveryId)?.sectionName??"Section")+" ("+
@@ -281,7 +281,7 @@ export function CollegeContentAuthoringControl({kind,lessons,deliveries,existing
        deliveryId={item.deliveryId} editable/>:null}
    </li>)}</ul>
   </div></details>}
-  {error&&<p role="alert" className="text-sm text-error">{error}</p>}
-  {message&&<p role="status" className="text-sm">{message}</p>}
+  {error&&<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>}
+  {message&&<p role="status" className="text-sm leading-[22px]">{message}</p>}
  </section>;
 }
