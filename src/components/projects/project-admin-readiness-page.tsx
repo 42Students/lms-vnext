@@ -2,7 +2,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
-import {listCollegeReadinessWorkspaceChoices,listCollegeReadinessReleases,
+import {listCollegeReadinessWorkspaceChoicePage,listCollegeReadinessReleases,
  resolveCollegeReadinessWorkspaceId} from "@/modules/projects/college-readiness-releases-service";
 import {requireProjectManageAccess} from "@/modules/projects/access";
 import {getProjectReadiness} from "@/modules/projects/readiness-service";
@@ -96,7 +96,7 @@ export async function ProjectAdminReadinessPage({
   const read = await Promise.all([
     listProjectAdminSnapshots(context, collegeId, query),
     listCollegeActiveReadinessOverrides(context, collegeId),
-    listCollegeReadinessWorkspaceChoices(context,collegeId),
+    listCollegeReadinessWorkspaceChoicePage(context,collegeId,{page:1,search:""}),
   ]).then(value => ({ ok: true as const, value }))
     .catch(() => ({ ok: false as const }));
   if (!read.ok) return <div className="min-w-0 space-y-4">
@@ -116,9 +116,9 @@ export async function ProjectAdminReadinessPage({
     .then(scope=>scope.collegeId===collegeId?scope:null).catch(()=>null):null;
   const selected=selectedScope?.project.id??null;
   const outsideScope=Boolean(requested&&!selected);
-  const pickerChoices=selectedScope&&!workspaceChoices.some(item=>item.id===selected)
+  const pickerChoices=selectedScope&&!workspaceChoices.items.some(item=>item.id===selected)
     ?[{id:selectedScope.project.id,title:selectedScope.project.title,
-      status:selectedScope.project.status},...workspaceChoices]:workspaceChoices;
+      status:selectedScope.project.status},...workspaceChoices.items]:workspaceChoices.items;
   const [readinessRead,releasesRead]=selected?await Promise.allSettled([
     getProjectReadiness(context,selected),
     listCollegeReadinessReleases(context,collegeId,selected),
@@ -183,7 +183,8 @@ export async function ProjectAdminReadinessPage({
           its releases and any manual override. Choose a college workspace below.
         </Banner>:null}
         <AdminReadinessWorkspacePicker key={selected??"no-selection"}
-          items={pickerChoices} selected={selected} action={readinessPath}/>
+          items={pickerChoices} selected={selected} action={readinessPath}
+          collegeId={collegeId} initialTotal={workspaceChoices.total}/>
         {selected ? <>
           <Link href={basePath+"/"+selected+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
             Manage override

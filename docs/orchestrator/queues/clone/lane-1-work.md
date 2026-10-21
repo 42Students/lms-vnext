@@ -138,7 +138,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-task-create-service.ts.md` (edit src/modules/projects/mentor-task-create-service.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_evaluation-service.ts.md` (edit src/modules/projects/evaluation-service.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_risk-signals.ts.md` (edit src/modules/projects/risk-signals.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_admin-readiness-workspace-picker.tsx.md` (edit src/components/projects/admin-readiness-workspace-picker.tsx; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_admin-readiness-workspace-picker.tsx.md` (edit src/components/projects/admin-readiness-workspace-picker.tsx; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_readiness-override-model.ts.md` (edit src/modules/projects/readiness-override-model.ts; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_project-template-catalogue-model.ts.md` (edit src/modules/projects/project-template-catalogue-model.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u020-college-admin-workspace-create.md.md` (new; 1 findings; best P1)

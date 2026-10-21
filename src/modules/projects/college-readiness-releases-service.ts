@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,eq,ilike,inArray,ne,isNull,or,sql} from "drizzle-orm";
+import {and,asc,eq,ilike,inArray,ne,isNull,or,sql,count} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectReleases,projectSprints,projectTasks} from "@/db/schema";
@@ -30,6 +30,44 @@ export async function listCollegeReadinessWorkspaceChoices(context:RequestContex
  });
 }
 
+
+
+/** Counted, tenant-scoped workspace selector; unlike the legacy first-1000
+ * snapshot this is a genuine page query with a stable ID tie-break. */
+export async function listCollegeReadinessWorkspaceChoicePage(
+ context:RequestContext,collegeIdInput:string,
+ input:{page:number;search:string},
+){
+ const id=z.string().uuid().parse(collegeIdInput);
+ if(getProjectAdminCollegeId(context)!==id)
+  throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+ const college=await loadProjectCollegeScope(id);
+ requirePermission(context,"projects.manage",{
+  collegeId:college.id,organizationId:college.organizationId,
+ });
+ const page=z.number().int().min(1).max(100000).parse(input.page);
+ const search=z.string().trim().max(120).parse(input.search);
+ const escaped=search.replace(/[\\%_]/g,match=>"\\"+match);
+ const pattern="%"+escaped+"%";
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,context,"projects.manage",{
+   collegeId:college.id,organizationId:college.organizationId,
+  });
+  const filter=and(eq(projectInstances.collegeId,id),
+    isNull(projectInstances.deletedAt),ne(projectInstances.status,"ARCHIVED"),
+    search?or(ilike(projectInstances.title,pattern),ilike(projectInstances.slug,pattern),
+      sql`${projectInstances.id}::text ilike ${pattern}`):undefined);
+  const [totals,items]=await Promise.all([
+   tx.select({n:count()}).from(projectInstances).where(filter),
+   tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
+    .from(projectInstances).where(filter)
+    .orderBy(asc(projectInstances.title),asc(projectInstances.id))
+    .limit(25).offset((page-1)*25),
+  ]);
+  const total=Number(totals[0]?.n??0);
+  return {items,total,page,pageSize:25,totalPages:Math.max(1,Math.ceil(total/25))};
+ });
+}
 
 /** Recover historic ?projectId=slug and numeric project bookmarks inside the
  * selected college only. Never resolve a foreign-college slug or leaked UUID.
