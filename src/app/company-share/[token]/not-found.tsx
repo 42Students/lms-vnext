@@ -10,7 +10,7 @@ export default function CompanyShareNotFound() {
         <p className="text-sm text-body">
           It may have expired or been withdrawn. Please ask the placement cell for a new one.
         </p>
-        <Link href="/" className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        <Link href="/" className="inline-flex min-h-11 w-full items-center justify-center text-sm md:min-h-9 md:w-auto font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Home
         </Link>
       </section>

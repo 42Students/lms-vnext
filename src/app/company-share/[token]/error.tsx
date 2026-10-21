@@ -11,7 +11,7 @@ export default function CompanyShareError({reset}:{error:Error&{digest?:string};
     We couldn&apos;t load the shared applicant list right now. Please retry. If this keeps happening, contact the placement cell.
    </p>
    <Button type="button" className="min-h-11 w-full md:min-h-9 md:w-auto" onClick={reset}>Retry</Button>
-   <Link href="/" className="inline-flex min-h-11 w-full items-center justify-center px-4 text-sm md:min-h-9 md:w-auto font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Home</Link>
+   <Link href="/" className="inline-flex min-h-11 w-full items-center justify-center px-4 text-sm md:min-h-9 md:w-auto font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Home</Link>
   </section>
  </main>;
 }
