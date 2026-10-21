@@ -21,10 +21,16 @@ export async function listCollegeCompanyDirectory(
   const search=query.q?literalCompanySearch(query.q):null;
   const where=and(
     eq(placementCompanyRelationships.collegeId,collegeId),
-    status==="ARCHIVED"?eq(placementCompanyRelationships.status,"ARCHIVED"):
-      showDeleted?undefined:eq(placementCompanyRelationships.status,"ACTIVE"),
-    !showDeleted&&status==="ACTIVE"?isNull(placementCompanyRelationships.archivedAt):undefined,
-    !showDeleted?eq(placementCompanies.status,"ACTIVE"):undefined,
+    // A deleted college relationship and a deleted canonical company are
+    // separate lifecycle states. Either one makes the college row archived.
+    status==="ARCHIVED"
+      ? or(eq(placementCompanyRelationships.status,"ARCHIVED"),eq(placementCompanies.status,"ARCHIVED"))
+      : showDeleted ? undefined : and(
+          eq(placementCompanyRelationships.status,"ACTIVE"),
+          isNull(placementCompanyRelationships.archivedAt),
+          eq(placementCompanies.status,"ACTIVE"),
+          isNull(placementCompanies.archivedAt),
+        ),
     search?or(ilike(placementCompanies.name,search),
       ilike(placementCompanies.industry,search)):undefined,
   );
@@ -36,6 +42,19 @@ export async function listCollegeCompanyDirectory(
   const lastActive=sql<Date>`coalesce((select max(job.updated_at)
     from placement_jobs job where job.company_relationship_id = ${placementCompanyRelationships.id}
       and job.college_id = ${collegeId}),${placementCompanyRelationships.updatedAt})`;
+  // These counts are historical, not merely current active applications.
+  // Every nested query is restricted to the same persisted college and link.
+  const applicants=sql<number>`(select count(*)::int from placement_applications app
+    inner join placement_jobs job on job.id = app.job_id
+    where job.company_relationship_id = ${placementCompanyRelationships.id}
+      and job.college_id = ${collegeId})`;
+  const hired=sql<number>`(select count(distinct app.membership_id)::int
+    from placement_applications app
+    inner join placement_jobs job on job.id = app.job_id
+    inner join placement_offers offer on offer.application_id = app.id and offer.status = 'ACCEPTED'
+    inner join placement_joining_outcomes outcome on outcome.offer_id = offer.id and outcome.status = 'JOINED'
+    where job.company_relationship_id = ${placementCompanyRelationships.id}
+      and job.college_id = ${collegeId})`;
   const sort=query.sort??"LAST_ACTIVE";
   const pageSize=query.pageSize??COLLEGE_COMPANIES_PAGE_SIZE;
   const limit=options.exportAll?2001:pageSize;
@@ -54,9 +73,13 @@ export async function listCollegeCompanyDirectory(
       companyStatus:placementCompanies.status,
       relationshipStatus:placementCompanyRelationships.status,
       industry:placementCompanies.industry,
+      // College-private CRM contacts only: this service enforces placement
+      // administration scope before projecting any personal information.
+      contactName:placementCompanyRelationships.contactPersonName,
+      contactEmail:placementCompanyRelationships.contactEmail,
       isTrusted:placementCompanyRelationships.isTrusted,
       ownerMembershipId:placementCompanyRelationships.ownerMembershipId,
-      drives, lastActive,
+      drives, applicants, hired, lastActive,
     }).from(placementCompanyRelationships)
       .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
       .where(where)

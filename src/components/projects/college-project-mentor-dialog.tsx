@@ -21,30 +21,41 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
  const router=useRouter();
  const {showToast}=useToast();
  const lock=useRef(false);
+ const requestSequence=useRef(0);
  const [open,setOpen]=useState(false);
  const [search,setSearch]=useState("");
  const [mentors,setMentors]=useState<Mentor[]>([]);
  const [mentorId,setMentorId]=useState("");
+ const [selectedMentor,setSelectedMentor]=useState<Mentor|null>(null);
+ const [confirming,setConfirming]=useState(false);
+ const [hasSearched,setHasSearched]=useState(false);
+ const [mentorRequired,setMentorRequired]=useState(false);
  const [roleLabel,setRoleLabel]=useState("");
  const [busy,setBusy]=useState(false);
  const [searching,setSearching]=useState(false);
  const [error,setError]=useState("");
- async function load(){
-  if(searching)return;
+ async function load(query=search){
+  const sequence=++requestSequence.current;
+  const previousSearch=hasSearched;
   setSearching(true);setError("");
   try{
-   const params=new URLSearchParams({role:"MENTOR",q:search.trim(),limit:"20"});
+   const params=new URLSearchParams({role:"MENTOR",q:query.trim(),limit:"20"});
    const data=await apiFetch<{candidates:Mentor[]}>(
     "/api/projects/"+encodeURIComponent(projectId)+"/member-candidates?"+params,{cache:"no-store"});
-   setMentors(data.candidates);setMentorId(current=>data.candidates.some(m=>m.membershipId===current)?current:data.candidates[0]?.membershipId??"");
+   if(sequence!==requestSequence.current)return;
+   setMentors(data.candidates);
+   setHasSearched(true);
+   // Never silently select the first faculty member or discard a selection
+   // when a remote search returns a different page.
   }catch{
-   setError("Could not load mentors. Try searching again.");
-  }finally{setSearching(false);}
+   if(sequence===requestSequence.current)
+    setError(previousSearch||query.trim()?"Failed to search faculty. Try again.":"Failed to load faculty. Try again.");
+  }finally{if(sequence===requestSequence.current)setSearching(false);}
  }
  async function reassign(){
-  if(lock.current||!mentorId)return;
-  const mentor=mentors.find(x=>x.membershipId===mentorId);
-  if(!mentor)return;
+  if(lock.current)return;
+  if(!mentorId||!selectedMentor){setMentorRequired(true);setConfirming(false);return;}
+  if(!confirming){setConfirming(true);return;}
   lock.current=true;setBusy(true);setError("");
   try{
    const result=await projectMutation("/api/projects/reassign-mentor","POST",{
@@ -54,7 +65,7 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
     setError(result.skippedCount>0?"This workspace already has the selected mentor.":"Could not reassign this workspace. Your selection has been kept.");
     return;
    }
-   setOpen(false);
+   setOpen(false);setConfirming(false);
    showToast({tone:"success",title:"Mentor assigned",description:"The primary mentor was updated for this workspace."});
    router.refresh();
   }catch{
@@ -62,39 +73,42 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
   }finally{lock.current=false;setBusy(false);}
  }
  return <>
-  <Button size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");void load();}}>
+  <Button size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");setHasSearched(false);setConfirming(false);setMentorRequired(false);setMentorId("");setSelectedMentor(null);setMentors([]);void load("");}}>
    Reassign mentor
   </Button>
-  <Dialog open={open} onOpenChange={next=>{if(!busy)setOpen(next);}}
+  <Dialog open={open} onOpenChange={next=>{if(!busy){setOpen(next);if(!next){requestSequence.current++;setConfirming(false);}}}}
    title="Reassign mentor"
    description="Choose an eligible mentor for this workspace. The outgoing primary mentor will be replaced.">
    <div className="space-y-4">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-end">
      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search mentors
-      <Input value={search} onChange={e=>setSearch(e.target.value)} maxLength={120} placeholder="Name or email"/>
+      <Input value={search} onChange={e=>{setSearch(e.target.value);setConfirming(false);}} maxLength={120} placeholder="Name or email"/>
      </label>
      <Button type="button" variant="secondary" className="w-full md:w-auto" loading={searching} disabled={searching||busy} onClick={()=>void load()}>
       {searching?"Searching…":"Search"}
      </Button>
     </div>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New primary mentor
-     <Select value={mentorId} onChange={e=>setMentorId(e.target.value)} disabled={searching||busy}>
+     <Select value={mentorId} onChange={e=>{const id=e.target.value;setMentorId(id);setSelectedMentor(mentors.find(m=>m.membershipId===id)??null);setMentorRequired(false);setConfirming(false);}} disabled={busy} aria-invalid={mentorRequired&&!mentorId}>
       <option value="">Select a mentor</option>
+      {selectedMentor&&!mentors.some(m=>m.membershipId===selectedMentor.membershipId)?<option value={selectedMentor.membershipId}>{selectedMentor.displayName??selectedMentor.email??"Mentor"}</option>:null}
       {mentors.map(mentor=><option key={mentor.membershipId} value={mentor.membershipId}>
        {mentor.displayName??mentor.email??"Mentor"}
       </option>)}
      </Select>
+     {mentorRequired&&!mentorId?<span role="alert" className="text-[12px] text-error">Mentor is required</span>:null}
     </label>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Role label (optional)
      <Input value={roleLabel} onChange={e=>setRoleLabel(e.target.value)} maxLength={120} placeholder="Project Mentor"/>
     </label>
-    {!searching&&!error&&mentors.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-muted-text)]">No eligible mentors found. Search by another name or email.</p>:null}
-    <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">The previous primary mentor will be replaced. Co-mentors remain assigned. Scheduled meetings and task assignments may change.</p>
+    {!searching&&!error&&hasSearched&&mentors.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-muted-text)]">No eligible mentors found. Search by another name or email.</p>:null}
+    <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">Reassigning the mentor cancels scheduled meetings, unassigns tasks belonging to the outgoing mentor, and notifies both the outgoing and incoming mentors. Co-mentors remain assigned.</p>
+    {confirming?<Banner tone="warning">Confirm the reassignment to {selectedMentor?.displayName??selectedMentor?.email??"the selected mentor"}. Cancelled meetings and unassigned tasks may need rescheduling or reassignment.</Banner>:null}
     {error?<Banner tone="error">{error}</Banner>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
-     <Button type="button" variant="secondary" className="w-full md:w-auto" disabled={busy} onClick={()=>setOpen(false)}>Cancel</Button>
-     <Button type="button" className="w-full md:w-auto" loading={busy} disabled={!mentorId||busy||searching} onClick={()=>void reassign()}>
-      {busy?"Reassigning…":"Confirm reassignment"}
+     <Button type="button" variant="secondary" className="w-full md:w-auto" disabled={busy} onClick={()=>{if(confirming)setConfirming(false);else{requestSequence.current++;setOpen(false);}}}>{confirming?"Back":"Cancel"}</Button>
+     <Button type="button" className="w-full md:w-auto" loading={busy} disabled={busy||searching} onClick={()=>void reassign()}>
+      {busy?"Reassigning…":confirming?"Confirm reassignment":"Review reassignment"}
      </Button>
     </div>
    </div>
