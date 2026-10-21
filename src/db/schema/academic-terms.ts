@@ -1,5 +1,5 @@
 import { sql } from "drizzle-orm";
-import { check, index, integer, jsonb, pgTable, text, timestamp, unique, uuid, boolean, varchar } from "drizzle-orm/pg-core";
+import { check, date, index, integer, jsonb, pgTable, text, timestamp, unique, uuid, boolean, varchar } from "drizzle-orm/pg-core";
 import { programs } from "./academics";
 import { courses } from "./courses";
 import { courseOfferingTypeEnum } from "./enums";
@@ -15,6 +15,8 @@ export const programTerms = pgTable("program_terms", {
   legacyStructureId: integer("legacy_structure_id"),
   /** Historical COMPLETED must never be collapsed into the mutable isActive flag. */
   legacyStructureStatus: varchar("legacy_structure_status", { length: 16 }),
+  startDate: date("start_date", { mode: "string" }),
+  endDate: date("end_date", { mode: "string" }),
   legacyStartDate: varchar("legacy_start_date", { length: 255 }),
   legacyEndDate: varchar("legacy_end_date", { length: 255 }),
   legacyCourseIds: jsonb("legacy_course_ids").$type<unknown>(),
@@ -27,6 +29,7 @@ export const programTerms = pgTable("program_terms", {
   unique("program_terms_program_number_uq").on(table.programId, table.termNumber),
   index("program_terms_program_active_idx").on(table.programId, table.isActive, table.termNumber),
   check("program_terms_term_number_ck", sql`${table.termNumber} >= 1`),
+  check("program_terms_date_order_ck",sql`${table.startDate} is null or ${table.endDate} is null or ${table.endDate} >= ${table.startDate}`),
   check("program_terms_name_ck", sql`btrim(${table.name}) <> ''`),
   check("program_terms_legacy_structure_status_ck",
     sql`${table.legacyStructureStatus} is null or ${table.legacyStructureStatus} in ('ACTIVE', 'INACTIVE', 'COMPLETED')`),
@@ -54,8 +57,45 @@ export const programTermCourses = pgTable("program_term_courses", {
 }, (table) => [
   unique("program_term_courses_term_course_uq").on(table.programTermId, table.courseId),
   index("program_term_courses_course_idx").on(table.courseId, table.programTermId),
+  index("program_term_courses_display_order_idx").on(table.programTermId,table.displayOrder,table.id),
   index("program_term_courses_legacy_source_idx").on(table.programTermId, table.legacySemesterCourseId)
     .where(sql`${table.legacySemesterCourseId} is not null`),
   check("program_term_courses_credits_ck", sql`${table.credits} is null or ${table.credits} between 0 and 30`),
   check("program_term_courses_display_order_ck", sql`${table.displayOrder} >= 1`),
 ]);
+
+/** Source date text remains visible when it cannot be interpreted unambiguously. */
+export function legacyProgramTermDate(raw: string | null | undefined): {
+  date: string | null; source: string | null; needsReview: boolean;
+} {
+  const value = raw?.trim() || null;
+  if (!value) return { date: null, source: value, needsReview: false };
+  if (!/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(value)) return { date: null, source: value, needsReview: true };
+  const [year, month, day] = value.split("-").map(Number);
+  const checked = new Date(Date.UTC(year, month - 1, day));
+  const valid = checked.getUTCFullYear() === year &&
+    checked.getUTCMonth() + 1 === month && checked.getUTCDate() === day;
+  return { date: valid ? value : null, source: value, needsReview: !valid };
+}
+
+/** A legacy ordered array can refer to deleted or unmapped numeric course IDs. */
+export function legacyTermCourseIdCrosswalk(raw: unknown, resolved: ReadonlyMap<number, string>) {
+  const input = Array.isArray(raw) ? raw : [];
+  const ordered: Array<{ legacyId: number; courseId: string; order: number }> = [];
+  const unresolved: unknown[] = [];
+  const seen = new Set<number>();
+  input.forEach((item, index) => {
+    const id = typeof item === "number" ? item :
+      typeof item === "string" && /^[0-9]+$/.test(item) ? Number(item) : NaN;
+    const target = Number.isSafeInteger(id) && id > 0 ? resolved.get(id) : undefined;
+    if (!target || seen.has(id)) { unresolved.push(item); return; }
+    seen.add(id);
+    ordered.push({ legacyId: id, courseId: target, order: index + 1 });
+  });
+  return { ordered, unresolved };
+}
+
+/** Legacy nullable order must receive a stable one-based position. */
+export function legacyTermCourseDisplayOrder(value: number | null, sourceIndex: number): number {
+  return value != null && Number.isSafeInteger(value) && value > 0 ? value : sourceIndex + 1;
+}

@@ -106,3 +106,39 @@ export async function saveTpoOutcomeLabels(context:RequestContext,raw:unknown){
   return {labels,version:saved.updatedAt.toISOString()};
  });
 }
+
+
+/** Batched page read: fixed vocabulary and any editable college overrides are
+ * returned as one response snapshot. Universal mode intentionally never
+ * touches the college table or exposes another tenant's custom choices.
+ * SCOPED mode propagates missing-college, revoked-role and storage failures,
+ * never converting authorization failures into an empty but "valid" list. */
+export async function readTpoOutcomeChoiceCatalog(
+ context:RequestContext,mode:"UNIVERSAL"|"SCOPED",
+){
+ const base=fixedTpoOutcomeCatalog(context);
+ if(mode==="UNIVERSAL"){
+  return {...base,scope:"UNIVERSAL" as const,version:null};
+ }
+ const college=await readTpoOutcomeLabels(context);
+ return {fixed:base.fixed,labels:college.labels,
+  ready:base.ready&&college.ready,version:college.version,
+  scope:"SCOPED" as const};
+}
+
+/** Immutable source-to-canonical ID crosswalk used only for an explicitly
+ * approved import. Historical numeric IDs never serve as API identifiers.
+ * Distinct labels are retained under their per-college scope and conflict
+ * with fixed choices is rejected rather than silently relabeled. */
+export function mappedLegacyOutcomeLabel(
+ row:{legacyId:number;label:string;outcome:z.infer<typeof afterCollegeManualSchema>},
+ canonicalId:string,
+){
+ if(!Number.isSafeInteger(row.legacyId)||row.legacyId<1)
+  throw new Error("Invalid source outcome-label ID");
+ const parsed=entrySchema.parse({id:canonicalId,label:row.label,outcome:row.outcome});
+ if(Object.values(AFTER_COLLEGE_LABELS).some(label=>
+    label.toLocaleLowerCase("en-IN")===parsed.label.toLocaleLowerCase("en-IN")))
+  throw new Error("Source outcome label conflicts with a fixed choice");
+ return {legacyId:row.legacyId,...parsed,id:canonicalId};
+}

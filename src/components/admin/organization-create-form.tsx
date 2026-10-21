@@ -62,7 +62,7 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
     <form
       onSubmit={submit}
       noValidate
-      className="grid min-w-0 grid-cols-1 items-end gap-3 border-t border-border pt-4 md:grid-cols-[minmax(0,1fr)_auto] print:hidden"
+      className="flex min-w-0 flex-col items-stretch gap-4 pt-4 print:hidden"
     >
       <div className="min-w-0 flex-1">
         <label
@@ -83,8 +83,8 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
         />
         {error&&!name.trim()?<p id="organization-name-error" role="alert" className="mt-1 text-xs text-error">Please enter organization name</p>:null}
       </div>
-      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending} loading={pending}>
-        {pending ? "Creating…" : "Create Organization"}
+      <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-fit" disabled={pending} loading={pending}>
+        <span aria-hidden="true" className="mr-2">＋</span>{pending ? "Creating…" : "Create Organization"}
       </Button>
       {restored ? <p role="status" className="text-xs leading-5 text-muted-foreground md:col-span-2">Draft restored</p> : null}
       {error&&name.trim() ? (

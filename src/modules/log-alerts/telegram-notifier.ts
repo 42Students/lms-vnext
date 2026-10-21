@@ -66,7 +66,7 @@ export async function sendTelegramAlert(
       /^[0-9a-f-]{36}$/i.test(options.acknowledgeSignatureId)) {
     payload.reply_markup = {
       inline_keyboard: [[{
-        text: "Acknowledge",
+        text: "✅ Acknowledge",
         callback_data: "ack:" + options.acknowledgeSignatureId,
       }]],
     };

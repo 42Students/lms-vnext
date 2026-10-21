@@ -56,20 +56,14 @@ export async function GET(
             | "HIGH"
             | "CRITICAL"
             | undefined,
-          actorUserId: value(
-            params,
-            "actorUserId",
-          ),
+          actorUserId: value(params,"actorUserId")??value(params,"actorId"),
           eventType: value(
             params,
             "eventType",
           ),
-          subjectType: value(
-            params,
-            "subjectType",
-          ),
-          from: value(params, "from"),
-          to: value(params, "to"),
+          subjectType:value(params,"subjectType")??value(params,"targetType"),
+          from:value(params,"from")??value(params,"startDate"),
+          to:value(params,"to")??value(params,"endDate"),
           beforeOccurredAt: value(
             params,
             "beforeOccurredAt",
@@ -95,6 +89,11 @@ export async function GET(
     return NextResponse.json({
       ...result,
       actorNames,targetNames,
+      // An absolute total is truthful only before the first keyset cursor.
+      // Later pages must not relabel remaining rows as a full-history total.
+      total:params.has("beforeOccurredAt")||params.has("beforeId")
+        ? null : result.items.length+result.remainingCount,
+      hasMore:result.nextCursor!==null,
       nextCursor:
         result.nextCursor
           ? {
@@ -104,7 +103,7 @@ export async function GET(
                 result.nextCursor.beforeId,
             }
           : null,
-    });
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

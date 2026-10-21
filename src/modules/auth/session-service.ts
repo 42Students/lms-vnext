@@ -133,14 +133,50 @@ export async function revokeAllSessionsForUser(
   `);
 }
 
-export async function listActiveSessions(userId: string) {
+/** Bounded own-device listing. Caller must derive userId from the verified session.
+ * Defaults to first 25, not an unbounded historical account scan.
+ */
+export async function listActiveSessions(
+  userId: string,
+  page = 1,
+  pageSize = 25,
+) {
+  const safePage = Number.isSafeInteger(page) ? Math.min(1000,Math.max(1,page)) : 1;
+  const safeSize = Number.isSafeInteger(pageSize) ? Math.min(100,Math.max(1,pageSize)) : 25;
   const result = await getDb().execute(sql`
     SELECT id, device_name, user_agent, created_at, last_seen_at, expires_at
     FROM identity_device_sessions
     WHERE user_id = ${userId} AND revoked_at IS NULL AND expires_at > now()
-    ORDER BY last_seen_at DESC
+    ORDER BY last_seen_at DESC, id DESC
+    LIMIT ${safeSize} OFFSET ${(safePage-1)*safeSize}
   `);
   return rowsOf(result);
+}
+
+/** Revocation history is metadata-only: credential digests never leave the DB. */
+export async function listOwnSessionRevocationHistory(
+  userId: string, page = 1, pageSize = 25,
+) {
+  const safePage = Number.isSafeInteger(page) ? Math.min(1000,Math.max(1,page)) : 1;
+  const safeSize = Number.isSafeInteger(pageSize) ? Math.min(100,Math.max(1,pageSize)) : 25;
+  const result = await getDb().execute(sql`
+    SELECT id, device_name, created_at, last_seen_at, revoked_at, revocation_reason
+    FROM identity_device_sessions
+    WHERE user_id = ${userId} AND revoked_at IS NOT NULL
+    ORDER BY revoked_at DESC, id DESC
+    LIMIT ${safeSize} OFFSET ${(safePage-1)*safeSize}
+  `);
+  return rowsOf(result);
+}
+
+/** Last-seen is a minute-throttled approximation, not an exact activity event. */
+export function sessionLastSeenLabel(lastSeen: Date | string | null): string {
+  if (!lastSeen) return "Last active time unavailable";
+  const when = lastSeen instanceof Date ? lastSeen : new Date(lastSeen);
+  return Number.isNaN(when.getTime()) ? "Last active time unavailable" :
+    "Last active around " + new Intl.DateTimeFormat("en-IN", {
+      dateStyle: "medium", timeStyle: "short", timeZone: "Asia/Kolkata",
+    }).format(when);
 }
 
 /** Explicit own-account revoke-all, including this device. This differs from

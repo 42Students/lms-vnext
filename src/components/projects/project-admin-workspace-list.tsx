@@ -2,6 +2,7 @@ import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "./project-workspace-readiness.module.css";
 import Link from "next/link";
 import { ProjectArchiveControl } from "@/components/projects/project-archive-control";
+import { ProjectSoftDeleteControl } from "./project-soft-delete-control";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
@@ -16,6 +17,7 @@ export type ProjectAdminWorkspaceListItem = {
   updatedAt: Date;
   mentorName: string | null;
   templateTitle?: string | null;
+  courseLabel?:string|null;phase?:string|null;dueLabel?:string|null;
   memberCount: number;
   progressPercent: number;
   riskReasons?: readonly string[];
@@ -51,6 +53,27 @@ function label(status: string) {
     .join(" ");
 }
 
+function TemplateLink({item,basePath}:{item:ProjectAdminWorkspaceListItem;basePath:string}){
+ return item.templateTitle?<span className="text-xs text-body">Template: {item.templateTitle}</span>:
+  <Link href={basePath+"/"+encodeURIComponent(item.id)+"/summary?openTemplate=1"}
+    aria-label={"No template for "+item.title+" — attach one"}
+    className="inline-flex min-h-11 items-center text-xs font-semibold text-warning-text underline md:min-h-9">
+    No template — attach one
+  </Link>;
+}
+function WorkspaceActions({item,basePath}:{item:ProjectAdminWorkspaceListItem;basePath:string}){
+ const root=basePath+"/"+encodeURIComponent(item.id);
+ return <div className="flex flex-wrap items-center gap-2">
+  <Link href={root} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">View</Link>
+  <Link href={root+"/team"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Assign Mentor</Link>
+  <Link href={root+"/team?editLearners=1"} title="Review the existing roster before replacing learners"
+    className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Assign Learners</Link>
+  <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
+    status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
+  <ProjectSoftDeleteControl projectId={item.id} projectTitle={item.title}
+    expectedUpdatedAt={item.updatedAt.toISOString()} deleted={false}/>
+ </div>;
+}
 export function ProjectAdminWorkspaceList({
   items,
   basePath,
@@ -84,9 +107,11 @@ export function ProjectAdminWorkspaceList({
     columns={[
       {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:item=><>
         <span className="font-semibold">{item.title}</span>
-        <span className="mt-1 block text-xs text-muted-foreground">{item.templateTitle??"No template — attach one"}</span>
+        <TemplateLink item={item} basePath={basePath}/>
       </>},
+      {key:"course",header:"Course",mobilePriority:"secondary",cell:item=>item.courseLabel??"—"},
       {key:"mentor",header:"Mentor",mobilePriority:"secondary",cell:item=>item.mentorName??"Unassigned"},
+      {key:"phase",header:"Phase",mobilePriority:"secondary",cell:item=>item.phase??"—"},
       {key:"status",header:"Status",mobilePriority:"secondary",cell:item=>
         <StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>},
       {key:"progress",header:"Progress",mobilePriority:"secondary",cell:item=>{
@@ -98,13 +123,10 @@ export function ProjectAdminWorkspaceList({
           <span className={styles.inlinePercent}>{progress}%</span>
         </div>;
       }},
+      {key:"due",header:"Due",mobilePriority:"secondary",cell:item=>item.dueLabel??"—"},
       {key:"members",header:"Members",mobilePriority:"secondary",cell:item=>item.memberCount},
-      {key:"action",header:"Action",mobilePriority:"action",cell:item=>
-        <div className="flex flex-wrap items-center gap-2">
-          <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open</Link>
-          <ProjectArchiveControl projectId={item.id} projectTitle={item.title}
-            status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
-        </div>},
+      {key:"action",header:"Actions",mobilePriority:"action",
+        cell:item=><WorkspaceActions item={item} basePath={basePath}/>},
     ]}
     empty={<EmptyState title={emptyTitle} description={emptyDescription}/>}
   />;
@@ -117,7 +139,7 @@ export function ProjectAdminWorkspaceList({
             <StatusBadge tone={tone(item.status)}>{collegeWorkspaceStatusLabel(item.status,item.riskReasons)}</StatusBadge>
           </div>
           <p className="mt-1 break-words text-sm text-body leading-[22px]">{item.summary ?? "Project workspace."}</p>
-          <p className="mt-2 break-words text-xs text-muted-foreground leading-[20px]">{item.templateTitle ? "Template: "+item.templateTitle : "No template — attach one"}</p>
+          <div className="mt-2"><TemplateLink item={item} basePath={basePath}/></div>
           <dl className="mt-2 grid min-w-0 gap-x-4 gap-y-2 text-xs md:grid-cols-3">
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Mentor</dt><dd className="break-words text-foreground">{item.mentorName??"Unassigned"}</dd></div>
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Members</dt><dd className="text-foreground">{item.memberCount}</dd></div>
@@ -126,8 +148,7 @@ export function ProjectAdminWorkspaceList({
           <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Updated {formatProjectAdminUpdatedDateIst(item.updatedAt)}</p>
         </div>
         <div className="flex min-w-0 flex-wrap items-center gap-2 min-[768px]:justify-end">
-          <Link href={basePath+"/"+encodeURIComponent(item.id)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Open workspace</Link>
-          <ProjectArchiveControl projectId={item.id} projectTitle={item.title} status={item.status} expectedUpdatedAt={item.updatedAt.toISOString()}/>
+          <WorkspaceActions item={item} basePath={basePath}/>
         </div>
       </div>
     </article>)}
@@ -142,8 +163,9 @@ export function ProjectAdminWorkspaceList({
           <div className="flex min-w-0 flex-wrap items-start justify-between gap-3">
             <div className="min-w-0">
               <p className="m-0 text-xs font-bold uppercase tracking-[0.08em] text-primary-text leading-[20px]">
-                {item.templateTitle ? "Template: " + item.templateTitle : "No template — attach one"}
+                {item.courseLabel??"Project workspace"}
               </p>
+              <div className="mt-2"><TemplateLink item={item} basePath={basePath}/></div>
               <h2 className="mt-2 line-clamp-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
                 <Link href={basePath+"/"+encodeURIComponent(item.id)}
                   className="inline-flex min-h-11 items-center break-words rounded-sm underline-offset-4 hover:text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
@@ -158,6 +180,7 @@ export function ProjectAdminWorkspaceList({
             </StatusBadge>
           </div>
 
+          <p className="mt-2 text-xs text-body">{item.phase??"Planning"} · {item.dueLabel??"Due not set"}</p>
           <p className="mt-3 line-clamp-2 text-sm text-body leading-[22px]">
             {item.summary ??
               "Project workspace."}
@@ -193,12 +216,7 @@ export function ProjectAdminWorkspaceList({
           </p>
 
           <div className="mt-auto flex min-w-0 items-center justify-end pt-4">
-            <ProjectArchiveControl
-              projectId={item.id}
-              projectTitle={item.title}
-              status={item.status}
-              expectedUpdatedAt={item.updatedAt.toISOString()}
-            />
+            <WorkspaceActions item={item} basePath={basePath}/>
           </div>
         </article>
       ))}

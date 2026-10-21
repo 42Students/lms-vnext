@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,asc,eq,inArray} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,
- placementApplications,placementJobs} from "@/db/schema";
+ placementApplications,placementJobs,placementJobRoleOptions,users} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
 import {PlacementsServiceError} from "./errors";
 import {requireTpoJobActor,requireTpoJobCollege} from "./tpo-job-write-base";
@@ -116,4 +116,41 @@ export async function remindTpoNonApplicants(context:RequestContext,rawJobId:unk
   }
   return {reminded:recipients.length,alreadySent:false,reason:null};
  });
+}
+
+
+/** Separate, currently registered/eligible not-applied list. The vetted
+ * recipient resolver already uses live placement registration and current
+ * application exclusion; this reader reveals membership IDs only to a TPO
+ * in the job's college, never to the reminder's notification audience. */
+export async function listTpoEligibleNonApplicants(
+ context:RequestContext,rawJobId:unknown,rawPage:unknown=1,
+){
+ const page=(await import("zod")).z.coerce.number().int().min(1).max(10000).parse(rawPage);
+ const job=await scopedJob(context,rawJobId);
+ const all=await getDb().transaction(async tx=>{
+  await requireTpoJobActor(tx,context);
+  return candidateAudience(tx,context,job);
+ },{accessMode:"read only"});
+ const selectedUsers=all.slice((page-1)*25,page*25);
+ const learners=selectedUsers.length?await getDb().select({
+  membershipId:collegeMemberships.id,userId:collegeMemberships.userId,
+  displayName:users.displayName,
+ }).from(collegeMemberships)
+ .innerJoin(users,eq(users.id,collegeMemberships.userId))
+ .where(and(eq(collegeMemberships.collegeId,job.collegeId),
+  eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE"),
+  inArray(collegeMemberships.userId,selectedUsers)))
+ .orderBy(asc(users.displayName),asc(collegeMemberships.id)):[];
+ const roles=await getDb().select({
+  id:placementJobRoleOptions.id,title:placementJobRoleOptions.title,
+ }).from(placementJobRoleOptions).where(and(
+  eq(placementJobRoleOptions.jobId,job.id),
+  eq(placementJobRoleOptions.status,"ACTIVE")))
+ .orderBy(asc(placementJobRoleOptions.title),asc(placementJobRoleOptions.id));
+ return {jobId:job.id,jobTitle:job.title,
+  students:learners,roles,page,total:all.length,hasMore:page*25<all.length,
+  canAdd:job.status==="PUBLISHED"&&
+   (!job.applicationDeadline||job.applicationDeadline>new Date()),
+ };
 }

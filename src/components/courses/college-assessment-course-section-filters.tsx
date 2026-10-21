@@ -21,7 +21,9 @@ export function CollegeAssessmentCourseSectionFilters({
   initialDeliveryId: string;
 }) {
   const listId = useId();
-  const [courseCode, setCourseCode] = useState(initialCourseCode);
+  const initialCourse=courses.find(course=>course.code===initialCourseCode);
+  const [courseInput, setCourseInput] = useState(initialCourse?.name??initialCourseCode);
+  const courseCode=courses.find(course=>course.name===courseInput||course.code===courseInput)?.code??courseInput;
   const [deliveryId, setDeliveryId] = useState(initialDeliveryId);
   const sectionOptions = sections.filter(section => section.courseCode === courseCode);
   const selectedDeliveryId = sectionOptions.some(section => section.deliveryId === deliveryId)
@@ -30,13 +32,14 @@ export function CollegeAssessmentCourseSectionFilters({
   return <>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Course
-      <Input name="courseCode" type="search" list={listId}
-        placeholder="All courses" value={courseCode} maxLength={64}
-        onChange={event => { setCourseCode(event.target.value); setDeliveryId(""); }}
+      <Input type="hidden" name="courseCode" value={courseCode}/>
+      <Input type="search" list={listId} aria-label="Search or clear course"
+        placeholder="All courses" value={courseInput} maxLength={100}
+        onChange={event => { setCourseInput(event.target.value); setDeliveryId(""); }}
         className="min-h-11 w-full md:min-h-9 md:w-[260px]" />
       <datalist id={listId}>
-        {courses.map(course => <option key={course.code} value={course.code}
-          label={course.name} />)}
+        {courses.map(course => <option key={course.code} value={course.name}
+          label={course.code} />)}
       </datalist>
     </label>
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">

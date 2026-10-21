@@ -1852,6 +1852,15 @@ export function ProjectWorkspace({
         </section> : null}
 
         {show("meetings") ? <section className="space-y-3">
+          {workspace.meetingsLoadError?<div role="alert"
+            className="border-l-2 border-error bg-error-subtle p-3 text-sm text-body">
+            <p className="font-semibold text-foreground">Workspace meetings could not be loaded</p>
+            <p className="mt-1">Meeting records are temporarily unavailable.
+              The other loaded project sections remain accessible.</p>
+            <Link href="?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+              Retry meetings
+            </Link>
+          </div>:null}
           <div className="flex flex-wrap items-end justify-between gap-3">
             <div>
               <h2 className="m-0 text-lg font-semibold text-foreground">
@@ -1885,7 +1894,8 @@ export function ProjectWorkspace({
               />
             ) : null}
           </div>
-          {mode === "ADMIN" && !readOnly && ["PLANNED", "ACTIVE"].includes(workspace.project.status) ? (
+          {mode === "ADMIN" && !readOnly && !workspace.meetingsLoadError &&
+            ["PLANNED", "ACTIVE"].includes(workspace.project.status) ? (
             <ProjectMeetingPlanEditor projectId={workspace.project.id}
               meetingsToken={projectMeetingPlanToken(workspace.meetings)}
               meetings={workspace.meetings.filter(meeting => !meeting.deletedAt).map(meeting => ({
@@ -1932,7 +1942,7 @@ export function ProjectWorkspace({
             Meeting history
           </h3>:null}
           <div className="space-y-3">
-            {workspace.meetings.length === 0 ? (
+            {workspace.meetings.length === 0 && !workspace.meetingsLoadError ? (
               <EmptyState title="No meetings yet." description="No project meetings have been recorded." />
             ) : (
               workspace.meetings.map((meeting) => {

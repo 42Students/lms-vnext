@@ -7,9 +7,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { ChoiceInput } from "@/components/ui/choice-input";
 import { DateInput } from "@/components/ui/date-input";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
 import { Banner } from "@/components/ui/banner";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
-import {useRef,useState} from "react";
+import {useEffect,useRef,useState} from "react";
 import {useRouter} from "next/navigation";
 import {parseCollegeIstLocal} from "@/modules/courses/college-ist-datetime-model";
 
@@ -31,12 +32,30 @@ export function CollegeQuizCreate({lessons,deliveries}:{
  const [deliveryId,setDeliveryId]=useState("");
  const [title,setTitle]=useState(""),[description,setDescription]=useState("");
  const [dueAt,setDueAt]=useState(""),[maxAttempts,setMaxAttempts]=useState("1");
+ const [publishNow,setPublishNow]=useState(true);
  const [shuffleQuestions,setShuffleQuestions]=useState(false),[shuffleOptions,setShuffleOptions]=useState(false);
  const [questions,setQuestions]=useState<Question[]>([empty()]);
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
  const lock=useRef(false),lesson=lessons.find(x=>x.id===lessonId);
  const [nextOverride,setNextOverride]=useState<Record<string,number>>({});
  const sections=deliveries.filter(x=>x.offeringId===lesson?.offeringId);
+ const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
+  maxAttempts!=="1"||!publishNow||shuffleQuestions||shuffleOptions||questions.length!==1||
+  questions.some(q=>q.prompt.trim()||q.type!=="SINGLE_CHOICE"||q.points!==1||
+   q.options.length!==2||q.options.some(option=>option.text.trim())));
+ useEffect(()=>{
+  if(!opened||!dirty)return;
+  function warn(event:BeforeUnloadEvent){event.preventDefault();event.returnValue="";}
+  window.addEventListener("beforeunload",warn);
+  return()=>window.removeEventListener("beforeunload",warn);
+ },[opened,dirty]);
+ async function close(){
+  if(busy)return;
+  if(dirty&&!(await askConfirm("Your unsaved changes will be lost.")))return;
+  setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
+  setMaxAttempts("1");setPublishNow(true);setShuffleQuestions(false);setShuffleOptions(false);
+  setQuestions([empty()]);setError("");
+ }
  function moveQuestion(index:number,delta:-1|1){
   setQuestions(rows=>{
    const next=index+delta;
@@ -50,37 +69,44 @@ export function CollegeQuizCreate({lessons,deliveries}:{
   setQuestions(rows=>rows.map((row,index)=>index===i?updated:row));
  }
  function valid(){
-  if(!title.trim()||!lesson||(nextOverride[lesson.id]??lesson.nextSequence)>10000)
-   return "Select a lesson and enter a quiz title.";
+  if(!title.trim())return "Enter a quiz title";
+  if(!lesson||(nextOverride[lesson.id]??lesson.nextSequence)>10000)
+   return "Select a lesson before creating the quiz.";
+  if(description.trim().length>5000)return "Quiz description may not exceed 5000 characters";
+  if(!dueAt)return "Set a due date";
   if(deliveryId&&!sections.some(x=>x.deliveryId===deliveryId))return "Choose a Section within this offering.";
   const attempts=Number(maxAttempts);
   if(!Number.isInteger(attempts)||attempts<1||attempts>20)return "Attempts must be 1–20.";
   if(questions.length<1||questions.length>100)return "Add 1–100 questions.";
   for(let i=0;i<questions.length;i++){
    const q=questions[i],texts=q.options.map(x=>x.text.trim());
-   if(!q.prompt.trim()||q.prompt.length>5000||!Number.isInteger(q.points)||q.points<1||q.points>1000||
+   if(!q.prompt.trim()||q.prompt.length>5000||!Number.isInteger(q.points)||q.points<1||q.points>100||
       texts.some(x=>!x||x.length>2000)||new Set(texts.map(x=>x.toLocaleLowerCase())).size!==texts.length||
       texts.length<2||texts.length>20)return "Complete all question prompts, points and unique options.";
    const correct=q.options.filter(x=>x.correct).length;
    if(q.type==="SINGLE_CHOICE"&&correct!==1)return "Choose exactly one correct answer for each single-choice question.";
-   if(q.type==="MULTIPLE_CHOICE"&&(correct<1||correct>=q.options.length))
-    return "Choose at least one correct and one incorrect answer for each multiple-choice question.";
+   if(q.type==="MULTIPLE_CHOICE"&&correct<1)
+    return "Choose at least one correct answer for each multiple-choice question.";
   }
   if(questions.reduce((sum,q)=>sum+q.points,0)>10000)return "Quiz total points may not exceed 10000.";
-  if(dueAt&&!parseCollegeIstLocal(dueAt))return "Use a valid deadline.";
-  if(dueAt&&Date.parse(parseCollegeIstLocal(dueAt)!)<=currentTimeMs())return "Quiz deadline must be in the future.";
+  if(!parseCollegeIstLocal(dueAt))return "Set a valid due date";
+  if(!/^\d{4}-\d{2}-\d{2}T\d{2}:(?:00|05|10|15|20|25|30|35|40|45|50|55)$/.test(dueAt))
+   return "Select a due time in 5-minute increments";
+  if(Date.parse(parseCollegeIstLocal(dueAt)!)<=currentTimeMs())return "Quiz deadline must be in the future.";
   return null;
  }
  async function create(){
   if(lock.current)return;
   const problem=valid();if(problem){setError(problem);return;}
-  if(!(await askConfirm("Create this quiz as a draft? Learners will not see it until published.")))return;
+  if(!(await askConfirm(publishNow?
+    "Create and publish this quiz now? Learners will be able to see it immediately.":
+    "Create this quiz as a draft? Learners will not see it until published.")))return;
   lock.current=true;setBusy(true);setError("");setNotice("");
   try{
    const result=await fetch("/api/courses/quizzes",{method:"POST",
     headers:{"content-type":"application/json"},
     body:JSON.stringify({lessonId:lesson!.id,deliveryId:deliveryId||null,title:title.trim(),
-     description:description.trim()||null,dueAt:dueAt?parseCollegeIstLocal(dueAt):null,
+     description:description.trim()||null,dueAt:parseCollegeIstLocal(dueAt),publishNow,
      maxAttempts:Number(maxAttempts),shuffleQuestions,shuffleOptions,sequence:nextOverride[lesson!.id]??lesson!.nextSequence,
      questions:questions.map((q,index)=>({...q,sequence:index,
       prompt:q.prompt.trim(),options:q.options.map((o,j)=>({...o,text:o.text.trim(),sequence:j}))}))})});
@@ -90,8 +116,9 @@ export function CollegeQuizCreate({lessons,deliveries}:{
    if(!keepOpen)setOpened(false);
    setTitle("");setDescription("");setDueAt("");setMaxAttempts("1");
    setShuffleQuestions(false);setShuffleOptions(false);setQuestions([empty()]);
-   setNotice("Quiz draft created. Publish it when the questions are ready.");router.refresh();
-  }catch(cause){setError(cause instanceof Error?cause.message:"Could not create quiz.");}
+   setPublishNow(true);
+   setNotice(publishNow?"Quiz created and published":"Quiz created as a draft. Publish it when the questions are ready.");router.refresh();
+  }catch(cause){setError("Quiz was not created. "+(cause instanceof Error?cause.message:"Check your entries and try again."));}
   finally{lock.current=false;setBusy(false);}
  }
  return <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
@@ -102,7 +129,10 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     Create New Quiz</Button>
   </div>
   {!lessons.length?<p className="text-sm text-muted-foreground">Create an active course lesson before adding quizzes.</p>:null}
-  {opened?<div className="min-w-0 max-w-4xl space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
+  <Dialog open={opened} onOpenChange={open=>{if(!open)void close();}}
+   title="Create quiz" description="Build and publish a quiz for the selected Course and Section."
+   className="max-w-[760px]" dismissible={!busy}>
+   <div className="min-w-0 space-y-4">
    <div className="grid min-w-0 gap-4 md:grid-cols-2">
     <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course / Lesson
      <Select value={lessonId} disabled={busy} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
@@ -119,20 +149,24 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title
      <Input maxLength={255} required value={title} disabled={busy}
       onChange={e=>setTitle(e.target.value)} className="min-h-11 md:min-h-9"/></label>
-    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Deadline (IST, required before publishing)
-     <DateInput mode="datetime-local" value={dueAt} disabled={busy} onChange={e=>setDueAt(e.target.value)}
-      className="min-h-11 md:min-h-9"/></label>
+    <label className="grid gap-1 text-sm font-semibold leading-5 text-body">Deadline (IST)
+     <DateInput mode="datetime-local" value={dueAt} disabled={busy} required step={300}
+      onChange={e=>setDueAt(e.target.value)} className="min-h-11 md:min-h-9"/>
+     {!dueAt?<span className="text-xs text-warning">Set a due date</span>:null}
+   </label>
     <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
      <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
       onChange={e=>setMaxAttempts(e.target.value)} className="min-h-11 md:min-h-9"/></label>
     <label className="grid gap-[6px] font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">Description
-     <Textarea rows={2} maxLength={10000} value={description} disabled={busy}
+     <Textarea rows={2} maxLength={5000} value={description} disabled={busy}
       onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/></label>
    </div>
    <p role="status" className="text-xs text-muted-foreground">Audience: {deliveryId?
     sections.find(section=>section.deliveryId===deliveryId)?.sectionName??"Invalid Section":
-    "All currently eligible Sections in the Course Offering"} · Draft quiz is hidden until published.</p>
+    "All currently eligible Sections in the Course Offering"} · {publishNow?"Publish now":"Save as draft"}.</p>
    <div className="flex flex-wrap gap-4 text-sm">
+    <label className="flex min-h-11 items-center gap-2"><Checkbox checked={publishNow}
+      disabled={busy} onChange={e=>setPublishNow(e.target.checked)}/>Publish now</label>
     <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleQuestions}
       onChange={e=>setShuffleQuestions(e.target.checked)}/>Shuffle question order per learner</label>
     <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleOptions}
@@ -150,7 +184,7 @@ export function CollegeQuizCreate({lessons,deliveries}:{
       <option value="SINGLE_CHOICE">Single choice</option>
       <option value="MULTIPLE_CHOICE">Multiple choice</option>
      </Select>
-     <Input type="number" min={1} max={1000} aria-label="Question points" disabled={busy}
+     <Input type="number" min={1} max={100} aria-label="Question points" disabled={busy}
       value={question.points} onChange={e=>replaceQuestion(i,{...question,points:Number(e.target.value)})}
       className="min-h-11 w-full sm:w-28 md:min-h-9"/>
     </div>
@@ -191,23 +225,16 @@ export function CollegeQuizCreate({lessons,deliveries}:{
     <Checkbox disabled={busy} checked={keepOpen} onChange={event=>setKeepOpen(event.target.checked)}/>
     Create another quiz after saving
    </label>
+   {error?<Banner tone="error" role="alert">{error}</Banner>:null}
    <div className="sticky bottom-0 z-10 flex min-w-0 flex-col gap-2 border-t border-border bg-surface py-3 md:flex-row md:items-center">
     <Button variant="primary" type="button" loading={busy} disabled={busy} onClick={()=>void create()} className="min-h-11 w-full md:min-h-9 md:w-auto"
      >
-     {busy?"Saving…":"Create quiz draft"}</Button>
-    <Button variant="secondary" type="button" disabled={busy} onClick={async()=>{
-      const dirty=Boolean(title.trim()||description.trim()||dueAt||deliveryId||
-       maxAttempts!=="1"||shuffleQuestions||shuffleOptions||questions.length!==1||
-       questions.some(q=>q.prompt.trim()||q.type!=="SINGLE_CHOICE"||q.points!==1||
-        q.options.length!==2||q.options.some(option=>option.text.trim())));
-      if(dirty&&!(await askConfirm("Discard unsaved quiz changes?")))return;
-      setOpened(false);setTitle("");setDescription("");setDueAt("");setDeliveryId("");
-      setMaxAttempts("1");setShuffleQuestions(false);setShuffleOptions(false);
-      setQuestions([empty()]);setError("");
-    }} className="min-h-11 w-full md:min-h-9 md:w-auto">Cancel</Button>
+     {busy?"Saving…":publishNow?"Create and publish":"Create quiz draft"}</Button>
+    <Button variant="secondary" type="button" disabled={busy} onClick={()=>void close()}
+     className="min-h-11 w-full md:min-h-9 md:w-auto">Cancel</Button>
    </div>
-  </div>:null}
-  {error?<Banner tone="error">{error}</Banner>:null}
+  </div>
+  </Dialog>
   {notice?<Banner tone="success">{notice}</Banner>:null}
   {dialog}
  </section>;

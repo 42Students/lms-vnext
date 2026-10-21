@@ -691,14 +691,16 @@ export function LearnerProfileWorkspace(props: {
         </Card>
         <Card id="job-preferences" title="Job Preferences"
           action={<Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
-            onClick={()=>{setJobPrefsDraft(document.jobPreferences);setRolePrefsInput(document.jobPreferences.rolePreferences.join("\n"));setJobPrefsEditing(true);}}>
+            onClick={()=>{setJobPrefsDraft(document.jobPreferences);setRolePrefsInput(document.jobPreferences.rolePreferences.join("\n") || document.jobPreferences.rolePreference);setJobPrefsEditing(true);}}>
             Edit preferences
           </Button>}>
           <div className="grid gap-3 md:grid-cols-2">
-            <Value label="Role Preference" value={document.jobPreferences.rolePreferences.join(", ")}/>
+            <Value label="Role Preference" value={document.jobPreferences.rolePreferences.join(", ") || document.jobPreferences.rolePreference}/>
             <Value label="Specific Role Preference" value={document.jobPreferences.specificRolePreference}/>
             <Value label="Work Shift Preference" value={document.jobPreferences.workShiftPreference}/>
             <Value label="Preferred Employment City" value={document.jobPreferences.preferredEmploymentCity}/>
+            <Value label="Exam Slot Preference" value={document.jobPreferences.examSlotPreference || "No preference"}/>
+            <Value label="Job Notifications Enabled" value={document.jobPreferences.jobNotificationsEnabled ? "Enabled" : "Disabled"}/>
           </div>
         </Card>
         <Card id="social-profiles" title="Social profiles"
@@ -955,13 +957,14 @@ export function LearnerProfileWorkspace(props: {
         footer={<>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:{...jobPrefsDraft,
-              rolePreferences:rolePrefsInput.split(/\r?\n/).map(role=>role.trim()).filter(Boolean)}},
+              rolePreferences:rolePrefsInput.split(/\r?\n/).map(role=>role.trim()).filter(Boolean),
+              rolePreference:rolePrefsInput.split(/\r?\n/).map(role=>role.trim()).find(Boolean) ?? jobPrefsDraft.rolePreference}},
               ()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
           </Button>
         </>}>
         <div className="grid gap-4">
-          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Role Preference (multiple)
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Role Preference
             <Textarea value={rolePrefsInput} maxLength={800}
               placeholder={"Software Engineer\nData Analyst"}
               onChange={event=>setRolePrefsInput(event.target.value)}
@@ -987,7 +990,24 @@ export function LearnerProfileWorkspace(props: {
             <Input className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.preferredEmploymentCity} maxLength={120}
               onChange={event=>setJobPrefsDraft(current=>({...current,preferredEmploymentCity:event.target.value}))}/>
           </label>
-          <p className="text-xs text-muted-foreground">These preferences are learner-authored and do not change placement eligibility.</p>
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Exam Slot Preference
+            <Select className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.examSlotPreference}
+              onChange={event=>setJobPrefsDraft(current=>({...current,examSlotPreference:event.target.value as LearnerProfileDocument["jobPreferences"]["examSlotPreference"]}))}>
+              <option value="">No preference</option>
+              <option value="Morning">Morning</option>
+              <option value="Afternoon">Afternoon</option>
+              <option value="Evening">Evening</option>
+            </Select>
+          </label>
+          <label className="flex min-h-11 items-center gap-3 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Checkbox checked={jobPrefsDraft.jobNotificationsEnabled} disabled={pending}
+              onChange={event=>setJobPrefsDraft(current=>({...current,jobNotificationsEnabled:event.target.checked}))}/>
+            Job Notifications Enabled
+          </label>
+          <p className="text-xs text-muted-foreground">These are your profile preferences. Placement alert delivery has separate choices in{" "}
+            <Link href="/learn/my-placements/notification-preferences" className="font-semibold text-primary-text underline">
+              Placement notification choices
+            </Link>. Essential academic and security messages are unaffected.</p>
         </div>
       </Dialog>
 

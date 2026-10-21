@@ -5,6 +5,7 @@ import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {Alert} from "@/components/ui/alert";
 import { DEPARTMENT_COPY } from "@/modules/admin-ui/department-copy";
 
 export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
@@ -65,8 +66,8 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
   }
   return (
     <form onSubmit={submit} aria-label={DEPARTMENT_COPY.createCardTitle}
-      className="grid min-w-0 max-w-[920px] grid-cols-1 items-end gap-[var(--lms-space-3)] print:hidden sm:grid-cols-[minmax(0,1fr)_auto]">
-      <h2 className="m-0 min-w-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)] sm:col-span-2">
+      className="flex min-w-0 flex-col items-stretch gap-4 print:hidden">
+      <h2 className="m-0 -mx-4 border-b border-[var(--lms-canvas-border)] px-4 pb-4 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">
         {DEPARTMENT_COPY.createCardTitle}
       </h2>
       <div className="min-w-0 w-full flex-1">
@@ -80,16 +81,16 @@ export function DepartmentCreateForm({collegeId}:{collegeId:string}) {
           maxLength={255} placeholder={DEPARTMENT_COPY.namePlaceholder}/>
         {fieldError?<p id="department-name-error" className="mt-1 text-xs text-error">{fieldError}</p>:null}
       </div>
-      <Button type="submit" className="min-h-11 w-full justify-center sm:w-auto md:min-h-9" disabled={pending}>
-        {pending?"Creating…":DEPARTMENT_COPY.createButton}
+      <Button type="submit" className="min-h-11 w-full justify-center sm:w-fit md:min-h-9" disabled={pending}>
+        <span aria-hidden="true" className="mr-2">＋</span>{pending?"Creating…":DEPARTMENT_COPY.createButton}
       </Button>
       {notice?<p role="status" className="m-0 w-full min-w-0 break-words text-sm leading-[22px] text-success-text sm:col-span-2">{notice}</p>:null}
-      {error?<div role="alert" className="relative w-full min-w-0 space-y-1 border-l-2 border-error bg-error-subtle p-3 pr-10 text-sm text-error sm:col-span-2">
-        <strong className="block">{DEPARTMENT_COPY.createFailed}</strong>
+      {error?<Alert tone="error" title={DEPARTMENT_COPY.createFailed}>
         <p className="break-words">{error}</p>
-        <Button variant="ghost" type="button" aria-label="Dismiss department error" onClick={()=>{setError(null);setFieldError("");}}
-          className="absolute right-2 top-2" title="Dismiss error">×</Button>
-      </div>:null}
+        <Button variant="ghost" type="button" aria-label="Dismiss department error"
+          onClick={()=>{setError(null);setFieldError("");}}
+          className="mt-2" title="Dismiss error">Dismiss</Button>
+      </Alert>:null}
     </form>
   );
 }

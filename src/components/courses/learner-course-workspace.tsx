@@ -473,7 +473,7 @@ function AssignmentCard({
         </p>
       ) : overdue ? (
         <p className="mt-4 text-xs font-semibold text-warning">
-          Submissions are closed · Submission deadline has passed
+          Not submitted · Submission deadline has passed. You can still review the instructions.
         </p>
       ) : null}
 
@@ -700,19 +700,19 @@ export function LearnerCourseWorkspace({
     <div className="min-w-0 space-y-5">
       {progressUnknown ? (
         <Alert tone="warning" role="alert" title="Lesson completion state could not be fully verified">
-          <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Content remains accessible; completion counts and Continue recommendations are unavailable until verification succeeds.</p>
+          <p className="mt-1">The lesson list is available, but {workspace.stateWarnings.join(", ")} could not be loaded. Completion/counts may be incomplete. Content remains accessible; completion counts and Continue recommendations are unavailable until verification succeeds.</p>
           <LearnerCourseStateRetry/>
         </Alert>
       ) : null}
       {filterNotice ? <Alert tone="warning">{filterNotice}</Alert> : null}
       {focusLessonId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId)
-        ? <Alert tone="error">
+        ? <Alert tone="error" role="alert">
             Lesson not found. This lesson is unavailable in your current learning path.
           </Alert>
         : focusLessonId && focusContentId && !workspace.lessons.some(lesson=>lesson.id===focusLessonId &&
             lesson.items.some(item=>item.id===focusContentId))
-          ? <Alert tone="error">
-              Content unavailable. This item is not published in the selected lesson.
+          ? <Alert tone="error" role="alert">
+              Content locked or unavailable. This item is not published in the selected lesson.
             </Alert>:null}
       <div>
         <h2 className="sr-only">Learning Path</h2>
@@ -942,6 +942,9 @@ export function LearnerCourseWorkspace({
                 {visibleItems.length === 0 ? (
                   <div className="border-t border-border py-4 text-sm text-muted-foreground">
                     {activeFilter==="lectures"?"No lectures in this lesson.":
+                      activeFilter==="resources"?"No resources in this lesson.":
+                      activeFilter==="assessments"?"No assessments in this lesson.":
+                      activeFilter==="live-sessions"?"No live sessions in this lesson.":
                       activeFilter==="all"?"No content in this lesson yet.":"No lesson content yet"}
                   </div>
                 ) : (
@@ -959,6 +962,9 @@ export function LearnerCourseWorkspace({
                             )}
                             title={content.title}
                             kind="Content"
+                            focusKey={deliveryId+":"+lesson.id+":"+item.id}
+                            locked={content.availability==="SCHEDULED"&&content.type!=="LIVE_CLASS"}
+                            availability={content.availability}
                             caption={content.type === "LIVE_CLASS" ? "Live session" :
                               content.type === "RESOURCE" ? "Resource" : "Lecture"}
                             progress={item.progress.status}
@@ -984,6 +990,7 @@ export function LearnerCourseWorkspace({
                             )}
                             title={assignment.title}
                             kind="Assignment"
+                            focusKey={deliveryId+":"+lesson.id+":"+item.id}
                             caption="Assignment" dueText={assignment.dueAt?(formatDateTime(assignment.dueAt)??undefined):undefined}
                             progress={item.progress.status}
                             initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}
@@ -1005,6 +1012,7 @@ export function LearnerCourseWorkspace({
                           )}
                           title={quiz.title}
                           kind="Quiz"
+                          focusKey={deliveryId+":"+lesson.id+":"+item.id}
                           caption="Quiz" dueText={quiz.dueAt?(formatDateTime(quiz.dueAt)??undefined):undefined}
                           progress={item.progress.status}
                           initiallyOpen={learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId)}

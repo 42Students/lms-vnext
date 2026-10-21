@@ -23,6 +23,7 @@ type GridWorkspaceProps<Row>={
  columnScope?:"url"|"local";
  columnStorageKey?:string;
  columnKeys?:readonly string[];
+ defaultVisibleKeys?:readonly string[];
  onColumnKeysChange?:(keys:string[])=>void;
  filters?:readonly TpoFilterField[];
  externalFilters?:{count:number;open:boolean;controlsId:string;onToggle:()=>void};
@@ -53,7 +54,7 @@ export function GridWorkspace<Row>({
  exportName="export",xlsxHref,searchPlaceholder="Search name, roll no., anything",
  searchParam="search",filterTitle="Filters",columnScope="url",columnStorageKey,
  searchMaxLength=120,searchMode="url",searchValue,onSearchChange,
- columnKeys,onColumnKeysChange,onExportCsv,onExportXlsx,onCopyRows,
+ columnKeys,onColumnKeysChange,onExportCsv,onExportXlsx,onCopyRows,defaultVisibleKeys,
 }:GridWorkspaceProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const id=useId();
@@ -80,7 +81,8 @@ export function GridWorkspace<Row>({
  const controlledKeys=columnKeys?columnKeys.filter(key=>permitted.includes(key)):null;
  const activeKeys=controlledKeys?.length?controlledKeys:
   columnScope==="local"&&localKeys.length?localKeys:
-  urlKeys.length&&columnScope==="url"?urlKeys:permitted;
+  urlKeys.length&&columnScope==="url"?urlKeys:
+  defaultVisibleKeys?.filter(key=>permitted.includes(key))??permitted;
  const chosen=chosenTpoGridColumns(columns,activeKeys.length?activeKeys:permitted)
    .filter(column=>!column.exportOnly);
  const exportColumns=tpoGridExportColumns(columns,chosen);
@@ -122,7 +124,8 @@ export function GridWorkspace<Row>({
     catch{/* Keep the in-page preference even with storage disabled. */}}
    return;
   }
-  const reset=keys.length===permitted.length&&keys.every((key,index)=>key===permitted[index]);
+  const defaults=defaultVisibleKeys?.filter(key=>permitted.includes(key))??permitted;
+ const reset=keys.length===defaults.length&&keys.every((key,index)=>key===defaults[index]);
   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:reset?"":keys.join(",")},false);
   router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
  };

@@ -1,9 +1,9 @@
 import "server-only";
-import { and, desc, eq, exists, inArray, sql } from "drizzle-orm";
+import { and, desc, eq, exists, gt, inArray, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { collegeMemberships, placementApplications, placementApplicationScreenings,
   placementJobRoleOptions, placementOffers, placementJoiningOutcomes, placementJobRounds,placementRoundResults,users,
-  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments,placementCompanyVisibilitySettings } from "@/db/schema";
+  learnerProfiles,placementCompanyRelationships,profileVerificationAcademicMarks,profileVerifications,placementDriveSelections,placementRoundCandidateSlots,learnerProgramEnrollments,programs,departments,placementCompanyVisibilitySettings,placementJobs,placementRecruiterCollegeGrants,placementRecruiterProfiles,placementCompanies } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {projectRecruiterProfileLinks} from "./recruiter-applicant-shared-links-model";
 import {uniqueHrVerifiedAcademicMarks} from "./hr-verified-marks-model";
@@ -11,10 +11,41 @@ import { findRecruiterScopedGrant } from "./recruiter-grant-selection-model";
 import { getRecruiterPlacementWorkspace } from "./recruiter-workspace-service";
 import { hrApplicantFilterSchema, HR_APPLICANT_PAGE_SIZE, projectSharedApplicants, hrApplicantPageBounds, HR_OFFER_PAGE_SIZE, hrOfferPageBounds,type HrApplicantStage } from "./hr-job-applicants-model";
 
+/** Legacy drive operations map to these separate authorized vNext contracts. */
+export const HR_DRIVE_ACTIONS={DRIVE:"recruiter-workspace",ROUNDS:"recruiter-workspace",
+ APPLICANTS:"hr-job-read",PIPELINE:"hr-job-read",RESULTS:"round-results",
+ SLOTS:"round-candidate-slots",SELECTIONS:"drive-selection",OFFERS:"hr-offer-read",ZIP:"authorized-export"} as const;
 export async function getHrJobRead(context: RequestContext, rawJobId: string, rawFilters: unknown) {
   const filters = hrApplicantFilterSchema.parse(rawFilters);
   // This pre-read enforces the exact active company relationship and college grant.
-  const workspace = await getRecruiterPlacementWorkspace(context, rawJobId);
+  let resolvedJobId=rawJobId;
+  // Imported integer IDs are scoped locators, not grants. Re-run the standard
+  // workspace permission checks on the resolved UUID.
+  if(/^[1-9][0-9]{0,9}$/.test(rawJobId)){
+   const matches=await getDb().select({id:placementJobs.id}).from(placementJobs)
+    .innerJoin(placementCompanyRelationships,and(
+     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+     eq(placementCompanyRelationships.collegeId,placementJobs.collegeId),
+     eq(placementCompanyRelationships.status,"ACTIVE")))
+    .innerJoin(placementCompanies,and(
+     eq(placementCompanies.id,placementCompanyRelationships.companyId),
+     eq(placementCompanies.id,context.recruiter?.companyId??""),
+     eq(placementCompanies.status,"ACTIVE")))
+    .innerJoin(placementRecruiterProfiles,and(
+     eq(placementRecruiterProfiles.userId,context.user.id),
+     eq(placementRecruiterProfiles.companyId,placementCompanies.id),
+     eq(placementRecruiterProfiles.status,"ACTIVE")))
+    .innerJoin(placementRecruiterCollegeGrants,and(
+     eq(placementRecruiterCollegeGrants.recruiterUserId,context.user.id),
+     eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
+     eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
+     eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
+     gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+     sql<boolean>`'DRIVES'=ANY(${placementRecruiterCollegeGrants.capabilities})`))
+    .where(eq(placementJobs.legacyJobId,Number(rawJobId))).limit(2);
+   if(matches.length===1)resolvedJobId=matches[0]!.id;
+  }
+  const workspace = await getRecruiterPlacementWorkspace(context, resolvedJobId);
   const where = and(
     eq(placementApplications.jobId, workspace.job.id),
     eq(collegeMemberships.collegeId, workspace.college.id),
@@ -88,7 +119,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     ? where
     : selectionOnly?and(where,sql`false`):
       and(where,eq(placementOffers.status,filters.offerState));
-  const [counts,applications, offerCounts,offers] = await Promise.all([
+  const [countsResult,applicationsResult,offerCountsResult,offersResult] = await Promise.allSettled([
     db.select({
       total: sql<number>`count(*)::integer`,
       active: sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED')::integer`,
@@ -162,6 +193,12 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .orderBy(desc(placementOffers.issuedAt), desc(placementOffers.id))
       .limit(HR_OFFER_PAGE_SIZE).offset((filters.offerPage - 1) * HR_OFFER_PAGE_SIZE),
   ]);
+  if(countsResult.status!=="fulfilled"||applicationsResult.status!=="fulfilled")
+   throw new Error("RECRUITER_DRIVE_REQUIRED_READ_UNAVAILABLE");
+  const counts=countsResult.value, applications=applicationsResult.value;
+  const offerCounts=offerCountsResult.status==="fulfilled"?offerCountsResult.value:[];
+  const offers=offersResult.status==="fulfilled"?offersResult.value:[];
+  const offersUnavailable=offerCountsResult.status!=="fulfilled"||offersResult.status!=="fulfilled";
   // REC-home-drives-46: only placement-cell recorded candidate slots
   // with confirmedAt count as confirmed; internal recruiter BOOKED does not.
   const slotRows=(filters.tab==="rounds"||filters.tab==="overview")
@@ -170,7 +207,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       confirmed:sql<number>`count(*) filter (where ${placementRoundCandidateSlots.confirmedAt} is not null and ${placementRoundCandidateSlots.status} <> 'CANCELLED')::integer`})
      .from(placementRoundCandidateSlots)
      .where(eq(placementRoundCandidateSlots.jobId,workspace.job.id))
-     .groupBy(placementRoundCandidateSlots.roundId):[];
+     .groupBy(placementRoundCandidateSlots.roundId).catch(()=>[]):[];
   const roundSlotCounts=Object.fromEntries(slotRows.map(row=>[row.roundId,
    {confirmed:Number(row.confirmed),total:Number(row.total)}])) as Record<string,{confirmed:number;total:number}>;
   // REC-home-drives-52: formal selection ledger is not an issued offer.
@@ -197,8 +234,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
    .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
    .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId));
-  const [selectionCountRows,selectionRows]=readSelections
-   ?await Promise.all([
+  const selectionReads=readSelections
+   ?await Promise.allSettled([
     db.select({total:sql<number>`count(*)::integer`}).from(placementDriveSelections)
      .innerJoin(placementApplications,eq(placementApplications.id,placementDriveSelections.applicationId))
      .innerJoin(placementApplicationScreenings,eq(placementApplicationScreenings.applicationId,placementApplications.id))
@@ -208,7 +245,10 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
     selectionJoin().where(selectionWhere).orderBy(desc(placementDriveSelections.recordedAt),
      desc(placementDriveSelections.id)).limit(HR_OFFER_PAGE_SIZE)
      .offset((filters.offerPage-1)*HR_OFFER_PAGE_SIZE),
-   ]):[[],[]];
+   ]):null;
+  const selectionCountRows=selectionReads?.[0].status==="fulfilled"?selectionReads[0].value:[];
+  const selectionRows=selectionReads?.[1].status==="fulfilled"?selectionReads[1].value:[];
+  const selectionsUnavailable=Boolean(selectionReads?.some(result=>result.status==="rejected"));
   const selectionTotal=Number(selectionCountRows[0]?.total??0);
   const selectionPage=hrOfferPageBounds(filters.offerPage,selectionTotal);
   const totals = counts[0];
@@ -238,7 +278,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       eq(profileVerifications.section,"EDUCATION"),
       inArray(profileVerifications.status,["VERIFIED","UPDATE_PENDING"])))
      .where(and(inArray(profileVerificationAcademicMarks.learnerMembershipId,memberIds),
-      inArray(profileVerificationAcademicMarks.level,["UG","10TH","12TH","DIPLOMA"])))
+      inArray(profileVerificationAcademicMarks.level,["UG","10TH","12TH","DIPLOMA"]))).catch(()=>[])
    :[];
   // Conflicting verified-history rows are not an employer disclosure grant.
   // A single historical duplicate must never win by undefined SQL row order.
@@ -253,7 +293,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       .innerJoin(departments,eq(departments.id,programs.departmentId))
       .where(and(inArray(learnerProgramEnrollments.membershipId,memberIds),
        eq(learnerProgramEnrollments.status,"ACTIVE"),
-       eq(departments.collegeId,workspace.college.id))):[];
+       eq(departments.collegeId,workspace.college.id))).catch(()=>[]):[];
   const branchSet=new Map<string,Set<string>>();
   for(const row of activeBranches){
    const names=branchSet.get(row.membershipId)??new Set<string>();
@@ -292,6 +332,8 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
   const selectedTotal = stageCounts[filters.stage];
   return {
     workspace, filters, roundSlotCounts, selectionRows, selectionPage, selectionTotal, stageCounts,
+    offersUnavailable,selectionsUnavailable,legacyActionContract:HR_DRIVE_ACTIONS,
+    selectedCandidateIds:selectionRows.map(row=>row.applicationId),
     applicants: { rows: projected.rows, counts: applicantCounts },
     applicantsPage: hrApplicantPageBounds(filters.page, selectedTotal),
     applicantsTruncated: false,
@@ -306,7 +348,7 @@ export async function getHrJobRead(context: RequestContext, rawJobId: string, ra
       awaitingReply: Number(offerCounts[0]?.awaitingReply ?? 0),
       overdue: Number(offerCounts[0]?.overdue ?? 0),
     },
-    offers,
+    offers:offers.map(row=>({...row,ctcLpa:row.annualCtcInr==null?null:(Number(row.annualCtcInr)/100000).toFixed(2)})),
     offersPage: hrOfferPageBounds(filters.offerPage,
       filters.offerState === "ISSUED" ? Number(offerCounts[0]?.issued ?? 0) :
       filters.offerState === "ACCEPTED" ? Number(offerCounts[0]?.accepted ?? 0) :
