@@ -1,7 +1,6 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Tabs } from "@/components/ui/tabs";
-import { PageBackLink } from "@/components/ui/page-back-link";
 import Link from "next/link";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
@@ -37,7 +36,7 @@ export function FacultyCourseTabNavigation({
         section.deliveryId === cls ||
         (section.legacyClassId !== null &&
          section.legacyClassId !== undefined &&
-         /^\\d{1,10}$/.test(cls) &&
+         /^\d{1,10}$/.test(cls) &&
          String(section.legacyClassId) === cls));
       if(!target){
         router.replace("/teacher/courses");
@@ -67,20 +66,20 @@ export function FacultyCourseTabNavigation({
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div className="min-w-0 flex-1">
-          <PageBackLink href="/teacher/courses" label="Back to courses" />
-          <p className="sr-only">{courseName} · {sectionName}</p>
-        </div>
-        {teachingSections.length > 1 ? (
-          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:max-w-[18rem]">
-            {activeTab==="attendanceDetail"?"Select class to view attendance":"Teaching Section"}
+      <p className="sr-only">{courseName} · {sectionName}</p>
+      <div className="flex min-w-0 justify-end">
+        {teachingSections.length > 1 &&
+         (activeTab==="students"||activeTab==="attendanceDetail") ? (
+          <label htmlFor="faculty-course-section" className="grid w-full min-w-0 gap-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-40">
+            Class
             <Select
               id="faculty-course-section"
+              aria-label={activeTab==="students"?"Select class to view its roster":"Select class to view attendance"}
               value={deliveryId}
               onChange={(event) => router.push(facultyCourseTabHref(event.target.value, activeTab))}
               className="min-h-11 w-full min-w-0 md:min-h-9"
             >
+              <option value="" disabled>Select Class</option>
               {teachingSections.map((section) => (
                 <option key={section.deliveryId} value={section.deliveryId}>{section.label}</option>
               ))}
@@ -88,7 +87,9 @@ export function FacultyCourseTabNavigation({
           </label>
         ) : null}
       </div>
-      <nav aria-label="Course tools" className="grid min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
+      <details className="min-w-0 border-t border-border pt-2">
+        <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold text-primary-text underline md:min-h-9">Course tools</summary>
+      <nav aria-label="Course tools" className="mt-2 grid min-w-0 grid-cols-1 gap-2 min-[420px]:grid-cols-3 sm:flex sm:flex-wrap sm:items-center sm:justify-end">
         <Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
           className="inline-flex min-h-11 min-w-0 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-[var(--lms-surface)] px-[var(--lms-space-3)] py-2 text-center text-[13px] font-semibold leading-5 text-[var(--lms-primary-text)] transition-colors duration-[var(--lms-motion-fast)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">
           Author Assignments
@@ -102,6 +103,7 @@ export function FacultyCourseTabNavigation({
           Live Classes
         </Link>
       </nav>
+      </details>
       <Tabs ariaLabel="Faculty course tabs" value={activeTab} renderPanel={false}
         items={facultyCourseTabs.map(tab => ({
           value: tab.path,

@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { PageBackLink } from "@/components/ui/page-back-link";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { CoursesServiceError } from "@/modules/courses/errors";
@@ -57,10 +58,13 @@ export default async function FacultyCourseTabLayout({
   }
   const sections=assignments.filter(a=>a.courseId===active.courseId)
    .sort((a,b)=>a.sectionName.localeCompare(b.sectionName,undefined,{numeric:true})||a.deliveryId.localeCompare(b.deliveryId))
-   .map(a=>({deliveryId:a.deliveryId,label:a.sectionName.trim()||"Class "+a.deliveryId.slice(0,8)}));
+   .map(a=>({deliveryId:a.deliveryId,
+    label:a.legacyClassLabel?.trim()||a.sectionName.trim()||"Class "+a.deliveryId.slice(0,8),
+    legacyClassId:a.legacyClassId}));
   return (
     <div className="min-w-0 space-y-5">
-      <PageHeader title={active.courseName} description={"Course workspace · "+active.sectionName}/>
+      <PageHeader title={active.courseName} description="Course workspace"
+        actions={<PageBackLink href="/teacher/courses" label="Back to courses" />}/>
       <FacultyCourseTabNavigation
         deliveryId={deliveryId}
         courseName={active.courseName}

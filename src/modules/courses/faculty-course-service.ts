@@ -106,6 +106,7 @@ export async function listFacultyCourseDeliveries(
       // Keep the active section UUID separate from the display-only label.
       legacyClassLabel: sql<string>`coalesce(nullif(btrim(${sections.name}), ''), 'Class ' || coalesce(${sections.legacyClassId}::text, ${sections.code}))`,
       sectionCode: sections.code,
+      legacyClassId:sections.legacyClassId,
       cohortName: cohorts.name,
       cohortCode: cohorts.code,
       academicPeriodId:
