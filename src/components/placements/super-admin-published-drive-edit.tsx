@@ -5,6 +5,7 @@ import {Input} from "@/components/ui/input";
 import {Textarea} from "@/components/ui/textarea";
 import {Button} from "@/components/ui/button";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {useToast} from "@/components/ui/toast";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {superAdminPublishedDriveEditFeedback} from "@/modules/placements/super-admin-published-drive-edit-feedback";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
@@ -24,6 +25,8 @@ function nullableNumber(value:FormDataEntryValue|null){
 }
 export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
  const router=useRouter(),[open,setOpen]=useState(false),[error,setError]=useState("");
+ const {showToast}=useToast();
+ const [staleConflict,setStaleConflict]=useState(false);
  const [dirty,setDirty]=useState(false);
  const [confirmLeave,setConfirmLeave]=useState(false);
  const [leaveHref,setLeaveHref]=useState<string|null>(null);
@@ -82,10 +85,17 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
       maximumAnnualCtcInr:nullableNumber(data.get("maximumAnnualCtcInr")),
      }),
     });
-    setDirty(false);setOpen(false);router.refresh();
+    setDirty(false);setOpen(false);
+    showToast({tone:"success",title:"Job updated"});
+    router.refresh();
    }catch(e){
     const fallback=e instanceof Error?e.message:"Unable to edit this drive. Refresh and retry.";
-    setError(superAdminPublishedDriveEditFeedback(e instanceof FriendlyFetchError?e.code:null,fallback));
+    if(e instanceof FriendlyFetchError && (e.code==="PLACEMENT_JOB_STALE" || e.status===409)){
+     setStaleConflict(true);
+     setError("");
+    }else{
+     setError(superAdminPublishedDriveEditFeedback(e instanceof FriendlyFetchError?e.code:null,fallback));
+    }
    }
   });
  }
@@ -126,6 +136,15 @@ export function SuperAdminPublishedDriveEdit({job}:{job:Job}){
      const destination=leaveHref;
      setConfirmLeave(false);setLeaveHref(null);setDirty(false);setOpen(false);
      if(destination)router.push(destination);
+    }}/>
+   <ConfirmDialog open={staleConflict} onOpenChange={setStaleConflict}
+    title="This drive changed since you loaded it"
+    description="Reload the current drive details before saving, or dismiss to review your unsaved changes."
+    confirmLabel="Reload" cancelLabel="Dismiss" confirmVariant="primary"
+    onConfirm={()=>{
+     setStaleConflict(false);setConfirmLeave(false);setLeaveHref(null);
+     setDirty(false);setOpen(false);setError("");
+     router.refresh();
     }}/>
  </section>;
 }
