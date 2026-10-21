@@ -65,5 +65,5 @@ Proof: ONE entry per surface in docs/audit/ux/verify-lane-10.md: surface | regre
 - [x] `src/components/courses/faculty-course-tab-navigation.tsx`
 - [x] `src/components/placements/super-admin-drive-tabs.tsx`
 - [x] `src/components/public/error-recovery-actions.tsx`
-- [ ] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
-- [ ] `src/components/ui/file-dropzone.tsx`
+- [x] `src/components/tpo/tpo-draft-drive-step-one-form.tsx`
+- [x] `src/components/ui/file-dropzone.tsx`
