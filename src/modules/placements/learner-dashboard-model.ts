@@ -50,6 +50,12 @@ export function learnerPlacementDashboard(
     applications: readonly PlacementDashboardApplication[];
     rounds: readonly PlacementDashboardRound[];
     offers: readonly PlacementDashboardOffer[];
+    /** Registration is authoritative at caller boundary, not inferred from jobs. */
+    registrationRequired?:boolean;
+    placed?:boolean;
+    optedOut?:boolean;
+    /** Pending move requests cannot produce a second Confirm todo. */
+    pendingRescheduleRoundIds?:readonly string[];
   },
   now: Date = new Date(),
 ) {
@@ -97,8 +103,10 @@ export function learnerPlacementDashboard(
   const weekEvents=weekDays.flatMap(day=>day.events);
   // The timeline is already in effective-schedule order; grouping by round
   // kind here hid earlier interviews behind later assessments.
+  const pendingRescheduleIds=new Set(input.pendingRescheduleRoundIds??[]);
   const attentionEvents=weekEvents.filter(event=>
-    event.kind==="ASSESSMENT"||event.kind==="INTERVIEW");
+    (event.kind==="ASSESSMENT"||event.kind==="INTERVIEW") &&
+    !pendingRescheduleIds.has(event.roundId));
   // Do not hide an earlier interview behind a later assessment.
   const priority = events[0] ?? null;
 
@@ -123,6 +131,14 @@ export function learnerPlacementDashboard(
         href:"/learn/my-placements/offers?status=pending",
         when:null,
       }
+    : input.registrationRequired
+    ? {
+        label:"Registration needed",
+        title:"Register for placements",
+        detail:"Complete the placement registration step before applying to new drives.",
+        href:"/learn/my-placements/placement",
+        when:null,
+      }
     : priority
     ? {
         label: priority.kind === "ASSESSMENT"
@@ -134,14 +150,36 @@ export function learnerPlacementDashboard(
         href: priority.href,
         when: priority.when,
       }
+    : input.placed
+    ? {
+        label:"Placed",
+        title:"Your placement is recorded",
+        detail:"Review your official offer and joining details.",
+        href:"/learn/my-placements/offers",
+        when:null,
+      }
+    : openJobIds.size>0
+    ? {
+        label: appliedIds.size===0?"Start here":"Stay ready",
+        title: appliedIds.size===0?"Explore placement opportunities":"Browse more opportunities",
+        detail:"Check published roles and their eligibility before applying.",
+        href:"/learn/my-placements/jobs",
+        when:null,
+      }
+    : input.optedOut
+    ? {
+        label:"Participation paused",
+        title:"You opted out of placements",
+        detail:"Review your college's placement participation choices.",
+        href:"/learn/my-placements/placement",
+        when:null,
+      }
     : {
-        label: appliedIds.size === 0 ? "Start here" : "Stay ready",
-        title: appliedIds.size === 0
-          ? "Explore placement opportunities"
-          : "Browse more opportunities",
-        detail: "Check published roles and their eligibility before applying.",
-        href: "/learn/my-placements/jobs",
-        when: null,
+        label:"All caught up",
+        title:"You're up to date",
+        detail:"New opportunities and scheduled rounds will appear here.",
+        href:"/learn/my-placements",
+        when:null,
       };
 
   return {
