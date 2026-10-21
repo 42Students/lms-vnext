@@ -101,7 +101,7 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
               deadlineReached={item.resultsReleaseReady}/>:null}
         </div>
         <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}#lesson-authoring`}
-          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline print:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline print:hidden focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           Open offering builder / submissions →
         </Link>
       </article>)}
@@ -113,6 +113,6 @@ export function AdminAssessmentDirectory({ data, showHeader = true }: { data: Da
         label={title + " pages"} showBoundaryLinks={false} />
     </div>
     <p className="text-xs text-muted-foreground">No answers, submission body, learner contacts or stored attachments are fetched by this directory.</p>
-    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 print:hidden">← Courses</Link>
+    <Link href="/admin/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden">← Courses</Link>
   </div>;
 }

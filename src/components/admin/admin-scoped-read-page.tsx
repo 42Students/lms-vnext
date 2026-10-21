@@ -123,7 +123,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    </label>
    <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
    {applicationFilters?<details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.source!=="ALL"||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL")}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     {(["jobId","departmentId","programId","cohortId"] as const).map(key=>{
       const rows=key==="jobId"?applicationFilters.jobs:key==="departmentId"?applicationFilters.departments:key==="programId"?applicationFilters.programs:applicationFilters.batches;
@@ -152,7 +152,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     </div>
    </details>:null}
    {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
+    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
      <Select name="departmentId" defaultValue={data.query.departmentId??""} className="w-full">
@@ -189,7 +189,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
    </label>}
 
    {compactReadLayout?<details className="order-4 min-w-0 sm:col-span-2 lg:col-span-3">
-     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Rows per page</summary>
+     <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Rows per page</summary>
      <div className="max-w-[200px] pb-1">
        <Select name="pageSize" aria-label="Rows per page" defaultValue={data.query.pageSize} className="min-h-11 w-full md:min-h-9">
          {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
