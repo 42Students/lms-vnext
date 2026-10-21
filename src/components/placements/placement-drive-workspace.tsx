@@ -334,22 +334,10 @@ export async function PlacementDriveWorkspace({
                 Applicants
               </Link>
             ) : null}
-            {isTpo && job.status === "PUBLISHED" ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/close-preview"}
+            {isTpo && job.status === "DRAFT" ? (
+              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
-                Close drive
-              </Link>
-            ) : null}
-            {isTpo && (job.status === "DRAFT" || job.status === "PUBLISHED") ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
-                Cancel drive
-              </Link>
-            ) : null}
-            {isTpo && job.status === "PUBLISHED" && job.applicationDeadline ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/extend-deadline"}
-                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
-                Extend deadline
+                Edit draft
               </Link>
             ) : null}
             {isTpo ? <div role="group" aria-label="More drive actions">
@@ -367,10 +355,22 @@ export async function PlacementDriveWorkspace({
                   ? <TpoDriveCloneAction jobId={jobId} label="Run it again" /> : null}
               </div>
             </div>:null}
-            {isTpo && job.status === "DRAFT" ? (
-              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/edit"}
+            {isTpo && job.status === "PUBLISHED" ? (
+              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/close-preview"}
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
-                Edit draft
+                Close drive
+              </Link>
+            ) : null}
+            {isTpo && (job.status === "DRAFT" || job.status === "PUBLISHED") ? (
+              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/cancel-preview"}
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
+                Cancel drive
+              </Link>
+            ) : null}
+            {isTpo && job.status === "PUBLISHED" && job.applicationDeadline ? (
+              <Link href={"/tpo/placements/jobs/" + encodeURIComponent(jobId) + "/extend-deadline"}
+                className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
+                Extend deadline
               </Link>
             ) : null}
             {hasMembershipRole(context, "TPO") ? (
