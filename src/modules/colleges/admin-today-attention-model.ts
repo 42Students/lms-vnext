@@ -19,6 +19,18 @@ export type SuperAdminTodayMetrics={
  classesScheduled:number;classesEnded:number;attendanceTaken:number;
  attendanceNotTaken:number;coursesWithoutTeacher:number;quizzesClosingThisWeek:number;
  quizDeadlineLabels?:readonly string[];
+ /** Independent legacy Today previews. Unknown totals stay null; never imply an all-clear. */
+ attendanceThreshold?:number;
+ attendanceAtRisk?:number|null;
+ attendanceRiskRows?:readonly {membershipId:string;displayName:string|null;rollNumber:string|null;
+  className:string;held:number;absent:number;percent:number}[];
+ attendancePendingRows?:readonly {title:string;section:string;faculty:string;when:string}[];
+ gradingBacklog?:number|null;
+ gradingRows?:readonly {course:string;code:string;pending:number;oldest:string|null}[];
+ unstaffedRows?:readonly {course:string;section:string;semester:string}[];
+ setupGaps?:number|null;
+ setupGapRows?:readonly {label:string;count:number;href:string}[];
+ dueQuizRows?:readonly {title:string;course:string;section:string;when:string|null}[];
 };
 export const SUPER_ADMIN_TODAY_LABELS=[
  "Attendance not taken","Under N% attendance","Waiting to be graded",
