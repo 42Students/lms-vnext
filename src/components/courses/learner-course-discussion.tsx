@@ -431,7 +431,7 @@ export function LearnerCourseDiscussion({
           {moderate && canPost ? (
             <Button type="button" disabled={pinningId!==null}
               onClick={()=>void togglePin(pinned.id)}
-              variant="secondary" className="mt-3 min-h-11 md:min-h-9">
+              variant="secondary" className="mt-3 min-h-11 w-full sm:w-auto md:min-h-9">
               {pinningId===pinned.id?"Saving…":"Unpin pinned message"}
             </Button>
           ) : null}
@@ -444,7 +444,9 @@ export function LearnerCourseDiscussion({
         description="This cannot be undone."
         confirmLabel="Delete" confirmVariant="danger"
         pending={deletingId!==null}
-        onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}/>
+        onConfirm={()=>{if(deleteTarget)void remove(deleteTarget);}}>
+        {moderationError?<Alert tone="error">{moderationError}</Alert>:null}
+      </ConfirmDialog>
       <ConfirmDialog open={leaveHref!==null}
         onOpenChange={open=>{if(!open)setLeaveHref(null);}}
         title="Discard your unsent discussion message?"
@@ -586,7 +588,7 @@ export function LearnerCourseDiscussion({
                         {canPost && (moderate || row.item.isMine) ? <Button
                           type="button" variant="ghost"
                           disabled={deletingId===row.item.id}
-                          onClick={()=>setDeleteTarget(row.item.id)}
+                          onClick={()=>{setModerationError(null);setDeleteTarget(row.item.id);}}
                           className="min-h-11 !text-[var(--lms-error)] hover:underline md:min-h-9">
                           {deletingId===row.item.id?"Deleting…":"Delete"}
                         </Button> : null}

@@ -33,9 +33,9 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
       (issue as Record<string,unknown>).status!==status||
       (issue as Record<string,unknown>).publicId!==publicId)
      throw Error("Tracker update could not be confirmed.");
-   setFeedback("Status saved; updating the board.");router.refresh();
+   setFeedback("Status saved; updating the board.");setReview(false);router.refresh();
   }catch{setFeedback("Connection failure. No status change was confirmed.");}
-  finally{inFlight.current=false;setPending(false);setReview(false);}
+  finally{inFlight.current=false;setPending(false);}
  }
  return <div className="grid min-w-0 gap-2 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
    <label className="grid min-w-0 gap-1 text-xs font-semibold text-body">Triage status
@@ -51,6 +51,8 @@ export function AuditFindingStatusAction({publicId,current,version}:{publicId:st
     confirmDisabled={!canChangeAuditFindingStatus(current,status,pending)}
     title="Confirm tracker finding status"
     description={"Change "+publicId+" from "+current+" to "+status+"? The server checks the current version and records the transition."}
-    onConfirm={()=>{void submit();}}/>
+    onConfirm={()=>{void submit();}}>
+    {feedback?<p role="status" className="text-sm text-body">{feedback}</p>:null}
+   </ConfirmDialog>
   </div>;
 }
