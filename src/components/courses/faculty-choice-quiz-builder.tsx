@@ -18,7 +18,9 @@ import {authoringLocalDateTime,authoringDueInstant}
  from "@/modules/courses/faculty-authoring-datetime-model";
 import {facultyAuthoringQuestionsFromResponse,facultyQuizDraftIssue,facultyChangeQuizChoiceType,facultyQuizDraftEditable,facultyQuizMetadataEditable,facultyToggleQuizAnswer,facultyRemoveQuizOption,facultyQuizConfirmationAfterEdit,facultyRemoveQuizQuestion,facultyAppendQuizQuestion,facultyQuizDraftLoadAllowsAction,facultyQuizMetadataIssue,facultyQuizCanRetryDetails,facultyQuizSavedFromCommand,facultyQuizReconcileRows,facultyMoveQuizQuestion,facultyMoveQuizOption,facultyDuplicateQuizQuestion,facultyDuplicateQuizOption,facultyQuizSwitchNeedsConfirmation,facultyBeginQuizWrite,facultyQuizDraftReview,facultyQuizCanSaveChanges,facultyQuizMayResetDraft,facultyQuizCanCopyToDraft,facultyQuizCopyTitle,facultyQuizNormalizeQuestions,facultyQuizMatchesSearch,facultyQuizQuestionIssue,facultyQuizAnswerSummary,facultyInsertQuizQuestionAfter,facultyMoveQuizQuestionToEdge,facultyInsertQuizOptionAfter,facultyQuizOptionRemovalNeedsConfirmation,facultyQuizQuestionRemovalPrompt,facultyQuizApplyPastedOptions,facultyQuizLoadedBankIssue,facultyQuizRetryNeedsConfirmation,facultyQuizTitleConflict,facultyQuizReviewIssues,facultyQuizShouldDisplayQuestion,facultyQuizReadErrorMessage,facultyQuizOptionRemovalPrompt,facultyQuizReadyToPublish}
  from "@/modules/courses/faculty-quiz-builder-model";
-type Option={text:string;correct:boolean;sequence:number};
+type Option={id?:string;clientKey?:string;text:string;correct:boolean;sequence:number};
+let nextDraftOptionKey=0;
+const draftOptionKey=()=>`draft-option-${++nextDraftOptionKey}`;
 type Question={type:"SINGLE_CHOICE"|"MULTIPLE_CHOICE";prompt:string;points:number;sequence:number;options:Option[]};
 type Quiz={id:string;lessonId:string;title:string;description:string|null;dueAt:string|null;
  maxAttempts:number;sequence:number;status:string;updatedAt:string;
@@ -167,7 +169,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
        :{quizId:chosen?.id,expectedUpdatedAt:chosen?.updatedAt}),
      title,description:description||null,dueAt:authoringDueInstant(dueAt),
      maxAttempts,shuffleQuestions,shuffleOptions,
-     ...(action==="CREATE" || chosen?.status==="DRAFT" ? {questions:facultyQuizNormalizeQuestions(questions)} : {}),
+     ...(action==="CREATE" || chosen?.status==="DRAFT" ? {questions:facultyQuizNormalizeQuestions(questions).map(question=>({...question,options:question.options.map(({text,correct,sequence})=>({text,correct,sequence}))}))} : {}),
    };
    const endpoint="/api/courses/faculty/quizzes/"+encodeURIComponent(deliveryId)+"/command";
    const result=await apiFetch<unknown>(endpoint,{
@@ -270,7 +272,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
      className="min-w-0 space-y-2 border-b border-border py-3">
      <legend className="text-sm font-semibold">Question {index+1} · {question.points} point(s)</legend>
      <p className="whitespace-pre-wrap break-words text-sm text-body">{question.prompt||"Question prompt not entered"}</p>
-     {question.options.map((option,i)=><label key={i}
+     {question.options.map((option,i)=><label key={option.id??option.clientKey??i}
       className="flex items-start gap-2 text-sm text-body">
       {question.type === "SINGLE_CHOICE" ? <Radio 
        name={"preview-question-"+index} disabled/> : <NativeCheckbox 
@@ -311,7 +313,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
       className="min-h-11 md:min-h-9 w-24 rounded-[var(--lms-control-radius)] border border-border p-2 text-base md:text-sm"/></label>
    </div>
    <p className="text-xs text-body" role="status">{facultyQuizAnswerSummary(q)}</p>
-   {q.options.map((o,j)=><div key={j} className="grid min-w-0 grid-cols-2 items-end gap-2 border-b border-border pb-3 sm:flex sm:flex-wrap sm:items-center">
+   {q.options.map((o,j)=><div key={o.id??o.clientKey??j} className="grid min-w-0 grid-cols-2 items-end gap-2 border-b border-border pb-3 sm:flex sm:flex-wrap sm:items-center">
     <label className="col-span-2 min-w-0 text-[13px] font-semibold leading-4 sm:flex-[1_1_12rem] text-[var(--lms-neutral-400)]">Option {j+1}
      <Input value={o.text} maxLength={2000}
       onChange={e=>updateQuestion(i,old=>({...old,options:old.options.map((x,k)=>k===j?{...x,text:e.target.value}:x)}))}
@@ -323,10 +325,10 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     <Button variant="secondary" type="button" disabled={j===q.options.length-1} onClick={()=>updateQuestion(i,old=>({...old,options:facultyMoveQuizOption(old.options,j,j+1)}))}
      aria-label={"Move answer "+(j+1)+" down in question "+(i+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">↓</Button>
     <Button variant="secondary" type="button" disabled={q.options.length>=20}
-     onClick={()=>updateQuestion(i,old=>({...old,options:facultyInsertQuizOptionAfter(old.options,j,{text:"",correct:false,sequence:j+1})}))}
+     onClick={()=>updateQuestion(i,old=>({...old,options:facultyInsertQuizOptionAfter(old.options,j,{clientKey:draftOptionKey(),text:"",correct:false,sequence:j+1})}))}
      aria-label={"Insert answer after "+(j+1)+" in question "+(i+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">Insert below</Button>
     <Button variant="secondary" type="button" disabled={q.options.length>=20}
-     onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j)}))}
+     onClick={()=>updateQuestion(i,old=>({...old,options:facultyDuplicateQuizOption(old.options,j).map((o,k)=>k===j+1?{...o,id:undefined,clientKey:draftOptionKey()}:o)}))}
      aria-label={"Duplicate answer "+(j+1)+" in question "+(i+1)} className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">Duplicate</Button>
     <Button variant="secondary" type="button" disabled={q.options.length<=2}
      onClick={()=>{if(facultyQuizOptionRemovalNeedsConfirmation(q.options,j)){
@@ -340,7 +342,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     onClick={()=>{setPasteQuestionIndex(i);setPastedChoices("");setError(null);}}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm">Paste choices</Button>
    <Button variant="secondary" type="button" disabled={q.options.length>=20}
-    onClick={()=>updateQuestion(i,old=>({...old,options:[...old.options,{text:"",correct:false,sequence:old.options.length}]}))}
+    onClick={()=>updateQuestion(i,old=>({...old,options:[...old.options,{clientKey:draftOptionKey(),text:"",correct:false,sequence:old.options.length}]}))}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm">Add option</Button>
    <div className="flex flex-wrap gap-2">
     <Button variant="secondary" type="button" disabled={i===0} onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyMoveQuizQuestionToEdge(old,i,"FIRST"));}}
@@ -356,7 +358,7 @@ export function FacultyChoiceQuizBuilder({deliveryId,lessons,quizzes}:{
     onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyInsertQuizQuestionAfter(old,i,{...fresh(),sequence:i+1}));}}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm" aria-label={"Insert question after "+(i+1)}>Insert below</Button>
    <Button variant="secondary" type="button" disabled={questions.length>=100}
-    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i));}}
+    onClick={()=>{setConfirmed(false);setDirtyDraft(true);setQuestions(old=>facultyDuplicateQuizQuestion(old,i).map((question,k)=>k===i+1?{...question,options:question.options.map(option=>({...option,id:undefined,clientKey:draftOptionKey()}))}:question));}}
     className="min-h-11 md:min-h-9 rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm" aria-label={"Duplicate question "+(i+1)}>Duplicate question</Button>
    <Button variant="secondary" type="button" disabled={questions.length<=1}
     onClick={()=>askConfirm(facultyQuizQuestionRemovalPrompt(i,q.prompt),()=>{
