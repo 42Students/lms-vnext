@@ -15,7 +15,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-season-write-model.ts.md` (edit src/modules/placements/tpo-season-write-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_NEW_docs_audit_gap2_lane-16_u001-tracker-audit-findings.md.md` (new; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-drive-publish-entry-model.ts.md` (edit src/modules/placements/tpo-drive-publish-entry-model.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_src_components_activity_activity-center.tsx.md` (edit src/components/activity/activity-center.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_src_components_activity_activity-center.tsx.md` (edit src/components/activity/activity-center.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-6_l13-u022-tpo-request-controller.md.md` (new; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_src_modules_activity_notification-service.ts.md` (edit src/modules/activity/notification-service.ts; 4 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_tpo_calendar_follow-ups_followupId_route.ts.md` (edit src/app/api/placements/tpo/calendar/follow-ups/[followupId]/route.ts; 1 findings; best P2)

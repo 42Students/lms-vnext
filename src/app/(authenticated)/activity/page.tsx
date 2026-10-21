@@ -4,6 +4,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ActivityCenter,
   type ActivityCenterGroup,
+  RAW_AUDIT_FORENSIC_HEADERS,
+  RAW_AUDIT_MISSING_TRANSPORT,
 } from "@/components/activity/activity-center";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
@@ -349,7 +351,7 @@ export default async function ActivityPage({
           <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"grouped"}).toString()}
             aria-current={!rawMode?"page":undefined} className="min-h-9 font-semibold text-link underline">Activity feed</Link>
           <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"raw"}).toString()}
-            aria-current={rawMode?"page":undefined} className="min-h-9 font-semibold text-link underline">Audit Logs (raw)</Link>
+            aria-current={rawMode?"page":undefined} className="min-h-9 font-semibold text-link underline">Raw Audit Logs</Link>
         </div>
       </nav>:null}
       <details className="min-w-0 border-b border-border pb-3" open={explicitFilter||Boolean(one(params.collegeId))||rawMode}>
@@ -522,15 +524,15 @@ export default async function ActivityPage({
 
       {rawMode ? (
         <section aria-labelledby="raw-audit-log" className="min-w-0 space-y-3">
-          <h2 id="raw-audit-log" className="text-lg font-semibold text-[var(--lms-heading)]">Audit Logs</h2>
+          <h2 id="raw-audit-log" className="text-lg font-semibold text-[var(--lms-heading)]">Raw Audit Logs</h2>
           <p className="text-sm text-muted-foreground">
             Raw events in newest-first order. IP addresses are not retained in vNext;
             the audit record uses privacy-safe provenance instead.
           </p>
           <div className="w-full min-w-0 overflow-x-auto rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)]">
-            <table className="w-full min-w-[740px] border-collapse text-left text-sm">
+            <table className="w-full min-w-[1120px] border-collapse text-left text-sm">
               <thead className="bg-[var(--lms-neutral-100)] text-[var(--lms-heading)]">
-                <tr>{["Time","Who","What","Item","Action key","IP"].map(label=>(
+                <tr>{RAW_AUDIT_FORENSIC_HEADERS.map(label=>(
                   <th key={label} scope="col" className="px-3 py-3 font-semibold">{label}</th>
                 ))}</tr>
               </thead>
@@ -540,14 +542,19 @@ export default async function ActivityPage({
                     <td className="whitespace-nowrap px-3 py-3">{new Intl.DateTimeFormat("en-IN",{
                       timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
                     }).format(event.occurredAt)}</td>
-                    <td className="px-3 py-3">{actor?.displayName??"System"}</td>
-                    <td className="max-w-[320px] px-3 py-3">{event.summary}</td>
-                    <td className="max-w-[220px] break-words px-3 py-3">{event.subjectLabel??event.subjectId}</td>
-                    <td className="break-all px-3 py-3">{event.eventType}</td>
-                    <td className="px-3 py-3 text-muted-foreground">—</td>
+                    <td className="max-w-[240px] break-all px-3 py-3">{event.eventType}</td>
+                    <td className="max-w-[220px] break-words px-3 py-3">
+                      <span className="block text-xs text-muted-foreground">{event.subjectType}</span>
+                      <span>{event.subjectLabel??event.subjectId}</span>
+                    </td>
+                    <td className="break-all px-3 py-3">{event.organizationId??"—"}</td>
+                    <td className="break-all px-3 py-3">{event.collegeId??"—"}</td>
+                    <td className="max-w-[180px] break-words px-3 py-3">{actor?.displayName??actor?.email??"System"}</td>
+                    <td className="px-3 py-3 text-muted-foreground">{RAW_AUDIT_MISSING_TRANSPORT}</td>
+                    <td className="px-3 py-3 text-muted-foreground">{RAW_AUDIT_MISSING_TRANSPORT}</td>
                   </tr>
                 ))}
-                {result.items.length===0?<tr><td colSpan={6} className="px-3 py-6 text-center text-muted-foreground">No audit logs match these filters.</td></tr>:null}
+                {result.items.length===0?<tr><td colSpan={8} className="px-3 py-6 text-center text-muted-foreground">No audit logs match these filters.</td></tr>:null}
               </tbody>
             </table>
           </div>
