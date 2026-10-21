@@ -4,11 +4,16 @@ type Row={project:{id:string;title:string;status:string;updatedAt:Date}};
 
 /** Legacy lists numbered teams naturally, so Team 2 sorts before Team 10. */
 export function compareNumberedTeamProjects(left:string,right:string):number {
- const l=/\bteam\s+(\d+)\b/i.exec(left);
- const r=/\bteam\s+(\d+)\b/i.exec(right);
- if(!l||!r)return 0;
- const n=Number(l[1])-Number(r[1]);
- return n||left.localeCompare(right,undefined,{numeric:true,sensitivity:"base"});
+ // Two numbered teams sort naturally only within the same title series.
+ // "Project A Team 10" must not reorder "Project B Team 2".
+ const series=(title:string)=>{
+  const match=/^(.*?)(?:\s*[-—:]?\s*)\bteam\s+(\d+)\b(.*)$/i.exec(title.trim());
+  return match ? {key:match[1].trim().toLowerCase()+"|"+match[3].trim().toLowerCase(),
+   number:Number(match[2])} : null;
+ };
+ const l=series(left),r=series(right);
+ return l&&r&&l.key===r.key&&Number.isFinite(l.number)&&Number.isFinite(r.number)
+  ?l.number-r.number:0;
 }
 
 /** Sort already membership-scoped project rows without changing the visibility set. */
@@ -17,6 +22,9 @@ export function sortLearnerProjectRows<T extends Row>(
   progress:ReadonlyMap<string,{percentage:number|null}>,
 ):T[] {
  const mode=sortSchema.parse(modeInput);
+ // Preserve the scoped backend order for unrelated projects, even when
+ // timestamps tie or arrive in nonchronological order.
+ const originalIndex=new Map(rows.map((row,index)=>[row.project.id,index]));
  return [...rows].sort((a,b)=>{
   const archived=Number(a.project.status==="ARCHIVED")-Number(b.project.status==="ARCHIVED");
   if(archived)return archived;
@@ -30,7 +38,6 @@ export function sortLearnerProjectRows<T extends Row>(
   }
   const numbered=compareNumberedTeamProjects(a.project.title,b.project.title);
   if(numbered)return numbered;
-  return b.project.updatedAt.getTime()-a.project.updatedAt.getTime()||
-   a.project.id.localeCompare(b.project.id);
+  return (originalIndex.get(a.project.id)??0)-(originalIndex.get(b.project.id)??0);
  });
 }
