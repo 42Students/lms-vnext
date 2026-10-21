@@ -1,5 +1,5 @@
 import {sql} from "drizzle-orm";
-import {check,index,pgTable,text,timestamp,uuid,varchar} from "drizzle-orm/pg-core";
+import {bigint,check,index,pgTable,text,timestamp,uniqueIndex,uuid,varchar,integer} from "drizzle-orm/pg-core";
 import {placementJobs} from "./placements";
 import {users} from "./users";
 
@@ -12,16 +12,31 @@ export const placementDriveChangeRequests=pgTable("placement_drive_change_reques
  targetParty:varchar("target_party",{length:12}).notNull(),
  mode:varchar("mode",{length:12}).notNull(),
  field:varchar("field",{length:32}).notNull(),
+ /** Before/after and source creator snapshots preserve the historic discussion. */
+ currentValue:text("current_value"),
  proposedValue:text("proposed_value").notNull(),
+ answerValue:text("answer_value"),
+ replyText:text("reply_text"),
+ creatorNameSnapshot:text("creator_name_snapshot"),
+ creatorTypeSnapshot:varchar("creator_type_snapshot",{length:20}),
+ legacyRequestId:bigint("legacy_request_id",{mode:"bigint"}),
+ legacyCollegeId:integer("legacy_college_id"),
+ legacyField:varchar("legacy_field",{length:32}),
+ legacyKind:varchar("legacy_kind",{length:16}),
+ legacyDirection:varchar("legacy_direction",{length:20}),
  reason:text("reason").notNull(),
  status:varchar("status",{length:16}).notNull().default("OPEN"),
  decisionNote:text("decision_note"),
  decidedByUserId:uuid("decided_by_user_id").references(()=>users.id),
  decidedAt:timestamp("decided_at",{withTimezone:true}),
+ resolvedAt:timestamp("resolved_at",{withTimezone:true}),
  createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
  updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
 },t=>[
  index("placement_drive_changes_job_status_idx").on(t.jobId,t.status,t.createdAt),
+ index("placement_drive_changes_target_open_idx").on(t.jobId,t.targetParty,t.status,t.field),
+ uniqueIndex("placement_drive_changes_one_open_field_uq")
+   .on(t.jobId,t.field,t.proposerParty,t.targetParty).where(sql`${t.status} = 'OPEN' and ${t.field} <> 'OTHER'`),
  check("placement_drive_changes_parties_ck",sql`${t.proposerParty} in ('TPO','COMPANY') and ${t.targetParty} in ('TPO','COMPANY') and ${t.proposerParty} <> ${t.targetParty}`),
  check("placement_drive_changes_mode_ck",sql`${t.mode} in ('SUGGEST','ASK')`),
  check("placement_drive_changes_field_ck",sql`${t.field} in ('DEADLINE','PAY','ELIGIBILITY','LOCATION','ROUNDS','OTHER')`),
