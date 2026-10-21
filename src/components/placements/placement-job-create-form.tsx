@@ -10,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,6 +66,7 @@ const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 const textareaClass = "min-h-28 w-full min-w-0";
 type ImportantDateRow = {id:number;label:string;date:string};
 type CustomRuleRow = {id:number;label:string;value:string};
+type ExtraPackageRow = {id:number;name:string;ctcLpa:string};
 
 function splitList(value: string) {
   return value
@@ -147,8 +149,33 @@ export function PlacementJobCreateForm({
   const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:""}]);
   const [customRuleRows,setCustomRuleRows]=useState<CustomRuleRow[]>([{id:1,label:"",value:""}]);
   const [assessmentUrlLength,setAssessmentUrlLength]=useState(0);
+  const [wantedSkills,setWantedSkills]=useState<string[]>([]);
+  const [skillDraft,setSkillDraft]=useState("");
+  function addSkills(text:string) {
+    const items=text.split(/[,\n]+/).map(value=>value.trim()).filter(Boolean);
+    setWantedSkills(current=>{
+      const keys=new Set(current.map(value=>value.toLocaleLowerCase("en")));
+      const next=[...current];
+      for(const item of items) {
+        if(item.length>50||keys.has(item.toLocaleLowerCase("en"))||next.length>=30)continue;
+        next.push(item);
+        keys.add(item.toLocaleLowerCase("en"));
+      }
+      return next;
+    });
+    setSkillDraft("");
+    markDirty();
+  }
   const [saveError,setSaveError]=useState<string|null>(null);
+  const [loadingCopy,setLoadingCopy]=useState(false);
+  const [copyJobId,setCopyJobId]=useState("");
+  const [cancelConfirmOpen,setCancelConfirmOpen]=useState(false);
+  const clonableDrives=companies.flatMap(company=>
+    (company.memory?.existingRoles??[]).map(role=>({
+      ...role,companyName:company.name,companyRelationshipId:company.relationshipId
+    })));
   const [roundRows,setRoundRows]=useState<Array<{id:number;kind:string;name:string}>>([]);
+  const [extraPackages,setExtraPackages]=useState<ExtraPackageRow[]>([]);
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
   const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   // TPO-drives-25: recent-role highlights must not cap duplicate-drive checks.
@@ -195,6 +222,76 @@ export function PlacementJobCreateForm({
   const effectiveCohortIds=selectedCohortIds.filter(id=>visibleCohorts.some(c=>c.id===id));
   const effectiveSectionIds=selectedSectionIds.filter(id=>visibleSections.some(c=>c.id===id));
 
+  async function loadCloneSource(sourceJobId:string){
+    if(!sourceJobId||partialJobId||loadingCopy)return;
+    setLoadingCopy(true);
+    setSaveError(null);
+    try{
+      const response=await apiFetch<{job:{
+        id:string;collegeId:string;companyRelationshipId:string;title:string;
+        description:string;employmentType:string;jobTypeLabel:string|null;
+        workMode:string;locations:string[];openings:number|null;
+        minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
+        fixedCtcLpa:string|null;variableCtcLpa:string|null;
+        stipendPerMonthInr:number|null;isDream:boolean;
+        legacyPostingDetails?:{responsibilities?:string;skillsWanted?:string[];
+          customEligibilityRules?:Array<{label:string;value:string}>};
+      }}>(`/api/placements/jobs/${encodeURIComponent(sourceJobId)}`,{
+        credentials:"same-origin",timeoutMs:30000
+      });
+      const source=response.job;
+      if(!source||source.id!==sourceJobId||source.collegeId!==collegeId||
+        !companies.some(company=>company.relationshipId===source.companyRelationshipId)){
+        throw new Error("The selected drive is not available in this college.");
+      }
+      const form=formRef.current;
+      if(!form)throw new Error("The form is not ready to copy a drive.");
+      const copiedTitle=(source.title.replace(/\s*\(Copy\)\s*$/i,"")+" (Copy)").slice(0,100);
+      setEnteredDriveTitle(copiedTitle);
+      setCompanyMode("EXISTING");
+      setCompanyRelationshipId(source.companyRelationshipId);
+      const fields:Record<string,string>={
+        description:source.description??"",
+        jobTypeLabel:source.jobTypeLabel??(source.employmentType==="INTERNSHIP"?"Internship":"Full-time"),
+        workMode:source.workMode??"ONSITE",
+        locations:Array.isArray(source.locations)?source.locations.join(", "):"",
+        openings:source.openings===null?"":String(source.openings),
+        minimumLpa:source.minimumAnnualCtcInr===null?"":String(source.minimumAnnualCtcInr/100000),
+        maximumLpa:source.maximumAnnualCtcInr===null?"":String(source.maximumAnnualCtcInr/100000),
+        fixedLpa:source.fixedCtcLpa??"",
+        variableLpa:source.variableCtcLpa??"",
+        stipendPerMonthInr:source.stipendPerMonthInr===null?"":String(source.stipendPerMonthInr),
+        responsibilities:source.legacyPostingDetails?.responsibilities??"",
+        assessmentUrl:"",assessmentDeadline:"",applicationDeadline:"",
+        externalApplicationUrl:"",importantDates:"",customEligibilityRules:""
+      };
+      for(const [key,value] of Object.entries(fields)){
+        const field=form.elements.namedItem(key);
+        if(field instanceof HTMLInputElement||field instanceof HTMLTextAreaElement||
+          field instanceof HTMLSelectElement)field.value=value;
+      }
+      const dream=form.elements.namedItem("isDream");
+      if(dream instanceof HTMLInputElement)dream.checked=Boolean(source.isDream);
+      const copiedRules=source.legacyPostingDetails?.customEligibilityRules??[];
+      setCustomRuleRows(copiedRules.length?copiedRules.slice(0,20).map(row=>({
+        id:nextRowId.current++,label:row.label,value:row.value
+      })):[{id:nextRowId.current++,label:"",value:""}]);
+      setWantedSkills((source.legacyPostingDetails?.skillsWanted??[]).slice(0,30));
+      setImportantDateRows([{id:nextRowId.current++,label:"",date:""}]);
+      setRoundRows([]);
+      setExtraPackages([]);
+      setRoundPreset("NONE");
+      setAssessmentUrlLength(0);
+      deadlineTimeChosen.current=false;
+      markDirty();
+      saveBrowserDraft(form);
+      showToast({tone:"success",title:"Past drive copied",description:"Review this new draft. Application and assessment deadlines, external links and rounds were cleared."});
+    }catch(error){
+      setSaveError(tpoDriveFormErrorMessage(error));
+    }finally{
+      setLoadingCopy(false);
+    }
+  }
   // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
   // No passwords, tokens, email invitations or learner records are present here.
   // TPO-drives-43: lost POST replies have unknown commit outcome; never blind-retry.
@@ -225,11 +322,11 @@ export function PlacementJobCreateForm({
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
         companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,
-        eligibilityPreset,importantDateRows,customRuleRows,roundRows,partialDraft:createdJobRef.current}));
+        eligibilityPreset,importantDateRows,customRuleRows,roundRows,extraPackages,wantedSkills,partialDraft:createdJobRef.current}));
       setLastLocalSaveAt(Date.now());
     }catch{/* Storage may be unavailable in private mode; form still works. */}
   },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,
-    selectedSectionIds,eligibilityPreset,importantDateRows,customRuleRows,roundRows]);
+    selectedSectionIds,eligibilityPreset,importantDateRows,customRuleRows,roundRows,extraPackages,wantedSkills]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
     const task=window.setTimeout(()=>{
@@ -241,7 +338,7 @@ export function PlacementJobCreateForm({
           selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
           departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset;
           importantDateRows?:ImportantDateRow[];customRuleRows?:CustomRuleRow[];
-          roundRows?:Array<{id:number;kind:string;name:string}>;
+          roundRows?:Array<{id:number;kind:string;name:string}>;extraPackages?:ExtraPackageRow[];wantedSkills?:string[];
           partialDraft?:{jobId:string;relationshipId:string;fingerprint:string}};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
         // TPO-drives-43: recover a saved partial draft before allowing another POST.
@@ -277,13 +374,20 @@ export function PlacementJobCreateForm({
           setRoundRows(saved.roundRows.filter(row=>row&&typeof row.id==="number"&&
             typeof row.kind==="string"&&typeof row.name==="string"));
         }
-        const restoredIds=[...(saved.importantDateRows??[]),...(saved.customRuleRows??[]),...(saved.roundRows??[])]
+        if(Array.isArray(saved.extraPackages)&&saved.extraPackages.length<=10){
+          setExtraPackages(saved.extraPackages.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.name==="string"&&typeof row.ctcLpa==="string"));
+        }
+        const restoredIds=[...(saved.importantDateRows??[]),...(saved.customRuleRows??[]),...(saved.roundRows??[]),...(saved.extraPackages??[])]
           .map(row=>row.id).filter(id=>Number.isInteger(id)&&id>=0);
         nextRowId.current=Math.max(nextRowId.current,...restoredIds.map(id=>id+1));
         setEnteredDriveTitle(String(saved.values.title??""));
         setNewEmployerName(String(saved.values.companyName??""));
         setNewEmployerDomain(String(saved.values.companyDomain??""));
         setAssessmentUrlLength(String(saved.values.assessmentUrl??"").length);
+        if(Array.isArray(saved.wantedSkills)){
+          setWantedSkills(saved.wantedSkills.filter(skill=>typeof skill==="string"&&skill.length<=50).slice(0,30));
+        }else setWantedSkills(splitList(String(saved.values.skillsWanted??"")).slice(0,30));
         for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
           else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
@@ -479,7 +583,7 @@ export function PlacementJobCreateForm({
       const assessmentDeadline=assessmentRaw?driveDeadlineIstToIso(assessmentRaw):null;
       if(assessmentDeadline&&Date.parse(assessmentDeadline)<Date.now())
         throw new Error("Assessment deadline cannot be in the past.");
-      if(assessmentDeadline&&deadlineIso&&Date.parse(assessmentDeadline)<=Date.parse(deadlineIso))
+      if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)))
         throw new Error("Assessment deadline must be after application deadline.");
       const graduationYearRaw=String(data.get("preferredGraduationYear")??"").trim();
       const gpaRaw=String(data.get("preferredMinimumGpa")??"").trim();
@@ -501,12 +605,22 @@ export function PlacementJobCreateForm({
           throw new Error(label + " must be between 0 and " + max + ".");
         }
       }
+      const defaultRoleTitle=title;
+      const validatedPackages=extraPackages.map(row=>{
+        const name=row.name.trim(),ctc=nullableDecimal(row.ctcLpa);
+        if(name.length<2||name.length>200)throw new Error("Each package needs a name between 2 and 200 characters.");
+        if(ctc===null||ctc<0||ctc>1000)
+          throw new Error("Each additional package needs a CTC between 0 and 1000 LPA.");
+        return {name,annualCtcInr:Math.round(ctc*100_000)};
+      });
+      if(new Set([defaultRoleTitle,...validatedPackages.map(row=>row.name)].map(name=>name.toLocaleLowerCase("en"))).size!==validatedPackages.length+1)
+        throw new Error("Each package must have a different name from the main job role and other packages.");
       const fingerprint=JSON.stringify({
         fields:Array.from(data.entries()).map(([key,value])=>[key,String(value)]),
         selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...effectiveCohortIds].sort(),
         selectedSectionIds:[...effectiveSectionIds].sort(),
-        companyMode,companyRelationshipId,roundPreset,importantDateRows,customRuleRows,roundRows,
+        companyMode,companyRelationshipId,roundPreset,importantDateRows,customRuleRows,roundRows,extraPackages,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
         throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
@@ -724,13 +838,38 @@ export function PlacementJobCreateForm({
         },
       );
 
+      // Never create duplicate packages after a partial save or a lost role response.
+      if(validatedPackages.length){
+        const savedRoles=await apiFetch<{roles:Array<{title:string;status:string}>}>(
+          `/api/placements/jobs/${encodeURIComponent(jobId)}/roles`,
+          {credentials:"same-origin",timeoutMs:30000},
+        );
+        for(const pkg of validatedPackages){
+          if(savedRoles.roles.some(row=>row.title.trim().toLocaleLowerCase("en")===pkg.name.toLocaleLowerCase("en"))){
+            continue;
+          }
+          await requestJson(`/api/placements/jobs/${encodeURIComponent(jobId)}/roles`,"POST",{
+            title:pkg.name,
+            employmentType:(()=>{
+              const label=String(data.get("jobTypeLabel")??"Full-time");
+              return label==="Internship"?"INTERNSHIP":
+                label==="Contract"||label==="Apprenticeship"?"CONTRACT":"FULL_TIME";
+            })(),
+            workMode:String(data.get("workMode")??"ONSITE"),
+            locations:splitList(String(data.get("locations")??"")),
+            openings:null,
+            minimumAnnualCtcInr:pkg.annualCtcInr,
+            maximumAnnualCtcInr:pkg.annualCtcInr,
+          });
+        }
+      }
       // TPO-drives-39 / TPO-drives-43: read server rounds before retrying
       // individual creates; a lost POST response must not duplicate a round.
       const planned=roundRows.length?roundRows.map((row,index)=>({
         sequence:index+1,kind:row.kind,name:row.name.trim()
       })):plannedTpoRoundRows(roundPreset);
-      if(planned.some(row=>!row.name||row.name.length>160))
-        throw new Error("Each interview round requires a name of at most 160 characters.");
+      if(planned.some(row=>!row.name||row.name.length>100))
+        throw new Error("Each interview round requires a name of at most 100 characters.");
       if(planned.length){
         const saved=await apiFetch<{rounds:Array<{kind:string;name:string}>}>(
           `/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
@@ -804,7 +943,7 @@ export function PlacementJobCreateForm({
         <Link href={basePath+"/jobs/"+encodeURIComponent(existingDrive.jobId)} className="font-semibold text-primary-text underline">Open it</Link>
       </div>:null}
       <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
-      <div className="min-w-0 space-y-4">
+      <fieldset disabled={pending||loadingCopy} className="min-w-0 space-y-4">
       <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)] lg:hidden">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
@@ -826,13 +965,27 @@ export function PlacementJobCreateForm({
         </div>
         </nav>
       </details>
-      <details open={!activeSeason} className="min-w-0 border-b border-border pb-3">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Start from · Placement season</summary>
+      <details open={!activeSeason||clonableDrives.length>0} className="min-w-0 border-b border-border pb-3">
+       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Start from</summary>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <p className="pb-[var(--lms-space-3)] text-sm text-body">
           Every drive belongs to the current operating season. Historical seasons remain read-only.
         </p>
-        <div className="pt-4">
+        <div className="grid gap-3 pt-4">
+          <label className="grid gap-1 text-sm font-semibold text-foreground">
+            Clone a past drive
+            <Select value={copyJobId} className={inputClass}
+              disabled={loadingCopy||pending||Boolean(partialJobId)}
+              onChange={event=>{setCopyJobId(event.target.value);void loadCloneSource(event.target.value);}}>
+              <option value="">Choose a past drive to copy</option>
+              {clonableDrives.map(role=><option key={role.jobId} value={role.jobId}>
+                {role.companyName} · {role.title} ({tpoDriveStatusLabel(role.status)})
+              </option>)}
+            </Select>
+          </label>
+          {loadingCopy?<p role="status" className="text-sm text-body">Loading the past drive…</p>:null}
+          {!clonableDrives.length?<p className="text-xs text-muted-foreground">No past drives to copy yet. Or just fill it in below.</p>:null}
+          <p className="text-xs text-body">New drives start in the current placement season; past applicants, dates and rounds are not copied.</p>
           {activeSeason ? (
             <>
               <p className="m-0 font-semibold text-foreground">
@@ -1096,7 +1249,7 @@ export function PlacementJobCreateForm({
             <Input
               className={inputClass}
               name="locations"
-              placeholder="Hyderabad, Bengaluru"
+              placeholder="e.g. Bangalore, Remote"
             />
           </label>
           <label>
@@ -1113,7 +1266,7 @@ export function PlacementJobCreateForm({
             />
           </label>
           <h3 className="sm:col-span-2 mt-2 border-t border-border pt-4 text-base font-semibold text-foreground">Pay packages</h3>
-          <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">The default pay package is shown to students. Salary amounts are in LPA unless labelled otherwise.</p>
+          <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">Default package · main job role. Salary amounts are in LPA unless labelled otherwise.</p>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Minimum CTC (LPA)
@@ -1126,6 +1279,7 @@ export function PlacementJobCreateForm({
               max={1000}
               step="0.5"
             />
+            <span className="mt-1 block text-xs text-muted-foreground">CTC Range, e.g. 6–10 LPA; use minimum and maximum fields.</span>
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -1149,6 +1303,40 @@ export function PlacementJobCreateForm({
           <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Stipend per month (INR)
           </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
+          <div className="grid gap-1 rounded-lg border border-border bg-muted/30 p-3 text-sm">
+            <span className="font-semibold">Visibility</span>
+            <span className="text-body">College only · this drive stays within the selected college workspace.</span>
+            <span className="text-xs text-muted-foreground">Choose eligible departments, programs and batches below to narrow its audience.</span>
+          </div>
+          <div className="grid gap-3 border-t border-border pt-3 sm:col-span-2">
+            {extraPackages.map((pkg,index)=>(
+              <div key={pkg.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Package name
+                  <Input className={inputClass} maxLength={200} placeholder="e.g. Digital, Ninja"
+                    aria-label={"Package "+(index+2)+" name"} value={pkg.name}
+                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,name:event.target.value}:row))}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">CTC (LPA)
+                  <Input className={inputClass} type="number" min={0} max={1000} step="0.5"
+                    aria-label={"Package "+(index+2)+" CTC in LPA"} value={pkg.ctcLpa}
+                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,ctcLpa:event.target.value}:row))}/>
+                </label>
+                <Button variant="secondary" type="button" className="self-end text-danger"
+                  aria-label={"Remove package "+(index+2)}
+                  onClick={()=>{setExtraPackages(rows=>rows.filter(row=>row.id!==pkg.id));markDirty();}}>
+                  Remove package
+                </Button>
+              </div>
+            ))}
+            <Button variant="secondary" type="button" disabled={extraPackages.length>=10}
+              className="min-h-11 justify-self-start border-dashed md:min-h-9"
+              onClick={()=>{setExtraPackages(rows=>[...rows,{id:nextRowId.current++,name:"",ctcLpa:""}]);markDirty();}}>
+              Add another package
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Additional pay tracks are saved as separate role options on this drive. Configure per-role bonuses and stipend duration in the saved drive workspace.
+            </p>
+          </div>
           <label className="flex items-center gap-3 text-sm font-semibold text-body">
             <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
             Dream drive (college held-offer cap exception)
@@ -1234,7 +1422,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <details className="min-w-0 border-b border-border pb-6">
+      <details open className="min-w-0 border-b border-border pb-6">
         <summary className="min-h-11 cursor-pointer text-base font-semibold text-foreground md:min-h-9">Additional job details</summary>
         <div className="pt-3">
           <h2 className="sr-only">Additional job details</h2>
@@ -1267,10 +1455,30 @@ export function PlacementJobCreateForm({
             </label>
             <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
           </fieldset>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Skills the company wants (up to 30, comma-separated; 50 characters each)
-            <Textarea name="skillsWanted" maxLength={1590} rows={2} className={inputClass} />
-            <span className="text-xs font-normal text-muted-foreground">Skill tags are informational until applicant matching explicitly uses them.</span>
-          </label>
+          <div className="grid gap-2 sm:col-span-2">
+            <label htmlFor="drive-skills-input" className="text-sm font-semibold text-foreground">Skills the company wants</label>
+            <p className="text-xs text-muted-foreground">Type a skill and press Enter. Applicants get a skill match, but skills never decide who can apply. Up to 30 skills, 50 characters each.</p>
+            <input type="hidden" name="skillsWanted" value={wantedSkills.join(", ")} readOnly />
+            {wantedSkills.length>0?<div className="flex flex-wrap gap-2" aria-label="Skills selected">
+              {wantedSkills.map(skill=><span key={skill} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-xs">
+                {skill}
+                <Button variant="secondary" type="button" className="min-h-7 px-1 py-0 text-xs text-danger"
+                  aria-label={"Remove skill "+skill} onClick={()=>{setWantedSkills(items=>items.filter(item=>item!==skill));markDirty();}}>×</Button>
+              </span>)}
+            </div>:null}
+            <Input id="drive-skills-input" className={inputClass} value={skillDraft} maxLength={50}
+              disabled={wantedSkills.length>=30} placeholder="e.g. Java, SQL, React"
+              onChange={event=>{
+                if(event.target.value.includes(","))addSkills(event.target.value);
+                else setSkillDraft(event.target.value);
+              }}
+              onKeyDown={event=>{if(event.key==="Enter"||event.key===","){
+                event.preventDefault();addSkills(skillDraft);
+              }}}
+              onBlur={()=>{if(skillDraft.trim())addSkills(skillDraft);}}
+            />
+            <p className="text-xs text-muted-foreground">{wantedSkills.length} of 30 skills selected</p>
+          </div>
           <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Responsibilities
             <Textarea name="responsibilities" rows={6} maxLength={15000} className={textareaClass} placeholder="Responsibilities, duties and expectations"/>
           </label>
@@ -1354,10 +1562,10 @@ export function PlacementJobCreateForm({
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
       </details>
-      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <section className="min-w-0 border-b border-border border-l-[3px] border-l-primary pl-3 pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
-            Eligibility
+            Eligibility · Target Audience
           </h2>
           <p className="mt-1 text-sm text-body">
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
@@ -1611,9 +1819,9 @@ export function PlacementJobCreateForm({
                   const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
                   setRoundRows(rows.map(item=>item.id===round.id?{...item,kind:event.target.value}:item));markDirty();
                 }}>
-                {["TALK","TEST","GD","INTERVIEW","HR","OTHER"].map(kind=><option key={kind} value={kind}>{kind}</option>)}
+                {["TALK","TEST","VENDOR_TEST","GD","INTERVIEW"].map(kind=><option key={kind} value={kind}>{kind}</option>)}
               </Select>
-              <Input aria-label={"Round "+(index+1)+" name"} value={round.name} maxLength={160}
+              <Input aria-label={"Round "+(index+1)+" name"} value={round.name} maxLength={100}
                 placeholder="Round name" onChange={event=>{
                   const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
                   setRoundRows(rows.map(item=>item.id===round.id?{...item,name:event.target.value}:item));markDirty();
@@ -1640,12 +1848,12 @@ export function PlacementJobCreateForm({
       <details className="min-w-0 border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
       <section aria-label="Who this reaches" className="min-w-0 pb-[var(--lms-space-4)]">
-        <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
+        <p role="status" className="mt-2 text-sm text-body">Eligibility preview unavailable before the draft is saved. Save the draft, then review eligible and excluded counts in the drive workspace before publishing.</p>
         <p className="mt-2 text-xs text-muted-foreground">Round templates are saved as pending during draft setup; scheduling, eligibility reach verification and recruiter invitations are managed in the saved drive workspace.</p>
       </section>
 
       </details>
-      </div>
+      </fieldset>
       <aside aria-label="Setup review" className="sticky top-24 hidden rounded-xl border border-border bg-background p-4 lg:block">
         <h2 className="m-0 text-base font-semibold text-foreground">Setup review</h2>
         <p className="mt-1 text-xs text-body">Your milestones remain visible as you build the opportunity.</p>
@@ -1674,14 +1882,16 @@ export function PlacementJobCreateForm({
       <section className="flex min-w-0 flex-col gap-3 border-t border-border py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Create a draft, then review the server reach, rounds and notifications before confirming publication.</p>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !activeSeason || uncertainCreate}>
-            {pending ? "Creating…" : "Create draft"}
+          <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
+            onClick={()=>{if(dirty)setCancelConfirmOpen(true);else router.push(basePath);}}>Cancel</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !activeSeason || uncertainCreate || loadingCopy}>
+            {pending ? "Saving changes…" : "Save as draft"}
           </Button>
           <Button variant="secondary"
             type="submit"
             value="review-publish"
             aria-label="Create draft and review before publication"
-            disabled={pending || !activeSeason || uncertainCreate}
+            disabled={pending || !activeSeason || uncertainCreate || loadingCopy}
             className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
           >
             Review &amp; publish
@@ -1706,6 +1916,10 @@ export function PlacementJobCreateForm({
         Do not submit a second drive.
       </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
+      <ConfirmDialog open={cancelConfirmOpen} onOpenChange={setCancelConfirmOpen}
+        title="Discard unsaved changes?" description="Your changes will not be saved."
+        confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
+        onConfirm={()=>{setCancelConfirmOpen(false);clearDirty();router.push(basePath);}} />
       {guardDialog}
     </form>
   );
