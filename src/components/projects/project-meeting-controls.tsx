@@ -77,7 +77,7 @@ function MeetingFields({
 }) {
   return (
     <div className="grid min-w-0 gap-[var(--lms-space-4)]">
-      <label className="min-w-0">
+      <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
         <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Title
         </span>

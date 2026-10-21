@@ -68,37 +68,37 @@ export function ProjectActivityFilteredList({projectId,events,now,resourceAudit=
  const resetFilters=()=>{setSearch("");setResourceAction("ALL");setType("");setRange("ALL");setFromDate("");setToDate("");};
  return <section className="space-y-3">
   <div className="flex flex-wrap items-end gap-3 border-b border-border pb-4">
-   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Search activity
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search activity
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      placeholder="Search activity" className="w-full"/>
    </label>
-   {resourceAudit?<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Resource change
+   {resourceAudit?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Resource change
     <Select value={resourceAction} onChange={event=>setResourceAction(event.target.value)}
      className="w-full">
      <option value="ALL">All resource changes</option>
      {(["Added","Edited","Saved","Removed"] as const).map(action=><option key={action} value={action}>{action}</option>)}
     </Select>
    </label>:null}
-   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Type
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Type
     <Select value={type} onChange={event=>setType(event.target.value)}
       className="w-full">
      <option value="">All activity</option>
      {categories.map(kind=><option key={kind} value={kind}>{mentorActivityLabel(kind)}</option>)}
     </Select>
    </label>
-   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">Date range
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Date range
     <Select value={range} onChange={event=>setRange(event.target.value)}
       className="w-full">
      <option value="ALL">All time</option><option value="1">Today</option>
      <option value="7">Last 7 days</option><option value="30">Last 30 days</option>
     </Select>
    </label>
-   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">From date
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">From date
     <Input type="date" value={fromDate} max={toDate||now.slice(0,10)}
       onChange={event=>setFromDate(event.target.value)}
       className="w-full"/>
    </label>
-   <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">To date
+   <label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">To date
     <Input type="date" value={toDate} min={fromDate||undefined} max={now.slice(0,10)}
       onChange={event=>setToDate(event.target.value)}
       className="w-full"/>

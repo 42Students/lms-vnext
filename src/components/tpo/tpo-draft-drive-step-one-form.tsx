@@ -87,7 +87,7 @@ export function TpoDraftDriveStepOneForm({
         Active season: <strong>{season.name}</strong> ({season.startDate} to {season.endDate}).
         You can add other role options, compensation, targeting and rounds in the draft workspace.
       </p>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
         Company relationship
         <Select className={cls} value={companyRelationshipId}
           onChange={(event) => setCompanyRelationshipId(event.target.value)} disabled={pending}>
@@ -96,20 +96,20 @@ export function TpoDraftDriveStepOneForm({
           ))}
         </Select>
       </label>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
         Initial role / drive title
         <Input className={cls} required minLength={3} maxLength={100}
           value={title} disabled={pending}
           onChange={(event) => setTitle(event.target.value)}/>
       </label>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
         Role description
         <Textarea className={cls} required rows={4} maxLength={20000}
           value={description} disabled={pending}
           onChange={(event) => setDescription(event.target.value)}/>
       </label>
       <div className="grid gap-4 sm:grid-cols-2">
-        <label className="block text-sm font-semibold text-foreground">
+        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Employment type
           <Select className={cls} value={employmentType} disabled={pending}
             onChange={(event) => setEmploymentType(event.target.value as typeof employmentType)}>
@@ -118,7 +118,7 @@ export function TpoDraftDriveStepOneForm({
             <option value="CONTRACT">Contract</option>
           </Select>
         </label>
-        <label className="block text-sm font-semibold text-foreground">
+        <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Work mode
           <Select className={cls} value={workMode} disabled={pending}
             onChange={(event) => setWorkMode(event.target.value as typeof workMode)}>
@@ -128,7 +128,7 @@ export function TpoDraftDriveStepOneForm({
           </Select>
         </label>
       </div>
-      <label className="block text-sm font-semibold text-foreground">
+      <label className="block font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
         Application deadline (optional, IST)
         <Input className={cls} type="datetime-local" value={deadline}
           disabled={pending} onChange={(event) => setDeadline(event.target.value)}/>

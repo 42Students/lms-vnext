@@ -162,19 +162,19 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       </span>
     </div>
     <div className="grid min-w-0 gap-3 md:grid-cols-[max-content_max-content_minmax(0,1fr)_auto] md:items-end">
-      <label className="grid w-full min-w-0 basis-full gap-1 text-[length:var(--lms-font-sm)] font-semibold md:w-auto md:basis-auto leading-4">Time window
+      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:w-auto md:basis-auto leading-4 text-[13px] text-[var(--lms-neutral-400)]">Time window
         <Select value={windowMinutes} onChange={event=>setWindowMinutes(event.target.value)} className="min-h-11 w-full min-w-0 md:min-h-9">
           <option value="15">Last 15 minutes</option><option value="60">Last hour</option>
           <option value="360">Last 6 hours</option><option value="1440">Last 24 hours</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 basis-full gap-1 text-[length:var(--lms-font-sm)] font-semibold md:w-auto md:basis-auto leading-4">Minimum severity
+      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:w-auto md:basis-auto leading-4 text-[13px] text-[var(--lms-neutral-400)]">Minimum severity
         <Select value={minimumSeverity} onChange={event=>setMinimumSeverity(event.target.value as "ERROR"|"WARNING")} className="min-h-11 w-full min-w-0 md:min-h-9">
           <option value="ERROR">Error and above</option>
           <option value="WARNING">Warning and above</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 basis-full gap-1 text-[length:var(--lms-font-sm)] font-semibold md:min-w-44 md:basis-auto md:flex-1 leading-4">Search this page
+      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:min-w-44 md:basis-auto md:flex-1 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search this page
         <Input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
           placeholder="Message, route, reference" className="min-h-11 w-full min-w-0 md:min-h-9"/>
       </label>
@@ -229,7 +229,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       description="This updates the stored error signature for every matching log. It does not erase log records."
       confirmLabel={muteTarget?.muted?"Unmute":"Mute error"} pending={mutating}
       onConfirm={()=>void toggleKnownErrorMute()}>
-      {!muteTarget?.muted?<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold leading-4">
+      {!muteTarget?.muted?<label className="grid gap-[6px] text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
         Reason (optional)
         <Input value={muteReason} maxLength={255} onChange={event=>setMuteReason(event.target.value)}
          />

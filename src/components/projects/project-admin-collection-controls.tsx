@@ -74,7 +74,7 @@ export function ProjectAdminFilters({
       method="get"
       className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 min-[992px]:grid-cols-4"
     >
-      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Search
         <Input
           name={legacyWorkspaces ? "search" : "q"}
@@ -84,7 +84,7 @@ export function ProjectAdminFilters({
           className="w-full min-w-0"
         />
       </label>
-      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Workspace status
         <Select
           name="status"
@@ -103,7 +103,7 @@ export function ProjectAdminFilters({
       {query.fromMentorId ? <input type="hidden" name="fromMentorId" value={query.fromMentorId} /> : null}
       {query.riskBucket ? <input type="hidden" name="riskBucket" value={query.riskBucket} /> : null}
       {includeRiskSort ? (
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
           Sort by
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
             className="w-full">
@@ -114,7 +114,7 @@ export function ProjectAdminFilters({
         </label>
       ) : null}
       {includeSubmissionStatus ? (
-        <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
           Submission status
           <Select
             name="submissionStatus"
@@ -132,7 +132,7 @@ export function ProjectAdminFilters({
           </Select>
         </label>
       ) : null}
-      <label className="grid min-w-0 gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Rows
         <Select
           name="pageSize"

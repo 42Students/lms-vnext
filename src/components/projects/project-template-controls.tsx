@@ -175,7 +175,7 @@ export function CreateProjectTemplateControl() {
           </label>
           <details className="border-t border-[var(--lms-canvas-border)] pt-3">
             <summary className="cursor-pointer py-2 text-[13px] font-semibold text-body">Additional template details</summary>
-          <label className="mt-3 block min-w-0">
+          <label className="mt-3 block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-body">
               Summary
             </span>
@@ -488,14 +488,14 @@ export function ProjectTemplateActions({
             onClick={()=>void duplicate()}>{pending==="Duplicate template"?"Duplicating…":"Duplicate template"}</Button>
         </div>}>
         <div className="grid gap-3">
-          <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">New title
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New title
             <Input required maxLength={200} value={copyTitle} onChange={e=>setCopyTitle(e.target.value)}/>
           </label>
-          <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">New slug
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New slug
             <Input required maxLength={64} pattern="[a-z0-9]+(?:-[a-z0-9]+)*"
               value={copySlug} onChange={e=>setCopySlug(e.target.value.toLowerCase())}/>
           </label>
-          <label className="grid min-w-0 gap-1.5 text-[13px] font-semibold leading-4 text-body">New summary
+          <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New summary
             <Textarea maxLength={2000} value={copySummary} onChange={e=>setCopySummary(e.target.value)}/>
           </label>
         </div>

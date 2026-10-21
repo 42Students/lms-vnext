@@ -25,7 +25,7 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
   targetKind==="branches"?"No student in placements has a branch yet":
   "No published drive yet";
  return <div className="grid w-full min-w-0 flex-1 grid-cols-1 items-start gap-3 sm:w-auto sm:grid-cols-2">
-  <label className="grid min-w-0 gap-2 text-sm">Audience
+  <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
    <Select name="audience" value={audience}
     onChange={event=>{setAudience(event.target.value as Audience);setTarget("");setTargets([]);setSearch("");}}
     className="min-h-11 min-[768px]:min-h-9">
@@ -37,11 +37,11 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
    </Select>
   </label>
   {multiple&&options?<div className="grid min-w-0 gap-3 text-sm">
-   <label className="grid min-w-0 gap-2">Find {targetKind==="batches"?"batches":"branches"}
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find {targetKind==="batches"?"batches":"branches"}
     <Input type="search" value={search} onChange={event=>setSearch(event.target.value)}
      placeholder="Search options" className="min-h-11 min-[768px]:min-h-9"/>
    </label>
-   <label className="grid min-w-0 gap-2">Choose {targetKind==="batches"?"batches":"branches"}
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose {targetKind==="batches"?"batches":"branches"}
     <Select aria-label="Selected audience groups" multiple value={targets}
      onChange={event=>setTargets(Array.from(event.target.selectedOptions,option=>option.value).slice(0,50))}
      className="min-h-28 max-w-full">
@@ -54,13 +54,13 @@ export function TpoNoticeAudiencePicker({initialAudience,initialTarget,initialTa
    </span>
   </div>:null}
   {targetKind==="drives"&&options?<div className="grid min-w-0 gap-3 text-sm">
-   <label className="grid min-w-0 gap-2">Find a drive
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Find a drive
     <Input type="search" value={search}
      onChange={event=>{setSearch(event.target.value);setTarget("");}}
      placeholder="Search published drives"
      className="min-h-11 min-[768px]:min-h-9 max-w-full"/>
    </label>
-   <label className="grid min-w-0 gap-2">Choose a drive
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Choose a drive
     <Select name="targetId" required value={target}
      onChange={event=>setTarget(event.target.value)}
      className="min-h-11 min-[768px]:min-h-9 max-w-full">

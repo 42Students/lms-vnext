@@ -92,27 +92,27 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
         <p className="mt-1 text-sm text-body">Super Admin only. Version {issue.version}; stale writes are rejected.</p>
       </div>
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Status
           <Select className="w-full min-w-0" value={status} onChange={(e) => setStatus(e.target.value)}>
             {BUG_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Resolution
           <Select className="w-full min-w-0" value={resolution} onChange={(e) => setResolution(e.target.value)}>
             <option value="">No resolution</option>
             {BUG_RESOLUTIONS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Affected layer
           <Select className="w-full min-w-0" value={affectedLayer} onChange={(e) => setAffectedLayer(e.target.value)}>
             <option value="">Not set</option>
             {BUG_AFFECTED_LAYERS.map((value) => <option key={value} value={value}>{value}</option>)}
           </Select>
         </label>
-        <label className="grid min-w-0 gap-1 text-sm font-semibold text-body">
+        <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Regression test
           <Select className="w-full min-w-0" value={regressionTestStatus} onChange={(e) => setRegressionTestStatus(e.target.value)}>
             {BUG_REGRESSION_TEST_STATUSES.map((value) => <option key={value} value={value}>{value}</option>)}
@@ -121,23 +121,23 @@ export function TrackerWorkflowPanel({ issue }: { issue: TrackerWorkflowIssue })
         <details className="min-w-0 sm:col-span-2">
           <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Engineering evidence</summary>
           <div className="grid min-w-0 gap-4 pt-2 sm:grid-cols-2">
-        <label className="min-w-0 text-sm font-semibold text-body sm:col-span-2">
+        <label className="min-w-0 font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Root cause
-          <Textarea className="mt-1 w-full min-w-0" value={rootCause} maxLength={4000} onChange={(e) => setRootCause(e.target.value)} />
+          <Textarea className="mt-[6px] w-full min-w-0" value={rootCause} maxLength={4000} onChange={(e) => setRootCause(e.target.value)} />
         </label>
-        <label className="min-w-0 text-sm font-semibold text-body sm:col-span-2">
+        <label className="min-w-0 font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Fix notes
-          <Textarea className="mt-1 w-full min-w-0" value={fixNotes} maxLength={4000} onChange={(e) => setFixNotes(e.target.value)} />
+          <Textarea className="mt-[6px] w-full min-w-0" value={fixNotes} maxLength={4000} onChange={(e) => setFixNotes(e.target.value)} />
         </label>
         <div className="min-w-0 text-sm font-semibold text-body">
           <label htmlFor="tracker-workflow-frontend-sha">Frontend commit SHA</label>
-          <Input id="tracker-workflow-frontend-sha" className="mt-1 min-w-0 w-full" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
+          <Input id="tracker-workflow-frontend-sha" className="mt-[6px] min-w-0 w-full" value={frontendCommitSha} maxLength={64} onChange={(e) => setFrontendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(frontendCommitSha.trim())?<a href={"https://github.com/42Students/lms2-fe/commit/"+frontendCommitSha.trim()}
             target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
         </div>
         <div className="min-w-0 text-sm font-semibold text-body">
           <label htmlFor="tracker-workflow-backend-sha">Backend commit SHA</label>
-          <Input id="tracker-workflow-backend-sha" className="mt-1 min-w-0 w-full" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
+          <Input id="tracker-workflow-backend-sha" className="mt-[6px] min-w-0 w-full" value={backendCommitSha} maxLength={64} onChange={(e) => setBackendCommitSha(e.target.value)} />
           {/^[a-f0-9]{7,40}$/i.test(backendCommitSha.trim())?<a href={"https://github.com/42Students/lms/commit/"+backendCommitSha.trim()}
             target="_blank" rel="noopener noreferrer" className="mt-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:underline">View on GitHub ↗</a>:null}
         </div>
