@@ -106,7 +106,7 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
  return <form onSubmit={e=>void save(e)} className="min-w-0 space-y-4">
   <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
    <p className="font-semibold">Recruiter contact details</p>
-   {dirty?<p role="status" className="text-sm font-semibold text-warning-text">Unsaved changes</p>:null}
+   {dirty?<span role="status" className="inline-flex w-fit items-center rounded-full border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-3 py-1 text-xs font-semibold text-warning-text">Unsaved changes</span>:null}
   </div>
   <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
@@ -125,7 +125,6 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
     <Button type="submit" loading={busy} disabled={busy||!dirty}
       className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
       {busy?"Saving…":"Save changes"}</Button>
-    {dirty?<span role="status" className="inline-flex w-fit items-center rounded-full border border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] px-3 py-1 text-xs font-semibold text-warning-text">Unsaved changes</span>:null}
   </div>
   {feedback==="Profile saved"
     ? <div role="status" className="fixed right-6 top-20 z-50 rounded-lg border border-[var(--lms-success)] bg-white px-4 py-3 text-sm font-semibold text-success shadow-md">✓ Profile saved</div>

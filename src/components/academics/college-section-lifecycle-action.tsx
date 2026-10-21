@@ -41,7 +41,10 @@ export function CollegeSectionLifecycleAction({ row }: {
           ?"Historical class records remain available and this class can be restored.":undefined});
         router.refresh();
       } catch (reason) {
-        setError(reason instanceof Error ? reason.message : "Failed to update class. Retry the action.");
+        // Preserve distinct learner, timetable, teaching and delivery blockers.
+        const code = reason instanceof FriendlyFetchError ? reason.code : null;
+        setError(academicSetupErrorMessage(code ?? reason,
+          "We couldn't update this class. Please retry."));
       } finally {
         inFlight.current = false;
       }
@@ -119,19 +122,6 @@ export function CollegeSectionLifecycleAction({ row }: {
           : "Restoring makes the class available again only if its batch and academic period are still valid."}
       </p>
       {error ? <Alert tone="error" title="Class could not be updated" className="mt-3">{error}</Alert> : null}
-    </ConfirmDialog>
-    {row.status === "ACTIVE" ? <Button variant="secondary" type="button" disabled={pending}
-      aria-label={"Delete class “" + row.name + "”"}
-      title="Delete is only available when no learners, schedules, faculty or course deliveries refer to this class."
-      onClick={() => { setError(""); setDeleting(true); }}>
-      Delete
-    </Button> : null}
-    <ConfirmDialog open={deleting} onOpenChange={setDeleting}
-      title={'Delete class “' + row.name + '”?'}
-      description="Delete this class only if it has no enrolled students, teaching assignments, scheduled sessions or course deliveries. This action cannot be undone."
-      confirmVariant="danger" confirmLabel={error ? "Retry delete" : "Delete class"}
-      pending={pending} onConfirm={deleteClass}>
-      {error ? <Alert tone="error" className="mt-3">{error}</Alert> : null}
     </ConfirmDialog>
   </div>;
 }
