@@ -174,7 +174,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  );
  return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
   {heading(directoryKind?"People":"Super Admin · Read-only",description,
-    <>{exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}{refreshAction}</>)}
+    <>{exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename} visibleFacultyRows={title==="Registered Faculty"?data.items:undefined}/>:null}{refreshAction}</>)}
   {directoryKind&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
@@ -192,7 +192,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {intro}
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Filters apply within your selected college. {data.total.toLocaleString("en-IN")} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
-  {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
+  {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename} visibleFacultyRows={title==="Registered Faculty"?data.items:undefined}/>:null}
   {headingMode==="section"?refreshAction:null}
   <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
@@ -307,7 +307,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
         {refreshAction}
-        {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
+        {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename} visibleFacultyRows={title==="Registered Faculty"?data.items:undefined}/>:null}
       </div>
     </div>
    :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}

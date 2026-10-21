@@ -83,7 +83,9 @@ export function SuperAdminTodayBoard({data}:{data:SuperAdminTodayMetrics|null}){
   {title:SUPER_ADMIN_TODAY_LABELS[5],count:data?.quizzesClosingThisWeek??null,
    href:"/admin/courses",icon:5,tone:"info",
    empty:"No quiz closes in the next 7 days.",
-   detail:"Quizzes with deadlines this week need a review of learner participation and release settings."},
+   detail:data?.quizDeadlineLabels?.length?
+    "Upcoming: "+data.quizDeadlineLabels.join("; "):
+    "Quizzes with deadlines this week need a review of learner participation and release settings."},
  ];
  // Never interpret unknown/null metrics as zero. In particular, an all-clear
  // banner cannot appear while the setup and grading evidence is unavailable.
