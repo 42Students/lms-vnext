@@ -142,7 +142,7 @@ export default async function SuperAdminCompaniesPage({
     </div>
     {data.rows.length ? <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
       {data.rows.map(row => <article key={row.relationshipId} className="min-w-0 bg-transparent py-[var(--lms-space-4)]">
-        <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">{row.name}</h2>
+        <h2 className="m-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{row.name}</h2>
         {row.companyStatus==="ARCHIVED"&&!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
          <SuperAdminCompanyRestore id={row.companyId} name={row.name}/>:null}
         <p className="mt-1 text-sm text-body">{row.collegeName}</p>
@@ -198,7 +198,7 @@ export default async function SuperAdminCompaniesPage({
     <Disclosure title="Company curation" className="min-w-0" contentClassName="space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]">
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Company curation candidates">
       <div>
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Potential duplicate companies</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Potential duplicate companies</h2>
         <p className="mt-1 text-sm text-body">Different company identities sharing the same website domain within this authorized result page. These are suggestions, not verified merges.</p>
       </div>
       {candidates.length===0?<EmptyState title="No matching domains" description="No matching domains found in this result page."/>:
@@ -213,11 +213,11 @@ export default async function SuperAdminCompaniesPage({
       {data.truncated?<p className="text-xs text-muted-foreground">Only this 50-row page was checked. Move through pages before concluding there are no duplicate identities.</p>:null}
     </section>
     <section className="min-w-0 space-y-3 border-b border-border pb-4" aria-label="Name identity review">
-      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Same-name identities to review</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Same-name identities to review</h2>
       <p className="text-sm text-body">Distinct employer IDs with matching normalized names may be aliases, franchises or unrelated companies. No automatic verification or merge is made.</p>
       {nameConflicts.length===0?<EmptyState title="No duplicate names" description="No distinct IDs share a normalized name in this page."/>:
        <ul className="grid gap-2 md:grid-cols-2">{nameConflicts.map(group=><li key={group.key} className="min-w-0 border-b border-border py-3">
-        <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{group.label}</h3>
+        <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{group.label}</h3>
         <p className="mt-2 text-xs text-muted-foreground">{group.companyIds.length} distinct identities · manual verification required</p>
        </li>)}</ul>}
       {data.truncated?<p className="text-xs text-muted-foreground">Only this page of scoped relationships was reviewed.</p>:null}

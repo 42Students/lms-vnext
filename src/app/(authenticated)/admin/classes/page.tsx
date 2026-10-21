@@ -74,7 +74,7 @@ export default async function SuperAdminClassesPage({ searchParams }: {
         </form>
       </section>
       <section aria-label="Manage classes" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Manage classes</h2>
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Manage classes</h2>
         <p className="text-sm text-muted-foreground">Edit class names, codes and capacities within the selected college.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage classes" rows={data.items} getRowKey={row=>row.id}
           empty={<EmptyState title="No matching classes on this page." />}
