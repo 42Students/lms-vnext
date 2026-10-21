@@ -101,6 +101,7 @@ export function LearnerCourseDiscussion({
   const [loadingOlder, setLoadingOlder] = useState(false);
   const [olderError, setOlderError] = useState(false);
   const [loadError, setLoadError] = useState(false);
+  const [scopeUnavailable,setScopeUnavailable] = useState(false);
   const [refreshDismissed,setRefreshDismissed] = useState(false);
   const [draft, setDraft] = useState("");
   const router = useRouter();
@@ -174,7 +175,15 @@ export function LearnerCourseDiscussion({
         `/api/courses/deliveries/${encodeURIComponent(deliveryId)}/discussions`,
         { cache: "no-store" },
       );
-      if (!response.ok) throw new Error("discussion_load_failed");
+      if(!response.ok){
+        if(response.status===403||response.status===404){
+          setScopeUnavailable(true);
+          setCanPost(false);
+          setLoading(false);
+          return;
+        }
+        throw new Error("discussion_load_failed");
+      }
       const payload = await response.json();
       if (!learnerDiscussionRefreshIsCurrent(refreshId,latestRefreshId.current)) return;
       const received = Array.isArray(payload.messages) ? payload.messages as DiscussionMessage[] : [];
@@ -199,6 +208,7 @@ export function LearnerCourseDiscussion({
       // Refresh relative timestamps only when a feed response arrives, not during render.
       setTimeReference(Date.now());
       setLoadError(false);
+      setScopeUnavailable(false);
       setRefreshDismissed(false);
       loadedOnce.current = true;
     } catch {
@@ -490,9 +500,9 @@ export function LearnerCourseDiscussion({
         {operationToast}
       </div>:null}
       <h2 className="sr-only">Discussions</h2>
-      {!moderate?<p className="m-0 text-sm text-body">
+      <p className="m-0 text-sm text-body">
         Keep course conversations in one place and follow along easily.
-      </p>:null}
+      </p>
 
 
 
@@ -558,7 +568,14 @@ export function LearnerCourseDiscussion({
           role="region" aria-label="Course discussion messages" tabIndex={0}
           className="max-h-[min(62vh,640px)] min-h-[320px] overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
-          {loading ? (
+          {scopeUnavailable ? (
+            <div className="flex min-h-64 flex-col items-center justify-center gap-2 p-4 text-center">
+              <h3 className="text-base font-semibold text-foreground">Discussion unavailable</h3>
+              <p className="max-w-md text-sm text-body">
+                This course is not linked to one of your classes yet, so there is no discussion to show.
+              </p>
+            </div>
+          ) : loading ? (
             <div className="flex min-h-64 items-center justify-center" aria-busy="true"
               aria-label="Loading discussion messages" role="status">
               <span aria-hidden="true" className="size-7 motion-safe:animate-spin rounded-full border-2 border-[#e5e9f0] border-t-[#0a7c88]"/>
@@ -710,7 +727,7 @@ export function LearnerCourseDiscussion({
           </Button>
         ) : null}
 
-        {canPost ? (
+        {canPost && !scopeUnavailable ? (
         <form onSubmit={submit} className="min-w-0 border-t border-border px-1 py-3 sm:px-3 md:py-4">
           <p className="mb-2 text-xs leading-5 text-muted-foreground">
             {moderate
