@@ -81,8 +81,8 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
     <details className="min-w-0 border-b border-border pb-3">
       <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Other people actions</summary>
       <nav aria-label="People directory tools" className="flex min-w-0 flex-wrap items-center gap-3 pt-2">
-        <Link href="/college/groups"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export filtered CSV</Link>
+        {process.env.COLLEGE_STUDY_GROUPS_RELEASED === "true" ? <Link href="/college/groups"
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Student groups</Link> : null}<Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export filtered CSV</Link>
       </nav>
     </details>
     <section className="min-w-0" aria-label="People filters">
@@ -116,6 +116,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       </form>
     </section>
     <section className="space-y-2" aria-label="Filtered people">
+      {filter.role==="LEARNER"?<p role="status" className="text-sm text-[var(--lms-muted-text)]">Learners retrieved</p>:null}
       <p className="text-sm text-muted-foreground">{pagination.total} matching membership{pagination.total === 1 ? "" : "s"}</p>
       <DataTable caption="College memberships" columns={columns} rows={people.items}
         getRowKey={person => person.membership.id}
