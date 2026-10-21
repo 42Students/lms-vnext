@@ -69,6 +69,7 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     status: sections.status,
     updatedAt: sql<Date>`${sections.updatedAt}`.mapWith(sections.updatedAt).as("section_updated_at"),
     capacity: sections.capacity,
+    minSize: sections.minSize,
     description: sections.description,
     programId: sql<string | null>`${programs.id}`.as("class_program_id"),
     linkedProgramId: sql<string | null>`${cohorts.programId}`.as("linked_class_program_id"),
