@@ -63,6 +63,23 @@ const releasedNotificationEvent = sql<boolean>`
 `;
 
 /**
+ * A due date alone is not proof of release. A scheduled recipient row must
+ * be explicitly delivered before it can appear in an inbox or be marked read.
+ * Immediate event-backed receipts have null deliveryStatus/scheduledAt.
+ */
+const releasedNotificationReceipt = sql<boolean>`
+  ${inAppNotifications.deletedAt} is null
+  and coalesce(${inAppNotifications.deliveryStatus}, 'SENT') = 'SENT'
+  and (
+    ${inAppNotifications.scheduledAt} is null
+    or (
+      ${inAppNotifications.deliveryStatus} = 'SENT'
+      and ${inAppNotifications.deliveredAt} is not null
+    )
+  )
+`;
+
+/**
  * Old LMS accepts a local "yyyy-MM-dd HH:mm:ss" time; the vNext product
  * contract uses IST for that form. Also accept offset-aware ISO timestamps.
  * Invalid or rolled-over calendar dates fail closed instead of sending now.
@@ -837,6 +854,7 @@ export async function listOwnNotifications(
   const conditions = [
     eq(inAppNotifications.userId, context.user.id),
     releasedNotificationEvent,
+    releasedNotificationReceipt,
   ];
   if (options.collegeId) {
     conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
@@ -909,6 +927,7 @@ export async function countOwnUnreadNotifications(
           isNull(inAppNotifications.readAt),
           eq(activityEvents.collegeId, collegeId),
           releasedNotificationEvent,
+          releasedNotificationReceipt,
         ))
     : await db.select({ total: count() }).from(inAppNotifications)
         .innerJoin(activityEvents, eq(activityEvents.id, inAppNotifications.eventId))
@@ -916,6 +935,7 @@ export async function countOwnUnreadNotifications(
           eq(inAppNotifications.userId, context.user.id),
           isNull(inAppNotifications.readAt),
           releasedNotificationEvent,
+          releasedNotificationReceipt,
         ));
   return row?.total ?? 0;
 }
@@ -946,6 +966,7 @@ export async function markOwnNotificationRead(
           context.user.id,
         ),
         inArray(inAppNotifications.eventId, releasedEventIds),
+        releasedNotificationReceipt,
       ),
     )
     .limit(1);
@@ -973,6 +994,7 @@ export async function markOwnNotificationRead(
           context.user.id,
         ),
         inArray(inAppNotifications.eventId, releasedEventIds),
+        releasedNotificationReceipt,
         isNull(
           inAppNotifications.readAt,
         ),
@@ -994,6 +1016,7 @@ export async function markOwnNotificationRead(
         eq(inAppNotifications.id, notificationId),
         eq(inAppNotifications.userId, context.user.id),
         inArray(inAppNotifications.eventId, releasedEventIds),
+        releasedNotificationReceipt,
       ),
     )
     .limit(1);
@@ -1021,6 +1044,7 @@ export async function markAllOwnNotificationsRead(
     .where(and(
       eq(inAppNotifications.userId, context.user.id),
       isNull(inAppNotifications.readAt),
+      releasedNotificationReceipt,
       ...(ownCollege ? [
         inArray(inAppNotifications.eventId,
           getDb().select({ id: activityEvents.id }).from(activityEvents)
@@ -1066,6 +1090,7 @@ export async function listOwnNotificationPage(
   const conditions = [
     eq(inAppNotifications.userId, context.user.id),
     releasedNotificationEvent,
+    releasedNotificationReceipt,
   ];
   if (options.collegeId) conditions.push(eq(activityEvents.collegeId, z.string().uuid().parse(options.collegeId)));
   if (options.unreadOnly) {
