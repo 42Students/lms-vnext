@@ -1,4 +1,4 @@
-import {afterCollegeOutcomeSchema} from "./tpo-after-college-model";
+import {afterCollegeOutcomeSchema,AFTER_COLLEGE_OUTCOMES} from "./tpo-after-college-model";
 import {tpoHiddenProfileMatchesSearch,tpoProfileSkillNameMatches} from "./tpo-hidden-profile-search";
 import {readTpoAfterCollegeMatches} from "./tpo-after-college-filter-service";
 import {readTpoStudentVerificationFacts,studentVerificationFact} from "./tpo-student-verification-facts";
@@ -177,6 +177,10 @@ export const tpoStudentRequestsQuerySchema = z
     decidedDays:z.union([z.literal("ALL"),z.coerce.number().int().min(1).max(365)]).optional(),
     urgentOnly:z.boolean().default(false),
     jobId:uuid.optional(),
+  proof:z.enum(["ALL","ATTACHED","MISSING"]).default("ALL"),
+  branchId:z.string().uuid().optional(),
+  registration:z.enum(["ALL","PLACEMENTS","HIGHER_STUDIES","NOT_INTERESTED","NOT_REGISTERED"]).default("ALL"),
+  afterCollege:z.enum(["ALL","NOT_RECORDED",...AFTER_COLLEGE_OUTCOMES]).default("ALL"),
     search: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
@@ -1120,6 +1124,7 @@ export type TpoStudentRequestView = {
   nextRoundAt: Date | null;
   nextRoundName: string | null;
   urgent: boolean;
+  proofAttached:boolean;
 };
 
 export type TpoStudentRequestSummary = {
@@ -1155,6 +1160,13 @@ export async function listTpoStudentRequests(
   await requireLiveTpoStudentActor(context,input.collegeId);
 
   const asOf=new Date();
+  const [registrationReady,afterCollegeReady]=await Promise.all([
+   input.registration==="ALL"?Promise.resolve(false):placementTableExists("placement_batch_registrations"),
+   input.afterCollege==="ALL"?Promise.resolve(false):placementTableExists("placement_tpo_after_college"),
+  ]);
+  if((input.registration!=="ALL"&&!registrationReady)||
+     (input.afterCollege!=="ALL"&&!afterCollegeReady))
+   throw new Error("Requested student filters are temporarily unavailable.");
   const decidedSince=typeof input.decidedDays==="number"
     ?new Date(asOf.getTime()-input.decidedDays*86_400_000):null;
   const rows = await getDb()
@@ -1176,6 +1188,27 @@ export async function listTpoStudentRequests(
         placementLearnerRequests.requestedAt,
       updatedAt: placementLearnerRequests.updatedAt,
       reason: placementLearnerRequests.reason,
+      proofAttached:sql<boolean>`coalesce(
+       nullif(btrim(${placementLearnerRequests.effectPayload}->>'proofUrl'),''),
+       nullif(btrim(${placementLearnerRequests.effectPayload}->>'proof_url'),''),
+       nullif(btrim(${placementLearnerRequests.effectPayload}->>'documentUrl'),''),
+       nullif(btrim(${placementLearnerRequests.effectPayload}->>'offerLetterUrl'),'')
+      ) is not null`,
+      branchId:sql<string|null>`(select program.department_id from learner_program_enrollments enr
+        join programs program on program.id=enr.program_id
+        join departments dept on dept.id=program.department_id
+        where enr.membership_id=${collegeMemberships.id} and enr.status='ACTIVE'
+          and dept.college_id=${college.id} limit 1)`,
+      registrationChoice:registrationReady?sql<string|null>`(select reg.choice
+        from placement_batch_registrations reg
+        join learner_program_enrollments enr on enr.membership_id=reg.membership_id
+          and enr.cohort_id=reg.cohort_id and enr.status='ACTIVE'
+        where reg.membership_id=${collegeMemberships.id} and reg.college_id=${college.id}
+        order by reg.updated_at desc limit 1)`:sql<string|null>`null::text`,
+      afterCollegeOutcome:afterCollegeReady?sql<string|null>`(select dest.outcome
+        from placement_tpo_after_college dest
+        where dest.learner_membership_id=${collegeMemberships.id}
+          and dest.college_id=${college.id} limit 1)`:sql<string|null>`null::text`,
       decisionNote:
         placementLearnerRequests.decisionNote,
       decidedAt:placementLearnerRequests.decidedAt,
@@ -1292,6 +1325,15 @@ export async function listTpoStudentRequests(
     if(input.requestType&&row.requestType!==input.requestType)return false;
     if(input.jobId&&row.jobId!==input.jobId)return false;
     if(input.urgentOnly&&!tpoRequestUrgent(row,asOf))return false;
+    if(input.proof==="ATTACHED"&&!row.proofAttached)return false;
+    if(input.proof==="MISSING"&&row.proofAttached)return false;
+    if(input.branchId&&row.branchId!==input.branchId)return false;
+    if(input.registration!=="ALL"&&
+      (input.registration==="NOT_REGISTERED"?row.registrationChoice!==null:
+       row.registrationChoice!==input.registration))return false;
+    if(input.afterCollege!=="ALL"&&
+      (input.afterCollege==="NOT_RECORDED"?row.afterCollegeOutcome!==null:
+       row.afterCollegeOutcome!==input.afterCollege))return false;
     if(input.requestedBefore&&row.requestedAt>=input.requestedBefore)return false;
     if(input.requestedAfter&&row.requestedAt<input.requestedAfter)return false;
 
@@ -1351,6 +1393,7 @@ export async function listTpoStudentRequests(
         nextRoundAt: row.nextRoundAt,
         nextRoundName: row.nextRoundName,
         urgent:tpoRequestUrgent(row,asOf),
+         proofAttached:row.proofAttached,
       }));
 
   return {
