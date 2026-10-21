@@ -10,9 +10,9 @@ export default function FacultyNotificationsError({ reset }: {
 }) {
   return (
     <section className="min-w-0 space-y-4">
-      <PageHeader title={"Unable to load Notifications"} />
+      <PageHeader title="Couldn't load notifications" />
       <p role="alert" className="mt-2 text-sm text-body">
-        This Faculty page could not load. Retry to recheck current access.
+        Couldn't load notifications. Please try again.
       </p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
         <Button onClick={reset} className="w-full sm:w-auto">Retry</Button>
