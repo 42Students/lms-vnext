@@ -1,3 +1,6 @@
+import Link from "next/link";
+import { Alert } from "@/components/ui/alert";
+import { AuthorizationError } from "@/modules/permissions/policy";
 import { Disclosure } from "@/components/ui/disclosure";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -23,13 +26,15 @@ export async function PlacementOperationsWorkspace({
   basePath: string;
   staleDays?: number;
 }) {
+  // The old drives landing keeps independent panels usable when a secondary
+  // data source fails. Never turn a failed read into an empty-success dataset.
   const [
-    operations,
-    relationships,
-    owners,
-    recruiterGrants,
-    seasons,
-  ] = await Promise.all([
+    operationsResult,
+    relationshipsResult,
+    ownersResult,
+    recruiterGrantsResult,
+    seasonsResult,
+  ] = await Promise.allSettled([
     getPlacementTpoOperations(
       context,
       collegeId,
@@ -53,16 +58,37 @@ export async function PlacementOperationsWorkspace({
       collegeId,
     ),
   ]);
+  for (const result of [
+    operationsResult, relationshipsResult, ownersResult,
+    recruiterGrantsResult, seasonsResult,
+  ]) {
+    if (result.status === "rejected" && result.reason instanceof AuthorizationError) {
+      throw result.reason;
+    }
+  }
+  const operations = operationsResult.status === "fulfilled" ? operationsResult.value : null;
+  const relationships = relationshipsResult.status === "fulfilled" ? relationshipsResult.value : null;
+  const owners = ownersResult.status === "fulfilled" ? ownersResult.value : null;
+  const recruiterGrants = recruiterGrantsResult.status === "fulfilled" ? recruiterGrantsResult.value : null;
+  const seasons = seasonsResult.status === "fulfilled" ? seasonsResult.value : null;
+  const retry = (
+    <Link href={basePath} className="ml-2 font-semibold text-link underline underline-offset-2">
+      Retry
+    </Link>
+  );
 
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
-      <PlacementOperationsOverview
+      {operations ? <PlacementOperationsOverview
         operations={operations}
         basePath={basePath}
         showDriveSearch={basePath.startsWith("/admin/")}
         staleDays={staleDays}
-      />
-      <Disclosure title="Placement season" defaultOpen={!seasons.some(season=>season.status==="ACTIVE")} className="border-b border-[var(--lms-canvas-border)]">
+      /> : <Alert tone="warning">
+        Couldn&apos;t load drives. Check your connection and retry.{retry}
+        Other placement settings remain available.
+      </Alert>}
+      {seasons ? <Disclosure title="Placement season" defaultOpen={!seasons.some(season=>season.status==="ACTIVE")} className="border-b border-[var(--lms-canvas-border)]">
       <PlacementSeasonManager
         collegeId={collegeId}
         seasons={seasons.map((season) => ({
@@ -77,8 +103,10 @@ export async function PlacementOperationsWorkspace({
               | "CLOSED",
         }))}
       />
-      </Disclosure>
-      <Disclosure title="Companies" className="border-b border-[var(--lms-canvas-border)]">
+      </Disclosure> : <Alert tone="warning">
+        Placement season data could not be refreshed.{retry}
+      </Alert>}
+      {relationships && owners ? <Disclosure title="Companies" className="border-b border-[var(--lms-canvas-border)]">
       <PlacementEmployerRelationships
         relationships={relationships.map(
           (item) => ({
@@ -96,8 +124,10 @@ export async function PlacementOperationsWorkspace({
         )}
         owners={owners}
       />
-      </Disclosure>
-      <Disclosure title="Recruiter access" className="border-b border-[var(--lms-canvas-border)]">
+      </Disclosure> : <Alert tone="warning">
+        Company relationships could not be refreshed.{retry}
+      </Alert>}
+      {relationships && recruiterGrants ? <Disclosure title="Recruiter access" className="border-b border-[var(--lms-canvas-border)]">
       <PlacementRecruiterAccess
         relationships={relationships.map(
           (item) => ({
@@ -123,6 +153,18 @@ export async function PlacementOperationsWorkspace({
           }),
         )}
       />
+      </Disclosure> : <Alert tone="warning">
+        Recruiter access could not be refreshed.{retry}
+      </Alert>}
+      <Disclosure title="Student placement lookup" className="border-b border-[var(--lms-canvas-border)]">
+        <p className="pb-3 text-sm text-body">
+          Find a student&apos;s placement registration, applications and outcomes
+          within the selected college.{" "}
+          <Link href={basePath+"/student-lookup"}
+            className="font-semibold text-link underline underline-offset-2">
+            Open student placement lookup
+          </Link>
+        </p>
       </Disclosure>
     </div>
   );
