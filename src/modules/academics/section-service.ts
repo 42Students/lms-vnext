@@ -2,12 +2,17 @@ import {
   and,
   asc,
   eq,
+  ilike,
+  or,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  sections,
+  sections, cohorts, departments, programs, sectionEnrollments,
+  sectionScheduleEvents,
 } from "@/db/schema";
+import { z } from "zod";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
@@ -58,10 +63,9 @@ async function assertSectionUnique(
 
     const conditions = [
       eq(sections.cohortId, cohortId),
-      eq(
-        sections.academicPeriodId,
-        academicPeriodId,
-      ),
+      ...(errorCode === "SECTION_NAME_CONFLICT" ? [] : [
+        eq(sections.academicPeriodId, academicPeriodId),
+      ]),
       eq(sections.status, "ACTIVE"),
       sql<boolean>`lower(${field}) = ${value.toLowerCase()}`,
     ];
@@ -209,6 +213,45 @@ export async function listSections(
       asc(sections.academicPeriodId),
       asc(sections.name),
     );
+}
+
+
+/**
+ * Cross-cohort class picker. Legacy discovery could search all batches, but
+ * this still resolves one acting college before reading any names. A global
+ * Super Admin must deliberately select a college in vNext.
+ *
+ * Search is read-only. This must never be reused as cache refresh authority.
+ */
+export async function searchSections(
+  context: RequestContext,
+  raw: { q?: string; programId?: string; limit?: number },
+) {
+  const input = z.object({
+    q: z.string().trim().max(100).default(""),
+    programId: z.string().uuid().optional(),
+    limit: z.number().int().min(1).max(100).default(20),
+  }).strict().parse(raw);
+  const acting = await resolveActingCollege(context, "academics.read");
+  const pattern = "%" + input.q.replace(/[\\%_]/g, "\\export async function createSection(") + "%";
+  return getDb().select({
+    id: sections.id, name: sections.name, code: sections.code,
+    cohortId: cohorts.id, cohortName: cohorts.name,
+    programId: programs.id, programName: programs.name,
+    academicPeriodId: sections.academicPeriodId,
+  }).from(sections)
+    .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(departments, eq(departments.id, programs.departmentId))
+    .where(and(
+      eq(departments.collegeId, acting.collegeId),
+      eq(sections.status, "ACTIVE"),
+      input.programId ? eq(programs.id, input.programId) : undefined,
+      input.q ? or(ilike(sections.name, pattern), ilike(sections.code, pattern),
+        ilike(cohorts.name, pattern), ilike(programs.name, pattern)) : undefined,
+    ))
+    .orderBy(asc(programs.name), asc(cohorts.name), asc(sections.name))
+    .limit(input.limit);
 }
 
 export async function createSection(
@@ -366,6 +409,13 @@ export async function archiveSection(
 
   const db = getDb();
   return await db.transaction(async (tx)=>{
+    const [enrolled] = await tx.select({ id: sectionEnrollments.id }).from(sectionEnrollments)
+      .where(and(eq(sectionEnrollments.sectionId, sectionId),
+        eq(sectionEnrollments.status, "ACTIVE"))).limit(1);
+    if (enrolled) throw new AcademicsServiceError("SECTION_HAS_STUDENTS");
+    const [scheduled] = await tx.select({ id: sectionScheduleEvents.id }).from(sectionScheduleEvents)
+      .where(eq(sectionScheduleEvents.sectionId, sectionId)).limit(1);
+    if (scheduled) throw new AcademicsServiceError("SECTION_HAS_SCHEDULE");
     const [archived] = await tx
     .update(sections)
     .set({

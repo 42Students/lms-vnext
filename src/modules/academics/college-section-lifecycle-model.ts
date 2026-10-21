@@ -5,6 +5,6 @@ export const collegeSectionLifecycleSchema=z.discriminatedUnion("action",[
 ]);
 export function classLifecyclePrompt(name:string,action:"ARCHIVE"|"RESTORE"){
   return action==="ARCHIVE"
-    ? `Archive class ${name}? Enrollment, Faculty, session or course delivery history blocks archival.`
+    ? `Archive class ${name}? This hides the class from active lists but retains its history for auditing. Move enrolled students and unlink teaching, schedules and course deliveries first.`
     : `Restore class ${name}? Its cohort, academic period and active class name/code must be available.`;
 }
