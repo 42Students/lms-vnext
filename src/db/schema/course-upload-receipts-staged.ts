@@ -28,6 +28,13 @@ export const courseUploadReceipts = pgTable(
     collegeId: uuid("college_id").notNull().references(() => colleges.id, { onDelete: "restrict" }),
     ownerMembershipId: uuid("owner_membership_id").notNull().references(() => collegeMemberships.id, { onDelete: "restrict" }),
     purpose: text("purpose").notNull(),
+    legacyReceiptId: varchar("legacy_receipt_id",{length:120}),
+    legacyOwnerUserId: integer("legacy_owner_user_id"),
+    legacyOwnerUserType: varchar("legacy_owner_user_type",{length:32}),
+    legacyFolder: varchar("legacy_folder",{length:64}),
+    legacyLessonContentId: integer("legacy_lesson_content_id"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
+    legacySourceCreatedAt: timestamp("legacy_source_created_at",{withTimezone:true}),
     assignmentId: uuid("assignment_id").references(() => courseAssignments.id, { onDelete: "restrict" }),
     deliveryId: uuid("delivery_id").references(() => courseSectionDeliveries.id, { onDelete: "restrict" }),
     lessonContentId: uuid("lesson_content_id").references(() => lessonContents.id, { onDelete: "restrict" }),
@@ -59,6 +66,16 @@ export const courseUploadReceipts = pgTable(
   },
   (table) => [
     uniqueIndex("course_upload_receipts_object_key_uq").on(table.objectKey),
+    uniqueIndex("course_upload_receipts_legacy_id_uq").on(table.legacyReceiptId)
+      .where(sql`${table.legacyReceiptId} is not null`),
+    index("course_upload_receipts_legacy_content_idx").on(table.legacyLessonContentId)
+      .where(sql`${table.legacyLessonContentId} is not null`),
+    check("course_upload_receipts_legacy_folder_ck",sql`
+      ${table.legacyFolder} is null or
+      (${table.legacyFolder} = 'assignment' and ${table.purpose} = 'ASSIGNMENT_SUBMISSION') or
+      (${table.legacyFolder} = 'lesson-content' and ${table.purpose} = 'COURSE_RESOURCE')`),
+    check("course_upload_receipts_legacy_deleted_ck",sql`
+      ${table.legacyWasDeleted} is distinct from true or ${table.deletedAt} is not null`),
     index("course_upload_receipts_submission_idx").on(table.consumedBySubmissionId),
     uniqueIndex("course_upload_receipts_consumed_attestation_uq").on(
       table.id,
