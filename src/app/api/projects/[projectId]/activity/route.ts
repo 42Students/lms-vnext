@@ -30,6 +30,8 @@ export async function GET(request:Request,{params}:{
     size:url.searchParams.get("size")??undefined,
   });
   if(!parsed.success)return NextResponse.json({error:"INVALID_ACTIVITY_CURSOR"},{status:400});
+  // Legacy /activity/feed consumers use this bounded activity route with
+  // page/size; newer consumers pass beforeTime/beforeId for stable cursors.
   // Access is checked inside the query against the current project and college.
   const page=await getProjectActivityPage(await getCurrentRequestContext(),projectId,parsed.data);
   const last=page.events.at(-1);

@@ -14,9 +14,11 @@ export async function DELETE(request: Request, { params }: RouteContext) {
   try {
     const context = await getCurrentRequestContext();
     const { grantId } = await params;
+    // This UUID route is recruiter SELF-leave only, never the legacy TPO
+    // extend/revoke action (mapped to POST /api/placements/tpo/settings/recruiter-grants).
     return NextResponse.json({
       access: await leaveOwnRecruiterCollegeAccess(context, grantId),
-    });
+    }, { headers: { "Cache-Control": "private, no-store" } });
   } catch (error) {
     return apiErrorResponse(error);
   }
