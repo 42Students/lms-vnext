@@ -12,9 +12,9 @@ export default function LearnerProfileError({
 }) {
   return (
     <section role="alert" className="min-w-0 space-y-4">
-      <PageHeader title={"Unable to load your profile"} />
+      <PageHeader title="We couldn't load your profile. Please try again." />
       <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
-        Your saved profile could not be retrieved. No empty profile or successful save has been assumed. Retry to reload your profile.
+        We couldn't load your profile. Please try again. Your previously saved details were not overwritten.
       </p>
       <div className="mt-4 flex flex-col items-stretch gap-2 sm:flex-row sm:items-center sm:gap-3">
         <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
