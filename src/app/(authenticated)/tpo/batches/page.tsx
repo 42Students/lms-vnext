@@ -201,12 +201,14 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
        <span className="bg-[var(--lms-error-text)]" style={{width:total>0?summary.ineligible/total*100+"%":"0%"}}/>
       </div>
       {summary.needsReview>0?<p className="text-xs font-semibold text-[var(--lms-warning-text)]">{summary.needsReview} need class membership review</p>:null}
-      {total>0?<ol aria-label="Journey" className="grid grid-cols-3 gap-1 text-center">
-       {([["Registered",progress?.registered],["Verified",progress?.verified],["Placed",progress?.placed]] as const).map(([label,value])=>
+      {total>0?<ol aria-label="Journey" className="grid grid-cols-4 gap-1 text-center">
+       {([["Invited",progress?.invited],["Registered",progress?.registered],["Verified",progress?.verified],["Placed",progress?.placed]] as const).map(([label,value])=>
         <li key={label} className="flex min-w-0 flex-col rounded-[var(--lms-radius-sm)] bg-[var(--lms-neutral-50)] px-1 py-2">
          <strong className="text-sm text-[var(--lms-heading)]">{value??"—"}</strong><span className="text-xs text-muted-foreground">{label}</span>
         </li>)}
       </ol>:null}
+      {total>0&&progress?.invited==null?
+       <p className="text-xs text-muted-foreground">Invitation recipient count unavailable for this cohort; no delivery total is inferred.</p>:null}
      </div>:<p role="status" className="text-sm text-muted-foreground">Eligibility counts unavailable.</p>}
      <footer className="mt-auto flex flex-wrap items-center gap-3 pt-2">
       <Link href={"/tpo/batches/"+b.id+tpoBatchNextActionLink(b,data.ready,summary,progress)}

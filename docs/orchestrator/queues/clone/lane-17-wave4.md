@@ -17,7 +17,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-12/W3_src_app_authenticated_tpo_placements_lifecycle_page.tsx.md` (edit src/app/(authenticated)/tpo/placements/lifecycle/page.tsx; 8 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_tpo_students_prep_route.ts.md` (edit src/app/api/placements/tpo/students/prep/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-team-message-change-service.ts.md` (edit src/modules/placements/tpo-team-message-change-service.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-batch-journey-service.ts.md` (edit src/modules/placements/tpo-batch-journey-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-batch-journey-service.ts.md` (edit src/modules/placements/tpo-batch-journey-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_tpo-report-gallery-filter-model.ts.md` (edit src/modules/placements/tpo-report-gallery-filter-model.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-20_public-share-controller.md.md` (new; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_modules_placements_hr-inline-round-results-model.ts.md` (edit src/modules/placements/hr-inline-round-results-model.ts; 1 findings; best P2)

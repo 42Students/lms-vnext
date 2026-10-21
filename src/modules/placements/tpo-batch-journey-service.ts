@@ -1,8 +1,8 @@
 import "server-only";
-import { and, countDistinct, eq, inArray, or } from "drizzle-orm";
+import { and, countDistinct, desc, eq, inArray, or } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
-  collegeMemberships, cohorts, departments, learnerProgramEnrollments, placementApplications,
+  activityEvents, collegeMemberships, cohorts, departments, learnerProgramEnrollments, placementApplications,
   placementBatchRegistrations, placementJobs, placementOffers, placementJoiningOutcomes,
   profileVerifications, programs,
 } from "@/db/schema";
@@ -10,7 +10,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
 
-export type BatchJourneyCounts={registered:number;verified:number;placed:number};
+export type BatchJourneyCounts={invited:number|null;registered:number;verified:number;placed:number};
 
 /** Unambiguous persisted evidence only: PLACEMENTS consent, verified profile,
  * and accepted offer or joined outcome. No guessed invitation counts. */
@@ -25,6 +25,26 @@ export async function listTpoBatchJourneyCounts(context:RequestContext,batchIds:
   .innerJoin(departments,and(eq(departments.id,programs.departmentId),eq(departments.collegeId,collegeId)))
   .where(inArray(cohorts.id,ids));
  if(cohortsOfCollege.length!==ids.length)throw new Error("BATCH_NOT_FOUND");
+ // Invite is an audited one-time cohort transition. The event records the
+ // actual number of APP recipients; it is NOT a count of emails delivered
+ // or a projection of currently eligible students. Imported cohorts without
+ // that historical evidence show an unknown invitation count.
+ const inviteEvents=await db.select({
+  cohortId:activityEvents.subjectId,metadata:activityEvents.metadata,
+ }).from(activityEvents).where(and(
+  eq(activityEvents.collegeId,collegeId),
+  eq(activityEvents.eventType,"BATCH_INVITED"),
+  eq(activityEvents.subjectType,"COHORT"),
+  inArray(activityEvents.subjectId,ids),
+ )).orderBy(desc(activityEvents.createdAt)).limit(500);
+ const invited=new Map<string,number>();
+ for(const event of inviteEvents){
+  const count=event.metadata?.appRecipients;
+  if(!invited.has(event.cohortId)&&typeof count==="number"&&
+   Number.isSafeInteger(count)&&count>=0)
+   invited.set(event.cohortId,count);
+ }
+
  const [registrations,verifications,offers]=await Promise.all([
   placementTableExists("placement_batch_registrations").then(ready=>ready?
    db.select({id:placementBatchRegistrations.cohortId,total:countDistinct(placementBatchRegistrations.membershipId)})
@@ -59,6 +79,7 @@ export async function listTpoBatchJourneyCounts(context:RequestContext,batchIds:
    .groupBy(learnerProgramEnrollments.cohortId),
  ]);
  for(const id of ids)result.set(id,{
+  invited:invited.get(id)??null,
   registered:registrations.find(item=>item.id===id)?.total??0,
   verified:verifications.find(item=>item.id===id)?.total??0,
   placed:offers.find(item=>item.id===id)?.total??0,
