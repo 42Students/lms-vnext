@@ -110,6 +110,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
    await apiFetch(endpoint,{method:"PATCH",headers:{"content-type":"application/json"},
     body:JSON.stringify({offerId,url,confirmed:true})});
    await reload();setSuccess("Offer letter attached");
+   showToast({tone:"success",title:"Offer letter attached"});
   }catch(reason){setError(reason instanceof Error?reason.message:"Unable to attach offer letter.");}
   finally{setSavingLetter(false);}
  }
@@ -329,7 +330,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       rounds={interviewData.rounds}
       candidates={interviewData.candidates.filter(candidate=>candidate.applicationId===applicationId)}
       appointments={interviewData.interviews.filter(appointment=>appointment.applicationId===applicationId)}
-      preferredApplicationId={applicationId}/>
+      preferredApplicationId={applicationId} onCommitted={()=>void loadCandidateInterviews()}/>
     </>:null}
     <Button type="button" variant="secondary" onClick={()=>{setInterviewOpen(false);void reload();}}>
      Close candidate interviews

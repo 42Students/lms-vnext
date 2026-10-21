@@ -27,8 +27,9 @@ const toLocal=(iso:string)=>new Intl.DateTimeFormat("sv-SE",{
  year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",
  hourCycle:"h23",timeZone:"Asia/Kolkata",
 }).format(new Date(iso)).replace(" ","T");
-export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments,preferredApplicationId}:{
+export function CollegeInterviewAppointments({jobId,rounds,candidates,appointments,preferredApplicationId,onCommitted}:{
  jobId:string;rounds:Round[];candidates:Candidate[];appointments:Appointment[];preferredApplicationId?:string;
+ onCommitted?:()=>void;
 }){
  const router=useRouter();const {showToast}=useToast();
  const [editing,setEditing]=useState<Appointment|null>(null);
@@ -69,9 +70,9 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
    setSuccess(body.action==="SCHEDULE"?"Interview scheduled and candidate notified." :
     "Interview "+(data.status??"updated").toLowerCase().replaceAll("_"," ")+". The learner was notified.");
    if(body.action==="SCHEDULE"){
-    showToast({tone:"success",title:"Interview scheduled successfully"});
+    showToast({tone:"success",title:"Interview scheduled and candidate notified."});
    }
-   setDirty(false);router.refresh();return true;
+   setDirty(false);router.refresh();onCommitted?.();return true;
   }catch(e){setError(e instanceof Error?e.message:"Interview action failed");return false;}
   finally{setBusy(false);}
  }
