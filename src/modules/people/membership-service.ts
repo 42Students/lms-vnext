@@ -86,8 +86,9 @@ export async function addMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
-  // COL-people-20: only Super Admins can grant/revoke COLLEGE_ADMIN.
-  if (input.role === "COLLEGE_ADMIN") {
+  // Legacy ADMIN and TPO are protected faculty types: never allow a college
+  // operator to grant or revoke either privileged role via a generic role edit.
+  if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
     requirePermission(context, "admin-scope.select");
   }
   const person = await loadAuthorizedMembership(
@@ -113,8 +114,9 @@ export async function removeMembershipRole(
   repository: MembershipManagementRepository,
 ) {
   const input = membershipRoleMutationInputSchema.parse(rawInput);
-  // COL-people-20: only Super Admins can grant/revoke COLLEGE_ADMIN.
-  if (input.role === "COLLEGE_ADMIN") {
+  // Legacy ADMIN and TPO are protected faculty types: never allow a college
+  // operator to grant or revoke either privileged role via a generic role edit.
+  if (input.role === "COLLEGE_ADMIN" || input.role === "TPO") {
     requirePermission(context, "admin-scope.select");
   }
   const person = await loadAuthorizedMembership(
@@ -149,9 +151,14 @@ export async function updateMembershipLifecycle(
 
   assertMutableMembershipTarget(context,{userId:person.user.id,roles:person.membership.roles},input.action);
 
-  return repository.transitionMembershipLifecycle(
+  // A membership lifecycle transition is scoped to this college membership.
+  // It is NOT a platform-wide user disable: global sign-in revocation must use
+  // the separate platform-status/session-revocation workflow.
+  const updated = await repository.transitionMembershipLifecycle(
     person.membership.id,
     input,
     { context, person },
   );
+  return { ...updated, lifecycleScope: "COLLEGE_MEMBERSHIP" as const, userId: person.user.id };
+
 }

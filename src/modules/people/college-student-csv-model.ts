@@ -1,18 +1,55 @@
 import { z } from "zod";
 import { phoneE164Schema, personDisplayNameSchema, personEmailSchema } from "./validation";
 
+const structuredStudentRowSchema = z.object({
+  displayName: z.string().trim().optional(),
+  firstName: z.string().trim().optional(),
+  lastName: z.string().trim().optional(),
+  phoneE164: z.string().trim().optional(),
+  mobileNumber: z.string().trim().optional(),
+  email: z.string().trim().optional(),
+  rollNumber: z.string().trim().optional(),
+  programId: z.string().uuid().optional(),
+  cohortId: z.string().uuid().optional(),
+  sectionId: z.string().uuid().optional(),
+}).strict();
+
+/** Legacy bulk JSON can be submitted without a temporary CSV file. The
+ * caller must resolve numeric legacy class/program IDs to scoped UUIDs first;
+ * we never infer a tenant academic mapping from a number. */
+function structuredStudentRowsAsCsv(
+  entries: z.infer<typeof structuredStudentRowSchema>[],
+  defaults: { programId?: string; cohortId?: string; sectionId?: string },
+): string {
+  const quote = (value: string) => '"' + value.replaceAll('"', '""') + '"';
+  return [
+    STUDENT_CSV_COLUMNS.join(","),
+    ...entries.map(entry => [
+      entry.displayName || [entry.firstName, entry.lastName].filter(Boolean).join(" "),
+      entry.phoneE164 || entry.mobileNumber || "",
+      entry.email || "",
+      entry.programId || defaults.programId || "",
+      entry.cohortId || defaults.cohortId || "",
+    ].map(value => quote(value)).join(",")),
+  ].join("\r\n");
+}
+
 export const studentCsvRequestSchema = z.object({
   action: z.enum(["PREVIEW", "IMPORT"]),
-  csv: z.string().min(1).max(1000000),
+  csv: z.string().min(1).max(1000000).optional(),
+  students: z.array(structuredStudentRowSchema).min(1).max(500).optional(),
   confirm: z.boolean().optional(),
   programId: z.string().uuid().optional(),
   cohortId: z.string().uuid().optional(),
   sectionId: z.string().uuid().optional(),
 }).strict().superRefine((v, ctx) => {
+  if (Boolean(v.csv) === Boolean(v.students?.length)) {
+    ctx.addIssue({ code: "custom", path: ["csv"], message: "Provide either CSV or structured student records" });
+  }
   if (v.action === "IMPORT" && v.confirm !== true) {
     ctx.addIssue({ code: "custom", path: ["confirm"], message: "Explicit confirmation required" });
   }
-});
+}).transform(v => ({ ...v, csv: v.csv ?? structuredStudentRowsAsCsv(v.students ?? [], v) }));
 
 const csvRowSchema = z.object({
   displayName: personDisplayNameSchema,
@@ -54,7 +91,7 @@ export function tokenizeStudentCsv(input: string): string[][] {
       if (fields.some(v => v.trim() !== "")) result.push(fields);
       fields = []; afterQuote = false;
     } else {
-      if (afterQuote) throw Error("INVALID_CSV_AFTER_QUOTE");
+      if (afterQuote) throw Error("INVALID_CSV_AFTER_QUOTE: Unexpected character after quoted field in record " + (result.length + 1) + ".");
       field += ch;
     }
   }
@@ -70,7 +107,10 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
 } {
   let rows: string[][];
   try { rows = tokenizeStudentCsv(raw.replace(/^\uFEFF/, "")); }
-  catch { return { entries: [], structuralErrors: ["INVALID_CSV_FORMAT"] }; }
+  catch (error) {
+    const reason = error instanceof Error ? error.message : "";
+    return { entries: [], structuralErrors: [reason.startsWith("INVALID_CSV_AFTER_QUOTE:") ? reason : "INVALID_CSV_FORMAT"] };
+  }
   const header = rows[0]?.map(value => value.trim()) ?? [];
   const legacy = header.join(",") === LEGACY_STUDENT_CSV_COLUMNS.join(",");
   const prior = header.join(",") === PRIOR_STUDENT_CSV_COLUMNS.join(",");

@@ -25,7 +25,11 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  }
  if(query.q) {
   const pattern="%"+query.q.replace(/[\\%_]/g,"\\$&")+"%";
-  conditions.push(or(ilike(users.displayName,pattern),ilike(colleges.name,pattern))!);
+  // The global directory searches public names only. Contact-based search
+  // requires an explicitly selected college and is never an unscoped lookup.
+  conditions.push(or(ilike(users.displayName,pattern),ilike(colleges.name,pattern),
+   selected?.collegeId ? ilike(users.email,pattern) : undefined,
+   selected?.collegeId ? ilike(users.phoneE164,pattern) : undefined)!);
  }
  const db=getDb();
  const source=db.select({
@@ -53,7 +57,17 @@ export async function listSuperAdminUsers(context: RequestContext, raw: unknown)
  const byId=new Map<string,string[]>();
  for(const row of roleRows)byId.set(row.membershipId,[...(byId.get(row.membershipId)??[]),row.role]);
  return {
-  query:{...query,page:paging.page},contactVisible:Boolean(selected?.collegeId),total:paging.total,totalPages:paging.totalPages,
-  items:rows.map(row=>({...row,roles:byId.get(row.membershipId)??[]})),
+  query:{...query,page:paging.page},contactVisible:Boolean(selected?.collegeId),
+  searchScope:selected?.collegeId ? "SELECTED_COLLEGE_STAFF" as const : "GLOBAL_NAME_ONLY" as const,
+  total:paging.total,totalPages:paging.totalPages,
+  items:rows.map(row=>{
+   const roles=byId.get(row.membershipId)??[];
+   const staff=roles.some(role=>role==="FACULTY"||role==="TPO"||role==="COLLEGE_ADMIN") && !roles.includes("LEARNER");
+   // Even Super Admin search results do not become a learner/recruiter contact
+   // enumeration surface; staff contact details require explicit college scope.
+   return {...row,roles,
+    email:staff&&selected?.collegeId ? row.email : null,
+    phoneE164:staff&&selected?.collegeId ? row.phoneE164 : null};
+  }),
  };
 }
