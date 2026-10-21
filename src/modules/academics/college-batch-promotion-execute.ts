@@ -100,6 +100,22 @@ export async function executeCollegeBatchPromotion(
     const targetCourseSet = new Set(targetCourses.map(course => course.courseId));
     const oldOnly = previousCourses.map(course => course.courseId)
       .filter(courseId => !targetCourseSet.has(courseId));
+    // Shared courses retain authorized teaching links across the destination
+    // term; ending these would strand a live offering used by both terms.
+    const sharedCourseIds = [...new Set(previousCourses.map(course => course.courseId)
+      .filter(courseId => targetCourseSet.has(courseId)))];
+    const retainedSharedTeaching = sharedCourseIds.length ? await tx.select({
+      id: courseTeachingAssignments.id,
+    }).from(courseTeachingAssignments)
+      .innerJoin(courseSectionDeliveries,
+        eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
+      .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+      .where(and(eq(courseOfferings.cohortId, batch.id),
+        inArray(courseOfferings.courseId, sharedCourseIds),
+        eq(courseOfferings.status, "ACTIVE"),
+        isNull(courseSectionDeliveries.endedAt),
+        isNull(courseTeachingAssignments.endedAt)))
+      .for("update", { of: courseTeachingAssignments }) : [];
     let endedTeachingAssignments = 0;
     if (oldOnly.length) {
       const currentRoles = await tx.select({ id: courseTeachingAssignments.id })
@@ -131,6 +147,7 @@ export async function executeCollegeBatchPromotion(
         .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
         .where(and(eq(courseOfferings.cohortId, batch.id),
           inArray(courseOfferings.courseId, [...targetCourseSet]),
+          eq(courseOfferings.status, "ACTIVE"),
           isNull(courseTeachingAssignments.endedAt),
           isNull(courseSectionDeliveries.endedAt)))
         .groupBy(courseOfferings.courseId);
@@ -165,7 +182,9 @@ export async function executeCollegeBatchPromotion(
         version: updated.version,
         academicYearStart: updated.currentAcademicYearStart,
         learnerCount: preview.checkedLearners,
-        endedTeachingAssignments, facultySetupIncomplete,
+        endedTeachingAssignments,
+        retainedSharedTeachingAssignments: retainedSharedTeaching.length,
+        facultySetupIncomplete,
       },
     });
     return {
@@ -174,7 +193,10 @@ export async function executeCollegeBatchPromotion(
       academicYearStart: updated.currentAcademicYearStart,
       version: updated.version,
       checkedLearners: preview.checkedLearners,
-      endedTeachingAssignments, facultySetupIncomplete,
+      endedTeachingAssignments,
+      retainedSharedTeachingAssignments: retainedSharedTeaching.length,
+      facultySetupIncomplete,
+      message: `Batch promoted to semester ${updated.currentTermNumber}`,
     };
     });
   } catch (error) {
