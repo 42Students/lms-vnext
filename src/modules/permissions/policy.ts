@@ -23,6 +23,7 @@ export type PlatformPermission =
   | "projects.manage"
   | "placements.read"
   | "placements.manage"
+  | "placements.tpo.team.manage"
   | "placements.recruiter.read"
   | "placements.recruiter.round.manage"
   | "placements.recruiter.slot.manage"
@@ -44,6 +45,13 @@ export type ResourceScope = {
   organizationId?: string | null;
   collegeId?: string | null;
   placementCompanyRelationshipId?: string | null;
+  /** User/learner target resolved from a server-owned scoped row, never request JSON. */
+  learnerMembershipId?: string | null;
+  /** For a concrete delivery, service MUST prove enrollment before reading. */
+  courseDeliveryId?: string | null;
+  courseDeliveryAudienceAuthorized?: boolean;
+  /** Verified membership+college team grant resolved server side. */
+  tpoTeamAdministrator?: boolean;
   /** Trusted server-side lookups, never values read from request JSON. */
   tpoVerificationEnabled?: boolean;
   tpoVerificationAdministrator?: boolean;
@@ -114,6 +122,8 @@ function hasRecruiterGrant(
     context.recruiter?.grants.some(
       (grant) =>
         grant.collegeId === resource.collegeId &&
+        (!resource.organizationId ||
+          grant.organizationId === resource.organizationId) &&
         grant.companyRelationshipId ===
           resource.placementCompanyRelationshipId,
     ),
@@ -185,6 +195,23 @@ export function can(
     return false;
   }
 
+  // A LEARNER may never use a broad college read capability to inspect
+  // a different learner. A service must pass the actual target membership.
+  if (hasMembershipRole(context, "LEARNER") &&
+      resource.learnerMembershipId &&
+      resource.learnerMembershipId !== context.membership?.id) {
+    return false;
+  }
+
+  // A delivery-specific course read must include an enrollment/targeting
+  // decision from the authorized service, not just a matching college.
+  if (permission === "courses.read" &&
+      hasMembershipRole(context, "LEARNER") &&
+      resource.courseDeliveryId &&
+      resource.courseDeliveryAudienceAuthorized !== true) {
+    return false;
+  }
+
   switch (permission) {
     case "organization.read":
       return (
@@ -231,6 +258,15 @@ export function can(
         (hasMembershipRole(context, "TPO") &&
           resource.tpoVerificationAdministrator === true &&
           resource.tpoVerificationEnabled === true)
+      );
+
+    case "placements.tpo.team.manage":
+      return (
+        (hasMembershipRole(context, "TPO") ||
+          hasMembershipRole(context, "COLLEGE_ADMIN") ||
+          (hasMembershipRole(context, "FACULTY") &&
+            resource.tpoTeamAdministrator === true)) &&
+        isSameMembershipCollege(context, resource)
       );
 
     case "placements.manage":
