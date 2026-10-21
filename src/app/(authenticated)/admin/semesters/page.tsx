@@ -140,7 +140,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           {key:"name",header:"Name",mobilePriority:"primary",cell:row=>row.name},
           {key:"credits",header:"Credits",mobilePriority:"secondary",cell:row=>row.mappedCredits??"—"},
           {key:"courses",header:"Courses",mobilePriority:"secondary",cell:row=>row.mappedCourses},
-          {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><span className={row.isActive?"text-success-text":"text-error"}><StatusBadge tone={row.isActive?"success":"danger"}>{row.isActive?"Active":"Inactive"}</StatusBadge></span>},
+          {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><span className={row.isActive?"text-success-text":"text-error"}><StatusBadge tone={row.isActive?"success":"error"}>{row.isActive?"Active":"Inactive"}</StatusBadge></span>},
           {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeSemesterRowActions row={row}/>},
         ]}
         empty={<EmptyState title="No semesters found" description="No semesters match these filters. Create a program first, then add semesters."
