@@ -161,6 +161,8 @@ export async function getCollegeStudentPlacementDetails(ctx:RequestContext,raw:u
  for(const interview of interviews)if(interview.applicationId&&
    !nextInterviewByApplication.has(interview.applicationId))
     nextInterviewByApplication.set(interview.applicationId,interview);
+ // The profile payload is read only after resolving the selected active learner
+ // in the college, never as part of the multi-student suggestion result.
  const doc=student.profileDocument;
  const validArray=(value:unknown):string[]=>Array.isArray(value)?
   value.filter((item):item is string=>typeof item==="string").slice(0,50):[];
