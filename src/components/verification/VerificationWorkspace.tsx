@@ -46,7 +46,7 @@ function VerificationTableSkeleton(){
   <table aria-hidden="true" className="min-w-[960px] w-full border-collapse">
    <thead><tr>{["Student","Roll","Batch","Branch","Section","Status","Marksheets","Submitted","By","Review"].map(name=><th key={name} className="border-b border-border px-3 py-3 text-left text-xs">{name}</th>)}</tr></thead>
    <tbody>{[0,1,2,3,4].map(n=><tr key={n}>{Array.from({length:10},(_,i)=>
-    <td key={i} className="border-b border-border px-3 py-3"><div className="h-4 w-20 animate-pulse rounded bg-surface-subtle"/></td>)}</tr>)}</tbody>
+    <td key={i} className="border-b border-border px-3 py-3"><div className="h-4 w-20 animate-pulse rounded bg-border"/></td>)}</tr>)}</tbody>
   </table>
  </div>;
 }
@@ -181,6 +181,12 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
       {key:"state",header:"Status",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":"info"}>
         {verificationQueueCardPresentation(row.status).state}</StatusBadge>},
+      {key:"evidence",header:"Marksheets",mobilePriority:"secondary" as const,
+       cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"
+        ?row.marksheets
+         ?row.marksheets.missing===0?"All uploaded":"Some missing"
+         :row.missingMarksheet?"Some missing":"All uploaded"
+        :"Not an Education check"},
       {key:"date",header:tab==="VERIFIED"?"Verified":tab==="SENT_BACK"?"Sent back":"Sent",mobilePriority:"secondary" as const,
        cell:(row:VerificationQueueCard)=><VerificationTimestamp
         value={row.decidedAt??row.submittedAt} nowMs={nowMs}/>},
@@ -188,13 +194,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
        cell:(row:VerificationQueueCard)=>row.decidedByName
          ?row.decidedByName+(row.decisionNote?" · "+row.decisionNote:"")
          :row.decisionNote??"—"},
-      {key:"evidence",header:"Marksheets",mobilePriority:"secondary" as const,
-       cell:(row:VerificationQueueCard)=>row.section==="EDUCATION"
-        ?row.marksheets
-         ?row.marksheets.uploaded+" / "+row.marksheets.expected+" uploaded"
-         :row.missingMarksheet?"Missing marksheet":"Marksheet available"
-        :"Not an Education check"},
-      {key:"actions",header:"Actions",mobilePriority:"action" as const,
+      {key:"actions",header:"Review / Open",mobilePriority:"action" as const,
        cell:(row:VerificationQueueCard)=><Button type="button" variant="secondary"
         disabled={!onReview} onClick={()=>onReview?.(row)}
         className="min-h-11 md:min-h-9">Review</Button>},
