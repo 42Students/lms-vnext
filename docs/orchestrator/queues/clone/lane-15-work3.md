@@ -4,9 +4,9 @@ Packets moved to you from other lanes. Work them AFTER your own queue (lane-15-w
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-faculty-detail-service.ts.md` (edit src/modules/people/college-faculty-detail-service.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-faculty-lifecycle-model.ts.md` (edit src/modules/people/college-faculty-lifecycle-model.ts; 1 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_parent-sms-provider.ts.md` (edit src/modules/attendance/parent-sms-provider.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-faculty-detail-service.ts.md` (edit src/modules/people/college-faculty-detail-service.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_people_college-faculty-lifecycle-model.ts.md` (edit src/modules/people/college-faculty-lifecycle-model.ts; 1 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-13/src_modules_attendance_parent-sms-provider.ts.md` (edit src/modules/attendance/parent-sms-provider.ts; 1 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_app_authenticated_mentor_projects_projectId_page.tsx.md` (edit src/app/(authenticated)/mentor/projects/[projectId]/page.tsx; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-registration-read-service.ts.md` (edit src/modules/placements/learner-registration-read-service.ts; 4 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-12/src_modules_admin-ui_super-admin-screening-detail-service.ts.md` (edit src/modules/admin-ui/super-admin-screening-detail-service.ts; 3 findings; best P1)

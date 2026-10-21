@@ -5,7 +5,8 @@ export const collegeFacultyLifecycleSchema = z.discriminatedUnion("action", [
   z.object({
     action: z.literal("DEACTIVATE"),
     expectedStatus: z.literal("ACTIVE"),
-    reason: z.string().trim().min(3).max(500),
+    // Match the legacy no-reason lifecycle request while capping any supplied explanation.
+    reason: z.string().trim().max(1000).optional(),
     confirm: z.literal(true),
   }).strict(),
   z.object({
