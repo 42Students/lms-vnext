@@ -40,7 +40,7 @@ export const TPO_SCHEDULED_JOBS = {
     description: "Today's interviews: in-app only",
   },
   "tpo.recruiterMessageEmails": {
-    schedule: "*/5 * * * *", leaseMs: 4 * 60_000, wired: false,
+    schedule: "*/5 * * * *", leaseMs: 4 * 60_000, wired: true,
     description: "Recruiter unread-message digests",
   },
   "tpo.expireOverdueOffers": {

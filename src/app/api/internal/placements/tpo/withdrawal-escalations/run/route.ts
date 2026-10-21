@@ -21,7 +21,8 @@ export async function POST(request:Request){
     ttlMs:TPO_SCHEDULED_JOBS["tpo.escalateWithdrawals"].leaseMs},
    async fence=>{await fence.assertCurrent();return escalatePendingWithdrawalRequests();},
   );
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+  return NextResponse.json(result.ran?result.result:{skipped:true,reason:result.reason},
+   {headers:{"Cache-Control":"no-store"}});
  }catch{
   return NextResponse.json({error:"ESCALATION_NOT_COMPLETED"},{status:503});
  }

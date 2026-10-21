@@ -1,4 +1,7 @@
-import {createHash,timingSafeEqual} from "node:crypto";
+import {createHash,randomUUID,timingSafeEqual} from "node:crypto";
+import {executeScheduledJobWithLease} from "@/modules/operations/scheduled-job-runner";
+import {postgresScheduledJobLeaseStore} from "@/modules/operations/postgres-scheduled-job-lease-store";
+import {TPO_SCHEDULED_JOBS} from "@/modules/operations/tpo-scheduled-job-registry";
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {dispatchRecruiterUnreadMessageDigests} from "@/modules/placements/recruiter-message-email-dispatch-service";
@@ -19,8 +22,14 @@ export async function POST(request:Request){
  if(!isSameOriginRequest(request)||!allowed(request))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
  try{
-  const result=await dispatchRecruiterUnreadMessageDigests();
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+  const result=await executeScheduledJobWithLease(
+   postgresScheduledJobLeaseStore,
+   {jobName:"tpo.recruiterMessageEmails",holderId:randomUUID(),
+    ttlMs:TPO_SCHEDULED_JOBS["tpo.recruiterMessageEmails"].leaseMs},
+   async fence=>{await fence.assertCurrent();return dispatchRecruiterUnreadMessageDigests();},
+  );
+  return NextResponse.json(result.ran?result.result:
+   {skipped:true,reason:result.reason},{headers:{"Cache-Control":"no-store"}});
  }catch{
   return NextResponse.json({error:"SERVICE_UNAVAILABLE"},{status:503});
  }

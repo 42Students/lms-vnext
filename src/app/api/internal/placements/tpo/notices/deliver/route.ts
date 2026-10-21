@@ -21,7 +21,8 @@ export async function POST(request:Request){
   );
   if(result.ran&&!result.result.ready)
    return NextResponse.json({error:"DELIVERY_STORAGE_NOT_READY"},{status:503});
-  return NextResponse.json(result,{headers:{"Cache-Control":"no-store"}});
+  return NextResponse.json(result.ran?result.result:{skipped:true,reason:result.reason},
+   {headers:{"Cache-Control":"no-store"}});
  }catch{
   return NextResponse.json({error:"DELIVERY_NOT_COMPLETED"},{status:503});
  }
