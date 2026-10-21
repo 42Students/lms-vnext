@@ -1,9 +1,9 @@
 "use client";
 import {Button} from "@/components/ui/button";
-import {collegeContentCsv,type CollegeContentExportRow} from "@/modules/courses/college-content-csv-model";
-export function CollegeContentCsvExport({rows,filename}:{rows:readonly CollegeContentExportRow[];filename:string}){
+import {collegeContentCsv,legacyLessonContentCsv,type CollegeContentExportRow} from "@/modules/courses/college-content-csv-model";
+export function CollegeContentCsvExport({rows,filename,legacyLessonContent=false}:{rows:readonly CollegeContentExportRow[];filename:string;legacyLessonContent?:boolean}){
  function download(){
-  const url=URL.createObjectURL(new Blob([collegeContentCsv(rows)],{type:"text/csv;charset=utf-8"}));
+  const url=URL.createObjectURL(new Blob([legacyLessonContent?legacyLessonContentCsv(rows):collegeContentCsv(rows)],{type:"text/csv;charset=utf-8"}));
   let anchor: HTMLAnchorElement | null = null;
   let deferred=false;
   try {
