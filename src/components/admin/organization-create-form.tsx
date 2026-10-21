@@ -33,14 +33,16 @@ export function OrganizationCreateForm({ advanceToCollege = false }: { advanceTo
           headers:{"content-type":"application/json"},
           body:JSON.stringify({name:cleanName}),
         });
+        const href=createdOrganizationStepHref(payload);
+        if(!href){
+          setError(advanceToCollege
+            ? "Organization created, but the college step could not be selected. Refresh to choose the organization."
+            : "Could not verify the organization response. Refresh before trying again.");
+          router.refresh();return;
+        }
         showToast({title:"Created organization “"+cleanName+"”.",tone:"success"});
         clearDraft();
         if(advanceToCollege){
-          const href=createdOrganizationStepHref(payload);
-          if(!href){
-            setError("Organization created, but the college step could not be selected. Refresh to choose the organization.");
-            router.refresh();return;
-          }
           router.push(href);router.refresh();return;
         }
         setName("");clearDraft();router.refresh();
