@@ -1,7 +1,7 @@
 import "server-only";
 import { and, desc, eq, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { learnerProgramEnrollments } from "@/db/schema";
+import { cohorts, learnerProgramEnrollments } from "@/db/schema";
 import { placementBatchLifecycles } from "@/db/schema/placement-batches";
 import { placementBatchRegistrations } from "@/db/schema/placement-registration";
 import type { RequestContext } from "@/modules/identity/context";
@@ -12,8 +12,11 @@ import { PlacementRegistrationError } from "./batch-registration-service";
 export async function getOwnLearnerRegistration(context: RequestContext) {
   const membership = await requireLearnerPlacementAccess(context);
   const db = getDb();
-  const enrollments = await db.select({ cohortId: learnerProgramEnrollments.cohortId })
-    .from(learnerProgramEnrollments)
+  const enrollments = await db.select({
+    cohortId: learnerProgramEnrollments.cohortId,
+    batchName:cohorts.name,
+  }).from(learnerProgramEnrollments)
+    .innerJoin(cohorts,eq(cohorts.id,learnerProgramEnrollments.cohortId))
     .where(and(eq(learnerProgramEnrollments.membershipId, membership.id),
       eq(learnerProgramEnrollments.status, "ACTIVE"))).limit(2);
   if (enrollments.length !== 1)
@@ -48,6 +51,7 @@ export async function getOwnLearnerRegistration(context: RequestContext) {
   return {
     ...resolveLearnerRegistrationDisplay(batch, registration?.choice ?? null, new Date()),
     cohortId,
+    batchName:enrollments[0].batchName,
     // False is the semantic equivalent of legacy GET mine's empty 204 case.
     hasRegistration: registration !== null,
     noBatchAvailable:batch===null,

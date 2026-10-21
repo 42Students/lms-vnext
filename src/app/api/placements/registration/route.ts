@@ -21,7 +21,18 @@ export async function POST(request:Request) {
   try {
     const context=await getCurrentRequestContext();
     await requireLearnerPlacementAccess(context);
-    const result=await registerOwnPlacementChoice(context,await request.json());
+    const mime=request.headers.get("content-type")??"";
+    let payload:unknown;
+    if(mime.toLowerCase().includes("application/x-www-form-urlencoded")){
+      // Legacy form POSTs use choice and consent; modern UI uses strict JSON.
+      const form=await request.formData();
+      const consent=form.get("acceptedConsent")??form.get("consent");
+      payload={choice:form.get("choice"),
+        acceptedConsent:consent===true||consent==="true"||consent==="on"||consent==="1"};
+    }else{
+      payload=await request.json();
+    }
+    const result=await registerOwnPlacementChoice(context,payload);
     return NextResponse.json({ok:true,choice:result.choice,version:result.version},
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {return registrationError(error);}

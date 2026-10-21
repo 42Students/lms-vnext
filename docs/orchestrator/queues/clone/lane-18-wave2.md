@@ -39,7 +39,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_admin_super-admin-company-identities.tsx.md` (edit src/components/admin/super-admin-company-identities.tsx; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_app_authenticated_college_course-progress_page.tsx.md` (edit src/app/(authenticated)/college/course-progress/page.tsx; 13 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_tracker_tracker-issue-saved-views.tsx.md` (edit src/components/tracker/tracker-issue-saved-views.tsx; 12 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_placements_learner-placement-registration.tsx.md` (edit src/components/placements/learner-placement-registration.tsx; 11 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_placements_learner-placement-registration.tsx.md` (edit src/components/placements/learner-placement-registration.tsx; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_NEW_docs_audit_gap2_lane-2_temporary-sms-outage-recovery.md.md` (new; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_NEW_docs_audit_gap2_lane-7_u003-college-admin-projects-index.md.md` (new; 11 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-18/W2_src_components_courses_learner-course-overview.tsx.md` (edit src/components/courses/learner-course-overview.tsx; 11 findings; best P2)
