@@ -124,6 +124,8 @@ export async function ProjectAdminReadinessPage({
     getProjectReadiness(context,selected),
     listCollegeReadinessReleases(context,collegeId,selected),
   ]):[null,null];
+  const selectedHasFinalSubmission=Boolean(selectedReadiness?.finalSubmission.latest &&
+    selectedReadiness.finalSubmission.latest.status!=="DRAFT");
   const selectedReadiness=readinessRead?.status==="fulfilled"?readinessRead.value:null;
   const releaseUnavailable=releasesRead?.status==="rejected";
   const releaseContext=releasesRead?.status==="fulfilled"?releasesRead.value:[];
@@ -188,19 +190,39 @@ export async function ProjectAdminReadinessPage({
           items={pickerChoices} selected={selected} action={readinessPath}
           collegeId={collegeId} initialTotal={workspaceChoices.total}/>
         {selected ? <>
-          {selectedProject?.status==="ARCHIVED"?<Banner tone="warning" role="status">This archived workspace is not in the active picker. You can still review its current manual override.</Banner>:null}
-          <section aria-label="Current readiness" className="space-y-2 border-b border-border pb-3">
-            <h3 className="text-sm font-semibold">Current readiness — {selectedProject?.title}</h3>
-            <p className="text-sm">Workspace status: <strong>{selectedProject?.status}</strong></p>
-            {currentReadiness?.error?<Banner tone="warning" role="alert">Couldn't load current readiness. Retry this page.</Banner>:
-              currentReadiness?.data?<p className="text-sm">
-                Execution: {currentReadiness.data.execution.complete?"Complete":"Incomplete"} ·
-                Tasks: {currentReadiness.data.execution.tasks.done}/{currentReadiness.data.execution.tasks.total} ·
-                Sprints: {currentReadiness.data.execution.sprints.completed}/{currentReadiness.data.execution.sprints.total}
-              </p>:selectedSummary?<p className="text-sm">
-                Execution: {selectedSummary.executionComplete?"Complete":"Incomplete"} · Progress: {selectedSummary.progressPercent}%
-              </p>:null}
-            <p className="text-sm">Manual override: {selectedOverride?selectedOverride.direction:"None"}</p>
+          <Link href={basePath+"/"+selected+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+            Manage override
+          </Link>
+          <section aria-label="Current readiness" className="space-y-3 border-y border-border py-4">
+            <h3 className="text-base font-semibold">Current readiness</h3>
+            {selectedReadiness?<>
+              <dl className="grid grid-cols-1 gap-3 text-sm sm:grid-cols-3">
+                <div><dt className="text-xs font-semibold text-body">State</dt>
+                  <dd className="mt-1 font-semibold">{
+                    selectedHasFinalSubmission?"Submission already exists":
+                    selectedReadiness.readinessOverride.state==="FORCE_UNLOCK"?"Ready (manual)":
+                    selectedReadiness.readinessOverride.state==="FORCE_BLOCK"?"Not ready (manual)":
+                    effectiveProjectSubmissionReady(selectedReadiness.execution.complete,null)?"Ready":"Not ready"
+                  }</dd></div>
+                <div><dt className="text-xs font-semibold text-body">Reason</dt>
+                  <dd className="mt-1 whitespace-pre-wrap">{
+                    (selectedHasFinalSubmission?
+                       "An existing final submission takes precedence over manual overrides.":
+                       selectedReadiness.readinessOverride.note)??
+                    (selectedReadiness.execution.complete?"All tasks and sprints are complete":
+                      "Incomplete tasks or sprints")
+                  }</dd></div>
+                <div><dt className="text-xs font-semibold text-body">Submission status</dt>
+                  <dd className="mt-1">{selectedReadiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
+              </dl>
+              <p className="text-xs text-body">
+                Tasks {selectedReadiness.execution.tasks.done}/{selectedReadiness.execution.tasks.total}
+                {" · "}Sprints {selectedReadiness.execution.sprints.completed}/{selectedReadiness.execution.sprints.total}
+              </p>
+            </>:<ErrorState title="Readiness could not be loaded"
+              description="The selected workspace's readiness could not be loaded. Retry the workspace; previous readiness values are not shown."
+              action={<Link href={readinessPath+"?projectId="+encodeURIComponent(selected)}
+                className="text-link underline">Retry readiness</Link>}/>}
           </section>
           <a href="#manual-override" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Manage override</a>
           <h3 className="text-sm font-semibold">Releases</h3>
