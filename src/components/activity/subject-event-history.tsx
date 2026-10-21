@@ -7,20 +7,23 @@ import { listActivityEvents } from "@/modules/activity/service";
  * The service enforces membership scope before returning the event rows.
  */
 export async function SubjectEventHistory({
-  context, subjectType, subjectId, limit = 10,
+  context, subjectType, subjectId, collegeId, limit = 10,
 }: {
   context: RequestContext;
   subjectType: string;
   subjectId: string;
+  collegeId?: string;
   limit?: number;
 }) {
   const result = await listActivityEvents(context, {
-    subjectType, subjectId, limit: Math.max(1, Math.min(limit, 25)),
+    subjectType, subjectId, ...(collegeId ? {collegeId} : {}),
+    limit: Math.max(1, Math.min(limit, 25)),
   }).then(value => ({ok: true as const, value}))
     .catch(() => ({ok: false as const, value: null}));
   const query = new URLSearchParams({
     view: "all", range: "ALL", subjectType, subjectId,
   });
+  if (collegeId) query.set("collegeId", collegeId);
   const historyHref = (isSuperAdmin(context) ? "/admin/audit" : "/activity") +
     "?" + query.toString();
   return <section aria-label="Record history" className="min-w-0 space-y-3 border-t border-border pt-5">

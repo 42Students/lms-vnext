@@ -11,6 +11,7 @@ import {listSmsDeliveryAttemptsForSupport} from "@/modules/notifications/exotel-
 import {validateSuperAdminAuditRouteQuery} from "@/modules/activity/super-admin-audit-route-query-model";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {SubjectEventHistory} from "@/components/activity/subject-event-history";
 
 function smsDate(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
@@ -79,7 +80,10 @@ export default async function SuperAdminAuditPage({searchParams}:{
   </nav>
   {blocked?<Alert tone="warning" title="Select a College to view audit logs">
    This scoped view cannot show platform-wide events. Select a college from the header, then retry.
-  </Alert>:<div className={embedded==="true"?"[&_[aria-label='Activity_Log_filters']]:hidden":""}>
+  </Alert>:embedded==="true"&&parsed.subjectType&&parsed.subjectId?
+   <SubjectEventHistory context={context} subjectType={parsed.subjectType}
+    subjectId={parsed.subjectId} collegeId={selectedCollege??undefined} limit={25}/>:
+   <div className={embedded==="true"?"[&_[aria-label='Activity_Log_filters']]:hidden":""}>
    <ActivityPage searchParams={Promise.resolve({
     ...activityParams,...(mainScope?{collegeId:mainScope}:{}),
    })}/>
