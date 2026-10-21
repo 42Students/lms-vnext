@@ -50,7 +50,7 @@ export default async function DriveSettingsPage({params}:{params:Promise<{jobId:
     </div>}/>
   </div>;
  }
- const [policyRead,typesRead]=["PUBLISHED","DRAFT","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)?await Promise.allSettled([
+ const [policyRead,typesRead,companiesRead]=["PUBLISHED","DRAFT","CLOSED","CANCELLED","ARCHIVED"].includes(job.status)?await Promise.allSettled([
   getJobEligibilityPolicy(context,jobId),
   listPlacementJobTypeChoices(context,job.collegeId),
   listPlacementCompanies(context,job.collegeId),
