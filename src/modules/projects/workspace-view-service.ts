@@ -40,7 +40,7 @@ export async function getProjectWorkspaceView(
     workspace,
     members,
     readiness,
-    meetings,
+    meetingsRead,
     finalDelivery,
     taskSubmissions,
     evaluation,
@@ -52,7 +52,10 @@ export async function getProjectWorkspaceView(
     ),
     listProjectMembers(context, projectId),
     getProjectReadiness(context, projectId),
-    listProjectMeetings(context, projectId),
+    listProjectMeetings(context, projectId)
+      .then(items=>({items,failed:false as const}))
+      .catch(()=>({items:[] as Awaited<ReturnType<typeof listProjectMeetings>>,
+        failed:true as const})),
     listProjectSubmissions(context, projectId),
     listProjectTaskSubmissionsForProject(
       context,
@@ -68,6 +71,7 @@ export async function getProjectWorkspaceView(
     ),
   ]);
 
+  const meetings=meetingsRead.items;
   // MEN-projects-meetings-25: historical roster is mentor-only. Learners
   // retain the active roster and never receive former members' profile data.
   const access = await requireProjectReadAccess(context, projectId);
@@ -197,6 +201,7 @@ export async function getProjectWorkspaceView(
     mentorRoster,
     readiness,
     meetings,
+    meetingsLoadError:meetingsRead.failed,
     finalDelivery,
     taskSubmissions,
     evaluation,
