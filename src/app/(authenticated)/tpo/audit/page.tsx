@@ -221,6 +221,10 @@ export default async function TpoAuditPage({
         ))}
       </section>
 
+      {summary.total>5000?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-2 text-sm text-body">
+        The audit export is limited to the first 5,000 matching events ({summary.total} match).
+        Narrow the From and To dates above, then export each range to include all events.
+      </p>:null}
       <p className="text-xs text-muted-foreground leading-5">About and What happened: use the category tabs. Who and When: use the actor/entity view and date filters. The actor view contains additional scoped audit filters.</p>
       <TpoAuditSavedViews
        filters={{kind:query.kind,from:query.from,to:query.to,q:query.q,who:query.who}}/>
