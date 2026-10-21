@@ -171,7 +171,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
             </div>
-            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground leading-[20px]">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
+            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground leading-[20px]">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
             <a
               download="recruiter-leads-template.csv"
               href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
