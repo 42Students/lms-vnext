@@ -4,4 +4,5 @@
  * bounded payloads, network rate limits and opaque response codes.
  * An HTTP redirect would break POST clients and leak one-time form data.
  */
-export { POST, runtime } from "@/app/api/public/recruit-from-us/send-code/route";
+export { POST } from "@/app/api/public/recruit-from-us/send-code/route";
+export const runtime = "nodejs";
