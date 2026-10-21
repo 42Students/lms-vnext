@@ -7,6 +7,7 @@ import {
  placementCompanies,placementCompanyRelationships,placementJobs,users,learnerProfiles,
 } from "@/db/schema";
 import {projectCompanyShareRows,safeCompanyShareColumns} from "./column-model";
+import {createPrivateReadGrant} from "@/modules/storage/private-object-storage";
 import {companyShareTablesReady} from "./readiness";
 import {placementTableExists} from "../staged-tables";
 import {placementCompanyShareSelections as selectedShares} from "@/db/schema/placement-company-share-selection";
@@ -89,6 +90,8 @@ export async function getPublicCompanyApplicantShare(
    applicationId:placementApplications.id,displayName:users.displayName,email:users.email,
    phone:users.phoneE164,rollNumber:learnerProfiles.rollNumber,
    profileDocument:learnerProfiles.profileDocument,
+   membershipId:collegeMemberships.id,
+   resumeObjectPath:learnerProfiles.resumeObjectPath,
    stage:placementApplicationScreenings.status,
    branch:sql<string|null>`(SELECT p.name FROM learner_program_enrollments lpe
       JOIN programs p ON p.id=lpe.program_id
@@ -116,11 +119,26 @@ export async function getPublicCompanyApplicantShare(
   await tx.insert(views).values({
    shareId:grant.shareId,collegeId:grant.collegeId,eventKind,
   });
+  // Never return a static object path, arbitrary URL, or unscanned resume.
+  // Legacy files are not migrated: only new namespace-scoped, CLEAN objects
+  // can produce short-lived read capabilities for an authorized shared row.
+  const visibleRecords=await Promise.all(records.map(async row=>{
+   if(!selectedColumns.includes("RESUME")||!row.resumeObjectPath||
+     !/^private\/[0-9a-f-]{36}\/[0-9a-f-]{36}\/resume\/[0-9a-f-]{36}$/i.test(row.resumeObjectPath))
+     return {...row,resumeSignedUrl:null,resumeExpiresAt:null};
+   try{
+    const signed=await createPrivateReadGrant({objectKey:row.resumeObjectPath,
+     collegeId:grant.collegeId,ownerMembershipId:row.membershipId,expiresInMs:60000});
+    return {...row,resumeSignedUrl:signed.readUrl,resumeExpiresAt:signed.expiresAt.toISOString()};
+   }catch{
+    return {...row,resumeSignedUrl:null,resumeExpiresAt:null};
+   }
+  }));
   return {
    kind:"READY" as const,title:grant.title,companyName:grant.companyName,
    collegeName:grant.collegeName,sharedAt:grant.sharedAt.toISOString(),
    expiresAt:grant.expiresAt.toISOString(),
-   rows:projectCompanyShareRows(records,selectedColumns),
+   rows:projectCompanyShareRows(visibleRecords,selectedColumns),
    total,page:isCsv?1:pagination.page,totalPages:pagination.totalPages,
    truncated:isCsv&&total>500,search:search.data,
    selectedColumns,shortlistBy:grant.shortlistBy?.toISOString()??null,
