@@ -79,7 +79,7 @@ export default async function CollegeFacultyAssignmentPage({
         </label>}
         action={<Button type="submit" form="college-faculty-assignment-filters" className="min-h-11 md:min-h-9">Filter</Button>}>
         <form id="college-faculty-assignment-filters" action="/college/faculty-assignment" method="get"
-          className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-2 xl:grid-cols-4">
+          className="grid min-w-0 items-end gap-[8px] md:grid-cols-2 xl:grid-cols-4">
           <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Exact course code
             <Input name="courseCode" defaultValue={query.courseCode ?? ""} maxLength={64}/>

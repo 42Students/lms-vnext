@@ -48,7 +48,7 @@ export default async function CollegeDriveApplicationsPage({ params, searchParam
     <PageHeader title={"Applications · " + data.drive.title}
       description="Review applications, move candidates through hiring stages and notify them about decisions."
       actions={<Link href={`/college/placements/jobs/${jobId}/overview`} className="text-link underline min-h-11 md:min-h-[var(--lms-control-height)] inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Drive overview</Link>} />
-    <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
+    <form method="get" role="search" aria-label="Application filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,2fr)_auto]">
       <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email, roll or role
         <Input type="search" name="q" defaultValue={query.q} maxLength={100} />
       </label>

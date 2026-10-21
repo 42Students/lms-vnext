@@ -86,7 +86,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       </nav>
     </details>
     <section className="min-w-0" aria-label="People filters">
-      <form action="/college/people/manage" method="get" role="search" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Search people">
+      <form action="/college/people/manage" method="get" role="search" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Search people">
         <label className="grid min-w-0 w-full flex-1 md:w-auto md:min-w-44 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, email or phone
           <Input name="q" type="search" maxLength={100} defaultValue={filter.q}
             />
