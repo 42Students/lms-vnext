@@ -138,7 +138,7 @@ export async function getCollegeDriveAttention(context:RequestContext){
    ))
    .orderBy(desc(placementApplications.submittedAt),placementApplications.id)
    .limit(900);
-  const byCategory=new Map(categories.map(item=>[item.jobId+":"+item.category,item]));
+  const byCategory=new Map<string, AttentionItem>(categories.map(item=>[item.jobId+":"+item.category,item] as const));
   for(const applicant of actionable){
    const matches:CollegeAttentionCategory[]=[];
    if(applicant.stale)matches.push("STALE_APPLIED");
