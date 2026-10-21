@@ -3,6 +3,8 @@ import styles from "@/components/courses/faculty-report-legacy-charts.module.css
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
 import {notFound} from "next/navigation";
+import { ErrorState } from "@/components/ui/error-state";
+import { Banner } from "@/components/ui/banner";
 import {parseFacultyAssessmentReportRoute,facultyQuizReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
@@ -28,13 +30,23 @@ export default async function FacultyQuizReportPage({
   const context = await getCurrentRequestContext();
   const { quizId } = await params;
   const parsed=parseFacultyAssessmentReportRoute(quizId,await searchParams);
-  if(!parsed) notFound();
+  if(!parsed) return <section className="min-w-0 space-y-4">
+    <PageHeader title="Quiz report" />
+    <ErrorState title="Report not found." description="This quiz report link is no longer valid."
+      action={<Link href="/teacher/allQuizzes" className="font-semibold text-primary-text underline">Back to quizzes</Link>} />
+  </section>;
   let report:Awaited<ReturnType<typeof getFacultyQuizReport>>;
   try {
     report=await getFacultyQuizReport(context,parsed.assessmentId,parsed.deliveryId);
   } catch(error) {
     if(facultyQuizReportHidden(error)) notFound();
-    throw error;
+    return <section className="min-w-0 space-y-4">
+      <PageHeader title="Quiz report" />
+      <ErrorState title="Couldn't load this quiz's report. Please try again."
+        description="Your report is temporarily unavailable. No results have been changed."
+        action={<a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
+          className="font-semibold text-primary-text underline">Retry report</a>} />
+    </section>;
   }
   const {
     quiz,
@@ -47,6 +59,11 @@ export default async function FacultyQuizReportPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
+      {report.rosterUnavailable ? <Banner tone="warning" role="status">
+        Couldn't load the student roster. Scores from authorized attempts remain visible, but the not-attempted list is unavailable.
+        <a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
+          className="ml-2 font-semibold text-primary-text underline">Retry roster</a>
+      </Banner> : null}
       <PageHeader title={quiz.title}
         description={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
         actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">

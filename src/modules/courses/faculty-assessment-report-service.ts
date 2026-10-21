@@ -209,17 +209,16 @@ export async function getFacultyQuizReport(
     "QUIZ_NOT_FOUND",
     "QUIZ_DELIVERY_MISMATCH",
   );
-  const [attempts, rosterScope, authoredQuiz] =
+  const [attempts, rosterRead, authoredQuiz] =
     await Promise.all([
       listQuizAttempts(
         context,
         quizId,
         quiz.deliveryId,
       ),
-      getFacultyDeliveryRoster(
-        context,
-        quiz.deliveryId,
-      ),
+      getFacultyDeliveryRoster(context, quiz.deliveryId)
+        .then(value => ({ok:true as const,value}))
+        .catch(() => ({ok:false as const})),
       getCourseQuiz(
         context,
         quizId,
@@ -228,7 +227,11 @@ export async function getFacultyQuizReport(
     ]);
   // Legacy report parity: retakes contribute only the learner's latest
   // attempt to standing, distribution and question accuracy.
-  const scopedAttempts=facultyReportCurrentRosterRows(attempts,rosterScope.roster);
+  // Roster failure must not hide the already-authorized attempt summary.
+  // Never infer non-attempting learners without a current roster.
+  const rosterScope=rosterRead.ok?rosterRead.value:null;
+  const scopedAttempts=rosterScope
+    ?facultyReportCurrentRosterRows(attempts,rosterScope.roster):attempts;
   const latestAttempts =
     latestQuizAttemptsByLearner(scopedAttempts);
   const learners = new Set(
@@ -237,7 +240,7 @@ export async function getFacultyQuizReport(
     ),
   );
   const notAttemptedLearners =
-    rosterScope.roster.filter(
+    (rosterScope?.roster??[]).filter(
       (learner) =>
         !learners.has(learner.membershipId),
     );
@@ -261,6 +264,7 @@ export async function getFacultyQuizReport(
     scoreSummary(latestAttempts);
   return {
     quiz,
+    rosterUnavailable:rosterScope===null,
     attempts:scopedAttempts,
     latestAttempts,
     distribution:
@@ -274,7 +278,7 @@ export async function getFacultyQuizReport(
       ...latestScoreSummary,
       totalAttempts: scopedAttempts.length,
       eligibleLearners:
-        rosterScope.roster.length,
+        rosterScope?.roster.length??latestAttempts.length,
       uniqueLearners: learners.size,
       submittedLearners:
         latestAttempts.length,
