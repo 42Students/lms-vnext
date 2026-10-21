@@ -498,3 +498,17 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/tpo/settings/job-types/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
 - `src/app/(authenticated)/tpo/settings/notices/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
 - `src/app/(authenticated)/tpo/settings/notifications/error.tsx` | instances H0/h10/B0/T0/F0 | legacy/code: none | fixes: none
+- `src/app/(authenticated)/tpo/settings/notifications/page.tsx` | instances H2/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/public-link/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/public-page/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/recruiters/error.tsx` | instances H0/h10/B0/T0/F0 | legacy/code: none | fixes: none
+- `src/app/(authenticated)/tpo/settings/recruiters/page.tsx` | instances H2/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/rules/error.tsx` | instances H0/h10/B0/T0/F0 | legacy/code: none | fixes: none
+- `src/app/(authenticated)/tpo/settings/rules/page.tsx` | instances H2/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/season/error.tsx` | instances H0/h10/B0/T0/F0 | legacy/code: none | fixes: none
+- `src/app/(authenticated)/tpo/settings/season/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/see/error.tsx` | instances H0/h10/B0/T0/F0 | legacy/code: none | fixes: none
+- `src/app/(authenticated)/tpo/settings/see/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none
+- `src/app/(authenticated)/tpo/settings/team/error.tsx` | instances H0/h10/B0/T0/F0 | legacy/code: none | fixes: none
+- `src/app/(authenticated)/tpo/settings/templates/page.tsx` | instances H1/h10/B0/T0/F0 | legacy/code: title 30px/600/#172033 vs shared/normalized 30px/600/#172033; 375px title 20px vs 20px; subtitle 14px vs 14px | fixes: none

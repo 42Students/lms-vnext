@@ -506,21 +506,21 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/settings/job-types/page.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
 - [x] `src/app/(authenticated)/tpo/settings/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-link/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/season/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/see/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/team/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/prep-readiness/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-link/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/public-page/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/recruiters/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/rules/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/season/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/see/error.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/see/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/team/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/team/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/templates/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/templates/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/settings/trusted/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
