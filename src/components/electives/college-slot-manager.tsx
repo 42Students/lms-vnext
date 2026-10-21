@@ -1,12 +1,15 @@
 "use client";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Dialog } from "@/components/ui/dialog";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useToast } from "@/components/ui/toast";
 
 
 
 import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
-import { useState, useTransition, type FormEvent } from "react";
+import { useRef, useState, useTransition, type FormEvent } from "react";
 
 export type SlotFormRow = {
   id: string;
@@ -35,7 +38,10 @@ export function CollegeSlotManager({ options, row }: {
 }) {
   const editing = Boolean(row);
   const router = useRouter();
+  const { showToast } = useToast();
   const [open, setOpen] = useState(false);
+  const [discardOpen, setDiscardOpen] = useState(false);
+  const initialDraft = useRef("");
   const [pending, transition] = useTransition();
   const [programId, setProgramId] = useState(options.programs[0]?.id ?? "");
   const [periodId, setPeriodId] = useState("");
@@ -47,10 +53,82 @@ export function CollegeSlotManager({ options, row }: {
   const [minPick, setMinPick] = useState(String(row?.minPick ?? 1));
   const [maxPick, setMaxPick] = useState(String(row?.maxPick ?? 1));
   const [error, setError] = useState<string | null>(null);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const limit = options.programs.find(p => p.id === programId)?.durationTerms ?? 12;
+
+  function snapshot() {
+    return JSON.stringify({ programId, periodId, term, year, name, description, credits, minPick, maxPick });
+  }
+
+  function openEditor() {
+    if (open) { requestClose(); return; }
+    initialDraft.current = snapshot();
+    setFieldErrors({});
+    setError(null);
+    setOpen(true);
+  }
+
+  function requestClose() {
+    if (pending) return;
+    if (snapshot() !== initialDraft.current) { setDiscardOpen(true); return; }
+    setOpen(false);
+    setError(null);
+  }
+
+  function discard() {
+    setProgramId(options.programs[0]?.id ?? "");
+    setPeriodId(""); setTerm("1"); setYear("");
+    setName(row?.name ?? ""); setDescription(row?.description ?? "");
+    setCredits(String(row?.credits ?? 3)); setMinPick(String(row?.minPick ?? 1));
+    setMaxPick(String(row?.maxPick ?? 1));
+    setFieldErrors({}); setError(null);
+    setDiscardOpen(false); setOpen(false);
+  }
+
+  function apiError(result: { error?: string; issues?: { path?: (string | number)[]; message?: string }[] } | null): string {
+    switch (result?.error) {
+      case "ELECTIVE_SLOT_STALE": return "This elective slot was changed elsewhere. Copy your changes before refreshing and retrying.";
+      case "ELECTIVE_SELECTION_LOCKED": return "Enrollment history prevents changes to credits or pick limits.";
+      case "ELECTIVE_YEAR_INVALID": return "Academic year must use YYYY-YY format, e.g. 2026-27";
+      case "ELECTIVE_SEMESTER_INVALID": return `This program has only ${limit} semesters`;
+      case "ELECTIVE_PROGRAM_NOT_FOUND": return "Select a program in this college.";
+      case "ELECTIVE_PERIOD_INVALID": return "The selected academic period is unavailable.";
+      case "ELECTIVE_SLOT_NOT_FOUND": return "This elective slot is unavailable. Refresh before retrying.";
+      case "INVALID_REQUEST": return result.issues?.[0]?.message ?? "Review the highlighted fields.";
+      default: return "Unable to save elective slot. Review the fields and try again.";
+    }
+  }
 
   function submit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (pending) return;
+    const fields: Record<string, string> = {};
+    if (!row && !programId) fields.programId = "Program is required";
+    if (!row && (!term || !Number.isInteger(Number(term)) || Number(term) < 1)) fields.term = "Semester is required";
+    else if (!row && Number(term) > Math.min(12, limit)) fields.term = `This program has only ${limit} semesters`;
+    if (!name.trim()) fields.name = "Name is required";
+    else if (name.trim().length > 150) fields.name = "Name cannot exceed 150 characters";
+    if (year.trim() && !/^\d{4}-\d{2}$/.test(year.trim())) {
+      fields.year = "Academic year must use YYYY-YY format, e.g. 2026-27";
+    } else if (year.trim()) {
+      const start = Number(year.slice(0, 4));
+      if (Number(year.slice(5)) !== (start + 1) % 100) {
+        fields.year = "Academic year must use YYYY-YY format, e.g. 2026-27";
+      }
+    }
+    if (!Number.isInteger(Number(credits)) || Number(credits) < 0 || Number(credits) > 30) {
+      fields.credits = "Credits must be a whole number from 0 to 30";
+    }
+    if (!Number.isInteger(Number(minPick)) || Number(minPick) < 0 || Number(minPick) > 100) {
+      fields.minPick = "Minimum choices must be from 0 to 100";
+    }
+    if (!Number.isInteger(Number(maxPick)) || Number(maxPick) < 1 ||
+        (Number(maxPick) > 10 && (!row || Number(maxPick) !== row.maxPick))) {
+      fields.maxPick = "Maximum choices must be from 1 to 10";
+    }
+    if (Number(minPick) > Number(maxPick)) fields.maxPick = "Maximum choices cannot be less than minimum choices";
+    setFieldErrors(fields);
+    if (Object.keys(fields).length > 0) { setError("Please correct the highlighted fields."); return; }
 
     const common = {
       name, description: description.trim() || null,
@@ -75,8 +153,17 @@ export function CollegeSlotManager({ options, row }: {
           },
         );
         const result = await response.json().catch(() => null);
-        if (!response.ok) throw new Error(result?.error || "Unable to save elective slot");
+        if (!response.ok) {
+          const serverFields: Record<string, string> = {};
+          for (const issue of (result?.issues ?? []) as { path?: (string | number)[]; message?: string }[]) {
+            if (issue.path?.length) serverFields[String(issue.path[0])] = issue.message ?? "Please check this field";
+          }
+          if (Object.keys(serverFields).length) setFieldErrors(serverFields);
+          throw new Error(apiError(result));
+        }
         setOpen(false);
+        setDiscardOpen(false);
+        showToast({ tone: "success", title: row ? "Slot saved" : "Slot created" });
         if (!row) {
           setName("");
           setDescription("");
