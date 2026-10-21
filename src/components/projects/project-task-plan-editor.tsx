@@ -56,11 +56,15 @@ export function ProjectTaskPlanEditor({ projectId, tasksToken, tasks, sprints }:
     const old = baseline.find(task => task.id === row.id);
     const source = old?.sprintId ? bySprint.get(old.sprintId) : null;
     const target = row.sprintId ? bySprint.get(row.sprintId) : null;
+    const sourceTask = tasks.find(task => task.id === row.id);
     const changedRow = JSON.stringify(old) !== JSON.stringify(row);
-    const editable = (!source || (["PLANNED", "ACTIVE"].includes(source.status) &&
-      source.releaseStatus !== "SHIPPED")) &&
+    const validWorkflowMove = old?.sprintId === row.sprintId || sourceTask?.status === "TODO" ||
+      target?.status === "ACTIVE";
+    const editable = validWorkflowMove &&
+      (!source || (["PLANNED", "ACTIVE"].includes(source.status) &&
+        source.releaseStatus !== "SHIPPED")) &&
       (!target || (["PLANNED", "ACTIVE"].includes(target.status) &&
-      target.releaseStatus !== "SHIPPED"));
+        target.releaseStatus !== "SHIPPED"));
     return changedRow && (!editable || !row.key.trim() || row.key.length > 120 ||
       !row.title.trim() || row.title.length > 200 ||
       (row.dueLabel?.length ?? 0) > 160 ||
