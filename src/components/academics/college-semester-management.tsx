@@ -170,6 +170,9 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
   const router = useRouter();
   const { showToast } = useToast();
   const [deleteError, setDeleteError] = useState("");
+  const editNameRef = useRef<HTMLInputElement>(null);
+  const [editFieldErrors, setEditFieldErrors] = useState<SemesterFieldErrors>({});
+  const [editError, setEditError] = useState("");
   const [pending, startTransition] = useTransition();
   const [editing, setEditing] = useState(false);
   const [confirming, setConfirming] = useState(false);
@@ -192,12 +195,20 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
     event.preventDefault();
     if(pending)return;
     setNotice("");
+    setEditError("");
+    setEditFieldErrors({});
+    if (!name.trim() || name.trim().length > 255) {
+      setEditFieldErrors({ name: !name.trim() ? "Please enter semester name" : "Name must be 255 characters or less" });
+      editNameRef.current?.focus();
+      return;
+    }
     const parsed = updateCollegeSemesterSchema.safeParse({
       name, totalCredits: row.totalCredits, isActive,
       expectedUpdatedAt:row.updatedAt.toISOString(),confirm:true,
     });
     if (!parsed.success) {
-      setNotice(parsed.error.issues[0]?.message ?? "Check semester details.");
+      setEditFieldErrors({ name: parsed.error.issues[0]?.message ?? "Check semester details." });
+      editNameRef.current?.focus();
       return;
     }
 
@@ -211,7 +222,11 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         showToast({ tone: "success", title: message });
         router.refresh();
       } catch (error) {
-        setNotice(academicSetupErrorMessage(error, SEMESTER_COPY.updateFailed));
+        setEditFieldErrors(semesterFieldErrors(error));
+        const message = academicSetupErrorMessage(error, SEMESTER_COPY.updateFailed);
+        setEditError(message);
+        if (Object.values(semesterFieldErrors(error)).every(value => !value))
+          showToast({ tone: "error", title: message });
       }
     });
   }
@@ -240,7 +255,7 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
     <div className="min-w-0 space-y-[var(--lms-space-2)]">
       {!editing && !confirming ? (
         <div className="flex min-w-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] sm:justify-end">
-          <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setName(row.name);setIsActive(row.isActive);setEditing(true); }}
+          <Button variant="secondary" type="button" disabled={pending} onClick={() => { setNotice(""); setEditError(""); setEditFieldErrors({}); setName(row.name);setIsActive(row.isActive);setEditing(true); }}
             >
             Edit
           </Button>
@@ -255,13 +270,19 @@ export function CollegeSemesterRowActions({ row }: { row: SemesterRow }) {
         <Dialog open={editing} onOpenChange={next=>{if(!next)closeEditor();}}
           title={SEMESTER_COPY.editTitle}
           description={SEMESTER_COPY.promotionNote}>
-        <form onSubmit={save} className="grid min-w-0 gap-[var(--lms-space-4)]">
+        <form noValidate onSubmit={save} className="grid min-w-0 gap-[var(--lms-space-4)]">
+          {editError ? <div role="alert" className="flex items-center justify-between gap-3 rounded-[var(--lms-control-radius)] border border-error p-3 text-sm">
+            <p><strong>{SEMESTER_COPY.updateFailed}</strong>: {editError}</p>
+            <Button variant="secondary" type="button" onClick={() => setEditError("")}>Dismiss</Button>
+          </div> : null}
           
           
           <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             {SEMESTER_COPY.nameLabel}
-            <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
+            <Input ref={editNameRef} required maxLength={255} value={name} aria-invalid={Boolean(editFieldErrors.name)}
+              onChange={e => { setName(e.target.value); setEditFieldErrors({}); }}
               className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-sm text-foreground" />
+            {editFieldErrors.name ? <span role="alert" className="text-xs text-error">{editFieldErrors.name}</span> : null}
           </label>
           <p className="text-xs text-body leading-5">Credits come from mapped courses and cannot be edited here.</p>
           <div className="flex flex-wrap items-center gap-2 text-xs text-body">
