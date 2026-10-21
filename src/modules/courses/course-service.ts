@@ -111,6 +111,29 @@ async function assertCourseUnique(
   }
 }
 
+/** Legacy parity: short titles are unique per active department, case-insensitively.
+ * The future DB unique index is tracked as a migration handoff; this service
+ * precheck also provides the legacy field-level conflict before INSERT. */
+async function assertCourseShortTitleUnique(
+  tx: CourseTx,
+  departmentId: string,
+  shortTitle: string,
+  excludeCourseId?: string,
+) {
+  const conditions = [
+    eq(courses.departmentId, departmentId),
+    eq(courses.status, "ACTIVE"),
+    sql<boolean>`lower(${courses.shortTitle}) = ${shortTitle.toLowerCase()}`,
+  ];
+  if (excludeCourseId) conditions.push(ne(courses.id, excludeCourseId));
+  const [collision] = await tx
+    .select({ id: courses.id })
+    .from(courses)
+    .where(and(...conditions))
+    .limit(1);
+  if (collision) throw new CoursesServiceError("COURSE_NAME_CONFLICT");
+}
+
 function mapCourseConstraint(error: unknown) {
   switch (postgresConstraintName(error)) {
     case "courses_active_department_name_uq":
@@ -131,6 +154,7 @@ export async function listCourses(
   collegeIdInput: string,
   departmentIdInput?: string | null,
   includeArchived = false,
+  paging?: { limit: number; offset: number },
 ) {
   const collegeId =
     collegeIdSchema.parse(collegeIdInput);
@@ -176,7 +200,7 @@ export async function listCourses(
     );
   }
 
-  return getDb()
+  const query = getDb()
     .select({
       id: courses.id,
       departmentId: courses.departmentId,
@@ -199,7 +223,49 @@ export async function listCourses(
     .orderBy(
       asc(departments.name),
       asc(courses.name),
+      asc(courses.id),
     );
+
+  if (!paging) return query;
+  if (!Number.isSafeInteger(paging.limit) || paging.limit < 1 ||
+      !Number.isSafeInteger(paging.offset) || paging.offset < 0) {
+    throw new RangeError("Invalid course page");
+  }
+  return query.limit(Math.min(100, paging.limit)).offset(paging.offset);
+}
+
+/** Indexed SQL page and count, scoped with the same authorization as listCourses.
+ * The unpaged call remains available to existing legacy-compatible consumers. */
+export async function listCoursesPage(
+  context: RequestContext,
+  collegeIdInput: string,
+  paging: { limit: number; offset: number },
+  departmentIdInput?: string | null,
+  includeArchived = false,
+) {
+  const coursesPage = await listCourses(
+    context, collegeIdInput, departmentIdInput, includeArchived, paging,
+  );
+  const collegeId = collegeIdSchema.parse(collegeIdInput);
+  const departmentId = departmentIdInput
+    ? departmentIdSchema.parse(departmentIdInput) : null;
+  const conditions = [
+    eq(departments.collegeId, collegeId),
+    isNull(departments.archivedAt),
+  ];
+  if (!includeArchived) conditions.push(eq(courses.status, "ACTIVE"));
+  if (departmentId) conditions.push(eq(courses.departmentId, departmentId));
+  const [counter] = await getDb()
+    .select({ total: sql<number>`count(*)::int` })
+    .from(courses)
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .where(and(...conditions));
+  return {
+    courses: coursesPage,
+    total: counter?.total ?? 0,
+    limit: Math.min(100, paging.limit),
+    offset: paging.offset,
+  };
 }
 
 export async function createCourse(
@@ -257,6 +323,9 @@ export async function createCourse(
         throw new CoursesServiceError("DEPARTMENT_NOT_FOUND");
       }
 
+      await assertCourseShortTitleUnique(
+        tx, input.departmentId, input.shortTitle ?? input.name.slice(0, 120),
+      );
       const [created] = await tx
         .insert(courses)
         .values({
@@ -309,6 +378,7 @@ export async function updateCourse(
     return await getDb().transaction(async (tx) => {
       const [locked] = await tx.select({
         id: courses.id, name: courses.name, code: courses.code,
+        shortTitle: courses.shortTitle,
         status: courses.status, departmentId: courses.departmentId,
         updatedAt: courses.updatedAt,
       }).from(courses).innerJoin(departments, and(
@@ -324,6 +394,11 @@ export async function updateCourse(
       if (locked.updatedAt.getTime() !== new Date(input.expectedUpdatedAt).getTime()) {
         throw new CoursesServiceError("COURSE_STALE_VERSION");
       }
+      await assertCourseShortTitleUnique(
+        tx, scope.departmentId,
+        input.shortTitle ?? locked.shortTitle ?? locked.name.slice(0, 120),
+        courseId,
+      );
       const { expectedUpdatedAt, ...changes } = input;
       const [updated] = await tx
       .update(courses)
@@ -438,4 +513,81 @@ export async function archiveCourse(
     });
     return archived;
   });
+}
+
+/** Restores a previously archived course without changing its immutable UUID
+ * or its archived offering/history records. Route and recycle-tab UI are
+ * separate handoffs owned by the API and page packets. */
+export async function restoreCourse(
+  context: RequestContext,
+  courseIdInput: string,
+) {
+  const courseId = courseIdSchema.parse(courseIdInput);
+  const scope = await loadCourseScope(courseId, true);
+  requireCourseWrite(context, scope.organizationId, scope.collegeId);
+
+  try {
+    return await getDb().transaction(async (tx) => {
+      const [locked] = await tx
+        .select({
+          id: courses.id,
+          name: courses.name,
+          code: courses.code,
+          shortTitle: courses.shortTitle,
+          departmentId: courses.departmentId,
+          status: courses.status,
+        })
+        .from(courses)
+        .innerJoin(departments, and(
+          eq(departments.id, courses.departmentId),
+          eq(departments.collegeId, scope.collegeId),
+          isNull(departments.archivedAt),
+        ))
+        .where(and(
+          eq(courses.id, courseId),
+          eq(courses.departmentId, scope.departmentId),
+        ))
+        .for("update", { of: courses })
+        .limit(1);
+
+      if (!locked || locked.status !== "ARCHIVED") {
+        throw new CoursesServiceError("COURSE_NOT_FOUND");
+      }
+      // The existing database unique indexes guard concurrent restores that
+      // conflict with a new active name or code in the same department.
+      await assertCourseShortTitleUnique(
+        tx, scope.departmentId,
+        locked.shortTitle ?? locked.name.slice(0, 120),
+        courseId,
+      );
+      const [restored] = await tx
+        .update(courses)
+        .set({ status: "ACTIVE", updatedAt: new Date() })
+        .where(and(
+          eq(courses.id, courseId),
+          eq(courses.departmentId, scope.departmentId),
+          eq(courses.status, "ARCHIVED"),
+        ))
+        .returning();
+      if (!restored) throw new CoursesServiceError("COURSE_STALE_VERSION");
+      await recordActivityEventInTransaction(tx, context, {
+        eventType: ACTIVITY_EVENT_TYPES.COURSES_CATALOG_UPDATED,
+        collegeId: scope.collegeId,
+        organizationId: scope.organizationId,
+        subjectType: "course",
+        subjectId: restored.id,
+        subjectLabel: restored.name,
+        summary: "Course restored",
+        metadata: {
+          restoredFromArchive: true,
+          departmentId: restored.departmentId,
+          code: restored.code,
+        },
+      });
+      return restored;
+    });
+  } catch (error) {
+    if (error instanceof CoursesServiceError) throw error;
+    throw mapCourseConstraint(error);
+  }
 }

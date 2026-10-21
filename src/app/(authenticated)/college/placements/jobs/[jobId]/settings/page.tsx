@@ -8,6 +8,7 @@ import {getCollegeDriveOverview} from "@/modules/placements/college-drive-overvi
 import {CollegeLegacyDriveSettings} from "@/components/placements/college-legacy-drive-settings";
 import {CollegeDriveArchiveAction} from "@/components/placements/college-drive-archive-action";
 import {PlacementDraftEditForm} from "@/components/placements/placement-draft-edit-form";
+import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 import {listPrograms} from "@/modules/academics/program-service";
 import {listCohorts} from "@/modules/academics/cohort-service";
 import {getPlacementJob} from "@/modules/placements/job-service";
@@ -34,13 +35,14 @@ export default async function CollegeDriveSettingsPage({
   const cohortGroups=job.status==="DRAFT"?await Promise.all(
     programs.map(async program=>({program,cohorts:await listCohorts(context,program.id)})),
   ):[];
+  const jobTypes=job.status==="DRAFT"?await listPlacementJobTypeChoices(context,job.collegeId):[];
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
     <PageHeader title="Settings" description={drive.title}
       actions={<Link className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] min-[768px]:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         href={"/college/placements/jobs/"+encodeURIComponent(jobId)+"/overview"}>Overview</Link>}/>
     {job.status==="DRAFT"&&eligibilityPolicy?
       <section aria-label="Edit drive" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-        <PlacementDraftEditForm academicOptions={{
+        <PlacementDraftEditForm jobTypes={jobTypes} academicOptions={{
           programs:programs.map(program=>({
             id:program.id,name:program.name,code:program.code,departmentName:program.departmentName,
           })),
@@ -53,6 +55,7 @@ export default async function CollegeDriveSettingsPage({
         }} value={{job:{
           id:job.id,title:job.title,description:job.description,
           employmentType:job.employmentType as "FULL_TIME"|"INTERNSHIP"|"CONTRACT",
+          jobTypeLabel:job.jobTypeLabel,
           workMode:job.workMode as "ONSITE"|"HYBRID"|"REMOTE",
           locations:job.locations,openings:job.openings,
           minimumAnnualCtcInr:job.minimumAnnualCtcInr,

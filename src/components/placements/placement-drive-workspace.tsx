@@ -33,6 +33,7 @@ import {getTpoDriveJourney} from "@/modules/placements/tpo-drive-journey-service
 import { listPlacementJobRequests } from "@/modules/placements/request-service";
 import { listPlacementRoleOptions } from "@/modules/placements/role-option-service";
 import { PlacementDraftEditForm } from "./placement-draft-edit-form";
+import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 import { PlacementDriveDayOverview } from "./placement-drive-day-overview";
 import { PlacementJobLifecycleControls } from "./placement-job-lifecycle-controls";
 import { TpoDriveLifecycleControls } from "./tpo-drive-lifecycle-controls";
@@ -93,6 +94,7 @@ export async function PlacementDriveWorkspace({
     ),
   ]);
 
+  const jobTypes=job.status==="DRAFT"?await listPlacementJobTypeChoices(context,job.collegeId):[];
   const isTpo = hasMembershipRole(context,"TPO");
   // Read optional panels concurrently. Their failure must not misrepresent
   // a safe-to-publish state or hide the primary drive page.
@@ -578,6 +580,7 @@ export async function PlacementDriveWorkspace({
       ) : null}
       {job.status === "DRAFT" ? (
         <PlacementDraftEditForm
+          jobTypes={jobTypes}
           academicOptions={{
             programs: programs.map(
               (program) => ({
@@ -617,6 +620,7 @@ export async function PlacementDriveWorkspace({
                   | "FULL_TIME"
                   | "INTERNSHIP"
                   | "CONTRACT",
+              jobTypeLabel:job.jobTypeLabel,
               workMode:
                 job.workMode as
                   | "ONSITE"

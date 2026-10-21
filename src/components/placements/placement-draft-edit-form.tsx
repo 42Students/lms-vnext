@@ -15,6 +15,7 @@ import { useToast } from "@/components/ui/toast";
 import { useUnsavedDriveGuard } from "./use-unsaved-drive-guard";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
+import {TPO_BUILTIN_JOB_TYPES} from "@/modules/placements/tpo-builtin-job-types";
 
 type ApplicationMode =
   | "INTERNAL"
@@ -52,6 +53,7 @@ export type PlacementDraftEditValue = {
     title: string;
     description: string;
     employmentType: EmploymentType;
+    jobTypeLabel?:string|null;
     workMode: WorkMode;
     locations: string[];
     openings: number | null;
@@ -128,11 +130,14 @@ async function requestJson(url:string,method:"POST"|"PUT"|"PATCH",body:unknown){
 export function PlacementDraftEditForm({
   value,
   academicOptions,
+  jobTypes,
 }: {
   value: PlacementDraftEditValue;
   academicOptions: PlacementAcademicTargetingOptions;
+  jobTypes?:readonly {label:string}[];
 }) {
   const router = useRouter();
+  const availableJobTypes=jobTypes?.length?jobTypes:TPO_BUILTIN_JOB_TYPES;
   const { showToast } = useToast();
   const { dirty, markDirty, clearDirty } = useUnsavedDriveGuard();
   const {pending,run}=useGuardedAction();
@@ -197,10 +202,12 @@ export function PlacementDraftEditForm({
           description: String(
             data.get("description") ?? "",
           ).trim(),
-          employmentType: String(
-            data.get("employmentType") ??
-              "FULL_TIME",
-          ),
+          jobTypeLabel: String(data.get("jobTypeLabel")??"Full-time"),
+          employmentType: (()=>{
+            const label=String(data.get("jobTypeLabel")??"Full-time");
+            return label==="Internship"?"INTERNSHIP":
+              label==="Contract"||label==="Apprenticeship"?"CONTRACT":"FULL_TIME";
+          })(),
           workMode: String(
             data.get("workMode") ??
               "ONSITE",
@@ -392,18 +399,19 @@ export function PlacementDraftEditForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Employment type
+              Job type
             </span>
             <Select
               className={inputClass}
-              name="employmentType"
-              defaultValue={
-                value.job.employmentType
-              }
+              name="jobTypeLabel"
+              defaultValue={value.job.jobTypeLabel??
+                (value.job.employmentType==="INTERNSHIP"?"Internship":
+                 value.job.employmentType==="CONTRACT"?"Contract":"Full-time")}
             >
-              <option value="FULL_TIME">Full time</option>
-              <option value="INTERNSHIP">Internship</option>
-              <option value="CONTRACT">Contract</option>
+              {availableJobTypes
+                .map(type=><option key={type.label} value={type.label}>{type.label}</option>)}
+              {value.job.jobTypeLabel&&!availableJobTypes.some(type=>type.label===value.job.jobTypeLabel)?
+                <option value={value.job.jobTypeLabel}>{value.job.jobTypeLabel} (historic)</option>:null}
             </Select>
           </label>
           <label>
