@@ -1,4 +1,6 @@
 import { z } from "zod";
+import Link from "next/link";
+import { Banner } from "@/components/ui/banner";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
@@ -62,6 +64,17 @@ export default async function LearnerProjectsPage({
   }
 
   const params = await searchParams;
+  const allowedKeys=["search","status","attention","work","sort","page","pageSize"];
+  const invalidFilters=Object.keys(params).some(key=>!allowedKeys.includes(key)) ||
+    Object.values(params).some(Array.isArray) ||
+    (params.search!==undefined&&!searchSchema.safeParse(one(params.search)).success) ||
+    (params.status!==undefined&&!statusSchema.safeParse(one(params.status)).success) ||
+    (params.attention!==undefined&&!attentionSchema.safeParse(one(params.attention)).success) ||
+    (params.work!==undefined&&!workSchema.safeParse(one(params.work)).success) ||
+    (params.sort!==undefined&&!sortSchema.safeParse(one(params.sort)).success) ||
+    (params.page!==undefined&&!z.coerce.number().int().min(1).max(100000).safeParse(one(params.page)).success) ||
+    (params.pageSize!==undefined&&!z.coerce.number().int().safeParse(one(params.pageSize)).success) ||
+    (params.pageSize!==undefined&&![10,25,50].includes(Number(one(params.pageSize))));
   const status = one(params.status);
   const attention = one(params.attention);
   const work = one(params.work);
@@ -142,6 +155,15 @@ export default async function LearnerProjectsPage({
   return (
     <div className="min-w-0 space-y-5">
       <PageHeader title="Projects" description="Choose a project to open its workspace." />
+      {invalidFilters ? <Banner tone="warning" role="status">
+        Some project filters were invalid and have been reset to safe defaults.
+        <Link href="/learn/projects" className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Clear filters
+        </Link>
+      </Banner> : null}
+      {query.page!==page ? <Banner tone="info" role="status">
+        That project page is no longer available. Showing page {page} instead.
+      </Banner> : null}
 
       <LearnerProjectMobileFilters query={{ ...query, page }} />
       <div className="hidden min-[768px]:block">
@@ -154,9 +176,10 @@ export default async function LearnerProjectsPage({
 
       <ProjectList
         items={rows.map((row) => {
-          const projectAttention = attentionByProject.get(row.project.id);
-          const blocked = Boolean(row.project.blocker?.trim()) ||
-            learnerProjectHasBlockedTasks(row.project.status, progressByProject.get(row.project.id));
+          const archived = row.project.status === "ARCHIVED";
+          const projectAttention = archived ? undefined : attentionByProject.get(row.project.id);
+          const blocked = !archived && (Boolean(row.project.blocker?.trim()) ||
+            learnerProjectHasBlockedTasks(row.project.status, progressByProject.get(row.project.id)));
           return {
             id: row.project.id,
             title: row.project.title,
@@ -177,12 +200,13 @@ export default async function LearnerProjectsPage({
               ? "Task completion " + String(progressByProject.get(row.project.id)!.completedTasks) +
                 "/" + String(progressByProject.get(row.project.id)!.totalTasks) + " tasks"
               : row.project.progressPercent!==null?"Admin-reported progress / Manual estimate":undefined,
-            actionLine: projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
+            actionLine: archived ? "Archived · view only" :
+              projectAttention === "CHANGES_REQUESTED" ? "Update your submission" :
               projectAttention === "DRAFT" ? "Finish your draft submission" :
               blocked ? "Open blocked work" : row.project.nextAction?.trim() || "Open workspace",
             blockedHref: blocked ? "/learn/projects/" + row.project.id + "?tab=board&taskStatus=BLOCKED" : undefined,
             attention:
-              projectAttention === "CHANGES_REQUESTED"
+              archived ? [] : projectAttention === "CHANGES_REQUESTED"
                 ? ["Changes requested"]
                 : projectAttention === "DRAFT"
                   ? ["Draft submission"]
@@ -190,7 +214,7 @@ export default async function LearnerProjectsPage({
             href:
               "/learn/projects/" +
               row.project.id +
-              (projectAttention ? "?tab=delivery" : blocked ? "?tab=board&taskStatus=BLOCKED" : ""),
+              (archived ? "" : projectAttention ? "?tab=delivery" : blocked ? "?tab=board&taskStatus=BLOCKED" : ""),
           };
         })}
         basePath="/learn/projects"
