@@ -21,3 +21,11 @@ export function facultyQuizReportHidden(error:unknown):boolean {
   "SECTION_DELIVERY_NOT_FOUND","FACULTY_TEACHING_SCOPE_REQUIRED",
   "LEARNING_ACCESS_DENIED"].includes(error.code);
 }
+
+/** Legacy report copy without exposing whether an unauthorized UUID exists. */
+export const FACULTY_REPORT_NOT_FOUND_MESSAGE="Report not found." as const;
+export function facultyAssessmentReportErrorCopy(kind:"assignment"|"quiz",error:unknown){
+ if(kind==="assignment"?facultyAssignmentReportHidden(error):facultyQuizReportHidden(error))
+  return {title:FACULTY_REPORT_NOT_FOUND_MESSAGE,retry:false as const};
+ return {title:"Couldn't load the report.",retry:true as const};
+}

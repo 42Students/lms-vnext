@@ -36,7 +36,15 @@ export async function PATCH(request:Request,{params}:RouteContext){
  if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
  try{
   const {projectId}=await params;
-  const updated=await updateCollegeProjectSummary(await getCurrentRequestContext(),projectId,await request.json());
+  const input:unknown=await request.json();
+  // Legacy workspace-wide PATCH bundled nested sections with section tokens.
+  // New vNext summary CAS cannot atomically apply these nested operations:
+  // clients must use authorized, versioned section endpoints separately.
+  if(input && typeof input==="object" && !Array.isArray(input) &&
+     ["releases","sprints","tasks","resources","sectionTokens","sections"].some(
+      key=>Object.prototype.hasOwnProperty.call(input,key)))
+   return NextResponse.json({error:"USE_VERSIONED_SECTION_ENDPOINTS"},{status:400});
+  const updated=await updateCollegeProjectSummary(await getCurrentRequestContext(),projectId,input);
   return NextResponse.json({project:updated},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }

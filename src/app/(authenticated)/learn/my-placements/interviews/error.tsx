@@ -10,7 +10,7 @@ export default function LearnerInterviewError({ reset }: {
 }) {
   return (
     <section className="min-w-0 space-y-4">
-      <PageHeader title={"Interviews could not load"} />
+      <PageHeader title="We could not load your schedule" />
       <p className="mt-2 text-sm text-body">
         A loading failure does not mean you have no scheduled interview rounds.
       </p>

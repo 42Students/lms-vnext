@@ -30,3 +30,23 @@ export function placementNotificationIsStale(
   return current.notifyMatchingJobs !== expected.notifyMatchingJobs ||
     current.notifyApplicationUpdates !== expected.notifyApplicationUpdates;
 }
+
+/** Legacy nullable PUT adapter. Absent/null fields mean "leave unchanged";
+ * do not write null as false or clear other placement candidate preferences.
+ * The authenticated mutation still requires confirmed=true and CAS baseline.
+ */
+export const learnerPlacementNotificationLegacyPatchSchema=z.object({
+ jobNotificationsEnabled:z.boolean().nullable().optional(),
+ notifyMatchingJobs:z.boolean().nullable().optional(),
+ notifyApplicationUpdates:z.boolean().nullable().optional(),
+}).strict();
+export function mergeLegacyPlacementNotificationPatch(
+ current:{notifyMatchingJobs:boolean;notifyApplicationUpdates:boolean},
+ raw:unknown,
+){
+ const patch=learnerPlacementNotificationLegacyPatchSchema.parse(raw);
+ return {
+  notifyMatchingJobs:patch.notifyMatchingJobs??patch.jobNotificationsEnabled??current.notifyMatchingJobs,
+  notifyApplicationUpdates:patch.notifyApplicationUpdates??current.notifyApplicationUpdates,
+ };
+}

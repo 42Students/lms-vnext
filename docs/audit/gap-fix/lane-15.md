@@ -299,3 +299,12 @@
 
 - work2 #29 `super-admin-company-verification-service.ts` | G2-9-034-093: global verification audit now snapshots canonical primaryDomain and explicitly records that independent domain ownership is NOT inferred from company flag. Domain-proof consistency cannot be auto-propagated without separate verified domain evidence; handoff for approved schema/service migration.
 - work2 #30 `api/projects/reassign-mentor/route.ts` | G2-6-028-036: rejects obsolete numeric mentorId body with 400 MENTOR_MEMBERSHIP_ID_REQUIRED, retains membership-scoped bulk reassignment authority and roleLabel. Legacy tenant-checked ID crosswalk handed to adapter owner.
+
+- work2 #31 `learner-placement-notification-model.ts` | G2-4-015-020/025: added strict nullable legacy toggle adapter merging only explicitly non-null fields into live baseline; current confirmed CAS schema unchanged for safe writes. Endpoint integration handed off.
+- work2 #32 `faculty-assessment-route-boundary.ts` | G2-3-007-024/G2-4-013-032: distinct hidden/invalid report "Report not found." (no Retry) vs transient fetch "Couldn't load the report." with Retry, without revealing scoped resource existence. Render in report pages/error boundaries handed off.
+
+- work2 #33 `learn/my-placements/interviews/error.tsx` | G2-17-005-016: exact historical "We could not load your schedule" error copy with same Retry control and explicit failure-not-empty guidance retained.
+- work2 #34 `placements/season-service.ts` | G2-8-022-030: documented old season endpoint crosswalk and added scoped current ACTIVE season resolver. Legacy open-registration intentionally not conflated with season creation; requires batch-invitation route, handed off.
+
+- work2 #35 `api/projects/[projectId]/route.ts` | G2-2-020-023: preserved CAS project summary PATCH and explicit 400 USE_VERSIONED_SECTION_ENDPOINTS for unsupported legacy nested releases/sprints/tasks/resources/sectionTokens instead of silently discarding updates. Authenticated section API adapter handoff.
+- work2 #36 `tpo-outcome-label-settings-service.ts` | G2-2-030-035/026: added fixed-only, ACTIVE-account catalog reader for recruiter/no-college sessions; dynamic custom labels remain strict college/TPO auth. Endpoint owner must use safe fallback without swallowing database outage.
