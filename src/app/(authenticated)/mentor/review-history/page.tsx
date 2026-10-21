@@ -45,7 +45,7 @@ export default async function MentorReviewHistoryPage({
     <PageHeader title="Delivery review history"
       description="Recorded final-delivery review decisions for projects currently assigned to you."
       actions={<Link data-unskin="" href="/mentor/reviews"
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Pending reviews
       </Link>} />
     {!data.enabled ?
@@ -95,7 +95,7 @@ export default async function MentorReviewHistoryPage({
             </label>
             </div>
           </Disclosure>
-          {(data.query.decision!=="ALL"||Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.projectState!=="ALL"||data.query.version!==undefined||data.query.order!=="NEWEST"||data.query.window!=="ALL")?<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear</Link>:null}
+          {(data.query.decision!=="ALL"||Boolean(data.query.search)||Boolean(data.query.projectId)||data.query.projectState!=="ALL"||data.query.version!==undefined||data.query.order!=="NEWEST"||data.query.window!=="ALL")?<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>:null}
         </form>
       </FilterBar>
 
@@ -104,7 +104,7 @@ export default async function MentorReviewHistoryPage({
       </p>
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
-            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." action={<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>} />
+            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." action={<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>} />
         : <ol aria-label="mentor review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <li key={item.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">

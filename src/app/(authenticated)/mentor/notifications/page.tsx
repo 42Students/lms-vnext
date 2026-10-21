@@ -47,7 +47,7 @@ export default async function MentorNotificationsPage({
   const attentionOrder=mentorAttentionOrderSchema.safeParse(first(raw.attentionOrder)??"RECENT");
   if (!parsed.success||!kind.success||!projectId.success||!attentionOrder.success) return <section role="alert" className="min-w-0 max-w-full space-y-3">
     <PageHeader title="Invalid notification filters" />
-    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Return to newest notifications</Link>
+    <Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Return to newest notifications</Link>
   </section>;
 
   const context = await getCurrentRequestContext();
@@ -99,7 +99,7 @@ export default async function MentorNotificationsPage({
         Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
       </p>
       <Link href={MENTOR_INBOX}
-        className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Retry sources</Link>
+        className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Retry sources</Link>
     </Alert> : null}
     <section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
       <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
@@ -112,7 +112,7 @@ export default async function MentorNotificationsPage({
         ? <Alert tone="error" role="alert">
             The notification page link is invalid.{" "}
             <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
               Return to newest notifications
             </Link>
           </Alert>
@@ -121,7 +121,7 @@ export default async function MentorNotificationsPage({
               emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
             {nextHref ? <div className="flex justify-center">
               <Link href={nextHref}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                 Older notifications
               </Link>
             </div> : null}
@@ -158,7 +158,7 @@ export default async function MentorNotificationsPage({
         <Button type="submit" variant="primary" className="min-h-11 w-full md:min-h-9 xl:w-auto">
           Filter attention
         </Button>
-        {attentionFiltered?<Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
+        {attentionFiltered?<Link href={MENTOR_INBOX} className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form>
       {!projectAccess?.projects.enabled
         ? <p role="status" className="border-b border-border pb-4 text-sm text-body leading-[22px]">
@@ -170,7 +170,7 @@ export default async function MentorNotificationsPage({
             </p>
           : <div className="min-w-0 divide-y divide-border border-b border-border">{visibleAlerts.map(alert=>
               <Link key={alert.key} href={alert.href}
-                className="block min-h-11 min-w-0 py-4 transition hover:border-primary focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="block min-h-11 min-w-0 py-4 transition hover:border-primary focus-visible:outline-none focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                 <div className="flex flex-wrap items-center justify-between gap-3">
                   <h3 className="min-w-0 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{alert.title}</h3>
                   <StatusBadge tone={alert.kind === "STALLED" ? "error" :

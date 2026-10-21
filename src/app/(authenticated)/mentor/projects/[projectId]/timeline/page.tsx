@@ -36,7 +36,7 @@ export default async function MentorProjectTimelinePage({
     <PageHeader title="Release & Sprint timeline"
       description={data.enabled?data.projectTitle:"Projects access is disabled; no timeline was loaded."}
       actions={<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
         Sprint workspace
       </Link>} />
     {!data.enabled?<section role="status"
@@ -59,7 +59,7 @@ export default async function MentorProjectTimelinePage({
         {data.total.toLocaleString("en-IN")} registered release{data.total===1?"":"s"} match.
       </p>
       {data.items.length===0?<EmptyState title="No matching registered releases"
-        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed." action={filtered?<Link href={mentorTimelineHref({...data.query,releaseStatus:"ALL",sprintStatus:"ALL",page:1})} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>:<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Sprint workspace</Link>}/>
+        description="No persisted release matches the filter. Missing milestones, start dates or historic schedules are not reconstructed." action={filtered?<Link href={mentorTimelineHref({...data.query,releaseStatus:"ALL",sprintStatus:"ALL",page:1})} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>:<Link href={"/mentor/projects/"+encodeURIComponent(p.projectId)+"?tab=sprints"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Sprint workspace</Link>}/>
       :<Timeline aria-label="Registered releases">
         {data.items.map(release=><TimelineEntry key={release.id}>
           <div className="flex flex-wrap items-center justify-between gap-2">

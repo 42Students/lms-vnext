@@ -36,7 +36,7 @@ export default async function Page({params}:{
    </p>
   </section>
   {data.feedback.length>0?<Link href={"/mentor/projects/"+encodeURIComponent(data.projectId)+"?tab=board"}
-   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+   className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
    Back to authorized task Board
   </Link>:null}
   <p className="text-xs text-muted-foreground leading-5">

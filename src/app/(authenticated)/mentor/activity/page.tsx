@@ -28,7 +28,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   }));
   if (!parsed.success) return <section role="alert" className="min-w-0 max-w-full space-y-4">
     <PageHeader title={"Invalid activity filters"} />
-    <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
+    <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link hover:text-[var(--lms-primary-text)]">Clear filters</Link>
   </section>;
   const data = await getMentorPortfolioActivity(context, parsed.data);
   const hasAdvancedFilters =
@@ -45,7 +45,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader eyebrow="Mentor · Projects" title="Project activity"
       description="Recorded activity in your currently assigned projects. Raw summaries and metadata are omitted."
-      actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Projects</Link>} />
+      actions={<Link data-unskin="" href="/mentor/projects" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Projects</Link>} />
     {!data.enabled ? <div role="status" className="min-w-0 border-b border-border pb-4 text-sm text-body">
       Projects access is disabled. No activity was loaded.
     </div> : <>
@@ -110,14 +110,14 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
           </div>
         </Disclosure>
         {hasActiveFilters ? <div className="flex min-w-0 justify-start">
-          <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary lms-inline-link">Clear</Link>
+          <Link href="/mentor/activity" className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lms-inline-link">Clear</Link>
         </div> : null}
       </form>
       <div className="flex min-w-0 flex-col gap-2 border-b border-[var(--lms-canvas-border)] pb-3 md:flex-row md:items-center md:justify-between">
         <p className="m-0 text-sm text-body">{data.total.toLocaleString("en-IN")} recorded project event{data.total === 1 ? "" : "s"}</p>
         <div className="flex min-w-0 flex-col items-start gap-1 md:items-end">
           <Link data-unskin="" href={mentorPortfolioActivityExportHref(data.query)} download
-            className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+            className="inline-flex min-h-11 max-w-full items-center break-words text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Export filtered activity CSV (max 200)
           </Link>
           {data.total>200?<span role="status" className="text-xs text-body">
@@ -128,7 +128,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
       {data.items.length === 0 ? <EmptyState title="No recorded activity"
         description="No persisted events match your assigned projects. Missing events do not imply no work occurred."
         action={<Link href={hasActiveFilters ? "/mentor/activity" : "/mentor/projects"}
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
           {hasActiveFilters ? "Clear" : "Projects"}
         </Link>} />
         : <ol className="divide-y divide-[var(--lms-canvas-border)] border-b border-[var(--lms-canvas-border)]">{data.items.map(event =>
@@ -139,7 +139,7 @@ export default async function MentorActivityPage({ searchParams }: { searchParam
             </div>
             <div className="mt-1 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1">
               <Link href={`/mentor/projects/${encodeURIComponent(event.projectId)}?tab=activity`}
-                className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline-offset-4 hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
+                className="inline-flex min-h-11 min-w-0 items-center break-words text-sm font-semibold text-link underline-offset-4 hover:underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
                 {event.projectTitle} →
               </Link>
               <time dateTime={event.occurredAt.toISOString()} className="text-xs text-muted-foreground">
