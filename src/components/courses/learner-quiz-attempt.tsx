@@ -633,7 +633,7 @@ export function LearnerQuizAttempt() {
             ) : null}
           </div>
           {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
-          <div className="sticky bottom-0 z-10 mt-7 grid min-w-0 grid-cols-2 gap-2 border-t border-[var(--lms-canvas-border)] bg-white py-3 lg:static lg:border-t-0 lg:bg-transparent lg:py-0">
+          <div className={styles.actions+" bottom-0 z-10 mt-7 grid min-w-0 grid-cols-2 gap-2"}>
             {step>0?<Button variant="secondary" className="min-h-11 w-full md:min-h-9" onClick={() => setStep((value) => Math.max(0, value - 1))}>Previous</Button>:<span aria-hidden="true"/>}
             {step < questions.length - 1 ? (
               <Button className="min-h-11 w-full md:min-h-9" disabled={!current || (answers[current.id]??[]).length===0}

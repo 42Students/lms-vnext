@@ -144,6 +144,8 @@ export const tpoStudentsQuerySchema = z
     cgpaRecorded:z.union([z.boolean(),z.enum(["YES","NO"])]).transform(value=>typeof value==="boolean"?value:value==="YES").optional(),
     batchId: uuid.optional(),
     search: z.string().trim().max(150).optional(),
+    // Legacy /table?q= is a deep-link alias; explicit search wins.
+    q: z.string().trim().max(150).optional(),
     ...paginationFields,
   })
   .strict()
@@ -171,6 +173,8 @@ export const tpoStudentRequestsQuerySchema = z
     sort: z.enum(["URGENCY_FIRST","NEWEST_FIRST","OLDEST_FIRST","DECIDED_NEWEST","DECIDED_OLDEST"]).optional(),
     requestedBefore:z.date().optional(),
     requestedAfter:z.date().optional(),
+    // All decided requests or only recent decisions, as in old requestsQueue.
+    decidedDays:z.union([z.literal("ALL"),z.coerce.number().int().min(1).max(365)]).optional(),
     urgentOnly:z.boolean().default(false),
     jobId:uuid.optional(),
     search: z.string().trim().max(150).optional(),
@@ -246,8 +250,8 @@ export async function getTpoStudentsIntelligence(
   rawInput: unknown,
   options: { includeExportRows?: boolean } = {},
 ) {
-  const input =
-    tpoStudentsQuerySchema.parse(rawInput);
+  const parsed=tpoStudentsQuerySchema.parse(rawInput);
+  const input={...parsed,search:parsed.search??parsed.q};
 
   const college =
     await requirePlacementManageScope(
@@ -1145,6 +1149,8 @@ export async function listTpoStudentRequests(
   await requireLiveTpoStudentActor(context,input.collegeId);
 
   const asOf=new Date();
+  const decidedSince=typeof input.decidedDays==="number"
+    ?new Date(asOf.getTime()-input.decidedDays*86_400_000):null;
   const rows = await getDb()
     .select({
       id: placementLearnerRequests.id,
@@ -1238,6 +1244,12 @@ export async function listTpoStudentRequests(
           collegeMemberships.collegeId,
           college.id,
         ),
+        // Filter before joining/aggregating an unbounded decision history.
+        // Undecided requests are never hidden by the decided-days limit.
+        decidedSince?or(
+          eq(placementLearnerRequests.status,"PENDING"),
+          gte(placementLearnerRequests.decidedAt,decidedSince),
+        ):undefined,
       ),
     )
     .orderBy(

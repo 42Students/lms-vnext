@@ -36,6 +36,17 @@
   border-radius: 0 !important;
   background: var(--lms-primary) !important;
 }
+.actions {
+  position: sticky;
+  border-top: 1px solid var(--lms-canvas-border);
+  background: var(--lms-white);
+  padding: 12px 0;
+}
+/* The legacy inline question rail begins at 768px. Keep the bottom action
+ * strip sticky only while the mobile Questions drawer replaces that rail. */
+@media (min-width: 768px) {
+  .actions { position: static; border-top: 0; background: transparent; padding: 0; }
+}
 @media (max-width: 767px) {
   .header { position: static; padding: 8px 0 12px; }
   .track { height: 4px !important; }

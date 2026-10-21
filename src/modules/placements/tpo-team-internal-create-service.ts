@@ -39,15 +39,21 @@ export async function createTpoInternalThread(context:RequestContext,raw:unknown
   const others=[input.recipientMembershipId,...input.participantMembershipIds];
   if(others.includes(own.id) || new Set(others).size!==others.length)
     throw new Error("TEAM_RECIPIENT_NOT_FOUND");
+  let authorizedParticipantUsers:string[]=[];
   if(input.kind!=="DIRECT"){
     const teammates=await tx.select({id:collegeMemberships.id,userId:collegeMemberships.userId})
       .from(collegeMemberships).innerJoin(users,eq(users.id,collegeMemberships.userId))
       .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
         inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"])))
       .where(and(inArray(collegeMemberships.id,others),eq(collegeMemberships.collegeId,college.id),
-        eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")));
+        eq(collegeMemberships.status,"ACTIVE"),eq(users.platformStatus,"ACTIVE")))
+      .for("share");
     if(new Set(teammates.map(row=>row.id)).size!==others.length)
       throw new Error("TEAM_RECIPIENT_NOT_FOUND");
+    // Keep the validated participant user IDs under the transaction's SHARE
+    // locks through notification creation; never re-select deactivated users
+    // from a broader, potentially stale membership list.
+    authorizedParticipantUsers=teammates.map(row=>row.userId);
     if(input.kind==="DRIVE"){
       const [target]=await tx.select({id:placementJobs.id}).from(placementJobs)
         .where(and(eq(placementJobs.id,input.contextId!),eq(placementJobs.collegeId,college.id))).limit(1);
@@ -116,9 +122,7 @@ export async function createTpoInternalThread(context:RequestContext,raw:unknown
   const [actor]=await tx.select({displayName:users.displayName})
    .from(users).where(eq(users.id,context.user.id)).limit(1);
   const notifiedUsers = input.kind==="DIRECT" ? [recipient.userId] :
-    (await tx.select({userId:collegeMemberships.userId}).from(collegeMemberships)
-      .where(and(eq(collegeMemberships.collegeId,college.id),
-        inArray(collegeMemberships.id,others)))).map(row=>row.userId);
+    authorizedParticipantUsers;
   await tx.insert(inAppNotifications).values([...new Set(notifiedUsers)].map(userId=>({
    userId,eventId:event.id,
    title:(actor?.displayName?.trim()||"TPO colleague")+" added you to a conversation",
