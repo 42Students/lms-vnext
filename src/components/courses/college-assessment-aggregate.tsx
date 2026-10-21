@@ -229,7 +229,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                   <div><dt className="font-semibold text-muted-foreground">Submitted</dt>
                     <dd>{item.submittedLearners}/{item.eligibleLearners}</dd></div>
                   {isAssignment?<div><dt className="font-semibold text-muted-foreground">Graded</dt>
-                    <dd>{item.gradedLearners} graded</dd></div>:null}
+                    <dd>{item.gradedLearners} graded · {Math.max(0,item.submittedLearners-item.gradedLearners)} not graded</dd></div>:null}
                   {!isAssignment?<div className="col-span-2"><dt className="font-semibold text-muted-foreground">Results</dt><dd><StatusBadge tone={item.resultsPublished?"success":"warning"}>{item.resultsPublished?"Published":"Hidden"}</StatusBadge></dd></div>:null}
                 </dl>
                 {!isAssignment?<><QuizListActions item={item}/><CollegeQuizActions quiz={item}/><CollegeQuizAttempts quizId={item.id} offeringId={item.offeringId} specificDeliveryId={item.deliveryId} deliveries={data.reviewDeliveries} status={item.status}/></>:null}
@@ -273,7 +273,7 @@ export function CollegeAssessmentAggregate({ data, leading }: { data: Data; lead
                   {key:"submitted",header:"Submitted / eligible",mobilePriority:"secondary" as const,
                     cell:(item)=>item.submittedLearners+"/"+item.eligibleLearners+" submitted"},
                   ...(isAssignment?[{key:"graded",header:"Graded",mobilePriority:"secondary" as const,
-                    cell:(item:CollegeAssessmentAggregateItem)=>item.gradedLearners+" graded"}]:[]),
+                    cell:(item:CollegeAssessmentAggregateItem)=>item.gradedLearners+" graded / "+Math.max(0,item.submittedLearners-item.gradedLearners)+" not graded"}]:[]),
                   {key:"actions",header:"Actions",mobilePriority:"action" as const,
                     cell:(item)=><div className="min-w-0 space-y-2">
                       {isAssignment?<><CollegeAssignmentActions assignment={item}/>
