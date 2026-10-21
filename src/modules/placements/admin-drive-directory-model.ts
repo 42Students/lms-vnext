@@ -48,8 +48,13 @@ export function adminDriveDirectoryHref(query:z.infer<typeof adminDriveDirectory
  const encoded=url.toString();
  return "/admin/placements/drives"+(encoded?"?"+encoded:"");
 }
+/** Legacy Ant moment comparison expires only when the deadline minute passes. */
+export function adminDriveIsExpired(deadline:Date|null|undefined,now=new Date()):boolean {
+ return Boolean(deadline&&Number.isFinite(deadline.getTime())&&
+  Math.floor(deadline.getTime()/60_000)<Math.floor(now.getTime()/60_000));
+}
 export function adminDriveStatus(job:{status:string;applicationDeadline:Date|null},now=new Date()){
- if(job.status==="PUBLISHED")return job.applicationDeadline&&job.applicationDeadline.getTime()<=now.getTime()?"Open · Expired":"Open";
+ if(job.status==="PUBLISHED")return adminDriveIsExpired(job.applicationDeadline,now)?"Open · Expired":"Open";
  return job.status==="DRAFT"?"Draft":job.status==="CLOSED"?"Closed":job.status;
 }
 
