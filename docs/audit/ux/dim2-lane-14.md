@@ -109,3 +109,47 @@ src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-audit/page.tsx | 16 re
 src/app/(authenticated)/tpo/placements/jobs/[jobId]/share-preview/company-share-controls.tsx | 29 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | phone flex wrap
 src/app/(authenticated)/tpo/placements/jobs/[jobId]/shortlist/page.tsx | 11 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
 src/app/(authenticated)/tpo/placements/new/page.tsx | 6 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/app/(authenticated)/tpo/placements/overview/page.tsx | 10 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/profile/page.tsx | 16 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/recruiters/campaigns/drafts/[campaignId]/page.tsx | 25 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/reports/branch-season/page.tsx | 17 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/reports/intelligence/page.tsx | 18 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | phone grid one column
+src/app/(authenticated)/tpo/reports/offers-expiry/page.tsx | 21 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/settings/notices/page.tsx | 31 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/settings/public-page/page.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 375 header stacks ↔ PageHeader flex-col; 768 header row ↔ PageHeader md:flex-row | none
+src/app/(authenticated)/tpo/settings/season/page.tsx | 21 responsive instances | 375 header stacks ↔ PageHeader flex-col; 768 header row ↔ PageHeader md:flex-row; 375 min width zero ↔ min-w-0 | none
+src/app/(authenticated)/tpo/settings/see/page.tsx | 32 responsive instances | 375 header stacks ↔ PageHeader flex-col; 768 header row ↔ PageHeader md:flex-row; 375 min width zero ↔ min-w-0 | none
+src/app/(authenticated)/tpo/settings/team/page.tsx | 27 responsive instances | 375 tap 44px ↔ min-h-11; 375 header stacks ↔ PageHeader flex-col; 768 header row ↔ PageHeader md:flex-row | none
+src/app/(authenticated)/tpo/settings/templates/page.tsx | 16 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/settings/trusted/page.tsx | 22 responsive instances | 375 tap 44px ↔ min-h-11; 375 header stacks ↔ PageHeader flex-col; 768 header row ↔ PageHeader md:flex-row | none
+src/app/(authenticated)/tpo/students/[membershipId]/participation/page.tsx | 21 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/students/preparation-plan/page.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tpo/team/everyone/page.tsx | 16 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tracker/audit-findings/page.tsx | 40 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tracker/issues/[publicId]/page.tsx | 51 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | none
+src/app/(authenticated)/tracker/mine/page.tsx | 19 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 header stacks ↔ PageHeader flex-col | phone header action full width
+src/app/home/page.tsx | 15 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/app/placements/page.tsx | 12 responsive instances | 375 header stacks ↔ PageHeader flex-col; 768 header row ↔ PageHeader md:flex-row; 375 min width zero ↔ min-w-0 | none
+src/app/quiz/page.tsx | 5 responsive instances | 375 tap 44px ↔ min-h-11; 375 min width zero ↔ min-w-0; 375 sidebar hidden ↔ shell @max767 | none
+src/app/request-demo/page.tsx | 8 responsive instances | 375 tap 44px ↔ min-h-11; 375 header stacks ↔ PageHeader flex-col; 768 header row ↔ PageHeader md:flex-row | none
+src/components/academics/college-hall-booking-action.tsx | 23 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/academics/college-semester-management.tsx | 28 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/academics/college-term-mapping-manager.tsx | 44 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | phone grid one column
+src/components/academics/learner-class-schedule.tsx | 91 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | phone flex wrap, phone flex wrap
+src/components/activity/activity-center.tsx | 24 responsive instances | 375 tap 44px ↔ min-h-11; 375 min width zero ↔ min-w-0; 375 wraps ↔ flex-wrap | none
+src/components/activity/notification-toolbar.tsx | 8 responsive instances | 375 tap 44px ↔ min-h-11; 375 min width zero ↔ min-w-0; 375 grid 1 ↔ grid-cols-1 | phone grid one column
+src/components/admin/academic-module-scope-inventory.tsx | 23 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | none
+src/components/admin/academic-setup-steps.tsx | 12 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/admin-dashboard-actions.tsx | 29 responsive instances | 375 tap 44px ↔ min-h-11; 375 min width zero ↔ min-w-0; 375 sidebar hidden ↔ shell @max767 | none
+src/components/admin/college-archive-button.tsx | 8 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 sidebar hidden ↔ shell @max767 | none
+src/components/admin/college-at-glance-panel.tsx | 9 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 wraps ↔ flex-wrap | none
+src/components/admin/college-bulk-import.tsx | 17 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | none
+src/components/admin/college-logo-uploader.tsx | 25 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/department-directory.tsx | 29 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 table card ↔ DataTable block | none
+src/components/admin/learner-module-access-drawer.tsx | 34 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/managed-college-subdomain.tsx | 23 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/organization-create-form.tsx | 8 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/person-membership-actions.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | phone flex wrap
+src/components/admin/scoped-membership-lifecycle-actions.tsx | 15 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none
+src/components/admin/student-rule-editor.tsx | 14 responsive instances | 375 tap 44px ↔ min-h-11; 375 min width zero ↔ min-w-0; 375 wraps ↔ flex-wrap | none
+src/components/admin/super-admin-attendance-settings-editor.tsx | 13 responsive instances | 375 tap 44px ↔ min-h-11; 768 target 36px ↔ md:min-h-9; 375 min width zero ↔ min-w-0 | none

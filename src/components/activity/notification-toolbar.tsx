@@ -51,7 +51,7 @@ export function NotificationToolbar({
 
   return (
     <div className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-      <div className="grid w-full min-w-0 grid-cols-2 gap-2 min-[768px]:flex min-[768px]:w-auto min-[768px]:flex-wrap" role="group" aria-label="Notification filter">
+      <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-2 min-[768px]:flex min-[768px]:w-auto min-[768px]:flex-wrap" role="group" aria-label="Notification filter">
         <Link
           href={baseHref + "?view=all"}
           aria-current={view === "all" ? "page" : undefined}
