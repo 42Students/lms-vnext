@@ -3,7 +3,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {
   PUBLIC_JOIN_LINK_COPY, type TpoPublicJoinLinkStatus,
@@ -83,6 +83,13 @@ export function TpoPublicJoinLinkCard({
     }catch{setFeedback("Couldn't load the company link");}
     finally{actionInFlight.current=false;setBusy(false);}
   }
+  useEffect(()=>{
+    // A name-keyed Company Memory can render before the scoped link summary
+    // arrives. Fetch its current link and domain automatically, rather than
+    // presenting a false broken-link warning until the user presses Retry.
+    if(!initial.ready)void retryStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  },[scope,companyId,initial.ready]);
   async function saveDomain(){
     if(!companyId||actionInFlight.current)return;
     actionInFlight.current=true;
@@ -167,6 +174,10 @@ export function TpoPublicJoinLinkCard({
               Made {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"}).format(new Date(status.link.createdAt))}. Opened {status.link.opensCount} times, {status.link.joinsCount} joined.
             </p>
           ) : null}
+          {status.link&&!freshUrl?<p className="mt-2 text-xs text-muted-foreground">
+            For safety the original link address cannot be recovered from a status lookup.
+            Choose New link to replace it and copy the new address. The old link will stop working.
+          </p>:null}
           {status.link?<label className="mt-3 flex min-h-11 items-center gap-3 text-sm text-body">
             <Checkbox checked={status.link.enabled} disabled={busy}
               onChange={()=>void toggleLink()}/>
