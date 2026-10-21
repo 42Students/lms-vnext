@@ -1538,7 +1538,7 @@ export function ProjectWorkspace({
                               </div> : null}
                               {latestAttempt?.submissionUrl && safeHttpHref(latestAttempt.submissionUrl) ?
                                 <div className="sm:col-span-2"><dt className="font-semibold">Submission</dt>
-                                  <dd><a target="_blank" rel="noreferrer"
+                                  <dd><a target="_blank" rel="noopener noreferrer"
                                     href={safeHttpHref(latestAttempt.submissionUrl)!}
                                     className="text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open submission</a></dd>
                                 </div> : null}
@@ -1782,7 +1782,7 @@ export function ProjectWorkspace({
                           <a
                             href={source}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open source ↗
@@ -1792,7 +1792,7 @@ export function ProjectWorkspace({
                           <a
                             href={demo}
                             target="_blank"
-                            rel="noreferrer"
+                            rel="noopener noreferrer"
                             className="text-link hover:text-[var(--lms-primary-text)]"
                           >
                             Open demo ↗
@@ -2114,7 +2114,7 @@ export function ProjectWorkspace({
                       <a
                         href={href}
                         target="_blank"
-                        rel="noreferrer"
+                        rel="noopener noreferrer"
                         className="mt-3 inline-flex text-sm font-semibold text-link hover:text-[var(--lms-primary-text)]"
                       >
                         Join meeting ↗
@@ -2180,12 +2180,23 @@ export function ProjectWorkspace({
 
           {mode === "ADMIN" ? <Link href={(backHref.startsWith("/college/") ? "/college/projects/audit" : "/admin/projects/audit") + "?entityId=" + encodeURIComponent(workspace.project.id) + "&range=all"}
             className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View audit trail</Link> : null}
-          {mode === "ADMIN" ? <ProjectResourceAuditList events={workspace.activity.map(event => ({
+          {mode==="ADMIN"&&workspace.activityLoadError?
+            <div role="alert" className="border-l-[3px] border-warning-border bg-warning-subtle p-3 text-sm">
+              <p className="font-semibold">Resource audit could not be loaded.</p>
+              <p className="mt-1 text-body">The workspace remains available. Retry the audit without losing the project context.</p>
+              <Link href="?retry=1" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                Retry workspace audit
+              </Link>
+            </div>:null}
+          {mode==="ADMIN"&&!workspace.activityLoadError?
+            <ProjectResourceAuditList events={workspace.activity.map(event => ({
             id: event.id, eventType: event.eventType, summary: event.summary,
             subjectLabel: event.subjectLabel, actorDisplayName: event.actorDisplayName,
             occurredAt: event.occurredAt.toISOString(),
           }))} /> : null}
-          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} />
+          {!workspace.activityLoadError?<ProjectActivityFilteredList
+            projectId={workspace.project.id} events={workspace.activity}
+            now={new Date().toISOString()} />:null}
 
 
         </section>

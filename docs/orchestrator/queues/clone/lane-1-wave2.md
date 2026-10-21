@@ -12,7 +12,7 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 Packets:
 
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-workspace.tsx.part1of4.md` (edit src/components/projects/project-workspace.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-workspace.tsx.part2of4.md` (edit src/components/projects/project-workspace.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-workspace.tsx.part2of4.md` (edit src/components/projects/project-workspace.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-workspace.tsx.part3of4.md` (edit src/components/projects/project-workspace.tsx; 40 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_project-workspace.tsx.part4of4.md` (edit src/components/projects/project-workspace.tsx; 23 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-1/W2_src_components_projects_class-team-workspace-creator.tsx.part1of2.md` (edit src/components/projects/class-team-workspace-creator.tsx; 40 findings; best P2)
