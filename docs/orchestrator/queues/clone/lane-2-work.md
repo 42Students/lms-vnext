@@ -52,7 +52,7 @@ Packets:
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_college-hiring-funnel.tsx.md` (edit src/components/placements/college-hiring-funnel.tsx; 7 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-general-request-model.ts.md` (edit src/modules/placements/tpo-general-request-model.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_learner-application-detail-service.ts.md` (edit src/modules/placements/learner-application-detail-service.ts; 6 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-live-drive-day-service.ts.md` (edit src/modules/placements/tpo-live-drive-day-service.ts; 6 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-live-drive-day-service.ts.md` (edit src/modules/placements/tpo-live-drive-day-service.ts; 6 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-2/src_modules_placements_tpo-drive-day-checkin-service.ts.md` (edit src/modules/placements/tpo-drive-day-checkin-service.ts; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-placement-offers.tsx.md` (edit src/components/placements/learner-placement-offers.tsx; 6 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-2/src_components_placements_learner-placement-jobs.tsx.md` (edit src/components/placements/learner-placement-jobs.tsx; 6 findings; best P1)

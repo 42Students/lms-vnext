@@ -110,6 +110,8 @@ export function LearnerPlacementOffers({
   const [extensionAt,setExtensionAt]=useState("");
   const [extensionReason,setExtensionReason]=useState("");
   const [extensionError,setExtensionError]=useState<string|null>(null);
+  // Legacy RELEASED maps to ISSUED; legacy REJECTED maps to a DECLINED
+  // offer, not a withdrawn application. Canonical statuses come from the API.
   const sortedOffers=preserveOrder?[...offers]:prioritizeLearnerOffers(offers,snapshotNowIso);
   const pendingExtensions=learnerPendingOfferExtensions(extensionRequests);
   const preview = confirmOffer
@@ -181,7 +183,9 @@ export function LearnerPlacementOffers({
       if (!response.ok) {
         const code=typeof payload?.code==="string"?payload.code:
           typeof payload?.error==="string"?payload.error:null;
-        throw new Error(learnerOfferActionErrorMessage(response.status,code));
+        throw new Error(code==="PLACEMENT_OFFER_EXPIRED"
+          ? "The offer response deadline has passed"
+          : learnerOfferActionErrorMessage(response.status,code));
       }
       // Never announce an irreversible response until the canonical offer row
       // confirms that the requested transition was recorded.
@@ -350,7 +354,7 @@ export function LearnerPlacementOffers({
             </div>
 
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 break-words text-sm text-body">
-              {item.letterHref && !learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? (
+              {item.letterHref && item.status==="ACCEPTED" ? (
                 <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
                   className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline">
                   Offer letter
@@ -433,7 +437,7 @@ export function LearnerPlacementOffers({
               </p>
             ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
               <p role="status" className="mt-4 text-sm font-semibold text-error">
-                The recorded response deadline has passed. You cannot respond to this offer.
+                The offer response deadline has passed
                 Contact your placement cell for clarification.
               </p>
             ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="SOON" ? (
@@ -468,7 +472,7 @@ export function LearnerPlacementOffers({
                 >
                   Decline
                 </Button>
-                {item.letterHref ? <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
+                {item.letterHref && item.status==="ISSUED" ? <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:text-primary-text sm:w-auto md:min-h-9">Offer letter</a> : null}
                 {extensionsAvailable && item.expiresAt && !pendingExtensions.has(item.offerId) ? (
                   <Button className="min-h-11 w-full sm:w-auto md:min-h-9" size="sm" variant="secondary" disabled={pendingId!==null}

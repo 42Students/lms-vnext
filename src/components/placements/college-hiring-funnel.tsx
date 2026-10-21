@@ -100,8 +100,8 @@ export function CollegeHiringFunnel({data,selectedSeasonId,selectedJobId}:{
    </div>:<div className="space-y-3">
     {order.map(stage=><div key={stage} className={reportStyles.chartRow}>
       <div className="min-w-0 space-y-1">
-        <span className={reportStyles.label}>{label(stage)}</span>
-        <span className="block text-xs tabular-nums text-body" title="Ever observed in this stage, from the selected applications and recorded transition history">
+        <strong className={reportStyles.label}>{label(stage)}</strong>
+        <span className="inline-flex rounded border border-[var(--lms-primary)] bg-primary-subtle px-2 py-0.5 text-xs font-semibold tabular-nums text-primary-text" title="Ever observed in this stage, from the selected applications and recorded transition history">
           {stage==="APPLIED"?"100% of applied":comparisonStage[stage]&&
            (cumulative[comparisonStage[stage]!]??0)>0
             ?Math.round(100*(cumulative[stage]??0)/(cumulative[comparisonStage[stage]!]??1))+

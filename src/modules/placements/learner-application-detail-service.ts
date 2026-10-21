@@ -43,6 +43,10 @@ async function loadOwnedApplication(
   const [row] = await getDb()
     .select({
       applicationId: placementApplications.id,
+      publicRef: placementApplications.publicRef,
+      submittedAt: placementApplications.submittedAt,
+      firstAppliedAt: placementApplications.firstAppliedAt,
+      statusUpdatedAt: placementApplications.statusUpdatedAt,
       jobId: placementApplications.jobId,
       applicationStatus: placementApplications.status,
       jobTitle: placementJobs.title,
@@ -118,13 +122,34 @@ export async function getOwnLearnerApplicationHistory(
       asc(placementApplicationStatusHistory.id),
     );
 
+  // Some migrated applications have no historical status events. Recover
+  // their original persisted submission, without inventing round decisions.
+  const initialAt = application.firstAppliedAt ?? application.submittedAt;
+  const synthetic: {id:string;fromStatus:string|null;toStatus:string;occurredAt:Date}[] =
+    rows.length === 0 ? [{
+      id: application.applicationId + ":initial",
+      fromStatus: null,
+      toStatus: "SUBMITTED",
+      occurredAt: initialAt,
+    }] : [];
+  if (rows.length === 0 && application.applicationStatus !== "SUBMITTED" &&
+      application.statusUpdatedAt &&
+      application.statusUpdatedAt.getTime() >= initialAt.getTime()) {
+    synthetic.push({
+      id: application.applicationId + ":current",
+      fromStatus: "SUBMITTED",
+      toStatus: application.applicationStatus,
+      occurredAt: application.statusUpdatedAt,
+    });
+  }
   return {
     applicationId: application.applicationId,
+    publicRef: application.publicRef,
     roleTitle: application.roleTitle,
     companyName: application.companyName,
     currentStatus: application.applicationStatus,
     // Actor IDs and free-text internal history reasons are not selected.
-    events: learnerApplicationHistoryTimeline(rows),
+    events: learnerApplicationHistoryTimeline(rows.length ? rows : synthetic),
   };
 }
 
@@ -171,10 +196,12 @@ export async function getOwnLearnerApplicationCompany(
     });
   return {
     applicationId: application.applicationId,
+    publicRef: application.publicRef,
     companySharePreview:{
       currentlyShared,
-      fields:["Application ID","Learner","Email"] as const,
-      applicationId:application.applicationId,
+      fields:["Applicant reference","Learner","Email"] as const,
+      // Never present the private routing UUID as an employer-facing ATS ref.
+      applicationId:application.publicRef,
       learnerName:principal?.displayName??"Unnamed learner",
       email:principal?.email??null,
     },
