@@ -52,7 +52,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Filter</Button>
       </form>
-      <p className="mt-2 text-xs text-muted-foreground">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
+      <p className="mt-2 text-xs text-muted-foreground leading-5">{data.enrollmentTotal} total persisted enrollment(s), including other lifecycle statuses.</p>
       {data.enrollments.length === 0 ? <EmptyState title="No matching enrollments" description="No program enrollment matches the selected lifecycle status."
           action={data.filter.status !== "ALL" ? <Link href={"/college/students/" + encodeURIComponent(membershipId)}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">All enrollments</Link> : undefined} /> :
@@ -69,7 +69,7 @@ export default async function CollegeStudentDetailPage({ params, searchParams }:
     </section>
     <section className="border-b border-border pb-5">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recorded attendance</h2>
-      <p className="mt-2 max-w-3xl text-sm leading-6 text-body">
+      <p className="mt-2 max-w-3xl text-sm leading-[22px] text-body">
         {data.attendance.recordedMarkedEvents} marked-session record(s);
         {" "}{data.attendance.presentOrLate} explicitly present/late;
         {" "}{data.attendance.absent} absent;

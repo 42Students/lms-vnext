@@ -67,7 +67,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
               ? "No marked attendance" : attendance.overall.percentage + "% recorded"}
           </StatusBadge>
         </div>
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
+        <p className="mt-2 max-w-2xl text-sm leading-[22px] text-body">
           College policy threshold: {attendance.thresholdPercent}%. Percentage is based on marked
           sessions only; unmarked or future classes are not treated as absences.
         </p>
@@ -95,7 +95,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
               <div className="flex flex-col items-start justify-between gap-2 sm:flex-row sm:gap-3">
                 <div>
                   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{month.month}</h2>
-                  <p className="mt-1 text-sm text-body">
+                  <p className="mt-1 text-sm text-body leading-[22px]">
                     {month.present} present · {month.otherMarked} other marked ·
                     {" "}{month.notMarked} not marked · {month.scheduled} scheduled
                   </p>
@@ -109,7 +109,7 @@ export default async function LearnerCourseAttendanceSummaryPage({
                 {month.records.map((row) => (
                   <li key={row.id} className="flex min-w-0 flex-col items-start justify-between gap-2 py-3 sm:flex-row sm:gap-3">
                     <div className="min-w-0 flex-1 break-words">
-                      <p className="text-sm font-semibold text-foreground">{row.title}</p>
+                      <p className="text-sm font-semibold text-foreground leading-[22px]">{row.title}</p>
                       <time dateTime={row.startsAt.toISOString()}
                         className="mt-1 block text-xs text-muted-foreground">{formatWhen(row.startsAt)}</time>
                     </div>
