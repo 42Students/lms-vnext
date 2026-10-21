@@ -108,3 +108,6 @@
 
 - Placement registration owner: G2-15-023-008/051. Never equate legacy placement season with academic cohort; only import after verified learner same-college membership+cohort enrollment, explicit source/time and lawful consent validity. Non-placement choice must not backfill consent.
 - Assignment upload storage/Faculty UI owners: G2-12-021-007/027. Staged course_upload_receipts must remain unexported until scanner, tenant membership/role, physical GCS object attestation and current assignment_submission_files relation are reconciled (avoid duplicate tables). Add multi-file producer/UI with bounded sequence, unique consumed receipt and per-file CLEAN status, not merely sequence 0.
+
+- Teacher attendance policy owner: G2-14-009-082. Additive 0170 replaces 168-hour SQL cap with schema's 8760-hour maximum. Recheck policy UI, role, cutoff calculations and migration replay before exposing year-long corrections; default stays 24h.
+- Quiz authoring/validation owner: G2-16-016-035. Legacy per-question 100 points already enforced by faculty authoring, but generic quiz-validation.ts, quizzes.ts and immutable migration 0007 accept up to 1000. Do NOT change SQL without synchronizing Zod/UI/schema for all writers, checking existing questions >100 and approving any downgrade. Migration 0007 unchanged.
