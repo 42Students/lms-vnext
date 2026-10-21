@@ -131,7 +131,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         eligibilityThresholdPercent={attendancePolicy.policy.eligibilityThresholdPercent}
         correctionWindowHours={attendancePolicy.policy.correctionWindowHours}
         maxCorrectionHours={attendancePolicy.maxCorrectionHours}/>:null}
-      <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]">
+      <form className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto_auto]" aria-label="Filter tenant settings">
         <label className="grid min-w-48 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Setting or source
           <Input name="q" defaultValue={parsed.q} maxLength={100} className="min-h-11 md:min-h-9"/>
         </label>
