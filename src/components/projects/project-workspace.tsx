@@ -22,6 +22,9 @@ import {ProjectDeliveryReopenControl} from "./project-delivery-reopen-control";
 import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-model";
 import {learnerSprintRollup,learnerSprintProgress} from "@/modules/projects/learner-sprint-progress-model";
 import { StatusBadge } from "@/components/ui/status-badge";
+import { MetricBar } from "@/components/ui/metric-bar";
+import { effectiveProjectSubmissionReady } from "@/modules/projects/readiness-override-model";
+import { projectResourceAuditAction } from "@/modules/projects/project-resource-audit-model";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
 import {MentorSprintDeleteControl} from "./mentor-sprint-delete-control";
 import {ProjectActivityFilteredList} from "./project-activity-filtered-list";
@@ -158,6 +161,117 @@ function Metric({
     <p className="mt-1 break-words text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">{value}</p>
     <p className="mt-1 break-words text-xs leading-5 text-muted-foreground">{detail}</p>
   </div>;
+}
+
+
+/** Match the legacy read-first snapshot without overwriting execution-managed progress. */
+function WorkspaceHealthSnapshot({ workspace }: { workspace: Workspace }) {
+  const tasks = workspace.readiness.execution.tasks;
+  const sprints = workspace.readiness.execution.sprints;
+  const progress = tasks.total > 0
+    ? Math.round(100 * tasks.done / tasks.total)
+    : sprints.total > 0
+      ? Math.round(100 * sprints.completed / sprints.total)
+      : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
+  const facts = [
+    { label: "Team", value: workspace.members.length + " member" + (workspace.members.length === 1 ? "" : "s") },
+    { label: "Tasks", value: tasks.total ? tasks.done + " / " + tasks.total + " done" : "No tasks yet" },
+    { label: "Sprints", value: sprints.total ? sprints.completed + " / " + sprints.total + " done" : "No sprints yet" },
+    { label: "Target", value: workspace.project.endDate ?? workspace.project.dueLabel ?? "Not set" },
+  ];
+  return <section aria-label="Workspace health" className="border-b border-[var(--lms-canvas-border)] pb-5">
+    <div className="grid min-w-0 gap-5 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+      <div className="min-w-0 space-y-4">
+        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Workspace health</p>
+        <div className="flex flex-wrap items-center gap-2">
+          <StatusBadge tone={tone(workspace.project.status)}>{label(workspace.project.status)}</StatusBadge>
+          <StatusBadge tone="neutral">{workspace.project.templateVersionId ? "Template attached" : "No template attached"}</StatusBadge>
+          {workspace.project.phase ? <StatusBadge tone="neutral">Phase: {label(workspace.project.phase)}</StatusBadge> : null}
+        </div>
+        <p className="whitespace-pre-wrap text-sm leading-6 text-body">
+          {workspace.project.summary || "No workspace summary has been added yet."}
+        </p>
+        <div>
+          <div className="mb-2 flex items-center justify-between gap-2 text-sm font-semibold text-foreground">
+            <span>Overall progress</span><span className="tabular-nums">{progress}%</span>
+          </div>
+          <MetricBar label="Overall progress" value={progress} maximum={100} size="medium" role="progressbar" />
+        </div>
+      </div>
+      <dl aria-label="Workspace quick facts" className="grid min-w-0 grid-cols-2 gap-0 border-t border-[var(--lms-canvas-border)] lg:border-t-0">
+        {facts.map(fact => <div key={fact.label} className="min-w-0 border-b border-[var(--lms-canvas-border)] px-3 py-3">
+          <dt className="text-xs text-muted-foreground">{fact.label}</dt>
+          <dd className="mt-1 break-words text-sm font-semibold tabular-nums text-foreground">{fact.value}</dd>
+        </div>)}
+      </dl>
+    </div>
+  </section>;
+}
+
+/** Readiness must use the server's execution verdict plus the recorded administrator override. */
+function WorkspaceReadinessSnapshot({ workspace }: { workspace: Workspace }) {
+  const readiness = workspace.readiness;
+  if (!readiness) return <section role="alert" className="border-y border-warning-border bg-warning-subtle p-4">
+    <h2 className="font-semibold">Readiness snapshot is unavailable</h2>
+    <p className="mt-1 text-sm">The workspace loaded, but its readiness calculation was not included. Retry before making a submission-readiness decision.</p>
+    <Link href={"?tab=readiness"} className="mt-2 inline-flex text-sm font-semibold text-link underline">Retry</Link>
+  </section>;
+  const ready = workspace.project.status !== "ARCHIVED" &&
+    effectiveProjectSubmissionReady(readiness.execution.complete, readiness.readinessOverride.state);
+  const tasks = readiness.execution.tasks;
+  const sprints = readiness.execution.sprints;
+  const doneTasks = workspace.tasks.filter(task => task.status === "DONE");
+  const withSubmission = doneTasks.filter(task => workspace.taskSubmissions.some(submission =>
+    submission.taskId === task.id && Boolean(submission.submissionUrl))).length;
+  const progress = tasks.total > 0 ? Math.round(tasks.done * 100 / tasks.total)
+    : sprints.total > 0 ? Math.round(sprints.completed * 100 / sprints.total)
+    : Math.max(0, Math.min(100, workspace.project.progressPercent ?? 0));
+  const override = readiness.readinessOverride;
+  const overrideActive = override.state === "FORCE_UNLOCK" || override.state === "FORCE_BLOCK";
+  const metrics = [
+    { label: "Tasks complete", value: tasks.done + " / " + tasks.total },
+    { label: "Sprints complete", value: sprints.completed + " / " + sprints.total },
+    { label: "Proof coverage", value: doneTasks.length ? withSubmission + " / " + doneTasks.length + " completed tasks" : "No completed tasks yet" },
+    { label: "Submission", value: readiness.finalSubmission.latest ? label(readiness.finalSubmission.latest.status) : "Not submitted" },
+  ];
+  return <section aria-label="Submission readiness" className="space-y-4 border-b border-[var(--lms-canvas-border)] pb-5">
+    <div className="space-y-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.08em] text-body">Submission readiness</p>
+          <h2 className="mt-1 text-lg font-semibold text-foreground">
+            {ready ? "This workspace is ready to submit" : "This workspace still has readiness gaps"}
+          </h2>
+        </div>
+        <StatusBadge tone={ready ? "success" : "error"}>{ready ? "Ready" : "Not ready"}</StatusBadge>
+      </div>
+      <div>
+        <div className="mb-2 flex justify-between gap-2 text-sm font-semibold">
+          <span>Overall project progress</span><span className="tabular-nums">{progress}%</span>
+        </div>
+        <MetricBar label="Overall project progress" role="progressbar" size="medium" value={progress} maximum={100} />
+      </div>
+      <dl className="grid min-w-0 grid-cols-2 gap-0 border-t border-[var(--lms-canvas-border)] lg:grid-cols-4">
+        {metrics.map(metric => <div key={metric.label} className="min-w-0 border-b border-[var(--lms-canvas-border)] px-3 py-3">
+          <dt className="text-xs text-muted-foreground">{metric.label}</dt>
+          <dd className="mt-1 break-words text-sm font-semibold tabular-nums">{metric.value}</dd>
+        </div>)}
+      </dl>
+    </div>
+    {overrideActive ? <div role="status" className={
+      "border-y px-4 py-3 text-sm " + (override.state === "FORCE_UNLOCK"
+        ? "border-success-border bg-success-subtle" : "border-warning-border bg-warning-subtle")
+    }>
+      <p className="font-semibold">Readiness override active · {override.state === "FORCE_UNLOCK" ? "Force unlocked" : "Force blocked"}</p>
+      <dl className="mt-2 grid gap-3 sm:grid-cols-3">
+        <div><dt className="text-xs text-muted-foreground">Reason</dt><dd className="mt-1 whitespace-pre-wrap">{override.note || "—"}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Set by</dt><dd className="mt-1">{override.overriddenBy || "—"}</dd></div>
+        <div><dt className="text-xs text-muted-foreground">Set at</dt><dd className="mt-1">{formatDateTime(override.occurredAt)}</dd></div>
+      </dl>
+    </div> : <p className="border-y border-border px-4 py-3 text-sm text-body">
+      No manual readiness override is active. The status above is based on workspace progress and submission rules.
+    </p>}
+  </section>;
 }
 
 function safeHttpHref(value: string | null) {
@@ -339,7 +453,7 @@ export function ProjectWorkspace({
       ) : null}
 
       {mode === "ADMIN" && show("readiness") ? (
-        <Link href={"/admin/projects/readiness?projectId=" + encodeURIComponent(workspace.project.id)}
+        <Link href={(backHref.startsWith("/college/") ? "/college/projects/readiness" : "/admin/projects/readiness") + "?projectId=" + encodeURIComponent(workspace.project.id)}
           className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
           Manage override
         </Link>
@@ -359,9 +473,11 @@ export function ProjectWorkspace({
         </section>
       ) : null}
 
+      {mode === "ADMIN" && show("summary") ? <WorkspaceHealthSnapshot workspace={workspace} /> : null}
+      {mode === "ADMIN" && show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
         project={workspace.project}/>:null}
-      {show("summary") || show("readiness") || (mode === "MENTOR" && show("overview")) ? (
+      {show("summary") || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
             label="Tasks"
@@ -1668,7 +1784,50 @@ export function ProjectWorkspace({
 
           {mode === "ADMIN" ? <Link href={"/admin/projects/audit?projectId=" + encodeURIComponent(workspace.project.id)}
             className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">View full project audit</Link> : null}
-          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} resourceAudit={mode==="ADMIN"}/>
+          {mode === "ADMIN" ? (() => {
+            const resourceEvents = workspace.activity.map(event => ({
+              event,
+              action: projectResourceAuditAction(event.eventType),
+            })).filter(row => row.action !== null);
+            const countAction = (value: string) => resourceEvents.filter(row => row.action === value).length;
+            return <section aria-label="Resource activity" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
+              <div>
+                <h3 className="text-base font-semibold text-foreground">Resource activity</h3>
+                <p className="mt-1 text-sm text-body">See who changed project resources and when</p>
+                <p className="mt-1 text-xs text-muted-foreground">
+                  This view focuses on resource changes inside the workspace. Use the full audit trail for broader project events.
+                </p>
+              </div>
+              <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+                {([["Changes",resourceEvents.length],["Added",countAction("Added")],
+                   ["Edited",countAction("Edited")+countAction("Saved")],["Removed",countAction("Removed")]] as const)
+                  .map(([name,count]) => <div key={name} className="border-b border-border px-2 py-2">
+                    <dt className="text-xs text-muted-foreground">{name}</dt>
+                    <dd className="mt-1 text-lg font-semibold tabular-nums">{count}</dd>
+                  </div>)}
+              </dl>
+              {resourceEvents.length === 0 ? <EmptyState title="No resource activity yet"
+                description="Resource changes will appear here." /> :
+                <div className="min-w-0 overflow-x-auto border border-[var(--lms-canvas-border)]">
+                  <table className="w-full min-w-[540px] text-left text-sm">
+                    <thead className="border-b border-[var(--lms-canvas-border)] bg-surface-subtle">
+                      <tr><th scope="col" className="px-3 py-2">Resource</th>
+                        <th scope="col" className="px-3 py-2">Action</th>
+                        <th scope="col" className="px-3 py-2">Actor</th>
+                        <th scope="col" className="px-3 py-2">When</th></tr>
+                    </thead>
+                    <tbody>{resourceEvents.map(({event,action}) => <tr key={event.id}
+                      className="border-b border-[var(--lms-canvas-border)] last:border-b-0">
+                      <td className="px-3 py-2">{event.summary}</td>
+                      <td className="px-3 py-2"><StatusBadge tone="neutral">{action}</StatusBadge></td>
+                      <td className="px-3 py-2">{event.actorDisplayName || "System"}</td>
+                      <td className="px-3 py-2">{formatDateTime(new Date(event.occurredAt))}</td>
+                    </tr>)}</tbody>
+                  </table>
+                </div>}
+            </section>;
+          })() : null}
+          <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} />
 
 
         </section>
