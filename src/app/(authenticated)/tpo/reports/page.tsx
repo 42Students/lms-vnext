@@ -186,6 +186,12 @@ export default async function TpoReportsPage({
   ] as const;
   const indexedCards=groups.flatMap(group=>group.cards);
   const legacyPaths=new Set<string>(legacyReportOrder.flat());
+  const retryParams=new URLSearchParams();
+  for(const key of ["seasonId","jobId","q","group"] as const){
+   const value=first(query[key]);
+   if(value)retryParams.set(key,value);
+  }
+  const retryHref="/tpo/reports"+(retryParams.size?"?"+retryParams.toString():"");
   const legacyGroups=groups.map((group,index)=>({
    ...group,
    eyebrow:["Placement health","Student outcomes","Relationships and compliance"][index],
@@ -207,7 +213,7 @@ export default async function TpoReportsPage({
       <Alert tone="error">
         <h2 className="text-base font-semibold">The headline numbers could not be loaded.</h2>
         <p className="mt-2 text-sm text-body">Previously loaded figures cannot be verified in this request. The report links remain available.</p>
-        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+        <Link href={retryHref} className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry headline numbers</Link>
       </Alert>
       {visibleGroups.length === 0 ? <EmptyState title="No matching reports" description="Clear filters to see the full report directory." /> : null}
       {visibleGroups.map(group => <section key={group.heading} className="space-y-3 border-b border-border pb-4">
@@ -222,6 +228,10 @@ export default async function TpoReportsPage({
       </section>)}
     </div>;
   }
+  const looking=Math.max(0,workspace.report.metrics.registered);
+  const placed=Math.max(0,workspace.report.metrics.studentsPlaced);
+  const accepted=Math.max(0,workspace.report.metrics.studentsAccepted);
+  const percent=(count:number)=>looking>0?Math.round(count*100/looking):0;
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
@@ -237,6 +247,51 @@ export default async function TpoReportsPage({
           </Link>
         }
       />
+
+      <nav aria-label="Placement journey" className="space-y-3 border-y border-border py-4">
+       <h2 className="text-lg font-semibold">Placement journey</h2>
+       <p className="text-sm text-body">The college&apos;s placement journey: {workspace.report.metrics.offers} {workspace.report.metrics.offers===1?"offer":"offers"} made. Click any number for its report.</p>
+       <ol className="grid min-w-0 items-center gap-2 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)_auto_minmax(0,1fr)]" role="group" aria-label="Placement journey steps and gaps">
+        <li className="min-w-0">
+         <Link href={reportHref("/tpo/reports/by-branch",workspace)} aria-label={"Looking for a job: "+looking}
+          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+          <span className="block text-sm text-body">Looking for a job</span>
+          <strong className="mt-1 block text-2xl tabular-nums text-link">{looking.toLocaleString("en-IN")}</strong>
+          <span className="text-xs text-muted-foreground">100% baseline</span>
+         </Link>
+        </li>
+        <li className="min-w-0">
+         <Link href={reportHref("/tpo/reports/unplaced",workspace)}
+          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[145px] md:min-h-9">
+          <span>Unplaced</span><strong className="tabular-nums">{Math.max(0,looking-placed).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
+         </Link>
+        </li>
+        <li className="min-w-0">
+         <Link href={reportHref("/tpo/reports/placement-summary",workspace)} aria-label={"Placed: "+placed+"; "+percent(placed)+" percent"}
+          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+          <span className="block text-sm text-body">Placed</span>
+          <strong className="mt-1 block text-2xl tabular-nums text-link">{placed.toLocaleString("en-IN")}</strong>
+          <span className="text-xs text-muted-foreground">{percent(placed)}% of looking</span>
+         </Link>
+        </li>
+        <li className="min-w-0">
+         <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)}
+          className="inline-flex min-h-11 min-w-0 flex-wrap items-center gap-1 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-2 text-xs font-semibold text-link sm:max-w-[145px] md:min-h-9">
+          <span>Not accepted yet</span><strong className="tabular-nums">{Math.max(0,placed-accepted).toLocaleString("en-IN")}</strong><span aria-hidden="true">→</span>
+         </Link>
+        </li>
+        <li className="min-w-0">
+         <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} aria-label={"Accepted: "+accepted+"; "+percent(accepted)+" percent"}
+          className="block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+          <span className="block text-sm text-body">Accepted</span>
+          <strong className="mt-1 block text-2xl tabular-nums text-link">{accepted.toLocaleString("en-IN")}</strong>
+          <span className="text-xs text-muted-foreground">{percent(accepted)}% of looking</span>
+         </Link>
+        </li>
+       </ol>
+       <p className="text-xs text-muted-foreground">Each stage counts unique students; the number of offers made is shown separately. A stage gap is not a verified historical transition.</p>
+      </nav>
+      <ReportMetrics metrics={workspace.report.metrics} />
 
       <ReportFilters workspace={workspace} userId={context.user.id} path="/tpo/reports" />
       <form method="get" action="/tpo/reports"
@@ -263,32 +318,7 @@ export default async function TpoReportsPage({
           Clear
         </Link>
       </form>
-      <nav aria-label="Placement journey" className="space-y-3 border-y border-border py-4">
-        <h2 className="text-lg font-semibold">Placement journey</h2>
-        <p className="text-sm text-body">The college&apos;s placement journey: {workspace.report.metrics.offers} {workspace.report.metrics.offers === 1 ? "offer" : "offers"} made. Click any number for its report.</p>
-        <div className="grid gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-border sm:grid-cols-3">
-          {([
-            {label:"Looking for a job",count:workspace.report.metrics.registered,href:"/tpo/reports/by-branch"},
-            {label:"Placed",count:workspace.report.metrics.studentsPlaced,href:"/tpo/reports/placement-summary"},
-            {label:"Accepted",count:workspace.report.metrics.studentsAccepted,href:"/tpo/reports/offers-acceptance"},
-          ] as const).map(step => <Link key={step.label} href={reportHref(step.href,workspace)}
-            className="block min-w-0 bg-surface p-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px]">
-            <span className="block text-sm text-body">{step.label}</span>
-            <strong className="mt-1 block text-2xl tabular-nums text-link">{step.count.toLocaleString("en-IN")}</strong>
-          </Link>)}
-        </div>
-        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Placement journey gaps">
-          <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="font-semibold text-link underline">
-            Unplaced · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)}
-          </Link>
-          {workspace.report.metrics.studentsPlaced>=workspace.report.metrics.studentsAccepted?
-            <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="font-semibold text-link underline">
-              Not accepted yet · {workspace.report.metrics.studentsPlaced-workspace.report.metrics.studentsAccepted}
-            </Link>:null}
-        </div>
-        <p className="text-xs text-muted-foreground">Each stage counts unique students; the number of offers made is shown separately. A stage gap is not a verified historical transition.</p>
-      </nav>
-      <ReportMetrics metrics={workspace.report.metrics} />
+
 
       {workspace.noSeason ? (
         <EmptyState
@@ -298,7 +328,7 @@ export default async function TpoReportsPage({
       ) : null}
 
 
-      <p role="status" className="text-sm text-body leading-[1.6]">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>
+      {parsedSearch.data||parsedGroup.data!=="ALL"?<p role="status" className="text-sm text-body leading-[1.6]">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>:null}
       {visibleGroups.length===0?<EmptyState title="No matching reports"
         description="No available report matches this search and category. Clear filters to see the full gallery."/>:null}
       {visibleGroups.map((group) => (

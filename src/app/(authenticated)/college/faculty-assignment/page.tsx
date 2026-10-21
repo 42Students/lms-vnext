@@ -58,6 +58,20 @@ export default async function CollegeFacultyAssignmentPage({
     listCollegeTeachingOptions(context),
   ]);
   const { query, items, total, totalPages } = directory;
+  // Legacy overview metrics are scoped independently from roster filters.
+  // A failed summary may not take down an otherwise usable assignment list.
+  const overviewQuery={q:"",role:"ALL" as const,status:"ALL" as const,page:1};
+  const metricReads=await Promise.allSettled([
+   listCollegeFacultyAssignments(context,overviewQuery),
+   listCollegeFacultyAssignments(context,{...overviewQuery,status:"ACTIVE"}),
+   listCollegeFacultyAssignments(context,{...overviewQuery,status:"ACTIVE",role:"PRIMARY"}),
+  ]);
+  const metricValue=(index:number)=>{
+   const result=metricReads[index];
+   return result?.status==="fulfilled"?result.value.total:null;
+  };
+  const currentVisibleClasses=new Set(items.filter(item=>item.state==="ACTIVE")
+   .map(item=>item.cohortName+"|"+item.sectionName+"|"+item.periodName)).size;
   const classChoices=Array.from(
     new Map(options.deliveries.map(item=>[item.sectionCode,{code:item.sectionCode,name:item.sectionName}])).values(),
   ).sort((a,b)=>a.name.localeCompare(b.name)||a.code.localeCompare(b.code));
@@ -72,6 +86,18 @@ export default async function CollegeFacultyAssignmentPage({
         actions={<Link href="/college/faculty"
           className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Faculty directory</Link>}
       />
+      <section aria-label="Teaching assignments overview" className="grid grid-cols-2 divide-x divide-y divide-border overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface lg:grid-cols-4 lg:divide-y-0">
+       {([
+        ["Assignments",metricValue(0),""],
+        ["Active",metricValue(1),""],
+        ["Primary instructors",metricValue(2),""],
+        ["Classes covered",currentVisibleClasses,"Visible page only"],
+       ] as const).map(([label,value,note])=><article key={label} className="min-w-0 p-[var(--lms-space-4)]">
+        <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+        <strong className="mt-2 block text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{value===null?"—":value.toLocaleString("en-IN")}</strong>
+        {note?<p className="mt-1 text-xs text-muted-foreground">{note}</p>:null}
+       </article>)}
+      </section>
       <Disclosure title={FACULTY_ASSIGNMENT_COPY.createTitle} className="min-w-0 border-y border-[var(--lms-canvas-border)]" contentClassName="pb-[var(--lms-space-4)] pt-[var(--lms-space-3)]">
         <CollegeFacultyAssignmentCreate {...options} />
       </Disclosure>
@@ -126,6 +152,7 @@ export default async function CollegeFacultyAssignmentPage({
         </form>
       </FilterBar>
       <section className="min-w-0" aria-label="Teaching assignment roster">
+        <h2 className="mb-2 text-lg font-semibold text-[var(--lms-heading)]">Current teaching assignments</h2>
         <p className="border-b border-[var(--lms-canvas-border)] px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm text-muted-foreground">
           {total} matching teaching assignment{total === 1 ? "" : "s"}
         </p>
@@ -160,9 +187,9 @@ export default async function CollegeFacultyAssignmentPage({
               { key: "year", header: "Year", mobilePriority: "secondary",
                 cell: item => item.periodName||"Not recorded" },
               { key: "role", header: FACULTY_ASSIGNMENT_COPY.columns.role,
-                mobilePriority: "secondary", cell: item => facultyAssignmentRoleLabel(item.role) },
+                mobilePriority: "secondary", cell: item => <StatusBadge tone={item.role==="PRIMARY"?"success":item.role==="CO_TEACHER"?"info":"warning"}>{facultyAssignmentRoleLabel(item.role)}</StatusBadge> },
               { key: "active", header: FACULTY_ASSIGNMENT_COPY.columns.active,
-                mobilePriority: "secondary", cell: item => <StatusBadge tone={item.state==="ACTIVE"?"success":"neutral"}>{item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no}</StatusBadge> },
+                mobilePriority: "secondary", cell: item => <StatusBadge tone={item.state==="ACTIVE"?"success":"error"}>{item.state === "ACTIVE" ? FACULTY_ASSIGNMENT_COPY.yes : FACULTY_ASSIGNMENT_COPY.no}</StatusBadge> },
               { key: "actions", header: FACULTY_ASSIGNMENT_COPY.columns.actions,
                 mobilePriority: "action", cell: item => item.state === "ACTIVE" ? (
                   <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:flex-wrap">
@@ -184,7 +211,7 @@ export default async function CollegeFacultyAssignmentPage({
         )}
       </section>
       <nav aria-label="Faculty assignment pagination" className="flex min-w-0 flex-wrap items-center justify-between gap-[var(--lms-space-3)] text-sm">
-        <span className="text-muted-foreground">Page {query.page} of {totalPages} · 25/page</span>
+        <span className="text-muted-foreground">{total===0?0:(query.page-1)*25+1}-{Math.min(total,query.page*25)} of {total} · Page {query.page} of {totalPages} · 25/page</span>
         <div className="flex gap-2">
           {query.page > 1 ? <Link className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             href={collegeMappingHref("FACULTY_ASSIGNMENTS", { ...query, page: query.page - 1 })}>Previous</Link> : null}
