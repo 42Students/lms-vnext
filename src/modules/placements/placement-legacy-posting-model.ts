@@ -29,7 +29,9 @@ export const placementLegacyPostingDetailsSchema=z.strictObject({
  }).refine(v=>Boolean(v.at||v.date),{message:"Important date is required",path:["at"]})
   .transform(v=>({
    label:v.label,
-   at:v.at??(v.date!.length===10?v.date+"T00:00:00.000Z":v.date!),
+   // Legacy date-only values mean midnight at the selected Indian college.
+   // Do not interpret them as UTC midnight and shift the learner's date.
+   at:v.at??(v.date!.length===10?v.date+"T00:00:00+05:30":v.date!),
    ...(v.type?{type:v.type}:{}),
    ...(v.dateType?{dateType:v.dateType}:{}),
   }))).max(20).default([]),
