@@ -27,6 +27,8 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  const [reviewSnapshot,setReviewSnapshot]=useState<{
    decision:string;feedback:string|null;reviewedAt:string
  }|null>(null);
+ const [reviewVersion,setReviewVersion]=useState<number|null>(null);
+ const [reviewUpdatedAt,setReviewUpdatedAt]=useState<string|null>(null);
  const [missing,setMissing]=useState(false);
  const currentActionAvailable=isLatest&&!missing&&
    ["SUBMITTED","APPROVED"].includes(currentStatus)&&!currentLocked&&
@@ -36,7 +38,8 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
   setLoadingCurrent(true);
   try{
    const data=await apiFetch<{
-     submissions:{id:string;status:string;version:number;lockedAt:string|null}[];
+     submissions:{id:string;status:string;version:number;lockedAt:string|null;
+      updatedAt:string}[];
      reviews:{submissionId:string;decision:string;feedback:string|null;reviewedAt:string}[];
    }>("/api/projects/"+encodeURIComponent(projectId)+"/submissions",{
      method:"GET",cache:"no-store",
@@ -49,6 +52,8 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    if(target){
      setCurrentStatus(target.status);
      setCurrentLocked(Boolean(target.lockedAt));
+     setReviewVersion(target.version);
+     setReviewUpdatedAt(target.updatedAt);
      setReviewSnapshot(data.reviews.find(row=>row.submissionId===submissionId)??null);
    }
    return Boolean(target&&latest?.id===target.id);
@@ -63,6 +68,7 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
  }
  async function decide(action:AdminDeliveryAction){
   if(pendingRef.current||loadingCurrent||!isLatest||missing||
+     reviewVersion===null||reviewUpdatedAt===null||
     (action==="LOCK"&&!allowLock)||
     !canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,action))return;
   if(action==="CHANGES_REQUESTED"&&!feedback.trim()){
@@ -74,7 +80,8 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
    await apiFetch(base+(action==="LOCK"?"/lock":"/review"),{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify(action==="LOCK"?{reason:feedback.trim()||"Locked by College Admin"}:
-     {decision:action,feedback:feedback.trim()||undefined}),
+     {decision:action,feedback:feedback.trim()||undefined,
+      expectedVersion:reviewVersion,expectedUpdatedAt:reviewUpdatedAt}),
    });
    setMessage(adminDeliveryToast(action));
    setOpen(false);setConfirmLock(false);
@@ -102,10 +109,14 @@ export function ProjectAdminSubmissionReview({projectId,submissionId,status,lock
     <Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending} onClick={()=>setOpen(false)}
      >Cancel</Button>
     {currentActionAvailable&&canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"CHANGES_REQUESTED")?
-     <Button className="w-full sm:w-auto" type="button" variant="secondary" disabled={pending||!feedback.trim()} onClick={()=>{void decide("CHANGES_REQUESTED")}}
+     <Button className="w-full sm:w-auto" type="button" variant="secondary"
+      disabled={pending||loadingCurrent||reviewVersion===null||!feedback.trim()}
+      onClick={()=>{void decide("CHANGES_REQUESTED")}}
       >Request changes</Button>:null}
     {currentActionAvailable&&canAdminSettleDelivery(currentStatus,currentLocked,projectStatus,"APPROVED")?
-     <Button className="w-full sm:w-auto" type="button" variant="primary" loading={pending} disabled={pending} onClick={()=>{void decide("APPROVED")}}>Accept submission</Button>:null}
+     <Button className="w-full sm:w-auto" type="button" variant="primary" loading={pending}
+       disabled={pending||loadingCurrent||reviewVersion===null}
+       onClick={()=>{void decide("APPROVED")}}>Accept submission</Button>:null}
    </div>}>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Feedback for the learner
     <Textarea maxLength={6000} value={feedback} disabled={pending}
