@@ -6,6 +6,9 @@ import {users} from "./users";
 /** Proposed COL-placements-04 candidate interview appointments and recorded outcomes. */
 export const placementCollegeInterviews=pgTable("placement_college_interviews",{
  id:uuid("id").defaultRandom().primaryKey(),
+ legacyInterviewId:integer("legacy_interview_id"),
+ legacyJobId:integer("legacy_job_id"),
+ legacyVenue:text("legacy_venue"),
  jobId:uuid("job_id").notNull().references(()=>placementJobs.id),
  roundId:uuid("round_id").notNull().references(()=>placementJobRounds.id),
  applicationId:uuid("application_id").notNull().references(()=>placementApplications.id),

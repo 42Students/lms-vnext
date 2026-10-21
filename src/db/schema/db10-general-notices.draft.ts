@@ -129,6 +129,10 @@ export const db10SmsDeliveryLogs = pgTable("general_sms_delivery_logs", {
 }, (t) => [
   index("db10_sms_delivery_logs_college_status_time_idx").on(t.collegeId, t.status, t.createdAt),
   index("db10_sms_delivery_logs_notice_idx").on(t.noticeId),
+  // Legacy support searched by createdAt and suffix+purpose; suffix is masked.
+  index("db10_sms_delivery_logs_created_idx").on(t.createdAt),
+  index("db10_sms_delivery_logs_suffix_purpose_idx")
+    .on(t.collegeId,t.recipientSuffix,t.purpose,t.createdAt),
   check("db10_sms_delivery_logs_status_ck", sql`${t.status} in ('SENT','FAILED')`),
   check("db10_sms_delivery_logs_suffix_ck", sql`${t.recipientSuffix} is null or ${t.recipientSuffix} ~ '^[0-9]{4}$'`),
   check("db10_sms_delivery_logs_purpose_ck", sql`length(trim(${t.purpose})) between 1 and 64`),

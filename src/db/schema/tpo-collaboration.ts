@@ -605,3 +605,38 @@ export const placementRecruiterNotificationReads = pgTable(
     }),
   ],
 );
+
+/**
+ * College-scoped legacy TPO settings crosswalk. Notification switches must
+ * retain their own booleans (including false); blocked calendar dates belong
+ * in availability tables, not settings JSON. Job types keep source keys and
+ * display labels to avoid rewriting historical company/application records.
+ */
+export const LEGACY_TPO_SETTINGS_FIELDS = {
+  inviteEmailTemplate: "inviteEmailTemplate",
+  reminderEmailTemplate: "reminderEmailTemplate",
+  whatsappTemplate: "whatsappTemplate",
+  studentEmailWording: "studentEmailWording",
+  smsMonthlyCap: "smsMonthlyCap",
+  emailSignature: "emailSignature",
+  logoObjectPath: "logoObjectPath",
+  prepThresholdPct: "prepThresholdPct",
+  notifyDriveOpenEmail: "notifyDriveOpenEmail",
+  notifyResultApplied: "notifyResultApplied",
+  notifyNudges: "notifyNudges",
+  notifyPrepAssigned: "notifyPrepAssigned",
+  jobTypes: "jobTypes",
+  outcomeLabels: "outcomeLabels",
+  recruiterAccessMonths: "recruiterAccessMonths",
+  recruiterDriveNeedsApproval: "recruiterDriveNeedsApproval",
+} as const;
+
+/** Blocked-day migration must preserve date-only ISO values without UTC shifts. */
+export function parseLegacyTpoBlockedDate(value: string): string | null {
+  const match = /^(\\d{4})-(\\d{2})-(\\d{2})$/.exec(value.trim());
+  if (!match) return null;
+  const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+  const date = new Date(Date.UTC(year, month - 1, day));
+  return date.getUTCFullYear() === year && date.getUTCMonth() + 1 === month && date.getUTCDate() === day
+    ? value.trim() : null;
+}
