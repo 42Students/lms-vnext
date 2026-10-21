@@ -45,6 +45,10 @@ export const activityEvents = pgTable(
     legacyEntityType: varchar("legacy_entity_type", { length: 80 }),
     legacyEntityId: text("legacy_entity_id"),
     actorRoleSnapshot: varchar("actor_role_snapshot", { length: 64 }),
+    actorNameSnapshot: text("actor_name_snapshot"),
+    legacyProjectEventKey: varchar("legacy_project_event_key", { length: 120 }),
+    legacyProjectEventCode: varchar("legacy_project_event_code", { length: 80 }),
+    legacyProjectId: integer("legacy_project_id"),
     actorContactLast4: varchar("actor_contact_last4", { length: 4 }),
     sourceIpHash: varchar("source_ip_hash", { length: 64 }),
     sourceUserAgentFamily: varchar("source_user_agent_family", { length: 128 }),
@@ -78,6 +82,11 @@ export const activityEvents = pgTable(
       .defaultNow(),
   },
   (table) => [
+    index("activity_events_subject_time_idx")
+      .on(table.module, table.subjectType, table.subjectId, table.occurredAt),
+    index("activity_events_project_event_idx")
+      .on(table.legacyProjectId, table.occurredAt)
+      .where(sql`${table.legacyProjectId} is not null`),
     index("activity_events_legacy_audit_id_idx")
       .on(table.legacyAuditId)
       .where(sql`${table.legacyAuditId} is not null`),
@@ -155,6 +164,9 @@ export const inAppNotifications = pgTable(
     body: text("body").notNull(),
     actionHref: text("action_href"),
     legacyNotificationId: bigint("legacy_notification_id", { mode: "number" }),
+    legacyNotificationType: varchar("legacy_notification_type", { length: 80 }),
+    legacyContextLabel: text("legacy_context_label"),
+    legacyCreatorFacultyId: integer("legacy_creator_faculty_id"),
     legacyRecipientType: varchar("legacy_recipient_type", { length: 24 }),
     legacyClassId: integer("legacy_class_id"),
     legacyCourseId: integer("legacy_course_id"),
@@ -198,6 +210,10 @@ export const inAppNotifications = pgTable(
       table.readAt,
       table.createdAt,
     ),
+    check("in_app_notifications_legacy_assessment_length_ck",
+      sql`${table.legacyAssessmentUrl} is null or length(${table.legacyAssessmentUrl}) <= 2048`),
+    check("in_app_notifications_delivery_error_length_ck",
+      sql`${table.deliveryError} is null or length(${table.deliveryError}) <= 500`),
     check(
       "in_app_notifications_shape_ck",
       sql`length(trim(${table.title})) > 0 and length(trim(${table.body})) > 0`,
@@ -402,5 +418,56 @@ export const inAppNotifications = pgTable(
       "in_app_notifications_shape_ck",
       sql`length(trim(${table.title})) > 0 and length(trim(${table.body})) > 0`,
     ),
+  ],
+);
+
+/**
+ * Producer-owned scheduled notification rows. Inbox entries must only be
+ * published after the outbox worker acquires and releases due deliveries.
+ * This schema is unregistered until worker, same-college recipients and
+ * retry-idempotency guarantees are implemented and verified.
+ */
+export const notificationDeliveryOutbox = pgTable(
+  "notification_delivery_outbox",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    eventId: uuid("event_id").notNull()
+      .references(() => activityEvents.id, { onDelete: "restrict" }),
+    collegeId: uuid("college_id")
+      .references(() => colleges.id, { onDelete: "restrict" }),
+    organizationId: uuid("organization_id")
+      .references(() => organizations.id, { onDelete: "restrict" }),
+    authoredByUserId: uuid("authored_by_user_id").notNull()
+      .references(() => users.id, { onDelete: "restrict" }),
+    recipientSelection: jsonb("recipient_selection")
+      .$type<Record<string, unknown>>().notNull(),
+    scheduledAt: timestamp("scheduled_at", { withTimezone: true }).notNull(),
+    deliveryStatus: varchar("delivery_status", { length: 24 }).notNull()
+      .default("SCHEDULED"),
+    deliveryAttempts: integer("delivery_attempts").notNull().default(0),
+    nextRetryAt: timestamp("next_retry_at", { withTimezone: true }),
+    deliveryError: varchar("delivery_error", { length: 500 }),
+    deliveredAt: timestamp("delivered_at", { withTimezone: true }),
+    dedupeKey: text("dedupe_key"),
+    deletedAt: timestamp("deleted_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull().defaultNow(),
+    updatedAt: timestamp("updated_at", { withTimezone: true })
+      .notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("notification_delivery_outbox_dedupe_uq").on(table.dedupeKey)
+      .where(sql`${table.dedupeKey} is not null`),
+    index("notification_delivery_outbox_due_idx")
+      .on(table.deliveryStatus, table.scheduledAt, table.nextRetryAt)
+      .where(sql`${table.deletedAt} is null`),
+    index("notification_delivery_outbox_scope_idx")
+      .on(table.organizationId, table.collegeId, table.createdAt),
+    check("notification_delivery_outbox_status_ck",
+      sql`${table.deliveryStatus} in ('SCHEDULED','PROCESSING','SENT','FAILED')`),
+    check("notification_delivery_outbox_attempts_ck",
+      sql`${table.deliveryAttempts} >= 0`),
+    check("notification_delivery_outbox_status_time_ck",
+      sql`${table.deliveryStatus} <> 'SENT' or ${table.deliveredAt} is not null`),
   ],
 );
