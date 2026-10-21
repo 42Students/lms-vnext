@@ -75,7 +75,7 @@ export default async function LearnerAssessmentResultsPage({
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
       </form>
       <p role="status" className="text-sm text-body">
-        Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
+        Showing {paged.items.length} of {paged.total.toLocaleString("en-IN")} matching published assessment outcomes.
       </p>
       {paged.items.length === 0 ? (
         <section role="status" className="flex min-h-44 flex-col items-start justify-center border-y border-border px-2 py-6">

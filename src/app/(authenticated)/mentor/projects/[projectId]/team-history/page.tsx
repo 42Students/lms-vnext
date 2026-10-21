@@ -86,7 +86,7 @@ export default async function MentorTeamHistoryPage({
           {filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>:null}
         </form></FilterBar>
 
-        <p className="text-sm text-body leading-[22px]">{data.total} matching membership record{data.total === 1 ? "" : "s"}</p>
+        <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching membership record{data.total === 1 ? "" : "s"}</p>
         {data.items.length === 0
           ? <EmptyState title="No team membership records"
               description="No registered membership rows match this project and filter. History from before migration may not be available." action={filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/team-history"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>:<Link href={back} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Team workspace</Link>} />

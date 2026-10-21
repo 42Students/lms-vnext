@@ -86,7 +86,7 @@ export default async function MentorTaskReviewHistoryPage({
 
       </form></FilterBar>
       <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
-        <p className="font-medium text-body">{data.total} matching reviewed task version{data.total===1?"":"s"}</p>
+        <p className="font-medium text-body">{data.total.toLocaleString("en-IN")} matching reviewed task version{data.total===1?"":"s"}</p>
         <div className="flex flex-wrap items-center gap-3">
         <Link data-unskin="" href={"/api/mentor/task-review-history/export?"+
           new URLSearchParams({decision:data.query.decision,priority:data.query.priority,

@@ -100,7 +100,7 @@ export default async function MentorReviewHistoryPage({
       </FilterBar>
 
       <p className="text-sm text-body leading-[22px]">
-        {data.total} persisted delivery decision{data.total === 1 ? "" : "s"} across assigned projects
+        {data.total.toLocaleString("en-IN")} persisted delivery decision{data.total === 1 ? "" : "s"} across assigned projects
       </p>
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"

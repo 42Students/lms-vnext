@@ -104,7 +104,7 @@ export default async function MentorReviewsPage({
         </Link>
         {data.total>200?<span role="status">CSV omits {data.total-200} matching reviews.</span>:null}
       </div>
-      <p className="text-sm text-body leading-[22px]">{data.total} matching review item{data.total === 1 ? "" : "s"}</p>
+      <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching review item{data.total === 1 ? "" : "s"}</p>
       {data.items.length === 0 ? <EmptyState title="No deliveries awaiting review"
         description="No submitted delivery needs review in the matching projects. Reopened or already-reviewed work is not treated as a new submission." action={<Link href="/mentor/projects" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Projects</Link>} />
         : <div className="grid">{data.items.map(item =>

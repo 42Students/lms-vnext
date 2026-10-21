@@ -97,7 +97,7 @@ export default async function MentorSprintProgressPage({
 
       </form></FilterBar>
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border pb-3 text-sm">
-        <p className="font-medium text-body">{data.total} matching sprint{data.total === 1 ? "" : "s"}</p>
+        <p className="font-medium text-body">{data.total.toLocaleString("en-IN")} matching sprint{data.total === 1 ? "" : "s"}</p>
         <div className="flex min-w-0 flex-wrap items-center gap-3">
         <Link data-unskin="" href={"/api/mentor/sprint-progress/export?"+
           new URLSearchParams({

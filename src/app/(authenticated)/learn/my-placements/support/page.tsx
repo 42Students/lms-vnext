@@ -44,7 +44,7 @@ export default async function LearnerSupportHistory({searchParams}:{
       </Link>)}
     </nav>
     <p role="status" className="text-xs text-muted-foreground leading-5">
-      {data.total} matching requests · Page {data.page} of {data.totalPages}
+      {data.total.toLocaleString("en-IN")} matching requests · Page {data.page} of {data.totalPages}
     </p>
     {data.items.length===0?<EmptyState title="No requests in this view"
       description={data.status==="ALL"?"You have not submitted a placement request yet.":"No requests match this status filter."}/>:<ol className="divide-y divide-border border-y border-border">
