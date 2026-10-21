@@ -99,6 +99,8 @@ export const attendanceSessions = pgTable(
     index(
       "attendance_sessions_status_idx",
     ).on(table.status, table.updatedAt),
+    index("attendance_sessions_marked_at_idx").on(table.markedAt,table.scheduleEventId)
+      .where(sql`${table.status} = 'MARKED'`),
     check(
       "attendance_sessions_status_ck",
       sql`${table.status} in ('UNMARKED', 'MARKED')`,
@@ -184,3 +186,35 @@ export const attendanceRecords = pgTable(
     ),
   ],
 );
+
+/** An empty exception list means everyone present ONLY after a session was
+ * marked; otherwise a newly scheduled class has no attendance yet. */
+export function legacyAttendanceMarkSummary(input:{
+  marked:boolean;absenceCount:number;
+}):"Not marked"|"Marked"|"All present"{
+  return !input.marked?"Not marked":input.absenceCount===0?"All present":"Marked";
+}
+
+/** The full historical reason remains in legacyAbsenceReason even if the
+ * current editable note has a 1,000-character cap. */
+export function legacyAttendanceAbsence(input:{
+  legacyAttendId:number;sourceReason:string|null;markedAt:Date;
+}){
+  return {legacyAttendId:input.legacyAttendId,status:"ABSENT" as const,
+    legacyAbsenceReason:input.sourceReason,note:input.sourceReason?.slice(0,1000)??null,
+    markedAt:input.markedAt};
+}
+
+/** Import a marked-but-all-present source session without creating fake
+ * PRESENT rows. A missing actor must be remapped before marking, not guessed. */
+export function legacyAttendanceSessionState(input:{
+  sourceMarked:boolean;sourceMarkedAt:Date|null;actorUserId:string|null;
+}){
+  if(input.sourceMarked&&input.sourceMarkedAt&&input.actorUserId)
+    return {status:"MARKED" as const,markedAt:input.sourceMarkedAt,markedByUserId:input.actorUserId};
+  return {status:"UNMARKED" as const,markedAt:null,markedByUserId:null};
+}
+
+export function legacyAttendanceCollegeThreshold(percent:number|null):number{
+  return percent!==null&&Number.isInteger(percent)&&percent>=1&&percent<=100?percent:75;
+}

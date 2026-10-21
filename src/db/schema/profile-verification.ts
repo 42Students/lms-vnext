@@ -12,6 +12,9 @@ export const profileVerifications = pgTable("profile_verifications", {
   /** Original source IDs are for scoped import, not runtime authorization. */
   legacyStudentId: integer("legacy_student_id"),
   legacyVerificationId: integer("legacy_verification_id"),
+  legacyCollegeId: integer("legacy_college_id"),
+  legacyVerifiedByUserId: integer("legacy_verified_by_user_id"),
+  legacyVerifiedAt: timestamp("legacy_verified_at", {withTimezone:true}),
   learnerMembershipId: uuid("learner_membership_id").notNull()
     .references(() => collegeMemberships.id, {onDelete: "restrict"}),
   section: varchar("section", {length: 16}).notNull(),
@@ -97,6 +100,8 @@ export const profileVerificationEvents = pgTable("profile_verification_events", 
   verificationId: uuid("verification_id").notNull()
     .references(() => profileVerifications.id, {onDelete: "restrict"}),
   legacyEventId: integer("legacy_event_id"),
+  legacyActorId: integer("legacy_actor_id"),
+  legacyTimestamp: timestamp("legacy_timestamp", {withTimezone:true}),
   legacyAction: varchar("legacy_action", {length: 64}),
   action: varchar("action", {length: 20}).notNull(),
   actorKind: varchar("actor_kind", {length: 20}).notNull(),
@@ -111,6 +116,7 @@ export const profileVerificationEvents = pgTable("profile_verification_events", 
 }, (t) => [
   uniqueIndex("profile_verification_events_revision_uq").on(t.verificationId, t.nextVersion),
   index("profile_verification_events_created_idx").on(t.verificationId, t.createdAt),
+  index("profile_verification_events_history_idx").on(t.verificationId,t.nextVersion,t.createdAt,t.id),
   check("profile_verification_events_action_ck",
     sql`${t.action} in ('SUBMITTED','UPDATE_SUBMITTED','VERIFIED','SENT_BACK','WITHDRAWN')`),
   check("profile_verification_events_actor_ck",
@@ -183,3 +189,32 @@ export const profileVerificationAcademicMarks = pgTable("profile_verification_ac
   check("profile_verification_academic_marks_rule_ck", sql`${t.appliedRule} in
     ('X9_5','MINUS_0_5_X10','MINUS_0_75_X10','X10')`),
 ]);
+
+/** A verified source mark is historical evidence, not automatically a fresh
+ * approval in the current college. An importer resolves both numeric IDs via
+ * the college-specific crosswalk and still supplies a persisted actor/membership. */
+export function legacyProfileVerificationCrosswalk(input:{
+  collegeId:number;learnerId:number;
+},known:readonly {legacyCollegeId:number;legacyLearnerId:number;
+  membershipId:string}[]):string|null{
+  const matches=known.filter(x=>x.legacyCollegeId===input.collegeId &&
+    x.legacyLearnerId===input.learnerId);
+  return matches.length===1?matches[0].membershipId:null;
+}
+
+/** A college missing an imported verification setting needs admin review;
+ * silently inventing "enabled" would change the legacy permission boundary. */
+export function legacyVerificationSettingDisposition(
+  imported:boolean|undefined,policyDefault:boolean,
+):{enabled:boolean;requiresAdminReview:boolean}{
+  return imported===undefined?{enabled:policyDefault,requiresAdminReview:true}:
+    {enabled:imported,requiresAdminReview:false};
+}
+
+/** For UI history always show all authorized revisions, not only latest status. */
+export function sortProfileVerificationHistory<T extends {
+  nextVersion:number;createdAt:Date;id:string;
+}>(events:readonly T[]):T[]{
+  return [...events].sort((a,b)=>a.nextVersion-b.nextVersion ||
+    a.createdAt.getTime()-b.createdAt.getTime()||a.id.localeCompare(b.id));
+}
