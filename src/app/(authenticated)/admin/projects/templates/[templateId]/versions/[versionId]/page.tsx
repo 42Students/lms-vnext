@@ -11,6 +11,7 @@ import {can} from "@/modules/permissions/policy";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { templateVersionComparisonParamsSchema } from "@/modules/projects/template-version-comparison-model";
 import { getSuperAdminTemplateVersionComparison } from "@/modules/projects/template-version-comparison-service";
+import {previewProjectTemplateRollbackImpact} from "@/modules/projects/template-rollback-service";
 
 export default async function TemplateVersionComparisonPage({ params }: {
   params: Promise<{ templateId: string; versionId: string }>;
@@ -40,6 +41,9 @@ export default async function TemplateVersionComparisonPage({ params }: {
         action={<PageBackLink href={"/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+"/versions"} label="Back to version history" />}/>
     </div>;
   }
+  const canManage=can(context,"project-template.manage");
+  const impact=canManage?await previewProjectTemplateRollbackImpact(context,detail.template.id)
+    .catch(()=>null):null;
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageBackLink href={`/admin/projects/templates/${encodeURIComponent(detail.template.id)}/versions`} label="Version history" />
     <PageHeader title={detail.template.title}
@@ -56,11 +60,15 @@ export default async function TemplateVersionComparisonPage({ params }: {
         </div>
       </article>)}
     </section> : <EmptyState title="No content differences" description="No content differences from the current version."/>}
-    {can(context,"project-template.manage")?<SuperAdminTemplateRollbackControl
+    {canManage&&impact?<SuperAdminTemplateRollbackControl
+      impact={impact}
       key={detail.template.id+":"+detail.selected.id+":"+detail.template.currentVersion}
       templateId={detail.template.id} selectedVersion={{
         id:detail.selected.id,version:detail.selected.version,title:detail.selected.title,
       }} currentVersion={detail.template.currentVersion} status={detail.template.status}/>:null}
+    {canManage&&!impact?<Banner tone="warning">
+      Rollback impact could not be checked. Refresh comparison before restoring a version.
+    </Banner>:null}
     <section aria-label="Selected version snapshot" className="min-w-0 border-t border-border pt-[var(--lms-space-4)]"><h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Version {detail.selected.version} snapshot</h2>
       <ProjectTemplateView blueprint={detail.selected.blueprint} />
     </section>
