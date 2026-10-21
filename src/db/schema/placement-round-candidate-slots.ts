@@ -20,6 +20,9 @@ export const placementRoundCandidateSlots=pgTable("placement_round_candidate_slo
  legacyInterviewMode:varchar("legacy_interview_mode",{length:24}),
  legacyLocation:text("legacy_location"),
  legacyRoundDescription:text("legacy_round_description"),
+ legacySourceTimeZone:varchar("legacy_source_time_zone",{length:80}),
+ legacyRoomLabel:text("legacy_room_label"),
+ legacyPreviousStatus:varchar("legacy_previous_status",{length:32}),
  legacyInterviewerName:varchar("legacy_interviewer_name",{length:255}),
  legacyDurationMinutes:integer("legacy_duration_minutes"),
  legacyScheduledAt:timestamp("legacy_scheduled_at",{withTimezone:true}),
@@ -52,6 +55,8 @@ export const placementRoundCandidateSlots=pgTable("placement_round_candidate_slo
    .on(t.jobId,t.legacyInterviewId).where(sql`${t.legacyInterviewId} is not null`),
  uniqueIndex("placement_round_candidate_slots_active_room_time_uq").on(t.roundId,t.room,t.startsAt).where(sql`${t.status} <> 'CANCELLED'`),
  index("placement_round_candidate_slots_round_date_idx").on(t.roundId,t.startsAt),
+ index("placement_round_candidate_slots_application_upcoming_idx").on(t.applicationId,t.startsAt,t.id)
+   .where(sql`${t.applicationId} is not null`),
  foreignKey({columns:[t.roundId,t.jobId],foreignColumns:[placementJobRounds.id,placementJobRounds.jobId],name:"candidate_slot_round_job_fk"}),
  check("placement_round_candidate_slots_status_ck",sql`${t.status} in ('AVAILABLE','BOOKED','CANCELLED')`),
  check("placement_round_candidate_slots_legacy_type_ck",

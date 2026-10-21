@@ -92,6 +92,8 @@ export function FacultyQuizReview({
   const router = useRouter();
   const openedOnce=useRef(false);
   const resultUpdatePending=useRef(false);
+  const requests=useRef(0);
+  const activeController=useRef<AbortController|null>(null);
   const actions = quizReviewActions({
     deliveryOwned,
     status,
@@ -111,6 +113,13 @@ export function FacultyQuizReview({
   const [confirmPublished,setConfirmPublished]=useState<boolean|null>(null);
 
   useEffect(()=>{
+    return ()=>{
+      requests.current++;
+      activeController.current?.abort();
+      activeController.current=null;
+    };
+  },[quizId,deliveryId]);
+  useEffect(()=>{
     if(autoOpen&&actions.canReviewAttempts&&!openedOnce.current){
       openedOnce.current=true;
       void load();
@@ -121,6 +130,10 @@ export function FacultyQuizReview({
   }
 
   async function load() {
+    activeController.current?.abort();
+    const controller=new AbortController();
+    activeController.current=controller;
+    const thisRequest=++requests.current;
     setOpen(true);
     setError(null);
     setLoading(true);
@@ -133,8 +146,10 @@ export function FacultyQuizReview({
         )}&deliveryId=${encodeURIComponent(
           deliveryId,
         )}`,
+        {signal:controller.signal,cache:"no-store"},
       );
 
+      if (thisRequest!==requests.current||controller.signal.aborted)return;
       if (!response.ok) {
         setError(
           await courseApiError(response),
@@ -146,13 +161,19 @@ export function FacultyQuizReview({
         (await response.json()) as {
           attempts: Attempt[];
         };
-      setAttempts(payload.attempts);
+      if(!Array.isArray(payload.attempts)){
+        setError("Unexpected submissions response. Please retry.");
+        return;
+      }
+      if(thisRequest===requests.current&&!controller.signal.aborted)
+        setAttempts(payload.attempts);
     } catch {
+      if(controller.signal.aborted||thisRequest!==requests.current)return;
       setError(
         "Could not load Quiz attempts. Check your connection and try again.",
       );
     } finally {
-      setLoading(false);
+      if(thisRequest===requests.current)setLoading(false);
     }
   }
 
@@ -161,7 +182,8 @@ export function FacultyQuizReview({
   ) {
     if (resultUpdatePending.current) return;
     resultUpdatePending.current=true;
-    setError(null);setNotice(null);
+    const updateScope=quizId+"::"+deliveryId;
+    setError(null);setNotice(published?"Releasing results…":"Withholding results…");
     setSavingResults(true);
 
     try {
@@ -189,7 +211,8 @@ export function FacultyQuizReview({
         return;
       }
 
-      setNotice(published?"Results released successfully.":"Results withheld successfully.");
+      if(updateScope!==quizId+"::"+deliveryId)return;
+      setNotice(published?"Results released to students":"Results withheld");
       router.refresh();
     } catch {
       setError(
@@ -204,7 +227,7 @@ export function FacultyQuizReview({
 
   return (
     <>
-      {notice?<Alert tone="success" className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
+      {notice?<Alert tone={savingResults?"info":"success"} className="mt-[var(--lms-space-2)]">{notice}</Alert>:null}
       <div className="mt-3 flex min-w-0 items-center gap-2">
         <Button size="md" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
           variant="secondary" onClick={load}>Submissions</Button>

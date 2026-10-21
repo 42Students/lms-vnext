@@ -38,6 +38,7 @@ import {
   type PlacementDriveDayCoordinatorInput,
 } from "./validation";
 
+/** Both coordinator assignment and check-in compare the same IST civil day. */
 export function dateInIndia(
   now: Date = new Date(),
 ) {
@@ -835,6 +836,7 @@ export async function getDriveDayRoster(
         attendance:
           mark?.status ?? "WAITING",
         room: mark?.room ?? null,
+      roomDisplay:mark?.room?.trim()||access.round.venue?.trim()||"Room not assigned",
       };
     })
     .sort((a, b) =>
@@ -858,6 +860,8 @@ export async function getDriveDayRoster(
         access.round.scheduledAt,
       timezone: access.round.timezone,
       venue: access.round.venue,
+      assignedRoom:students.find(student=>student.room?.trim())?.room??null,
+      roomDisplay:students.find(student=>student.room?.trim())?.room??access.round.venue??"Room not assigned",
       jobId: access.job.id,
       jobTitle: access.job.title,
       company: access.company.name,

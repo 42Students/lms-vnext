@@ -13,11 +13,21 @@ import {collegeRuleWriteSchema,collegeRuleSame,collegeRuleNoChange,hasCollegeAnc
 export async function writeSuperAdminCollegeRule(context:RequestContext,rawCollege:string,raw:unknown){
  if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  requirePermission(context,"admin-scope.select");
+ // Legacy PUT {module,enabled} lacked the vNext expected-state token.
+ // Reject that ambiguous request instead of silently dropping enabled.
+ // Compatibility clients must translate null -> INHERIT, booleans -> SET
+ // and supply the last-read expected snapshot before sending the write.
+ if(raw && typeof raw==="object" && !Array.isArray(raw) &&
+   "enabled" in raw && !("action" in raw)){
+   throw new StudentRuleConflict("EXPECTED_STATE_REQUIRED");
+ }
  const collegeId=z.uuid().parse(rawCollege),input=collegeRuleWriteSchema.parse(raw);
  return getDb().transaction(async tx=>{
   const [college]=await tx.select({id:colleges.id,organizationId:colleges.organizationId,status:colleges.status})
    .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
-  if(!college||college.status!=="ACTIVE")return null;
+  if(!college)return null;
+  // Keep inactive (not deleted) colleges in history but block new grants.
+  if(college.status!=="ACTIVE")throw new StudentRuleConflict("INACTIVE_COLLEGE");
   requirePermission(context,"college.manage",{collegeId:college.id,organizationId:college.organizationId});
   await assertPersistedPlatformPermission(tx,context,"college.manage",{
    collegeId:college.id,organizationId:college.organizationId,
@@ -58,6 +68,10 @@ export async function writeSuperAdminCollegeRule(context:RequestContext,rawColle
    summary:"Super Admin changed a college module rule",
    metadata:{module:input.module,before,after:input.action==="INHERIT"?null:{enabled:input.enabled,locked:input.locked},
     legacyCategory:"COLLEGE_FEATURE_TOGGLE",legacySettingKey:"module."+input.module,
+    legacyPreviousEnabled:before?.enabled??null,
+    legacyNewEnabled:input.action==="INHERIT"?null:input.enabled,
+    legacyPreviousLocked:before?.locked??false,
+    legacyNewLocked:input.action==="INHERIT"?false:input.locked,
     inheritedLocked:false,actorPermission:"college.manage"},
   });
   return {module:input.module,enabled:input.action==="INHERIT"?null:input.enabled,locked:input.action==="INHERIT"?false:input.locked,unchanged:false};

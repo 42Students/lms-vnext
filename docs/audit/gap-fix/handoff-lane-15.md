@@ -359,3 +359,323 @@
 - G2-5-013-049 — placement service/authorized page owner: Report terminal rejection using screening stage and withdrawal separately
 - G2-5-013-060 — placement service/authorized page owner: Map visibility vs application channel to avoid off-platform leaks
 - G2-5-013-068 — placement service/authorized page owner: Map signed file/document link to normalized offer attachment feature
+
+## Wave 2 placements part 5: scoped follow-up for non-schema findings
+- G2-5-013-084 — src/modules/placements/company-service.ts and company verification UI: Document migration field mapping, indexes and uniqueness constraints
+- G2-5-015-010 — src/modules/placements/application-service.ts and authorized application history routes: Map nullable system actors safely; avoid inventing human authors.
+- G2-5-015-023 — src/modules/placements/application-service.ts and authorized application history routes: Exclude deleted legacy history during migration; specify append-only policy.
+- G2-5-015-040 — src/modules/placements/application-service.ts and authorized application history routes: Profile and add `(application_id,to_status,created_at)` index for filtered reports.
+- G2-5-015-045 — src/modules/placements/round-service.ts and candidate round UI: Define migration mappings and excluded deleted events.
+- G2-6-021-038 — src/modules/placements/application-service.ts and authorized application history routes: Create central mapping inventory for all legacy entities and avoid assuming one uniform vNext deleted column.
+- G2-6-019-034 — src/modules/placements/placement presentation and API: Preserve legacy values with explicit mapping of no preference and remote.
+- G2-8-012-007 — src/modules/placements/company-service.ts and company verification UI: Document field-to-field read model and maintain company display from canonical source
+- G2-8-012-052 — src/modules/placements/application-service.ts and authorized application history routes: Document IDs/fields/filters and import compatibility (migration explicitly not required)
+- G2-8-019-010 — src/modules/placements/application-service.ts and authorized application history routes: Import original transition time instead of migration write time.
+- G2-8-019-012 — src/modules/placements/application-service.ts and authorized application history routes: Align max length and retention of rejection reason.
+- G2-8-019-015 — src/modules/placements/application-service.ts and authorized application history routes: Decide immutable audit strategy; exclude imported deleted records.
+- G2-8-019-016 — src/modules/placements/application-service.ts and authorized application history routes: Map invalid event producer input to controlled no-op or validation error.
+- G2-8-019-017 — src/modules/placements/application-service.ts and authorized application history routes: Guard against unchanged duplicate transition writes in producers.
+- G2-8-019-033 — src/modules/placements/application-service.ts and authorized application history routes: Define safe max and exact validation wording.
+- G2-8-019-052 — src/modules/placements/application-service.ts and authorized application history routes: Choose durable audit retention on application deletion and preserve FK.
+- G2-8-019-055 — src/modules/placements/application-service.ts and authorized application history routes: Retain original time on imported row.
+- G2-8-019-057 — src/modules/placements/application-service.ts and authorized application history routes: Define safe maximum and field mapping.
+- G2-8-019-058 — src/modules/placements/application-service.ts and authorized application history routes: Document audit immutability; filter historic deleted during import.
+- G2-8-015-001 — src/modules/placements/round-service.ts and candidate round UI: Document route/ID map, old round IDs not directly reusable
+- G2-8-015-007 — src/modules/placements/round-service.ts and candidate round UI: Legacy-to-new link resolver if migration ever used
+- G2-8-015-015 — src/modules/placements/round-service.ts and candidate round UI: Map testLink→testUrl in read/write and imports
+- G2-8-015-017 — src/modules/placements/round-service.ts and candidate round UI: Convert timezone and keep due-after-round invariant
+- G2-8-015-022 — src/modules/placements/round-service.ts and candidate round UI: Derive timezone from college and show visible field if needed
+- G2-8-015-039 — src/modules/placements/round-service.ts and candidate round UI: Map exact max length/trim validation strings
+- G2-8-015-044 — src/modules/placements/round-service.ts and candidate round UI: Provide mapping for field names and historical time interpretation
+- G2-15-026-008 — src/modules/placements/company-service.ts and company verification UI: Display old job title/company/logo and recorded-outside flag via split entities
+- G2-8-022-052 — src/modules/placements/round-service.ts and candidate round UI: Use descending startDate and stable tie order; benchmark query under 1000 archived seasons.
+- G2-9-004-086 — src/modules/placements/company-service.ts and company verification UI: Restore domain alias list and verification label mapping.
+- G2-9-015-102 — src/modules/placements/application-service.ts and authorized application history routes: Retain fallback parsing for legacy civil-date migration.
+- G2-9-016-098 — src/modules/placements/application-service.ts and authorized application history routes: Define postedDate->publishedAt mapping and all/active counts.
+- G2-9-016-101 — src/modules/placements/application-service.ts and authorized application history routes: Maintain dates synchronization and timezone conversion.
+- G2-9-013-101 — src/modules/placements/application-service.ts and authorized application history routes: Map deleted versus archived in reports, list filters and exports.
+- G2-13-025-009 — src/modules/placements/placement presentation and API: Return explicit success only after committed decline.
+- G2-13-025-014 — src/modules/placements/placement presentation and API: Do not require recruiter-entered reason.
+- G2-13-025-031 — src/modules/placements/placement presentation and API: Implement loading skeleton, 401, transient retry and stale resolution state.
+- G2-13-025-034 — src/modules/placements/placement presentation and API: Audit decline without inventing outbound email/bell.
+- G2-13-025-037 — src/modules/placements/placement presentation and API: Use buttons with explicit 'Accept/Decline invitation to [college]' labels.
+- G2-17-023-060 — src/modules/placements/application-service.ts and authorized application history routes: Confirm Asia/Kolkata conversions and transition compare-and-set semantics.
+- G2-18-013-056 — src/modules/placements/placement presentation and API: Verify legacy orphan job visibility vs new non-null college FK.
+
+## Wave 2 placements part 6: scoped follow-up for non-schema findings
+- G2-9-033-101 — src/modules/placements/company-service.ts and company verification UI: Align lengths and field names across API and constraints.
+- G2-9-034-027 — src/modules/placements/company-service.ts and company verification UI: Check verification propagates across all domains and recruiter drive company matching
+- G2-15-019-024 — src/modules/placements/company-service.ts and company verification UI: Ensure accessible required and duplicate-name messages at form boundary
+- G2-20-011-012 — src/modules/placements/application-service.ts and authorized application history routes: Define standardized max length at service boundary and UI helper
+- G2-3-013-027 — src/modules/placements/application-service.ts and authorized application history routes: Legacy rejectionReason truncates to 500 preserving whitespace except blank filter; vNext free text reason is nullable and has no max at column level. Match 500 for equivalent public reason.
+- G2-3-013-038 — src/modules/placements/application-service.ts and authorized application history routes: Legacy indexes application_id and changed_at separately, vNext compound application_id/created_at index and cascade partial index. Confirm query plans, preserve stable asc ordering.
+
+## Wave 2 course discussion part1 — service/layout dependencies
+- G2-18-001-013 — src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx: Avoid duplicate page heading and preserve pinned-strip/feed/composer vertical hierarchy.
+- G2-2-033-004 — src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx: Remove redundant subtitle on learner path and restore old course tab head/card padding.
+- G2-2-033-005 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Clone strip border/background, inline pin icon, author/time placement, tiny unpin icon.
+- G2-2-033-006 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Match exact section order: pin strip, refresh warning within feed, scrolling log, jump overlay.
+- G2-2-033-007 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Align composer bar, compact send action and fixed location below scroll.
+- G2-2-033-008 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Match legacy avatar tint algorithm and 5-minute grouped bubble styling.
+- G2-2-033-010 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Restore legacy icon buttons and tooltips; retain new Reply as extra.
+- G2-2-033-019 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Keep 15s cadence but avoid re-downloading current page each tick; apply mutation delta.
+- G2-2-033-024 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Compare disabled message composer state during partial refresh/error and revoked rights.
+- G2-2-033-036 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Remove canPost gate from authorized moderator unpin when read-only moderation permitted; preserve noninteractive banner.
+- G2-2-033-049 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Restore legacy spinner type and exact initial error/empty header/card sizing.
+- G2-2-033-057 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Compare 320/375/768/1280 screenshot for panel height, pinned strip and composer stacking.
+- G2-2-033-060 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Give accessible item-specific names and restore icon tooltips.
+- G2-2-033-067 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Fetch updates only or use ETag/updatedAt to avoid repeated first-page load.
+- G2-2-033-074 — src/components/shell/app-shell.tsx / course discussion page prop: Wire tenant chat polling setting or explicitly deprecate it.
+- G2-2-037-035 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Match legacy skeleton/spinner/Retry copy/empty-state layout.
+- G2-12-009-001 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy Classroom tab uses Redux selectedCourseId plus resolved class assignment; vNext mounts LearnerCourseDiscussion for immutable courseSectionDeliveryId.
+- G2-12-009-004 — src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx: Legacy nested learn-projects-detail page-head+body/content; vNext generic `min-w-0 space-y-4` and border-y surface, verify canvas padding.
+- G2-12-009-005 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy pinned strip with PushpinFilled icon and optional unpin beside message; vNext border-l primary tinted section with unpin below.
+- G2-12-009-006 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy scroll and composer use plain `ln-classroom` skins; vNext explicit border-y region, gradient scroll hints, form border and responsive flex.
+- G2-12-009-007 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy avatar beside bubble+icon action rail and minimal grouped rows; vNext all text inside bordered left/right message bubbles, actions as text links.
+- G2-12-009-009 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy pinned banner shows PushpinFilled and Pinned by below body; vNext author/count line above message plus separate timestamp.
+- G2-12-009-010 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy name+5-minute grouped senders and Tag Faculty/Pinned with relative tooltip; vNext StatusBadge and circular initial inside message bubble.
+- G2-12-009-011 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy icon-only Pin/Unpin/Delete action with Tooltip and aria-label, vNext word buttons Reply/Pin/Delete.
+- G2-12-009-012 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy show character count only after >3400; vNext always shows `N/3900`, with phone-specific Tap Send hint.
+- G2-12-009-014 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy hashes sender ID into eight deterministic pastel avatar palettes; vNext only 3 tone families and one initial based on role/self.
+- G2-12-009-017 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy relative timestamps derive from legacy timezone/date utils and user locale; vNext learnerDiscussionRelativeTimeLabel may use IST/format differences.
+- G2-12-009-019 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy initial GET unbounded full course/class history; vNext 60 newest + explicit older pagination and reconcile, safer for large classes.
+- G2-12-009-020 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy first pinned message from entire list, vNext separately gets highlightedPinned query even when old pinned outside page.
+- G2-12-009-023 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy Enter posts regardless of pointer; vNext mobile coarse pointer uses Enter newline, desktop Enter send, preserves IME.
+- G2-12-009-034 — src/components/shell/app-shell.tsx route transition integration: Legacy routeChangeStart unsent draft native confirm while navigating; vNext intercepts in-app links with ConfirmDialog but not necessarily programmatic navigation.
+- G2-12-009-035 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy Pin/Delete direct tooltip buttons, vNext text actions and reply flow, moving deletion dialog access.
+- G2-12-009-048 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy loading central Spin and scopeReady false Discussion unavailable, vNext skeleton 3 rows and may show read-only Past semester if canPost false.
+- G2-12-009-049 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Faculty empty body copy truncated from Learners are far more likely to post... to Welcome your class or share the week's focus.
+- G2-12-009-050 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy closable Ant Alert Discussion refresh failed with separate stale-state description; vNext Alert without visible closable x.
+- G2-12-009-051 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy no class assignment is Discussion unavailable with explicit linkage explanation; vNext can indicate Past semester/read-only but route gate may prevent rendering.
+- G2-12-009-056 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): VNext scroll viewport min56dvh mobile and max34rem desktop; legacy ln-classroom-scroll height from SCSS not verified to match.
+- G2-12-009-057 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): VNext mobile coarse-pointer changes Enter behavior and full-width Send button, legacy one consistent key hint.
+- G2-12-009-060 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy icon button aria-label Pin this message / Delete this message and tooltips; vNext text controls with visible labels, no identical focused hover affordance.
+- G2-12-009-067 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy delta polling transfers updatedAt changes only; vNext poll fetches newest page snapshot repeatedly every ~15s.
+
+## Wave 2 course discussion part2 — service/layout dependencies
+- G2-12-009-072 — src/components/shell/app-shell.tsx route transition integration: Legacy Router routeChangeStart catches all internal route changes and browser beforeUnload; vNext captures link clicks + beforeUnload, not every navigation source.
+- G2-12-009-073 — src/components/shell/app-shell.tsx / course discussion page prop: Legacy ui.chatPollIntervalMs loaded through client settings; vNext pollIntervalMs prop default15000, platform config source must be traced at call site.
+- G2-12-009-081 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy separate sender-coloured avatar and icon action rail replaced by border bubble message cards; restore visual clone without losing reply.
+- G2-17-027-003 — src/modules/courses/discussion service, lesson-thread route and scoped sender projection: Legacy headless lesson-content comment endpoint powers content-specific thread; vNext full course discussion feed with pinned strip.
+- G2-17-027-005 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy contentText/sequence/userName/profileName metadata, vNext messageText composer and sender membership identity.
+- G2-17-027-006 — src/modules/courses/discussion service, lesson-thread route and scoped sender projection: Legacy profile image, class name and roll number for learner messages; vNext initial avatar, no roll/class in course chat.
+- G2-17-027-019 — src/modules/courses/discussion service, lesson-thread route and scoped sender projection: Legacy lesson-content comment input contained in lesson item, vNext delivery composer outside lesson context.
+- G2-17-027-035 — src/modules/courses/discussion service, lesson-thread route and scoped sender projection: Profile image/avatar and roll/class on old lesson comments vs initial-only badges in new course chat.
+- G2-17-027-036 — src/modules/courses/discussion service, lesson-thread route and scoped sender projection: Old server uses content-specific text errors; new composer count/aria and Enter send should be compared with actual legacy form.
+- G2-17-027-038 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy phrase Content cannot be empty / cannot exceed 5000 characters missing as typed new composer copy.
+- G2-17-027-050 — src/modules/courses/discussion service, lesson-thread route and scoped sender projection: Old profile image, class name and roll missing from new course chat response; decide required privacy fields.
+- G2-19-031-104 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Add aria-live message log without noisy reload.
+- G2-18-001-087 — src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx: Restore subtitle and relocate scoping to helper/breadcrumb.
+- G2-2-033-009 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Use compact unpin icon button on desktop with same accessible title.
+- G2-2-033-011 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Restore exact placeholder with punctuation and control height.
+- G2-2-033-034 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Align confirm description, Cancel/Delete labels/order, backdrop, pending disable.
+- G2-2-033-050 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Place refresh warning above scroll inside feed and keep closable behavior.
+- G2-2-033-058 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Clone desktop side-by-side send row and add phone-safe vertical stacking.
+- G2-2-033-062 — src/app/(authenticated)/teacher/courses/[deliveryId]/discussions/page.tsx: For faculty legacy view use exact same subtitle unless separately approved.
+- G2-2-033-064 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Restore exact dotted placeholder.
+- G2-2-033-065 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Match Retry button label and icon in refresh banner.
+- G2-2-037-019 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Match character count threshold, placeholder, rows and disabled states.
+- G2-12-009-008 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy one-line Keep course conversations in one place and follow along easily; faculty now gets extra Guide the class conversation… description and Students can post questions here anytime.
+- G2-12-009-065 — src/components/courses/learner-course-discussion.tsx (legacy DOM/CSS parity follow-through): Legacy Enter to send · Shift+Enter for a new line always; vNext Tap Send to post · Enter adds a new line on phone.
+
+## Wave2 academic schema part 1 — scoped UI/service dependencies
+- G2-18-015-001 — src/modules/academics/class-service.ts / section and group-backed selectors: Document legacy class-to-section identity mapping; no direct table reuse
+- G2-18-015-003 — src/modules/academics/class-service.ts / section and group-backed selectors: Confirm API presentation dates and label differences
+- G2-18-015-004 — src/modules/academics/class-service.ts / section and group-backed selectors: Prevent grouping legacy group-backed classes as SECTION during imports
+- G2-18-015-007 — src/modules/academics/class-service.ts / section and group-backed selectors: Define zero vs unset semantics and display default
+- G2-18-015-010 — src/modules/academics/class-service.ts / section and group-backed selectors: Map program/batch to cohort and program of cohort with null-batch handling
+- G2-18-015-015 — src/modules/academics/class-service.ts / section and group-backed selectors: Preserve name-or-ID class selector via scoped search
+- G2-18-015-021 — src/modules/academics/class-service.ts / section and group-backed selectors: Map null/false soft delete to ACTIVE and archived to non-active status
+- G2-18-015-023 — src/modules/academics/class-service.ts / section and group-backed selectors: Publish precise computed legacy date fields in export/import
+- G2-18-015-026 — src/modules/academics/class-service.ts / section and group-backed selectors: Ensure field-required labels reflect new date scope
+- G2-18-015-027 — src/modules/academics/class-service.ts / section and group-backed selectors: Preserve '[Elective]' display for group-backed legacy selectors
+- G2-18-015-029 — src/modules/academics/class-service.ts / section and group-backed selectors: Guarantee scope-specific name sort for targets
+- G2-18-015-031 — src/modules/academics/class-service.ts / section and group-backed selectors: Record import collision and mapping strategy
+- G2-18-015-034 — src/modules/academics/class-service.ts / section and group-backed selectors: Write DB migration mapping for class soft-delete/date FK
+- G2-18-015-037 — src/modules/academics/class-service.ts / section and group-backed selectors: Document intended historical duplicate behavior vs active naming
+- G2-18-020-001 — src/modules/academics/class-service.ts / section and group-backed selectors: Map legacy /scheduleClass and /admin timetable deep links to new schedule events and calendar entry points, retaining section context
+- G2-18-020-003 — src/modules/academics/class-service.ts / section and group-backed selectors: Reconstitute exact event detail row order and labels in calendar/drawer; avoid exposing raw UUIDs in cards
+- G2-18-020-005 — src/modules/academics/class-service.ts / section and group-backed selectors: Default blank legacy title consistently in new UI; ensure required title not a confusing validation regression
+- G2-18-020-006 — src/modules/academics/class-service.ts / section and group-backed selectors: Show hall name/number if hall assigned and location fallback only when absent; match old room label
+- G2-18-020-010 — src/modules/academics/class-service.ts / section and group-backed selectors: Map hall records and title fallback, preserve display of no hall
+- G2-18-020-018 — src/modules/academics/class-service.ts / section and group-backed selectors: If unassigned events allowed, display 'Faculty not assigned' and exclude from faculty-owned read until assigned
+- G2-18-020-035 — src/modules/academics/class-service.ts / section and group-backed selectors: Ensure cancelled event excluded from schedule/attendance denominator and historical audit retained appropriately
+- G2-18-020-050 — src/modules/academics/class-service.ts / section and group-backed selectors: Return courseSlug-equivalent in DTO when caller depends on slug bookmarks, not persisted
+- G2-19-019-053 — src/modules/academics/class-service.ts / section and group-backed selectors: Reconstruct historical cohort even if section/cohort moves, do not treat section-level grant as course grant
+- G2-13-018-010 — src/modules/academics/program-service.ts / academic directory: Resolve old department numeric IDs to current UUID and reject dangling links
+- G2-13-018-047 — src/modules/academics/program-service.ts / academic directory: Use paginated API for institution-scale program listings; don't materialize all org records
+- G2-13-018-049 — src/modules/academics/cohort-service.ts / batch UI: Use exact integer conversion and flag unsupported >10-year legacy values
+- G2-13-018-050 — src/modules/academics/program-service.ts / academic directory: Document unique exclusion for archived and handle restoration collisions
+- G2-13-018-052 — src/modules/academics/program-service.ts / academic directory: Schema migration needs old numeric-to-UUID map and explicit foreign-key integrity plan
+- G2-2-029-100 — src/modules/academics/cohort-service.ts / batch UI: Normalize legacy `YYYY-YY` into accepted new format and retain unparseable originals for review.
+- G2-2-031-020 — src/modules/academics/class-service.ts / section and group-backed selectors: Expose editable class minimum only if legacy parity required; preserve stored min_size data.
+- G2-2-031-058 — src/modules/academics/class-service.ts / section and group-backed selectors: Map historic legacy dates to period/metadata or preserve separate historical fields.
+- G2-20-019-001 — src/modules/academics/class-service.ts / section and group-backed selectors: Crosswalk faculty/course/class to membership/section and derive course
+- G2-20-019-005 — src/modules/people/college-faculty-detail-service.ts / assignments: Map Active/Ended badge and default
+- G2-20-019-007 — src/modules/academics/class-service.ts / section and group-backed selectors: Preserve ID translation
+- G2-20-019-012 — src/modules/academics/class-service.ts / section and group-backed selectors: Handle incomplete mapping and role default
+- G2-20-019-021 — src/modules/people/college-faculty-detail-service.ts / assignments: Map old deactivation date to endedAt when known
+- G2-20-019-031 — src/modules/academics/class-service.ts / section and group-backed selectors: Write full DDL and migration crosswalk
+- G2-20-019-033 — src/modules/academics/class-service.ts / section and group-backed selectors: Validate retired partial mappings
+- G2-14-026-014 — src/modules/academics/program-service.ts / academic directory: Legacy college listing includes any underlying new_program not deleted per service, vNext ACTIVE-only and excludes archived parent departments.
+- G2-5-011-069 — src/modules/academics/class-service.ts / section and group-backed selectors: Map legacy identities and attendance session semantics to new schema; document migration deliberate divergence.
+
+## Wave2 academic schema part 2 — scoped UI/service dependencies
+- G2-5-014-022 — src/modules/academics/class-service.ts / section and group-backed selectors: Provide separate tenant-wide exact existence indicator or approve restricted uniqueness semantics
+- G2-5-014-024 — src/modules/academics/class-service.ts / section and group-backed selectors: Translate old numeric class references or document mapping for usage recording
+- G2-5-014-080 — src/modules/academics/class-service.ts / section and group-backed selectors: Document deletion semantics and uniqueness changes
+- G2-5-021-003 — src/modules/academics/cohort-service.ts / batch UI: Project exact legacy columns in batch UI in intended order.
+- G2-5-021-006 — src/modules/academics/cohort-service.ts / batch UI: Map IDs at migration/import boundaries.
+- G2-5-021-009 — src/modules/academics/cohort-service.ts / batch UI: Convert timezone-dependent java.util.Date to date-only without day shift.
+- G2-5-021-012 — src/modules/academics/cohort-service.ts / batch UI: Normalize legacy hyphen-year values to numeric start and display format.
+- G2-5-021-013 — src/modules/academics/cohort-service.ts / batch UI: Build enum transition/retirement mapping; do not silently treat INACTIVE as COMPLETED.
+- G2-5-021-043 — src/modules/academics/cohort-service.ts / batch UI: Map visible labels and data formats exactly.
+- G2-5-021-047 — src/modules/academics/schedule-service.ts / class calendar: Define Asia/Kolkata calendar boundary explicitly.
+- G2-18-020-052 — src/modules/academics/class-service.ts / section and group-backed selectors: Align deletion policy after cancelling sessions; handle old 'active only' count difference.
+- G2-14-031-037 — src/modules/people/college-faculty-detail-service.ts / assignments: Enforce immutable ordinal after assignment
+- G2-14-031-053 — src/modules/academics/program-service.ts / academic directory: Record per-column department ID/chair mapping
+- G2-14-031-056 — src/modules/academics/class-service.ts / section and group-backed selectors: Document class/team/student/teacher membership translation
+- G2-9-002-081 — src/modules/academics/cohort-service.ts / batch UI: Write explicit legacy schema field mapping.
+- G2-9-002-083 — src/modules/academics/cohort-service.ts / batch UI: Review name uniqueness vs code-uniqueness semantics across migrations.
+- G2-9-002-084 — src/modules/academics/cohort-service.ts / batch UI: Verify mapping for COMPLETED and reactivation.
+- G2-9-003-087 — src/modules/academics/cohort-service.ts / batch UI: Create field mapping and account for original status values.
+- G2-9-029-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value
+- G2-9-023-067 — src/modules/academics/class-service.ts / section and group-backed selectors: Restore legacy input/display year while keeping stored valid value
+
+## Wave2 bug report legacy identity and reporter provenance
+- G2-19-020-007 — src/modules/tracker report, search and activity services; report UI: Map numeric reporter_access_id to UUID for legacy issue history.
+- G2-19-020-009 — src/modules/tracker report, search and activity services; report UI: Convert timezone meaning on migration.
+- G2-19-020-011 — src/modules/tracker report, search and activity services; report UI: Add validated display-name search query/index or prohibit impersonating lookup.
+- G2-19-020-024 — src/modules/tracker report, search and activity services; report UI: Document inactive-on-intake behavior and activation workflow.
+- G2-19-020-035 — src/modules/tracker report, search and activity services; report UI: Provide case-insensitive name/active index if enrollment used.
+- G2-19-020-038 — src/modules/tracker report, search and activity services; report UI: Normalize UTC/IST on imports.
+- G2-19-020-042 — src/modules/tracker report, search and activity services; report UI: Resolve name lookup/index strategy.
+- G2-16-002-087 — src/modules/tracker report, search and activity services; report UI: Either support optional captured source metadata in API/quick report or document retained read-only fields.
+- G2-16-003-079 — src/modules/tracker report, search and activity services; report UI: Confirm historical report reference migration or approved no-migration, and reflect source metadata.
+- G2-16-004-078 — src/modules/tracker report, search and activity services; report UI: Maintain old publicID lookup compatibility if historical data imported; owner says no migration might waive.
+- G2-20-020-004 — src/modules/tracker report, search and activity services; report UI: Map IDs
+- G2-20-020-022 — src/modules/tracker report, search and activity services; report UI: Migration crosswalk
+- G2-3-021-007 — src/modules/tracker report, search and activity services; report UI: Legacy BIGINT event and issue IDs, timestamp DATETIME(6) unzoned; vNext UUID IDs, timestamptz, restrictive issue FK. Specify import identity/timezone mapping.
+- G2-3-021-035 — src/modules/tracker report, search and activity services; report UI: Legacy index issue+createdAt ASC and full fetch; VNext same index but cursor ORDER BY createdAt/id DESC, no compound tie-breaker index. Add index for stable keyset paging.
+- G2-3-021-043 — src/modules/tracker report, search and activity services; report UI: Legacy actor_name may be set without user FK, vNext actorUserId or accessId XOR constraint requires resolving historical Engineering/reporter event authors. Supply migration system actor.
+- G2-4-021-002 — src/modules/tracker report, search and activity services; report UI: Preserve historical public IDs and old route links with safe resolver.
+- G2-4-021-004 — src/modules/tracker report, search and activity services; report UI: Reconstruct detail sections and activity timeline with exact labels/order.
+- G2-4-021-007 — src/modules/tracker report, search and activity services; report UI: Capture safe browser,viewport and source context from authenticated application.
+- G2-4-021-014 — src/modules/tracker report, search and activity services; report UI: Wire remaining context fields with safe allowlist.
+- G2-4-021-032 — src/modules/tracker report, search and activity services; report UI: Verify upload UI, provisional grants and screenshot display in report form.
+- G2-4-021-056 — src/modules/tracker report, search and activity services; report UI: Use index to implement scoped efficient environment count.
+- G2-4-021-058 — src/modules/tracker report, search and activity services; report UI: Handle public ID collision retries and format historical ids.
+- G2-4-021-063 — src/modules/tracker report, search and activity services; report UI: Define IST/source zone on migration to prevent wrong incident chronology.
+- G2-4-021-065 — src/modules/tracker report, search and activity services; report UI: Backfill missing/duplicate legacy IDs with logged reconciliation.
+- G2-8-031-068 — src/modules/tracker report, search and activity services; report UI: Document legacy bug status/attachment field mapping and migration consequences; no data migration expected but functional parity required.
+
+## Wave2 project admin collection control dependent query/status behavior
+- G2-10-031-014 — src/modules/projects/admin workspace list query/parser and caller pages: Match each list's status model and clear URL defaults.
+- G2-10-031-015 — src/modules/projects/admin workspace list query/parser and caller pages: Adopt debounced search with robust deep links.
+- G2-10-028-019 — src/modules/projects/admin workspace list query/parser and caller pages: Restore immediate debounced search.
+- G2-10-028-021 — src/modules/projects/admin workspace list query/parser and caller pages: Match pagination position/counter wording.
+- G2-10-028-023 — src/modules/projects/admin workspace list query/parser and caller pages: Restore clearable one-click controls.
+- G2-10-028-024 — src/modules/projects/admin workspace list query/parser and caller pages: Apply page size immediately.
+- G2-10-028-045 — src/modules/projects/admin workspace list query/parser and caller pages: Verify/mobile match table scroll and controls at 320/375/768px.
+- G2-11-028-016 — src/modules/projects/admin workspace list query/parser and caller pages: Legacy dedicated deleted list has no status/search filters, only page/size; vNext user must choose ARCHIVED from Workspace status filter.
+- G2-11-028-017 — src/modules/projects/admin workspace list query/parser and caller pages: Legacy page sizes 10,20,50,100 and total string N-M of N deleted workspaces; vNext directory supports 10/20/50/100 but generic pagination copy.
+- G2-7-001-058 — src/modules/projects/admin workspace list query/parser and caller pages: Restore exact section title and search copy.
+- G2-7-019-011 — src/modules/projects/admin workspace list query/parser and caller pages: Match inline search and clearable select interaction without Apply/Clear requirement.
+- G2-7-019-026 — src/modules/projects/admin workspace list query/parser and caller pages: Restore exact placeholder and live 350ms search.
+- G2-7-019-032 — src/modules/projects/admin workspace list query/parser and caller pages: Support immediate clear; filter applied without extra submit.
+- G2-7-019-034 — src/modules/projects/admin workspace list query/parser and caller pages: Apply page-size changes without separate confirmation.
+- G2-7-019-075 — src/modules/projects/admin workspace list query/parser and caller pages: Restore both placeholders and avoid different field labels.
+- G2-7-019-080 — src/modules/projects/admin workspace list query/parser and caller pages: Restore debounce with request cancelation for live text searching.
+- G2-10-031-008 — src/modules/projects/admin workspace list query/parser and caller pages: Match per-resource labels, avoid one-size-fits-all statuses.
+- G2-10-028-049 — src/modules/projects/admin workspace list query/parser and caller pages: Restore export wording.
+- G2-7-019-029 — src/modules/projects/admin workspace list query/parser and caller pages: Render row range plus total with exact legacy suffix.
+- G2-7-019-033 — src/modules/projects/admin workspace list query/parser and caller pages: Match status picker clear button and placeholder `Status`.
+- G2-7-019-070 — src/modules/projects/admin workspace list query/parser and caller pages: Compare search width and toolbar wrapping at 375,768,1280; match legacy compact layout.
+
+## Wave2 assessments cross-file service and UI mapping
+- G2-2-026-015 — src/modules/assessments grade and submission services/UI: Map display names and assignment snapshots; assess downstream expectations of renamed fields.
+- G2-2-026-020 — src/modules/assessments grade and submission services/UI: Specify datetime presentation in IST and overflow/precision conversion for legacy long grade values.
+- G2-2-026-095 — src/modules/assessments grade and submission services/UI: Maintain explicit identity translation for reports/legacy imports, no integer-to-UUID casting.
+- G2-2-026-098 — src/modules/assessments grade and submission services/UI: Define archived/deleted submission visibility and remove/restore parity under permission scope.
+- G2-2-026-100 — src/modules/assessments grade and submission services/UI: Clarify historical snapshot policy for renamed learners/edited max scores.
+- G2-3-016-001 — src/modules/assessments grade and submission services/UI: Legacy student_assignment rows keyed to lesson_content_id and learner numeric student_id, vNext assignment_submissions keyed assignment UUID, delivery UUID, membership UUID. Map learner assignment route and archived content references.
+- G2-3-016-003 — src/modules/assessments grade and submission services/UI: Legacy one flat entity holds learner names, assignment name, content, type, points and grading; vNext normalized submission with joins to assignment/users/files. Ensure frontend section field/order parity.
+- G2-3-016-005 — src/modules/assessments grade and submission services/UI: Legacy stored student first/last names, gradingDate string and graded 0/1; vNext derives learnerDisplayName and gradedAt timestamp/gradingStatus enum. Match full name display and empty placeholder.
+- G2-3-016-008 — src/modules/assessments grade and submission services/UI: Legacy gradingDate string, HTML answer, submissionLink, submissionAssets JSON list; vNext timestamp gradedAt, textContent, submissionUrl and normalized link/file children. Map rich HTML and multi-part assets.
+- G2-3-016-009 — src/modules/assessments grade and submission services/UI: Legacy points and pointsObtained long (64bit), vNext pointsAwarded int and assignment maxPoints parent; enforce max range and preserve large historic marks conversion.
+- G2-3-016-018 — src/modules/assessments grade and submission services/UI: Legacy written response uses rich HTML string and submission types uppercase names; vNext TEXT uses plain text and LINK URL. Preserve sanitization and rendering of rich student content.
+- G2-3-016-035 — src/modules/assessments grade and submission services/UI: Legacy grade max bound is stored StudentAssignment.points, vNext compares to parent maxPoints; if changed after submission, old grade could become invalid. Snapshot maximum points at submission.
+- G2-3-016-046 — src/modules/assessments grade and submission services/UI: Legacy long points and previousPoints zero defaults, vNext nullable int previousPoints and pointsAwarded. Normalize old 0 ungraded to null and avoid overflow.
+- G2-3-016-051 — src/modules/assessments grade and submission services/UI: Legacy @Version and semester attempt semantics vs vNext unique assignmentId/membershipId, ATTEMPT >=1 and 2-state grading check; update relational constraints for historic/regrade parity.
+- G2-4-004-095 — src/modules/assessments grade and submission services/UI: Maintain field mapping for status/scope/grade/version, inspect migration constraints and historical data behavior.
+- G2-4-010-095 — src/modules/assessments grade and submission services/UI: Maintain field mapping for status/scope/grade/version, inspect migration constraints and historical data behavior.
+- G2-4-012-015 — src/modules/assessments grade and submission services/UI: Specify canonical legacy date parsing/transfer with timezone.
+- G2-4-012-087 — src/modules/assessments grade and submission services/UI: Define foreign-key and due/point history migration rules.
+- G2-4-012-013 — src/modules/assessments grade and submission services/UI: Fallback to Untitled for historical blank title.
+
+## Wave2 memberships cross-file service and UI mapping
+- G2-1-001-007 — src/modules/people membership lifecycle and role-service UI: Show counts based on membership-scoped state while matching visible Active/Suspended counters and document cross-college distinction.
+- G2-1-001-048 — src/modules/people membership lifecycle and role-service UI: Use membership version or timestamp CAS consistently for all generic lifecycle mutations if stale-client conflict matters.
+- G2-1-008-086 — src/modules/people membership lifecycle and role-service UI: Crosswalk dual-role de-duplication and statuses, tenant uniqueness and name.
+- G2-1-021-050 — src/modules/people membership lifecycle and role-service UI: Document role name/id migration with college scope and prevent unauthorized ADMIN grants.
+- G2-13-016-001 — src/modules/people membership lifecycle and role-service UI: Document intentionally noneditable role catalog and map old role IDs/names to scoped enums during import
+- G2-13-016-007 — src/modules/people membership lifecycle and role-service UI: Retain original descriptions in a migration map if needed for audit/help text; don't invent user-editable free-text roles
+- G2-13-016-008 — src/modules/people membership lifecycle and role-service UI: Create old role-ID mapping; document removed updatedAt/isDeleted semantics and derive revocation from row deletion/audit
+- G2-13-016-013 — src/modules/people membership lifecycle and role-service UI: Represent role removal with explicit revoke event instead of allowing soft-deleted role definition
+- G2-13-016-038 — src/modules/people membership lifecycle and role-service UI: Map role IDs to names first, normalize case and reject duplicate/missing seed roles
+- G2-13-016-041 — src/modules/people membership lifecycle and role-service UI: Write migration/connector dependency map for old USER_ROLES join references and role ID mapping
+- G2-4-020-001 — src/modules/people membership lifecycle and role-service UI: Map all legacy faculty account lookup routes and authority boundaries to membership-scoped data.
+- G2-4-020-042 — src/modules/people membership lifecycle and role-service UI: Define deleted-vs-ended retention and restore semantics for foreign keys.
+- G2-4-020-057 — src/modules/people membership lifecycle and role-service UI: Avoid N+1 joins and JSON decode across large faculty directory pages.
+- G2-5-019-033 — src/modules/people membership lifecycle and role-service UI: Rebuild active blast-radius counters using persisted status.
+- G2-6-004-070 — src/modules/people membership lifecycle and role-service UI: Define duplicate handling and labels for multi-role users across All/Teachers/Students
+- G2-8-001-048 — src/modules/people membership lifecycle and role-service UI: Add explicit DTO mapping/source for legacy contactPhone and image if required, avoid duplicating PII tables
+- G2-8-003-045 — src/modules/people membership lifecycle and role-service UI: Provide read-model mapping for role image/secondary phone or explicit approved omission; migration is not required
+- G2-8-002-047 — src/modules/people membership lifecycle and role-service UI: Record legacy-to-new mapping for identifiers, role duplicates, contact and profile fields in migration reference; no data migration requested
+
+## Wave2 profiles cross-file service and UI mapping
+- G2-1-004-010 — src/modules/people learner/faculty profile read and storage services: Map legacy IDs, program/college names and profile image to visible header.
+- G2-20-030-029 — src/modules/people learner/faculty profile read and storage services: Preserve section completeness and independent partial-data status when switching storage
+- G2-4-020-001 — src/modules/people learner/faculty profile read and storage services: Map all legacy faculty account lookup routes and authority boundaries to membership-scoped data.
+- G2-4-020-004 — src/modules/people learner/faculty profile read and storage services: Reproduce original About/card ordering, and profile section navigation.
+- G2-4-020-057 — src/modules/people learner/faculty profile read and storage services: Avoid N+1 joins and JSON decode across large faculty directory pages.
+- G2-4-020-066 — src/modules/people learner/faculty profile read and storage services: Map optimistic token between entity and profile JSON mutation, avoid lost updates.
+- G2-5-019-029 — src/modules/people learner/faculty profile read and storage services: Map to signed storage receipt and timestamp.
+- G2-5-019-031 — src/modules/people learner/faculty profile read and storage services: Map to private verified resume receipt.
+- G2-5-019-054 — src/modules/people learner/faculty profile read and storage services: Implement signed receipt-based access/migration.
+- G2-5-019-059 — src/modules/people learner/faculty profile read and storage services: Compare exact labels, keys and fallback text.
+- G2-5-019-066 — src/modules/people learner/faculty profile read and storage services: Plan private storage migration and authorized download.
+- G2-6-019-007 — src/modules/people learner/faculty profile read and storage services: Keep 1:1 scoped mapping from legacy learner to active membership; resolve transfers/duplicates.
+- G2-8-001-048 — src/modules/people learner/faculty profile read and storage services: Add explicit DTO mapping/source for legacy contactPhone and image if required, avoid duplicating PII tables
+- G2-8-003-045 — src/modules/people learner/faculty profile read and storage services: Provide read-model mapping for role image/secondary phone or explicit approved omission; migration is not required
+
+## Wave2 workspace section-specific loading and compatibility
+- G2-17-004-036 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Instrument tab-switch request count and avoid redundant full workspace aggregation when changing filter/query.
+- G2-3-029-018 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy review fields are on resolvedDelivery; vNext getProjectWorkspaceView assembles separate finalDelivery.reviews and evaluations. Join latest proper review metadata.
+- G2-3-029-030 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy fetches one college-scoped workspace through admin API on client; vNext parallel server fetch of workspace/members/readiness/reviews/activity, with different failure cascade.
+- G2-3-029-036 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy data fetch starts loading true to avoid first render not-found; vNext server-rendered page needs route loading.tsx parity for equivalent skeleton.
+- G2-3-029-050 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy retrieves one workspace JSON in one call, vNext launches 8 parallel subqueries, increasing query/connection pressure.
+- G2-3-029-055 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Legacy AdminService.getProjectWorkspaceById resolves college-scope payload; vNext typed workspace-view DB aggregator has different failure and loading telemetry.
+- G2-4-029-056 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Query resource-only rows newest first with server page/count.
+- G2-4-029-061 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Use discrete admin resource-audit service, avoid whole workspace dependencies.
+- G2-7-011-040 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Use section-specific projection/cache while preserving tenant enforcement and error states.
+- G2-7-012-030 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Optimize section projection and preserve error isolation
+- G2-7-012-053 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Readiness-only projections for large workspaces
+- G2-7-013-039 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Project normalized resource DTO onto legacy field identities
+- G2-7-015-045 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Avoid unrelated fetch blocking Summary load
+- G2-7-027-088 — src/app/(authenticated)/admin/projects detail pages and src/modules/projects project queries: Map every action request and notification into new typed API route/service
+
+
+## Wave 2 dependency contracts: recruiter, colleges, suppression and receipts
+- Recruiter search: HR request-list already owns SENT_BACK/REQUEST/DRAFT priority and request counts; drive SQL must count only canonical jobs, with valid recruiter grants, company joins and stable pagination. Map active/expired to status/deadline and only compute popularity from authorized application counts, not arbitrary initial 1000 rows. Program/department targeting needs scoped eligibility joins.
+- College: legacy numeric keys and casefolded historical uniqueId are import locators only, not access grants. Tenant-domain registry owns verified hosts, current code remains canonical. College detail needs chair/vice-chair + domain aliases; chair assignment must lock and validate an ACTIVE FACULTY membership in the same college. Migrate logos into verified object storage before signed preview.
+- Suppression: a null source reason becomes LEGACY_UNSPECIFIED and continues to suppress; old civil timestamps require documented IST conversion. Global email HMAC must derive from normalized bounded address with key rotation. Clear actions require privileged actor/audit checks; do not activate outbound dispatch without pre-send suppression fencing.
+- Course files: reconcile legacy receipt IDs and folder names through the membership/assignment mapping, never from public URL or numeric owner alone. Assignment folder maps to ASSIGNMENT_SUBMISSION and lesson-content folder to COURSE_RESOURCE. Only CLEAN scanned, nondeleted rows can generate 15-minute signed access grants. Record imported type/size exceptions.
+
+
+## Wave 2 shell, faculty authoring and grade audit follow-through
+- Shell model provides canonical legacy path aliases and active account portal filtering. Use the same URL normalization in mobile/desktop active indicator and deep-link redirects; selected recruiter college must have a persisted active grant before HR tabs are exposed. TPO role/delegation and college scope remain server-checked.
+- Youtube faculty authoring now has exact legacy drawer labels, initial values, role-specific action affordance, and Yes/No confirmation copy in its shared model. The faculty content row should render Edit/Delete outside the learner player; close after acknowledged mutation and refresh the authoring list only after success.
+- Grade audit staging has immutable legacy ID, actor-name and time provenance plus stable cursor index. Do not register it as live until the grading mutation producer and deferred trigger are promoted together. Never interpret an unavailable history store as a genuinely never-graded submission.
+- The active TPO job types page already uses the unified staged five-column TpoUnifiedJobTypesEditor with one Save changes action; the old built-in-only component is unused. Do not revive per-row PATCHes or fragment the single Settings panel.
+- Old identity migration 0056 remains DDL-stable; its header crosswalk explicitly retires raw tokens, password imports and old sessions, and separates 24-hour ownership proof from five-minute login OTP.

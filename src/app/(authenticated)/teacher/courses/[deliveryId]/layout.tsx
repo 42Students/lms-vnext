@@ -46,14 +46,12 @@ export default async function FacultyCourseTabLayout({
   }
   const active = assignments.find((assignment) => assignment.deliveryId === deliveryId);
   if (!active) notFound();
-  const sections = assignments
-    .filter((assignment) => assignment.courseId === active.courseId)
-    .map((assignment) => ({
-      deliveryId: assignment.deliveryId,
-      label: assignment.sectionName + " · " + assignment.academicPeriodName,
-    }));
+  const sections=assignments.filter(a=>a.courseId===active.courseId)
+   .sort((a,b)=>a.sectionName.localeCompare(b.sectionName,undefined,{numeric:true})||a.deliveryId.localeCompare(b.deliveryId))
+   .map(a=>({deliveryId:a.deliveryId,label:a.sectionName.trim()||"Class "+a.deliveryId.slice(0,8)}));
   return (
-    <div className="space-y-5">
+    <div className="min-w-0 space-y-5">
+      <PageHeader title={active.courseName} description={"Course workspace · "+active.sectionName}/>
       <FacultyCourseTabNavigation
         deliveryId={deliveryId}
         courseName={active.courseName}

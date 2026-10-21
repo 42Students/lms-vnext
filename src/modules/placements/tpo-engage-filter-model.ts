@@ -21,7 +21,9 @@ function isInRange(value:string|null|undefined,kind:string,now:number):boolean{
  const ist=new Date(now+330*60_000);
  const midnight=Date.UTC(ist.getUTCFullYear(),ist.getUTCMonth(),ist.getUTCDate())-330*60_000;
  switch(kind){
-  case "DUE":return time<=now;
+  // The legacy "due" bucket means overdue OR any time today in IST;
+  // do not exclude a follow-up scheduled later on the current date.
+  case "DUE":return time<midnight+DAY;
   case "OVERDUE":return time<midnight;
   case "TODAY":return time>=midnight&&time<midnight+DAY;
   case "NEXT_7":return time>=midnight+DAY&&time<midnight+8*DAY;

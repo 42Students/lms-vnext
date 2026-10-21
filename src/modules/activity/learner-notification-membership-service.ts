@@ -1,8 +1,9 @@
 import "server-only";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
+import { z } from "zod";
 import { getDb } from "@/db/client";
-import { collegeMemberships, membershipRoles, users } from "@/db/schema";
+import { collegeMemberships, membershipRoles, users, sectionEnrollments, learnerProgramEnrollments, sections, cohorts, programs, departments } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { requireLearnerNotificationsAccess } from "./learner-notifications-access";
@@ -45,3 +46,33 @@ export async function requirePersistedLearnerNotificationMembership(
   }
   return membership;
 }
+
+/** Legacy /class/:id notice targeting translates to an active persisted
+ * learner section enrollment. A college-wide notice does not require one. */
+export async function canOwnLearnerReceiveClassNotice(
+ context:RequestContext,rawSectionId:unknown,
+):Promise<boolean>{
+ const sectionId=z.string().uuid().parse(rawSectionId);
+ const member=await requirePersistedLearnerNotificationMembership(context);
+ const [row]=await getDb().select({id:sectionEnrollments.id})
+  .from(sectionEnrollments)
+  .innerJoin(learnerProgramEnrollments,
+    eq(learnerProgramEnrollments.id,sectionEnrollments.learnerEnrollmentId))
+  .innerJoin(sections,eq(sections.id,sectionEnrollments.sectionId))
+  .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+  .innerJoin(programs,eq(programs.id,cohorts.programId))
+  .innerJoin(departments,eq(departments.id,programs.departmentId))
+  .where(and(
+    eq(sectionEnrollments.sectionId,sectionId),
+    eq(sectionEnrollments.status,"ACTIVE"),
+    isNull(sectionEnrollments.endedAt),
+    eq(learnerProgramEnrollments.membershipId,member.id),
+    eq(learnerProgramEnrollments.status,"ACTIVE"),
+    eq(sections.status,"ACTIVE"),
+    eq(departments.collegeId,member.collegeId),
+  )).limit(1);
+ return Boolean(row);
+}
+/** Wrong-role readers receive a scoped permission failure and may navigate
+ * to their own workspace; they must not fall back to a learner's inbox. */
+export const LEARNER_NOTIFICATIONS_WRONG_ROLE_DESTINATION="/dashboard";

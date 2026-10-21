@@ -72,7 +72,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
    setSectionRevisions(current=>advanceFacultySectionRevision(current,section));
    // Legacy save/toast copy is retained in an accessible persistent status.
    // "Deleted" applies only after the server confirms a shorter saved list.
-   setSuccess(removed?"Deleted successfully!":added?"Added":"Saved");
+   setSuccess(removed?"Deleted successfully!":added?"Added successfully!":"Updated successfully!");
    window.dispatchEvent(new Event("profileUpdated"));
   }catch(error){
    if(error instanceof FacultyProfileSaveResponseError){
@@ -86,7 +86,25 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
   <ConfirmDialog open={reloadOpen} onOpenChange={setReloadOpen}
     title="Reload the latest Faculty profile?" description="Any unsaved changes in every section will be lost."
     confirmLabel="Reload latest profile" onConfirm={() => window.location.reload()} />
-  <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
+  <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <p className="max-w-[75ch] text-sm leading-5 text-muted-foreground">Only your own profile is editable. College-managed identity, employment and login details remain unchanged.</p>
+    <Button variant="secondary" className="min-h-11 shrink-0 sm:min-h-9" type="button" disabled={pending}
+      onClick={() => setReloadOpen(true)}>Refresh latest profile</Button>
+  </div>
+  <section aria-label="Profile completeness" className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface px-4 py-3">
+    <div className="flex flex-wrap items-center justify-between gap-3">
+      <span className="text-sm font-semibold text-foreground">Profile Completeness</span>
+      <strong className="text-sm tabular-nums text-foreground">{[
+        Boolean(document.personalDetails.gender && document.personalDetails.dateOfBirth),
+        document.experiences.length > 0,document.education.length > 0,
+        document.certifications.length > 0,document.skills.length > 0,
+        document.languages.length > 0,document.publications.length > 0,
+        document.awards.length > 0,Boolean(document.socialProfiles.linkedIn),
+        Boolean(document.address.currentAddress),
+      ].filter(Boolean).length} of 10 sections</strong>
+    </div>
+    <p className="mt-2 text-xs text-muted-foreground">Select Edit or Add in a profile section to keep your record up to date. This is not a verification or hiring-eligibility score.</p>
+  </section>
   {error?<Alert tone="error" className="max-w-[80ch] space-y-[var(--lms-space-2)]">
    <p className="m-0 break-words [overflow-wrap:anywhere]">{error}</p>
    {fieldErrorKeys.length?<p className="mt-2 text-sm">Check: {fieldErrorKeys.join(", ")}</p>:null}
@@ -101,11 +119,62 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
     <div className="flex min-w-0 snap-x snap-proximity gap-[var(--lms-space-2)] overflow-x-auto overscroll-x-contain pb-[var(--lms-space-2)]">
      <a href="#faculty-identity-readonly" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Identity documents</a>
      <a href="#faculty-contact" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Contact</a>
-     {FACULTY_PROFILE_NAV.map(item=><a key={item.section}
+     {[...FACULTY_PROFILE_NAV].sort((left,right)=>{
+      const order=["personalDetails","experiences","education","certifications","skills","languages","publications","awards","socialProfiles","address","metadata","about"];
+      return order.indexOf(left.section)-order.indexOf(right.section);
+     }).map(item=><a key={item.section}
       className="inline-flex min-h-11 shrink-0 snap-start items-center rounded-[var(--lms-control-radius)] border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
       href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
   </nav>
   <div className="grid min-w-0 gap-4 lg:grid-cols-2 [&>form]:min-w-0 [&>form]:rounded-[var(--lms-control-radius)] [&>form]:border [&>form]:border-border [&>form]:px-4 [&>form]:py-3">
+  <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
+   description="Introduce your teaching and research interests."
+   fields={ABOUT_FIELDS} initial={{description:document.about.description}} pending={pending} onSave={save}/>
+  <FacultyProfileTextSection key={"personalDetails-"+(sectionRevisions.personalDetails??0)} section="personalDetails" title="Personal details"
+   description="Self-reported details only; college identity records remain separate."
+   fields={PERSONAL_DETAILS_FIELDS}
+   initial={{gender:document.personalDetails.gender,dateOfBirth:document.personalDetails.dateOfBirth,bloodGroup:document.personalDetails.bloodGroup}} pending={pending} onSave={save}/>
+  <FacultyProfileRepeatable key={"experiences-"+(sectionRevisions.experiences??0)}
+   section="experiences" title="Experience" description="Manage your own experience history. Nothing changes until you save."
+   initial={document.experiences} fields={EXPERIENCES_FIELDS} maxItems={50}
+   create={newFacultyExperience} pending={pending} onSave={save}/>
+  <FacultyProfileRepeatable key={"education-"+(sectionRevisions.education??0)}
+   section="education" title="Education/Qualification"
+   description="Edit your own education records. Removals are drafts until saved."
+   initial={document.education} fields={EDUCATION_FIELDS} maxItems={30}
+   create={newFacultyEducation} pending={pending} onSave={save}/>
+  <FacultyProfileRepeatable key={"certifications-"+(sectionRevisions.certifications??0)}
+   section="certifications" title="Certifications" description="Manage your own certifications history. Nothing changes until you save."
+   initial={document.certifications} fields={CERTIFICATIONS_FIELDS} maxItems={50}
+   create={newFacultyCertification} pending={pending} onSave={save}/>
+  <FacultyProfileSkills key={"skills-"+(sectionRevisions.skills??0)} initial={document.skills} pending={pending} onSave={save}/>
+  <FacultyProfileRepeatable key={"languages-"+(sectionRevisions.languages??0)}
+   section="languages" title="Languages"
+   description="Edit your own languages records. Removals are drafts until saved."
+   initial={document.languages} fields={LANGUAGE_FIELDS} maxItems={30}
+   create={newFacultyLanguage} pending={pending} onSave={save}/>
+  <FacultyProfileRepeatable key={"publications-"+(sectionRevisions.publications??0)}
+   section="publications" title="Publications & Research" description="Maintain your own publications history. Draft deletions require Save."
+   initial={document.publications} fields={PUBLICATIONS_FIELDS} maxItems={100}
+   create={newFacultyPublication} pending={pending} onSave={save}/>
+  <FacultyProfileRepeatable key={"awards-"+(sectionRevisions.awards??0)}
+   section="awards" title="Awards & Recognitions" description="Maintain your own awards history. Draft deletions require Save."
+   initial={document.awards} fields={AWARDS_FIELDS} maxItems={100}
+   create={newFacultyAward} pending={pending} onSave={save}/>
+  <FacultyProfileTextSection key={"socialProfiles-"+(sectionRevisions.socialProfiles??0)} section="socialProfiles" title="Social profiles"
+   description="Optional HTTPS links to professional work and research."
+   fields={SOCIAL_PROFILES_FIELDS}
+   initial={{linkedIn:document.socialProfiles.linkedIn,github:document.socialProfiles.github,portfolio:document.socialProfiles.portfolio,twitter:document.socialProfiles.twitter,googleScholar:document.socialProfiles.googleScholar,researchGate:document.socialProfiles.researchGate}} pending={pending} onSave={save}/>
+  <FacultyProfileTextSection key={"address-"+(sectionRevisions.address??0)} section="address" title="Address"
+   description="Private mailing information; never exported to Faculty directories."
+   fields={ADDRESS_FIELDS}
+   initial={{currentAddress:document.address.currentAddress,currentCity:document.address.currentCity,currentState:document.address.currentState,currentPincode:document.address.currentPincode,permanentAddress:document.address.permanentAddress,permanentCity:document.address.permanentCity,permanentState:document.address.permanentState,permanentPincode:document.address.permanentPincode,city:document.address.city,state:document.address.state,pincode:document.address.pincode}} pending={pending} onSave={save}/>
+  <FacultyProfileMetadata key={"metadata-"+(sectionRevisions.metadata??0)} initial={document.metadata} pending={pending} onSave={save}/>
+   <FacultyProfileTextSection key={"contact-"+(sectionRevisions.contact??0)} section="contact" title="Contact"
+    description="Change your self-reported contacts. Your college-managed sign-in phone and email stay unchanged."
+    fields={CONTACT_FIELDS}
+    initial={{contactMobile:document.contact.contactMobile,contactPhone:document.contact.contactPhone,contactMail:document.contact.contactMail}}
+    pending={pending} onSave={save}/>
    <section id="faculty-identity-readonly" aria-label="Identity documents" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
     <h2 className="text-base font-semibold text-foreground">Identity documents</h2>
     <p className="text-sm text-muted-foreground">College-managed records. Private documents are not downloadable from the public profile.</p>
@@ -116,54 +185,6 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
      <div><dt className="font-semibold">Profile photo</dt><dd className="text-body">{document.profileImageDocumentId?"On file":"Not uploaded"}</dd></div>
     </dl>
    </section>
-   <FacultyProfileTextSection key={"contact-"+(sectionRevisions.contact??0)} section="contact" title="Contact"
-    description="Change your self-reported contacts. Your college-managed sign-in phone and email stay unchanged."
-    fields={CONTACT_FIELDS}
-    initial={{contactMobile:document.contact.contactMobile,contactPhone:document.contact.contactPhone,contactMail:document.contact.contactMail}}
-    pending={pending} onSave={save}/>
-  <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
-   description="Introduce your teaching and research interests."
-   fields={ABOUT_FIELDS} initial={{description:document.about.description}} pending={pending} onSave={save}/>
-  <FacultyProfileTextSection key={"personalDetails-"+(sectionRevisions.personalDetails??0)} section="personalDetails" title="Personal details"
-   description="Self-reported details only; college identity records remain separate."
-   fields={PERSONAL_DETAILS_FIELDS}
-   initial={{gender:document.personalDetails.gender,dateOfBirth:document.personalDetails.dateOfBirth,bloodGroup:document.personalDetails.bloodGroup}} pending={pending} onSave={save}/>
-  <FacultyProfileTextSection key={"address-"+(sectionRevisions.address??0)} section="address" title="Address"
-   description="Private mailing information; never exported to Faculty directories."
-   fields={ADDRESS_FIELDS}
-   initial={{currentAddress:document.address.currentAddress,currentCity:document.address.currentCity,currentState:document.address.currentState,currentPincode:document.address.currentPincode,permanentAddress:document.address.permanentAddress,permanentCity:document.address.permanentCity,permanentState:document.address.permanentState,permanentPincode:document.address.permanentPincode,city:document.address.city,state:document.address.state,pincode:document.address.pincode}} pending={pending} onSave={save}/>
-  <FacultyProfileTextSection key={"socialProfiles-"+(sectionRevisions.socialProfiles??0)} section="socialProfiles" title="Social profiles"
-   description="Optional HTTPS links to professional work and research."
-   fields={SOCIAL_PROFILES_FIELDS}
-   initial={{linkedIn:document.socialProfiles.linkedIn,github:document.socialProfiles.github,portfolio:document.socialProfiles.portfolio,twitter:document.socialProfiles.twitter,googleScholar:document.socialProfiles.googleScholar,researchGate:document.socialProfiles.researchGate}} pending={pending} onSave={save}/>
-  <FacultyProfileSkills key={"skills-"+(sectionRevisions.skills??0)} initial={document.skills} pending={pending} onSave={save}/>
-  <FacultyProfileMetadata key={"metadata-"+(sectionRevisions.metadata??0)} initial={document.metadata} pending={pending} onSave={save}/>
-  <FacultyProfileRepeatable key={"awards-"+(sectionRevisions.awards??0)}
-   section="awards" title="Awards" description="Maintain your own awards history. Draft deletions require Save."
-   initial={document.awards} fields={AWARDS_FIELDS} maxItems={100}
-   create={newFacultyAward} pending={pending} onSave={save}/>
-  <FacultyProfileRepeatable key={"publications-"+(sectionRevisions.publications??0)}
-   section="publications" title="Publications" description="Maintain your own publications history. Draft deletions require Save."
-   initial={document.publications} fields={PUBLICATIONS_FIELDS} maxItems={100}
-   create={newFacultyPublication} pending={pending} onSave={save}/>
-  <FacultyProfileRepeatable key={"experiences-"+(sectionRevisions.experiences??0)}
-   section="experiences" title="Experience" description="Manage your own experience history. Nothing changes until you save."
-   initial={document.experiences} fields={EXPERIENCES_FIELDS} maxItems={50}
-   create={newFacultyExperience} pending={pending} onSave={save}/>
-  <FacultyProfileRepeatable key={"certifications-"+(sectionRevisions.certifications??0)}
-   section="certifications" title="Certifications" description="Manage your own certifications history. Nothing changes until you save."
-   initial={document.certifications} fields={CERTIFICATIONS_FIELDS} maxItems={50}
-   create={newFacultyCertification} pending={pending} onSave={save}/>
-  <FacultyProfileRepeatable key={"education-"+(sectionRevisions.education??0)}
-   section="education" title="Education"
-   description="Edit your own education records. Removals are drafts until saved."
-   initial={document.education} fields={EDUCATION_FIELDS} maxItems={30}
-   create={newFacultyEducation} pending={pending} onSave={save}/>
-  <FacultyProfileRepeatable key={"languages-"+(sectionRevisions.languages??0)}
-   section="languages" title="Languages"
-   description="Edit your own languages records. Removals are drafts until saved."
-   initial={document.languages} fields={LANGUAGE_FIELDS} maxItems={30}
-   create={newFacultyLanguage} pending={pending} onSave={save}/>
   </div>
  </div>;
 }

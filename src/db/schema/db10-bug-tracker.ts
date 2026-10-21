@@ -17,6 +17,9 @@ import { colleges } from "./colleges";
 export const db10BugTrackerAccess = pgTable("bug_tracker_access", {
   id: uuid("id").defaultRandom().primaryKey(),
   displayName: varchar("display_name", { length: 120 }).notNull(),
+  legacyReporterAccessId: integer("legacy_reporter_access_id"),
+  /** Stable signed-in subject, not an externally issued reporter token. */
+  subjectUserId: uuid("subject_user_id").references(()=>users.id,{onDelete:"restrict"}),
   tokenHash: varchar("token_hash", { length: 64 }).notNull(),
   accessRole: varchar("access_role", { length: 24 }).notNull().default("REPORTER"),
   active: boolean("active").notNull().default(true),
@@ -24,6 +27,11 @@ export const db10BugTrackerAccess = pgTable("bug_tracker_access", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, t => [
   uniqueIndex("db10_tracker_access_hash_uq").on(t.tokenHash),
+  uniqueIndex("db10_tracker_access_subject_user_uq").on(t.subjectUserId)
+    .where(sql`${t.subjectUserId} is not null`),
+  uniqueIndex("db10_tracker_access_legacy_uq").on(t.legacyReporterAccessId)
+    .where(sql`${t.legacyReporterAccessId} is not null`),
+  index("db10_tracker_access_name_active_idx").on(sql`lower(${t.displayName})`,t.active),
   index("db10_tracker_access_role_active_idx").on(t.active, t.accessRole),
   check("db10_tracker_access_role_ck",
     sql.raw('"access_role" in (\'REPORTER\',\'MANAGER\')')),
@@ -52,6 +60,7 @@ export const db10BugTrackerSessions = pgTable("bug_tracker_sessions", {
 export const db10BugReports = pgTable("bug_reports", {
   id: uuid("id").defaultRandom().primaryKey(),
   publicId: varchar("public_id", { length: 24 }).notNull(),
+  legacyReportId: bigint("legacy_report_id",{mode:"bigint"}),
   reporterAccessId: uuid("reporter_access_id").notNull()
     .references(() => db10BugTrackerAccess.id, { onDelete: "restrict" }),
   reporterUserId: uuid("reporter_user_id").references(() => users.id,{onDelete:"restrict"}),
@@ -88,6 +97,9 @@ export const db10BugReports = pgTable("bug_reports", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, t => [
   uniqueIndex("db10_bug_reports_public_id_uq").on(sql.raw('lower("public_id")')),
+  uniqueIndex("db10_bug_reports_legacy_id_uq").on(t.legacyReportId)
+    .where(sql`${t.legacyReportId} is not null`),
+  index("db10_bug_reports_environment_state_time_idx").on(t.environment,t.status,t.createdAt),
   index("db10_bug_reports_status_time_idx").on(t.status, t.createdAt),
   index("db10_bug_reports_reporter_time_idx").on(t.reporterAccessId, t.createdAt),
   index("db10_bug_reports_reporter_user_idx").on(t.reporterUserId, t.createdAt),
@@ -116,6 +128,7 @@ export const db10BugReports = pgTable("bug_reports", {
 
 export const db10BugReportActivities = pgTable("bug_report_activities", {
   id: uuid("id").defaultRandom().primaryKey(),
+  legacyActivityId: bigint("legacy_activity_id",{mode:"bigint"}),
   bugReportId: uuid("bug_report_id").notNull()
     .references(() => db10BugReports.id, { onDelete: "restrict" }),
   type: varchar("activity_type", { length: 40 }).notNull(),
@@ -129,10 +142,15 @@ export const db10BugReportActivities = pgTable("bug_report_activities", {
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 }, t => [
   index("db10_bug_report_activity_report_time_idx").on(t.bugReportId, t.createdAt),
+  index("db10_bug_report_activity_keyset_idx").on(t.bugReportId,t.createdAt,t.id),
+  uniqueIndex("db10_bug_report_activity_legacy_id_uq").on(t.legacyActivityId)
+    .where(sql`${t.legacyActivityId} is not null`),
   check("db10_bug_report_activity_type_ck",
     sql.raw('"activity_type" in (\'STATUS_CHANGED\',\'RESOLUTION_CHANGED\',\'WORKFLOW_UPDATED\',\'RETEST\',\'CREATED\')')),
   check("db10_bug_report_activity_actor_ck",
-    sql.raw('("actor_user_id" is not null) <> ("actor_access_id" is not null)')),
+    sql`(${t.actorUserId} is not null) <> (${t.actorAccessId} is not null)
+      or (${t.legacyActivityId} is not null and ${t.actorUserId} is null
+        and ${t.actorAccessId} is null and length(trim(coalesce(${t.actorName},''))) > 0)`),
 ]);
 
 export const db10BugReportAttachments = pgTable("bug_report_attachments", {
@@ -147,6 +165,7 @@ export const db10BugReportAttachments = pgTable("bug_report_attachments", {
 }, t => [
   uniqueIndex("db10_bug_report_attachments_key_uq").on(t.storageKey),
   index("db10_bug_report_attachments_report_time_idx").on(t.bugReportId, t.createdAt),
+  index("db10_bug_report_attachments_limit_idx").on(t.bugReportId,t.id),
   check("db10_bug_report_attachments_mime_ck",
     sql.raw('"content_type" in (\'image/png\',\'image/jpeg\',\'image/webp\')')),
   check("db10_bug_report_attachments_size_ck",

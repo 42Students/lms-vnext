@@ -1,4 +1,6 @@
 import { PageBackLink } from "@/components/ui/page-back-link";
+import {Alert} from "@/components/ui/alert";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ZodError } from "zod";
 import { CoursesServiceError } from "@/modules/courses/errors";
@@ -32,6 +34,8 @@ export async function AdminOfferingLearningPage({
   backHref: string;
   deliveryId?:string|null;
 }) {
+  const retryHref=backHref+"/offerings/"+encodeURIComponent(offeringId)+
+   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
   const workspace =
     await getAdminOfferingLearningWorkspace(
       context,
@@ -44,21 +48,30 @@ export async function AdminOfferingLearningPage({
       ) {
         notFound();
       }
-      throw error;
+      return null;
     });
-  const [roster,sectionPreview]=await Promise.all([
+  if(!workspace)return <div className="min-w-0 space-y-4">
+   <PageHeader title="Course unavailable" actions={<PageBackLink href={backHref} label="Back to Courses"/>}/>
+   <Alert tone="error" role="alert" title="Server Notification">
+    Lessons couldn&apos;t be loaded. Internal Server Error. Your changes have not been made.
+   </Alert>
+   <Link href={backHref} className="font-semibold text-primary-text underline">Back to Courses</Link>
+   <a href={retryHref}
+    className="ml-3 font-semibold text-primary-text underline">Retry</a>
+  </div>;
+  const [rosterResult,sectionPreviewResult]=await Promise.allSettled([
    listOfferingTeachingOverview(context,offeringId),
    listOfferingSectionPreview(context,offeringId,deliveryId,workspace.lessons,
     workspace.learningPath?.status==="PUBLISHED"),
   ]);
-  const displayEnabled =
-    courseDisplayRuntimeEnabled();
-  const display = displayEnabled
-    ? await getAdminCourseDisplayContent(
-        context,
-        workspace.offering.courseId,
-      )
-    : null;
+  const roster=rosterResult.status==="fulfilled"?rosterResult.value:null;
+  const sectionPreview=sectionPreviewResult.status==="fulfilled"?sectionPreviewResult.value:null;
+  const displayEnabled=courseDisplayRuntimeEnabled();
+  const displayResult=displayEnabled?await getAdminCourseDisplayContent(
+   context,workspace.offering.courseId).then(value=>({value,failed:false as const}))
+    .catch(()=>({value:null,failed:true as const})):
+    {value:null,failed:false as const};
+  const display=displayResult.value;
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
@@ -78,33 +91,42 @@ export async function AdminOfferingLearningPage({
           <PageBackLink href={backHref} label="Back to Courses" />
         }
       />
-      <AdminOfferingSectionTabs/>
-      <section id="course-home" aria-label="Course Home" className="min-w-0 scroll-mt-24 space-y-3">
-        <h2 className="text-lg font-semibold text-foreground">Home</h2>
-        {displayEnabled ? (
-          <Disclosure title="Edit Course Home content" className="border-b border-[var(--lms-canvas-border)] pb-3" contentClassName="pt-3">
-            <AdminCourseDisplayEditor
-              courseId={workspace.offering.courseId}
-              enabled={displayEnabled}
-              initial={display ? {
-                introductionText: display.introductionText,
-                bodyHtml: display.bodyHtml,
-                takeaways: display.takeaways,
-                thumbnailUrl: display.thumbnailUrl,
-                version: display.version,
-              } : null}
-            />
-          </Disclosure>
-        ) : (
-          <AdminCourseDisplayEditor courseId={workspace.offering.courseId} enabled={false} initial={null} />
-        )}
-      </section>
-      <section id="course-syllabus" aria-label="Course Syllabus" className="min-w-0 scroll-mt-24 space-y-3">
-        <h2 className="text-lg font-semibold text-foreground">Syllabus</h2>
-        <AdminOfferingLearningOverview workspace={workspace}/>
-      </section>
-      <AdminOfferingTeachersPanel roster={roster} academicPeriodName={workspace.offering.academicPeriodName}/>
-      <AdminOfferingSectionPreview data={sectionPreview}/>
+      <AdminOfferingSectionTabs home={<div className="space-y-4">
+       <h2 className="text-lg font-semibold text-foreground">Home</h2>
+       {displayResult.failed?<Alert tone="warning" role="alert" title="Server Notification">
+        Course Home content couldn&apos;t be loaded. Internal Server Error.
+        <a href={retryHref+"#course-home"} className="ml-2 font-semibold underline">Retry</a>
+       </Alert>:null}
+       {display?<section aria-label="In this Course" className="space-y-3 border-b border-border pb-4">
+        <h3 className="text-base font-semibold text-foreground">In this Course</h3>
+        {display.introductionText?<p className="whitespace-pre-wrap text-sm text-body">{display.introductionText}</p>:null}
+        {display.bodyHtml?<div className="prose max-w-none text-sm text-body"
+          dangerouslySetInnerHTML={{__html:display.bodyHtml}}/>:null}
+        {display.takeaways.length?<ul className="list-disc space-y-1 pl-5 text-sm text-body">
+         {display.takeaways.map((value,index)=><li key={index}>{value}</li>)}
+        </ul>:null}
+       </section>:<p className="text-sm text-muted-foreground">In this Course: the Course introduction has not been added yet.</p>}
+       {displayEnabled?<Disclosure title="Edit Course Home content"
+        className="border-b border-[var(--lms-canvas-border)] pb-3" contentClassName="pt-3">
+        <AdminCourseDisplayEditor courseId={workspace.offering.courseId} enabled={displayEnabled}
+         initial={display?{introductionText:display.introductionText,bodyHtml:display.bodyHtml,
+          takeaways:display.takeaways,thumbnailUrl:display.thumbnailUrl,version:display.version}:null}/>
+       </Disclosure>:
+        <AdminCourseDisplayEditor courseId={workspace.offering.courseId} enabled={false} initial={null}/>}
+      </div>} syllabus={<div className="space-y-4">
+       <h2 className="text-lg font-semibold text-foreground">Syllabus</h2>
+       <AdminOfferingLearningOverview workspace={workspace}/>
+       {roster?<AdminOfferingTeachersPanel roster={roster}
+        academicPeriodName={workspace.offering.academicPeriodName}/>:
+        <Alert tone="warning" role="alert">Faculty assignments couldn&apos;t be loaded.
+         <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
+        </Alert>}
+       {sectionPreview?<AdminOfferingSectionPreview data={sectionPreview}/>:
+        <Alert tone="warning" role="alert" title="Server Notification">
+         Sections couldn&apos;t be loaded, so you&apos;re seeing shared content only.
+         <a className="ml-2 font-semibold underline" href={retryHref+"#course-syllabus"}>Retry</a>
+        </Alert>}
+      </div>}/>
     </div>
   );
 }

@@ -2,54 +2,106 @@
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
-import {useRef,useState} from "react";
-import {bulkStudentSelectionIsCurrent,superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
+import {useEffect,useRef,useState} from "react";
+import {superAdminStudentBulkFailure} from "@/modules/module-access/super-admin-student-bulk-feedback";
 import {useRouter} from "next/navigation";
 type Learner={id:string;name:string};
-export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learner[]}){
+export function SuperAdminStudentBulkAccess({learners,collegeId}:{learners:readonly Learner[];collegeId:string}){
  const router=useRouter(),[selected,setSelected]=useState<string[]>([]);
  const pendingRef=useRef(false);
+ const [hydratedKey,setHydratedKey]=useState<string|null>(null);
+ const storageKey="lms-vnext:student-bulk:"+collegeId;
+ useEffect(()=>{
+  setHydratedKey(null);
+  setSelected([]);
+  try{
+   const raw=window.sessionStorage.getItem(storageKey);
+   const parsed:unknown=raw?JSON.parse(raw):[];
+   const ids=Array.isArray(parsed)?parsed.filter((id):id is string=>
+    typeof id==="string"&&/^[a-f\d]{8}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{4}-[a-f\d]{12}$/i.test(id)):[];
+   setSelected([...new Set(ids)]);
+  }catch{setSelected([]);}
+  setHydratedKey(storageKey);
+ },[storageKey]);
+ useEffect(()=>{
+  if(hydratedKey!==storageKey)return;
+  try{window.sessionStorage.setItem(storageKey,JSON.stringify(selected));}
+  catch{setError("Selection storage is full. Reduce selection before changing pages.");}
+ },[selected,storageKey,hydratedKey]);
  const [module,setModule]=useState<"projects"|"electives">("projects");
  const [action,setAction]=useState<"ENABLE"|"DISABLE"|"INHERIT">("ENABLE");
  const [busy,setBusy]=useState(false),[error,setError]=useState<string|null>(null);
  const [report,setReport]=useState<{requested:number;applied:number;failures:{id:string;error:string}[]}|null>(null);
- const capped=learners.slice(0,100);
+ const capped=learners;
+ const visibleIds=capped.map(row=>row.id);
+ const allVisible=visibleIds.length>0&&visibleIds.every(id=>selected.includes(id));
+ function toggleVisible(checked:boolean){
+  const visible=new Set(visibleIds);
+  setSelected(curr=>checked?[...new Set([...curr,...visibleIds])]:
+    curr.filter(id=>!visible.has(id)));
+ }
  async function submit(){
-  if(pendingRef.current||busy)return;
-  if(!bulkStudentSelectionIsCurrent(selected,capped.map(learner=>learner.id))){
-   setError("The student roster changed. Refresh the page and select students again.");
-   setSelected([]);
+  if(pendingRef.current||busy||selected.length===0)return;
+  if(new Set(selected).size!==selected.length){
+   setError("Duplicate student membership IDs in the selection. Refresh this page and try again.");
    return;
   }
   const membershipIds=[...selected],requestedModule=module,requestedAction=action;
-  if(!confirm(requestedAction+" "+requestedModule+" access for "+membershipIds.length+" student(s) in this college?"))return;
-  // A ref closes the gap before React commits busy=true; the exact confirmed
-  // members/action are immutable during this in-flight request.
-  pendingRef.current=true;
-  setBusy(true);setError(null);setReport(null);
+  if(!confirm(requestedAction+" "+requestedModule+" access for "+membershipIds.length+
+   " selected students in this college? Changes are applied in audited groups of 25."))return;
+  pendingRef.current=true;setBusy(true);setError(null);setReport(null);
+  let applied=0;
+  const failures:{id:string;error:string}[]=[];
   try{
-   const response=await fetch("/api/admin/students/module-access/bulk",{method:"POST",
-    headers:{"content-type":"application/json"},
-    body:JSON.stringify({membershipIds,module:requestedModule,action:requestedAction,confirmed:true}),
-   });
-   if(!response.ok)throw new Error(superAdminStudentBulkFailure(response.status));
-   const data=await response.json() as {requested:number;applied:number;failures:{id:string;error:string}[]};
-   setReport(data);router.refresh();
-  }catch(e){setError(e instanceof Error?e.message:"Update failed. Refresh and retry.");}
-  finally{pendingRef.current=false;setBusy(false);}
+   for(let start=0;start<membershipIds.length;start+=25){
+    const ids=membershipIds.slice(start,start+25);
+    const response=await fetch("/api/admin/students/module-access/bulk",{
+     method:"POST",headers:{"content-type":"application/json"},
+     body:JSON.stringify({membershipIds:ids,module:requestedModule,
+      action:requestedAction,confirmed:true}),
+    });
+    if(!response.ok){
+     const detail=superAdminStudentBulkFailure(response.status);
+     for(const id of ids)failures.push({id,error:detail});
+     for(const id of membershipIds.slice(start+ids.length))
+      failures.push({id,error:"Not processed after the prior group failed."});
+     break;
+    }
+    const data=await response.json() as {
+     requested:number;applied:number;failures:{id:string;error:string}[];
+    };
+    applied+=data.applied;
+    failures.push(...data.failures);
+    if(data.failures.length||data.applied!==ids.length){
+     for(const id of membershipIds.slice(start+ids.length))
+      failures.push({id,error:"Not processed after the prior group failed."});
+     break;
+    }
+   }
+   setReport({requested:membershipIds.length,applied,failures});
+   // Clear only successful members after server acknowledgment; failures
+   // remain selected for safe correction/retry across paginated searches.
+   const failedIds=new Set(failures.map(item=>item.id));
+   setSelected(curr=>curr.filter(id=>failedIds.has(id)&&membershipIds.includes(id)));
+   router.refresh();
+  }catch(e){
+   setReport({requested:membershipIds.length,applied,failures});
+   setError((e instanceof Error?e.message:"Update failed.")+
+    " Completed groups remain saved; review the selection before retrying.");
+  }finally{pendingRef.current=false;setBusy(false);}
  }
  return <section aria-label="Bulk student access" className="min-w-0 space-y-3 pb-4">
   <div className="flex flex-wrap justify-between gap-3"><h2 className="text-lg font-semibold text-[var(--lms-heading)]">Bulk module access</h2>
-   <p role="status" className="text-sm text-muted-foreground leading-[22px]">{selected.length}/25 students selected</p></div>
-  <p className="text-xs text-muted-foreground leading-5">Membership-scoped overrides work for Projects and Electives. Placements is configured at college scope, so it is deliberately not offered here. Locked ancestor policies remain protected.</p>
+   <p role="status" className="text-sm text-muted-foreground leading-[22px]">{selected.length} students selected across pages</p></div>
+  <p className="text-xs text-muted-foreground leading-5">Selection is retained across this college's roster pages and filters for this browser session. Updates are saved in validated batches of 25 with a separate audit event for each group. Placements remains configured at college scope (not per student); Projects and Electives can be overridden here. Locked ancestor policies remain protected.</p>
   <label className="flex min-h-11 items-center gap-2 text-sm text-body print:hidden">
-   <Checkbox checked={capped.length>0&&selected.length===Math.min(capped.length,25)}
-    onChange={e=>setSelected(e.target.checked?capped.slice(0,25).map(x=>x.id):[])} disabled={busy}/>
-   Select first {Math.min(25,capped.length)} students in these search results
+   <Checkbox checked={allVisible}
+    onChange={e=>toggleVisible(e.target.checked)} disabled={busy}/>
+   {allVisible?"Clear":"Select"} all {capped.length} students on this visible page
   </label>
   <div role="region" aria-label="Bulk student selection" tabIndex={0} className="grid max-h-44 gap-2 overflow-y-auto overscroll-contain [mask-image:linear-gradient(to_bottom,black_85%,transparent_100%)] md:grid-cols-2 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] print:hidden">
    {capped.map(learner=><label key={learner.id} className="flex min-h-11 items-center gap-2 text-sm text-body">
-    <Checkbox checked={selected.includes(learner.id)} disabled={busy||(!selected.includes(learner.id)&&selected.length>=25)}
+    <Checkbox checked={selected.includes(learner.id)} disabled={busy}
      onChange={e=>setSelected(curr=>e.target.checked?[...curr,learner.id]:curr.filter(id=>id!==learner.id))}/>
     <span className="min-w-0 break-words">{learner.name}</span>
    </label>)}
@@ -67,7 +119,7 @@ export function SuperAdminStudentBulkAccess({learners}:{learners:readonly Learne
   </div>
   {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
   {report?<div role="status" className="space-y-1 text-sm text-body">
-   <p>{report.applied} of {report.requested} processed · {report.failures.length} failed</p>
+   <p>{report.applied} of {report.requested} updated · {report.failures.length} failed or not processed</p>
    {report.failures.length?<ul className="list-disc pl-5">{report.failures.map(f=><li key={f.id}>{f.id}: {f.error}</li>)}</ul>:null}
   </div>:null}
  </section>;

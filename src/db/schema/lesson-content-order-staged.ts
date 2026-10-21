@@ -1,6 +1,6 @@
 /** W02 DB05 staged only; W01 owns migration registration/index export. */
 import { sql } from "drizzle-orm";
-import { bigint, check, index, integer, pgTable, primaryKey, timestamp, uuid } from "drizzle-orm/pg-core";
+import { bigint, check, foreignKey, index, integer, pgTable, primaryKey, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { courseSectionDeliveries, lessonContents } from "./courses";
 import { users } from "./users";
 
@@ -25,6 +25,13 @@ export const lessonContentDeliverySequences = pgTable(
   },
   (table) => [
     primaryKey({ columns: [table.lessonContentId, table.deliveryId], name: "lesson_content_delivery_sequences_pk" }),
+    foreignKey({
+      name: "lesson_content_delivery_sequences_content_lesson_fk",
+      columns: [table.lessonContentId, table.lessonId],
+      foreignColumns: [lessonContents.id, lessonContents.lessonId],
+    }).onDelete("cascade"),
+    uniqueIndex("lesson_content_delivery_sequences_order_uq")
+      .on(table.deliveryId,table.lessonId,table.sequence),
     index("lesson_content_delivery_sequences_delivery_sequence_idx").on(table.deliveryId, table.sequence),
     check("lesson_content_delivery_sequences_sequence_ck", sql`${table.sequence} >= 0`),
     index("lesson_content_delivery_sequences_source_class_idx")
@@ -33,3 +40,21 @@ export const lessonContentDeliverySequences = pgTable(
       sql`${table.legacySequence} is null or ${table.legacySequence} >= 0`),
   ],
 );
+
+/** Import rows only when both source identifiers belong to the same offering. */
+export type LegacyLessonSequenceSource={
+ classId:bigint;contentId:bigint;sequence:bigint;lessonId:string;
+};
+export function mapLegacyLessonDeliveryOrder(
+ source:LegacyLessonSequenceSource,
+ scopedClassMap:ReadonlyMap<bigint,{deliveryId:string;lessonId:string}>,
+ scopedContentMap:ReadonlyMap<bigint,{lessonContentId:string;lessonId:string}>,
+):{deliveryId:string;lessonContentId:string;lessonId:string;sequence:number}|null {
+ const delivery=scopedClassMap.get(source.classId);
+ const content=scopedContentMap.get(source.contentId);
+ if(!delivery||!content||delivery.lessonId!==source.lessonId||
+    content.lessonId!==source.lessonId)return null;
+ if(source.sequence<0n||source.sequence>2147483647n)return null;
+ return {deliveryId:delivery.deliveryId,lessonContentId:content.lessonContentId,
+    lessonId:source.lessonId,sequence:Number(source.sequence)};
+}

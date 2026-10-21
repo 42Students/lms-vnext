@@ -19,8 +19,10 @@ import { FacultyAssignmentReview } from "./faculty-assignment-review";
 import { FacultyQuizReview } from "./faculty-quiz-review";
 import {FacultyQuizLearnerPreview} from "./faculty-quiz-learner-preview";
 import { FacultyAssessmentEditor } from "./faculty-assessment-editor";
+import {normalizeAssignmentMethods} from "@/modules/courses/assignment-submission-methods";
 import { FacultyQuizQuestionEditor } from "./faculty-quiz-question-editor";
 import { FacultyCourseHomeSignals } from "./faculty-course-home-signals";
+import { FacultyCourseItemViewer } from "./faculty-course-item-viewer";
 import { CourseDisplayReadOnly } from "./course-display-read-only";
 import { FacultyContentOrderEditor } from "./faculty-content-order-editor";
 import { lessonContentOrderRuntimeEnabled } from "@/modules/courses/lesson-content-order-readiness";
@@ -80,10 +82,11 @@ function Metric({
 }
 
 function ContentItem({
-  item,materialsEnabled,
+  item,materialsEnabled,focused=false,
 }: {
   item: Workspace["lessons"][number]["contents"][number];
   materialsEnabled:boolean;
+  focused?:boolean;
 }) {
   const actions = facultyOwnedItemActions({
     deliveryId: item.deliveryId,
@@ -102,7 +105,12 @@ function ContentItem({
   ];
 
   return (
-    <article className="min-w-0 border-b border-border bg-transparent py-4">
+    <article id={"course-item-"+item.id} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+      {focused?<StatusBadge tone="info">Selected content</StatusBadge>:null}
+      <FacultyCourseItemViewer title={item.title} kind={item.contentType}
+        notes={item.notes} externalHref={externalHref} youtubeEmbed={youtubeEmbed}
+        startsAt={item.startsAt?.toISOString()??null}
+        endsAt={item.endsAt?.toISOString()??null}/>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -177,13 +185,18 @@ function ContentItem({
 function AssignmentItem({
   item,
   deliveryId,
+  focused=false,
 }: {
   item: Workspace["lessons"][number]["assignments"][number];
   deliveryId: string;
+  focused?:boolean;
 }) {
 
   return (
-    <article className="min-w-0 border-b border-border bg-transparent py-4">
+    <article id={"course-item-"+item.id} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+      {focused?<StatusBadge tone="info">Selected assignment</StatusBadge>:null}
+      <FacultyCourseItemViewer title={item.title} kind="ASSIGNMENT" notes={item.description}
+        dueAt={item.dueAt?.toISOString()??null}/>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -229,12 +242,14 @@ function AssignmentItem({
             assessment={{
               id: item.id,
               kind: "ASSIGNMENT",
+              deliveryId,
               title: item.title,
               description: item.description,
               dueAt: item.dueAt,
               status: item.status,
               updatedAt: item.updatedAt,
               maxPoints: item.maxPoints,
+              allowedMethods:normalizeAssignmentMethods(item.allowedSubmissionMethods),
             }}
           />
           <FacultyAssessmentLifecycle
@@ -265,13 +280,18 @@ function AssignmentItem({
 function QuizItem({
   item,
   deliveryId,
+  focused=false,
 }: {
   item: Workspace["lessons"][number]["quizzes"][number];
   deliveryId: string;
+  focused?:boolean;
 }) {
 
   return (
-    <article className="min-w-0 border-b border-border bg-transparent py-4">
+    <article id={"course-item-"+item.id} className={"min-w-0 scroll-mt-24 border-b border-border bg-transparent py-4 "+(focused?"rounded-[var(--lms-control-radius)] ring-2 ring-[var(--lms-primary)] ring-offset-2":"")}>
+      {focused?<StatusBadge tone="info">Selected quiz</StatusBadge>:null}
+      <FacultyCourseItemViewer title={item.title} kind="QUIZ" notes={item.description}
+        dueAt={item.dueAt?.toISOString()??null}/>
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex flex-wrap items-center gap-2">
@@ -366,15 +386,17 @@ export function FacultyCourseWorkspace({
   view = "ALL",
   contentFilter="ALL",
   selectedLessonId=null,
+  selectedContentId=null,
 }: {
   workspace: Workspace;
   homeSignals: Awaited<
     ReturnType<typeof getFacultyCourseHomeSignals>
-  >;
+  > | null;
   display: CourseDisplayContentView | null;
   view?: "ALL" | "OVERVIEW" | "BLUEPRINT";
   contentFilter?:"ALL"|"LECTURES"|"RESOURCES"|"ASSESSMENTS"|"LIVE";
   selectedLessonId?:string|null;
+  selectedContentId?:string|null;
 }) {
   const { course, learningPath, summary } =
     workspace;
@@ -406,10 +428,14 @@ export function FacultyCourseWorkspace({
       {view !== "BLUEPRINT" ? (
         <>
 
-      <FacultyCourseHomeSignals
+      {homeSignals?<FacultyCourseHomeSignals
         signals={homeSignals}
         deliveryId={course.deliveryId}
-      />
+      />:<div role="alert" className="border-b border-border pb-4 text-sm text-body">
+        Some course state could not be loaded. The Blueprint is still available.
+        <Link href={facultyCourseTabHref(course.deliveryId,"home")+"?refreshSignals=1"}
+          className="ml-2 inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry signals</Link>
+      </div>}
 
       <section aria-label="In this Course" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
         <Badge tone="neutral">
@@ -532,7 +558,11 @@ export function FacultyCourseWorkspace({
               value,
               label,
               href: facultyCourseTabHref(course.deliveryId,"blueprint")+
-                (value==="ALL"?"":"?filter="+value),
+                "?"+new URLSearchParams({
+                  ...(value==="ALL"?{}:{filter:value==="LIVE"?"live-sessions":value.toLowerCase()}),
+                  ...(selectedLessonId?{lesson:selectedLessonId}:{}),
+                  ...(selectedContentId?{content:selectedContentId}:{}),
+                }).toString(),
             }))}
           />
           {selectedLessonId?<nav aria-label="Lesson navigation" className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
@@ -562,14 +592,14 @@ export function FacultyCourseWorkspace({
                 (lesson) => {
                   const lessonIndex=workspace.lessons.findIndex(row=>row.id===lesson.id);
                   const visibleContents=lesson.contents.filter(item=>
-                    contentFilter==="ALL"||
+                    contentFilter==="ALL"||item.id===selectedContentId||
                     contentFilter==="LECTURES"&&["VIDEO","YOUTUBE"].includes(item.contentType)||
                     contentFilter==="RESOURCES"&&item.contentType==="RESOURCE"||
                     contentFilter==="LIVE"&&item.contentType==="LIVE_CLASS");
                   const visibleAssignments=contentFilter==="ALL"||contentFilter==="ASSESSMENTS"?
-                    lesson.assignments:[];
+                    lesson.assignments:lesson.assignments.filter(item=>item.id===selectedContentId);
                   const visibleQuizzes=contentFilter==="ALL"||contentFilter==="ASSESSMENTS"?
-                    lesson.quizzes:[];
+                    lesson.quizzes:lesson.quizzes.filter(item=>item.id===selectedContentId);
                   const itemCount =
                     visibleContents.length+visibleAssignments.length+visibleQuizzes.length;
                   const nextSequence =
@@ -673,6 +703,7 @@ export function FacultyCourseWorkspace({
                                 key={item.id}
                                 item={item}
                                 materialsEnabled={resourceMaterialsRuntimeEnabled()}
+                                focused={selectedContentId===item.id}
                               />
                             ),
                           )}
@@ -682,6 +713,7 @@ export function FacultyCourseWorkspace({
                                 key={item.id}
                                 item={item}
                                 deliveryId={course.deliveryId}
+                                focused={selectedContentId===item.id}
                               />
                             ),
                           )}
@@ -691,6 +723,7 @@ export function FacultyCourseWorkspace({
                                 key={item.id}
                                 item={item}
                                 deliveryId={course.deliveryId}
+                                focused={selectedContentId===item.id}
                               />
                             ),
                           )}

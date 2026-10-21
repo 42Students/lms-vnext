@@ -31,7 +31,12 @@ export async function POST(
       domainId,
     );
 
-    return NextResponse.json({ domain });
+    return NextResponse.json({
+      ok:domain.isVerified,
+      domain,
+      result:domain.isVerified?"VERIFIED":domain.lastCheckResult??"DNS_LOOKUP_FAILED",
+      message:domain.isVerified?"Domain verified.":"DNS verification has not succeeded. Check the TXT record and retry.",
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

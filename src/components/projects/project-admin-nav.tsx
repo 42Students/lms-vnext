@@ -1,14 +1,8 @@
 import { Tabs } from "@/components/ui/tabs";
 import styles from "./legacy-project-tabs.module.css";
+import { PROJECT_ADMIN_SECTIONS } from "@/modules/projects/project-admin-navigation-model";
 
-const PROJECT_ADMIN_LINKS = [
-  ["", "Workspaces"],
-  ["/at-risk", "At Risk"],
-  ["/readiness", "Readiness"],
-  ["/submissions", "Submissions"],
-  ["/templates", "Templates"],
-  ["/audit", "Audit"],
-] as const;
+
 
 export function ProjectAdminNav({
   basePath,
@@ -33,7 +27,7 @@ export function ProjectAdminNav({
       : "/" + active;
 
   return <Tabs className={styles.legacy} ariaLabel="Projects" renderPanel={false} value={activePath}
-    items={PROJECT_ADMIN_LINKS.map(([suffix,label])=>({
+    items={PROJECT_ADMIN_SECTIONS.map(({suffix,label})=>({
       value:suffix,
       label,
       href:basePath+suffix,

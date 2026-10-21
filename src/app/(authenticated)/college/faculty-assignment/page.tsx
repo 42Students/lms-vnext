@@ -175,6 +175,7 @@ export default async function CollegeFacultyAssignmentPage({
                       role={item.role} oldMembershipId={item.membershipId}
                       expectedUpdatedAt={item.updatedAt.toISOString()}
                       faculty={options.faculty}
+                      deliveryId={item.deliveryId} deliveries={options.deliveries}
                     />
                   </div>
                 ) : <span className="text-xs text-muted-foreground">Historical</span> },

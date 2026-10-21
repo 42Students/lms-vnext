@@ -94,3 +94,32 @@ export const placementTpoAfterCollege = pgTable(
     ),
   ],
 );
+
+/** Old job type settings returned name, builtin, hidden, countsAsPlaced,
+ * and the number of drives using the value. Never return nullable placed
+ * flags to the UI: current persisted rows explicitly choose true or false. */
+export function toLegacyTpoJobType(
+ row:{id:string;label:string;isBuiltin:boolean;active:boolean;countsAsPlaced:boolean},
+ usedCount:number,
+){
+ if(!Number.isSafeInteger(usedCount)||usedCount<0)
+  throw new Error("Invalid job-type usage count");
+ return {id:row.id,name:row.label,builtin:row.isBuiltin,
+  hidden:!row.active,countsAsPlaced:row.countsAsPlaced,
+  drives:usedCount};
+}
+/** Shared with any import/Settings mutation; the caller must additionally
+ * enforce that each college has at least one active job type before commit. */
+export function validatedTpoJobTypeName(name:string):string{
+ const normalized=name.trim();
+ if(normalized.length<2||normalized.length>40||
+  !/^[\p{L}\p{N} +&/().,'-]+$/u.test(normalized))
+  throw new Error("Job type name must be 2–40 letters, numbers or allowed punctuation");
+ return normalized;
+}
+export function assertAtLeastOneActiveTpoJobType(
+ rows:readonly {active:boolean}[],
+){
+ if(!rows.some(row=>row.active))
+  throw new Error("At least one job type must remain active");
+}

@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { z } from "zod";
+import { NeedsDoingChips } from "@/components/ui/needs-doing-chips";
 
 import {
   getCurrentRequestContext,
@@ -51,6 +53,7 @@ type SearchParams = {
   date?: string | string[];
   view?: string | string[];
   category?:string|string[];
+  collegeId?: string | string[];
 };
 
 const VIEWS: readonly PlacementCalendarView[] = [
@@ -87,6 +90,7 @@ function calendarHref(
   date: string,
   view: PlacementCalendarView,
   category:HrCalendarCategory="ALL",
+  collegeId?: string | null,
 ) {
   const params = new URLSearchParams({
     date,
@@ -94,6 +98,7 @@ function calendarHref(
     category,
   });
 
+  if (collegeId) params.set("collegeId", collegeId);
   return `/hr/calendar?${params.toString()}`;
 }
 
@@ -180,6 +185,7 @@ function RecruiterCalendarEventCard({
               {event.jobTitle}
             </p>
           ) : null}
+          {event.note ? <p className="mt-1 text-sm text-body">{event.note}</p> : null}
 
           <p className="mt-2 text-sm text-body">
             <time dateTime={event.startsAt.toISOString()}>
@@ -230,6 +236,34 @@ function RecruiterCalendarEventCard({
   );
 }
 
+/** Match the legacy foldWeek: combine slots only with a round on the same
+ * day, and show orphan interview slots once per round rather than repeating. */
+function foldRecruiterWeekDays(days: ReturnType<typeof combineHrCalendarDays>) {
+  return days.map(day => {
+    const rounds = day.events.filter(event => event.kind !== "INTERVIEW_SLOT");
+    const slotsByRound = new Map<string, PlacementCalendarEvent[]>();
+    for (const slot of day.events.filter(event => event.kind === "INTERVIEW_SLOT")) {
+      const key = slot.jobId + ":" + (slot.roundId ?? slot.id);
+      slotsByRound.set(key, [...(slotsByRound.get(key) ?? []), slot]);
+    }
+    const events: PlacementCalendarEvent[] = [...rounds];
+    for (const slots of slotsByRound.values()) {
+      const firstSlot = slots[0]!;
+      const count = slots.length;
+      const note = count + " interview slot" + (count === 1 ? "" : "s");
+      const ownerIndex = events.findIndex(event => event.kind === "ROUND" &&
+        event.jobId === firstSlot.jobId && event.roundId !== null &&
+        event.roundId === firstSlot.roundId);
+      if (ownerIndex >= 0) {
+        events[ownerIndex] = { ...events[ownerIndex]!, note };
+      } else {
+        events.push({ ...firstSlot, title: "Interview slots", note });
+      }
+    }
+    return { ...day, events: events.sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime()) };
+  }).filter(day => day.events.length > 0 || day.resultsDue.length > 0);
+}
+
 export default async function HrCalendarPage({
   searchParams,
 }: {
@@ -268,19 +302,41 @@ export default async function HrCalendarPage({
       (candidate) => candidate === requestedView,
     ) ?? "week";
 
-  const window = placementCalendarWindow(
-    anchor,
-    view,
-  );
-
-  const calendar =
-    await listRecruiterCalendarEvents(
-      context,
-      {
-        from: window.from,
-        to: window.to,
-      },
-    );
+  const window = placementCalendarWindow(anchor, view);
+  const grants = context.recruiter?.grants ?? [];
+  const requestedCollegeId = first(query.collegeId);
+  if (requestedCollegeId && (!z.string().uuid().safeParse(requestedCollegeId).success ||
+      !grants.some(grant => grant.collegeId === requestedCollegeId))) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Recruiter Calendar"/>
+      <ErrorState title="College calendar unavailable"
+        description="Select a college where your recruiter access is active."
+        retryHref="/hr/calendar" retryLabel="Choose college"/>
+    </div>;
+  }
+  if (grants.length > 1 && !requestedCollegeId) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Recruiter Calendar" description="Choose the college whose drive calendar you want to view."/>
+      <NeedsDoingChips label="Authorized colleges:" items={grants.map(grant => ({
+        key: grant.collegeId, label: grant.collegeName,
+        href: calendarHref(anchor, view, category, grant.collegeId),
+      }))}/>
+    </div>;
+  }
+  const selectedCollegeId = requestedCollegeId ?? (grants.length === 1 ? grants[0]!.collegeId : null);
+  let calendar: Awaited<ReturnType<typeof listRecruiterCalendarEvents>>;
+  try {
+    calendar = await listRecruiterCalendarEvents(context, {
+      from: window.from, to: window.to,
+    }, selectedCollegeId ?? undefined);
+  } catch {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Recruiter Calendar"/>
+      <ErrorState title="Could not load the calendar"
+        description="Your calendar could not be loaded. Your saved rounds and interview dates have not changed."
+        retryHref={calendarHref(anchor, view, category, selectedCollegeId)} retryLabel="Retry calendar"/>
+    </div>;
+  }
 
   const noCollegeAccess =
     (context.recruiter?.grants.length ?? 0) === 0;
@@ -297,11 +353,15 @@ export default async function HrCalendarPage({
     1,
   );
 
-  const allDays = filterHrCalendarDays(combineHrCalendarDays(calendar.days, calendar.resultsDue),category);
+  const combinedDays = combineHrCalendarDays(calendar.days, calendar.resultsDue);
+  const visibleDays = view === "week" && category !== "SLOTS"
+    ? foldRecruiterWeekDays(combinedDays) : combinedDays;
+  const allDays = filterHrCalendarDays(visibleDays,category)
+    .filter(day => day.events.length > 0 || day.resultsDue.length > 0);
   const byDay = new Map(allDays.map((day) => [day.day, day]));
   const mobileDays = selectHrMobileCalendarDays(allDays, window.days);
   const eventCount = allDays.reduce((total,day)=>total+day.events.length+day.resultsDue.length,0);
-  const nextVisible=hrNextCalendarEvent(calendar.events,calendar.resultsDue,category,now);
+  const nextVisible=hrNextCalendarEvent(allDays.flatMap(day=>day.events),calendar.resultsDue,category,now);
 
   const heading =
     view === "week"
@@ -352,27 +412,27 @@ export default async function HrCalendarPage({
               <Tabs renderPanel={false} ariaLabel="Calendar views" value={view}
                 className="w-full min-[768px]:w-auto"
                 items={VIEWS.map(option=>({value:option,label:option.charAt(0).toUpperCase()+option.slice(1),
-                  href:calendarHref(anchor,option,category)}))}/>
+                  href:calendarHref(anchor,option,category,selectedCollegeId)}))}/>
             </div>
 
             <Tabs renderPanel={false} ariaLabel="Calendar event types" value={category}
               items={HR_CALENDAR_CATEGORIES.map(option=>({value:option,
                 label:option==="ALL"?"All":option==="RESULTS_DUE"?"Results due":
                   option==="DEADLINES"?"Deadlines":option==="SLOTS"?"Interview slots":"Rounds",
-                href:calendarHref(anchor,view,option)}))}/>
+                href:calendarHref(anchor,view,option,selectedCollegeId)}))}/>
 
             <div className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-4 min-[1100px]:flex-row min-[1100px]:items-start min-[1100px]:justify-between">
               <nav aria-label="Calendar period navigation" className={styles.nav}>
-                <Link href={calendarHref(previous,view,category)}
+                <Link href={calendarHref(previous,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Previous week":"Previous month"}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                   ← Previous
                 </Link>
-                <Link href={calendarHref(today,view,category)}
+                <Link href={calendarHref(today,view,category,selectedCollegeId)}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                   Today
                 </Link>
-                <Link href={calendarHref(next,view,category)}
+                <Link href={calendarHref(next,view,category,selectedCollegeId)}
                   aria-label={view==="week"?"Next week":"Next month"}
                   className="inline-flex min-h-11 min-w-0 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-body hover:text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9">
                   Next →
@@ -386,6 +446,7 @@ export default async function HrCalendarPage({
                   <form action="/hr/calendar" method="get"
                     className="mt-3 grid min-w-0 gap-[8px] min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-end" aria-label="Filter recruiter calendar">
                     <Input type="hidden" name="view" value={view} />
+                    {selectedCollegeId?<Input type="hidden" name="collegeId" value={selectedCollegeId}/>:null}
                     <Input type="hidden" name="category" value={category} />
                     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                       Jump to date
@@ -396,7 +457,7 @@ export default async function HrCalendarPage({
                     <Button type="submit" className="min-h-11 min-[768px]:min-h-9">Go to date</Button>
                   </form>
                 </details>
-                {!noCollegeAccess ? <Link
+                {!noCollegeAccess && grants.length<=1 ? <Link
                   href={"/api/placements/recruiter/calendar/export?date="+encodeURIComponent(anchor)+"&view="+view+"&category="+category}
                   className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text hover:border-primary focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1a95a1] min-[768px]:min-h-9 min-[768px]:w-auto">
                   Export calendar CSV
@@ -423,11 +484,11 @@ export default async function HrCalendarPage({
           {eventCount === 0 ? (
             <EmptyState title={view==="week"?"Nothing scheduled this week":"Nothing scheduled this period"}
               description="Rounds, slots and deadlines appear here as soon as they are dated."
-              action={<Link href={calendarHref(today,view,category)}
+              action={<Link href={calendarHref(today,view,category,selectedCollegeId)}
                 className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-primary-text min-[768px]:min-h-9">Today</Link>} />
           ) : null}
 
-          {view !== "agenda" && eventCount > 0 ? (
+          {view === "month" && eventCount > 0 ? (
             <section
               aria-label={`${view} recruiter calendar`}
               className={styles.boardFrame}
@@ -559,7 +620,7 @@ export default async function HrCalendarPage({
             </section>
           ) : null}
 
-          {view === "agenda" && eventCount > 0 ? (
+          {view !== "month" && eventCount > 0 ? (
             <section
               aria-label="Recruiter calendar agenda"
               className="space-y-6"
@@ -613,7 +674,7 @@ export default async function HrCalendarPage({
               ))}
             </section>
           ) : null}
-          {view !== "agenda" && (category === "ALL" || category === "RESULTS_DUE") ? (
+          {view === "month" && (category === "ALL" || category === "RESULTS_DUE") ? (
             <section aria-label="Results due in this period"
               className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:pb-6">
               <div>

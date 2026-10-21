@@ -58,6 +58,14 @@ export function MembershipSwitcher({
           method:"POST",headers:{"content-type":"application/json"},
           body:JSON.stringify(choice.role?{membershipId:choice.membershipId,role:choice.role}:{membershipId:choice.membershipId}),
         });
+        // Legacy remembered the selected college on this browser. Keep it a
+        // navigation preference only, after server acceptance; never reuse
+        // localStorage to grant a workspace or infer a role.
+        const selectedCollege=memberships.find(member=>member.id===choice.membershipId)?.collegeId;
+        if(selectedCollege){
+          try{window.localStorage.setItem("lms:last-selected-college",selectedCollege);}
+          catch{/* Storage may be unavailable; server switch already succeeded. */}
+        }
         router.push("/dashboard");
         router.refresh();
       }catch{

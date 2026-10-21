@@ -133,35 +133,19 @@ export function CollegeProjectSummaryEditorFull({
   {open?<div className="mt-4 space-y-4">
    <div className="grid gap-3 md:grid-cols-2">
     {field("Workspace title","title",160)}
+    <p className="col-span-full text-xs text-muted-foreground" aria-live="polite">{form.title.length}/160 characters</p>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style}
-     value={legacyStatus} onChange={event=>{
-       const choice=event.target.value;
-       const nextStatus=choice==="PLANNED"?"PLANNED":choice==="COMPLETED"?"COMPLETED":
-         choice==="BLOCKED"&&form.status!=="ACTIVE"?"PLANNED":"ACTIVE";
-       const nextPhase=choice==="READY"?"Ready":
-         choice==="BLOCKED"?"Blocked":choice==="IN_PROGRESS"?"In progress":
-           choice==="PLANNED"?"Planning":form.phase;
-       setForm(current=>({...current,status:nextStatus,phase:nextPhase}));
-     }}>
-      <option value="PLANNED" disabled={p.status==="ACTIVE"||p.status==="COMPLETED"}>Planning</option>
-      <option value="ACTIVE" disabled={p.status==="COMPLETED"}>Active</option>
-      <option value="IN_PROGRESS" disabled={p.status==="COMPLETED"}>In progress</option>
-      <option value="READY" disabled={p.status==="COMPLETED"}>Ready</option>
-      <option value="BLOCKED" disabled={p.status==="COMPLETED"}>Blocked</option>
-      {p.status==="ACTIVE"||p.status==="COMPLETED"?
-        <option value="COMPLETED">Completed</option>:null}
+     value={form.status} onChange={e=>change("status",e.target.value)}>
+      {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
+       <option key={v} value={v}>{v}</option>)}
       <option value="ARCHIVED" disabled>Archived (use Archive action)</option>
-    </Select>
-      <span className="mt-1 block text-xs font-normal text-body">
-        In progress, Ready and Blocked remain in Phase; execution lifecycle is Planned/Active.
-      </span>
-    </label>
+    </Select></label>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
      disabled={hasTaskData} value={derivedProgress??form.progressPercent}
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
      {hasTaskData?<span className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
     </label>
-    {field("Phase","phase",120)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}
+    {field("Phase","phase",80)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class<Select className={style} value={form.sectionId}
      onChange={e=>change("sectionId",e.target.value)}>
       <option value="">No class</option>
@@ -193,6 +177,8 @@ export function CollegeProjectSummaryEditorFull({
    </label>)}
    <p className="text-xs text-muted-foreground">
      Activating requires a Mentor; completing requires an approved final submission.
+     Historical In progress, Ready and Blocked stages remain in the Phase field
+     while vNext uses the Planned/Active lifecycle.
    </p>
    {!hasMentor&&p.status!=="ACTIVE"&&form.status==="ACTIVE"?
     <Banner tone="warning">Assign a mentor before changing the workspace status to Active.

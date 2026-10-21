@@ -115,6 +115,7 @@ export type RecruiterCalendarQuery = z.input<
 export async function listRecruiterCalendarEvents(
   context: RequestContext,
   rawInput: RecruiterCalendarQuery,
+  collegeId?: string,
 ) {
   const input =
     recruiterCalendarQuerySchema.parse(rawInput);
@@ -136,7 +137,7 @@ export async function listRecruiterCalendarEvents(
   );
 
   const authorizedRows =
-    await listOwnRecruiterPlacementJobs(context);
+    await listOwnRecruiterPlacementJobs(context, collegeId);
 
   const jobs: RecruiterCalendarJob[] =
     authorizedRows.map((row) => ({

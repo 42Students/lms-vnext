@@ -20,9 +20,11 @@ export async function POST(request:Request){
     return NextResponse.json({message:"Choose a valid alert type."},{status:400});
   try{
     const result=await sendManualTelegramAlertForAdmin(context,parsed.data.kind);
+    // Throttle compares accepted provider attempts; a digest already
+    // accepted within ten minutes must not be submitted twice.
     if(result.reason==="RATE_LIMITED")
       return NextResponse.json({message:"A manual alert was sent recently. Try again in 10 minutes."},
-        {status:429,headers:{"Retry-After":"600"}});
+        {status:429,headers:{"Retry-After":"600","Cache-Control":"no-store"}});
     if(result.reason==="UNCONFIGURED")
       return NextResponse.json({
         configured:false,accepted:false,delivered:null,

@@ -41,16 +41,30 @@ export async function POST(
     const context =
       await getCurrentRequestContext();
     const { assignmentId } = await params;
-    const grant =
-      await createAssignmentFileUploadGrant(
-        context,
-        assignmentId,
-        await request.json(),
-      );
-    return NextResponse.json(
-      { grant },
-      { status: 201 },
-    );
+    const body:unknown=await request.json();
+    if(!body||typeof body!=="object"||Array.isArray(body))
+      return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
+    const data=body as Record<string,unknown>;
+    // The old /api/v1/upload/presign accepted arbitrary folder strings.
+    // vNext deliberately accepts only assignment-submission files bound to
+    // this authenticated assignment and delivery; no user-selected R2 key.
+    if(data.folder!==undefined && data.folder!=="assignment-submission")
+      return NextResponse.json({
+        error:"UNSUPPORTED_UPLOAD_FOLDER",
+        message:"This folder requires its own authenticated upload grant.",
+      },{status:400});
+    const grant=await createAssignmentFileUploadGrant(context,assignmentId,{
+      deliveryId:data.deliveryId as string,
+      originalName:(data.originalName??data.fileName) as string,
+      contentType:(data.contentType??data.mimeType) as string,
+      sizeBytes:Number(data.sizeBytes??data.fileSize),
+    });
+    return NextResponse.json({
+      grant,receiptId:grant.receiptId,method:grant.method,
+      uploadUrl:grant.uploadUrl,expiresAt:grant.expiresAt,
+      requiredHeaders:grant.requiredHeaders,
+      message:"Upload permission created. Complete the upload and verification before submitting.",
+    },{status:201,headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

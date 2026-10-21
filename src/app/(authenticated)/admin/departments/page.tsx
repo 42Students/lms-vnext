@@ -3,6 +3,12 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { DepartmentCreateForm } from "@/components/admin/department-create-form";
 import { DepartmentDirectory } from "@/components/admin/department-directory";
 import { EmptyState } from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
+import {RECOVERY_ENTITY_TYPES,isRecoveryEntityType} from "@/modules/admin-ui/recovery-type-registry";
+import {ErrorState} from "@/components/ui/error-state";
+import Link from "next/link";
 import { PageHeader } from "@/components/ui/page-header";
 import {
   listDepartments,
@@ -10,9 +16,41 @@ import {
 } from "@/modules/departments/service";
 import type { DepartmentDirectoryRow } from "@/modules/admin-ui/department-directory";
 
-export default async function SuperAdminDepartmentsPage() {
+export default async function SuperAdminDepartmentsPage({
+  searchParams,
+}: {searchParams:Promise<{type?:string|string[]}>}) {
   const context = await getCurrentRequestContext();
   const collegeId = context.adminScope?.collegeId ?? null;
+  const params=await searchParams;
+  const requestedType=params.type??"department";
+  const validType=isRecoveryEntityType(requestedType);
+  const selectedType=validType?requestedType:"department";
+  const recoveryType=RECOVERY_ENTITY_TYPES.find(item=>item.value===selectedType)!;
+  const recoveryChooser=<section aria-label="Deleted Items" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <h2 className="text-base font-semibold text-[var(--lms-heading)]">Deleted Items</h2>
+    <form method="get" action="/admin/departments" className="flex flex-wrap items-end gap-3">
+      <label className="grid min-w-0 gap-2 text-sm font-semibold text-body">
+        Entity type
+        <Select name="type" defaultValue={selectedType}>
+          {RECOVERY_ENTITY_TYPES.map(item=><option key={item.value} value={item.value}>{item.label}</option>)}
+        </Select>
+      </label>
+      <Button type="submit" variant="secondary">View</Button>
+    </form>
+    {!validType?<Alert tone="warning">Unknown deleted item type. Select a supported entity type.</Alert>:null}
+    <p className="text-xs text-muted-foreground">
+      Recoveries require the selected tenant safety scope. Restoring a parent does not restore its children.
+    </p>
+    {recoveryType.platformLevel?<Link href={"/admin/organizations?type="+selectedType}
+      className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">
+      Open platform Deleted Items
+    </Link>:collegeId?<Alert tone="info">
+      {recoveryType.label} recovery must be performed within this selected college.
+      {recoveryType.implemented?" Use the authorized restore action shown here.":" The restore operation is not yet available; no archived records have been changed."}
+    </Alert>:<Alert tone="warning" title="College scope required">
+      Select a college in the header before searching for archived {recoveryType.label.toLowerCase()} records.
+    </Alert>}
+  </section>;
 
   if (!collegeId) {
     return (
@@ -21,20 +59,38 @@ export default async function SuperAdminDepartmentsPage() {
           title="Departments"
           description="Department administration requires a college safety scope."
         />
-        <EmptyState
-          title="Select a college to continue"
-          description="Choose a college in the header above to see its departments."
-        />
+        <AcademicSetupSteps step={1}/>
+        {recoveryChooser}
+        <div className="rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+          <EmptyState
+            title={recoveryType.platformLevel?"Select a college for department administration":"College scope required"}
+            description={recoveryType.platformLevel?
+              "Platform recovery uses the Deleted Items directory. Select a college to administer its departments.":
+              "Choose a college in the header above to search this type of archived record and manage its departments."}
+          />
+        </div>
       </div>
     );
   }
 
   // listDepartments checks the active tenant scope and department.read.
   // The dependency-count resolver operates only on IDs from that list.
-  const departments = await listDepartments(context, collegeId);
-  const usageResults = await Promise.allSettled(
-    departments.map((department) => resolveDepartmentUsage(department.id)),
-  );
+  const departments = await listDepartments(context,collegeId).catch(()=>null);
+  if(!departments)return <div className="min-w-0 space-y-6">
+    <PageHeader title="Departments"/>
+    <AcademicSetupSteps step={1}/>
+    <ErrorState title="Couldn't refresh departments"
+      description="The selected college's departments could not be loaded. No rows from another college are shown."
+      action={<Link href="/admin/departments" className="font-semibold text-link underline">Retry</Link>}/>
+  </div>;
+  // Keep tenant-scoped count queries bounded: never issue 3N reads in one burst.
+  const usageResults:PromiseSettledResult<Awaited<ReturnType<typeof resolveDepartmentUsage>>>[]=[];
+  for(let offset=0;offset<departments.length;offset+=8){
+    const batch=await Promise.allSettled(
+      departments.slice(offset,offset+8).map(department=>resolveDepartmentUsage(department.id)),
+    );
+    usageResults.push(...batch);
+  }
   const rows: DepartmentDirectoryRow[] = departments.map((department, index) => {
     const usage = usageResults[index];
     return {
@@ -48,13 +104,17 @@ export default async function SuperAdminDepartmentsPage() {
 
   return (
     <div className="min-w-0 space-y-6">
-      <PageHeader
-        title="Departments"
-        description="Search, export and maintain departments inside the selected college safety scope."
-      />
+      <PageHeader title="Departments"/>
       <AcademicSetupSteps step={1} />
-      <DepartmentCreateForm collegeId={collegeId} />
-      <DepartmentDirectory rows={rows} />
+      {recoveryChooser}
+      <div className="grid min-w-0 grid-cols-1 items-start gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+        <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm">
+          <DepartmentCreateForm collegeId={collegeId}/>
+        </div>
+        <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 shadow-sm">
+          <DepartmentDirectory rows={rows}/>
+        </div>
+      </div>
     </div>
   );
 }

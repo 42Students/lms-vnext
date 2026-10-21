@@ -2,6 +2,16 @@ import "server-only";
 import {outboundFetch} from "@/lib/outbound";
 import {appendSmsDeliveryAttempt} from "@/modules/notifications/exotel-sms";
 import {verifiedParentPhoneSchema,type AttendanceParentSmsKind} from "./parent-sms-model";
+/** A transport response only certifies that the provider accepted the API
+ * request; handset delivery needs an independent delivery receipt. */
+export const ATTENDANCE_PARENT_SMS_STATUS_COPY={
+ ACCEPTED:"Provider accepted",
+ REJECTED:"Provider rejected",
+ NOT_CONFIGURED:"SMS service unavailable",
+} as const;
+export const ATTENDANCE_PARENT_SMS_MAX_TEMPLATE_CHARS=1000;
+export const ATTENDANCE_PARENT_SMS_LEGACY_LIMIT_NOTE=
+ "Legacy free-form SMS allowed 2000 characters; approved attendance DLT templates are limited to 1000.";
 /** COL-attendance-R02: separate, registered Indian DLT templates from OTP.
  * A configuration gap MUST never reuse the OTP sender/template or send. */
 export async function sendAttendanceParentSms(input:{
@@ -25,7 +35,7 @@ export async function sendAttendanceParentSms(input:{
   !/^[A-Za-z0-9_-]+$/.test(sid)||
   !/^[A-Za-z0-9]{3,12}$/.test(sender)||
   !verifiedParentPhoneSchema.safeParse(input.phoneE164).success||
-  !input.body||input.body.length>1000){
+  !input.body||input.body.length>ATTENDANCE_PARENT_SMS_MAX_TEMPLATE_CHARS){
   await record("FAILED",null,"ATTENDANCE_NOT_CONFIGURED");
   return "NOT_CONFIGURED";
  }

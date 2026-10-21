@@ -50,6 +50,11 @@ export async function PATCH(
       person,
       membership: person.membership,
       membershipId: person.membership.id,
+      // Legacy userType/userId routes referred to a whole account. This
+      // replacement only mutates the selected college membership; callers
+      // must not interpret SUSPENDED here as a platform-wide user ban.
+      scope: "COLLEGE_MEMBERSHIP",
+      accountStatusUnchanged: true,
       status: person.membership.status,
       suspendedAt: person.membership.suspendedAt,
       suspensionReason: person.membership.suspensionReason,

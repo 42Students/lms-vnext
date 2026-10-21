@@ -18,6 +18,30 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
 }){
  const router=useRouter();
  const [selected,setSelected]=useState<string[]>([]);
+ const [savedSelection,setSavedSelection]=useState<College[]>([]);
+ const [selectionLoaded,setSelectionLoaded]=useState(false);
+ const selectionKey="template-college-selection:"+templateId;
+ useEffect(()=>{
+  try{
+   const raw=sessionStorage.getItem(selectionKey);
+   const stored=raw?JSON.parse(raw) as unknown:null;
+   if(Array.isArray(stored)){
+    const valid=stored.filter((row):row is College=>
+     row!==null&&typeof row==="object"&&typeof row.id==="string"&&
+     typeof row.name==="string"&&typeof row.assigned==="boolean"&&
+     row.canAssign===true&&/^[0-9a-f-]{36}$/i.test(row.id)).slice(0,500);
+    setSavedSelection(valid);
+    setSelected(valid.map(row=>row.id));
+   }
+  }catch{/* Corrupt selection must not override server authorization. */}
+  setSelectionLoaded(true);
+ },[selectionKey]);
+ useEffect(()=>{
+  if(!selectionLoaded)return;
+  try{sessionStorage.setItem(selectionKey,JSON.stringify(
+   savedSelection.filter(row=>selected.includes(row.id))
+  ));}catch{/* optional */}
+ },[selectionKey,selectionLoaded,selected,savedSelection]);
  const [operation,setOperation]=useState<BulkOperation|null>(null);
  const [pending,setPending]=useState(false);
  const [progress,setProgress]=useState<{done:number;total:number}|null>(null);
@@ -126,7 +150,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        <Button type="button" variant="ghost" size="sm"
         className="min-h-11 w-full sm:w-auto md:min-h-9"
         disabled={pending||!selected.length}
-        onClick={()=>setSelected([])}>
+        onClick={()=>{setSelected([]);setSavedSelection([]);}}>
         Clear selection
        </Button>
       </div>
@@ -139,9 +163,14 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
           checked={selected.includes(college.id)}
           disabled={pending||!college.canAssign}
           className="mt-0.5"
-          onChange={event=>setSelected(current=>
-           event.target.checked?(current.includes(college.id)?current:[...current,college.id]):current.filter(id=>id!==college.id)
-          )}
+          onChange={event=>{
+           setSelected(current=>event.target.checked?
+            (current.includes(college.id)?current:[...current,college.id]):
+            current.filter(id=>id!==college.id));
+           setSavedSelection(current=>event.target.checked?
+            [...current.filter(row=>row.id!==college.id),college]:
+            current.filter(row=>row.id!==college.id));
+          }}
          />
          <span className="flex min-w-0 flex-1 flex-col gap-1 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
           <span className="min-w-0 flex-1 break-words [overflow-wrap:anywhere]">

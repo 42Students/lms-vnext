@@ -184,6 +184,18 @@ export const drizzleLoginRepository: LoginRepository = {
       ) {
         return false;
       }
+      // A newly started challenge supersedes earlier unused codes for the
+      // same verified user/contact. This prevents old SMS and email codes
+      // from surviving a restart in another tab or device.
+      await tx.execute(sql`
+        UPDATE identity_auth_attempts
+        SET used_at = now(), sms_code_mac = NULL,
+            sms_code_expires_at = NULL, email_code_mac = NULL,
+            email_code_expires_at = NULL, version = version + 1
+        WHERE user_id = ${input.userId}
+          AND contact_fingerprint = ${input.contactFingerprint}
+          AND used_at IS NULL AND expires_at > now()
+      `);
       await tx.execute(sql`
       INSERT INTO identity_auth_attempts (
         id, user_id, college_id, target_role, contact_fingerprint, ip_tag,
@@ -216,6 +228,8 @@ export const drizzleLoginRepository: LoginRepository = {
         smsCodeExpiresAt: identityAuthAttempts.smsCodeExpiresAt,
         emailCodeMac: identityAuthAttempts.emailCodeMac,
         emailCodeExpiresAt: identityAuthAttempts.emailCodeExpiresAt,
+        emailCodeSentAt: identityAuthAttempts.emailCodeSentAt,
+        resendAttempts: identityAuthAttempts.resendAttempts,
         verificationAttempts:
           identityAuthAttempts.verificationAttempts,
         expiresAt: identityAuthAttempts.expiresAt,
@@ -246,6 +260,30 @@ export const drizzleLoginRepository: LoginRepository = {
       RETURNING id
     `);
     return rowsOf(result).length === 1;
+  },
+
+  async invalidateUndeliveredAttempt(id) {
+    // Preserve the row for abuse budgets, but remove all still-usable MACs.
+    await getDb().execute(sql`
+      UPDATE identity_auth_attempts
+      SET used_at=now(), sms_code_mac=NULL, sms_code_expires_at=NULL,
+          email_code_mac=NULL, email_code_expires_at=NULL,
+          version=version+1
+      WHERE id=${id} AND used_at IS NULL AND expires_at>now()
+    `);
+  },
+
+  async releaseUndeliveredEmailCode(id, mac) {
+    await getDb().execute(sql`
+      UPDATE identity_auth_attempts
+      SET email_code_mac = NULL,
+          email_code_expires_at = NULL,
+          email_code_sent_at = NULL,
+          resend_attempts = greatest(0,resend_attempts-1),
+          version = version + 1
+      WHERE id = ${id} AND email_code_mac = ${mac}
+        AND used_at IS NULL AND expires_at > now()
+    `);
   },
 
   async reserveVerification(id) {

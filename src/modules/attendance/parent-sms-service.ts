@@ -182,6 +182,39 @@ export async function retryQueuedAttendanceParentSmsForCollege(ctx:RequestContex
  return {ready:true,accepted,skipped,unavailable};
 }
 
+/** College-scoped attendance SMS support history. Historical provider outcomes
+ * for other SMS purposes are consulted through the shared delivery ledger,
+ * not inferred from guardian consent or a learner's unverified mobile.
+ * This view never returns a guardian number, SMS body, credentials or refs.
+ */
+export async function getAttendanceParentSmsSupportHistory(
+ context:RequestContext, raw:unknown,
+) {
+ const input=z.strictObject({collegeId:z.string().uuid(),
+  membershipId:z.string().uuid()}).parse(raw);
+ const college=await requireAttendanceCollege(context,input.collegeId);
+ if(!(await getDb().transaction(async tx=>parentTablesReady(tx))))
+  return {ready:false,reason:"PARENT_SMS_SCHEMA_NOT_REGISTERED",attempts:[]};
+ const [learner]=await getDb().select({id:collegeMemberships.id})
+  .from(collegeMemberships).innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"LEARNER")))
+  .where(and(eq(collegeMemberships.id,input.membershipId),
+   eq(collegeMemberships.collegeId,college.id))).limit(1);
+ if(!learner)return {ready:true,reason:"LEARNER_NOT_FOUND",attempts:[]};
+ const attempts=await getDb().select({
+  kind:attendanceParentSmsOutbox.kind,
+  status:attendanceParentSmsOutbox.status,
+  createdAt:attendanceParentSmsOutbox.createdAt,
+  attemptedAt:attendanceParentSmsOutbox.attemptedAt,
+  acceptedAt:attendanceParentSmsOutbox.acceptedAt,
+ }).from(attendanceParentSmsOutbox).where(and(
+  eq(attendanceParentSmsOutbox.collegeId,college.id),
+  eq(attendanceParentSmsOutbox.membershipId,input.membershipId)))
+  .orderBy(sql`${attendanceParentSmsOutbox.createdAt} desc`).limit(25);
+ return {ready:true,reason:null,attempts};
+}
+
 /** Privacy-safe migration gate from legacy learner-mobile absence SMS.
  * Never reuse an unverified learner number as a guardian opt-in.
  */

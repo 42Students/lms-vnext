@@ -1,5 +1,4 @@
 import { MetricBar } from "@/components/ui/metric-bar";
-import styles from "@/components/placements/super-admin-hiring-funnel.module.css";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -12,10 +11,11 @@ import {DateInput} from "@/components/ui/date-input";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {EmptyState} from "@/components/ui/empty-state";
+import {Alert} from "@/components/ui/alert";
 import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {DataTable,type DataTableColumn} from "@/components/ui/data-table";
-import {hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
+import {historicalHiringTotals,hiringFunnel, hiringMetricLabel} from "@/modules/admin-ui/super-admin-hiring-funnel-model";
 import {SuperAdminHiringAcademicFilters} from "@/components/admin/super-admin-hiring-academic-filters";
 import {Pagination} from "@/components/ui/pagination";
 export default async function SuperAdminPlacementAnalytics({searchParams}:{
@@ -43,7 +43,7 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."/>
-  <EmptyState title="Select a college to continue" description="Choose a college in the Super Admin scope selector before reviewing placement analytics."/>
+  <Alert tone="warning" title="Select a college to continue">Hiring metrics are college-scoped. Pick an Organization + College in the header above.</Alert>
  </div>;
  requireSuperAdminSelectedCollege(context,"placements.read");
  const [reportResult,filterResult]=await Promise.allSettled([
@@ -81,12 +81,25 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   offered:out.offered+row.offered,hired:out.hired+row.hired,rejected:out.rejected+row.rejected,
   withdrawn:out.withdrawn+row.withdrawn,waitlisted:out.waitlisted+row.waitlisted,
  }),{totalApplications:0,applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0,rejected:0,withdrawn:0,waitlisted:0});
- const funnel=hiringFunnel(totals);
+ const funnelTotals=data.funnelRows.reduce((out,row)=>({
+  applied:out.applied+row.applied,shortlisted:out.shortlisted+row.shortlisted,
+  assessment:out.assessment+row.assessment,interview:out.interview+row.interview,
+  offered:out.offered+row.offered,hired:out.hired+row.hired,
+ }),{applied:0,shortlisted:0,assessment:0,interview:0,offered:0,hired:0});
+ const funnel=hiringFunnel(funnelTotals);
+ const observedShortlistHours=data.funnelRows
+  .map(row=>row.averageHoursToFirstShortlist)
+  .filter((hours):hours is number=>typeof hours==="number"&&Number.isFinite(hours)&&hours>=0);
+ const meanShortlistHours=observedShortlistHours.length
+  ?Math.round(observedShortlistHours.reduce((sum,hours)=>sum+hours,0)/observedShortlistHours.length):null;
  const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
+ const visibleRows=[...reportRows,...groups.map(group=>({
+  ...group,companyId:"",jobId:"total:"+group.companyName,jobTitle:"Company total",
+ }))];
  type Row=(typeof data.rows)[number];
  const columns:DataTableColumn<Row>[]=[
-  {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.companyName},
-  {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Drive",mobilePriority:"secondary",cell:row=>
+  {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.jobId.startsWith("total:")?<strong>{row.companyName} total</strong>:row.companyName},
+  {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Job",mobilePriority:"secondary",cell:row=>row.jobId.startsWith("total:")?<strong>Company total</strong>:
    <Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
     className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
      {row.jobTitle}</Link>},
@@ -95,92 +108,114 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     cell:(row:Row)=><span className="tabular-nums">{row[key]}</span>,
   })),
  ];
- const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string}[])=>(
+ const select=(key:"jobId"|"departmentId"|"programId"|"cohortId",label:string,values:readonly {id:string;name:string;companyName?:string|null}[])=>(
   <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}<Select name={key} defaultValue={q[key]??""}
    className="min-w-0">
-   <option value="">All {label.toLowerCase()}</option>{q[key]&&!values.some(item=>item.id===q[key])?<option value={q[key]}>Current selected {label.toLowerCase()}</option>:null}{values.map(item=><option key={item.id} value={item.id}>{item.name}</option>)}</Select></label>
+   <option value="">{label==="Job"?"All jobs":"All"}</option>{q[key]&&!values.some(item=>item.id===q[key])?<option value={q[key]}>Current selected {label.toLowerCase()}</option>:null}{values.map(item=><option key={item.id} value={item.id}>{label==="Job"?item.name.slice(0,30)+(item.name.length>30?"…":"")+(item.companyName?" - "+item.companyName:""):item.name}</option>)}</Select></label>
  );
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
-   actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-    Export report</a>}/>
+   actions={<span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Placements</span>}/>
   {filters===null?<Banner tone="warning" action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
    Jobs, departments, programs and batches could not be loaded for filtering. The verified hiring results remain visible.
   </Banner>:filters.filtersError?<Banner tone="warning" role="status"
     action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
     {filters.filtersError}
   </Banner>:null}
-  <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive or company
-     <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="min-w-0 w-full"/></label>
-    {select("jobId","Job",filters?.jobs??[])}
-    <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Refresh</Button>
-   </div>
-   <details className="min-w-0" open={Boolean(q.departmentId||q.programId||q.cohortId||q.appliedFrom||q.appliedTo)}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
-    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
-     <SuperAdminHiringAcademicFilters
-      key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
+  <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 print:hidden">
+   <fieldset className="min-w-0">
+    <legend className="sr-only">Hiring report date range and filters</legend>
+    <div className="flex min-w-0 flex-wrap items-end gap-3">
+     <div className="grid w-full min-w-0 gap-2 sm:w-auto sm:grid-cols-2" role="group" aria-label="Filter by date range">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Applied from
+       <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-w-0" /></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Applied to
+       <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0" /></label>
+     </div>
+     <div className="w-full min-w-0 sm:w-[205px]">{select("jobId","Job",filters?.jobs??[])}</div>
+     <div className="w-full min-w-0 sm:w-[180px]">
+      <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Drive or company
+       <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="w-full" placeholder="Search jobs or companies" /></label>
+     </div>
+     <Button type="submit" variant="secondary" className="min-h-11 w-full gap-2 md:min-h-9 sm:w-auto">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6"/></svg>Refresh
+     </Button>
+     <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
+      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>Export report
+     </a>
+    </div>
+    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Academic hiring filters">
+     <SuperAdminHiringAcademicFilters key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
       departments={filters?.departments??[]} programs={filters?.programs??[]}
       batches={filters?.batches??[]}
       selected={{departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId}}/>
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
-      <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="w-full"/></label>
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied through
-      <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="w-full"/></label>
     </div>
-   </details>
-   <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear all</Link>
+   </fieldset>
   </form>
-  {params.size?<p role="status" className="max-w-full break-words text-xs text-muted-foreground">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
+  {params.size?<div role="status" className="flex min-w-0 flex-wrap items-center gap-2 text-xs print:hidden" aria-label="Active hiring filters">
+   {[...params.entries()].map(([key,value])=>{
+    const next=new URLSearchParams(params);
+    next.delete(key);
+    return <Link key={key} href={"/admin/placements/analytics"+(next.size?"?"+next.toString():"")}
+     className="inline-flex min-h-8 items-center gap-2 rounded border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-2 font-medium text-primary-text hover:underline"
+     aria-label={"Remove "+key+" filter"}>{key==="appliedFrom"?"Applied from":key==="appliedTo"?"Applied to":key==="jobId"?"Job":key==="cohortId"?"Batch":key==="departmentId"?"Department":key==="programId"?"Program":"Search"}: {value}<span aria-hidden="true">×</span></Link>;
+   })}
+   <Link href="/admin/placements/analytics" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Clear all</Link>
+  </div>:null}
   <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
   {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </Banner>:null}
-  <dl className="grid min-w-0 grid-cols-2 gap-0 border-y border-border sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
-   <div key={key} className="min-w-0 border-b border-r border-border px-[var(--lms-space-3)] py-[var(--lms-space-3)]"><dt className="text-[13px] font-semibold leading-4 capitalize text-[var(--lms-neutral-400)]">{hiringMetricLabel(key)}</dt>
-    <dd className="mt-2 text-[16px] font-semibold leading-6 tabular-nums text-[var(--lms-heading)]">{totals[key]}</dd></div>)}</dl>
-  <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Hiring Funnel">
-   <div className="flex flex-wrap items-start justify-between gap-3">
-    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Hiring Funnel</h2>
-    <p className="text-sm text-muted-foreground">Current persisted stages · the percentage is relative to the previous stage.</p>
-   </div>
-   <ol className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">{funnel.map(step=>
-    <li key={step.key} className={styles.step}>
-     <span className={styles.label}>{step.label}</span>
-     <strong className={styles.count}>{step.count.toLocaleString("en-IN")}</strong>
-     <p className={styles.percent}>{step.percentPrevious===null?"No preceding stage":step.percentPrevious+"% of previous"}</p>
-     <MetricBar className={styles.track+" mt-2"} role="img"
-      label={step.label+": "+step.count+" applications"}
-      value={step.widthPercent} maximum={100} unit="percent" />
-    </li>)}</ol>
+  <section aria-label="Hiring metrics" className="min-w-0">
+   <h2 className="sr-only">Hiring metrics</h2>
+   <dl className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+    {metricKeys.map((key,index)=><div key={key} className={"min-w-0 rounded-[8px] border border-border bg-surface px-3 py-4 "+(index===0?"col-span-2 sm:col-span-2":"")}>
+     <dt className="text-[13px] font-medium text-muted-foreground">{hiringMetricLabel(key)}</dt>
+     <dd className="mt-2 text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{totals[key].toLocaleString("en-IN")}</dd>
+    </div>)}
+   </dl>
   </section>
-  <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
-  <section aria-label="Company hiring results" className="min-w-0 space-y-4">
-   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company hiring results</h2>
-   <DataTable columns={columns} rows={reportRows} getRowKey={row=>row.jobId}
-     caption="Company hiring report" empty={<EmptyState title="No hiring results" description="No hiring results match these filters."/>}/>
+  <section className="min-w-0 rounded-[8px] border border-border bg-surface p-4" aria-label="Hiring Funnel">
+   <h2 className="mb-4 text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Hiring Funnel</h2>
+   {funnelTotals.applied===0?
+    <p role="status" className="text-sm text-muted-foreground">No funnel data</p>:
+    <ol className="max-w-[500px] space-y-3">{funnel.map((step,index)=>
+     <li key={step.key} className="min-w-0">
+      <div className="mb-1 flex min-w-0 flex-wrap items-center justify-between gap-2 text-sm">
+       <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <strong>{step.label}</strong>
+        {step.percentPrevious!==null?<span className="rounded-full border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-2 py-0.5 text-xs text-primary-text">
+         {step.percentPrevious}% of {funnel[index-1]?.label??"previous stage"}
+        </span>:null}
+       </div>
+       <span className="font-semibold tabular-nums">{step.count.toLocaleString("en-IN")}</span>
+      </div>
+      <MetricBar className="h-6 overflow-hidden rounded bg-muted" role="img"
+       label={step.label+": "+step.count+" applications"}
+       value={step.widthPercent} maximum={100} unit="percent"/>
+     </li>)}</ol>}
+  </section>
+  {meanShortlistHours!==null?<div className="w-full rounded-[8px] border border-border bg-surface p-3 sm:max-w-[280px]">
+   <p className="text-sm text-muted-foreground">Avg. time to shortlist</p>
+   <p className="mt-2 text-2xl font-semibold tabular-nums">{meanShortlistHours.toLocaleString("en-IN")} <span className="text-sm font-normal">hrs</span></p>
+   <p className="mt-1 text-xs text-muted-foreground">Mean of drives with recorded first-shortlist transitions.</p>
+  </div>:<p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. A first-shortlist transition is required before this metric can be calculated.</p>}
+  <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 rounded-[8px] border border-border bg-surface p-4">
+   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</h2>
+   <DataTable columns={columns} rows={visibleRows} getRowKey={row=>row.jobId}
+    caption="Company-wise Hiring Report" mobileMode="scroll"
+    className="min-w-0 [&_table]:min-w-[950px]"
+    empty={<EmptyState title={params.size?"No companies match these filters — try widening the date range or clearing filters":"No hiring data yet"}
+     description={params.size?"Widen the selected date range or clear filters to review available hiring data.":"No hiring activity has been recorded for the selected college."}
+     action={params.size?<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>}/>
+   {groups.length?<p className="text-xs text-muted-foreground">Company total rows summarize all matching drives across report pages, not just the currently visible page.</p>:null}
    {data.rows.length>10?<div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">
     <span>Showing {(reportPage-1)*10+1}–{Math.min(reportPage*10,data.rows.length)} of {data.rows.length} drives</span>
     <Pagination page={reportPage} pageCount={reportPages} label="Company hiring results pagination" hrefForPage={reportPageHref}/>
    </div>:null}
   </section>
-  {groups.length?<section aria-label="Company totals" className="space-y-3">
-   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company totals</h2>
-   <div className="grid min-w-0 gap-[var(--lms-space-3)] lg:grid-cols-2">{groups.map(group=>
-     <article key={group.companyName} className="min-w-0 border-b border-border py-[var(--lms-space-4)]">
-      <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{group.companyName}</h3>
-      <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
-       {metricKeys.map(key=><div key={key} className="min-w-0">
-        <dt className="break-words text-body">{hiringMetricLabel(key)}</dt>
-        <dd className="tabular-nums font-semibold text-foreground">{group[key]}</dd>
-       </div>)}
-      </dl>
-     </article>)}</div>
-  </section>:null}
-  <p className="text-xs text-muted-foreground">Stage counts are current persisted application stages, not historical transitions. Hired stage is not a substitute for confirmed joining. This report does not infer match scores or private candidate contacts.</p>
+  <p className="text-xs text-muted-foreground">Headline counts are current persisted application stages; the funnel uses ever-reached stage history. Hired requires a confirmed accepted offer and joining outcome. This report does not infer match scores or private candidate contacts.</p>
  </div>;
 }

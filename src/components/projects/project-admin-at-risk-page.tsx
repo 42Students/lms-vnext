@@ -14,15 +14,15 @@ import { ErrorState } from "@/components/ui/error-state";
 import { EmptyState } from "@/components/ui/empty-state";
 import { parseProjectAdminRiskQuery } from "@/modules/projects/admin-risk-query-model";
 import { StatusBadge } from "@/components/ui/status-badge";
-import { FilterChipLink } from "@/components/ui/filter-chip";
 import {
   listProjectAdminRiskQueue,
 } from "@/modules/projects/admin-insights-service";
 import {ProjectAtRiskPageExport} from "./project-at-risk-page-export";
+import {AuthorizationError} from "@/modules/permissions/policy";
+import {ProjectsServiceError} from "@/modules/projects/errors";
 import {formatProjectAdminActivityDateIst as formatDate,safeProjectAdminUtcIso} from "@/modules/projects/project-admin-date-model";
 import {FilterBar} from "@/components/ui/filter-bar";
 import {DataTable} from "@/components/ui/data-table";
-import {ProjectsServiceError} from "@/modules/projects/errors";
 function riskHref(basePath:string,query:ProjectAdminCollectionQuery,bucket:string|null){
  const params=new URLSearchParams();
  if(query.q)params.set("q",query.q);
@@ -69,6 +69,8 @@ export async function ProjectAdminAtRiskPage({
     .then(value => ({ ok: true as const, value }))
     .catch(error => ({ ok: false as const, error }));
   if (!riskResult.ok) {
+    const denied=riskResult.error instanceof AuthorizationError ||
+      (riskResult.error instanceof ProjectsServiceError && riskResult.error.code==="PROJECT_ACCESS_DENIED");
     return <div className="min-w-0 space-y-4">
       <PageHeader title="At-risk projects"
         description="Workspaces with no recent activity, an active blocker, or a pending review."
@@ -84,13 +86,16 @@ export async function ProjectAdminAtRiskPage({
     </div>;
   }
   const result = riskResult.value;
+  const dynamicDescription=result.total>0
+    ? result.total+" "+(result.total===1?"workspace needs":"workspaces need")+" attention."
+    : "No at-risk projects detected for this college.";
 
   return (
     <div className="min-w-0 space-y-4">
       <div className="min-w-0">
         <PageBackLink href={basePath} label="Project workspaces" />
         <PageHeader title="At-risk projects"
-          description="Workspaces with no recent activity, an active blocker, or a pending review." />
+          description={dynamicDescription} />
       </div>
       <ProjectAdminNav basePath={basePath} active="at-risk" />
       {!result.blockerSignalSupported ? (
@@ -98,7 +103,7 @@ export async function ProjectAdminAtRiskPage({
           Workspace blocker data is unavailable. Task blockers are still counted.
         </Banner>
       ) : null}
-      <nav aria-label="At-risk quick filters" className="flex min-w-0 flex-wrap gap-2">
+      <nav aria-label="At-risk quick filters" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
         {([
           ["Stalled", result.buckets.stalled, "STALLED"],
           ["Active blocker", result.buckets.blocker, "BLOCKER"],

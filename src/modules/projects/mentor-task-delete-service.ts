@@ -61,6 +61,6 @@ export async function deleteMentorProjectTask(context:RequestContext,projectIdRa
      eq(projectTasks.projectId,scope.project.id),isNull(projectTasks.deletedAt)))
    .returning({id:projectTasks.id});
   if(!deleted)throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-  return {deleted:true,commentCount:comments.length};
+  return {deleted:true,tombstoned:true,deletedByWorkspace:true,templateKey:task.templateKey,commentCount:comments.length};
  });
 }

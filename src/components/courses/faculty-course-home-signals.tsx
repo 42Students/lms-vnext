@@ -31,6 +31,11 @@ export function FacultyCourseHomeSignals({
   const reviewHref = firstPending
     ? `/teacher/report/assignment/${firstPending.assignmentId}?deliveryId=${encodeURIComponent(deliveryId)}`
     : `/teacher/courses/${deliveryId}/blueprint#learning-path`;
+  const blueprintFocusHref = firstPending
+    ? facultyCourseTabHref(deliveryId,"blueprint")+"?"+
+      new URLSearchParams({lesson:firstPending.lessonId,content:firstPending.assignmentId}).toString()+
+      "#course-item-"+encodeURIComponent(firstPending.assignmentId)
+    : null;
 
   return (
     <div className="min-w-0 space-y-6">
@@ -89,6 +94,10 @@ export function FacultyCourseHomeSignals({
         </div>
       </section>
 
+      {blueprintFocusHref?<Link href={blueprintFocusHref}
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline">
+        View pending assignment in Blueprint
+      </Link>:null}
       <section aria-label="Pending work">
         <div className="mb-3">
           <h2 className="m-0 text-base font-semibold text-[var(--lms-heading)]">

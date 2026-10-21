@@ -49,3 +49,34 @@ export function effectiveCourseContentVisibleToStudents(input:{
   input.lessonStatus==="ACTIVE"&&input.learningPathStatus==="PUBLISHED"&&
   input.offeringStatus==="ACTIVE"&&input.courseStatus==="ACTIVE";
 }
+
+/** Deep-link adapter for the prior unified content workspace.
+ * Legacy filtering remains URL-based; no cross-college fallback is inferred.
+ */
+export function legacySuperAdminLessonContentHref(raw:Record<string,string|string[]|undefined>):string {
+ const rawType=typeof raw.type==="string"?raw.type.toLowerCase():"video";
+ const kind:AdminContentKind=rawType==="resources"||rawType==="resource"?"RESOURCES":
+  rawType==="live-classes"||rawType==="live-class"?"LIVE_CLASSES":"VIDEOS";
+ const valid=adminContentQuerySchema.safeParse({
+  q:typeof raw.q==="string"?raw.q:undefined,
+  status:typeof raw.status==="string"?raw.status:undefined,
+  page:typeof raw.page==="string"?raw.page:undefined,
+  offeringId:typeof raw.offeringId==="string"?raw.offeringId:undefined,
+  lessonId:typeof raw.lessonId==="string"?raw.lessonId:undefined,
+  deliveryId:typeof raw.deliveryId==="string"?raw.deliveryId:undefined,
+  scope:typeof raw.scope==="string"?raw.scope:undefined,
+ });
+ return adminContentHref(kind,valid.success?valid.data:{});
+}
+/** Legacy badge exposed only the item's flag; actual student access must
+ * additionally require published parents. Preserve both meanings separately.
+ */
+export function legacyContentVisibilityBadge(row:{
+ visibleToStudents:boolean;status:string;lessonStatus:string;
+ learningPathStatus:string;offeringStatus:string;courseStatus:string;
+}) {
+ const configured=row.visibleToStudents;
+ const effective=effectiveCourseContentVisibleToStudents(row);
+ return {configured,effective,
+  label:!configured?"Hidden":effective?"Visible":"Visible flag on · waiting for publication"};
+}

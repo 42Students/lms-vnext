@@ -1,4 +1,8 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
+import Link from "next/link";
+import {redirect} from "next/navigation";
+import {learnerLegacyRouteQuery,resolveLearnerLegacyCourseDelivery} from "@/modules/courses/learner-course-legacy-route-model";
+import {Alert} from "@/components/ui/alert";
 import {
   LearnerCourseList,
   type LearnerCourseListRow,
@@ -16,12 +20,45 @@ import {
   listLearnerCourseInstructors,
 } from "@/modules/courses/learner-course-service";
 
-export default async function LearnerCoursesPage() {
+export default async function LearnerCoursesPage({
+ searchParams,
+}:{searchParams:Promise<Record<string,string|string[]|undefined>>}) {
   const context = await getCurrentRequestContext();
-  const courses = await listLearnerCourseDeliveries(
-    context,
-    { includeHistorical: true },
-  );
+  const params=await searchParams;
+  const legacyRequested=Object.keys(params).some(key=>
+   ["legacyCourseId","legacyClassId","legacySemesterCourseId"].includes(key));
+  const rawAlias=legacyRequested?learnerLegacyRouteQuery.safeParse(params):null;
+  let directoryError:string|null=null;
+  const courses=await listLearnerCourseDeliveries(context,{includeHistorical:true})
+   .catch(error=>{
+    directoryError=error instanceof Error&&/ACCESS_DENIED|PERMISSION|AUTH|403/i.test(error.message)
+     ?"You do not have permission to view these courses."
+     :"Failed to load courses. Please try again.";
+    return [];
+   });
+
+  if(legacyRequested){
+    if(!rawAlias?.success||directoryError){
+      return <section className="min-w-0 space-y-4">
+        <PageHeader title="Courses"/>
+        <Alert tone="error" title="Cannot open the old course link">
+          {directoryError??"The old course link needs a valid numeric course ID and optional class/semester-course IDs."}
+          <Link href="/learn/courses" className="ml-2 inline-flex min-h-9 font-semibold text-link underline">View my courses</Link>
+        </Alert>
+      </section>;
+    }
+    const resolved=resolveLearnerLegacyCourseDelivery(courses,rawAlias.data);
+    if(resolved.kind==="RESOLVED")redirect("/learn/courses/"+encodeURIComponent(resolved.deliveryId));
+    return <section className="min-w-0 space-y-4">
+      <PageHeader title="Courses"/>
+      <Alert tone="warning" title="Old course link needs review">
+        {resolved.kind==="AMBIGUOUS"
+         ?"This course appears in more than one enrolled class or semester. Choose the class from the current Courses page."
+         :"No course in your selected college enrollment matches this old link."}
+        <Link href="/learn/courses" className="ml-2 inline-flex min-h-9 font-semibold text-link underline">Choose a course</Link>
+      </Alert>
+    </section>;
+  }
 
   let displays=new Map<string,{thumbnailUrl:string|null}>();
   try{
@@ -34,16 +71,21 @@ export default async function LearnerCoursesPage() {
   // Each delivery fails independently; one corrupt or temporarily unavailable
   // course must never hide the learner's remaining course cards.
   const seenDeliveries = new Set<string>();
+  const seenMappings = new Set<string>();
   const rows: LearnerCourseListRow[] = await mapLearnerCourseCardsLimited(
     courses, async (course, index) => {
-      const duplicate = seenDeliveries.has(course.deliveryId);
-      seenDeliveries.add(course.deliveryId);
+      const mappingKey=[course.courseId,course.academicPeriodId,course.sectionCode].join(":");
+      const duplicate=seenDeliveries.has(course.deliveryId)||seenMappings.has(mappingKey);
+      seenDeliveries.add(course.deliveryId);seenMappings.add(mappingKey);
       const baseCourse = {
         deliveryId: duplicate || !course.deliveryId ? "unavailable-" + index : course.deliveryId,
         courseId: course.courseId,
         courseName: course.courseName || "Course name unavailable",
         courseCode: course.courseCode,
         courseDescription: course.courseDescription,
+        courseEnabled:course.courseEnabled,
+        courseStatus:course.courseStatus,
+        courseAllowedForDisplay:course.courseAllowedForDisplay,
         offeringType: course.offeringType,
         credits: course.credits,
         sectionName: course.sectionName,
@@ -71,8 +113,24 @@ export default async function LearnerCoursesPage() {
       });
       if (duplicate) return unavailable("Duplicate course mapping " + (index + 1));
       if (!course.deliveryId || !course.courseId || !course.academicPeriodId ||
-          typeof course.courseName !== "string" || !course.courseName.trim()) {
+          !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(course.deliveryId)) {
         return unavailable("Invalid course record " + (index + 1));
+      }
+      const historical=Boolean(course.deliveryEndedAt)||
+       course.courseStatus!=="ACTIVE"||!course.courseEnabled||
+       course.courseAllowedForDisplay===0||
+       course.sectionEnrollmentStatus!=="ACTIVE"||
+       course.programEnrollmentStatus!=="ACTIVE"||
+       course.periodStatus==="CLOSED";
+      // Legacy renders historic cards for reference, without loading their
+      // entire lesson and assessment trees or authorizing a click.
+      // Limit expensive dashboard expansion to a single active 48-card page.
+      if(historical||index>=48){
+       return {
+        ...unavailable(""),unavailable:false,
+        thumbnailUrl:displays.get(course.courseId)?.thumbnailUrl??null,
+        readOnly:historical,learningPathReady:Boolean(course.learningPathId),
+       };
       }
       try {
         const [workspace, instructors] = await Promise.all([
@@ -96,6 +154,8 @@ export default async function LearnerCoursesPage() {
             itemsTotal: workspace.summary.itemsTotal,
           },
           readOnly:
+            course.courseStatus!=="ACTIVE"||!course.courseEnabled||
+            course.courseAllowedForDisplay===0||
             Boolean(course.deliveryEndedAt) ||
             course.sectionEnrollmentStatus !== "ACTIVE" ||
             course.programEnrollmentStatus !== "ACTIVE" ||
@@ -118,16 +178,22 @@ export default async function LearnerCoursesPage() {
     }, 4,
   );
 
-  const [setupStatus,programSemesters]=await Promise.all([
-    rows.length===0?getLearnerCourseSetupStatus(context):Promise.resolve(null),
-    listLearnerProgramSemesters(context),
+  const [setupStatus,semesterResult]=await Promise.all([
+    rows.length===0&&directoryError===null
+      ?getLearnerCourseSetupStatus(context).catch(()=>null):Promise.resolve(null),
+    listLearnerProgramSemesters(context)
+      .then(value=>({semesters:value,error:null as "LOAD_FAILED"|null}))
+      .catch(()=>({semesters:[],error:"LOAD_FAILED" as const})),
   ]);
+  const programSemesters=semesterResult.semesters;
   return (
     <div className="min-w-0 max-w-full space-y-[16px]">
-      <PageHeader
-        title="Courses"
-      />
-      <LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters} />
+      <PageHeader title="Courses" />
+      {directoryError?<Alert tone="error" role="alert">
+       {directoryError} <Link href="/learn/courses" className="inline-flex min-h-11 items-center font-semibold underline md:min-h-9">Try again</Link>
+      </Alert>:<LearnerCourseList rows={rows} setupStatus={setupStatus} programSemesters={programSemesters}
+       semestersLoadError={semesterResult.error} />}
+      {/* A failed authorized directory request is not a confirmed empty list. */}
     </div>
   );
 }

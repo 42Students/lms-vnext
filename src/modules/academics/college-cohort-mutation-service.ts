@@ -142,6 +142,9 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
       if(resolvedEnd&&resolvedEnd<resolvedStart)throw new CollegeCohortMutationError("BATCH_PERIOD_INVALID");
       const [created] = await tx.insert(cohorts).values({...input,
        startDate:resolvedStart,endDate:resolvedEnd,
+       // Match legacy immediate activation for a live first term. The vNext
+       // planned state remains mandatory for a future academic period.
+       status:start.status==="ACTIVE"?"ACTIVE":"PLANNED",
        academicYear:input.academicYear??batchAcademicYearFromDates(resolvedStart,resolvedEnd),
       }).returning();
       // Registered DB-0051 trigger initializes the cohort progression row.
@@ -155,6 +158,7 @@ export async function createCollegeCohort(context: RequestContext, raw: unknown)
           startPeriodId: created.startPeriodId,
           expectedEndPeriodId: created.expectedEndPeriodId,
           academicYear:created.academicYear,startDate:created.startDate,endDate:created.endDate,
+          initialTermNumber:1,initialStatus:created.status,
         },
       });
       return created;

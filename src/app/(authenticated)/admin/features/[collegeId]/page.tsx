@@ -127,11 +127,30 @@ export default async function SuperAdminCollegeModuleAccessPage({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        title={`${college.name} · Access hierarchy`}
-        description={`Inspect and update college rules for ${college.code}. Higher-priority locks and learner participation gates still apply.`}
+        title="Module Access"
+        description={`Manage Projects and Placements for ${college.name} (${college.code}), with a college-scoped hierarchy and effective locks.`}
         actions={<Link href="/admin/features" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)]">← Feature Controls</Link>}
       />
 
+      <Banner tone="info">
+        <div className="space-y-2">
+          <strong>How this page works</strong>
+          <p>Switch optional Projects and Placements modules on or off for part of the college.
+            Courses &amp; Content is always available; individual course permissions are managed in Courses.</p>
+          <p><strong>Inherit</strong> follows the setting above it. An explicit <strong>On</strong> or <strong>Off</strong> is shown in bold; narrower settings win unless a higher level is locked.</p>
+          <p>Student counts show the population under each scope, not the number whose effective access will change. To change one student, search above; for many, use the bulk action on the Students page.</p>
+        </div>
+      </Banner>
+      <nav aria-label="Module access workspace actions" className="flex flex-wrap gap-3">
+        <Link href={"/admin/features/"+encodeURIComponent(college.id)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+          Refresh
+        </Link>
+        <Link href={"/admin/features/"+encodeURIComponent(college.id)+"/history"}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+          Recent changes
+        </Link>
+      </nav>
       <LearnerModuleAccessDrawer collegeId={college.id}/>
 
       <nav aria-label="Learner access explanation" className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-[var(--lms-canvas-border)] pb-4">
@@ -287,8 +306,27 @@ export default async function SuperAdminCollegeModuleAccessPage({
         <p className="mt-2 text-sm text-body">Select an academic scope to set Projects or Electives On, Off, or Inherit, with an optional lock. Placements eligibility is decided by the placement cell; that control is read-only here.</p>
         {academicRead.ok ? <>
           <DescendantFeatureRuleEditor collegeId={college.id} scopes={academicRead.value}/>
-          <AcademicModuleScopeInventory scopes={academicRead.value} page={academicPage}
-            baseHref={pageHref(result.page)}/>
+          {academicRead.value.length>0?<div className="min-w-0 overflow-x-auto">
+            <DataTable<(typeof academicRead.value)[number]>
+              caption="Academic access hierarchy"
+              rows={academicRead.value}
+              getRowKey={scope=>scope.scopeType+":"+scope.scopeId}
+              columns={[
+                {key:"scope",header:"Scope",mobilePriority:"primary",cell:scope=><div className="min-w-44">
+                  <p className="font-semibold">{scope.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{scope.scopeType==="COHORT"?"Batch":scope.scopeType}</p>
+                </div>},
+                {key:"students",header:"Students in scope",cell:scope=><span className="tabular-nums">{scope.studentsInScope}</span>},
+                {key:"projects",header:"Projects",cell:scope=><span className={scope.projectsShadowed?"line-through text-muted-foreground":"font-semibold"}>{scope.projectsRule} · {scope.projectsEffective}</span>},
+                {key:"placements",header:"Placements",cell:scope=><span className={scope.placementsShadowed?"line-through text-muted-foreground":"font-semibold"}>{scope.placementsRule} · {scope.placementsEffective}</span>},
+              ]}
+              empty={<EmptyState title="No departments, programs or classes set up for this college yet." description="Add the academic structure before changing scoped module access."/>}
+            />
+          </div>:<EmptyState title="No departments, programs or classes set up for this college yet." description="Add departments, programs, batches and classes to manage their access."/>}
+          <Disclosure title="Additional academic hierarchy details" contentClassName="pt-3">
+            <AcademicModuleScopeInventory scopes={academicRead.value} page={academicPage}
+              baseHref={pageHref(result.page)}/>
+          </Disclosure>
         </> : <Banner tone="warning" role="status">
           Couldn't load student overrides or the academic hierarchy. Existing college
           module decisions are still shown above. No descendant rules were changed.

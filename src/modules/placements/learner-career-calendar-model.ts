@@ -8,7 +8,9 @@ export type CareerCalendarSourceRound = {
   companyName: string;
   roleTitle: string;
   scheduledAt: string | null;
-  exception: { scheduledAt: string } | null;
+  exception: {scheduledAt:string;mode?:string|null;venue?:string|null;meetingUrl?:string|null}|null;
+  mode?:string|null;venue?:string|null;meetingUrl?:string|null;
+  durationMinutes?:number|null;booked?:boolean;learnerConfirmedAt?:string|null;
 };
 
 export type CareerCalendarEvent = {
@@ -22,6 +24,18 @@ export type CareerCalendarEvent = {
   start: Date;
   dayKey: string;
   rescheduled: boolean;
+  eventType?:"ROUND"|"APPLICATION_DEADLINE"|"EXAM_BLOCK";
+  mode?:string|null;venue?:string|null;meetingUrl?:string|null;
+  durationMinutes?:number|null;booked?:boolean;learnerConfirmedAt?:string|null;
+  note?:string|null;
+};
+
+/** The caller must independently authorize blackout dates and supply only
+ * un-applied, learner-visible deadlines. No arbitrary job IDs are queried. */
+export type CareerCalendarSupplement={
+ key:string;kind:"APPLICATION_DEADLINE"|"EXAM_BLOCK";day:string;title:string;
+ companyName?:string;roleTitle?:string;visible?:boolean;applied?:boolean;
+ note?:string|null;
 };
 
 export type CareerCalendarView = "agenda" | "month" | "week" | "day";
@@ -63,8 +77,9 @@ export function shiftCareerCalendarDay(
 
 export function careerCalendarEvents(
   rounds: readonly CareerCalendarSourceRound[],
+  supplements:readonly CareerCalendarSupplement[]=[],
 ): CareerCalendarEvent[] {
-  return rounds.flatMap((round) => {
+  const base=rounds.flatMap((round) => {
     const raw = round.exception?.scheduledAt ?? round.scheduledAt;
     if (!raw) return [];
     const start = new Date(raw);
@@ -83,8 +98,25 @@ export function careerCalendarEvents(
       start,
       dayKey: careerDayKey(start),
       rescheduled: round.exception !== null,
+      eventType:"ROUND" as const,mode:round.exception?.mode??round.mode,
+      venue:round.exception?.venue??round.venue,
+      meetingUrl:round.exception?.meetingUrl??round.meetingUrl,
+      durationMinutes:round.durationMinutes,booked:round.booked,
+      learnerConfirmedAt:round.learnerConfirmedAt,
     }];
-  }).sort((a,b) => a.start.getTime() - b.start.getTime() || a.key.localeCompare(b.key));
+  });
+  const extras:CareerCalendarEvent[]=supplements.flatMap(item=>{
+    if(item.kind==="APPLICATION_DEADLINE" && (item.visible!==true||item.applied===true))return [];
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(item.day))return [];
+    const start=new Date(item.day+"T00:00:00+05:30");
+    if(!Number.isFinite(start.getTime())||careerDayKey(start)!==item.day)return [];
+    return [{key:item.kind+":"+item.key,applicationId:"",roundId:"",
+      title:item.kind==="EXAM_BLOCK"?"No drives run on it · "+item.title:item.title,
+      companyName:item.companyName??"College calendar",roleTitle:item.roleTitle??"",
+      kind:"OTHER" as const,start,dayKey:item.day,rescheduled:false,
+      eventType:item.kind,note:item.note??null}];
+  });
+  return [...base,...extras].sort((a,b)=>a.start.getTime()-b.start.getTime()||a.key.localeCompare(b.key));
 }
 
 export function careerCalendarPeriod(

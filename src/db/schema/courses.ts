@@ -72,6 +72,11 @@ export const courses = pgTable(
     legacyCourseEndDateText: text("legacy_course_end_date_text"),
     orderedTakeaways: jsonb("ordered_takeaways").$type<string[]>(),
     legacyAllowedForDisplay: integer("legacy_allowed_for_display"),
+    legacyCourseId: integer("legacy_course_id"),
+    legacyCategory: varchar("legacy_category", {length:120}),
+    legacyCourseType: varchar("legacy_course_type", {length:60}),
+    legacyPriceInr: integer("legacy_price_inr"),
+    legacyPopularityCount: integer("legacy_popularity_count"),
     version: bigint("version", { mode: "number" }).notNull().default(0),
     status: courseStatusEnum("status")
       .notNull()
@@ -110,6 +115,8 @@ export const courses = pgTable(
     uniqueIndex("courses_active_department_short_title_uq")
       .on(table.departmentId, sql`lower(${table.shortTitle})`)
       .where(sql`${table.status} = 'ACTIVE' and ${table.shortTitle} is not null`),
+    index("courses_legacy_id_idx").on(table.departmentId,table.legacyCourseId)
+      .where(sql`${table.legacyCourseId} is not null`),
     index("courses_visible_department_idx")
       .on(table.departmentId, table.status, table.enabled)
       .where(sql`${table.deletedAt} is null`),
@@ -138,6 +145,9 @@ export const courseOfferings = pgTable(
       .references(() => academicPeriods.id, {
         onDelete: "restrict",
       }),
+    legacySemesterCourseId: integer("legacy_semester_course_id"),
+    legacySortOrder: integer("legacy_sort_order"),
+    legacyWasElective: boolean("legacy_was_elective"),
     type: courseOfferingTypeEnum("type")
       .notNull()
       .default("CORE"),
@@ -173,6 +183,9 @@ export const courseOfferings = pgTable(
       table.academicPeriodId,
       table.status,
     ),
+    index("course_offerings_legacy_semester_id_idx")
+      .on(table.courseId,table.legacySemesterCourseId)
+      .where(sql`${table.legacySemesterCourseId} is not null`),
     index("course_offerings_course_status_idx").on(
       table.courseId,
       table.status,
@@ -274,7 +287,11 @@ export const courseTeachingAssignments = pgTable(
       .references(() => collegeMemberships.id, {
         onDelete: "restrict",
       }),
-    role: courseTeachingRoleEnum("role").notNull(),
+    role: courseTeachingRoleEnum("role").notNull().default("PRIMARY"),
+    legacyMappingId: integer("legacy_mapping_id"),
+    legacyClassId: integer("legacy_class_id"),
+    legacyCourseId: integer("legacy_course_id"),
+    legacyWasActive: boolean("legacy_was_active"),
     startedAt: timestamp("started_at", {
       withTimezone: true,
     })
@@ -323,6 +340,9 @@ export const courseTeachingAssignments = pgTable(
     index(
       "course_teaching_assignments_delivery_idx",
     ).on(table.deliveryId),
+    index("course_teaching_assignments_legacy_mapping_idx")
+      .on(table.deliveryId,table.legacyMappingId)
+      .where(sql`${table.legacyMappingId} is not null`),
     index("course_teaching_assignments_membership_dates_idx")
       .on(table.membershipId, table.startDate, table.endDate),
     check("course_teaching_assignments_date_order_ck",
@@ -569,6 +589,8 @@ export const learnerContentProgress = pgTable(
       withTimezone: true,
     }),
     attempt: integer("attempt").notNull().default(1),
+    legacyProgressId: integer("legacy_progress_id"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     createdAt: timestamp("created_at", {
       withTimezone: true,
     })
@@ -594,6 +616,9 @@ export const learnerContentProgress = pgTable(
     // Readers must request latest attempt explicitly before 0203 registration.
     index("learner_content_progress_latest_attempt_idx")
       .on(table.membershipId, table.lessonContentId, sql`${table.attempt} DESC`),
+    index("learner_content_progress_active_latest_idx")
+      .on(table.membershipId,table.lessonContentId,sql`${table.attempt} DESC`)
+      .where(sql`${table.legacyWasDeleted} is null or ${table.legacyWasDeleted} = false`),
     index(
       "learner_content_progress_content_idx",
     ).on(table.lessonContentId),

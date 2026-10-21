@@ -4,7 +4,6 @@ import {
   and,
   asc,
   count,
-  desc,
   eq,
   ilike,
   or,
@@ -103,6 +102,7 @@ export async function listTpoRecruiterAccess(
       validUntil:placementRecruiterCollegeGrants.validUntil,
       capabilities:placementRecruiterCollegeGrants.capabilities,
       verificationStatus:placementRecruiterCollegeGrants.verificationStatus,
+      grantedByType:placementRecruiterCollegeGrants.grantedByType,
     })
     .from(
       placementRecruiterCollegeGrants,
@@ -191,22 +191,10 @@ export async function listTpoRecruiterAccess(
           validUntil:scopedGrants.validUntil,
           capabilities:scopedGrants.capabilities,
           verificationStatus:scopedGrants.verificationStatus,
+          grantedByType:scopedGrants.grantedByType,
         })
         .from(scopedGrants)
-        .orderBy(
-          asc(
-            scopedGrants.companyName,
-          ),
-          asc(
-            scopedGrants.displayName,
-          ),
-          desc(
-            scopedGrants.grantedAt,
-          ),
-          asc(
-            scopedGrants.grantId,
-          ),
-        )
+        .orderBy(asc(scopedGrants.grantedAt),asc(scopedGrants.grantId))
         .limit(options.exportAll?500:PAGE_SIZE)
         .offset(options.exportAll?0:(query.page - 1) * PAGE_SIZE),
     ]);

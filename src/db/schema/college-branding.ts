@@ -35,7 +35,11 @@ export const collegeBranding = pgTable(
     legacyBrandingId: integer("legacy_branding_id"),
     legacyCollegeId: integer("legacy_college_id"),
     legacyLoginMethods: varchar("legacy_login_methods", { length: 32 }),
+    loginMethods: varchar("login_methods",{length:32}),
     legacyWasDeleted: boolean("legacy_was_deleted"),
+    /** Historical logo path is quarantined until imported into verified storage. */
+    legacyLogoSourceUrl: text("legacy_logo_source_url"),
+    legacyBrandingArchivedAt: timestamp("legacy_branding_archived_at",{withTimezone:true}),
     logoUrl: text("logo_url"),
     faviconUrl: text("favicon_url"),
     loginBackgroundUrl: text("login_background_url"),
@@ -56,6 +60,9 @@ export const collegeBranding = pgTable(
   },
   (table) => [
     check("college_branding_version_ck", sql`${table.version} >= 1`),
+    check("college_branding_login_methods_ck",sql`
+      ${table.loginMethods} is null or
+      ${table.loginMethods} in ('EMAIL_PHONE','PHONE_EMAIL','EMAIL_ONLY','PHONE_ONLY')`),
     check("college_branding_logo_url_ck", httpsUrl("logo_url")),
     check("college_branding_favicon_url_ck", httpsUrl("favicon_url")),
     check(
@@ -78,3 +85,44 @@ export const collegeBranding = pgTable(
     ),
   ],
 );
+
+/** Imported branding must resolve the historical college under its owning org. */
+export function normalizeLegacyCollegeBranding(input: {
+  legacyCollegeId: number; legacyBrandingId: number | null;
+  isDeleted: boolean | null; logoUrl: string | null;
+  /** Historical preference, not the active college_signin_policies row. */
+  legacyLoginMethods?: string | null;
+}, mappedColleges: ReadonlyMap<number,string>) {
+  const collegeId = mappedColleges.get(input.legacyCollegeId);
+  if (!collegeId) return null;
+  // Source URLs cannot be served from this schema without trusted upload/signing.
+  // Keep the source spelling for migration review without bypassing the
+  // separately versioned, host-resolved sign-in policy.
+  const sourceLoginMethods = input.legacyLoginMethods?.trim().toUpperCase() ?? null;
+  if (sourceLoginMethods !== null && ![
+    "EMAIL_PHONE", "PHONE_EMAIL", "EMAIL_ONLY", "PHONE_ONLY",
+  ].includes(sourceLoginMethods)) {
+    throw new Error("Unsupported historical college sign-in preference");
+  }
+  return {collegeId,legacyCollegeId:input.legacyCollegeId,
+    legacyBrandingId:input.legacyBrandingId,legacyWasDeleted:input.isDeleted,
+    legacyLoginMethods:sourceLoginMethods,
+    legacyLogoSourceUrl:input.logoUrl,logoUrl:null,
+    legacyBrandingArchivedAt: input.isDeleted === true ? new Date(0) : null};
+}
+
+/** Legacy null/unknown means both methods, email shown first. Keep original
+ * legacyLoginMethods separately for source reconciliation. A login route must
+ * resolve this setting from the verified target college, never from a client
+ * query string or a global user preference. */
+export const COLLEGE_LOGIN_METHODS = ["EMAIL_PHONE","PHONE_EMAIL","EMAIL_ONLY","PHONE_ONLY"] as const;
+export type CollegeLoginMethods = typeof COLLEGE_LOGIN_METHODS[number];
+export function effectiveCollegeLoginMethods(value: string | null | undefined): CollegeLoginMethods {
+  const normalized = value?.trim().toUpperCase();
+  return COLLEGE_LOGIN_METHODS.find(method => method === normalized) ?? "EMAIL_PHONE";
+}
+export function collegeLoginChannelAllowed(methods: CollegeLoginMethods, channel: "EMAIL" | "PHONE") {
+  return methods === "EMAIL_PHONE" || methods === "PHONE_EMAIL" ||
+    (methods === "EMAIL_ONLY" && channel === "EMAIL") ||
+    (methods === "PHONE_ONLY" && channel === "PHONE");
+}

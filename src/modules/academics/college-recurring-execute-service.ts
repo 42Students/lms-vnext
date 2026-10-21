@@ -4,8 +4,8 @@ import { getDb } from "@/db/client";
 import { academicPeriods, cohorts, collegeMemberships, departments, lectureHalls, membershipRoles, programs, sectionScheduleEvents, sections, courseSectionDeliveries, courseOfferings, courses, sectionScheduleEventCourses } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import { expandIstSessions, findPreviewConflicts } from "./college-recurring-preview-model";
 import { collegeRecurringExecuteSchema, recurringExecutionSummary } from "./college-recurring-execute-model";
 
@@ -16,11 +16,7 @@ export class CollegeRecurringExecutionError extends Error {
 }
 export async function executeCollegeRecurringSchedule(context: RequestContext, raw: unknown) {
   const input=collegeRecurringExecuteSchema.parse(raw);
-  const member=context.membership;
-  if (!member || member.status!=="ACTIVE" || !hasMembershipRole(context,"COLLEGE_ADMIN") ||
-    !can(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId}))
-    throw new AuthorizationError("academics.manage");
-  requirePermission(context,"academics.manage",{collegeId:member.collegeId,organizationId:member.organizationId});
+  const member = await resolveActingCollege(context, "academics.manage");
   const slots=expandIstSessions(input);
   if (!slots.length) throw new CollegeRecurringExecutionError("SCHEDULE_CONFLICT");
   return getDb().transaction(async tx=>{

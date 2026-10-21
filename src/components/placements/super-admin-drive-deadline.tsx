@@ -4,6 +4,7 @@ import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {useRouter} from "next/navigation";
+import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:string|null}){
  const router=useRouter(),[busy,setBusy]=useState(false),[error,setError]=useState("");
  const [pendingIso,setPendingIso]=useState<string|null>(null);
@@ -24,6 +25,9 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
  }
  async function save(){
   if(busy||inFlightRef.current||!pendingIso)return;
+  if(!beginDriveMutation(jobId)){
+   setError("Another action is changing this drive. Retry after it finishes.");return;
+  }
   inFlightRef.current=true;
   setBusy(true);setError("");
   try{
@@ -34,7 +38,7 @@ export function SuperAdminDriveDeadline({jobId,deadline}:{jobId:string;deadline:
    if(!result.ok)throw new Error("Could not extend the deadline");
    setSavedIso(pendingIso);setPendingIso(null);router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Could not extend the deadline");}
-  finally{inFlightRef.current=false;setBusy(false);}
+  finally{inFlightRef.current=false;setBusy(false);endDriveMutation(jobId);}
  }
  return <div className="space-y-3"><form onSubmit={review} className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
   <h2 className="text-base font-semibold">Extend deadline</h2>

@@ -43,6 +43,10 @@ export const updateCollegeInputSchema = z
     state: optionalText(128),
     country: optionalText(128),
     postalCode: optionalText(32),
+    // Post-creation appointments: both IDs must be current membership UUIDs
+    // of this college (the DB enforces composite college scope).
+    chairMembershipId: z.string().uuid().nullable().optional(),
+    viceChairMembershipId: z.string().uuid().nullable().optional(),
   })
   .refine(
     (value) => Object.values(value).some((item) => item !== undefined),

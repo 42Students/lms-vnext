@@ -12,7 +12,7 @@ export function proxy(request: NextRequest) {
   const forwardHeaders = new Headers(request.headers);
   forwardHeaders.set("x-lms-path", path + request.nextUrl.search);
   forwardHeaders.set("x-request-id", requestId);
-  if (process.env.MAINTENANCE_MODE === "1" && path !== "/ready") {
+  if (process.env.MAINTENANCE_MODE === "1" && path !== "/ready" && path !== "/api/hello") {
     const html = `<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>42LMS is temporarily unavailable</title>
@@ -26,6 +26,17 @@ export function proxy(request: NextRequest) {
       "retry-after": "60",
       "x-request-id": requestId,
     } });
+  }
+  // Retired legacy group detail route now lives in the college People area.
+  // Temporary same-host redirect neither leaks nor parses obsolete integer IDs.
+  if (/^\/college-admin\/student-groups\/[^/]+\/?$/.test(path)) {
+    const target=request.nextUrl.clone();
+    target.pathname="/college/contacts";
+    target.search="";
+    const response=NextResponse.redirect(target,307);
+    response.headers.set("Cache-Control","no-store");
+    response.headers.set("x-request-id",requestId);
+    return response;
   }
   const response = NextResponse.next({ request: { headers: forwardHeaders } });
   response.headers.set("x-request-id", requestId);

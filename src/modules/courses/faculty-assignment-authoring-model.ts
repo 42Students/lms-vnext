@@ -13,7 +13,22 @@ const common=z.object({
   dueAt:z.iso.datetime({offset:true}).nullable(),
   maxPoints:z.number().int().min(0).max(1000),
   allowedMethods:assignmentMethodsSchema.optional(),
+  resources:facultyAssignmentResourcesSchema.optional(),
 }).strict();
+/** Legacy builder: one Instructions, repeatable PDF/File/Link. Only private,
+ * clean-scanned object keys are accepted for downloadable assets. */
+export const facultyAssignmentResourcesSchema=z.array(z.discriminatedUnion("kind",[
+ z.strictObject({kind:z.literal("INSTRUCTIONS"),title:z.string().trim().min(1).max(255),
+  body:z.string().trim().min(1).max(10000)}),
+ z.strictObject({kind:z.literal("LINK"),title:z.string().trim().min(1).max(255),
+  externalUrl:z.url().max(2048).refine(url=>url.startsWith("https://"),"HTTPS required")}),
+ z.strictObject({kind:z.enum(["PDF","FILE"]),title:z.string().trim().min(1).max(255),
+  privateObjectKey:z.string().min(30).max(1024)}),
+])).max(30).superRefine((items,ctx)=>{
+ if(items.filter(row=>row.kind==="INSTRUCTIONS").length>1)
+  ctx.addIssue({code:"custom",path:[],message:"Only one Instructions resource is allowed"});
+});
+export type FacultyAssignmentResourceInput=z.infer<typeof facultyAssignmentResourcesSchema>[number];
 const expected=z.iso.datetime({offset:true});
 export const facultyAssignmentCommandSchema=z.discriminatedUnion("action",[
   common.extend({

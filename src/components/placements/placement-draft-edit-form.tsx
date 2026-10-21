@@ -48,6 +48,8 @@ export type PlacementAcademicTargetingOptions = {
     programName: string;
     status: string;
   }>;
+  sections:Array<{id:string;name:string;code:string;cohortId:string;
+    cohortName:string;programId:string}>;
 };
 
 export type PlacementDraftEditValue = {
@@ -65,10 +67,17 @@ export type PlacementDraftEditValue = {
     applicationMode: ApplicationMode;
     externalApplicationUrl: string | null;
     applicationDeadline: string | null;
+    legacyPostingDetails:{
+      responsibilities?:string;assessmentUrl?:string|null;
+      assessmentDeadline?:string|null;importantDates?:Array<{label:string;at:string}>;
+      candidatePreferences?:{preferredDegree:string;specialization:string;
+       graduationYear:number|null;minGpa:number|null;city:string};
+    }|null;
   };
   policy: {
     allowedProgramIds: string[];
     allowedCohortIds: string[];
+    allowedSectionIds:string[];
     minCgpa: number | null;
     maxActiveBacklogs: number | null;
     maxPastBacklogs: number | null;
@@ -143,6 +152,10 @@ export function PlacementDraftEditForm({
   const { dirty, markDirty, clearDirty, guardDialog } = useUnsavedDriveGuard();
   const formRef=useRef<HTMLFormElement>(null);
   const [cancelConfirm,setCancelConfirm]=useState(false);
+  const [formError,setFormError]=useState("");
+  const [selectedDepartment,setSelectedDepartment]=useState("");
+  const [programFilter,setProgramFilter]=useState("");
+  const [cohortFilter,setCohortFilter]=useState("");
   const {pending,run}=useGuardedAction();
   const [staleConflict,setStaleConflict]=useState(false);
   const [
@@ -163,6 +176,19 @@ export function PlacementDraftEditForm({
   ] = useState<string[]>(
     value.policy.allowedCohortIds,
   );
+  const [selectedSectionIds,setSelectedSectionIds]=useState<string[]>(
+    value.policy.allowedSectionIds,
+  );
+  const departments=[...new Set(academicOptions.programs.map(p=>p.departmentName))].sort();
+  const visiblePrograms=academicOptions.programs.filter(p=>
+    !selectedDepartment||p.departmentName===selectedDepartment);
+  const visibleCohorts=academicOptions.cohorts.filter(c=>
+    (!selectedDepartment||visiblePrograms.some(p=>p.id===c.programId))&&
+    (!programFilter||c.programId===programFilter));
+  const visibleSections=academicOptions.sections.filter(s=>
+    (!selectedDepartment||visiblePrograms.some(p=>p.id===s.programId))&&
+    (!programFilter||s.programId===programFilter)&&
+    (!cohortFilter||s.cohortId===cohortFilter));
 
   function toggleId(
     value: string,
@@ -188,6 +214,9 @@ export function PlacementDraftEditForm({
     setApplicationMode(value.job.applicationMode);
     setSelectedProgramIds([...value.policy.allowedProgramIds]);
     setSelectedCohortIds([...value.policy.allowedCohortIds]);
+    setSelectedSectionIds([...value.policy.allowedSectionIds]);
+    setSelectedDepartment("");setProgramFilter("");setCohortFilter("");
+    setFormError("");
     clearDirty();
     const disclosure=form?.closest("details");
     const summary=disclosure?.querySelector("summary");
@@ -202,16 +231,91 @@ export function PlacementDraftEditForm({
     const data = new FormData(event.currentTarget);
     const description=String(data.get("description")??"").trim();
     if(!description.replace(/<[^>]*>/g,"").trim()){
-      showToast({tone:"error",title:"Please enter job description."});
+      setFormError("Please enter job description.");
       return;
     }
+    const originalLegacy=value.job.legacyPostingDetails;
+    const assessmentUrl=String(data.get("assessmentUrl")??"").trim();
+    if(assessmentUrl&&(!/^https?:\/\//i.test(assessmentUrl)||assessmentUrl.length>2048)){
+      setFormError("Must be a valid http or https URL");return;
+    }
+    const rawAssessmentDeadline=String(data.get("assessmentDeadline")??"");
+    const rawApplicationDeadline=String(data.get("applicationDeadline")??"");
+    let assessmentDeadline:string|null=null,applicationDeadline:string|null=null;
+    try{
+      assessmentDeadline=rawAssessmentDeadline?
+        rawAssessmentDeadline===toLocalInput(originalLegacy?.assessmentDeadline??null)?
+        originalLegacy?.assessmentDeadline??null:driveDeadlineIstToIso(rawAssessmentDeadline):null;
+      applicationDeadline=rawApplicationDeadline?
+        rawApplicationDeadline===toLocalInput(value.job.applicationDeadline)?
+        value.job.applicationDeadline:driveDeadlineIstToIso(rawApplicationDeadline):null;
+    }catch(problem){
+      setFormError(problem instanceof Error?problem.message:"Enter valid dates in IST.");
+      return;
+    }
+    if(assessmentDeadline){
+      if(assessmentDeadline!==originalLegacy?.assessmentDeadline&&
+         Date.parse(assessmentDeadline)<=Date.now()){
+        setFormError("Assessment deadline cannot be in the past.");return;
+      }
+      if(!applicationDeadline||Date.parse(assessmentDeadline)<=Date.parse(applicationDeadline)){
+        setFormError("Assessment deadline must be after application deadline.");return;
+      }
+    }
+    const yearText=String(data.get("graduationYear")??"").trim();
+    const graduationYear=yearText?Number(yearText):null;
+    if(yearText&&!/^\d{4}$/.test(yearText)){
+      setFormError("Graduation year must be a four-digit year.");return;
+    }
+    if(graduationYear!==null&&(graduationYear<1990||graduationYear>2050)){
+      setFormError("Graduation year must be between 1990 and 2050.");return;
+    }
+    const gpaText=String(data.get("advisoryMinGpa")??"").trim();
+    const minGpa=gpaText?Number(gpaText):null;
+    if(minGpa!==null&&(!Number.isFinite(minGpa)||minGpa<0||minGpa>10)){
+      setFormError("GPA must be between 0 and 10.");return;
+    }
+    const dateLines=String(data.get("importantDates")??"").split(/\r?\n/);
+    const importantDates:Array<{label:string;at:string}>=[];
+    for(const line of dateLines){
+      if(!line.trim())continue;
+      const divider=line.indexOf("|");
+      const label=divider<0?line.trim():line.slice(0,divider).trim();
+      const dateValue=divider<0?"":line.slice(divider+1).trim();
+      if(!label){setFormError("Label required when date is set.");return;}
+      if(!dateValue){setFormError("Date required when label is set.");return;}
+      if(label.toLowerCase()==="application deadline"){
+        setFormError("Application deadline is reserved and cannot be an important date label.");return;
+      }
+      let parsed:string;
+      try{parsed=dateValue.length===16?driveDeadlineIstToIso(dateValue):dateValue;}
+      catch{setFormError("Enter each date as Label | YYYY-MM-DDTHH:MM.");return;}
+      if(!Number.isFinite(Date.parse(parsed))){
+        setFormError("Enter each date as Label | YYYY-MM-DDTHH:MM.");return;
+      }
+      importantDates.push({label,at:parsed});
+    }
+    if(importantDates.length>20){setFormError("A maximum of 20 important dates is allowed.");return;}
+    if(new Set(importantDates.map(d=>d.label.toLowerCase())).size!==importantDates.length){
+      setFormError("Important date labels must be unique.");return;
+    }
+    // Audience visibility remains bound to authorized college memberships;
+    // applicationMode only decides which application channel is used.
+    const legacyPostingDetails={
+      ...originalLegacy,
+      responsibilities:String(data.get("responsibilities")??"").trim(),
+      assessmentUrl:assessmentUrl||null,
+      assessmentDeadline,
+      importantDates,
+      candidatePreferences:{
+        preferredDegree:String(data.get("preferredDegree")??"").trim(),
+        specialization:String(data.get("specialization")??"").trim(),
+        graduationYear,minGpa,city:String(data.get("preferredCity")??"").trim(),
+      },
+    };
+    setFormError("");
     await run(async()=>{
     try {
-      const deadline = String(
-        data.get("applicationDeadline") ??
-          "",
-      );
-
       await requestJson(
         `/api/placements/jobs/${value.job.id}`,
         "PATCH",
@@ -265,11 +369,8 @@ export function PlacementDraftEditForm({
                     "externalApplicationUrl",
                   ) ?? "",
                 ).trim() || null,
-          applicationDeadline:
-            deadline ? deadline===toLocalInput(value.job.applicationDeadline)
-              ? value.job.applicationDeadline
-              : driveDeadlineIstToIso(deadline)
-              : null,
+          applicationDeadline,
+          legacyPostingDetails,
         },
       );
 
@@ -281,6 +382,7 @@ export function PlacementDraftEditForm({
             selectedProgramIds,
           allowedCohortIds:
             selectedCohortIds,
+          allowedSectionIds:selectedSectionIds,
           minCgpa: nullableDecimal(
             String(
               data.get("minCgpa") ?? "",
@@ -362,10 +464,9 @@ export function PlacementDraftEditForm({
       showToast({
         tone: "success",
         title: "Job saved as draft",
-        description:
-          "Job details and eligibility rules were saved.",
+        description:"Job saved as draft",
       });
-      clearDirty();
+      clearDirty();setFormError("");
       router.refresh();
     } catch (error) {
       if(error instanceof FriendlyFetchError &&
@@ -431,7 +532,10 @@ export function PlacementDraftEditForm({
                  value.job.employmentType==="CONTRACT"?"Contract":"Full-time")}
             >
               {availableJobTypes
-                .map(type=><option key={type.label} value={type.label}>{type.label}</option>)}
+                .map(type=><option key={type.label} value={type.label}>
+                  {type.label}{"countsAsPlaced" in type?
+                    ((type as {countsAsPlaced?:boolean}).countsAsPlaced?" · Counts as placed":" · Not counted as placed"):""}
+                </option>)}
               {value.job.jobTypeLabel&&!availableJobTypes.some(type=>type.label===value.job.jobTypeLabel)?
                 <option value={value.job.jobTypeLabel}>{value.job.jobTypeLabel} (historic)</option>:null}
             </Select>
@@ -529,6 +633,7 @@ export function PlacementDraftEditForm({
               <option value="EXTERNAL_ONLY">Employer form only</option>
             </Select>
           </label>
+          <p className="text-xs text-muted-foreground sm:col-span-2">Audience visibility stays within the selected college and authorized memberships. It is independent of Application mode (LMS form, employer form, or both).</p>
           <label>
             <span className="mb-1.5 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Employer application URL
@@ -553,12 +658,59 @@ export function PlacementDraftEditForm({
               className={inputClass}
               name="applicationDeadline"
               type="datetime-local"
-              defaultValue={toLocalInput(
-                value.job.applicationDeadline,
-              )}
+              defaultValue={toLocalInput(value.job.applicationDeadline)}
             />
           </label>
         </div>
+        <details className="min-w-0 border-t border-border pt-3">
+          <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">
+            Additional posting details and assessment
+          </summary>
+          <div className="grid min-w-0 gap-4 py-3 sm:grid-cols-2">
+           <label className="sm:col-span-2 text-[13px] font-semibold">Responsibilities
+            <Textarea name="responsibilities" rows={3} maxLength={15000}
+             defaultValue={value.job.legacyPostingDetails?.responsibilities??""} className={textareaClass}/>
+           </label>
+           <label className="text-[13px] font-semibold">Assessment URL (optional)
+            <Input type="url" name="assessmentUrl" maxLength={2048}
+             defaultValue={value.job.legacyPostingDetails?.assessmentUrl??""}
+             placeholder="https://..." className={inputClass}/>
+           </label>
+           <label className="text-[13px] font-semibold">Assessment deadline (IST)
+            <Input type="datetime-local" name="assessmentDeadline"
+             defaultValue={toLocalInput(value.job.legacyPostingDetails?.assessmentDeadline??null)}
+             className={inputClass}/>
+           </label>
+           <p className="sm:col-span-2 text-xs text-muted-foreground">The assessment link and deadline are separate from the employer application URL. Assessment must follow the application deadline; existing expired dates may remain unchanged when editing unrelated terms.</p>
+           <label className="sm:col-span-2 text-[13px] font-semibold">Important dates (one Label | YYYY-MM-DDTHH:MM per line, IST)
+            <Textarea name="importantDates" rows={3} className={textareaClass}
+             defaultValue={(value.job.legacyPostingDetails?.importantDates??[]).map(date=>
+              date.label+" | "+toLocalInput(date.at)).join("\n")}/>
+           </label>
+          </div>
+        </details>
+        <details className="min-w-0 border-t border-border pt-3">
+         <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Candidate Preferences — informational</summary>
+         <p className="py-2 text-xs text-muted-foreground">Preferred degree, specialization, graduation year, minimum GPA and city describe ideal applicants. Unlike Eligibility rules below, these do not gate learner applications.</p>
+         <div className="grid min-w-0 gap-4 pb-4 sm:grid-cols-2">
+          {([["preferredDegree","Preferred degree",value.job.legacyPostingDetails?.candidatePreferences?.preferredDegree??""],
+             ["specialization","Specialization",value.job.legacyPostingDetails?.candidatePreferences?.specialization??""],
+             ["preferredCity","Preferred city",value.job.legacyPostingDetails?.candidatePreferences?.city??""]] as const).map(([name,label,initial])=>
+            <label key={name} className="text-[13px] font-semibold">{label}
+             <Input name={name} defaultValue={initial} maxLength={160} className={inputClass}/>
+            </label>)}
+          <label className="text-[13px] font-semibold">Graduation year (1990–2050)
+           <Input type="number" name="graduationYear" min={1990} max={2050} step={1}
+            defaultValue={value.job.legacyPostingDetails?.candidatePreferences?.graduationYear??""}
+            className={inputClass}/>
+          </label>
+          <label className="text-[13px] font-semibold">Minimum GPA (0–10)
+           <Input type="number" name="advisoryMinGpa" min={0} max={10} step="0.01"
+            defaultValue={value.job.legacyPostingDetails?.candidatePreferences?.minGpa??""}
+            className={inputClass}/>
+          </label>
+         </div>
+        </details>
 
         <details className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
           <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Eligibility rules — enforced</summary>
@@ -568,18 +720,53 @@ export function PlacementDraftEditForm({
             These eligibility rules restrict applications. Legacy candidate preferences were advisory, not eligibility gates.
           </p>
 
+          <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-3">
+           <label className="grid gap-1 text-[13px] font-semibold">Department
+            <Select className={inputClass} value={selectedDepartment} onChange={event=>{
+             setSelectedDepartment(event.target.value);setProgramFilter("");setCohortFilter("");
+             setSelectedProgramIds(event.target.value?
+              academicOptions.programs.filter(p=>p.departmentName===event.target.value).map(p=>p.id):[]);
+             setSelectedCohortIds([]);setSelectedSectionIds([]);markDirty();
+            }}>
+             <option value="">All departments</option>
+             {departments.map(name=><option key={name} value={name}>{name}</option>)}
+            </Select>
+           </label>
+           <label className="grid gap-1 text-[13px] font-semibold">Program
+            <Select className={inputClass} value={programFilter} onChange={event=>{
+             setProgramFilter(event.target.value);setCohortFilter("");
+             setSelectedProgramIds(event.target.value?[event.target.value]:
+              selectedDepartment?academicOptions.programs.filter(p=>
+                p.departmentName===selectedDepartment).map(p=>p.id):[]);
+             setSelectedCohortIds([]);setSelectedSectionIds([]);markDirty();
+            }}>
+             <option value="">All programs</option>
+             {visiblePrograms.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
+            </Select>
+           </label>
+           <label className="grid gap-1 text-[13px] font-semibold">Batch
+            <Select className={inputClass} value={cohortFilter} onChange={event=>{
+             setCohortFilter(event.target.value);
+             setSelectedCohortIds(event.target.value?[event.target.value]:[]);
+             setSelectedSectionIds([]);markDirty();
+            }}>
+             <option value="">All batches</option>
+             {visibleCohorts.map(c=><option key={c.id} value={c.id}>{c.name}</option>)}
+            </Select>
+           </label>
+          </div>
           <div className="mt-4 grid min-w-0 gap-4 sm:grid-cols-2">
             <fieldset className="min-w-0 border-t border-border py-3">
               <legend className="px-1 text-xs font-semibold text-body">
                 Eligible programs
               </legend>
-              {academicOptions.programs.length === 0 ? (
+              {visiblePrograms.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
                   No active programs are available in this college yet.
                 </p>
               ) : (
                 <div className="grid gap-2">
-                  {academicOptions.programs.map(
+                  {visiblePrograms.map(
                     (program) => (
                       <label
                         key={program.id}
@@ -589,13 +776,10 @@ export function PlacementDraftEditForm({
                           checked={selectedProgramIds.includes(
                             program.id,
                           )}
-                          onChange={() =>
-                            toggleId(
-                              program.id,
-                              selectedProgramIds,
-                              setSelectedProgramIds,
-                            )
-                          }
+                          onChange={() =>{
+                            toggleId(program.id,selectedProgramIds,setSelectedProgramIds);
+                            markDirty();
+                          }}
                         />
                         <span>
                           <span className="font-semibold text-foreground">
@@ -620,13 +804,13 @@ export function PlacementDraftEditForm({
               <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
                 Cohort selection narrows eligibility further when used with program selection.
               </p>
-              {academicOptions.cohorts.length === 0 ? (
+              {visibleCohorts.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
                   No active or planned cohorts are available yet.
                 </p>
               ) : (
                 <div className="grid gap-2">
-                  {academicOptions.cohorts.map(
+                  {visibleCohorts.map(
                     (cohort) => (
                       <label
                         key={cohort.id}
@@ -636,13 +820,10 @@ export function PlacementDraftEditForm({
                           checked={selectedCohortIds.includes(
                             cohort.id,
                           )}
-                          onChange={() =>
-                            toggleId(
-                              cohort.id,
-                              selectedCohortIds,
-                              setSelectedCohortIds,
-                            )
-                          }
+                          onChange={() =>{
+                            toggleId(cohort.id,selectedCohortIds,setSelectedCohortIds);
+                            markDirty();
+                          }}
                         />
                         <span>
                           <span className="font-semibold text-foreground">
@@ -660,6 +841,18 @@ export function PlacementDraftEditForm({
                 </div>
               )}
             </fieldset>
+           <fieldset className="min-w-0 border-t border-border py-3 sm:col-span-2">
+             <legend className="px-1 text-xs font-semibold text-body">Eligible classes</legend>
+             <p className="text-xs text-muted-foreground">Class-level selection further narrows the chosen program and batch. Clear selections to include all classes.</p>
+             {visibleSections.length===0?<p className="mt-2 text-sm text-muted-foreground">No active classes are available for this academic scope.</p>:
+              <div className="mt-3 grid gap-2 sm:grid-cols-2">
+               {visibleSections.map(section=><label key={section.id} className="flex items-center gap-2 text-sm">
+                <Checkbox checked={selectedSectionIds.includes(section.id)}
+                 onChange={()=>{toggleId(section.id,selectedSectionIds,setSelectedSectionIds);markDirty();}}/>
+                <span>{section.name} · {section.code} ({section.cohortName})</span>
+               </label>)}
+              </div>}
+           </fieldset>
           </div>
 
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
@@ -725,6 +918,7 @@ export function PlacementDraftEditForm({
           </div>
         </details>
 
+        {formError?<p role="alert" className="text-sm text-error">{formError}</p>:null}
         <div className="min-w-0 border-t border-border pt-4">
           <Button
             type="submit"
@@ -742,6 +936,13 @@ export function PlacementDraftEditForm({
             onClick={()=>{if(dirty)setCancelConfirm(true);else discardDraftChanges();}}>
             Cancel
           </Button>
+          <a href="#drive-lifecycle-publish"
+           aria-disabled={dirty}
+           className={"ml-0 mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:ml-3 md:min-h-9 "+
+            (dirty?"pointer-events-none opacity-50":"")}>
+            Publish now (review required)
+          </a>
+          {dirty?<p className="mt-1 text-xs text-muted-foreground">Save draft changes before publishing; the publish workflow rechecks eligible learners and requires confirmation.</p>:null}
         </div>
         {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
       </form>

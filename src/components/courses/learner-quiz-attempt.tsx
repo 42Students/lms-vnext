@@ -158,7 +158,7 @@ export function LearnerQuizAttempt() {
     setLoading(true);
     setError(null);
     try {
-      const query = `deliveryId=${encodeURIComponent(deliveryId)}`;
+      const query = `deliveryId=${encodeURIComponent(deliveryId)}&includeCorrectAnswers=true`;
       const [quizResponse, attemptsResponse] = await Promise.all([
         fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}?${query}`, { cache: "no-store", signal }),
         fetch(`/api/courses/quizzes/${encodeURIComponent(quizId)}/my-attempts?${query}`, { cache: "no-store", signal }),

@@ -1,5 +1,5 @@
 import "server-only";
-import {and,count,eq} from "drizzle-orm";
+import {and,count,eq,isNull} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementApplications,placementJobs,placementOffers} from "@/db/schema";
 import type {RequestContext} from "@/modules/identity/context";
@@ -27,16 +27,33 @@ export async function deleteTpoUnpublishedDraft(context:RequestContext,rawJobId:
   const decision=canDeleteUnpublishedDrive({status:job.status,
    applications:apps?.n??0,offers:offers?.n??0,
    matchesVersion:job.updatedAt.toISOString()===new Date(input.expectedUpdatedAt).toISOString()});
-  if(decision!=="ALLOW")return {archived:false,reason:decision};
+  if(decision!=="ALLOW")return {archived:false,reason:decision,
+    message:decision==="STALE"?"The drive changed. Refresh and try again.":
+      decision==="HAS_HISTORY"?"This drive has applications or offers and cannot be deleted.":
+      "Only an unused draft drive can be deleted."};
   const now=new Date();
   const [saved]=await tx.update(placementJobs).set({status:"ARCHIVED",
    archivedAt:now,updatedAt:now})
    .where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId),
-    eq(placementJobs.status,"DRAFT"),eq(placementJobs.updatedAt,job.updatedAt)))
+    eq(placementJobs.status,"DRAFT"),isNull(placementJobs.archivedAt),
+    eq(placementJobs.updatedAt,job.updatedAt)))
    .returning({id:placementJobs.id});
-  if(!saved)return {archived:false,reason:"STALE" as const};
+  if(!saved)return {archived:false,reason:"STALE" as const,
+    message:"The drive changed. Refresh and try again."};
   await auditTpoJobChange(tx,context,job,"placements.draft.archived","archived unpublished",{
+   legacySoftDelete:true,legacyIsActive:false,legacyIsDeleted:true,
    unpublished:true,submittedApplications:0,issuedOffers:0});
-  return {archived:true,reason:null};
+  return {archived:true,reason:null,message:"Draft drive deleted"};
  });
+}
+
+// Retain the immutable, read-only history of a soft-deleted old-LMS drive.
+export async function getTpoArchivedDriveHistory(ctx:RequestContext,rawId:unknown){
+ const collegeId=await requireTpoJobCollege(ctx),jobId=placementJobIdSchema.parse(rawId);
+ const [job]=await getDb().select({id:placementJobs.id,title:placementJobs.title,
+  status:placementJobs.status,archivedAt:placementJobs.archivedAt,updatedAt:placementJobs.updatedAt})
+  .from(placementJobs).where(and(eq(placementJobs.id,jobId),eq(placementJobs.collegeId,collegeId),
+   eq(placementJobs.status,"ARCHIVED"))).limit(1);
+ if(!job)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_FOUND");
+ return {...job,readOnly:true as const,legacyIsDeleted:true as const};
 }

@@ -14,6 +14,7 @@ import { placementRoundIdSchema } from "./validation";
 import { tpoDriveDayCheckInSchema, decideTpoAttendanceTransition } from "./tpo-drive-day-checkin-model";
 import { PlacementsServiceError } from "./errors";
 import { hasActivePlacementDebarment } from "./placement-debarment-gate";
+import { deliverRecordedLearnerPlacementEvent } from "./learner-placement-event-delivery";
 
 export class TpoAttendanceStaleError extends Error {
   constructor() { super("TPO_DRIVE_DAY_ATTENDANCE_STALE"); this.name = "TpoAttendanceStaleError"; }
@@ -123,7 +124,7 @@ export async function confirmTpoDriveDayCheckIn(
       }).onConflictDoNothing().returning();
     }
     if (!written) throw new TpoAttendanceStaleError();
-    await tx.insert(activityEvents).values({
+    const [attendanceEvent] = await tx.insert(activityEvents).values({
       organizationId: college.organizationId, collegeId,
       actorUserId, actorMembershipId, module: "PLACEMENTS",
       eventType: "PLACEMENTS_DRIVE_DAY_ATTENDANCE_CONFIRMED",
@@ -133,7 +134,20 @@ export async function confirmTpoDriveDayCheckIn(
         previousStatus: prior?.status ?? "WAITING", status: input.status,
         previousRoom:prior?.room??null,room },
       occurredAt: now,
-    });
+    }).returning({id:activityEvents.id});
+    // Only the FIRST transition into ABSENT emits a learner message. The
+    // activity event, attendance and preference-aware delivery commit together.
+    // A later room change or repeated mark must never emit a second absence.
+    if (attendanceEvent && input.status === "ABSENT" &&
+        prior?.status !== "ABSENT") {
+      await deliverRecordedLearnerPlacementEvent(tx, {
+        eventId: attendanceEvent.id,
+        collegeId,
+        membershipId: candidate.membershipId,
+        kind: "MARKED_ABSENT",
+        subject: roster.round.name + " · " + roster.job.title,
+      });
+    }
     return { attendance: written, changed: true as const };
   });
 }

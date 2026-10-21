@@ -12,6 +12,14 @@ export type BrowseJobShape = {
     title: string;
     description: string;
     jobTypeLabel?:string|null;
+    responsibilities?:string|null;
+    targetDepartmentName?:string|null;
+    targetProgramName?:string|null;
+    targetDepartmentId?:string|null;
+    targetProgramId?:string|null;
+    /** Historical saved postings may be inactive but still readable. */
+    isActive?:boolean;
+    status?:string;
     applicationDeadline: string | null;
     publishedAt?: string | null;
   };
@@ -25,6 +33,8 @@ export type BrowseJobShape = {
     maximumAnnualCtcInr: number | null;
   };
   canApply: boolean;
+  /** Legacy visibleFlag: browsing eligibility, not permission to submit. */
+  visibleToLearner?:boolean;
   deadlinePassed: boolean;
 };
 
@@ -42,6 +52,10 @@ export type LearnerJobBrowseFilters = {
   employmentType: string;
   location: string;
   eligibleOnly: boolean;
+  /** Optional permitted-scoped administrative search facets. */
+  departmentId?:string;
+  programId?:string;
+  jobType?:string;
   closingSoon: boolean;
   availability: z.infer<typeof learnerDriveAvailabilitySchema>;
   sort: "deadline" | "ctc" | "title" | "newest";
@@ -54,7 +68,8 @@ export const DEFAULT_LEARNER_JOB_FILTERS: LearnerJobBrowseFilters = {
 
 /** A published drive is not necessarily open to THIS learner for a new application. */
 export function learnerDriveAvailability(item: BrowseJobShape): "open" | "not-open" | "closed" {
-  if (item.deadlinePassed) return "closed";
+  if (item.deadlinePassed || item.job.isActive===false ||
+      (item.job.status!==undefined && item.job.status!=="PUBLISHED")) return "closed";
   return item.canApply ? "open" : "not-open";
 }
 
@@ -64,6 +79,12 @@ export function learnerDriveAvailabilityCounts(items:readonly BrowseJobShape[]) 
   return counts;
 }
 
+const synonyms:Readonly<Record<string,readonly string[]>>={
+ "sde":["software engineer","software developer"],"wfh":["remote","work from home"],
+ "software engineer":["sde","developer"],"work from home":["wfh","remote"],
+ "remote":["wfh","work from home"],"intern":["internship","trainee"],
+ "internship":["intern","trainee"],"hybrid":["partly remote","hybrid work"],
+};
 function visibleJobType(row:BrowseJobShape){
  return row.job.jobTypeLabel?.trim()||row.roleOption.employmentType;
 }
@@ -93,12 +114,22 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
   items: readonly T[], filters: LearnerJobBrowseFilters,
   snapshotNowMs: number = Number.NaN,
 ): T[] {
-  const search = filters.search.trim().toLocaleLowerCase();
+  const search=filters.search.trim().toLocaleLowerCase();
+  // Legacy search combines eight posting fields, but a query can contain
+  // words from different fields. Match each word (with recognized legacy
+  // synonyms) without requiring them to be adjacent in a single column.
+  const terms=search.split(/\s+/).filter(Boolean);
   const rows = items.filter((row) => {
     if (filters.availability !== "all" && learnerDriveAvailability(row) !== filters.availability) return false;
     // Eligibility may be true for a historical snapshot even after closure.
     // Never offer a closed drive as actionable in the eligible-only view.
-    if(filters.eligibleOnly&&(row.deadlinePassed||!row.canApply))return false;
+    // The legacy Eligible-only filter follows audience visibility, even if
+    // a visible role is temporarily closed or blocked for self-application.
+    if(filters.eligibleOnly && !(row.visibleToLearner ?? row.canApply))return false;
+    if(filters.departmentId && row.job.targetDepartmentId!==filters.departmentId)return false;
+    if(filters.programId && row.job.targetProgramId!==filters.programId)return false;
+    if(filters.jobType && visibleJobType(row).toLocaleLowerCase("en-IN")!==
+       filters.jobType.toLocaleLowerCase("en-IN"))return false;
     if (filters.closingSoon) {
       const deadline = row.job.applicationDeadline
         ? Date.parse(row.job.applicationDeadline) : Number.NaN;
@@ -110,16 +141,17 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
     }
     if (filters.employmentType !== "all" &&
         visibleJobType(row) !== filters.employmentType) return false;
-    if(filters.location!=="all"&&!row.roleOption.locations.some(place=>
+    if(filters.location!=="all"&&!(row.roleOption.locations??[]).some(place=>
       place.trim().toLocaleLowerCase()===filters.location.trim().toLocaleLowerCase()))return false;
     if (!search) return true;
-    return [
-      row.company.name,
-      row.roleOption.title,
-      row.job.title,
-      row.job.description,
-      ...row.roleOption.locations,
-    ].join(" ").toLocaleLowerCase().includes(search);
+    const indexed=[
+      row.company?.name,row.roleOption?.title,row.job?.title,row.job?.description,
+      row.job?.responsibilities,row.job?.targetDepartmentName,row.job?.targetProgramName,
+      row.job?.jobTypeLabel,row.roleOption?.employmentType,...(row.roleOption?.locations??[]),
+    ].filter((field):field is string=>typeof field==="string")
+     .join(" ").toLocaleLowerCase();
+    return indexed.includes(search)||terms.every(term=>
+      [term,...(synonyms[term]??[])].some(candidate=>indexed.includes(candidate)));
   });
 
   return [...rows].sort((a,b) => {
@@ -136,7 +168,7 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
         a.roleOption.id.localeCompare(b.roleOption.id);
     }
     if (filters.sort === "title") {
-      return a.roleOption.title.localeCompare(b.roleOption.title) ||
+      return (a.roleOption.title??"").localeCompare(b.roleOption.title??"") ||
         a.roleOption.id.localeCompare(b.roleOption.id);
     }
     // A closed or malformed-deadline drive must not outrank actionable
@@ -147,7 +179,7 @@ export function filterLearnerPlacementJobs<T extends BrowseJobShape>(
       return Number.isFinite(instant)?instant:Number.MAX_SAFE_INTEGER;
     };
     return deadline(a) - deadline(b) ||
-      a.roleOption.title.localeCompare(b.roleOption.title) ||
+      (a.roleOption.title??"").localeCompare(b.roleOption.title??"") ||
       a.roleOption.id.localeCompare(b.roleOption.id);
   });
 }

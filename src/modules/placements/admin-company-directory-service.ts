@@ -57,7 +57,8 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     const nameSearch=or(ilike(placementCompanies.name,needle),
       exists(dbPlaceholderAlias(needle)))!;
     filters.push(query.searchField==="DOMAIN"?domainSearch:
-      query.searchField==="NAME"?nameSearch:or(nameSearch,domainSearch)!);
+      query.searchField==="NAME"?nameSearch:or(nameSearch,domainSearch,
+       ilike(placementCompanies.industry,needle))!);
   }
   const db = getDb();
   const [totalRows, results] = await Promise.all([
@@ -114,14 +115,33 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     .where(filters.length ? and(...filters) : undefined)
     .orderBy(...(query.sort === "RECENT"
       ? [desc(placementCompanyRelationships.updatedAt),asc(placementCompanyRelationships.id)]
-      : [asc(placementCompanies.name),asc(colleges.name),asc(placementCompanyRelationships.id)]))
-    .limit(50).offset((query.page-1)*50),
+      : query.sort==="DRIVES"||query.sort==="DRIVES_ASC"
+        ? [query.sort==="DRIVES"
+           ? desc(sql`(select count(*) from placement_jobs j
+             where j.company_relationship_id=${placementCompanyRelationships.id}
+              and j.college_id=${colleges.id} and j.status!='ARCHIVED')`)
+           : asc(sql`(select count(*) from placement_jobs j
+             where j.company_relationship_id=${placementCompanyRelationships.id}
+              and j.college_id=${colleges.id} and j.status!='ARCHIVED')`),
+           asc(placementCompanies.name),asc(placementCompanyRelationships.id)]
+        : query.sort==="LAST_ACTIVE"||query.sort==="LAST_ACTIVE_ASC"
+          ? [query.sort==="LAST_ACTIVE"
+            ? sql`(select max(j.updated_at) from placement_jobs j
+                where j.company_relationship_id=${placementCompanyRelationships.id}
+                 and j.college_id=${colleges.id}) desc nulls last`
+            : sql`(select max(j.updated_at) from placement_jobs j
+                where j.company_relationship_id=${placementCompanyRelationships.id}
+                 and j.college_id=${colleges.id}) asc nulls last`,
+             asc(placementCompanies.name),asc(placementCompanyRelationships.id)]
+          : [query.sort==="NAME_DESC"?desc(placementCompanies.name):asc(placementCompanies.name),
+             asc(colleges.name),asc(placementCompanyRelationships.id)]))
+    .limit(10).offset((query.page-1)*10),
   ]);
   const total=totalRows[0]?.total ?? 0;
   return {
     query, scope: { collegeId: selected?.collegeId ?? null, organizationId: selected?.organizationId ?? null },
-    ...projectAdminCompanies(results), truncated: query.page * 50 < total, cap: 50,
-    total, totalPages: Math.max(1,Math.ceil(total/50)),
+    ...projectAdminCompanies(results), truncated: query.page * 10 < total, cap: 10,
+    total, totalPages: Math.max(1,Math.ceil(total/10)),
   };
 }
 
@@ -179,6 +199,16 @@ export async function listSuperAdminGlobalCompanyCatalogue(
    companyStatus:placementCompanies.status,
    website:placementCompanies.websiteUrl,primaryDomain:placementCompanies.primaryDomain,
    industry:placementCompanies.industry,about:placementCompanies.about,
+   // Attribute the creating college only when the account has exactly one
+   // historic college membership. Do not guess a college for multi-college
+   // users or imply a linked college necessarily created the global identity.
+   addedByLabel:sql<string|null>`(case
+     when exists(select 1 from system_roles sr where sr.user_id=${placementCompanies.createdByUserId}
+       and sr.role='SUPER_ADMIN') then '42'
+     else (select case when count(distinct m.college_id)=1 then min(c.name) else null end
+       from college_memberships m inner join colleges c on c.id=m.college_id
+       where m.user_id=${placementCompanies.createdByUserId}) end)`,
+
    logoPublicUrl:placementCompanies.logoPublicUrl,verifiedAt:placementCompanies.verifiedAt,
    createdAt:placementCompanies.createdAt,updatedAt:placementCompanies.updatedAt,
    domains:sql<string[]>`(select coalesce(array_agg(d.domain order by d.domain),array[]::text[])
@@ -196,6 +226,14 @@ export async function listSuperAdminGlobalCompanyCatalogue(
   }).from(placementCompanies).where(filter)
    .orderBy(...(query.sort==="RECENT"
     ?[desc(placementCompanies.updatedAt),asc(placementCompanies.id)]
+    :query.sort==="DRIVES"?
+      [desc(sql`(select count(*) from placement_jobs j
+       inner join placement_company_relationships r on r.id=j.company_relationship_id
+       where r.company_id=${placementCompanies.id} and j.status!='ARCHIVED')`),
+       asc(placementCompanies.id)]
+    :query.sort==="LAST_ACTIVE"?
+      [sql`case when ${placementCompanies.verifiedAt} is null then 0 else 1 end`,
+       desc(placementCompanies.createdAt),asc(placementCompanies.id)]
     :[asc(placementCompanies.name),asc(placementCompanies.id)]))
    .limit(50).offset((query.page-1)*50),
  ]);

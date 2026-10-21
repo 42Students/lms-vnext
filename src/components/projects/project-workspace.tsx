@@ -7,6 +7,7 @@ import {mentorEstimateLabel} from "@/modules/projects/mentor-estimation-unit-mod
 import {mentorMeetingFacilitationSchema} from "@/modules/projects/mentor-meeting-facilitation-model";
 import { safeProjectExternalHref, showMentorTaskCriteria, mentorSprintTaskFacts, mentorSprintEmptyWorkNotice, mentorTaskReviewEvidence, mentorTaskFeedbackHref, mentorWorkspaceMissingPrimaryMentor, mentorRequiredResourceLinkState } from "@/modules/projects/mentor-workspace-evidence-model";
 import { PageHeader } from "@/components/ui/page-header";
+import {Button} from "@/components/ui/button";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Breadcrumbs } from "@/components/ui/breadcrumbs";
 import { ProjectArchiveControl } from "./project-archive-control";
@@ -36,6 +37,7 @@ import {ProjectResourceList} from "./project-resource-list";
 import {ProjectResourceLibraryEditor} from "./project-resource-library-editor";
 import {projectResourceLibraryToken} from "@/modules/projects/project-resource-library-token";
 import { ProjectRosterTable } from "./project-roster-table";
+import {CollegeAdminWorkspaceTeamOverview} from "./college-admin-workspace-team-overview";
 import { ProjectTeamRosterReconcile } from "./project-team-roster-reconcile";
 import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
 import { ProjectTaskPlanEditor } from "./project-task-plan-editor";
@@ -324,6 +326,90 @@ function formatDateTime(value: Date | null) {
   }).format(value);
 }
 
+
+/** Legacy delivery overview is the primary read surface; version history follows. */
+function AdminDeliveryOverview({workspace}:{workspace:Workspace}){
+ const delivery=workspace.resolvedDelivery;
+ if(!delivery)return <div className="border border-[var(--lms-canvas-border)] rounded-[var(--lms-control-radius)] p-4">
+  <EmptyState title="Delivery" description="No final delivery has been submitted yet."/>
+  <p className="mt-2 text-sm text-muted-foreground">Task-level submissions can still be reviewed from the Tasks tab.</p>
+ </div>;
+ const latest=workspace.finalDelivery.submissions.find(item=>item.id===delivery.id);
+ const mainType=latest?.attachments.some(item=>Boolean(item&&typeof item==="object"&&
+  (item as {kind?:unknown}).kind==="FILE"))?"File upload":
+  delivery.sourceUrl&&delivery.demoUrl?"Source + demo":delivery.sourceUrl?"Link":"Text";
+ const source=safeHttpHref(delivery.sourceUrl);
+ const reviewState=String(delivery.reviewStatus??"PENDING");
+ const reviewTone=["APPROVED","ACCEPTED"].includes(reviewState)?"success" as const:
+  ["CHANGES_REQUESTED","REJECTED"].includes(reviewState)?"warning" as const:
+  ["SUBMITTED","UNDER_REVIEW"].includes(reviewState)?"info" as const:"neutral" as const;
+ return <div className="space-y-4" aria-label="Latest final delivery">
+  <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
+   <div className="flex flex-wrap items-start justify-between gap-3">
+    <div><p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Final delivery</p>
+     <h3 className="mt-1 text-base font-semibold text-foreground">Submission package and review state</h3></div>
+    <StatusBadge tone={reviewTone}>{label(reviewState)}</StatusBadge>
+   </div>
+   <dl className="mt-4 grid gap-3 text-sm text-body sm:grid-cols-2 lg:grid-cols-4">
+    <div><dt className="text-xs text-muted-foreground">Submission type</dt><dd>{mainType}</dd></div>
+    <div><dt className="text-xs text-muted-foreground">Submitted by</dt><dd>{delivery.submittedBy??"—"}</dd></div>
+    <div><dt className="text-xs text-muted-foreground">Submitted at</dt><dd>{formatDateTime(delivery.submittedAt)}</dd></div>
+    <div><dt className="text-xs text-muted-foreground">Revisions</dt><dd>{delivery.revisionCount??"—"}</dd></div>
+   </dl>
+   <div className="mt-4 border-t border-[var(--lms-canvas-border)] pt-3">
+    <h4 className="text-sm font-semibold">Primary submission</h4>
+    <div className="mt-2 flex flex-wrap gap-3 text-sm">
+     {latest?.attachments.map((item,index)=>{
+      if(!item||typeof item!=="object")return null;
+      const row=item as Record<string,unknown>;
+      if(row.kind!=="FILE"||typeof row.fileId!=="string")return null;
+      return <ProjectDeliveryEvidenceDownload key={index} projectId={workspace.project.id}
+       fileId={row.fileId} name={typeof row.name==="string"?row.name:"Open submitted file"}/>;
+     })}
+     {source?<a href={source} target="_blank" rel="noopener noreferrer"
+      className="font-semibold text-link underline">Open source link</a>:null}
+     {!source&&!latest?.attachments.some(item=>Boolean(item&&typeof item==="object"&&
+      (item as {kind?:unknown}).kind==="FILE"))?
+       <p className="text-sm text-muted-foreground">No valid file or source link is attached.</p>:null}
+    </div>
+   </div>
+  </section>
+  <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
+   <div className="flex flex-wrap justify-between gap-2">
+    <h3 className="text-sm font-semibold">Additional evidence</h3>
+    <span className="text-xs text-muted-foreground">{delivery.attachments.length} additional item{delivery.attachments.length===1?"":"s"}</span>
+   </div>
+   {!delivery.attachments.length?<p className="mt-2 text-sm text-muted-foreground">No additional files or links.</p>:
+    <ul className="mt-3 space-y-3">{delivery.attachments.map((item,index)=>{
+     if(!item||typeof item!=="object")return null;
+     const row=item as Record<string,unknown>;
+     const name=typeof row.label==="string"?row.label:
+      typeof row.fileName==="string"?row.fileName:
+      typeof row.name==="string"?row.name:`Attachment ${index+1}`;
+     const href=typeof row.url==="string"?safeHttpHref(row.url):null;
+     return <li key={index} className="flex flex-wrap items-center justify-between gap-2 border-t border-[var(--lms-canvas-border)] pt-3 text-sm">
+      <span>{name}</span>
+      {row.kind==="FILE"&&typeof row.fileId==="string"?
+       <ProjectDeliveryEvidenceDownload projectId={workspace.project.id} fileId={row.fileId} name={name}/>:
+       href?<a href={href} target="_blank" rel="noopener noreferrer" className="text-link underline">Open</a>:
+       <span className="text-muted-foreground">Unavailable link</span>}
+     </li>;
+    })}</ul>}
+  </section>
+  <section className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] p-4">
+   <h3 className="text-sm font-semibold">Review</h3>
+   <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+    <div><dt className="text-xs text-muted-foreground">Reviewed by</dt><dd>{delivery.reviewedBy??"—"}</dd></div>
+    <div><dt className="text-xs text-muted-foreground">Reviewed at</dt><dd>{formatDateTime(delivery.reviewedAt)}</dd></div>
+   </dl>
+   {delivery.feedback?<div className="mt-3">
+    <h4 className="text-xs text-muted-foreground">Mentor feedback</h4>
+    <p className="mt-1 whitespace-pre-wrap text-sm text-body">{delivery.feedback}</p>
+   </div>:<p className="mt-3 text-sm text-muted-foreground">No mentor feedback has been recorded yet.</p>}
+  </section>
+ </div>;
+}
+
 /** The same project title, mentor subtitle and status badge above every mentor detail tab. */
 export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
   workspace: Workspace;
@@ -504,7 +590,7 @@ export function ProjectWorkspace({
       {polishAdminSection && mode==="ADMIN"?<PageBackLink href={backHref} label={backLabel} />:null}
 
       {!hidePageHeader ? <ProjectWorkspaceHeader workspace={workspace} mode={mode} backHref={mode==="ADMIN"&&!polishAdminSection?backHref:undefined} backLabel={backLabel} /> : null}
-      {mode === "ADMIN" && !sectionBaseHref ? (
+      {mode === "ADMIN" ? (
         <Breadcrumbs items={[
           { label: "Projects", href: backHref },
           { label: workspace.project.title },
@@ -884,32 +970,20 @@ export function ProjectWorkspace({
       {show("team") ? <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 className="m-0 text-lg font-semibold text-foreground">
-              Project team
-            </h2>
-            <p className="mt-1 text-sm text-body">
-              See who is assigned, what role they play, and how the project is staffed.
-              {" "}{workspace.members.length} {workspace.members.length === 1 ? "member" : "members"}
-            </p>
+            <h2 className="m-0 text-lg font-semibold text-foreground">Team</h2>
+            <p className="mt-1 text-sm text-body">Manage mentor ownership, student membership and workload across this workspace.</p>
           </div>
-          {mode === "ADMIN" && !readOnly ? (
-            <>
-              <Link href={(backHref.startsWith("/college/") ? "/college/projects" : "/admin/projects") +
-                "/reassign-mentor?projectId=" + encodeURIComponent(workspace.project.id)}
-                className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-link underline">
-                Reassign mentor
-              </Link>
-              <CollegeProjectMentorDialog projectId={workspace.project.id} collegeId={workspace.project.collegeId}/>
-            </>
-          ) : null}
-          {mode === "ADMIN" && !readOnly && !workspace.project.teamGroupId ? (
-            <>
-              <CollegeProjectStudentRosterDialog projectId={workspace.project.id}
-                expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
-              <AddProjectMemberControl projectId={workspace.project.id}/>
-            </>
-          ) : null}
+          {mode==="ADMIN"&&!readOnly
+            ?<CollegeProjectMentorDialog projectId={workspace.project.id}
+              collegeId={workspace.project.collegeId}
+              currentMentorName={workspace.members.find(member=>member.role==="MENTOR"&&member.isPrimary)?.displayName}/>
+            :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Reassign mentor…</Button>:null}
+          {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId
+            ?<CollegeProjectStudentRosterDialog projectId={workspace.project.id}
+              expectedUpdatedAt={workspace.project.updatedAt.toISOString()}/>
+            :mode==="ADMIN"?<Button type="button" variant="secondary" disabled>Manage students…</Button>:null}
         </div>
+        {mode==="ADMIN"?<CollegeAdminWorkspaceTeamOverview members={workspace.members} tasks={workspace.tasks}/>:null}
         {mode==="MENTOR" && mentorWorkspaceMissingPrimaryMentor(workspace.project.status,workspace.members) ? (
           <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning-border bg-warning-subtle p-3 text-sm text-body">
             No primary Mentor is recorded in the current Project roster.
@@ -936,6 +1010,9 @@ export function ProjectWorkspace({
               <ProjectTeamRosterReconcile projectId={workspace.project.id} /> : null}
           </div>
         ) : null}
+        {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId?<div className="flex justify-end">
+          <AddProjectMemberControl projectId={workspace.project.id}/>
+        </div>:null}
         {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
           const assigned=workspace.tasks.filter(task=>task.assigneeMembershipId===member.membershipId);
           const last=assigned.reduce<Date|null>((mostRecent,task)=>
@@ -1524,10 +1601,13 @@ export function ProjectWorkspace({
         ) : null}
         <div>
           <h2 className="m-0 text-lg font-semibold text-foreground">
-            Final submission
+            {mode==="ADMIN"?"Delivery":"Final submission"}
           </h2>
-
+          {mode==="ADMIN"?<p className="mt-1 text-sm text-muted-foreground">Review the final submission package, evidence, revisions and mentor feedback.</p>:null}
         </div>
+        {mode==="ADMIN"?<AdminDeliveryOverview workspace={workspace}/>:null}
+        {mode==="ADMIN"&&workspace.finalDelivery.submissions.length>0?
+         <h3 className="mt-4 text-sm font-semibold">Submission history</h3>:null}
         {mode==="MENTOR" && workspace.mentorEvidence.latestDelivery ? (
           <p role="status" className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
             Latest recorded delivery: version {workspace.mentorEvidence.latestDelivery?.version}

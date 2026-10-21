@@ -34,3 +34,36 @@ export const placementCollegeApplicationStageHistory=pgTable("placement_college_
  index("placement_college_stage_history_stage_time_idx").on(t.stageId,t.movedAt),
  check("placement_college_stage_history_reason_ck",sql`length(trim(${t.reason})) >= 3`),
 ]);
+
+/** Historical job_application fields do not belong to the same vNext table.
+ * Resolve source learner/job IDs under one college and enforce the canonical
+ * application membership+job uniqueness before writing a stage projection.
+ * Staff-only notes stay outside the learner response. */
+export const LEGACY_COLLEGE_APPLICATION_FIELD_MAP={
+ id:"placement_applications.id",
+ learner_id:"placement_applications.membership_id",
+ job_id:"placement_applications.job_id",
+ application_status:"placement_applications.status",
+ applied_at:"placement_applications.submitted_at",
+ status_updated_at:"placement_college_application_stages.moved_at",
+ status_updated_by:"placement_college_application_stages.moved_by_user_id",
+ internal_notes:"staff-only application activity",
+ internal_reason:"staff-only stage history",
+ rejection_reason:"candidate-facing application rejection message",
+ status_before_withdrawal:"application status history",
+ offer_letter_url:"placement_offers verified storage document",
+ offer_letter_sent_at:"placement_offer_status_history release timestamp",
+ current_round_id:"placement_job_rounds scoped mapping",
+ source:"placement_applications.channel",
+ resume_url:"verified application submission attachment",
+} as const;
+export const LEGACY_COLLEGE_APPLICATION_STATUSES={
+ APPLIED:"APPLIED",SHORTLISTED:"SHORTLISTED",ASSESSMENT:"ASSESSMENT",
+ INTERVIEW:"INTERVIEW",WAITLISTED:"WAITLISTED",OFFERED:"OFFERED",
+ HIRED:"HIRED",REJECTED:"REJECTED",WITHDRAWN:"WITHDRAWN",
+} as const;
+export function legacyCollegeApplicationStage(status:string){
+ return Object.prototype.hasOwnProperty.call(LEGACY_COLLEGE_APPLICATION_STATUSES,status)
+  ?LEGACY_COLLEGE_APPLICATION_STATUSES[status as keyof typeof LEGACY_COLLEGE_APPLICATION_STATUSES]
+  :null;
+}

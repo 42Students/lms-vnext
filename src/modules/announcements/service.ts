@@ -2,7 +2,7 @@ import {
   and, desc, eq, gt, isNotNull, isNull, lt, lte, or, sql, type SQL,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { db10Announcements } from "@/db/schema/db10-announcements";
+import { db10Announcements,announcementBroadcastGroups } from "@/db/schema/db10-announcements";
 import { activityEvents } from "@/db/schema/activity";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { colleges } from "@/db/schema/colleges";
@@ -193,6 +193,12 @@ export async function createAnnouncement(context: RequestContext, raw: unknown) 
   });
 }
 
+/**
+ * Scoped replacement for the old announcement list endpoint. The default is
+ * chronological admin history, not the separate recipient's pinned-first feed.
+ * Stable cursor pagination replaces stale process-local announcement caches:
+ * a confirmed write is visible on the following authorized read.
+ */
 export async function listAnnouncementsForAdmin(context: RequestContext, raw: unknown = {}) {
   const input = announcementAdminListSchema.parse(raw);
   const scope = adminListScope(context);
@@ -255,6 +261,34 @@ export async function listAnnouncementsForAdmin(context: RequestContext, raw: un
   };
 }
 
+/**
+ * Tenant-aware replacement for the legacy aggregate announcement-statistics
+ * endpoint. Never aggregate against the platform database before asserting
+ * that this actor may manage the requested college/organization scope.
+ * Scheduled, expired and deleted rows are disjoint reportable states.
+ */
+export async function announcementStatisticsForAdmin(context: RequestContext) {
+  const scope=adminListScope(context);
+  const filters: SQL[]=[];
+  if(scope.collegeId) filters.push(eq(db10Announcements.collegeId,scope.collegeId));
+  if(scope.organizationId) filters.push(eq(db10Announcements.organizationId,scope.organizationId));
+  const now=new Date();
+  const [result]=await getDb().select({
+    total:sql<number>`cast(count(*) as integer)`,
+    deleted:sql<number>`cast(count(*) filter (where ${db10Announcements.deletedAt} is not null) as integer)`,
+    scheduled:sql<number>`cast(count(*) filter (where ${db10Announcements.deletedAt} is null and ${db10Announcements.scheduledAt} > ${now}) as integer)`,
+    expired:sql<number>`cast(count(*) filter (where ${db10Announcements.deletedAt} is null and ${db10Announcements.expiresAt} <= ${now}) as integer)`,
+    live:sql<number>`cast(count(*) filter (where ${db10Announcements.deletedAt} is null and
+      (${db10Announcements.scheduledAt} is null or ${db10Announcements.scheduledAt} <= ${now}) and
+      (${db10Announcements.expiresAt} is null or ${db10Announcements.expiresAt} > ${now})) as integer)`,
+  }).from(db10Announcements).where(filters.length?and(...filters):undefined);
+  return {
+    total:Number(result?.total??0), live:Number(result?.live??0),
+    scheduled:Number(result?.scheduled??0),expired:Number(result?.expired??0),
+    deleted:Number(result?.deleted??0),
+  };
+}
+
 async function loadAnnouncement(id: string) {
   const [row] = await getDb()
     .select()
@@ -279,6 +313,51 @@ export async function updateAnnouncement(
     collegeId: current.collegeId,
   });
   if (current.deletedAt) throw new AnnouncementError("ANNOUNCEMENT_DELETED");
+
+  // Imported platform announcements are physical college copies of one
+  // broadcast. Editing a shared field must update the whole logical notice,
+  // or an audience would see contradictory copies. Audience membership is
+  // immutable here: a retarget requires the dedicated broadcast workflow.
+  if(current.broadcastGroupId){
+    if(input.receiverType!==undefined||input.receiverId!==undefined)
+      throw new AnnouncementError("STALE_AUDIENCE");
+    return getDb().transaction(async tx=>{
+      const [group]=await tx.select({id:announcementBroadcastGroups.id,
+        organizationId:announcementBroadcastGroups.organizationId})
+        .from(announcementBroadcastGroups)
+        .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
+        .for("update").limit(1);
+      if(!group||group.organizationId!==current.organizationId)
+        throw new AnnouncementError("TARGET_NOT_FOUND");
+      const copies=await tx.select().from(db10Announcements)
+        .where(eq(db10Announcements.broadcastGroupId,group.id))
+        .for("update");
+      if(!copies.length||!copies.some(copy=>copy.id===id))
+        throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
+      for(const copy of copies){
+        requireManage(context,{collegeId:copy.collegeId,organizationId:copy.organizationId});
+        if(copy.version!==input.expectedVersion||copy.deletedAt)
+          throw new AnnouncementError("STALE_VERSION");
+        assertSchedule(input.scheduledAt!==undefined?input.scheduledAt:copy.scheduledAt,
+          input.expiresAt!==undefined?input.expiresAt:copy.expiresAt);
+      }
+      const now=new Date();
+      const updated=await tx.update(db10Announcements).set({
+        ...(input.title!==undefined?{title:input.title}:{}),
+        ...(input.message!==undefined?{message:input.message}:{}),
+        ...(input.scheduledAt!==undefined?{scheduledAt:input.scheduledAt}:{}),
+        ...(input.expiresAt!==undefined?{expiresAt:input.expiresAt}:{}),
+        ...(input.isPinned!==undefined?{isPinned:input.isPinned}:{}),
+        version:input.expectedVersion+1,updatedAt:now,
+      }).where(and(eq(db10Announcements.broadcastGroupId,group.id),
+        eq(db10Announcements.version,input.expectedVersion),
+        isNull(db10Announcements.deletedAt))).returning();
+      if(updated.length!==copies.length)throw new AnnouncementError("STALE_VERSION");
+      await tx.update(announcementBroadcastGroups).set({updatedAt:now})
+        .where(eq(announcementBroadcastGroups.id,group.id));
+      return updated.find(row=>row.id===id)!;
+    });
+  }
 
   const target = input.receiverType && input.receiverId
     ? await resolveTarget(input.receiverType, input.receiverId)
@@ -325,8 +404,42 @@ export async function deleteAnnouncement(
   const { expectedVersion } = announcementVersionSchema.parse(raw);
   const current = await loadAnnouncement(id);
   requireManage(context, current);
-  requireCurrentAnnouncementVersion(current.version, expectedVersion);
+  // An already withdrawn notice is an idempotent DELETE, even when the
+  // caller still holds the version from the original successful deletion.
   if (current.deletedAt) return current;
+  requireCurrentAnnouncementVersion(current.version, expectedVersion);
+  if(current.broadcastGroupId){
+    return getDb().transaction(async tx=>{
+      const [group]=await tx.select({id:announcementBroadcastGroups.id,
+        organizationId:announcementBroadcastGroups.organizationId})
+        .from(announcementBroadcastGroups)
+        .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
+        .for("update").limit(1);
+      if(!group||group.organizationId!==current.organizationId)
+        throw new AnnouncementError("TARGET_NOT_FOUND");
+      const copies=await tx.select().from(db10Announcements)
+        .where(eq(db10Announcements.broadcastGroupId,group.id))
+        .for("update");
+      if(!copies.length||!copies.some(copy=>copy.id===id))
+        throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
+      for(const copy of copies){
+        requireManage(context,{collegeId:copy.collegeId,organizationId:copy.organizationId});
+        if(copy.version!==expectedVersion||copy.deletedAt)
+          throw new AnnouncementError("STALE_VERSION");
+      }
+      const now=new Date();
+      const deleted=await tx.update(db10Announcements).set({
+        deletedAt:now,deletedByUserId:context.user.id,
+        version:expectedVersion+1,updatedAt:now,
+      }).where(and(eq(db10Announcements.broadcastGroupId,group.id),
+        eq(db10Announcements.version,expectedVersion),
+        isNull(db10Announcements.deletedAt))).returning();
+      if(deleted.length!==copies.length)throw new AnnouncementError("STALE_VERSION");
+      await tx.update(announcementBroadcastGroups).set({updatedAt:now})
+        .where(eq(announcementBroadcastGroups.id,group.id));
+      return deleted.find(row=>row.id===id)!;
+    });
+  }
   const now = new Date();
   const [deleted] = await getDb()
     .update(db10Announcements)
@@ -355,8 +468,41 @@ export async function restoreAnnouncement(
   const { expectedVersion } = announcementVersionSchema.parse(raw);
   const current = await loadAnnouncement(id);
   requireManage(context, current);
-  requireCurrentAnnouncementVersion(current.version, expectedVersion);
+  // Idempotent restore follows the legacy ACTIVE transition: returning an
+  // already-active notice never changes its version or repeats delivery.
   if (!current.deletedAt) return current;
+  requireCurrentAnnouncementVersion(current.version, expectedVersion);
+  if (current.broadcastGroupId) {
+    return getDb().transaction(async tx=>{
+      const [group]=await tx.select({id:announcementBroadcastGroups.id,
+        organizationId:announcementBroadcastGroups.organizationId})
+        .from(announcementBroadcastGroups)
+        .where(eq(announcementBroadcastGroups.id,current.broadcastGroupId!))
+        .for("update").limit(1);
+      if(!group||group.organizationId!==current.organizationId)
+        throw new AnnouncementError("TARGET_NOT_FOUND");
+      const copies=await tx.select().from(db10Announcements)
+        .where(eq(db10Announcements.broadcastGroupId,group.id))
+        .for("update");
+      if(!copies.length||!copies.some(copy=>copy.id===id))
+        throw new AnnouncementError("ANNOUNCEMENT_NOT_FOUND");
+      for(const copy of copies){
+        requireManage(context,{collegeId:copy.collegeId,organizationId:copy.organizationId});
+        if(copy.version!==expectedVersion||!copy.deletedAt)
+          throw new AnnouncementError("STALE_VERSION");
+      }
+      const when=new Date();
+      const restored=await tx.update(db10Announcements).set({
+        deletedAt:null,deletedByUserId:null,updatedAt:when,version:expectedVersion+1,
+      }).where(and(eq(db10Announcements.broadcastGroupId,group.id),
+        eq(db10Announcements.version,expectedVersion),
+        isNotNull(db10Announcements.deletedAt))).returning();
+      if(restored.length!==copies.length)throw new AnnouncementError("STALE_VERSION");
+      await tx.update(announcementBroadcastGroups).set({updatedAt:when})
+        .where(eq(announcementBroadcastGroups.id,group.id));
+      return restored.find(row=>row.id===id)!;
+    });
+  }
   const now = new Date();
   const [restored] = await getDb()
     .update(db10Announcements)
@@ -534,6 +680,9 @@ export async function listVisibleAnnouncementsForMembershipPage(
 }
 
 
+/** Target picker labels are sorted independently of recipient-visible pinned
+ * notices and chronological administrator history. No cross-tenant popularity
+ * statistics may leak through these suggestions. */
 export async function listAnnouncementTargetOptions(context: RequestContext) {
   if (!canAccessAnnouncements(context.user.platformStatus)) throw new AnnouncementError("FORBIDDEN");
   let collegeId: string | null = null;
@@ -604,24 +753,29 @@ export async function listAnnouncementTargetOptions(context: RequestContext) {
         )),
     ]);
 
+  const stableNameSort=<T extends {name:string|null;id:string}>(rows:T[]) =>
+    [...rows].sort((a,b)=>String(a.name??"").localeCompare(String(b.name??""),"en",{sensitivity:"base"}) ||
+      a.id.localeCompare(b.id));
   return {
-    college: collegeRows.map((row) => ({ type: "COLLEGE" as const, id: row.id, label: row.name })),
-    departments: departmentRows.map((row) => ({
+    college: stableNameSort(collegeRows).map((row) => ({ type: "COLLEGE" as const, id: row.id, label: row.name })),
+    departments: stableNameSort(departmentRows).map((row) => ({
       type: "DEPARTMENT" as const, id: row.id, label: row.name,
     })),
-    programs: programRows.map((row) => ({
+    programs: stableNameSort(programRows).map((row) => ({
       type: "PROGRAM" as const, id: row.id,
       label: `${row.name} · ${row.departmentName}`,
     })),
-    classes: classRows.map((row) => ({
+    classes: stableNameSort(classRows).map((row) => ({
       type: "CLASS" as const, id: row.id,
       label: `${row.name} · ${row.programName}`,
     })),
-    faculty: facultyRows.map((row) => ({
+    faculty: [...facultyRows].sort((a,b)=>String(a.displayName??a.email??"").localeCompare(String(b.displayName??b.email??""),"en"))
+      .map((row) => ({
       type: "FACULTY" as const, id: row.id,
       label: row.displayName || row.email || "Unnamed faculty",
     })),
-    learners: learnerRows.map((row) => ({
+    learners: [...learnerRows].sort((a,b)=>String(a.displayName??a.email??"").localeCompare(String(b.displayName??b.email??""),"en"))
+      .map((row) => ({
       type: "LEARNER" as const, id: row.id,
       label: row.displayName || row.email || "Unnamed learner",
     })),

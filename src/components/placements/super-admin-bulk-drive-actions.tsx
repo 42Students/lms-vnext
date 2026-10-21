@@ -9,8 +9,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Select } from "@/components/ui/select";
 import { useRouter } from "next/navigation";
 import { apiFetch } from "@/lib/api-fetch";
+import {beginDriveMutation,endDriveMutation} from "@/modules/placements/drive-mutation-client-lock";
 type Drive = {id: string; title: string; status: string; companyName: string};
-type Preview = {eligible: number; ignored: number; excluded: number; pendingLettersWithdrawn: number};
+type Preview = {eligible: number; ignored: number; excluded: number; pendingLettersWithdrawn: number;
+ recordedApplications?:number;recordedInterviews?:number;actionDescription?:string};
 type Result = {updated: number; skipped: number;
   results: {jobId: string; status: "UPDATED" | "SKIPPED"; reason: string}[]};
 
@@ -71,7 +73,7 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
           checked={eligible.length>0 && eligible.slice(0,25).every(d=>selected.includes(d.id))}
           onChange={e=>{setSelected(e.target.checked?eligible.slice(0,25).map(d=>d.id):[]);
             setPreview(null);setResult(null);}}/>
-        Select eligible on this page ({eligible.length})
+        Select up to 25 eligible drives ({eligible.length} available)
       </label>
       <label className="flex min-w-0 flex-col items-start gap-[6px] text-[13px]">Action
         <Select value={action} aria-label="Bulk action" disabled={busy} onChange={e=>{
@@ -117,6 +119,8 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
     {preview?<div role="group" aria-label="Bulk action impact"
       className="min-w-0 space-y-3 border-y border-border py-3 text-sm">
       <p>{preview.eligible} eligible, {preview.ignored+preview.excluded} skipped.</p>
+      <p>{preview.actionDescription??"The selected drives will be updated according to the placement policy."}</p>
+      {action==="CLOSE"?<p>{preview.recordedApplications??0} historical applications and {preview.recordedInterviews??0} interview records are retained; learners can no longer apply. Notices follow the audited close workflow.</p>:null}
       <p>{action==="CLOSE"?
         `${preview.pendingLettersWithdrawn} issued offers may be withdrawn when these drives close.`:
         "Previously withdrawn offers will not be reissued."}</p>
@@ -135,7 +139,11 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       {result.skipped>0?<Button type="button" variant="link" onClick={()=>void send(false)}
         className="!min-h-11 !px-0 !text-primary-text">Preview failed drives for retry</Button>:null}
     </div>:null}
-    {error?<InlineNotice tone="error" message={error}/>:null}
+    {error?<div className="space-y-2" role="alert">
+      <InlineNotice tone="error" message={error}/>
+      <Button type="button" variant="link" disabled={busy||selected.length===0}
+        onClick={()=>void send(false)}>Retry impact preview</Button>
+    </div>:null}
       </div>
     </details>
     <ConfirmDialog open={confirmOpen&&preview!==null} pending={busy}
@@ -148,4 +156,80 @@ export function SuperAdminBulkDriveActions({drives}: {drives: Drive[]}) {
       confirmVariant={action==="CLOSE"?"danger":"primary"}
       onConfirm={()=>void send(true)}/>
   </section>;
+}
+
+/** An accessible direct row action: preview the one selected drive and guard
+ * the same job's deadline, edit and archive changes. The server revalidates
+ * status, college membership and downstream offers at commit time.
+ */
+export function SuperAdminDriveRowStatusAction({jobId,title,status}:{
+ jobId:string;title:string;status:string;
+}){
+ const router=useRouter(),{showToast}=useToast();
+ const [preview,setPreview]=useState<Preview|null>(null);
+ const [error,setError]=useState("");
+ const [busy,setBusy]=useState(false);
+ const lock=useRef(false);
+ const action=status==="PUBLISHED"?"CLOSE":status==="CLOSED"?"OPEN":null;
+ async function inspect(){
+  if(!action||lock.current)return;
+  if(!beginDriveMutation(jobId)){
+   setError("Another action is updating this drive. Retry after it finishes.");return;
+  }
+  lock.current=true;setBusy(true);setError("");
+  try{
+   const response=await apiFetch<Preview>("/api/admin/placements/drives/bulk",{
+    method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({action,jobIds:[jobId],confirmStage:"PREVIEW"}),
+   });
+   if(response.eligible!==1){
+    setError("This drive is no longer in the required status. Refresh and retry.");return;
+   }
+   setPreview(response);
+  }catch(error){
+   setError(error instanceof Error?error.message:"Could not preview this drive status. Nothing was changed.");
+  }finally{lock.current=false;setBusy(false);endDriveMutation(jobId);}
+ }
+ async function submit(){
+  if(!action||lock.current||!preview)return;
+  if(!beginDriveMutation(jobId)){
+   setError("Another action is updating this drive. Retry after it finishes.");return;
+  }
+  lock.current=true;setBusy(true);setError("");
+  try{
+   const response=await apiFetch<Result>("/api/admin/placements/drives/bulk",{
+    method:"POST",headers:{"content-type":"application/json"},
+    body:JSON.stringify({action,jobIds:[jobId],confirmed:true}),
+   });
+   setPreview(null);
+   if(response.updated===1){
+    showToast({tone:"success",title:"Job "+(action==="OPEN"?"opened":"closed")+" successfully"});
+    router.refresh();
+   }else{
+    setError(response.results[0]?.reason??"Drive status changed. Refresh and retry.");
+   }
+  }catch(error){
+   setPreview(null);
+   setError(error instanceof Error?error.message:"Unable to update drive status. Refresh and retry.");
+  }finally{lock.current=false;setBusy(false);endDriveMutation(jobId);}
+ }
+ if(!action)return null;
+ return <div className="min-w-0 space-y-2">
+  <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={()=>void inspect()}>
+   {busy?"Checking…":action==="CLOSE"?"Close drive":"Open drive"}
+  </Button>
+  {error?<div role="alert" className="space-y-1 text-sm text-error">
+   <p>{error}</p>
+   <Button size="sm" variant="link" disabled={busy} onClick={()=>void inspect()}>Retry status preview</Button>
+  </div>:null}
+  <ConfirmDialog open={preview!==null} pending={busy} onOpenChange={next=>{
+   if(!next&&!busy)setPreview(null);
+  }} title={(action==="CLOSE"?"Close ":"Open ")+title+"?"}
+   description={action==="CLOSE"?
+    "Closing prevents further learner applications. Existing application and interview history remains retained. Issued offers may be withdrawn and affected learners notified according to the audited close workflow. This is not a delete.":
+    "Opening restores the drive to its published state if the season and company are still active. Withdrawn offers are not reissued."}
+   confirmLabel={action==="CLOSE"?"Close drive":"Open drive"}
+   confirmVariant={action==="CLOSE"?"danger":"primary"}
+   onConfirm={()=>void submit()}/>
+ </div>;
 }

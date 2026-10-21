@@ -8,6 +8,7 @@ import {useToast} from "@/components/ui/toast";
 import {VerificationWorkspace,type VerificationQueueCard} from "./VerificationWorkspace";
 import {VerificationReviewDrawer} from "./VerificationReviewDrawer";
 import {TpoRosterVerificationBulk} from "@/components/tpo/tpo-roster-verification-bulk";
+import {TpoStudentNudgePanel} from "@/components/tpo/tpo-student-nudge-panel";
 import {filterTpoVerificationRows,defaultTpoVerificationFilters,type TpoVerificationLocalFilters} from "@/modules/verification/tpo-queue-local-filters";
 
 /** Same locked review, private receipt and stale-version path as College Admin. */
@@ -26,6 +27,12 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
  const [asOf]=useState(()=>new Date());
  const visible=filterTpoVerificationRows(rows,filters,asOf);
  const waiting=visible.filter(row=>row.status==="SUBMITTED"||row.status==="UPDATE_PENDING");
+ // The legacy Send a message action targets distinct students, not each
+ // Education/Identity section. The existing TPO endpoint independently
+ // authorizes each recipient and writes an audited in-app notification.
+ const nudgeRows=[...new Map(visible.map(row=>[
+  row.learnerMembershipId,{id:row.learnerMembershipId,label:row.learnerName,registered:null},
+ ])).values()];
  const active=sequenceIndex===null?selected:sequenceRows[sequenceIndex]??null;
  function finishSequential(completed=false){
   if(sequenceIndex!==null&&sequenceIndex<sequenceRows.length-1&&!completed){
@@ -76,6 +83,12 @@ export function TpoVerificationPanel({rows,counts,serverTab,serverKind}:{rows:Ve
     <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 md:py-2">Verify profiles / Send back for correction</summary>
     <TpoRosterVerificationBulk key={"queue:"+JSON.stringify(filters)+serverTab+serverKind} rows={visible} scope="verification"/>
    </details>:null}
+  {nudgeRows.length?<details className="border-b border-border pb-3">
+   <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-primary-text md:min-h-9 md:py-2">
+    Act on selected → Send a message
+   </summary>
+   <TpoStudentNudgePanel rows={nudgeRows}/>
+  </details>:null}
   <VerificationWorkspace key={JSON.stringify(filters)+serverTab+serverKind} rows={visible}
    legacyTpoCopy initialTab={serverTab} initialKind={serverKind} counts={counts}
    disableLocalSearch preserveServerOrder showTabCounts={true}

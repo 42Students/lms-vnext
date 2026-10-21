@@ -14,13 +14,19 @@ import {
   type LoginDependencies,
 } from "./login-service";
 
-/** Production wiring: real Exotel + ZeptoMail, Postgres, system clock. */
+/** Production wiring: real Exotel + ZeptoMail, Postgres, system clock.
+ * Live transport is disabled in development unless explicitly verified.
+ * Provider acceptance never means handset/inbox delivery; webhook status is
+ * tracked by notification adapters without exposing recipients or OTPs. */
 function dependencies(): LoginDependencies {
+  const config=getAuthConfig();
+  // Development fixtures never hit live DLT or ZeptoMail by accident.
+  const liveTransport=config.appEnv==="production" || process.env.AUTH_DEV_REAL_DELIVERY==="VERIFIED";
   return {
     repository: drizzleLoginRepository,
-    sms: createExotelSmsProvider(),
-    email: createZeptoMailEmailProvider(),
-    config: getAuthConfig(),
+    sms:liveTransport?createExotelSmsProvider():{sendOtp:async()=>false},
+    email:liveTransport?createZeptoMailEmailProvider():{sendOtpEmail:async()=>false},
+    config,
     newId: () => randomUUID(),
     now: () => new Date(),
   };

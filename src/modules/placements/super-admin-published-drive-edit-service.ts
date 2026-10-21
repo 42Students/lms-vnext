@@ -2,6 +2,8 @@ import "server-only";
 import {and,eq,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {placementJobs,placementJobRoleOptions,placementSeasons} from "@/db/schema";
+import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
+import {TPO_BUILTIN_JOB_TYPES} from "./tpo-builtin-job-types";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
@@ -11,7 +13,7 @@ import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {placementJobIdSchema} from "./validation";
 import {PlacementsServiceError} from "./errors";
 import {superAdminPublishedDriveEditSchema} from "./super-admin-published-drive-edit-model";
-import {isLegacyAssessmentDeadlineAfterApplication} from "./placement-legacy-posting-model";
+import {isLegacyAssessmentDeadlineAfterApplication,placementLegacyPostingDetailsSchema} from "./placement-legacy-posting-model";
 
 /** A published edit changes only public descriptive terms and future application deadline.
  * It does not rewrite historical eligibility snapshots, submitted applications or prior offers.
@@ -57,8 +59,25 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
     eq(placementJobRoleOptions.status,"ACTIVE"),
     eq(placementJobRoleOptions.title,cmd.title))).limit(1);
   if(duplicate)throw new PlacementsServiceError("PLACEMENT_ROLE_OPTION_DUPLICATE");
+  const requestedJobType=cmd.jobTypeLabel.trim().replace(/\s+/g," ");
+  const builtin=TPO_BUILTIN_JOB_TYPES.find(type=>type.label.toLowerCase()===requestedJobType.toLowerCase());
+  const [configured]=await tx.select({label:placementTpoJobTypes.label,
+   active:placementTpoJobTypes.active,countsAsPlaced:placementTpoJobTypes.countsAsPlaced})
+   .from(placementTpoJobTypes).where(and(eq(placementTpoJobTypes.collegeId,acting.collegeId),
+    sql`lower(${placementTpoJobTypes.label}) = lower(${requestedJobType}::text)`)).limit(1);
+  const savedLabel=job.jobTypeLabel?.trim()??"";
+  if((!builtin&&!configured||configured?.active===false) &&
+   savedLabel.toLowerCase()!==requestedJobType.toLowerCase())
+   throw new PlacementsServiceError("PLACEMENT_JOB_TYPE_INVALID");
+  const jobTypeLabel=builtin?.label??configured?.label??savedLabel;
+  const countsAsPlaced=builtin?.countsAsPlaced??configured?.countsAsPlaced??job.countsAsPlaced;
+  const legacyPostingDetails=placementLegacyPostingDetailsSchema.parse({
+   ...(job.legacyPostingDetails??{}),responsibilities:cmd.responsibilities,
+  });
   const [saved]=await tx.update(placementJobs).set({
    title:cmd.title,description:cmd.description,locations:cmd.locations,
+   jobTypeLabel,countsAsPlaced,employmentType:cmd.employmentType,workMode:cmd.workMode,
+   legacyPostingDetails,
    applicationDeadline:deadline,
    openings:cmd.openings,
    minimumAnnualCtcInr:cmd.minimumAnnualCtcInr,
@@ -71,6 +90,7 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
   if(!saved)throw new PlacementsServiceError("PLACEMENT_JOB_STALE");
   await tx.update(placementJobRoleOptions).set({
    title:cmd.title,locations:cmd.locations,openings:cmd.openings,
+   employmentType:cmd.employmentType,workMode:cmd.workMode,
    minimumAnnualCtcInr:cmd.minimumAnnualCtcInr,
    maximumAnnualCtcInr:cmd.maximumAnnualCtcInr,updatedAt:new Date(),
   }).where(eq(placementJobRoleOptions.id,primary.id));
@@ -82,7 +102,8 @@ export async function editSuperAdminPublishedDrive(context:RequestContext,rawJob
    metadata:{reason:cmd.reason,previousTitle:job.title,newTitle:cmd.title,
     oldDeadline:job.applicationDeadline?.toISOString()??null,
     newDeadline:deadline.toISOString(),
-    fields:["title","description","locations","applicationDeadline","openings",
+    fields:["title","description","responsibilities","jobTypeLabel","employmentType",
+     "workMode","locations","applicationDeadline","openings",
      "minimumAnnualCtcInr","maximumAnnualCtcInr"],
     existingApplicationsUnchanged:true},
   });

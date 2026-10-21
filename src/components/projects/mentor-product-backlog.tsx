@@ -14,6 +14,8 @@ import {projectMutation} from "./project-api";
 import {MentorTaskDetailsEdit} from "./mentor-task-details-edit";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
+import {useToast} from "@/components/ui/toast";
+import {FriendlyFetchError} from "@/lib/api-fetch";
 type Task={id:string;title:string;status:string;sprintId:string|null;carriedFromSprintId?:string|null;updatedAt:Date;
  priority:string;estimatePoints:number|null;
  description:string|null;approach:string|null;acceptanceCriteria:string|null;
@@ -23,6 +25,8 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
  projectId:string;tasks:Task[];sprints:Sprint[];readOnly?:boolean;
 }){
  const router=useRouter();
+ const {showToast}=useToast();
+ const [recentlySaved,setRecentlySaved]=useState<Task[]>([]);
  const draftId=useId();
  const [adding,setAdding]=useState(false),[title,setTitle]=useState(""),[description,setDescription]=useState(""),[approach,setApproach]=useState(""),[criteria,setCriteria]=useState(""),[priority,setPriority]=useState("MEDIUM"),[points,setPoints]=useState("");
  const [taskType,setTaskType]=useState(""),[dueDate,setDueDate]=useState(""),[blockerReason,setBlockerReason]=useState("");
@@ -34,7 +38,10 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
   setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
  }
  const guard=useProjectEditorDiscardGuard(adding,draftDirty,busy,discardDraft);
- const backlog=tasks.filter(task=>task.sprintId===null),completed=tasks.filter(task=>task.status==="DONE");
+ // A server-confirmed new row remains visible until the next route snapshot.
+ const snapshotIds=new Set(tasks.map(task=>task.id));
+ const visibleTasks=[...tasks,...recentlySaved.filter(task=>!snapshotIds.has(task.id))];
+ const backlog=visibleTasks.filter(task=>task.sprintId===null),completed=visibleTasks.filter(task=>task.status==="DONE");
  const velocity=completed.reduce((sum,task)=>sum+(task.estimatePoints??0),0);
  async function move(){
   if(busy||readOnly||!moveRequest)return;
@@ -46,17 +53,22 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    });
    setMoveRequest(null);
    setNotice(targetSprintId?"Task pulled into sprint.":"Task returned to backlog.");router.refresh();
-  }catch{setError("Cannot move task.");}finally{setBusy(false);}
+  }catch(reason){
+    const stale=reason instanceof FriendlyFetchError&&reason.status===409;
+    setError(stale?"Task plan changed. Reload the latest workspace before saving.":"Failed to update tasks");
+   }finally{setBusy(false);}
  }
  const targets=sprints.filter(s=>s.status!=="COMPLETED");
  const returnable=tasks.filter(task=>task.sprintId!==null&&["TODO","IN_PROGRESS","BLOCKED"].includes(task.status));
  return <section className="space-y-3 border-b border-border pb-5">
+  <p className="text-xs text-muted-foreground">Task edits are individually version-checked. Reload after a conflict to avoid overwriting another editor.</p>
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><h2 className="text-lg font-semibold">Product backlog</h2>
     <p className="mt-1 text-sm text-body">{backlog.length} backlog tasks</p>
    </div>
    <p className="text-sm text-body"><span className="font-semibold">Velocity</span> · {velocity} points completed</p>
   </div>
+  {!readOnly&&targets.length===0?<Alert tone="warning" role="status">No active sprints found. You can create backlog tasks now, but cannot pull them into a sprint until a sprint is active.</Alert>:null}
   {!readOnly?<section className="space-y-2">
     <Button variant="primary" type="button" aria-expanded={adding} aria-controls={draftId} onClick={()=>adding?guard.requestClose():setAdding(true)}
       className="min-h-11 px-3">
@@ -64,23 +76,33 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
     </Button>
     {adding?<form id={draftId} onSubmit={async e=>{
       e.preventDefault();if(busy)return;setError("");
-      if(!title.trim()||!Number.isInteger(points?Number(points):0)||
+      if(!title.trim()){setError("Item 1: Title required");return;}
+      if(!Number.isInteger(points?Number(points):0)||
         (points!==""&&(Number(points)<0||Number(points)>1000))){
-        setError("Enter a task title and a valid estimate from 0 to 1000.");return;
+        setError("Item 1: Estimate must be between 0 and 1000.");return;
       }
       setBusy(true);
       try{
-        await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
+        const receipt=await projectMutation("/api/projects/"+encodeURIComponent(projectId)+"/backlog","POST",{
           title:title.trim(),description:description.trim()||null,
           approach:approach.trim()||null,
           acceptanceCriteria:criteria.trim()||null,priority,
           estimatePoints:points?Number(points):null,
           taskType:taskType||null,dueDate:dueDate||null,blockerReason:blockerReason.trim()||null,
         });
+        if(!receipt || typeof receipt!=="object" || !("task" in receipt) ||
+           !receipt.task || typeof receipt.task!=="object" ||
+           !("id" in receipt.task) || typeof receipt.task.id!=="string")
+          throw new Error("Task save receipt is invalid.");
+        setRecentlySaved(old=>[...old,receipt.task as Task]);
+        showToast({tone:"success",title:"Tasks updated"});
         setAdding(false);setTitle("");setDescription("");setApproach("");setCriteria("");
         setPriority("MEDIUM");setPoints("");setTaskType("");setDueDate("");setBlockerReason("");
         router.refresh();
-      }catch{setError("Could not add backlog task");}
+      }catch(reason){
+        const stale=reason instanceof FriendlyFetchError&&reason.status===409;
+        setError(stale?"Task plan changed. Reload the latest workspace before saving.":"Failed to update tasks");
+      }
       finally{setBusy(false);}
     }} className="grid gap-3 border-t border-border pt-3 min-[768px]:grid-cols-2">
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Title<Input required maxLength={200} value={title}
@@ -101,9 +123,13 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Done when<Textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimate points<Input type="number" min={0} max={1000}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimate points
+        <span className="mt-1 block text-xs font-normal text-body">Select a classic story-point estimate (1, 2, 3, 5, 8, 13) or enter a custom whole number (0–1000).</span>
+        <Input type="number" list={draftId+"-estimates"} min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
+        <datalist id={draftId+"-estimates"}>{[1,2,3,5,8,13].map(n=><option key={n} value={n}/>)}</datalist>
+      </label>
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task type
         <Select value={taskType} onChange={e=>setTaskType(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -149,14 +175,14 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
     {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Pull into sprint
-     <Select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
+     <Select disabled={busy||targets.length===0} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       <option value="">Choose sprint</option>
       {targets.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
      </Select>
     </label>:null}
    </article>)}
-   {!backlog.length?<div><EmptyState title="Backlog is empty." description="No backlog tasks to display." /></div>:null}
+   {!backlog.length?<div><EmptyState title="No backlog tasks yet" description="Add backlog tasks, then pull them into a sprint when the plan is ready." /></div>:null}
   </div>
   {!readOnly&&returnable.length>0?<Disclosure title="Return unfinished tasks to backlog">
     <div className="mt-2 space-y-2">

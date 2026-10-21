@@ -1,0 +1,2 @@
+# Notice for lane 11 (read and do FIRST)
+Your last version of src/app/api/admin/placements/hiring-report/export/route.ts (commit "Restore mixed assignment evidence and complete hiring CSV and curriculum workspaces") had a SYNTAX ERROR, so the merge robot restored the old file on main and that change is NOT on main. Re-read the file carefully (matching braces, parentheses, template strings, imports), redo the change cleanly, re-read it once more, then continue your queue.

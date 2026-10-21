@@ -259,3 +259,60 @@
 
 ## Packet 53 — Project template historical comparison
 - Historical comparison now marks unreadable snapshot specifically and never exposes rollback on failed comparison. The rollback control requires explicit "I reviewed these changes" acknowledgement, keyed to template+selected snapshot+current template version; mutation still sends expectedTemplateVersion to server and prompts again. Copy discloses that lifecycle publication/archive fields are not restored from blueprint snapshots. Full server-side compare digest token and historical full-snapshot migration require backend changes. No code/tests/CI run.
+
+## Packet 54 — Super Admin project workspace deep-link
+- Added strict UUID recovery with back navigation and preserved only whitelisted, bounded from/reason query context when redirecting legacy project index to canonical Summary. Added legacy workspace Audit alias route that validates/authorizes exact project before redirect to canonical Audit section. No unsafe arbitrary parameter reflection or cross-college lookup.
+- G2-20-028-010/020, G2-4-029-001 and G2-20-028-007 reviewed. No app execution, tests or CI.
+
+## Packet 55 — Super Admin project templates index
+- Restored current-page CSV filename project-templates.csv and four-column Title/Version/Lifecycle/Summary contract; clearly labeled current permissioned page vs all filtered results (G2-6-029-048).
+- Exact Templates could not be loaded recovery label, existing scoped Retry filters preserved (G2-6-029-028).
+- Archive success toast "Template archived" and fallback "Failed to archive template" (G2-6-029-029/031). Reconciliation of async current list uses router.refresh rather than premature optimistic deletion. No app execution, tests or CI.
+
+## Packet 56 — College branding setup
+- Branding preview, stored policy and college identity now settle independently; authorized failures continue denying access and unavailable data shows exact "Couldn't load branding for this college." with retry and no partial form state. Added warning to save edits before scope switch because page-local editor is per selected college. G2-9-030-025/029 page-local changes; G2-5-030-018 cross-tab dirty/busy registry deferred. No code/test/CI run.
+
+## Packet 57 — Super Admin legacy hiring dashboard
+- Legacy /admin/placements/hiring now redirects to the canonical scoped /admin/placements/analytics hiring metrics, funnel and company report. Allows only bounded analytic filter keys; rejects arbitrary query passthrough. Existing Analytics service retains unified validated counts rather than synthetic old GET shapes. G2-10-008-001 page route parity addressed; G2-10-008-063 remains a service/API compatibility handoff. No code/test/CI run.
+
+## Packet 58 — Selected-college Super Admin applications
+- No scope now shows exact legacy "Organization context required for job application search." and a selected-college recovery cue, rather than querying any applications. An optional filter lookup failure no longer hides the protected directory. Existing item links lead to authorized application detail and stage history; private contact/resume/notes remain protected pending explicit need-to-know service. Reviewed G2-11-030-009 and G2-12-014-023; first requires permissioned detail service handoff. No code/tests/CI run.
+
+## Packet 59 — Candidate interviews canonical route
+- The old Super Admin Interviews entry now maps to the already implemented selected-college Calendar candidate appointment list (default agenda view, bounded whitelisted date/company/job/round-kind filters), rather than prioritizing round-level records that lack Confirmed/Reschedule/No Show lifecycle. Calendar already reads actual bookings with independent retry. Existing detailed round pages remain addressable. G2-5-007-012/028 page route resolved via canonical consumer; same-scope stale list retention remains calendar-service handoff. No code/tests/CI run.
+
+## Packet 60 — New global project template
+- Clarified selected org/college scope denial and how to clear it before global template authoring. Clarified college module gate at assignment/workspace consumption rather than falsely applying one arbitrary college's Projects flag to a global catalog. G2-5-029-040/041 intent reconciled with vNext platform authoring model. No code/tests/CI run.
+
+## Packet 61 — Global project template catalogue
+- Preserved strict invalid-filter handling with a recovery link retaining safely bounded q, instead of silently interpreting unknown status. Clarified that Templates is global project-authoring catalogue even with no college selected; Workspaces retain selected-college safety. G2-7-031-021/G2-6-029-030 addressed as explicit route/design split. No code/tests/CI run.
+
+## Packet 62 — Project audit scope
+- Selected-college audit and explicitly permitted platform-wide audit now have distinct visible scope explanations; no-college non-global actor sees exact "Select a college to continue". G2-7-030-046/032 addressed on page, preserving permission-gated global service. No code/tests/CI run.
+
+## Packet 63 — College web address
+- Managed subdomain and verified custom domains now load independently; either can show exact "Couldn't load the web address." with retry without hiding the successfully loaded subsection. Authorization denial is not swallowed. Added explicit unsaved/scope-transition warning. G2-9-031-028 addressed, G2-5-030-018 shared dirty/busy registry handoff. No code/tests/CI run.
+
+## Packet 64 — Tenant setup hub
+- Unified visible step tabs for Create organization and college / Launch setup / Tenant directory, and explained the safe connected creation and scope-selection workflow. Legacy single-sheet contents stay separate routes intentionally to preserve vNext scope and current persisted form contracts. Findings G2-10-023-001/105 reviewed. No code execution, tests or CI.
+
+## Packet 65 — Create drive
+- Restored 800px-wide focused form composition using the existing validated placement create workspace and clear return path. Exact floating modal/drop-in duplicateFrom state cannot be generated safely from the current server page without a tenant-validated cloning API and client modal controller; documented instead of inventing draft values. G2-17-030-022 partially fulfilled. No code execution, tests or CI.
+
+## Packet 66 — Screening assessment evidence
+- Clarified in the scoped queue that decisions are not numeric scores; linked authorized Applications detail instead of leaking unverified assessment/ranking fields or manufacturing zero scores. The field-level assessment projection requires explicit service and permission handoff (G2-13-021-002). No code/tests/CI run.
+
+## Packet 67 — Canonical workspace overview navigation
+- Legacy overview already resolves through canonical /admin/projects/[projectId]/[section]. Replaced unsafe first-of-duplicate query selection with bounded single-value from/reason, while leaving college ID exclusively in authorized selected scope. G2-18-028-001 reviewed; unsupported old numeric IDs stay unmapped pending an explicit crosswalk. No code/tests/CI run.
+
+## Packet 68 — Template assignment legacy identifier
+- Finding G2-7-033-002 already fixed: `src/app/(authenticated)/admin/projects/templates/[templateId]/colleges/page.tsx` resolves legacy numeric template IDs using `legacyIdMap` and approved slugs using `resolveTemplateCollegeLegacyId`, then validates UUID after permissioned lookup. No parallel resolver added. No code/test/CI run.
+
+## Packet 69 — Workspace creator guarded Back action
+- Existing ClassTeamWorkspaceCreator already owns dirty/busy discard dialog and safe Cancel navigation. Removed the unguarded parent PageBackLink when the editor is present; retained it for a clean empty-template state. The editor's Cancel remains the only normal leaving action while dirty. G2-8-028-002 handled within one workspace role/scope. No code/test/CI run.
+
+## Packet 70 — Inbound mail provider cutover
+- Created `docs/audit/gap-fix/inbound-mail-cutover-lane-5.md` with source mapping, signed provider verification, idempotent source IDs, scoped privacy, dry-run validation, rollout, and rollback gates. PG 0068 migration and legacy V225 are not equivalent and no data migration is claimed complete. G2-10-009-120 planning finding covered. No code/tests/CI run.
+
+## Packet 71 — Cross-college admin lifecycle
+- Created `docs/audit/gap-fix/college-admin-lifecycle-contract-lane-5.md` describing per-college membership suspension, global user device-session revocation, role-switcher and reactivation semantics, and explicit follow-up auth verification. The existing Super Admin sign-out-everywhere service is user-wide; session tokens are not claimed refreshed after reactivation. G2-18-031-054 reviewed. No code/tests/CI run.

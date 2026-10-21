@@ -149,3 +149,31 @@ export async function assertPersistedPlatformPermission(
 
   return persistedContext;
 }
+
+/**
+ * Verify many roster resources using one actor reconstruction under locks.
+ * The audit sink must persist denials separately from a failed write transaction.
+ * No credentials, contact details, or request payloads enter the audit event.
+ */
+export async function assertPersistedPlatformPermissionBatch(
+ tx:PermissionTransaction,context:RequestContext,permission:PlatformPermission,
+ resources:readonly ResourceScope[],
+ auditDenial:(denial:{permission:PlatformPermission;collegeId:string|null})=>Promise<void>,
+):Promise<RequestContext> {
+ if(resources.length===0||resources.length>500)throw new AuthorizationError(permission);
+ let actor:RequestContext;
+ try {
+   actor=await assertPersistedPlatformPermission(tx,context,permission,resources[0]!);
+ }catch(error){
+   await auditDenial({permission,collegeId:resources[0]?.collegeId??null});
+   throw error;
+ }
+ for(const resource of resources.slice(1)){
+   try {requirePermission(actor,permission,resource);}
+   catch(error){
+     await auditDenial({permission,collegeId:resource.collegeId??null});
+     throw error;
+   }
+ }
+ return actor;
+}

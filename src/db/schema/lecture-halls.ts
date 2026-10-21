@@ -10,6 +10,9 @@ export const lectureHalls = pgTable("lecture_halls", {
   legacyDepartmentId: integer("legacy_department_id"),
   legacyRoomTypeOrdinal: integer("legacy_room_type_ordinal"),
   legacyWasDeleted: boolean("legacy_was_deleted"),
+  legacyNameWasNull: boolean("legacy_name_was_null"),
+  legacyOriginalCapacity: integer("legacy_original_capacity"),
+  legacyOriginalRoomType: varchar("legacy_original_room_type",{length:80}),
   collegeId: uuid("college_id").notNull().references(() => colleges.id, { onDelete: "restrict" }),
   departmentId: uuid("department_id").references(() => departments.id, { onDelete: "restrict" }),
   name: varchar("name", { length: 255 }).notNull(),
@@ -21,6 +24,7 @@ export const lectureHalls = pgTable("lecture_halls", {
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 }, t => [
   uniqueIndex("lecture_halls_active_college_name_uq").on(t.collegeId, sql`lower(${t.name})`).where(sql`${t.status} = 'ACTIVE'`),
+  index("lecture_halls_active_college_idx").on(t.collegeId,t.status,t.name),
   index("lecture_halls_department_idx").on(t.departmentId, t.status),
   check("lecture_halls_name_ck", sql`btrim(${t.name}) <> ''`),
   check("lecture_halls_capacity_ck", sql`${t.capacity} between 1 and 5000`),

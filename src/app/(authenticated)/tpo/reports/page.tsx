@@ -19,7 +19,7 @@ import {
 } from "@/components/placements/placement-report-ui";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { getPlacementReportWorkspace } from "@/modules/placements/report-service";
-import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards,alphabetizeTpoReportGallery} from "@/modules/placements/tpo-report-gallery-filter-model";
+import {filterTpoReportGallery,tpoReportGallerySearchSchema,tpoReportGalleryGroupSchema,TPO_REPORT_GALLERY_GROUPS,countVisibleTpoReportCards} from "@/modules/placements/tpo-report-gallery-filter-model";
 
 type SearchParams = {
   seasonId?: string | string[];
@@ -56,26 +56,6 @@ export default async function TpoReportsPage({
     </Link>
     </Alert>
   </section>;
-  // TPO-calendar-reports-55: do not mistake a failed snapshot for zero placements.
-  let workspace: Awaited<ReturnType<typeof getPlacementReportWorkspace>>;
-  try {
-    workspace = await getPlacementReportWorkspace(context, {
-      collegeId: context.membership.collegeId,
-      seasonId: first(query.seasonId) || undefined,
-      jobId: first(query.jobId) || undefined,
-    });
-  } catch {
-    return <div className="min-w-0 space-y-4">
-      <PageHeader eyebrow="TPO · Reports" title="Reports"
-        description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
-      <Alert tone="error">
-        <h2 className="text-base font-semibold text-foreground">The headline numbers could not be loaded.</h2>
-        <p className="mt-2 text-sm text-body">The report is temporarily unavailable. No placement totals are being inferred from missing data.</p>
-        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link lms-inline-link">Retry</Link>
-      </Alert>
-    </div>;
-  }
-
   const groups = [
     {
       heading: "Overview and performance",
@@ -130,7 +110,7 @@ export default async function TpoReportsPage({
         {
           title: "After college",
           description:"Student-reported higher studies, entrepreneurship, competitive examinations and job-search destinations, by batch and branch.",
-          path:"/tpo/reports/after-college",
+          path:"/tpo/reports/outcomes",
         },
         {
           title: "Offer expiry watchlist",
@@ -172,7 +152,7 @@ export default async function TpoReportsPage({
           title: "Leads report",
           description:
             "College-wide recruiter leads by manual stage and source, with observed invite and recruiter-account linkage counts.",
-          path: "/tpo/reports/leads",
+          path: "/tpo/reports/recruiter-leads",
         },
         {
           title: "Accreditation export",
@@ -184,8 +164,43 @@ export default async function TpoReportsPage({
     },
   ];
 
+  // TPO-calendar-reports-55: do not mistake a failed snapshot for zero placements.
+  let workspace: Awaited<ReturnType<typeof getPlacementReportWorkspace>> | null = null;
+  try {
+    workspace = await getPlacementReportWorkspace(context, {
+      collegeId: context.membership.collegeId,
+      seasonId: first(query.seasonId) || undefined,
+      jobId: first(query.jobId) || undefined,
+    });
+  } catch {
+    // Snapshot failures must not hide the static reporting destinations.
+    // Never display invented metric totals when the read failed.
+  }
+
   const legacyGroups=groups.map(group=>({...group,cards:group.cards.map(legacyTpoReportCard)}));
-  const visibleGroups = alphabetizeTpoReportGallery(filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data));
+  // Keep legacy's intentional report order: placement health, outcomes, relationships.
+  const visibleGroups = filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data);
+  if (!workspace) {
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title="Reports" description={TPO_LEGACY_REPORT_GALLERY_DESCRIPTION} />
+      <Alert tone="error">
+        <h2 className="text-base font-semibold">The headline numbers could not be loaded.</h2>
+        <p className="mt-2 text-sm text-body">Previously loaded figures cannot be verified in this request. The report links remain available.</p>
+        <Link href="/tpo/reports" className="mt-3 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>
+      </Alert>
+      {visibleGroups.length === 0 ? <EmptyState title="No matching reports" description="Clear filters to see the full report directory." /> : null}
+      {visibleGroups.map(group => <section key={group.heading} className="space-y-3 border-b border-border pb-4">
+        <h2 className="text-lg font-semibold">{group.heading}</h2>
+        <p className="text-sm text-body">{group.description}</p>
+        <div className="grid gap-3 sm:grid-cols-2">
+          {group.cards.map(card => <Link key={card.path} href={card.path} className="block border-b border-border py-3 hover:text-link focus-visible:outline-2">
+            <h3 className="font-semibold text-link">{card.title}</h3>
+            <p className="text-sm text-body">{card.description}</p>
+          </Link>)}
+        </div>
+      </section>)}
+    </div>;
+  }
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
@@ -227,9 +242,32 @@ export default async function TpoReportsPage({
           Clear
         </Link>
       </form>
+      <nav aria-label="Placement journey" className="space-y-3 border-y border-border py-4">
+        <h2 className="text-lg font-semibold">Placement journey</h2>
+        <p className="text-sm text-body">The college&apos;s placement journey: {workspace.report.metrics.offers} {workspace.report.metrics.offers === 1 ? "offer" : "offers"} made. Click any number for its report.</p>
+        <div className="grid gap-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-border sm:grid-cols-3">
+          {([
+            {label:"Looking for a job",count:workspace.report.metrics.registered,href:"/tpo/reports/by-branch"},
+            {label:"Placed",count:workspace.report.metrics.studentsPlaced,href:"/tpo/reports/placement-summary"},
+            {label:"Accepted",count:workspace.report.metrics.studentsAccepted,href:"/tpo/reports/offers-acceptance"},
+          ] as const).map(step => <Link key={step.label} href={reportHref(step.href,workspace)}
+            className="block min-w-0 bg-surface p-4 hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[-2px]">
+            <span className="block text-sm text-body">{step.label}</span>
+            <strong className="mt-1 block text-2xl tabular-nums text-link">{step.count.toLocaleString("en-IN")}</strong>
+          </Link>)}
+        </div>
+        <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm" aria-label="Placement journey gaps">
+          <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="font-semibold text-link underline">
+            Unplaced · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)}
+          </Link>
+          {workspace.report.metrics.studentsPlaced>=workspace.report.metrics.studentsAccepted?
+            <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="font-semibold text-link underline">
+              Not accepted yet · {workspace.report.metrics.studentsPlaced-workspace.report.metrics.studentsAccepted}
+            </Link>:null}
+        </div>
+        <p className="text-xs text-muted-foreground">Each stage counts unique students; the number of offers made is shown separately. A stage gap is not a verified historical transition.</p>
+      </nav>
       <ReportMetrics metrics={workspace.report.metrics} />
-
-
 
       {workspace.noSeason ? (
         <EmptyState
@@ -282,29 +320,9 @@ export default async function TpoReportsPage({
           )}
         </section>
       ))}
-      <Disclosure title="Placement journey and methodology" className="border-t border-border py-3">
-        <div className="min-w-0 space-y-4 pt-3">
-      <ReportScopeNote note={workspace.registrationScopeNote} />
-      <nav aria-label="Placement journey" className="space-y-2 border-t border-border pt-6">
-       <h2 className="font-semibold">Placement journey</h2>
-       <p className="text-sm text-body">{workspace.report.metrics.offers} offers made across the selected season and drive scope.</p>
-       <div className="grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        <Link href={reportHref("/tpo/reports/unplaced",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-         <strong className="block">Looking for a job</strong>
-         <span className="text-sm">{workspace.report.metrics.registered} registered · {Math.max(0,workspace.report.metrics.registered-workspace.report.metrics.studentsPlaced)} not placed</span>
-        </Link>
-        <Link href={reportHref("/tpo/reports/placed-branch",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-         <strong className="block">Placed</strong>
-         <span className="text-sm">{workspace.report.metrics.studentsPlaced} students under the college&apos;s placement rule</span>
-        </Link>
-        <Link href={reportHref("/tpo/reports/offers-acceptance",workspace)} className="block min-h-11 rounded-[var(--lms-control-radius)] border border-border p-3 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-         <strong className="block">Accepted</strong>
-         <span className="text-sm">{workspace.report.metrics.acceptedOffers} accepted offers · {Math.max(0,workspace.report.metrics.offers-workspace.report.metrics.acceptedOffers)} not yet accepted</span>
-        </Link>
-       </div>
-       <p className="text-xs text-muted-foreground">These are different populations: registered learners, placement-rule students, and offer records. Do not interpret their counts as a single conversion funnel.</p>
-      </nav>
-        </div>
+      <Disclosure title="Placement journey methodology" className="border-t border-border py-3">
+        <ReportScopeNote note={workspace.registrationScopeNote} />
+        <p className="mt-2 text-xs text-muted-foreground">A placed learner, an accepted learner, and an accepted offer are separate measures. No conversion rate is inferred from unlike populations.</p>
       </Disclosure>
     </div>
   );

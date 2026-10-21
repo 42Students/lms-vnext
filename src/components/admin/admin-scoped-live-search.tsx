@@ -1,18 +1,20 @@
 "use client";
 import { Input } from "@/components/ui/input";
-import {useEffect,useState} from "react";
+import {useEffect,useState,useTransition} from "react";
 import {useRouter} from "next/navigation";
 
 /** Only the selected-college server may supply suggestions; do not persist
  * names or lookups in browser storage across tenants. A missing provider
  * means no Popular group, rather than invented cross-college results. */
-export function AdminScopedLiveSearch({initial,path,recentSuggestions=[],popularSuggestions=[]}:{
- initial:string;path:string;recentSuggestions?:readonly string[];popularSuggestions?:readonly string[];
+export function AdminScopedLiveSearch({initial,path,placeholder="Search directory",recentSuggestions=[],popularSuggestions=[]}:{
+ initial:string;path:string;placeholder?:string;recentSuggestions?:readonly string[];popularSuggestions?:readonly string[];
 }){
  const router=useRouter(),[value,setValue]=useState(initial);
+ const [isPending,startTransition]=useTransition();
+ const [active,setActive]=useState(-1);
  const [prevInitial,setPrevInitial]=useState(initial);
  const [focused,setFocused]=useState(false);
- if(prevInitial!==initial){setPrevInitial(initial);setValue(initial);}
+ if(prevInitial!==initial){setPrevInitial(initial);setValue(initial);setActive(-1);}
  const normalized=value.trim().toLocaleLowerCase("en");
  function distinct(list:readonly string[]){
   const seen=new Set<string>();
@@ -29,7 +31,7 @@ export function AdminScopedLiveSearch({initial,path,recentSuggestions=[],popular
   const params=new URLSearchParams(window.location.search);
   next.trim()?params.set("q",next.trim()):params.delete("q");
   params.delete("page");
-  router.replace(path+(params.size?"?"+params.toString():""),{scroll:false});
+  startTransition(()=>router.replace(path+(params.size?"?"+params.toString():""),{scroll:false}));
  }
  useEffect(()=>{
   if(value===initial)return;
@@ -38,26 +40,34 @@ export function AdminScopedLiveSearch({initial,path,recentSuggestions=[],popular
  },[value,initial,path,router]);
  return <div className="relative space-y-1 print:hidden">
   <Input type="search" name="q" maxLength={100} value={value}
-   onChange={event=>setValue(event.target.value)}
-   onFocus={()=>setFocused(true)} onBlur={()=>setFocused(false)}
-   aria-label="Search directory" placeholder="Search directory"
-   role="combobox" aria-expanded={focused&&all.length>0}
+   onChange={event=>{setValue(event.target.value);setActive(-1);}}
+   onFocus={()=>setFocused(true)} onBlur={()=>{setFocused(false);setActive(-1);}}
+   onKeyDown={event=>{
+    if(event.key==="Escape"){setFocused(false);setActive(-1);return;}
+    if(!all.length)return;
+    if(event.key==="ArrowDown"){event.preventDefault();setFocused(true);setActive(prev=>(prev+1)%all.length);}
+    if(event.key==="ArrowUp"){event.preventDefault();setFocused(true);setActive(prev=>prev<=0?all.length-1:prev-1);}
+    if(event.key==="Enter"&&focused&&active>=0&&active<all.length){event.preventDefault();setValue(all[active]);setFocused(false);setActive(-1);navigate(all[active]);}
+   }}
+   aria-label="Search directory" placeholder={placeholder}
+   role="combobox" aria-busy={isPending} aria-expanded={focused&&all.length>0}
    aria-controls="admin-scoped-search-suggestions"
+   aria-autocomplete="list" aria-activedescendant={focused&&active>=0?"admin-scoped-suggestion-"+active:undefined}
    className="min-h-11 w-full md:min-h-9"/>
   {focused&&all.length>0?<div id="admin-scoped-search-suggestions"
     role="listbox" aria-label="Search suggestions"
     className="absolute left-0 right-0 top-full z-30 max-h-72 overflow-auto rounded border border-border bg-surface p-2 shadow-md">
     {recent.length?<div><p className="px-2 py-1 text-xs font-semibold">Recent</p>
-      {recent.map(label=><button key={"recent:"+label} role="option" type="button" aria-selected={value===label}
+      {recent.map((label,index)=><button key={"recent:"+label} id={"admin-scoped-suggestion-"+index} role="option" type="button" aria-selected={value===label||active===index}
         onMouseDown={event=>event.preventDefault()} onClick={()=>{setFocused(false);setValue(label);navigate(label);}}
         className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</button>)}
     </div>:null}
     {popular.length?<div><p className="px-2 py-1 text-xs font-semibold">Popular</p>
-      {popular.map(label=><button key={"popular:"+label} role="option" type="button" aria-selected={value===label}
+      {popular.map((label,index)=><button key={"popular:"+label} id={"admin-scoped-suggestion-"+(recent.length+index)} role="option" type="button" aria-selected={value===label||active===recent.length+index}
         onMouseDown={event=>event.preventDefault()} onClick={()=>{setFocused(false);setValue(label);navigate(label);}}
         className="block min-h-9 w-full truncate rounded px-2 py-1 text-left text-sm hover:bg-muted">{label}</button>)}
     </div>:null}
   </div>:null}
-  <p className="text-xs text-muted-foreground">Results refresh automatically as you search.</p>
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{isPending?"Refreshing directory…":"Results refresh automatically as you search."}</p>
  </div>;
 }

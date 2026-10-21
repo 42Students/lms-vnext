@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { notFound, redirect } from "next/navigation";
+import { redirect } from "next/navigation";
+import { and, countDistinct, eq } from "drizzle-orm";
+import { getDb } from "@/db/client";
+import { collegeMemberships, learnerProgramEnrollments } from "@/db/schema";
 import { z } from "zod";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -23,6 +26,17 @@ import {listOwnRecruiterDriveRequests} from "@/modules/placements/recruiter-driv
 import {hrSentProposalsHref} from "@/modules/placements/hr-drive-proposal-links-model";
 import {listRecruiterCollegeBranches} from "@/modules/placements/recruiter-college-branch-service";
 
+function DriveSourceUnavailable({ collegeId }: { collegeId?: string | null }) {
+  const backHref=collegeId
+    ? "/hr/drives?collegeId="+encodeURIComponent(collegeId) : "/hr/drives";
+  return <div className="min-w-0 space-y-4">
+    <PageHeader title="Request a drive" />
+    <ErrorState title="We couldn't load that drive"
+      description="The original request or job may have been removed, changed, or is no longer available to this recruiter. No draft was modified."
+      action={<Link href={backHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text">Back to Drives</Link>} />
+  </div>;
+}
+
 export default async function RecruiterRequestDrivePage({
   searchParams,
 }: {
@@ -45,7 +59,7 @@ export default async function RecruiterRequestDrivePage({
     edit: raw.edit,
     copy: raw.copy,
   });
-  if (!parsed.success) notFound();
+  if (!parsed.success) return <DriveSourceUnavailable />;
   const query = parsed.data;
   const grants = context.recruiter.grants;
 
@@ -54,16 +68,18 @@ export default async function RecruiterRequestDrivePage({
     try {
       fromJob = await getRecruiterPlacementWorkspace(context, query.from);
     } catch (error) {
-      if (error instanceof PlacementsServiceError && error.code === "PLACEMENT_JOB_NOT_FOUND") notFound();
-      if (error instanceof z.ZodError) notFound();
-      throw error;
+      if (error instanceof PlacementsServiceError || error instanceof z.ZodError)
+        return <DriveSourceUnavailable collegeId={typeof raw.collegeId === "string" ? raw.collegeId : null} />;
+      return <DriveSourceUnavailable collegeId={typeof raw.collegeId === "string" ? raw.collegeId : null} />;
     }
-    if (query.collegeId && fromJob.college.id !== query.collegeId) notFound();
+    if (query.collegeId && fromJob.college.id !== query.collegeId)
+      return <DriveSourceUnavailable collegeId={query.collegeId} />;
   }
 
   const collegeId = query.collegeId ?? fromJob?.college.id ??
     (grants.length === 1 ? grants[0]!.collegeId : null);
-  if (collegeId && !grants.some((grant) => grant.collegeId === collegeId)) notFound();
+  if (collegeId && !grants.some((grant) => grant.collegeId === collegeId))
+    return <DriveSourceUnavailable />;
 
   if (!collegeId) {
     return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
@@ -81,7 +97,23 @@ export default async function RecruiterRequestDrivePage({
     </div>;
   }
   const grant = grants.find((item) => item.collegeId === collegeId)!;
-  const branchSuggestions=await listRecruiterCollegeBranches(context,collegeId);
+  // Suggestions are optional. A service outage must not block manual entry.
+  let branchSuggestions: string[] = [];
+  let suggestionsUnavailable = false;
+  try { branchSuggestions = await listRecruiterCollegeBranches(context,collegeId); }
+  catch { suggestionsUnavailable = true; }
+  let approximateStudents: number | null = null;
+  try {
+    const [population] = await getDb().select({
+      total: countDistinct(learnerProgramEnrollments.membershipId),
+    }).from(learnerProgramEnrollments)
+      .innerJoin(collegeMemberships,
+        eq(collegeMemberships.id, learnerProgramEnrollments.membershipId))
+      .where(and(eq(collegeMemberships.collegeId,collegeId),
+        eq(collegeMemberships.status,"ACTIVE"),
+        eq(learnerProgramEnrollments.status,"ACTIVE")));
+    approximateStudents = Math.max(0, Math.round((population?.total ?? 0) / 10) * 10);
+  } catch { /* Read-only preview is optional; never block a draft. */ }
   const requestId=query.fix??query.edit??query.copy;
   const request=requestId
     ? (await listOwnRecruiterDriveRequests(context,collegeId)).find(item=>item.id===requestId)
@@ -89,9 +121,11 @@ export default async function RecruiterRequestDrivePage({
   if(requestId && (!request ||
     (query.fix?request.status!=="SENT_BACK":
      query.edit?request.status!=="REQUEST":
-      !["REJECTED","CANCELLED"].includes(request.status))))notFound();
+      !["REJECTED","CANCELLED"].includes(request.status))))
+    return <DriveSourceUnavailable collegeId={collegeId} />;
   const originalDraft=request?hrDriveDraftSchema.safeParse(request.draft):null;
-  if(originalDraft&&!originalDraft.success)notFound();
+  if(originalDraft&&!originalDraft.success)
+    return <DriveSourceUnavailable collegeId={collegeId} />;
   const initial = originalDraft?.success?originalDraft.data:fromJob
     ? hrDraftFromAuthorizedJob(fromJob.job, fromJob.rounds)
     : emptyHrDriveDraft();
@@ -116,6 +150,14 @@ export default async function RecruiterRequestDrivePage({
       </div>
     </details>
     </nav>
+    {approximateStudents !== null ? <p role="status" className="text-sm text-muted-foreground">
+      About {approximateStudents.toLocaleString("en-IN")} currently enrolled learners at {grant.collegeName}.
+      This is a rounded college-wide estimate, not an eligibility guarantee.
+    </p> : null}
+    {suggestionsUnavailable ? <ErrorState title="College suggestions unavailable"
+      description="You can enter eligible branches manually. Try again to reload suggested branches."
+      retryHref={"/hr/drives/new?collegeId="+encodeURIComponent(collegeId)}
+      retryLabel="Retry suggestions" /> : null}
     <HrDriveDraftForm
       key={hrDriveDraftFormStateKey(context.user.id,collegeId,
         query.fix?"FIX":query.edit?"EDIT":query.copy?"COPY":query.from?"FROM":"NEW",

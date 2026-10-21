@@ -1,5 +1,5 @@
 "use client";
-import {useState} from "react";
+import {useEffect,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import {Textarea} from "@/components/ui/textarea";
@@ -15,7 +15,7 @@ type Comment={id:string;body:string;commentKind:string;createdAt:string;
 export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
  projectId:string;taskId:string;updatedAt:string;canPost:boolean;
 }){
- const router=useRouter();const [open,setOpen]=useState(false);
+ const router=useRouter();
  const [rows,setRows]=useState<Comment[]>([]);const [body,setBody]=useState("");
  const [kind,setKind]=useState<ProjectTaskCommentKind>("NOTE");
  const [filter,setFilter]=useState<ProjectTaskCommentKind|"ALL">("ALL");
@@ -33,10 +33,12 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
    const result=await fetch(url,{cache:"no-store",credentials:"same-origin"});
    if(!result.ok)throw new Error("Could not load comments");
    const data=await result.json() as {comments:Comment[]};
-   setRows(data.comments);setOpen(true);
+   setRows([...data.comments].sort((left,right)=>
+     Date.parse(right.createdAt)-Date.parse(left.createdAt)||right.id.localeCompare(left.id)));
   }catch(caught){setError(caught instanceof Error?caught.message:"Could not load comments");}
   finally{setBusy(false);}
  }
+ useEffect(()=>{void show();},[projectId,taskId]);
  async function post(){
   if(!body.trim()){setError("message is required");return;}
   setBusy(true);setError(null);
@@ -71,7 +73,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
        <p role="status" className="text-sm text-muted-foreground leading-[22px]">No comments match this filter.</p>:null}
      {rows.filter(row=>filter==="ALL"||row.commentKind===filter).map(row=><article key={row.id} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm text-body last:border-b-0">
       <p className="mb-1 text-xs font-semibold text-muted-foreground leading-[20px]">
-        {row.authorName || "Project member"} · {new Intl.DateTimeFormat("en-IN", {
+        {row.authorName || "Unknown"} · {new Intl.DateTimeFormat("en-IN", {
           dateStyle: "medium",timeStyle: "short",timeZone: "Asia/Kolkata",
         }).format(new Date(row.createdAt))}
       </p>

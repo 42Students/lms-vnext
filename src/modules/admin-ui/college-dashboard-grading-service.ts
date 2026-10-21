@@ -33,8 +33,7 @@ export async function getCollegeDashboardPendingGrades(context: RequestContext) 
     .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
     .innerJoin(departments, eq(departments.id, courses.departmentId))
     .where(and(eq(departments.collegeId, member.collegeId),
-      eq(assignmentSubmissions.gradingStatus, "NOT_GRADED"),
-      eq(courseAssignments.status, "PUBLISHED")))
+      eq(assignmentSubmissions.gradingStatus, "NOT_GRADED")))
     .groupBy(courses.id, courses.name, courses.code)
     .orderBy(desc(count(assignmentSubmissions.id)), asc(min(assignmentSubmissions.submittedAt)))
     .limit(8);
@@ -62,7 +61,6 @@ export async function getCollegeDashboardPendingGradesCount(context: RequestCont
     .where(and(
       eq(departments.collegeId, member.collegeId),
       eq(assignmentSubmissions.gradingStatus, "NOT_GRADED"),
-      eq(courseAssignments.status, "PUBLISHED"),
     ));
   return row?.total ?? 0;
 }

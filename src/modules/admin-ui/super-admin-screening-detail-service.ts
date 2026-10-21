@@ -15,7 +15,7 @@ export async function getSuperAdminScreeningDetail(context:RequestContext,rawId:
   screeningStatus:placementApplicationScreenings.status,decidedAt:placementApplicationScreenings.decidedAt,
   candidateMessage:placementApplicationScreenings.candidateMessage,
   submittedAt:placementApplications.submittedAt,
-  applicant:users.displayName,jobTitle:placementJobs.title,
+  jobTitle:placementJobs.title,
  }).from(placementApplications)
  .innerJoin(placementApplicationScreenings,and(eq(placementApplicationScreenings.applicationId,placementApplications.id),
   inArray(placementApplicationScreenings.status,QUEUE_STATUSES)))
@@ -25,7 +25,7 @@ export async function getSuperAdminScreeningDetail(context:RequestContext,rawId:
  .innerJoin(colleges,and(eq(colleges.id,placementJobs.collegeId),scope.organizationId?eq(colleges.organizationId,scope.organizationId):undefined))
  .where(eq(placementApplications.id,id)).limit(1);
  if(!r)return null;
- return {title:r.applicant||"Applicant",subtitle:r.jobTitle,status:r.screeningStatus,
+ return {title:"Applicant screening",subtitle:r.jobTitle,status:r.screeningStatus,
   backHref:"/admin/placements/screenings",
   related:{href:"/admin/placements/applications/"+encodeURIComponent(r.applicationId),label:"Application"},
   facts:[{label:"Application ID",value:r.applicationId},
@@ -38,8 +38,8 @@ export async function getSuperAdminScreeningDetail(context:RequestContext,rawId:
    {label:"Automated score (0–1)",value:"Not recorded"},
    {label:"Matched skills",value:"Not assessed in this workflow"},
    {label:"Missing skills",value:"Not assessed in this workflow"},
-   {label:"Score provenance",value:"No automated score; do not infer ranking from manual status"},
+   {label:"Score provenance",value:"Automated scoring was intentionally retired. A manual status is not a numeric ranking."},
    {label:"Candidate-facing explanation",value:r.candidateMessage?.trim() || "Not recorded"},
    {label:"Excluded attributes",value:"Protected attributes are not used to compute a score"},
-   {label:"Privacy",value:"Internal review notes and candidate private contact details are not shown"}]};
+   {label:"Privacy",value:"Applicant name, personal contact data, internal review notes and other sensitive attributes are excluded"}]};
 }

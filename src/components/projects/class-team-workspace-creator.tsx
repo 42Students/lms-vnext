@@ -78,7 +78,7 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
   const [preflightError,setPreflightError]=useState("");
   const [outcomeRestored,setOutcomeRestored]=useState(false);
   const [prevCollegeId,setPrevCollegeId]=useState(collegeId);
-  const reportKey="lms-project-cohort-report:"+userId+":"+collegeId;
+  const reportKey="lms-project-cohort-report:"+collegeId;
   // A cohort report is recoverable for seven days after navigating away, and
   // never shared with another college's selected workspace.
   useEffect(()=>{
@@ -86,15 +86,12 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
     try{
       const raw=window.localStorage.getItem(reportKey);
       if(!raw)return;
-      const saved=JSON.parse(raw) as {
-        expiresAt?:number;savedAt?:string;report?:CohortCreationOutcome;
-      };
+      const saved=JSON.parse(raw) as {expiresAt?:number;report?:CohortCreationOutcome};
       if(!saved.expiresAt||saved.expiresAt<Date.now()||!saved.report||
         !Array.isArray(saved.report.individualResults)){
         window.localStorage.removeItem(reportKey);return;
       }
       setOutcome(saved.report);setOutcomeRestored(true);
-      setOutcomeCheckedAt(saved.savedAt??null);
     }catch{
       // Storage can be disabled in private browsing; creation still works.
     }
@@ -258,13 +255,11 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       if(result.batchMode==="ATOMIC"&&result.committed!==true)
         throw new Error("Creation was not committed. Refresh the roster before retrying.");
       setOutcome(result);
-      setOutcomeRestored(false);setUnconfirmedRows([]);
-      setOutcomeCheckedAt(new Date().toISOString());
+      setOutcomeRestored(false);
       if(mode==="INDIVIDUAL"){
         try{
           window.localStorage.setItem(reportKey,JSON.stringify({
-            expiresAt:Date.now()+7*24*60*60*1000,
-            savedAt:new Date().toISOString(),report:result,
+            expiresAt:Date.now()+7*24*60*60*1000,report:result,
           }));
         }catch{
           showToast({tone:"info",title:"Creation report could not be saved",
@@ -292,20 +287,8 @@ export function ClassTeamWorkspaceCreator({collegeId,userId,basePath,templates,i
       router.refresh();
     } catch(e) {
       const failure=classTeamCreationFeedback(e);
-      // A connection failure may happen after a successful commit. Never
-      // label an unknown receipt as a failed learner or automatically retry it.
-      if(mode==="INDIVIDUAL"){
-        setUnconfirmedRows((currentPreflight?.items??[])
-          .filter(item=>item.status==="TO_CREATE")
-          .map(item=>({
-            membershipId:item.membershipId,status:"UNCONFIRMED" as const,
-            projectId:null,title:null,reason:failure,
-          })));
-      }
-      setError("Creation was not confirmed. "+failure+
-        " Refresh the current preflight and existing workspaces before retrying.");
-      showToast({tone:"error",title:"Creation not confirmed",
-        description:"Check existing workspaces before retrying to avoid duplicates."});
+      setError("Nothing was created. "+failure);
+      showToast({tone:"error",title:"Nothing was created",description:failure});
     } finally {
       setPreflightLoading(false);
       // After a successful POST, keep Create locked until navigation unmounts this form.

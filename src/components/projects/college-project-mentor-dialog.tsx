@@ -15,8 +15,8 @@ type Mentor={membershipId:string;displayName:string|null;email:string|null};
 type ReassignOutcome={reassignedCount:number;skippedCount:number;failures:{projectId:string;code:string}[]};
 
 /** COL-projects-15: single workspace version of the scoped bulk reassignment. */
-export function CollegeProjectMentorDialog({projectId,collegeId}:{
- projectId:string;collegeId:string;
+export function CollegeProjectMentorDialog({projectId,collegeId,currentMentorName}:{
+ projectId:string;collegeId:string;currentMentorName?:string|null;
 }){
  const router=useRouter();
  const {showToast}=useToast();
@@ -69,12 +69,12 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
    showToast({tone:"success",title:"Mentor assigned",description:"The primary mentor was updated for this workspace."});
    router.refresh();
   }catch{
-   setError("Could not reassign the mentor. Your selection has been kept. Try again.");
+   setError("Failed to assign mentor. Your selection has been kept. Try again.");
   }finally{lock.current=false;setBusy(false);}
  }
  return <>
   <Button size="sm" variant="secondary" onClick={()=>{setOpen(true);setError("");setHasSearched(false);setConfirming(false);setMentorRequired(false);setMentorId("");setSelectedMentor(null);setMentors([]);void load("");}}>
-   Reassign mentor
+   Reassign mentor…
   </Button>
   <Dialog open={open} onOpenChange={next=>{if(!busy){setOpen(next);if(!next){requestSequence.current++;setConfirming(false);}}}}
    title="Reassign mentor"
@@ -82,13 +82,15 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
    <div className="space-y-4">
     <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] md:flex-row md:items-end">
      <label className="grid min-w-0 flex-1 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search mentors
-      <Input value={search} onChange={e=>{setSearch(e.target.value);setConfirming(false);}} maxLength={120} placeholder="Name or email"/>
+      <Input value={search} onChange={e=>{setSearch(e.target.value);setConfirming(false);}}
+       onKeyDown={event=>{if(event.key==="Enter"){event.preventDefault();void load(search);}}}
+       maxLength={120} placeholder="Search by faculty name"/>
      </label>
      <Button type="button" variant="secondary" className="w-full md:w-auto" loading={searching} disabled={searching||busy} onClick={()=>void load()}>
       {searching?"Searching…":"Search"}
      </Button>
     </div>
-    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">New primary mentor
+    <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mentor
      <Select value={mentorId} onChange={e=>{const id=e.target.value;setMentorId(id);setSelectedMentor(mentors.find(m=>m.membershipId===id)??null);setMentorRequired(false);setConfirming(false);}} disabled={busy} aria-invalid={mentorRequired&&!mentorId}>
       <option value="">Select a mentor</option>
       {selectedMentor&&!mentors.some(m=>m.membershipId===selectedMentor.membershipId)?<option value={selectedMentor.membershipId}>{selectedMentor.displayName??selectedMentor.email??"Mentor"}</option>:null}
@@ -102,13 +104,17 @@ export function CollegeProjectMentorDialog({projectId,collegeId}:{
      <Input value={roleLabel} onChange={e=>setRoleLabel(e.target.value)} maxLength={120} placeholder="Project Mentor"/>
     </label>
     {!searching&&!error&&hasSearched&&mentors.length===0?<p role="status" className="text-[13px] leading-5 text-[var(--lms-muted-text)]">No eligible mentors found. Search by another name or email.</p>:null}
-    <p className="max-w-prose border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-[13px] leading-5 text-[var(--lms-body-text)]">Reassigning the mentor cancels scheduled meetings, unassigns tasks belonging to the outgoing mentor, and notifies both the outgoing and incoming mentors. Co-mentors remain assigned.</p>
+    <Banner tone="warning">
+     Reassigning replaces the current mentor{currentMentorName?" ("+currentMentorName+")":""}:
+     their meetings on this workspace are cancelled, their task assignments are cleared, and both the outgoing and incoming mentor are notified.
+    </Banner>
+    <a href={"/college/projects/reassign-mentor?projectId="+encodeURIComponent(projectId)} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline">Use the bulk Reassign Mentor page</a>
     {confirming?<Banner tone="warning">Confirm the reassignment to {selectedMentor?.displayName??selectedMentor?.email??"the selected mentor"}. Cancelled meetings and unassigned tasks may need rescheduling or reassignment.</Banner>:null}
     {error?<Banner tone="error">{error}</Banner>:null}
     <div className="flex flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end">
      <Button type="button" variant="secondary" className="w-full md:w-auto" disabled={busy} onClick={()=>{if(confirming)setConfirming(false);else{requestSequence.current++;setOpen(false);}}}>{confirming?"Back":"Cancel"}</Button>
      <Button type="button" className="w-full md:w-auto" loading={busy} disabled={busy||searching} onClick={()=>void reassign()}>
-      {busy?"Reassigning…":confirming?"Confirm reassignment":"Review reassignment"}
+      {busy?"Assigning…":confirming?"Confirm assignment":"Assign"}
      </Button>
     </div>
    </div>

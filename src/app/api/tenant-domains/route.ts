@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
+import {createTenantDomainInputSchema,tenantDomainPrimaryNextStep} from "@/modules/tenant-domains/validation";
 import {
   createTenantDomainWithRuntime,
   listTenantDomainsWithRuntime,
@@ -45,9 +46,12 @@ export async function POST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const domain = await createTenantDomainWithRuntime(context, body);
-
-    return NextResponse.json({ domain }, { status: 201 });
+    const intent=createTenantDomainInputSchema.parse(body);
+    const domain=await createTenantDomainWithRuntime(context,intent);
+    return NextResponse.json({domain,compatibilityStatus:"CREATED",
+      nextStep:tenantDomainPrimaryNextStep({isPrimary:intent.isPrimary,domainId:domain.id,verified:domain.isVerified}),
+      message:intent.isPrimary?"Domain added. Verify DNS before making it primary.":"Domain added.",
+    },{status:201});
   } catch (error) {
     return apiErrorResponse(error);
   }

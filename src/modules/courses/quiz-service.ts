@@ -221,6 +221,7 @@ export async function getCourseQuiz(
   context: RequestContext,
   quizIdInput: string,
   deliveryIdInput?: string | null,
+  includeCorrectAnswers = true,
 ) {
   const quizId =
     courseQuizIdSchema.parse(quizIdInput);
@@ -310,8 +311,9 @@ export async function getCourseQuiz(
       asc(quizOptions.id),
     );
 
-  const revealCorrect = access !== "LEARNER" ||
-    learnerQuizResultsReleased(quiz,Date.now());
+  // GET editors opt in to private answer keys; learner release remains gated.
+  const resultsReleased=learnerQuizResultsReleased(quiz,Date.now());
+  const revealCorrect=includeCorrectAnswers && (access!=="LEARNER"||resultsReleased);
 
   const grouped = new Map<
     string,
@@ -369,7 +371,7 @@ export async function getCourseQuiz(
         : null,
     resultsVisible:
       access === "LEARNER"
-        ? revealCorrect
+        ? resultsReleased
         : true,
     questions:access==="LEARNER"&&context.membership
       ? shuffleQuizForLearner([...grouped.values()],quizId,context.membership.id,
@@ -380,10 +382,15 @@ export async function getCourseQuiz(
 
 export async function createCourseQuiz(
   context: RequestContext,
-  rawInput: CreateCourseQuizInput,
+  rawInput: unknown,
 ) {
   const input =
     createCourseQuizInputSchema.parse(rawInput);
+  if(input.publishNow){
+    if(!input.dueAt)throw new CoursesServiceError("QUIZ_DEADLINE_NOT_CONFIGURED");
+    if(new Date(input.dueAt).getTime()<=Date.now())
+      throw new CoursesServiceError("QUIZ_DEADLINE_PASSED");
+  }
   const lesson = await loadCourseLessonScope(
     input.lessonId,
   );
@@ -436,6 +443,7 @@ export async function createCourseQuiz(
             ),
             sequence: input.sequence,
             createdByUserId: context.user.id,
+            status: input.publishNow?"PUBLISHED":"DRAFT",
           })
           .returning();
 

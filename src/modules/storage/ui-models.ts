@@ -17,6 +17,7 @@ import {
   legacyStorageSizeFailure,
   maxBytesFor,
   type StorageFileKind,
+  type LegacyUploadFolder,
 } from "./file-policy";
 import { STORAGE_FILE_ERROR_STATUS, type StorageFileErrorCode } from "./file-errors";
 
@@ -151,10 +152,42 @@ const ERROR_MESSAGES: Record<StorageFileErrorCode, string> = {
 };
 
 /** Maps an API error code to learner-safe copy; unknown codes get a generic message. */
+export type StorageUiErrorContext={
+ sizeBytes?:number;kind?:StorageFileKind;profileUpload?:boolean;
+ legacyFolder?:LegacyUploadFolder;operation?:"upload"|"import";
+ httpStatus?:number;
+};
+
+/** Legacy presign/import HTTP 429 codes had separate retry instructions. */
+export function storageHttpErrorMessage(status:number,operation:"upload"|"import"="upload"):string|null{
+ if(status!==429)return null;
+ return operation==="import"
+  ?"Too many import requests. Please wait before trying again."
+  :"Too many upload requests. Please wait before trying again.";
+}
 export function storageErrorMessage(
   code: string | null | undefined,
-  context: {sizeBytes?:number;kind?:StorageFileKind;profileUpload?:boolean} = {},
+  context: StorageUiErrorContext = {},
 ) {
+  const rateLimit=storageHttpErrorMessage(context.httpStatus??0,context.operation);
+  if(rateLimit)return rateLimit;
+  if(code==="RATE_LIMITED"||code==="TOO_MANY_REQUESTS"||code==="429")
+   return storageHttpErrorMessage(429,context.operation)!;
+  if(code==="STORAGE_TYPE_NOT_ALLOWED"||code==="STORAGE_EXTENSION_MISMATCH"){
+    switch(context.legacyFolder){
+      case "jd-files":return "A job description must be a PDF or a Word file";
+      case "resumes":return "A resume must be a PDF or a Word file";
+      case "lesson-content":return "Choose a supported lecture document or presentation.";
+      case "video-intros":return "Choose a supported video file.";
+      case "course-images":return "Choose a JPG, PNG or WebP image.";
+      case "marksheets":return "A marksheet must be a PDF or an image.";
+      case "offer-letters":return "An offer letter must be a PDF or an image.";
+    }
+    if(context.kind==="lesson-video")return "Choose a supported video file.";
+    if(context.kind==="lesson-video-thumbnail")return "Choose a JPG, PNG or WebP image.";
+  }
+  if(code==="STORAGE_SIZE_INVALID"&&context.sizeBytes===0)
+   return "File size must be greater than zero";
   // The API keeps a stable STORAGE_SIZE_INVALID code. UI callers with the
   // original declared size can distinguish an empty file from a negative one.
   if(code==="STORAGE_SIZE_INVALID" && context.sizeBytes!==undefined) {

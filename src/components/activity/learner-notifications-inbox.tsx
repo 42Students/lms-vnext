@@ -10,7 +10,7 @@ import {learnerNotificationMobileFilterSummary} from "@/modules/activity/learner
 import {learnerInboxEmptyLabel} from "@/modules/activity/learner-inbox-empty-label-model";
 import {learnerNotificationPendingCount,learnerNotificationReadAllSchema}
   from "@/modules/activity/learner-notification-read-all-model";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useTransition } from "react";
 import { apiFetch } from "@/lib/api-fetch";
 import { useGuardedAction } from "@/hooks/use-guarded-action";
 import { FRIENDLY_MESSAGES } from "@/lib/friendly-error";
@@ -41,6 +41,23 @@ export function LearnerNotificationsInbox({
   initialFilters?: LearnerInboxQuery;
 }) {
   const router=useRouter();
+  const [refreshing,startRefresh]=useTransition();
+  // Bounded recipient-scoped refresh matches the old SSE arrival expectation
+  // without opening a cross-tenant subscription. Next re-authorizes every read.
+  useEffect(()=>{
+    const refresh=()=>{
+      if(document.visibilityState==="visible")startRefresh(()=>router.refresh());
+    };
+    const timer=window.setInterval(refresh,45000);
+    window.addEventListener("focus",refresh);
+    document.addEventListener("visibilitychange",refresh);
+    return ()=>{
+      window.clearInterval(timer);
+      window.removeEventListener("focus",refresh);
+      document.removeEventListener("visibilitychange",refresh);
+    };
+  },[router]);
+  const refreshInbox=()=>startRefresh(()=>router.refresh());
   const sourceStatus=learnerNotificationLoadStatus({
     announcementsEnabled,announcementsFailed:announcementsLoadFailed,
     personalReady:true,
@@ -173,16 +190,23 @@ export function LearnerNotificationsInbox({
       ):null}
       <div className="flex min-w-0 flex-col items-start justify-between gap-[var(--lms-space-2)] md:flex-row md:items-center">
         <p role="status" className="text-sm text-body leading-[22px]">Showing {visible.length} of {combined.length} loaded notifications in this filtered view.</p>
-        <Link href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-primary-text)] md:min-h-9">Browse personal history</Link>
+        <div className="flex min-w-0 w-full flex-wrap items-center gap-3 md:w-auto">
+          <Button type="button" variant="secondary" size="sm" disabled={refreshing}
+            className="min-h-11 w-full md:w-auto md:min-h-9" onClick={refreshInbox}>
+            {refreshing?"Refreshing notifications…":"Refresh"}
+          </Button>
+          <Link href="/learn/notifications/history" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-primary-text)] md:min-h-9">Browse personal history</Link>
+        </div>
       </div>
       <p className="max-w-3xl text-xs leading-5 text-muted-foreground">College announcements have no personal read status. {learnerNotificationPreviewNotice(personal.length,60)}</p>
 
       {sourceStatus.state==="PARTIAL" ? (
         <div role="alert" className="border-y border-border py-[var(--lms-space-3)] text-sm text-body">
-          <p className="font-semibold text-foreground">Announcements not refreshed</p>
-          <p className="mt-1">{sourceStatus.notice}</p>
-          <Button size="sm" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-9" onClick={()=>router.refresh()}>
-            Retry announcements
+          <p className="font-semibold text-foreground">Couldn't load college announcements</p>
+          <p className="mt-1">Your personal notifications are still available. {sourceStatus.notice}</p>
+          <Button size="sm" variant="secondary" disabled={refreshing}
+            className="min-h-11 w-full md:w-auto md:min-h-9" onClick={refreshInbox}>
+            {refreshing?"Refreshing notifications…":"Retry announcements"}
           </Button>
         </div>
       ):null}

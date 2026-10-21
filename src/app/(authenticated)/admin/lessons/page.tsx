@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {getSuperAdminLearningFilterOptions} from "@/modules/admin-ui/super-admin-learning-filter-options-service";
-import {SuperAdminLearningFilterFields} from "@/components/admin/super-admin-learning-filter-fields";
 import {SuperAdminLessonBulkVisibility} from "@/components/courses/super-admin-lesson-bulk-visibility";
 import {LessonActions} from "@/components/courses/admin-learning-structure-actions";
 import {CollegeLessonReorderActions} from "@/components/courses/college-lesson-reorder-actions";
@@ -26,8 +25,17 @@ export default async function SuperAdminLessonsPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const raw = await searchParams;
-  const parsed = parseSuperAdminLearningQuery(raw);
-  if (!parsed.success) return <div className="min-w-0 space-y-4 md:space-y-6">
+  // Legacy lesson directory has an explicit all-courses opt-in, separate from
+  // the authenticated tenant selection; never infer a college from query input.
+  const safeRaw={...raw};
+  delete safeRaw.allCourses;delete safeRaw.pageSize;
+  const parsed = parseSuperAdminLearningQuery(safeRaw);
+  const validAllCourses=raw.allCourses===undefined||raw.allCourses==="true";
+  const allCourses=raw.allCourses==="true"&&!raw.courseCode;
+  const validPageSize=typeof raw.pageSize!=="object"&&
+    (raw.pageSize===undefined||["10","25","50","100"].includes(raw.pageSize));
+  const pageSize=validPageSize&&raw.pageSize?Number(raw.pageSize):25;
+  if (!parsed.success||!validPageSize||!validAllCourses) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons" />
     <ErrorState title="Invalid lesson filters" description="Check the search, status and page values."
       action={<Link href="/admin/lessons" className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>} />
@@ -35,11 +43,13 @@ export default async function SuperAdminLessonsPage({
   const context = await getCurrentRequestContext();
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons" />
-    <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its lessons." />
+    <Alert tone="warning" role="alert" title="Select a college to manage Lessons">
+      Choose a college in the header above to see its lessons.
+    </Alert>
   </div>;
   requireSuperAdminSelectedCollege(context,"courses.manage");
   const [dataResult,filtersResult,pathsResult]=await Promise.allSettled([
-    listCollegeLessons(context,parsed.data),
+    listCollegeLessons(context,{...parsed.data,pageSize}),
     getSuperAdminLearningFilterOptions(context),
     listSuperAdminLearningPathPicker(context),
   ]);
@@ -51,28 +61,70 @@ export default async function SuperAdminLessonsPage({
         className="inline-flex min-h-11 items-center font-[650] text-primary-text hover:text-primary-hover md:min-h-9 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Retry loading lessons</Link>} />
   </div>;
   const data=dataResult.value;
+  const hasCourseSelection=Boolean(data.query.courseCode)||allCourses;
+  const listedLessons=hasCourseSelection?data.items:[];
+  const selectedScopeHref=(query:typeof data.query)=>{
+    const href=adminLearningHref("LESSONS",query);
+    return href+(href.includes("?")?"&":"?")+"pageSize="+pageSize+
+      (allCourses?"&allCourses=true":"");
+  };
+  const unscopedHref=adminLearningHref("LESSONS",{...data.query,courseCode:undefined,page:1});
+  const viewAllHref=unscopedHref+(unscopedHref.includes("?")?"&":"?")+
+    "pageSize="+pageSize+"&allCourses=true";
+  const closeAllHref=unscopedHref+(unscopedHref.includes("?")?"&":"?")+
+    "pageSize="+pageSize;
   const filters=filtersResult.status==="fulfilled"?filtersResult.value:{courses:[],cohorts:[]};
   const paths=pathsResult.status==="fulfilled"?pathsResult.value:[];
-  const summary = adminLessonStats(data.items);
+  const summary = adminLessonStats(listedLessons);
   // The directory is atomic, but unavailable filter choices make a bulk selection unsafe.
   const listIncomplete = filtersResult.status === "rejected";
   // A move is safe only with every lesson of one path visible, including archived rows.
   // The server still checks the expected sequence before applying any change.
-  const allRowsOfOnePath = !data.query.q && !data.query.courseCode && !data.query.cohortCode &&
+  const allRowsOfOnePath = hasCourseSelection && !allCourses && !data.query.q &&
+    Boolean(data.query.courseCode) && !data.query.cohortCode &&
     data.query.status === "ALL" && data.total === data.items.length &&
     data.items.length > 1 && new Set(data.items.map(item => item.learningPathId)).size === 1 &&
     data.items.every(item => item.status === "ACTIVE");
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Lessons"
-      description="Authored lesson catalogue in your selected college. Counts reflect registered content records, not learner completion."
-      actions={<a href={"/api/admin/lessons/export?"+new URLSearchParams({q:data.query.q,status:data.query.status,...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})}).toString()}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] leading-5 text-[var(--lms-primary-text)] transition-colors duration-150 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export</a>}
+      description="Authored lessons in the selected college."
     />
     
-    <form className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+      <aside aria-label="Create New Lesson" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+        <h2 className="mb-4 text-lg font-semibold text-foreground">Create New Lesson</h2>
+        {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
+          <Alert tone="warning" role="alert">Courses could not be loaded.{" "}
+            <Link href={selectedScopeHref(data.query)} className="font-semibold underline">Retry</Link>
+          </Alert>}
+        {pathsResult.status==="fulfilled"&&paths.length===0?<p className="mt-3 text-sm text-body">
+          No courses in this college yet.{" "}
+          <Link href="/admin/courses" className="font-semibold text-primary-text underline">Go to Courses</Link>
+        </p>:null}
+      </aside>
+      <section aria-label="Lessons table" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-foreground">Lessons</h2>
+          <div className="flex flex-wrap items-center gap-2">
+            <Link href={selectedScopeHref(data.query)}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">Refresh</Link>
+            {hasCourseSelection?<a download="lessons.csv" href={"/api/admin/lessons/export?"+new URLSearchParams({
+              q:data.query.q,status:data.query.status,
+              ...(data.query.courseCode?{courseCode:data.query.courseCode}:{}),
+              ...(data.query.cohortCode?{cohortCode:data.query.cohortCode}:{})
+            }).toString()} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+              Export lessons.csv
+            </a>:<span className="text-xs text-muted-foreground">
+              Choose a course to export
+            </span>}
+          </div>
+        </div>
+        <form className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+          <input type="hidden" name="pageSize" value={pageSize}/>
+          {allCourses?<input type="hidden" name="allCourses" value="true"/>:null}
       <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Lesson or course"
+        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} placeholder="Search lessons"
           className="min-h-11 md:min-h-9" />
       </label>
       <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
@@ -82,71 +134,154 @@ export default async function SuperAdminLessonsPage({
       </label>
         <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
       </div>
-      <details className="min-w-0" open={Boolean(data.query.courseCode || data.query.cohortCode)}>
+      <label className="grid min-w-0 gap-2 text-sm font-semibold text-[var(--lms-neutral-400)]">
+        Course
+        <Select aria-label="Filter lessons by course" name="courseCode"
+          defaultValue={data.query.courseCode??""} className="min-h-11 md:min-h-9">
+          <option value="">Choose a course</option>
+          {filters.courses.map(item=><option key={item.code} value={item.code}>
+            {item.name} ({item.code})
+          </option>)}
+        </Select>
+      </label>
+      <div className="flex flex-wrap items-center gap-2">
+        {!allCourses?<Link href={viewAllHref}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          View all courses (slower)
+        </Link>:<Link href={closeAllHref}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          Close all-courses view
+        </Link>}
+        {allCourses?<Alert tone="warning">
+          Loading all courses may take longer. Use a single course when possible.
+        </Alert>:null}
+      </div>
+      <details className="min-w-0" open={Boolean(data.query.cohortCode)}>
         <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
         <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2">
-          <SuperAdminLearningFilterFields courses={filters.courses} cohorts={filters.cohorts} selectedCourse={data.query.courseCode} selectedCohort={data.query.cohortCode}/>
+          <label className="grid gap-2 text-sm font-semibold text-[var(--lms-neutral-400)]">
+            Choose batch
+            <Select name="cohortCode" defaultValue={data.query.cohortCode??""}
+              className="min-h-11 w-full md:min-h-9">
+              <option value="">All batches</option>
+              {filters.cohorts.map(item=><option key={item.code} value={item.code}>
+                {item.name} ({item.code})
+              </option>)}
+            </Select>
+          </label>
         </div>
       </details>
       <Link className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href="/admin/lessons">Clear filters</Link>
     </form>
-    <p className="text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
-      <Link href={adminLearningHref("LESSONS",data.query)} className="font-semibold text-primary-text underline underline-offset-4">Reload results</Link>
+    <p className="mt-3 text-sm text-muted-foreground">{hasCourseSelection?data.total.toLocaleString("en-IN"):"0"} matching lessons · on this page: {summary.authored} content records, {summary.published} published{" "}
+      <Link href={selectedScopeHref(data.query)} className="font-semibold text-primary-text underline underline-offset-4">Reload results</Link>
     </p>
     {filtersResult.status==="rejected"?<Alert tone="warning">
       Courses could not be loaded. The lesson directory and your applied filters remain visible.{" "}
       <Link href={adminLearningHref("LESSONS",data.query)} className="font-semibold underline">Retry filter choices</Link>.
     </Alert>:null}
-    {pathsResult.status==="fulfilled"?<SuperAdminLessonCreate paths={paths}/>:
-      <Alert tone="warning">Lesson creation options are temporarily unavailable. Existing lessons remain visible.{" "}
-        <Link href={adminLearningHref("LESSONS",data.query)} className="font-semibold underline">Retry creation options</Link>.
-      </Alert>}
-    {data.items.length?<SuperAdminLessonBulkVisibility lessons={data.items} listIncomplete={listIncomplete}/>:null}
-    {data.items.length && !allRowsOfOnePath?<p className="text-xs text-muted-foreground">
+
+    {listedLessons.length?<SuperAdminLessonBulkVisibility lessons={listedLessons} listIncomplete={listIncomplete}/>:null}
+    {listedLessons.length>0 && !allRowsOfOnePath?<p className="text-xs text-muted-foreground">
       Reordering is unavailable in a filtered, multi-path or incomplete list. Open the offering to manage its complete lesson order.
     </p>:null}
-    {data.items.length ? <div className="min-w-0 divide-y divide-border border-y border-border">
-      {data.items.map(lesson => <article key={lesson.id} className="min-w-0 py-[var(--lms-space-4)] first:pt-0">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">{lesson.name}</h2>
-          <StatusBadge tone={lesson.status === "ACTIVE" ? "success" : "neutral"}>{lesson.status}</StatusBadge>
-        </div>
-        <p className="mt-1 text-sm text-body">{lesson.courseName} ({lesson.courseCode})</p>
-        <p className="mt-1 text-xs text-muted-foreground">{lesson.cohortName} · {lesson.periodName} · Order {lesson.sequence + 1}</p>
-        <p className="mt-[var(--lms-space-2)] flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm text-body">
-          Students see it: <StatusBadge tone={lesson.status==="ACTIVE" && lesson.visibleToStudents &&
-            lesson.pathStatus==="PUBLISHED" && lesson.offeringStatus==="ACTIVE"?"success":"neutral"}>
-            {lesson.status==="ACTIVE" && lesson.visibleToStudents &&
-              lesson.pathStatus==="PUBLISHED" && lesson.offeringStatus==="ACTIVE"?"Visible":"Hidden"}
-          </StatusBadge>
-          Learning path: <StatusBadge tone={lesson.pathStatus==="PUBLISHED"?"success":"neutral"}>{lesson.pathStatus}</StatusBadge>
-          Offering: <StatusBadge tone={lesson.offeringStatus==="ACTIVE"?"success":"neutral"}>{lesson.offeringStatus}</StatusBadge>
-        </p>
-        <p className="mt-2 text-sm text-body">{lesson.publishedContentCount} published / {lesson.contentCount} authored content records</p>
-        {lesson.status==="ACTIVE"?<details className="mt-[var(--lms-space-2)] min-w-0">
-          <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
-          <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:flex-row sm:flex-wrap sm:items-center">
-          <LessonActions lesson={{id:lesson.id,name:lesson.name,description:lesson.description,sequence:lesson.sequence}}/>
-          <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lesson.name,
-            visibleToStudents:lesson.visibleToStudents,updatedAt:lesson.updatedAt.toISOString()}}/>
-          {allRowsOfOnePath?<CollegeLessonReorderActions learningPathId={lesson.learningPathId} lessonId={lesson.id}
-            expectedSequence={lesson.sequence}
-            canMoveUp={data.items.some(other=>other.learningPathId===lesson.learningPathId && other.sequence===lesson.sequence-1)}
-            canMoveDown={data.items.some(other=>other.learningPathId===lesson.learningPathId && other.sequence===lesson.sequence+1)}/>:null}
-          </div>
-        </details>:<p className="mt-2 text-xs text-muted-foreground">Archived lesson retained with its content and order. Restoration requires an authorized server workflow.</p>}
-        <Link href={`/admin/courses/offerings/${encodeURIComponent(lesson.offeringId)}`}
-          className="mt-[var(--lms-space-2)] inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text underline focus-visible:outline hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
-          Open offering to add lessons →
-        </Link>
-      </article>)}
-    </div> : <EmptyState title="No lessons found" description="The current college and filters have no recorded lessons." />}
+    {hasCourseSelection&&listedLessons.length?<div className="mt-4 min-w-0 overflow-x-auto rounded-[var(--lms-control-radius)] border border-border"
+      role="region" aria-label="Lessons table" tabIndex={0}>
+      <table className="w-full min-w-[770px] border-collapse text-left text-sm">
+        <thead className="bg-[var(--lms-canvas-subtle)] text-[var(--lms-neutral-400)]">
+          <tr>
+            <th scope="col" className="whitespace-nowrap border-b border-border p-3 font-semibold">Lesson Name</th>
+            <th scope="col" className="whitespace-nowrap border-b border-border p-3 font-semibold">Course</th>
+            <th scope="col" className="whitespace-nowrap border-b border-border p-3 font-semibold">Order</th>
+            <th scope="col" className="whitespace-nowrap border-b border-border p-3 font-semibold">Students see it</th>
+            <th scope="col" className="whitespace-nowrap border-b border-border p-3 font-semibold">Actions</th>
+          </tr>
+        </thead>
+        <tbody className="divide-y divide-border">
+          {listedLessons.map((lesson,index)=>{
+            const visible=lesson.status==="ACTIVE"&&lesson.visibleToStudents&&
+              lesson.pathStatus==="PUBLISHED"&&lesson.offeringStatus==="ACTIVE";
+            const lessonName=lesson.name?.trim()||"Untitled lesson";
+            return <tr key={lesson.id} className="align-top hover:bg-[var(--lms-primary-subtle)]">
+              <td className="max-w-[260px] p-3">
+                <p className="break-words font-semibold text-foreground">{lessonName}</p>
+                <details className="mt-1 text-xs text-muted-foreground">
+                  <summary className="cursor-pointer text-primary-text underline">Details</summary>
+                  <p className="mt-2">{lesson.cohortName} · {lesson.periodName}</p>
+                  <p>{lesson.publishedContentCount} published / {lesson.contentCount} authored records</p>
+                  <p>Learning path: {lesson.pathStatus} · Offering: {lesson.offeringStatus}</p>
+                </details>
+              </td>
+              <td className="max-w-[220px] break-words p-3">
+                {lesson.courseName?.trim()||"Course name unavailable"}{" "}
+                <span className="text-xs text-muted-foreground">({lesson.courseCode})</span>
+              </td>
+              <td className="p-3 font-semibold">{(data.query.page-1)*pageSize+index+1}</td>
+              <td className="p-3">
+                <StatusBadge tone={visible?"success":"neutral"}>{visible?"Visible":"Hidden"}</StatusBadge>
+              </td>
+              <td className="min-w-[195px] p-3">
+                {lesson.status==="ACTIVE"?<div className="flex flex-wrap items-center gap-2">
+                  <LessonActions lesson={{id:lesson.id,name:lessonName,
+                    description:lesson.description,sequence:lesson.sequence}}/>
+                  <details className="w-full">
+                    <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline md:min-h-9">
+                      More actions
+                    </summary>
+                    <div className="mt-2 flex flex-col items-start gap-2">
+                      <CollegeLessonVisibilityControl lesson={{id:lesson.id,name:lessonName,
+                        visibleToStudents:lesson.visibleToStudents,updatedAt:lesson.updatedAt.toISOString()}}/>
+                      {allRowsOfOnePath?<CollegeLessonReorderActions learningPathId={lesson.learningPathId}
+                        lessonId={lesson.id} expectedSequence={lesson.sequence}
+                        canMoveUp={listedLessons.some(other=>
+                          other.learningPathId===lesson.learningPathId&&other.sequence===lesson.sequence-1)}
+                        canMoveDown={listedLessons.some(other=>
+                          other.learningPathId===lesson.learningPathId&&other.sequence===lesson.sequence+1)}/>:null}
+                      <Link href={"/admin/courses/offerings/"+encodeURIComponent(lesson.offeringId)}
+                        className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+                        Open offering
+                      </Link>
+                    </div>
+                  </details>
+                </div>:<p className="text-xs text-muted-foreground">
+                  Archived lesson retained. Restoration requires an authorized workflow.
+                </p>}
+              </td>
+            </tr>;
+          })}
+        </tbody>
+      </table>
+    </div>:<div className="mt-4 border border-border p-6 text-sm text-muted-foreground">
+      {!hasCourseSelection?"Choose a course, or opt in to all-courses view.":
+        data.query.q?"No matching lessons. Clear search to see the course.":
+        data.query.courseCode?"No lessons in this course yet. Create one on the left.":
+        "No lessons found"}
+      {data.query.q?<Link href={selectedScopeHref({...data.query,q:"",page:1})}
+        className="ml-2 font-semibold text-primary-text underline">Clear search</Link>:null}
+    </div>}
     <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] border-t border-border pt-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
-      <span className="text-sm text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
-      <Pagination page={data.query.page} pageCount={data.totalPages}
-        hrefForPage={page=>adminLearningHref("LESSONS",{...data.query,page})}
-        label="Lesson pages" showBoundaryLinks={false}/>
+      <div className="flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
+        <span>Page {data.query.page} of {data.totalPages} · {pageSize} per page</span>
+        <form className="flex items-center gap-2">
+          <input type="hidden" name="q" value={data.query.q}/>
+          <input type="hidden" name="status" value={data.query.status}/>
+          {data.query.courseCode?<input type="hidden" name="courseCode" value={data.query.courseCode}/>:null}
+          {data.query.cohortCode?<input type="hidden" name="cohortCode" value={data.query.cohortCode}/>:null}
+          {allCourses?<input type="hidden" name="allCourses" value="true"/>:null}
+          <label htmlFor="lessons-page-size" className="font-semibold">Rows per page</label>
+          <Select id="lessons-page-size" name="pageSize" defaultValue={String(pageSize)}
+            className="min-h-11 md:min-h-9">
+            {[10,25,50,100].map(size=><option key={size} value={String(size)}>{size}</option>)}
+          </Select>
+          <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
+        </form>
+      </div>
+      {hasCourseSelection?<Pagination page={data.query.page} pageCount={data.totalPages}
+        hrefForPage={page=>selectedScopeHref({...data.query,page})}
+        label="Lesson pages" showBoundaryLinks={false}/>:null}
     </div>
-    <Link href="/admin/courses" className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Courses</Link>
+    <Link href="/admin/courses" className="mt-4 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text hover:text-[var(--lms-primary)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">← Courses</Link>
+      </section>
+    </div>
   </div>;
 }

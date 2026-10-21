@@ -18,7 +18,7 @@ import { Pagination } from "@/components/ui/pagination";
 import { StatusBadge } from "@/components/ui/status-badge";
 import {
  ADMIN_CONTENT_LABELS,adminContentHref,adminContentQuerySchema,
- adminContentTypeLabel,effectiveCourseContentVisibleToStudents,type AdminContentKind,
+ effectiveCourseContentVisibleToStudents,type AdminContentKind,
 } from "@/modules/courses/super-admin-content-directory-model";
 import { listSuperAdminContentDirectory,listSuperAdminContentSectionOptions } from "@/modules/courses/super-admin-content-directory-service";
 
@@ -61,7 +61,15 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-4">
   <PageHeader title={title}/>
-  <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+"."}/>
+  <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+title.toLowerCase()+". If your scope was changed but content has not appeared, reselect your college or refresh this page."}/>
+  {kind==="VIDEOS"?<section aria-label="Global video policy" className="space-y-2 border-t border-border pt-4">
+   <h2 className="text-base font-semibold">Video watched threshold</h2>
+   <Banner tone="info">The video "watched" threshold is platform-wide (default 90%, valid range 1–100%). It can be edited only in GLOBAL platform settings, without a selected college.</Banner>
+   <Link href="/admin/settings?q=watchedThresholdPercent"
+    className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+    Edit GLOBAL video policy in Tenant Settings →
+   </Link>
+  </section>:null}
  </div>;
  // Directory reads must remain available even when an independent
  // authoring picker or Section-filter options service is temporarily down.
@@ -83,13 +91,60 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
  const offerings=[...new Map(lessons.map(item=>[item.offeringId,{id:item.offeringId,name:item.courseCode+" · "+item.courseName}])).values()];
  const statuses=["ALL","DRAFT","PUBLISHED","ARCHIVED"] as const;
  return <div className="min-w-0 space-y-4">
-  <PageBackLink href="/admin/courses" label="Courses" />
   <PageHeader title={title}
-   description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Manage lesson resources in the selected college."} />
+   description={kind==="VIDEOS"?"Upload a video or link a YouTube video to a lesson.":kind==="LIVE_CLASSES"?"Schedule a live class with a meeting link on a lesson.":"Give a lesson reading material: files, links and notes, together in one resource."} />
+  <nav aria-label="Courses & Content" className="flex min-w-0 flex-wrap items-center gap-2 border-b border-border pb-2">
+    {[
+      {label:"Courses",href:"/admin/courses"},
+      {label:"Lessons",href:"/admin/lessons"},
+      {label:"Videos",href:"/admin/videos"},
+      {label:"Resources",href:"/admin/resources"},
+      {label:"Live classes",href:"/admin/live-classes"},
+    ].map(tab=><Link href={tab.href} key={tab.label}
+      aria-current={tab.label===title?"page":undefined}
+      className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-sm font-semibold md:min-h-9 "+
+        (tab.label===title?"bg-primary-subtle text-primary-text":"text-body hover:bg-primary-subtle")}>
+      {tab.label}
+    </Link>)}
+  </nav>
+  {kind==="VIDEOS"?<section aria-label="Video policy"
+    className="rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+    <h2 className="text-base font-semibold text-foreground">Video policy</h2>
+    <p className="mt-2 text-sm text-body">Video &quot;watched&quot; threshold: 90% by default.
+      The platform value is configurable globally between 1% and 100%.</p>
+    <Banner tone="info">
+      The video &quot;watched&quot; threshold is platform-wide. Clear the selected college
+      before editing its GLOBAL setting.{" "}
+      <Link href="/admin/settings?q=watchedThresholdPercent"
+        className="font-semibold text-primary-text underline">Open Tenant Settings</Link>.
+    </Banner>
+  </section>:null}
+  <div className="grid min-w-0 items-start gap-6 lg:grid-cols-2">
+   <section aria-label="Add lesson content"
+     className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+    <h2 className="mb-3 text-lg font-semibold text-foreground">
+      {kind==="VIDEOS"?"Add Video":kind==="LIVE_CLASSES"?"Add Live Class":"Add Resource"}
+    </h2>
   {lessonsResult.status==="fulfilled"
-   ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} allowVideoUpload={false}/>
-   :<Banner tone="warning">Content authoring options are temporarily unavailable. Existing content remains visible.</Banner>}
-  {sectionsResult.status==="rejected"?<Banner tone="warning">Section filter choices are temporarily unavailable. Your selected filters are still applied.</Banner>:null}
+   ?<SuperAdminContentAuthoring kind={kind} lessons={lessons} sections={sections} allowVideoUpload/>
+   :<Banner tone="warning">Course and lesson authoring choices could not be loaded.
+    Existing content remains available. <Link href={adminContentHref(kind,parsed.data)}
+      className="font-semibold underline">Retry loading course and lesson choices</Link>
+   </Banner>}
+  {sectionsResult.status==="rejected"?<Banner tone="warning">Classes could not be loaded.
+   Your selected filters still apply. <Link href={adminContentHref(kind,parsed.data)}
+     className="font-semibold underline">Retry loading classes</Link>
+  </Banner>:null}
+   </section>
+   <section aria-label="Existing Content"
+    className="min-w-0 rounded-[var(--lms-radius-card)] border border-border bg-surface p-4">
+    <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+      <h2 className="text-lg font-semibold text-foreground">Existing Content</h2>
+      <Link href={adminContentHref(kind,data.query)}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+        ↻ Refresh
+      </Link>
+    </div>
   <form method="get" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)]">
    <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
     <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
@@ -103,67 +158,123 @@ export async function SuperAdminContentDirectoryPage({kind,searchParams}:{
     </label>
     <Button type="submit" className="min-h-11 w-full self-end sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Filter</Button>
    </div>
-   <details className="min-w-0" open={Boolean(data.query.offeringId || data.query.lessonId || data.query.deliveryId || data.query.scope !== "ALL")}>
+   <details className="min-w-0" open>
     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-4">
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course / offering
       <Select name="offeringId" defaultValue={data.query.offeringId??""} className="min-h-11 md:min-h-9">
-       <option value="">All courses</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
+       <option value="">Choose a course</option>{offerings.map(option=><option key={option.id} value={option.id}>{option.name}</option>)}
       </Select>
      </label>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
       <Select name="lessonId" defaultValue={data.query.lessonId??""} className="min-h-11 md:min-h-9">
-       <option value="">All lessons</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
+       <option value="">Choose a lesson</option>{lessons.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.name} · {item.courseCode}</option>)}
       </Select>
      </label>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Section
       <Select name="deliveryId" defaultValue={data.query.deliveryId??""} className="min-h-11 md:min-h-9">
-       <option value="">All sections</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
+       <option value="">All content in this lesson</option>{sections.filter(x=>!data.query.offeringId||x.offeringId===data.query.offeringId).map(item=><option key={item.id} value={item.id}>{item.courseCode} · {item.sectionName}</option>)}
       </Select>
      </label>
      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Audience
       <Select name="scope" defaultValue={data.query.scope} className="min-h-11 md:min-h-9">
-       <option value="ALL">All audiences</option><option value="SHARED">All currently eligible sections</option><option value="SECTION">One specific section</option>
+       <option value="ALL">All audiences</option>
+       <option value="SHARED">All currently eligible sections for this course</option>
+       <option value="SECTION">One specific section</option>
       </Select>
      </label>
     </div>
    </details>
    <Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
   </form>
-  <p className="m-0 break-words text-sm text-muted-foreground">{data.total} matching records · page {data.query.page} of {data.totalPages} · up to 25 per page</p>
-  {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
-   {data.items.map(item=><article key={item.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
-    <div className="flex flex-wrap items-start justify-between gap-2">
-     <h2 className="m-0 min-w-0 flex-1 break-words text-base font-semibold text-foreground">{item.title}</h2>
-     <StatusBadge tone={item.status==="PUBLISHED"?"success":item.status==="DRAFT"?"warning":"neutral"}>{item.status}</StatusBadge>
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+   <p className="m-0 break-words text-sm text-muted-foreground">
+      {data.total===0?0:(data.query.page-1)*25+1}–{Math.min(data.total,data.query.page*25)}
+      {" "}of {data.total} · Page {data.query.page} of {data.totalPages}
+    </p>
+   <div className="flex flex-wrap items-center gap-2" aria-label="Existing Content toolbar">
+    <Link href={adminContentHref(kind,data.query)} className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Refresh</Link>
+    <a href={"/api/courses/admin-content-export?"+new URLSearchParams({
+     kind,q:data.query.q,status:data.query.status,
+     ...(data.query.offeringId?{offeringId:data.query.offeringId}:{}),
+     ...(data.query.lessonId?{lessonId:data.query.lessonId}:{}),
+     ...(data.query.deliveryId?{deliveryId:data.query.deliveryId}:{}),
+     scope:data.query.scope,
+    }).toString()}
+      className="inline-flex min-h-11 items-center rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">
+      Export CSV
+    </a>
+   </div>
+  </div>
+  {data.items.length?<div role="table" aria-label={"Existing "+title}
+    className="min-w-0 overflow-x-auto border-y border-border" tabIndex={0}>
+   <div role="row" className="grid min-w-[680px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)] gap-3 border-b border-border py-3 text-xs font-semibold tracking-wide text-muted-foreground">
+    {["Title","Visibility","Students","Materials","Action"].map(column=>
+     <span role="columnheader" key={column}>{column}</span>)}
+   </div>
+   {data.items.map(item=><article role="row" key={item.id}
+    className="grid min-w-[680px] grid-cols-[minmax(0,2fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,1fr)_minmax(0,2fr)] gap-3 border-b border-border py-3 last:border-b-0">
+    <div role="cell" className="min-w-0">
+     <h2 className="m-0 break-words text-sm font-semibold text-foreground">{item.title?.trim()||"Untitled"}</h2>
+     <p className="mt-1 break-words text-xs text-muted-foreground">{item.courseName} ({item.courseCode}) · {item.lessonName}</p>
+     <p className="mt-1 break-words text-xs text-muted-foreground">{item.cohortName} · {item.periodName}</p>
     </div>
-    <p className="break-words text-sm text-body">{adminContentTypeLabel(item.contentType)} · Lesson: {item.lessonName}</p>
-    <p className="break-words text-sm text-body">{item.courseName} ({item.courseCode}) · {item.cohortName}</p>
-    <p className="break-words text-xs text-muted-foreground">{item.periodName} · Lesson {item.lessonStatus} · Offering {item.offeringStatus}</p>
-    <div className="flex flex-wrap items-center gap-3">
-      <StatusBadge tone={studentContentVisible(item)?"success":"neutral"}>Students {studentContentVisible(item)?"Visible":"Hidden"}</StatusBadge>
-      <span className="text-xs text-muted-foreground">Order within lesson: {item.sequence+1}</span>
-      {item.contentType==="RESOURCE"?<span className="text-xs text-muted-foreground">Linked materials: {publicHttpsHref(item.externalUrl)?1:0}</span>:null}
+    <div role="cell" className="min-w-0 space-y-1">
+      <p className="text-xs font-semibold text-muted-foreground">
+        {item.deliveryId?
+          sections.find(section=>section.id===item.deliveryId)?.sectionName??"Specific section":
+          "All sections"}
+      </p>
+      <StatusBadge tone="neutral">{item.deliveryId?"One specific section":"Shared"}</StatusBadge>
+      <p className="text-xs text-muted-foreground">Order {item.sequence+1}</p>
     </div>
-    {publicHttpsHref(item.externalUrl)?<ThirdPartyLink href={publicHttpsHref(item.externalUrl)!} label="Open public link"/>:null}
-    {item.durationSeconds!==null?<p className="text-sm text-body">Duration: {Math.ceil(item.durationSeconds/60)} minutes</p>:null}
-    {item.startsAt?<p className="text-sm text-body">Starts: {ist(item.startsAt)}</p>:null}
-    {item.endsAt?<p className="text-sm text-body">Ends: {ist(item.endsAt)}</p>:null}
-    {item.contentType==="RESOURCE"&&item.notes?<p className="whitespace-pre-wrap break-words text-sm text-body">{item.notes}</p>:null}
-    {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
-     <details className="min-w-0">
-      <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Actions</summary>
-      <div className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
-       <SuperAdminContentActions item={item}/>
-       <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
-        className="inline-flex min-h-11 items-center font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Edit, publish or archive →</Link>
-      </div>
-     </details>:
-     <p className="text-xs text-muted-foreground">Content editing is unavailable for an inactive offering or lesson.</p>}
+    <div role="cell" className="min-w-0 space-y-2">
+     <span className="block text-xs font-semibold text-muted-foreground xl:hidden">Students</span>
+     <StatusBadge tone={studentContentVisible(item)?"success":"neutral"}>
+       {studentContentVisible(item)?"Visible":"Hidden"}
+     </StatusBadge>
+     <p className="text-xs text-muted-foreground">Requires published content, lesson and offering ancestry.</p>
+    </div>
+    <div role="cell" className="min-w-0 space-y-1">
+     <span className="block text-xs font-semibold text-muted-foreground xl:hidden">Materials</span>
+     <p className="text-xs text-muted-foreground">
+       {item.contentType==="RESOURCE"
+        ?"Materials: "+item.materialCount
+        :"Points: "+item.points}
+     </p>
+     {publicHttpsHref(item.externalUrl)?
+      <ThirdPartyLink href={publicHttpsHref(item.externalUrl)!}
+        label={item.contentType==="LIVE_CLASS"?"Join":"View"}/>:<span className="text-xs text-muted-foreground">No link</span>}
+     {item.durationSeconds!==null?<p className="text-xs text-body">Duration: {Math.ceil(item.durationSeconds/60)} minutes</p>:null}
+     {item.startsAt?<p className="text-xs text-body">Starts: {ist(item.startsAt)}</p>:null}
+     {item.endsAt?<p className="text-xs text-body">Ends: {ist(item.endsAt)}</p>:null}
+     {item.contentType==="RESOURCE"&&item.notes?<p className="whitespace-pre-wrap break-words text-xs text-body">{item.notes}</p>:null}
+     {item.contentType==="RESOURCE"&&item.materials.some(material=>material.kind==="FILE")?
+      <p className="text-xs text-muted-foreground">Private files open through a scoped signed grant from the lesson.</p>:null}
+    </div>
+    <div role="cell" className="min-w-0">
+     <span className="block text-xs font-semibold text-muted-foreground xl:hidden">Action</span>
+     {item.offeringStatus==="ACTIVE"&&item.lessonStatus==="ACTIVE"?
+      <details className="min-w-0">
+       <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline md:min-h-9">Actions</summary>
+       <div className="min-w-0 space-y-2 pt-2">
+        <SuperAdminContentActions item={item}/>
+        <Link href={`/admin/courses/offerings/${encodeURIComponent(item.offeringId)}`}
+         className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
+         Edit, publish or archive →
+        </Link>
+       </div>
+      </details>:<p className="text-xs text-muted-foreground">Unavailable on inactive offerings or lessons.</p>}
+    </div>
    </article>)}
-  </div>:<EmptyState title="No content found." description="Select a course and lesson to view content."
-    action={<Link href={adminContentHref(kind,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Clear filters</Link>}/>}
+  </div>:<div className="border border-border p-5 text-sm text-muted-foreground" role="status">
+   {data.query.lessonId?"No content found.":"Select a course and lesson to view content."}{" "}
+   <Link href={adminContentHref(kind,{})}
+     className="font-semibold text-primary-text underline">Clear filters</Link>
+  </div>}
   <Pagination label={title+" pages"} page={data.query.page} pageCount={data.totalPages}
     hrefForPage={page=>adminContentHref(kind,{...data.query,page})}/>
+  </section>
+  </div>
  </div>;
 }

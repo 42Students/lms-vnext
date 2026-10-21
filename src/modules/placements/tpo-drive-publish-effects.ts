@@ -40,6 +40,7 @@ export async function countPublishedDriveDebarments(
   return affected;
 }
 /**
+ * Legacy targeting precedence was section/class then batch/cohort then program/department or all-college. In vNext the persisted college-scoped eligibility evaluation is authoritative. Unset audience never means public all-college reach.
  * Conservative eligible audience: active learner, explicit PLACEMENTS
  * registration, notification preference on, and job-specific eligibility.
  * NEVER count mere college membership as eligibility.
@@ -95,7 +96,7 @@ export async function previewEligiblePublishedDrive(
     );
     if(eligibility.status==="ELIGIBLE")recipients.push(learner.userId);
   }
-  const distinct=[...new Set(recipients)];
+  const distinct=[...new Set(recipients)].sort();
   return {eligible:distinct.length,excluded:registrations.length-distinct.length,
     candidateCount:registrations.length,recipientUserIds:distinct};
 }
@@ -109,7 +110,7 @@ export async function notifyEligiblePublishedDrive(
     await tx.insert(inAppNotifications).values(
       distinct.slice(i,i+200).map(userId=>({
         userId,eventId,title:"New placement drive",
-        body:job.title+" is open for applications.",
+        body:job.title+" is open for applications. Review the details and deadline before applying.",
         actionHref:"/learn/my-placements/jobs/"+job.id,
       })),
     ).onConflictDoNothing();
@@ -129,3 +130,10 @@ export const TPO_PUBLISH_DELIVERY_POLICY = {
  emailUnavailableCode:"EMAIL_DELIVERY_UNAVAILABLE",
  explanation:"Email notifications are not available. Eligible learners receive an in-app notice.",
 } as const;
+
+// Publishing is idempotent because notification writes conflict on their
+// persisted (event, recipient) key. A retry must reuse its publication event
+// ID; generating a fresh event constitutes a distinct authorized publish.
+export function publishedDriveRecipientScopeDescription(){
+ return "Eligible, opted-in learners with active PLACEMENTS registrations, tenant-scoped program enrolment and applicable job policy. No notification is sent to an unknown audience.";
+}

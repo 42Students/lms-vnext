@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { CollegeSemesterCreateForm, CollegeSemesterRowActions } from "@/components/academics/college-semester-management";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Banner } from "@/components/ui/banner";
 import { ErrorState } from "@/components/ui/error-state";
 import {DataTable} from "@/components/ui/data-table";
 import {Input} from "@/components/ui/input";
@@ -44,7 +45,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
   if (!context.adminScope?.collegeId) {
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader  title="Semesters" />
-      <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its semesters." />
+      <Banner tone="warning">Select a College to manage Semesters. Choose Organization and College in the header first.</Banner>
     </div>;
   }
 
@@ -62,12 +63,14 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
 
   const result=await listCollegeSemesters(context,parsed.data)
     .then(value=>({ok:true as const,value}))
-    .catch(()=>({ok:false as const}));
+    .catch(error=>({ok:false as const,reason:error instanceof Error?error.message:"SEMESTERS_UNAVAILABLE"}));
   if(!result.ok){
     return <div className="min-w-0 max-w-full space-y-4">
       <PageHeader title="Semesters" />
-      <ErrorState title="Semesters unavailable"
-        description="The semester directory could not be loaded. Your filters were not changed."
+      <ErrorState title={result.reason==="PROGRAMS_UNAVAILABLE"?"Programs unavailable":"Semesters unavailable"}
+        description={result.reason==="PROGRAMS_UNAVAILABLE"
+          ?"Programs could not be loaded. Retry the program lookup before creating a semester."
+          :"The semester directory could not be loaded. Your filters were not changed."}
         action={<Link href={pageHref(parsed.data)}
           className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading semesters</Link>}/>
     </div>;
@@ -127,18 +130,19 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
     </a>
     </div>
     <section aria-label="Semesters" className="min-w-0 space-y-3">
-      <p role="status" className="m-0 break-words text-sm text-muted-foreground">{data.total.toLocaleString("en-IN")} matching semesters</p>
+      <p role="status" className="m-0 break-words text-sm text-muted-foreground">Showing {data.total?((data.query.page-1)*data.query.pageSize+1):0}–{Math.min(data.query.page*data.query.pageSize,data.total)} of {data.total.toLocaleString("en-IN")} semesters</p>
       <DataTable
         caption="Semesters"
         rows={data.items}
         getRowKey={row=>row.id}
         columns={[
           {key:"program",header:"Program",mobilePriority:"secondary",cell:row=>row.programName},
-          {key:"number",header:"Semester #",mobilePriority:"secondary",cell:row=>"Sem "+row.termNumber},
+          {key:"number",header:"Semester #",mobilePriority:"secondary",cell:row=>
+            <span className="inline-flex rounded border border-info bg-info-subtle px-2 py-0.5 text-xs font-semibold text-info-text">Sem {row.termNumber}</span>},
           {key:"name",header:"Name",mobilePriority:"primary",cell:row=>row.name},
           {key:"credits",header:"Credits",mobilePriority:"secondary",cell:row=>row.mappedCredits??"—"},
           {key:"courses",header:"Courses",mobilePriority:"secondary",cell:row=>row.mappedCourses},
-          {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.isActive?"success":"neutral"}>{row.isActive?"Active":"Inactive"}</StatusBadge>},
+          {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><span className={row.isActive?"text-success-text":"text-error"}><StatusBadge tone={row.isActive?"success":"error"}>{row.isActive?"Active":"Inactive"}</StatusBadge></span>},
           {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeSemesterRowActions row={row}/>},
         ]}
         empty={<EmptyState title="No semesters found" description="No semesters match these filters. Create a program first, then add semesters."

@@ -26,6 +26,7 @@ export async function getCollegeDriveOverview(context: RequestContext, jobIdInpu
   const db = getDb();
   const [drive] = await db.select({
     id: placementJobs.id, title: placementJobs.title, description: placementJobs.description,
+    jobTypeLabel:placementJobs.jobTypeLabel,companyLogoUrl:placementCompanies.logoPublicUrl,
     status: placementJobs.status, employmentType: placementJobs.employmentType,
     workMode: placementJobs.workMode, openings: placementJobs.openings,
     applicationDeadline: placementJobs.applicationDeadline,
@@ -85,7 +86,10 @@ export async function getCollegeDriveOverview(context: RequestContext, jobIdInpu
     legacyStatus: drive.status==="DRAFT"?"Draft":
       drive.status!=="PUBLISHED"?"Closed":
       isPlacementApplicationDeadlinePassed(drive.applicationDeadline,new Date())?"Applications closed":"Active",
-    legacyJobType: drive.employmentType,
+    legacyJobType: drive.jobTypeLabel?.trim()||drive.employmentType,
+    descriptionVisible:Boolean(drive.description.trim()),
+    descriptionLines:drive.description.trim()?drive.description.trim().split(/\r?\n/).slice(0,3).join("\n"):null,
+    legacyIsDraft:drive.status==="DRAFT",legacyIsActive:drive.status==="PUBLISHED",
   }, counts: {
     applications: applications[0]?.total ?? 0,
     shortlisted: shortlisted[0]?.total ?? 0,

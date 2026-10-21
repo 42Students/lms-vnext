@@ -8,6 +8,7 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
 import {globalCompanyEditSchema} from "./super-admin-company-edit-model";
+import {z} from "zod";
 
 /** Updates only the canonical employer record. All drive/relationship readers join this identity. */
 export async function editGlobalCompany(context:RequestContext,raw:unknown){
@@ -44,4 +45,19 @@ export async function editGlobalCompany(context:RequestContext,raw:unknown){
   });
   return {id:saved.id,updatedAt:saved.updatedAt.toISOString()};
  });
+}
+
+/** Safely preserve historical description/logoUrl alias and PATCH omission. */
+export const legacyCompanyEditAliases=z.strictObject({
+ description:z.string().trim().max(4000).nullable().optional(),
+ logoUrl:z.string().trim().url().refine(raw=>{
+  try{const u=new URL(raw);return u.protocol==="https:"&&!u.username&&!u.password;}catch{return false;}
+ }).nullable().optional(),
+});
+export function applyLegacyCompanyEditAliases<T extends {about:string|null;logoPublicUrl:string|null}>(
+ current:T,raw:unknown,
+):T{
+ const input=legacyCompanyEditAliases.parse(raw);
+ return {...current,...(input.description!==undefined?{about:input.description}:{}),
+  ...(input.logoUrl!==undefined?{logoPublicUrl:input.logoUrl}:{})};
 }

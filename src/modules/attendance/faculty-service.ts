@@ -87,8 +87,8 @@ function facultyIndiaMonthBounds(month: string) {
 const bulkInputSchema = z
   .object({
     deliveryId: uuid,
-    absentMembershipIds: z.array(uuid).max(1000).default([]),
-    presentMembershipIds: z.array(uuid).max(1000).default([]),
+    absentMembershipIds: z.array(uuid).max(500).default([]),
+    presentMembershipIds: z.array(uuid).max(500).default([]),
     expectedMarkedAt:z.string().datetime({offset:true}).nullable().optional(),
     correctionReason:z.string().trim().max(500).optional(),
   })
@@ -125,10 +125,11 @@ const bulkInputSchema = z
       ctx.addIssue({code:"custom",path:["presentMembershipIds"],
         message:"Nothing to record — provide at least one absent or present learner"});
     }
-    // New UUID roster batches permit up to 1000 (legacy numeric API had 500).
-    if (total > 1000) {
+    // Legacy AttendanceBulkController counts both arrays against one 500-ID
+    // ceiling. A split 500-absent + 500-present request must not bypass it.
+    if (total > 500) {
       ctx.addIssue({code:"custom",path:["presentMembershipIds"],
-        message:"Maximum 1000 learners per request"});
+        message:"Maximum 500 learners per attendance request"});
     }
   });
 
@@ -250,6 +251,11 @@ export async function getFacultyDeliveryRoster(
   return { delivery, roster };
 }
 
+/** India-local month filters map the old class/course/faculty/start/end GET to
+ * sectionScheduleEventCourses.deliveryId plus a half-open IST month range.
+ * The UI preserves the selected date/course while server-rendered workspace
+ * queries recheck role, section and college scope. Cancelled events are excluded
+ * from editable sessions, never silently marked present. */
 export async function getFacultyAttendanceWorkspace(
   context: RequestContext,
   deliveryIdInput: string,
@@ -484,24 +490,40 @@ export async function createFacultyAttendanceSession(
  * vNext replacement for legacy POST /api/v1/attendance/bulk:
  * - numeric classScheduleId -> tenant-scoped UUID scheduleEventId in the path;
  * - numeric studentId[] -> ACTIVE collegeMembership.id[] for this delivery;
+ * - first convert the legacy numeric classScheduleId to a confirmed section
+ *   schedule event in the actor's active college; deliveryId is obtained from
+ *   sectionScheduleEventCourses, never submitted or guessed from legacy
+ *   learner_id/student_id values;
+ * - map imported legacy student IDs through active membership identity in
+ *   listActiveDeliveryLearners; displayName combines first/last at ingestion
+ *   and rollNumber is informational only, never a security join;
  * - presentMembershipIds/absentMembershipIds together cover the entire current
- *   delivery roster; legacy partial batches are deliberately not accepted;
+ *   delivery roster (combined maximum 500); historical departed students are
+ *   not exposed in the current Faculty roster; old partial batches are not
+ *   accepted;
  * - first mark writes an absence-only record set + a MARKED session;
  * - corrections require an optimistic markedAt token and an audit explanation.
  *
  * The write is all-or-none, not the old "some succeeded / retry failed IDs"
- * operation. On a network-uncertain result clients must reload persisted marks
- * before retrying. College Admin / Super Admin access uses separate scoped
- * admin services, not an exemption to persisted Faculty teaching assignment.
+ * operation. First-save reason defaults to "Mark Absent" for stored absent
+ * records, while a later correction must explain its delta. The single
+ * COURSES_ATTENDANCE_MARKED activity event is the vNext equivalent of old
+ * ATTENDANCE_MARK_BULK: counts, correction reason and schedule/delivery IDs
+ * are logged once per successful transaction; only changed learners are
+ * notified. On uncertain network responses, clients MUST reload persisted
+ * marks before retrying. College Admin / Super Admin access uses separate
+ * scoped admin services, not an exemption to Faculty teaching assignment.
  */
 export async function markFacultyAttendance(
   context: RequestContext,
   scheduleEventIdInput: string,
   rawInput: unknown,
 ) {
-  const scheduleEventId = uuid.parse(
-    scheduleEventIdInput,
-  );
+  const validatedEventId = uuid.safeParse(scheduleEventIdInput);
+  if (!validatedEventId.success) {
+    throw new AcademicsServiceError("SCHEDULE_EVENT_NOT_FOUND");
+  }
+  const scheduleEventId = validatedEventId.data;
   const input = bulkInputSchema.parse(rawInput);
   const delivery = await requireFacultyDelivery(
     context,
@@ -658,6 +680,8 @@ export async function markFacultyAttendance(
             membershipId,
             status: "ABSENT",
             markedByUserId: context.user.id,
+            note: isCorrection ? input.correctionReason!.trim() :
+              (input.correctionReason?.trim() || "Mark Absent"),
             markedAt: now,
             updatedAt: now,
           }),
@@ -706,6 +730,11 @@ export async function markFacultyAttendance(
         deliveryId: delivery.deliveryId,
         markedAbsent: input.absentMembershipIds.length,
         markedPresent: input.presentMembershipIds.length,
+        // Legacy ATTENDANCE_MARK_BULK audit alias for Activity Log filters;
+        // physical event type remains COURSES_ATTENDANCE_MARKED.
+        legacyAuditType: "ATTENDANCE_MARK_BULK",
+        absentCount: input.absentMembershipIds.length,
+        presentCount: input.presentMembershipIds.length,
         correction: existingSession?.status==="MARKED",
         previousMarkedAt:existingSession?.markedAt?.toISOString()??null,
         markedAt:writtenAt.toISOString(),

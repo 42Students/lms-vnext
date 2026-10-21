@@ -1,3 +1,5 @@
+import { Suspense } from "react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { ErrorState } from "@/components/ui/error-state";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -49,10 +51,18 @@ export default async function SuperAdminProjectAtRiskRoute({
   }
 
   return (
-    <ProjectAdminAtRiskPage
-      collegeId={collegeId}
-      basePath="/admin/projects"
-      searchParams={await searchParams}
-    />
+    <Suspense fallback={<section className="min-w-0 space-y-[var(--lms-space-4)]" aria-busy="true">
+      <PageHeader title="At-risk projects" description="Workspaces with no recent activity, an active blocker, or a pending review."
+        actions={<PageBackLink href="/admin/projects" label="Project workspaces" />}/>
+      <ProjectAdminNav basePath="/admin/projects" active="at-risk" />
+      <p role="status" className="text-sm text-[var(--lms-body-text)]">Loading at-risk projects for the selected college…</p>
+      <Skeleton variant="row" count={8} label="Loading at-risk projects" />
+    </section>}>
+      <ProjectAdminAtRiskPage
+        collegeId={collegeId}
+        basePath="/admin/projects"
+        searchParams={await searchParams}
+      />
+    </Suspense>
   );
 }

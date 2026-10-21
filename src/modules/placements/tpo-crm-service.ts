@@ -57,11 +57,24 @@ export type TpoCrmErrorCode =
   | "TPO_CRM_FOLLOWUP_NOT_FOUND"
   | "TPO_CRM_FOLLOWUP_ALREADY_DONE";
 
+const TPO_CRM_ERROR_MESSAGES: Partial<Record<TpoCrmErrorCode, string>> = {
+  TPO_CRM_LEAD_DUPLICATE: "This recruiter is already in your list. Search for them to open it.",
+  TPO_CRM_FOLLOWUP_ALREADY_DONE: "A finished follow-up cannot be moved",
+};
+
 export class TpoCrmError extends Error {
   constructor(public readonly code: TpoCrmErrorCode) {
-    super(code);
+    super(TPO_CRM_ERROR_MESSAGES[code] ?? code);
     this.name = "TpoCrmError";
   }
+}
+
+/** The legacy No answer default is 10:00 AM tomorrow in the college's IST day. */
+function nextDayTpoFollowupAt(now: Date): Date {
+  const india = new Date(now.getTime() + 330 * 60_000);
+  return new Date(Date.UTC(
+    india.getUTCFullYear(), india.getUTCMonth(), india.getUTCDate() + 1, 4, 30,
+  ));
 }
 
 /** Mirrors legacy contact normalization; no raw invitation tokens are stored. */
@@ -142,13 +155,15 @@ export async function listTpoLeads(
       isNull(placementTpoFollowups.doneAt),
     )).groupBy(placementTpoFollowups.leadId),
     getTpoRecruiterLeadStages(context, collegeId),
-    db.select({
+    db.selectDistinctOn([placementTpoLeadActivities.leadId],{
       leadId:placementTpoLeadActivities.leadId,
-      lastActivityAt:max(placementTpoLeadActivities.createdAt),
+      lastActivityAt:placementTpoLeadActivities.createdAt,
+      lastActivityType:placementTpoLeadActivities.type,
     }).from(placementTpoLeadActivities).where(and(
       eq(placementTpoLeadActivities.collegeId,collegeId),
       inArray(placementTpoLeadActivities.leadId,ids),
-    )).groupBy(placementTpoLeadActivities.leadId),
+    )).orderBy(placementTpoLeadActivities.leadId,
+      desc(placementTpoLeadActivities.createdAt),desc(placementTpoLeadActivities.id)),
     db.select({membershipId:collegeMemberships.id,ownerName:users.displayName})
       .from(collegeMemberships)
       .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -158,13 +173,13 @@ export async function listTpoLeads(
   const contactByLead = new Map(contacts.map(row => [row.leadId, row.lastContactAt]));
   const nextByLead = new Map(followups.map(row => [row.leadId, row.nextFollowupAt]));
   const now = new Date();
-  const activityByLead=new Map(activities.map(row=>[row.leadId,row.lastActivityAt]));
+  const activityByLead=new Map(activities.map(row=>[row.leadId,row]));
   const ownerByMembership=new Map(owners.map(row=>[row.membershipId,row.ownerName]));
   return rows.map(row => ({
     ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
     lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
-    lastActivityAt:activityByLead.get(row.id)??null,
+    lastActivityAt:activityByLead.get(row.id)?.lastActivityAt??null,
     stage:stages.get(row.id),
     nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
     inviteBouncedAt: row.inviteBouncedAt,
@@ -174,7 +189,8 @@ export async function listTpoLeads(
     unsubscribedAt: row.unsubscribedAt,
   }, now), stages.get(row.id)),
     ownerName:row.ownerMembershipId?ownerByMembership.get(row.ownerMembershipId)??null:null,
-    lastActivityAt:activityByLead.get(row.id)?.toISOString()??null,
+    lastActivityAt:activityByLead.get(row.id)?.lastActivityAt.toISOString()??null,
+    lastActivityType:activityByLead.get(row.id)?.lastActivityType??null,
     nextFollowupAt:nextByLead.get(row.id)?.toISOString()??null,
     inviteStatus:row.recruiterUserId?"JOINED":row.inviteBouncedAt?"BOUNCED":
       row.inviteClickedAt?"OPENED":row.inviteSentAt?"SENT":"NOT_INVITED",
@@ -365,7 +381,7 @@ export async function logTpoLeadActivity(
       if(!existing) {
         await tx.insert(placementTpoFollowups).values({
           collegeId:input.collegeId,leadId,
-          dueAt:new Date(Date.now()+2*24*60*60_000),
+          dueAt:nextDayTpoFollowupAt(new Date()),
           note:"Call again — no answer",
           ownerMembershipId:ownerMembership(context,input.collegeId),
         });
@@ -490,17 +506,25 @@ export async function finishTpoFollowup(
   const collegeId = tpoCrmCollegeIdSchema.parse(rawCollegeId);
   const followupId = tpoCrmFollowupIdSchema.parse(rawFollowupId);
   await requirePlacementManageScope(context, collegeId);
-  const [followup] = await getDb()
-    .update(placementTpoFollowups)
-    .set({ doneAt: new Date() })
-    .where(and(
-      eq(placementTpoFollowups.collegeId, collegeId),
-      eq(placementTpoFollowups.id, followupId),
-      isNull(placementTpoFollowups.doneAt),
-    ))
-    .returning();
-  if (!followup) throw new TpoCrmError("TPO_CRM_FOLLOWUP_NOT_FOUND");
-  return followup;
+  return getDb().transaction(async (tx) => {
+    const [existing] = await tx.select()
+      .from(placementTpoFollowups)
+      .where(and(
+        eq(placementTpoFollowups.collegeId, collegeId),
+        eq(placementTpoFollowups.id, followupId),
+      ))
+      .for("update").limit(1);
+    if (!existing) throw new TpoCrmError("TPO_CRM_FOLLOWUP_NOT_FOUND");
+    // A repeat Done returns the original row without changing its timestamp.
+    if (existing.doneAt) return existing;
+    const [updated] = await tx.update(placementTpoFollowups)
+      .set({ doneAt: new Date() })
+      .where(and(
+        eq(placementTpoFollowups.id, existing.id),
+        isNull(placementTpoFollowups.doneAt),
+      )).returning();
+    return updated ?? existing;
+  });
 }
 
 export async function markTpoLeadNotNow(

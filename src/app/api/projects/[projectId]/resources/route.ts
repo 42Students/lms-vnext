@@ -22,7 +22,10 @@ export async function GET(
   { params }: RouteContext,
 ) {
   const query=new URL(request.url).searchParams;
-  if([...query.keys()].some(key=>key!=="view") ||
+  if([...query.keys()].some(key=>key!=="view"&&key!=="page") ||
+     query.getAll("page").length>1 ||
+     (query.has("page") && !/^[1-9][0-9]{0,4}$/.test(query.get("page")??"")) ||
+     (query.has("page") && query.get("view")!=="audit") ||
      query.getAll("view").length>1 ||
      (query.has("view") && !["resources","audit"].includes(query.get("view")??"")))
     return NextResponse.json({error:"INVALID_REQUEST"},{status:400});
@@ -31,9 +34,19 @@ export async function GET(
     const { projectId } = await params;
     if(query.get("view")==="audit"){
       const history=await getProjectResourceHistory(context,projectId);
+      const page=Number(query.get("page")??"1");
+      const pageSize=10;
+      const total=history.rows.length;
+      const start=(page-1)*pageSize;
+      const rows=history.rows.slice(start,start+pageSize);
+      const first=rows.length?start+1:0;
+      const last=rows.length?start+rows.length:0;
       return NextResponse.json({
-        message:"Resource audit retrieved",history:history.rows,
-        hasMore:history.hasMore,
+        message:"Resource audit retrieved",history:rows,
+        hasMore:history.hasMore||last<total,
+        pagination:{page,pageSize,totalLoaded:total,
+          rangeLabel:first+"–"+last+" of "+(history.hasMore?"at least "+total:total)+" matching changes",
+          hasUnloadedHistory:history.hasMore},
       },{headers:{"Cache-Control":"private, no-store"}});
     }
     const resources=await listProjectResources(context,projectId);

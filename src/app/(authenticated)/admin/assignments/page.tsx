@@ -33,6 +33,7 @@ export default async function SuperAdminAssignmentsPage({
   </div>;
   if (!context.adminScope?.collegeId) return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments" />
+    <Alert tone="warning" role="alert">⚠ Select a college to continue. Choose a college in the header above to see its assignments.</Alert>
     <EmptyState title="Select a college to continue" description="Choose a college in the header above to see its assignments." />
   </div>;
   // A failed creation-options read must not erase an authorized assignment
@@ -50,9 +51,24 @@ export default async function SuperAdminAssignmentsPage({
   </div>;
   const data=dataResult.value;
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-    <PageHeader title="Assignments" actions={lessonsResult.status==="fulfilled"?
-      <CollegeAssignmentCreate lessons={lessonsResult.value.lessons} deliveries={lessonsResult.value.deliveries}/>:
-      null}/>
+    <PageHeader title="Assignments" />
+    <nav aria-label="Academic courses" className="flex flex-wrap gap-3 border-b border-border pb-3 text-sm">
+      <Link href="/admin/courses" className="font-semibold text-link underline">Courses &amp; Content</Link>
+      <span aria-current="page" className="font-semibold text-foreground">Assignments</span>
+    </nav>
+    <section aria-label="Assignment actions and filters" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+     <div className="flex min-w-0 flex-wrap items-center justify-end gap-3 border-b border-border pb-3">
+      <div className="order-1">{lessonsResult.status==="fulfilled"?
+        <CollegeAssignmentCreate lessons={lessonsResult.value.lessons} deliveries={lessonsResult.value.deliveries}/>:
+        <Button variant="primary" disabled>Create Assignment</Button>}</div>
+      <div className="order-2 flex flex-wrap items-center gap-2">
+        {data.items.length?<a download href={adminAssessmentExportHref("ASSIGNMENT",query.data,"PAGE")}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link md:min-h-9">↓ Export CSV (page)</a>:
+          <Button variant="secondary" disabled>Export CSV (page)</Button>}
+        <a download href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Export all matching</a>
+      </div>
+    </div>
     {lessonsResult.status==="rejected"?<Alert tone="warning" role="alert">
       <strong>Course list unavailable · Section list unavailable.</strong>
       <span>Assignment creation options could not be verified. Existing assignments remain visible, but creation is paused.</span>
@@ -61,15 +77,7 @@ export default async function SuperAdminAssignmentsPage({
       </Link>
     </Alert>:null}
     <AdminAssessmentDirectory data={data} showHeader={false} />
-    <div className="flex min-w-0 flex-wrap justify-start gap-2 print:hidden">
-      {data.items.length ? <a download href={adminAssessmentExportHref("ASSIGNMENT",query.data,"PAGE")}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9">
-        <span aria-hidden="true" className="mr-2">↓</span>Export CSV (page)
-      </a> : <Button variant="secondary" disabled>Export CSV (page)</Button>}
-      <a download href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">
-        Export all matching
-      </a>
-    </div>
+    </section>
+
   </div>;
 }

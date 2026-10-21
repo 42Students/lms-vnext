@@ -14,6 +14,7 @@ import { getDb } from "@/db/client";
 import {hasAvailablePlacementOfferSeat,isPlacementIssuanceConcurrencyError} from "./offer-seat-capacity-policy";
 import {placementWaitlistPromotions} from "@/db/schema/placement-waitlist-promotions";
 import {placementDriveSelections} from "@/db/schema/placement-drive-selections";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 type PlacementDb = ReturnType<typeof getDb>;
 type PlacementTx = Parameters<Parameters<PlacementDb["transaction"]>[0]>[0];
 import { deliverInAppNotificationInTransaction } from "@/modules/activity/notification-service";
@@ -37,6 +38,7 @@ import {
   placementSeasons,
   placementOffers,
   placementOfferStatusHistory,
+  membershipRoles,
   placementRoundResults,
   users,
 } from "@/db/schema";
@@ -671,6 +673,70 @@ export async function issuePlacementOffer(
   });
 }
 
+/** A response may invalidate future booked interview slots for the SAME
+ * application. Only INTERVIEW rounds and future BOOKED rows are touched.
+ * Clear the booking's applicationId alongside CANCELLED to preserve the
+ * database booking-status constraint. The event and participant bells commit
+ * atomically, so no notification is visible on a rolled-back cancellation.
+ */
+async function cancelFutureOfferInterviews(tx:PlacementTx,context:RequestContext,
+ collegeId:string,jobId:string,applicationId:string,offerId:string,
+ action:"DECLINED"|"WITHDRAWN",lockedNow:Date,
+){
+ const bookings=await tx.select({id:placementRoundCandidateSlots.id,
+   startsAt:placementRoundCandidateSlots.startsAt,
+   room:placementRoundCandidateSlots.room,
+ }).from(placementRoundCandidateSlots)
+  .innerJoin(placementJobRounds,and(
+   eq(placementJobRounds.id,placementRoundCandidateSlots.roundId),
+   eq(placementJobRounds.jobId,placementRoundCandidateSlots.jobId),
+   eq(placementJobRounds.kind,"INTERVIEW")))
+  .where(and(
+   eq(placementRoundCandidateSlots.applicationId,applicationId),
+   eq(placementRoundCandidateSlots.jobId,jobId),
+   eq(placementRoundCandidateSlots.status,"BOOKED"),
+   sql`${placementRoundCandidateSlots.startsAt} > ${lockedNow}`,
+  )).for("update",{of:placementRoundCandidateSlots});
+ if(!bookings.length)return 0;
+ const ids=bookings.map(row=>row.id);
+ const released=await tx.update(placementRoundCandidateSlots).set({
+  status:"CANCELLED",applicationId:null,legacyInterviewStatus:"CANCELLED",
+  learnerConfirmedAt:null,confirmedAt:null,updatedAt:lockedNow,
+  changedByUserId:context.user.id,
+  version:sql`${placementRoundCandidateSlots.version} + 1`,
+ }).where(and(
+  inArray(placementRoundCandidateSlots.id,ids),
+  eq(placementRoundCandidateSlots.jobId,jobId),
+  eq(placementRoundCandidateSlots.status,"BOOKED"),
+ )).returning({id:placementRoundCandidateSlots.id});
+ if(released.length!==ids.length)
+  throw new PlacementsServiceError("PLACEMENT_OFFER_INVALID_TRANSITION");
+ const event=await recordActivityEventInTransaction(tx,context,{
+  eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_OFFER_RESPONDED,
+  collegeId,subjectType:"placement_offer",subjectId:offerId,
+  summary:released.length+" future interview booking(s) cancelled after offer "+action.toLowerCase(),
+  metadata:{jobId,applicationId,action,slotIds:ids,source:"OFFER_RESPONSE"},
+  groupKey:"placement-job:"+jobId+":interviews",
+  dedupeKey:"placement-offer:"+offerId+":"+action.toLowerCase()+":interviews-cancelled",
+ });
+ const collegeRecipients=await tx.select({userId:collegeMemberships.userId})
+  .from(collegeMemberships)
+  .innerJoin(membershipRoles,and(
+   eq(membershipRoles.membershipId,collegeMemberships.id),
+   eq(membershipRoles.role,"TPO")))
+  .innerJoin(users,and(eq(users.id,collegeMemberships.userId),eq(users.platformStatus,"ACTIVE")))
+  .where(and(eq(collegeMemberships.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE")));
+ const recipients=[...new Set(collegeRecipients.map(row=>row.userId))];
+ if(recipients.length)await deliverInAppNotificationInTransaction(tx,event.id,recipients,{
+  title:"Interview booking cancelled",
+  body:released.length+" future interview booking(s) were cancelled after an offer was "+action.toLowerCase()+
+   ". Review the drive schedule and inform panel participants if necessary.",
+  actionHref:"/tpo/placements/jobs/"+encodeURIComponent(jobId),
+ });
+ return released.length;
+}
+
 export async function actOnPlacementOffer(
   context: RequestContext,
   offerIdInput: string,
@@ -1036,6 +1102,9 @@ export async function actOnPlacementOffer(
             input.reason ?? null,
         });
 
+      await cancelFutureOfferInterviews(tx,context,current.job.collegeId,
+       current.job.id,current.application.id,offer.id,"DECLINED",lockedNow);
+
       const declinedNoticeEvent=await recordActivityEventInTransaction(
         tx,
         context,
@@ -1133,6 +1202,9 @@ export async function actOnPlacementOffer(
           context.user.id,
         reason: input.reason,
       });
+
+    await cancelFutureOfferInterviews(tx,context,current.job.collegeId,
+     current.job.id,current.application.id,offer.id,"WITHDRAWN",lockedNow);
 
     const withdrawalEvent=await recordActivityEventInTransaction(
       tx,
@@ -1470,6 +1542,7 @@ export async function listOwnPlacementOffers(
       company: {
         id: placementCompanies.id,
         name: placementCompanies.name,
+        logoPublicUrl: placementCompanies.logoPublicUrl,
       },
     })
     .from(placementOffers)

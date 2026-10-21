@@ -11,7 +11,6 @@ import {
 } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs } from "@/components/ui/tabs";
-import { Drawer } from "@/components/ui/drawer";
 import { Dialog } from "@/components/ui/dialog";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Alert } from "@/components/ui/alert";
@@ -24,7 +23,7 @@ import { FacultySubmissionFileReview } from "./faculty-submission-file-review";
 import {AssignmentSubmissionLinks} from "./assignment-submission-links";
 import { facultyGradeEditorState } from "@/modules/courses/faculty-grade-editor-model";
 import {facultyManualGradeReceipt,beginFacultyManualGradeOperation,facultyManualGradeUncertainMessage,facultyManualGradePublishPrompt,facultyManualGradeNeedsRefresh,facultyManualGradeSuccessMessage} from "@/modules/courses/faculty-manual-grade-receipt";
-import { facultySubmissionReviewApiHref, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
+import { facultySubmissionReviewApiHref,facultySubmissionStudentPosition, type FacultySubmissionFilter } from "@/modules/courses/faculty-assignment-submissions-model";
 import { facultySubmissionReviewResponseSchema, facultySubmissionReviewMatchesScope, facultySubmissionReviewEmptyLabel, facultyReviewRequestCurrent, facultySubmissionReviewFailure, type FacultySubmissionReviewResponse, type FacultySubmissionReviewRow } from "@/modules/courses/faculty-submission-review-model";
 import { courseApiError } from "./learner-course-api";
 import {
@@ -33,6 +32,11 @@ import {
 
 type Submission = FacultySubmissionReviewRow;
 const SUBMISSION_FILTERS = ["ALL","UNGRADED","GRADED","LATE"] as const;
+/** Old rows may have a numeric score without a populated gradingStatus. */
+function isSubmissionGraded(row:Submission){
+ return row.gradingStatus==="GRADED"||
+  (typeof row.pointsAwarded==="number"&&Number.isFinite(row.pointsAwarded)&&row.pointsAwarded>=0);
+}
 
 function learnerLabel(
   submission: Submission,
@@ -40,10 +44,33 @@ function learnerLabel(
   return (
     submission.learnerDisplayName?.trim() ||
     submission.learnerEmail?.trim() ||
-    `Learner ${submission.membershipId.slice(0, 8)}`
+    `Student ${submission.membershipId.slice(0, 8)}`
   );
 }
 
+function studentInitials(value:string){
+ const parts=value.split(/\s+/).filter(Boolean);
+ return (parts.length>1?(parts[0]?.[0]??"")+(parts.at(-1)?.[0]??""):
+  value.slice(0,2)).toUpperCase()||"ST";
+}
+const AVATAR_PALETTE=[
+ "bg-cyan-100 text-cyan-900","bg-violet-100 text-violet-900",
+ "bg-lime-100 text-lime-900","bg-orange-100 text-orange-900",
+ "bg-pink-100 text-pink-900","bg-blue-100 text-blue-900",
+] as const;
+function studentAvatarHue(value:string){
+ let sum=0;for(const ch of value)sum=(sum*33+ch.charCodeAt(0))%AVATAR_PALETTE.length;
+ return AVATAR_PALETTE[sum];
+}
+/** Render visible legacy HTML as inert text with line breaks, not unsanitized HTML. */
+function legacySubmissionText(text:string){
+ if(!/<[a-z][\s\S]*>/i.test(text))return text;
+ return text.replace(/<br\s*\/?>/gi,"\n")
+  .replace(/<\/(p|div|li|h[1-6])\s*>/gi,"\n")
+  .replace(/<li(?:\s[^>]*)?>/gi,"• ").replace(/<[^>]*>/g,"")
+  .replace(/&nbsp;/gi," ").replace(/&amp;/gi,"&")
+  .replace(/&lt;/gi,"<").replace(/&gt;/gi,">");
+}
 function formatDateTime(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) {
@@ -62,6 +89,7 @@ function SubmissionGradeCard({
   maxPoints,
   onUpdated,
   onRefresh,
+  onBusyChange,
   filesEnabled,
 }: {
   submission: Submission;
@@ -69,6 +97,7 @@ function SubmissionGradeCard({
   filesEnabled: boolean;
   onUpdated: (submission: Submission) => void;
   onRefresh: () => void;
+  onBusyChange: (busy:boolean) => void;
 }) {
   const content = facultySubmissionContentView({
     id:submission.id,submissionType:submission.submissionType,
@@ -76,12 +105,13 @@ function SubmissionGradeCard({
   },filesEnabled);
   const actions =
     assignmentSubmissionActions({
-      gradingStatus:submission.gradingStatus,gradePublished:submission.gradePublished,
+      gradingStatus:isSubmissionGraded(submission)?"GRADED":"NOT_GRADED",gradePublished:submission.gradePublished,
     });
   const [points, setPoints] = useState(
     submission.pointsAwarded?.toString() ??
       "",
   );
+  const [gradeEditing,setGradeEditing]=useState(!submission.gradePublished);
   const [feedback, setFeedback] = useState(
     submission.feedback ?? "",
   );
@@ -105,11 +135,11 @@ function SubmissionGradeCard({
     setError(null);
     setSuccess(null);setNeedsRefresh(false);
 
+    if(!submission.id){setError("Could not resolve this submission");return;}
+    if(!points.trim()){setError("Enter a score before submitting");return;}
     const parsed = draftState.points;
     if (parsed === null) {
-      setError(
-        `Enter whole-number points between 0 and ${maxPoints}.`,
-      );
+      setError(`Enter whole-number points between 0 and ${maxPoints}.`);
       return;
     }
 
@@ -126,7 +156,7 @@ function SubmissionGradeCard({
 
   async function saveGradeConfirmed(parsed: number) {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setSaving(true);
+    setSaving(true);onBusyChange(true);
     try {
       const response = await fetch(
         `/api/courses/assignment-submissions/${submission.id}/grade`,
@@ -157,7 +187,7 @@ function SubmissionGradeCard({
       const saved = facultyManualGradeReceipt(await response.json(),submission,"GRADE",maxPoints,{
         points:parsed,feedback:feedback.trim()||null,
       });
-      setSuccess(facultyManualGradeSuccessMessage("GRADE",saved.version));
+      setSuccess("Grade saved privately. Learner cannot see the score until published.");
       onUpdated({
         ...submission,
         ...saved,
@@ -167,9 +197,9 @@ function SubmissionGradeCard({
           submission.learnerEmail,
       });
     } catch {
-      setError(facultyManualGradeUncertainMessage("GRADE"));
+      setError("Failed to submit grade. "+facultyManualGradeUncertainMessage("GRADE"));
     } finally {
-      operationInFlight.current=false;
+      operationInFlight.current=false;onBusyChange(false);
       setSaving(false);
       setConfirmAction(null);
     }
@@ -179,6 +209,8 @@ function SubmissionGradeCard({
   async function saveAndPublish(){
     setError(null);setSuccess(null);setNeedsRefresh(false);
     const parsed=draftState.points;
+    if(!submission.id){setError("Could not resolve this submission");return;}
+    if(!points.trim()){setError("Enter a score before submitting");return;}
     if(parsed===null){
       setError("Enter whole-number points between 0 and "+maxPoints+".");
       return;
@@ -192,7 +224,7 @@ function SubmissionGradeCard({
 
   async function saveAndPublishConfirmed(parsed: number) {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setSaving(true);
+    setSaving(true);onBusyChange(true);
     try{
       const changed=await fetch(
         "/api/courses/assignment-submissions/"+encodeURIComponent(submission.id)+"/grade",{
@@ -223,13 +255,14 @@ function SubmissionGradeCard({
       const published=facultyManualGradeReceipt(await released.json(),current,"PUBLISH",maxPoints,{
         points:parsed,feedback:feedback.trim()||null,
       });
-      setSuccess("Grade saved and published to the learner.");
+      setGradeEditing(false);
+      setSuccess("Grade submitted. The learner can now see the score.");
       onUpdated({...current,...published});
     }catch{
       setNeedsRefresh(true);
       setError("The grade or publication outcome is uncertain. Reload before retrying.");
     }finally{
-      operationInFlight.current=false;setSaving(false);setConfirmAction(null);
+      operationInFlight.current=false;onBusyChange(false);setSaving(false);setConfirmAction(null);
     }
   }
 
@@ -245,7 +278,7 @@ function SubmissionGradeCard({
 
   async function publishGradeConfirmed() {
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setPublishing(true);
+    setPublishing(true);onBusyChange(true);
 
     try {
       const response = await fetch(
@@ -274,6 +307,7 @@ function SubmissionGradeCard({
       const saved = facultyManualGradeReceipt(await response.json(),submission,"PUBLISH",maxPoints,{
         points:submission.pointsAwarded ?? -1,feedback:submission.feedback,
       });
+      setGradeEditing(false);
       setSuccess(facultyManualGradeSuccessMessage("PUBLISH",saved.version));
       onUpdated({
         ...submission,
@@ -284,9 +318,9 @@ function SubmissionGradeCard({
           submission.learnerEmail,
       });
     } catch {
-      setError(facultyManualGradeUncertainMessage("PUBLISH"));
+      setError("Failed to submit grade. "+facultyManualGradeUncertainMessage("PUBLISH"));
     } finally {
-      operationInFlight.current=false;
+      operationInFlight.current=false;onBusyChange(false);
       setPublishing(false);
       setConfirmAction(null);
     }
@@ -296,7 +330,7 @@ function SubmissionGradeCard({
   async function hidePublishedGrade(){
     if(!submission.gradePublished||submission.pointsAwarded===null)return;
     if(!beginFacultyManualGradeOperation(operationInFlight))return;
-    setSaving(true);setError(null);setSuccess(null);setNeedsRefresh(false);
+    setSaving(true);onBusyChange(true);setError(null);setSuccess(null);setNeedsRefresh(false);
     try{
       const response=await fetch(
         "/api/courses/assignment-submissions/"+encodeURIComponent(submission.id)+"/grade",{
@@ -322,7 +356,7 @@ function SubmissionGradeCard({
       setNeedsRefresh(true);
       setError("The grade visibility outcome is uncertain. Reload before retrying.");
     }finally{
-      operationInFlight.current=false;
+      operationInFlight.current=false;onBusyChange(false);
       setSaving(false);setConfirmAction(null);
     }
   }
@@ -350,17 +384,16 @@ function SubmissionGradeCard({
           tone={
             submission.gradePublished
               ? "success"
-              : submission.gradingStatus ===
-                  "GRADED"
+              : isSubmissionGraded(submission)
                 ? "warning"
                 : "neutral"
           }
         >
           {submission.gradePublished
-            ? "Graded: "+(submission.pointsAwarded??0)+" pts"
-            : submission.gradingStatus==="GRADED"
-              ? "Graded: "+(submission.pointsAwarded??0)+" pts · not published"
-              : "Grade pending"}
+            ? "Published: "+(submission.pointsAwarded??0)+"/"+maxPoints
+            : isSubmissionGraded(submission)
+              ? "Graded, not published"
+              : "Not graded"}
         </StatusBadge>
       </div>
 
@@ -369,13 +402,13 @@ function SubmissionGradeCard({
           <div className="space-y-3">
             {submission.textContent?<div>
               <p className="mb-1 text-xs font-semibold">Written Response</p>
-              <p className="whitespace-pre-wrap break-words text-sm text-body">{submission.textContent}</p>
+              <p className="whitespace-pre-wrap break-words text-sm text-body">{legacySubmissionText(submission.textContent)}</p>
             </div>:null}
             <FacultySubmissionFileReview submissionId={submission.id}/>
             <AssignmentSubmissionLinks submissionId={submission.id}/>
           </div>
         ) : content.kind === "TEXT" ? (
-          <div><p className="mb-2 text-xs font-semibold text-body">Written Response</p><p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{content.text}</p></div>
+          <div><p className="mb-2 text-xs font-semibold text-body">Written Response</p><p className="m-0 whitespace-pre-wrap break-words text-sm leading-6 text-body">{legacySubmissionText(content.text)}</p></div>
         ) : content.kind === "FILE" || content.kind === "LINK" ? (
           <Link href={content.href} target="_blank" rel="noopener noreferrer" prefetch={false}
             className="inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">
@@ -400,13 +433,19 @@ function SubmissionGradeCard({
             max={maxPoints}
             step={1}
             value={points}
-            disabled={saving || publishing}
-            onChange={(event) =>
-              setPoints(event.target.value)
-            }
-            required
+            disabled={saving || publishing || !gradeEditing}
+            onChange={event=>{
+              const value=event.target.value;
+              if(value===""||(/^\d+$/.test(value)&&Number(value)<=maxPoints))
+                setPoints(value);
+            }}
           />
-          <span className="mt-1 block text-xs font-normal text-muted-foreground">Max is {maxPoints}</span>
+          <span className="mt-1 block text-xs font-normal text-muted-foreground">
+            Max is {maxPoints} · / {maxPoints}
+          </span>
+          <span className="mt-1 block text-xs font-semibold text-body">
+            {submission.gradePublished?"Published grade":isSubmissionGraded(submission)?"Graded, not published":"Not graded"}
+          </span>
         </label>
         <label className="min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           <span className="mb-1.5 block text-xs font-semibold text-body">
@@ -416,7 +455,7 @@ function SubmissionGradeCard({
             aria-required={submission.gradePublished}
             className="min-h-24"
             value={feedback}
-            disabled={saving || publishing}
+            disabled={saving || publishing || !gradeEditing}
             onChange={(event) =>
               setFeedback(
                 event.target.value,
@@ -430,14 +469,17 @@ function SubmissionGradeCard({
         </label>
 
         <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-2)] sm:flex sm:flex-wrap md:col-span-2">
-          {actions.canGrade&&draftState.hasChanges?(
+          {submission.gradePublished&&!gradeEditing?<Button type="button" variant="secondary"
+            className="min-h-11 md:min-h-9" disabled={saving||publishing}
+            onClick={()=>setGradeEditing(true)}>Edit grade</Button>:null}
+          {actions.canGrade&&gradeEditing&&draftState.hasChanges?(
             <Button size="md" type="button" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||draftState.points===null}
               onClick={()=>void saveAndPublish()}>
-              {saving?"Submitting…":submission.gradingStatus==="GRADED"?"Edit grade":"Submit grade"}
+              {saving?"Submitting…":"Submit grade"}
             </Button>
           ):null}
-          {actions.canGrade ? (
+          {actions.canGrade&&gradeEditing ? (
             <Button size="md" type="submit" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||unchanged}>
               {saving?"Saving privately…":"Save privately"}
@@ -465,7 +507,7 @@ function SubmissionGradeCard({
               Save your score and feedback changes before publishing.
             </p>
           ) : null}
-          {submission.gradePublished && actions.canGrade ? (
+          {submission.gradePublished && actions.canGrade&&!gradeEditing ? (
             <Button size="md" type="button" variant="secondary"
               className="min-h-11 w-full sm:w-auto md:min-h-[var(--lms-control-height)]"
               disabled={saving||publishing||draftState.hasChanges}
@@ -497,9 +539,9 @@ function SubmissionGradeCard({
         description={confirmAction === "HIDE" ? "The learner will no longer see the published grade. The saved score and feedback will remain available to graders." : confirmAction === "REGRADING"
           ? "Regrading will hide the currently published grade until you publish the new grade. Continue?"
           : confirmAction === "SAVE_PUBLISH"
-            ? "Save and publish this grade to the learner?"
+            ? "Publish "+(draftState.points??0)+" points for "+learnerLabel(submission)+"?"
             : facultyManualGradePublishPrompt(submission.pointsAwarded,maxPoints,submission.feedback)}
-        confirmLabel={confirmAction === "HIDE" ? "Save & hide from learner" : confirmAction === "REGRADING" ? "Continue regrading" : confirmAction === "SAVE_PUBLISH" ? "Save and publish" : "Publish grade"}
+        confirmLabel={confirmAction === "HIDE" ? "Save & hide from student" : confirmAction === "REGRADING" ? "Continue regrading" : confirmAction === "SAVE_PUBLISH" ? "Save & publish" : "Publish grade"}
         confirmVariant={confirmAction === "HIDE" || confirmAction === "REGRADING" ? "danger" : "primary"}
         pending={saving || publishing}
         confirmDisabled={confirmAction === "HIDE" ? !submission.gradePublished||draftState.hasChanges : confirmAction === "REGRADING" || confirmAction === "SAVE_PUBLISH" ? draftState.points === null : !draftState.canPublish}
@@ -521,7 +563,9 @@ export function FacultyAssignmentReview({
   status,
   filesEnabled,
   reviewScope="FACULTY",
+  assignmentTitle,
 }: {
+  assignmentTitle?:string;
   filesEnabled: boolean;
   reviewScope?:"FACULTY"|"COLLEGE";
   assignmentId: string;
@@ -546,14 +590,58 @@ export function FacultyAssignmentReview({
   const [pagination,setPagination] = useState<FacultySubmissionReviewResponse|null>(null);
   const loadSequence = useRef(0);
   const [selectedSubmissionId,setSelectedSubmissionId]=useState<string|null>(null);
+  const studentPosition=facultySubmissionStudentPosition(submissions??[],selectedSubmissionId);
+  const [mutationBusy,setMutationBusy]=useState(false);
+  const mutationInFlight=useRef(false);
+  const onBusyChange=(busy:boolean)=>{mutationInFlight.current=busy;setMutationBusy(busy);};
+  const [bulkBusy,setBulkBusy]=useState(false);
+  const [bulkConfirm,setBulkConfirm]=useState(false);
+  const [bulkOnlyFailed,setBulkOnlyFailed]=useState(false);
+  const [bulkFailedIds,setBulkFailedIds]=useState<string[]>([]);
+  const [bulkReceipt,setBulkReceipt]=useState("");
+  const [bulkWarning,setBulkWarning]=useState(false);
+  async function publishGradedBatch(){
+   if(bulkBusy||mutationInFlight.current)return;
+   setBulkBusy(true);setBulkReceipt("");setBulkWarning(false);
+   try{
+    const result=await fetch("/api/courses/assignments/"+encodeURIComponent(assignmentId)+"/publish-grades",{
+     method:"POST",headers:{"Content-Type":"application/json"},
+     body:JSON.stringify({requestId:crypto.randomUUID(),deliveryId,
+      ...(bulkOnlyFailed&&bulkFailedIds.length?{submissionIds:bulkFailedIds}:{}),
+     }),
+    });
+    if(!result.ok)throw Error(await courseApiError(result));
+    const body:unknown=await result.json();
+    if(!body||typeof body!=="object"||
+       !("published" in body)||typeof body.published!=="number"||
+       !("remaining" in body)||typeof body.remaining!=="number"||
+       !("failed" in body)||typeof body.failed!=="number"||
+       !("failedIds" in body)||!Array.isArray(body.failedIds))
+     throw Error("Publication result could not be verified. Refresh before retrying.");
+    const failed=body.failedIds.filter((id):id is string=>typeof id==="string");
+    setBulkFailedIds(failed);
+    setBulkReceipt(body.published+" grade(s) published; "+body.failed+" failed. "+
+     (body.remaining?"Remaining graded submissions: "+body.remaining+".":"All graded submissions in this Section are published.")+
+     " Ungraded and already published work is skipped.");
+    setBulkWarning(body.remaining>0||body.failed>0);
+    void load();router.refresh();
+   }catch(reason){
+    setBulkWarning(true);
+    setBulkReceipt("Failed to publish grades. "+(reason instanceof Error?reason.message:"Refresh and retry."));
+   }finally{setBulkBusy(false);setBulkConfirm(false);}
+  }
 
-  const ReviewOverlay=reviewScope==="COLLEGE"?Dialog:Drawer;
+
+  // Legacy syllabus opens a centered, accessible 780px submissions modal for
+  // both staff roles. Closing destroys the selected submission view.
+  const ReviewOverlay=Dialog;
+  const reviewTitle=assignmentTitle?.trim()||"Assignment submissions";
   if(status==="ARCHIVED")return null;
   if(status==="DRAFT")return <div className="mt-3">
     <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]"
       onClick={()=>setOpen(true)}>View submissions</Button>
-    <ReviewOverlay open={open} onOpenChange={setOpen} title="Assignment submissions"
-      className={reviewScope==="COLLEGE"?"max-w-[760px]":undefined}
+    <ReviewOverlay open={open} onOpenChange={setOpen} title={reviewTitle}
+      className="max-w-[780px]"
       description="Draft assignments are hidden from learners.">
       <EmptyState title="No submissions yet" description="Publish this assignment to allow students to submit work." />
     </ReviewOverlay>
@@ -561,7 +649,9 @@ export function FacultyAssignmentReview({
 
   async function load(next: {filter:FacultySubmissionFilter;page:number} = {filter,page}) {
     const sequence = ++loadSequence.current;
-    setOpen(true);setError(null);setLoading(true);setSubmissions(null);setPagination(null);
+    setOpen(true);setError(null);setLoading(true);
+    // Preserve the last successful page when an in-place refresh fails.
+    if(next.filter!==filter||next.page!==page){setSubmissions(null);setPagination(null);}
     setFilter(next.filter);
     try {
       const facultyUrl=facultySubmissionReviewApiHref({
@@ -581,8 +671,9 @@ export function FacultyAssignmentReview({
       setSubmissions(payload.items);setPagination(payload);setPage(payload.page);
       setSelectedSubmissionId(current=>payload.items.some(item=>item.id===current)?current:payload.items[0]?.id??null);
     } catch (caught) {
-      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setError(caught instanceof Error ? caught.message :
-        "Could not load Assignment submissions. Check your connection and try again.");
+      if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setError(
+       "Failed to load submissions. "+(caught instanceof Error?caught.message:"Check your connection and try again.")+
+       (submissions?.length?" Showing the last loaded submissions.":""));
     } finally {
       if (facultyReviewRequestCurrent(sequence,loadSequence.current)) setLoading(false);
     }
@@ -597,13 +688,14 @@ export function FacultyAssignmentReview({
         </Button>
       </div>
       <ReviewOverlay
-        className={reviewScope==="COLLEGE"?"max-w-[760px]":undefined}
+        className="max-w-[780px]"
         open={open}
         onOpenChange={(nextOpen)=>{
+          if(!nextOpen&&mutationInFlight.current)return;
           if(!nextOpen){loadSequence.current+=1;setLoading(false);}
           setOpen(nextOpen);
         }}
-        title="Assignment submissions"
+        title={reviewTitle}
         description="Review authorized Section work. Grades stay private until explicitly published."
       >
       <div className="min-w-0 space-y-4">
@@ -612,33 +704,45 @@ export function FacultyAssignmentReview({
             size="md"
             className="min-h-11 md:min-h-[var(--lms-control-height)]"
             variant="ghost"
-            disabled={loading}
+            disabled={loading||mutationBusy||bulkBusy}
             onClick={()=>void load()}
           >
             Refresh
           </Button>
         </div>
 
+      {reviewScope==="COLLEGE"&&status==="PUBLISHED"?<div className="space-y-2">
+       <Button type="button" variant="secondary" disabled={bulkBusy||mutationBusy}
+        onClick={()=>{setBulkOnlyFailed(false);setBulkConfirm(true);}}>
+        {bulkBusy?"Publishing…":"Publish graded submissions"}
+       </Button>
+       {bulkReceipt?<Alert tone={bulkWarning?"warning":"success"} role="status">{bulkReceipt}</Alert>:null}
+       {bulkFailedIds.length&&!bulkBusy?<Button type="button" variant="secondary"
+        onClick={()=>{setBulkOnlyFailed(true);setBulkConfirm(true);}}>Retry failed publications</Button>:null}
+      </div>:null}
       <Tabs
         ariaLabel="Submission grading filters"
         value={filter}
         renderPanel={false}
         controlledOnly
-        onValueChange={value => void load({filter:value as FacultySubmissionFilter,page:1})}
+        onValueChange={value => {if(!mutationInFlight.current&&!bulkBusy)void load({filter:value as FacultySubmissionFilter,page:1});}}
         items={SUBMISSION_FILTERS.map(value => ({
           value,
           label: value==="ALL"?"All":value==="UNGRADED"?"Pending":value==="GRADED"?"Graded":"Late",
-          disabled: loading,
+          disabled: loading||mutationBusy||bulkBusy,
         }))}
       />
       {pagination ? <p role="status" className="text-xs text-muted-foreground">
         {pagination.total} matching submissions · Page {pagination.page} of {pagination.totalPages}
       </p> : null}
 
-      {loading ? <LoadingState label="Loading submissions…" /> : null}
+      {loading ? <div className="flex min-h-[240px] items-center justify-center">
+        <LoadingState label="Loading submissions…" />
+      </div> : null}
 
       {error ? (
-        <Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
+        <div className="space-y-2"><Alert tone="error" className="mt-[var(--lms-space-3)]">{error}</Alert>
+         <Button type="button" variant="secondary" disabled={mutationBusy||bulkBusy} onClick={()=>void load()}>Retry</Button></div>
       ) : null}
 
       {!loading && submissions && submissions.length === 0 ? (
@@ -648,33 +752,59 @@ export function FacultyAssignmentReview({
       {!loading && submissions && submissions.length>0 ? (
         <nav aria-label="Submission student navigation" className="grid min-w-0 grid-cols-2 items-end gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] md:flex md:flex-wrap">
           <label className="col-span-2 grid min-w-0 flex-1 gap-[var(--lms-space-1)] text-[13px] font-semibold leading-4 md:min-w-48 text-[var(--lms-neutral-400)]">
-            Students ({submissions.filter(item=>item.gradingStatus==="GRADED").length}/{submissions.length} graded on this page)
-            <Select className="min-h-11 text-[var(--lms-font-base)] md:min-h-[var(--lms-control-height)] md:text-sm"
+            Students ({submissions.filter(isSubmissionGraded).length}/{submissions.length} graded on this page · {pagination?.total??submissions.length} total)
+            <Select className="min-h-11 text-[var(--lms-font-base)] md:hidden"
               value={selectedSubmissionId??submissions[0].id}
-              onChange={event=>setSelectedSubmissionId(event.target.value)}>
+              disabled={mutationBusy||bulkBusy}
+              onChange={event=>{if(!mutationInFlight.current)setSelectedSubmissionId(event.target.value);}}>
               {submissions.map(item=><option key={item.id} value={item.id}>
-                {learnerLabel(item)} · {item.gradingStatus==="GRADED"?"Graded":"Pending"}
+                {learnerLabel(item)} · {isSubmissionGraded(item)?"Graded":"Pending"}
               </option>)}
             </Select>
           </label>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
-            disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
+            disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)<=0}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.max(0,submissions.findIndex(item=>item.id===current)-1)].id)}>
-            Previous student
+            <span className="sr-only">Previous student in selected submission page</span>
+            <span aria-hidden="true">Previous</span>
           </Button>
           <span className="col-span-2 text-center text-xs text-muted-foreground md:col-span-1">
-            {Math.max(1,submissions.findIndex(item=>item.id===selectedSubmissionId)+1)} / {submissions.length}
+            {studentPosition.display} / {studentPosition.count}
           </span>
           <Button type="button" size="md" variant="secondary" className="min-h-11 w-full md:w-auto md:min-h-[var(--lms-control-height)]"
-            disabled={submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
+            disabled={mutationBusy||bulkBusy||submissions.findIndex(item=>item.id===selectedSubmissionId)>=submissions.length-1}
             onClick={()=>setSelectedSubmissionId(current=>submissions[Math.min(submissions.length-1,submissions.findIndex(item=>item.id===current)+1)].id)}>
-            Next student
+            <span className="sr-only">Next student in selected submission page</span>
+            <span aria-hidden="true">Next</span>
           </Button>
         </nav>
       ):null}
       {!loading && submissions &&
       submissions.length > 0 ? (
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-[minmax(0,210px)_minmax(0,1fr)]">
+          <aside aria-label="Students" className="hidden min-w-0 max-h-[500px] overflow-y-auto border-r border-border pr-2 md:block">
+            <p className="mb-2 text-xs font-semibold text-muted-foreground">
+              Students · {submissions.filter(isSubmissionGraded).length} graded on this page
+            </p>
+            <div className="space-y-1">
+              {submissions.map(item=><button key={item.id} type="button"
+                disabled={mutationBusy||bulkBusy}
+                onClick={()=>setSelectedSubmissionId(item.id)}
+                aria-current={item.id===(selectedSubmissionId??submissions[0]?.id)?"true":undefined}
+                className={"flex min-h-11 w-full items-center gap-2 rounded-[var(--lms-control-radius)] p-2 text-left text-sm focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] "+
+                  (item.id===(selectedSubmissionId??submissions[0]?.id)?"bg-primary-subtle text-primary-text":"hover:bg-surface-subtle")}>
+                <span aria-hidden="true" className={"inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-semibold "+
+                  studentAvatarHue(item.membershipId)}>{studentInitials(learnerLabel(item))}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-semibold">{learnerLabel(item)}</span>
+                  <span className="block text-xs text-muted-foreground">
+                    {item.gradePublished?"Published":isSubmissionGraded(item)?"Graded":"Pending"}
+                  </span>
+                </span>
+              </button>)}
+            </div>
+          </aside>
+          <div className="min-w-0 space-y-3">
           {submissions.filter(submission=>submission.id===(selectedSubmissionId??submissions[0]?.id)).map(
             (submission) => (
               <SubmissionGradeCard
@@ -682,24 +812,36 @@ export function FacultyAssignmentReview({
                 submission={submission}
                 maxPoints={maxPoints}
                 filesEnabled={filesEnabled}
-                onRefresh={() => { void load(); }}
-                onUpdated={() => {
-                  // Re-query filters/counts so a newly graded row leaves Needs grading.
+                onRefresh={() => { if(!mutationInFlight.current)void load(); }}
+                onBusyChange={onBusyChange}
+                onUpdated={(updated) => {
+                  // Keep the selected learner in view while reloading assignment-wide totals.
+                  setSubmissions(current=>current?.map(item=>item.id===updated.id?updated:item)??null);
                   void load();router.refresh();
                 }}
               />
             ),
           )}
+          </div>
         </div>
       ) : null}
+      {pagination && pagination.totalPages>1 ? <p className="text-xs text-muted-foreground">
+        Showing page {pagination.page} of {pagination.totalPages}; student navigation
+        stays within this page. Use Previous or Next to load other students.
+      </p>:null}
       {pagination ? <nav aria-label="Submission pages" className="flex flex-wrap items-center justify-between gap-3">
-        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page<=1}
+        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||mutationBusy||bulkBusy||pagination.page<=1}
           onClick={()=>void load({filter,page:pagination.page-1})}>Previous</Button>
-        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||pagination.page>=pagination.totalPages}
+        <Button type="button" size="md" variant="secondary" className="min-h-11 md:min-h-[var(--lms-control-height)]" disabled={loading||mutationBusy||bulkBusy||pagination.page>=pagination.totalPages}
           onClick={()=>void load({filter,page:pagination.page+1})}>Next</Button>
       </nav> : null}
       </div>
       </ReviewOverlay>
+      <ConfirmDialog open={bulkConfirm} onOpenChange={open=>{if(!bulkBusy)setBulkConfirm(open);}}
+       title="Publish graded submissions?" pending={bulkBusy}
+       description="Only graded unpublished submissions in this Section will be released to learners. Confirm to continue; failed rows can be retried."
+       confirmLabel={bulkOnlyFailed?"Retry failed grades":"Publish grades"}
+       onConfirm={()=>void publishGradedBatch()}/>
     </>
   );
 }

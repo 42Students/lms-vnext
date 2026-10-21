@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getMentorProjectTeamSizes } from "@/modules/projects/mentor-project-team-size-service";
 import { getMentorProjectWorkCounts } from "@/modules/projects/mentor-project-work-service";
 import { mentorTaskProgress, matchesMentorProjectWork } from "@/modules/projects/mentor-project-work-model";
@@ -25,7 +26,23 @@ import { listMyProjectInstances } from "@/modules/projects/member-service";
 import {listPagedMentorProjects} from "@/modules/projects/mentor-paged-project-list-service";
 import {canPageMentorProjectList} from "@/modules/projects/mentor-paged-project-list-model";
 
-export default async function MentorProjectsPage({
+function MentorProjectsLoading() {
+  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Checking Projects access">
+    <PageHeader title="Projects" description="Checking Projects access…"/>
+    <div aria-hidden="true" className="space-y-4">{[1,2,3].map(id=><div key={id} className="rounded-lg border border-border p-5">
+      <span className="block h-4 w-1/3 animate-pulse rounded bg-muted"/>
+      <span className="mt-3 block h-5 w-1/2 animate-pulse rounded bg-muted"/>
+      <span className="mt-3 block h-4 w-4/5 animate-pulse rounded bg-muted"/>
+    </div>)}</div>
+  </div>;
+}
+type MentorProjectParams=Record<string,string|string[]|undefined>;
+export default function MentorProjectsPage({searchParams}:{searchParams:Promise<MentorProjectParams>}) {
+  return <Suspense fallback={<MentorProjectsLoading/>}>
+    <MentorProjectsContent searchParams={searchParams}/>
+  </Suspense>;
+}
+async function MentorProjectsContent({
   searchParams,
 }: {
   searchParams: Promise<
@@ -71,14 +88,46 @@ export default async function MentorProjectsPage({
 
   // MEN-projects-meetings-10: common filters are paged and counted in SQL.
   // Nontrivial attention/task ranking keeps the legacy full-set path.
+  const retrySearch=new URLSearchParams();
+  Object.entries(query).forEach(([key,value])=>{
+    if(typeof value==="string"&&value)retrySearch.set(key,value);
+    if(typeof value==="number"&&Number.isFinite(value))retrySearch.set(key,String(value));
+  });
+  const retryLink = <Link href={"/mentor/projects"+(retrySearch.size?"?"+retrySearch.toString():"")} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>;
+  const readFailure = () => <div className="min-w-0 space-y-4">
+    <PageHeader title="Projects"/>
+    <ErrorState title="Projects could not be loaded"
+      description="Couldn't refresh projects. Try again; your college and mentor access remain unchanged."
+      action={retryLink}/>
+  </div>;
   const canPageInSql=canPageMentorProjectList(query);
-  const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
-  const allRows=paged?.items??await listMyProjectInstances(context);
-  const [attentionRows,workCounts,teamSizes]=await Promise.all([
-    listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
-    getMentorProjectWorkCounts(context,paged?allRows:undefined),
-    getMentorProjectTeamSizes(context,paged?allRows:undefined),
-  ]);
+  // A list failure belongs next to this page, not to a route-level error that
+  // loses the current filter controls. Never infer an empty list from a failed read.
+  const loaded=await (async()=>{
+    const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
+    const allRows=paged?.items??await listMyProjectInstances(context);
+    if(!Array.isArray(allRows))throw new Error("INVALID_PROJECT_RECORDS");
+    const [attentionRows,workCounts,teamSizes]=await Promise.all([
+      listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
+      getMentorProjectWorkCounts(context,paged?allRows:undefined),
+      getMentorProjectTeamSizes(context,paged?allRows:undefined),
+    ]);
+    return {paged,allRows,attentionRows,workCounts,teamSizes};
+  })().catch(error=>({
+    failure:error instanceof Error&&error.message==="INVALID_PROJECT_RECORDS"
+      ?"The projects page did not return a valid records array."
+      :"Projects could not be loaded",
+  }));
+  if("failure" in loaded)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Projects" description="Choose a project to open its workspace."/>
+    <ErrorState title={loaded.failure}
+      description="Check your connection, then try again. Your project data has not been changed."
+      action={<Link href={"/mentor/projects?"+new URLSearchParams(
+        Object.entries(params).filter((item):item is [string,string]=>
+          typeof item[1]==="string"&&item[1].length<=120)
+      ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+  </div>;
+  const {paged,allRows,attentionRows,workCounts,teamSizes}=loaded;
   const alerts = new Map<
     string,
     Set<string>
@@ -277,9 +326,12 @@ export default async function MentorProjectsPage({
             readOnlyLabel: row.project.status === "ARCHIVED" ? "Read-only" : null,
             courseLabel:row.project.courseLabel,
             phase:row.project.phase,
+            phaseLabel:row.project.phase?.trim() || "In progress",
             dueLabel:row.project.dueLabel || row.project.endDate,
-            actionLine:projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
-            blockedHref:row.project.blocker?.trim()
+            actionLine:row.project.status==="ARCHIVED"?undefined:
+              projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() ||
+              (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
+            blockedHref:row.project.status!=="ARCHIVED"&&row.project.blocker?.trim()
               ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
             participation:
               row.isPrimaryMentor

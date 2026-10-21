@@ -41,8 +41,10 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  const ageBounds=verificationAgeSqlBounds(filter.ageBand,evaluatedAt);
  const [setting]=await getDb().select({enabled:profileVerificationSettings.tpoCanVerifyProfiles}).from(profileVerificationSettings).where(eq(profileVerificationSettings.collegeId,scope.collegeId)).limit(1);
  const tpoCanVerify=effectiveTpoVerifierSetting(setting);
- // Cap the working set and FAIL LOUDLY rather than silently reporting
- // truncated counts. Indexed DB-side paging is a later optimization.
+ // Evaluate all matching statuses before applying the legacy 1,000-row
+ // per-tab display cap. Other tabs must never exhaust a global 1,000 scan
+ // before the selected view is filtered. A larger safety bound still fails
+ // loudly instead of silently returning fabricated counts.
  const candidateRows=await getDb().select({
   membershipId:collegeMemberships.id,name:users.displayName,
   section:profileVerifications.section,status:profileVerifications.status,
@@ -62,10 +64,9 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    inArray(profileVerifications.section,verificationSqlSections(filter.kind)),
    inArray(profileVerifications.status,filter.waitingState==="ALL"?["SUBMITTED","UPDATE_PENDING","VERIFIED","SENT_BACK"]:[filter.waitingState]),
    ...verificationEnrollmentPredicates(scope.collegeId,filter)))
- .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(1001);
- const truncated=candidateRows.length>1000;
- const rows=candidateRows.slice(0,1000);
- const filtered=rows.filter(row=>{
+ .orderBy(filter.sort==="NAME"?asc(sql`lower(${users.displayName})`):verificationSortDirection(filter.sort)==="descending"?desc(profileVerifications.submittedAt):asc(profileVerifications.submittedAt),asc(collegeMemberships.id),asc(profileVerifications.section)).limit(10001);
+ if(candidateRows.length>10000)throw new VerificationQueueLimitError();
+ const filtered=candidateRows.filter(row=>{
   if(filter.kind&&row.section!==filter.kind)return false;
   if(filter.waitingSince&&!matchesWaitingSince(row.submittedAt,filter.waitingSince))return false;
   if(!matchesSubmittedFrom(row.submittedAt,filter.submittedFrom))return false;
@@ -78,8 +79,10 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
  });
  const counts=verificationTabCounts(filtered.map(r=>({status:r.status as VerificationStatus})));
  const pageRows=filtered.filter(r=>verificationTab({status:r.status as VerificationStatus})===filter.tab);
+ const truncated=pageRows.length>1000;
+ const displayRows=pageRows.slice(0,1000);
  const start=(filter.page-1)*filter.pageSize;
- const sliced=pageRows.slice(start,start+filter.pageSize);
+ const sliced=displayRows.slice(start,start+filter.pageSize);
  const enrollmentIds=sliced.map(row=>row.membershipId);
  const enrollments=enrollmentIds.length?await getDb().select({
   membershipId:learnerProgramEnrollments.membershipId,
@@ -105,5 +108,6 @@ export async function listCollegeVerificationQueue(context:RequestContext,raw:un
    marksheets:{uploaded:marks.count-marks.missing,expected:marks.count,missing:marks.missing},
    attention:flags.map(flag=>flag.replaceAll("_"," ").toLowerCase())};
  });
- return {rows:cards,counts,total:pageRows.length,page:filter.page,hasMore:start+filter.pageSize<pageRows.length,filter,tpoCanVerify,truncated};
+ return {rows:cards,counts,total:displayRows.length,page:filter.page,hasMore:start+filter.pageSize<displayRows.length,filter,tpoCanVerify,truncated,
+  totalMatching:pageRows.length,capacityMessage:truncated?"Showing first 1,000":null};
 }

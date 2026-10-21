@@ -21,14 +21,14 @@ const titleSchema = z
 const descriptionSchema = z
   .string()
   .trim()
-  .max(10000);
+  .max(5000,"Quiz description may not exceed 5000 characters");
 
 const dateTimeSchema = z
   .string()
   .datetime({ offset: true });
 
 const quizOptionInputSchema = z.object({
-  text: z.string().trim().min(1).max(2000),
+  text: z.string().trim().min(1,"Option is required").max(2000,"Option may not exceed 2000 characters"),
   correct: z.boolean(),
   sequence: z.number().int().min(0).max(100),
 });
@@ -45,7 +45,7 @@ const quizQuestionInputSchema = z
       .number()
       .int()
       .min(1)
-      .max(1000),
+      .max(100),
     sequence: z
       .number()
       .int()
@@ -53,7 +53,7 @@ const quizQuestionInputSchema = z
       .max(1000),
     options: z
       .array(quizOptionInputSchema)
-      .min(2)
+      .min(1)
       .max(20),
   })
   .superRefine((question, ctx) => {
@@ -94,20 +94,19 @@ const quizQuestionInputSchema = z
         code: "custom",
         path: ["options"],
         message:
-          "Single-choice questions require exactly one correct option",
+          "Single choice questions need exactly one correct option",
       });
     }
 
     if (
       question.type === "MULTIPLE_CHOICE" &&
-      (correctCount < 1 ||
-        correctCount >= question.options.length)
+      correctCount < 1
     ) {
       ctx.addIssue({
         code: "custom",
         path: ["options"],
         message:
-          "Multiple-choice questions require at least one correct and one incorrect option",
+          "Multiple choice questions need at least one correct option",
       });
     }
   });
@@ -170,6 +169,9 @@ export const createCourseQuizInputSchema =
       .min(0)
       .max(10000),
     questions: questionsSchema,
+    // Atomic create-and-publish avoids a second browser request that might
+    // leave an unintended draft after creation succeeded.
+    publishNow: z.boolean().optional().default(false),
   });
 
 export const updateCourseQuizInputSchema =
@@ -229,8 +231,8 @@ const quizAnswerInputSchema = z.object({
   questionId: z.string().uuid(),
   selectedOptionIds: z
     .array(z.string().uuid())
-    .max(20)
-    .default([]),
+    .min(1,"Submit exactly one answer for every quiz question")
+    .max(20),
 });
 
 export const submitQuizInputSchema = z
@@ -239,11 +241,21 @@ export const submitQuizInputSchema = z
       courseSectionDeliveryIdSchema,
     answers: z
       .array(quizAnswerInputSchema)
-      .max(100)
-      .default([]),
+      .min(1,"Quiz submission must include answers")
+      .max(200),
+    // Legacy client sends the authored question set visible when the
+    // attempt opened. Optional for old vNext clients: in that case the
+    // complete answer IDs themselves are the revision fingerprint.
+    shownQuestionIds:z.array(z.string().uuid()).max(200).optional(),
   })
   .superRefine((value, ctx) => {
     const questions = new Set<string>();
+    if(value.shownQuestionIds){
+      const unique=new Set(value.shownQuestionIds);
+      if(unique.size!==value.shownQuestionIds.length)
+       ctx.addIssue({code:"custom",path:["shownQuestionIds"],
+        message:"This quiz has changed. Reload before submitting."});
+    }
 
     value.answers.forEach((answer, index) => {
       if (questions.has(answer.questionId)) {
@@ -251,7 +263,7 @@ export const submitQuizInputSchema = z
           code: "custom",
           path: ["answers", index, "questionId"],
           message:
-            "A question may only be answered once",
+            "Duplicate answer submitted for questionId "+answer.questionId,
         });
       }
       questions.add(answer.questionId);

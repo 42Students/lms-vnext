@@ -122,7 +122,7 @@ export async function AppShell({
         <RouteProgress />
         <Suspense fallback={null}><RouteAnnouncer /></Suspense>
         <ShellConnectivityNotice />
-        <main id="lms-main-content" tabIndex={-1} className={"lms-shell-page-main mx-auto min-w-0 w-full px-[var(--lms-space-3)] py-[var(--lms-space-4)] min-[768px]:px-[var(--lms-space-4)] min-[768px]:py-[var(--lms-space-6)] min-[992px]:px-[var(--lms-space-6)] "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
+        <main id="lms-main-content" tabIndex={-1} className={"lms-shell-page-main mx-auto min-w-0 w-full px-[var(--lms-space-3)] py-[var(--lms-space-4)] min-[768px]:px-[14px] min-[768px]:py-[var(--lms-space-6)] min-[992px]:px-[var(--lms-space-6)] "+(canOpenTpoWorkspace(context)?"pb-24 md:pb-6":"")}>
           <RouteTransition>{children}</RouteTransition>
         </main>
         <LearnerFacultyMobileFooter items={navigation} />

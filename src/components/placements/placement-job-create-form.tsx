@@ -10,6 +10,7 @@ import {
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
@@ -21,7 +22,6 @@ import {driveDeadlineIstToIso,driveDeadlineIstEndOfDay} from "@/modules/placemen
 import {tpoDriveFormErrorMessage} from "@/modules/placements/tpo-drive-form-error-copy";
 import {tpoDriveStatusLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {TPO_DRIVE_ROUND_PRESETS,isTpoRoundPresetKey,plannedTpoRoundRows,type TpoRoundPresetKey} from "@/modules/placements/tpo-drive-round-presets";
-import {parseLegacyPairs} from "@/modules/placements/placement-legacy-posting-model";
 import {driveEligibilityPresetValue,type DriveEligibilityPreset} from "@/modules/placements/tpo-drive-eligibility-presets";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 
@@ -64,6 +64,11 @@ export type PlacementCompanyChoice = {
 
 const inputClass = "min-h-11 w-full min-w-0 md:min-h-9";
 const textareaClass = "min-h-28 w-full min-w-0";
+type ImportantDateRow = {id:number;label:string;date:string};
+type CustomRuleRow = {id:number;label:string;value:string};
+type ExtraPackageRow = {id:number;name:string;ctcLpa:string;
+  fixedLpa:string;variableLpa:string;joiningBonusLpa:string;
+  stipendPerMonthInr:string;stipendMonths:string};
 
 function splitList(value: string) {
   return value
@@ -124,6 +129,7 @@ export function PlacementJobCreateForm({
   const deadlineTimeChosen=useRef(false);
   const [restoredBackup,setRestoredBackup]=useState(false);
   const [lastLocalSaveAt,setLastLocalSaveAt]=useState<number|null>(null);
+  const [lastServerSavedAt,setLastServerSavedAt]=useState<string|null>(null);
   const backupKey="lms:drive-create:"+userId+":"+collegeId;
   const uncertainKey=backupKey+":create-outcome-unknown";
   const [uncertainCreate,setUncertainCreate]=useState(false);
@@ -141,7 +147,41 @@ export function PlacementJobCreateForm({
     companies.find(company=>company.name.toLowerCase()===initialCompanyName.toLowerCase()||company.otherNames?.some(alias=>alias.toLowerCase()===initialCompanyName.toLowerCase()))?.relationshipId ?? companies[0]?.relationshipId ?? "",
   );
   const [companySearch,setCompanySearch]=useState("");
+  const [driveMode,setDriveMode]=useState<"ON_CAMPUS"|"POOL"|"OFF_CAMPUS">("ON_CAMPUS");
+  const [applicationMode,setApplicationMode]=useState<"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY">("INTERNAL");
   const [roundPreset,setRoundPreset]=useState<TpoRoundPresetKey>("NONE");
+  const nextRowId=useRef(1000);
+  const [importantDateRows,setImportantDateRows]=useState<ImportantDateRow[]>([{id:0,label:"",date:""}]);
+  const [customRuleRows,setCustomRuleRows]=useState<CustomRuleRow[]>([{id:1,label:"",value:""}]);
+  const [assessmentUrlLength,setAssessmentUrlLength]=useState(0);
+  const [wantedSkills,setWantedSkills]=useState<string[]>([]);
+  const [skillDraft,setSkillDraft]=useState("");
+  function addSkills(text:string) {
+    const items=text.split(/[,\n]+/).map(value=>value.trim()).filter(Boolean);
+    setWantedSkills(current=>{
+      const keys=new Set(current.map(value=>value.toLocaleLowerCase("en")));
+      const next=[...current];
+      for(const item of items) {
+        if(item.length>50||keys.has(item.toLocaleLowerCase("en"))||next.length>=30)continue;
+        next.push(item);
+        keys.add(item.toLocaleLowerCase("en"));
+      }
+      return next;
+    });
+    setSkillDraft("");
+    markDirty();
+  }
+  const [saveError,setSaveError]=useState<string|null>(null);
+  const [loadingCopy,setLoadingCopy]=useState(false);
+  const [copyJobId,setCopyJobId]=useState("");
+  const autoCopyHandled=useRef(false);
+  const [cancelConfirmOpen,setCancelConfirmOpen]=useState(false);
+  const clonableDrives=companies.flatMap(company=>
+    (company.memory?.existingRoles??[]).map(role=>({
+      ...role,companyName:company.name,companyRelationshipId:company.relationshipId
+    })));
+  const [roundRows,setRoundRows]=useState<Array<{id:number;kind:string;name:string}>>([]);
+  const [extraPackages,setExtraPackages]=useState<ExtraPackageRow[]>([]);
   const [enteredDriveTitle,setEnteredDriveTitle]=useState("");
   const selectedEmployer=companies.find(company=>company.relationshipId===companyRelationshipId);
   // TPO-drives-25: recent-role highlights must not cap duplicate-drive checks.
@@ -188,6 +228,78 @@ export function PlacementJobCreateForm({
   const effectiveCohortIds=selectedCohortIds.filter(id=>visibleCohorts.some(c=>c.id===id));
   const effectiveSectionIds=selectedSectionIds.filter(id=>visibleSections.some(c=>c.id===id));
 
+  async function loadCloneSource(sourceJobId:string){
+    if(!sourceJobId||partialJobId||loadingCopy)return;
+    setLoadingCopy(true);
+    setSaveError(null);
+    try{
+      const response=await apiFetch<{job:{
+        id:string;collegeId:string;companyRelationshipId:string;title:string;
+        description:string;employmentType:string;jobTypeLabel:string|null;
+        workMode:string;locations:string[];openings:number|null;
+        minimumAnnualCtcInr:number|null;maximumAnnualCtcInr:number|null;
+        fixedCtcLpa:string|null;variableCtcLpa:string|null;
+        stipendPerMonthInr:number|null;isDream:boolean;
+        legacyPostingDetails?:{responsibilities?:string;skillsWanted?:string[];
+          customEligibilityRules?:Array<{label:string;value:string}>};
+      }}>(`/api/placements/jobs/${encodeURIComponent(sourceJobId)}`,{
+        credentials:"same-origin",timeoutMs:30000
+      });
+      const source=response.job;
+      if(!source||source.id!==sourceJobId||source.collegeId!==collegeId||
+        !companies.some(company=>company.relationshipId===source.companyRelationshipId)){
+        throw new Error("The selected drive is not available in this college.");
+      }
+      const form=formRef.current;
+      if(!form)throw new Error("The form is not ready to copy a drive.");
+      const copiedTitle=(source.title.replace(/\s*\(Copy\)\s*$/i,"")+" (Copy)").slice(0,100);
+      setEnteredDriveTitle(copiedTitle);
+      setCompanyMode("EXISTING");
+      setCompanyRelationshipId(source.companyRelationshipId);
+      setDriveMode("ON_CAMPUS");
+      setApplicationMode("INTERNAL");
+      const fields:Record<string,string>={
+        description:source.description??"",
+        jobTypeLabel:source.jobTypeLabel??(source.employmentType==="INTERNSHIP"?"Internship":"Full-time"),
+        workMode:source.workMode??"ONSITE",
+        locations:Array.isArray(source.locations)?source.locations.join(", "):"",
+        openings:source.openings===null?"":String(source.openings),
+        minimumLpa:source.minimumAnnualCtcInr===null?"":String(source.minimumAnnualCtcInr/100000),
+        maximumLpa:source.maximumAnnualCtcInr===null?"":String(source.maximumAnnualCtcInr/100000),
+        fixedLpa:source.fixedCtcLpa??"",
+        variableLpa:source.variableCtcLpa??"",
+        stipendPerMonthInr:source.stipendPerMonthInr===null?"":String(source.stipendPerMonthInr),
+        responsibilities:source.legacyPostingDetails?.responsibilities??"",
+        assessmentUrl:"",assessmentDeadline:"",applicationDeadline:"",
+        externalApplicationUrl:"",importantDates:"",customEligibilityRules:""
+      };
+      for(const [key,value] of Object.entries(fields)){
+        const field=form.elements.namedItem(key);
+        if(field instanceof HTMLInputElement||field instanceof HTMLTextAreaElement||
+          field instanceof HTMLSelectElement)field.value=value;
+      }
+      const dream=form.elements.namedItem("isDream");
+      if(dream instanceof HTMLInputElement)dream.checked=Boolean(source.isDream);
+      const copiedRules=source.legacyPostingDetails?.customEligibilityRules??[];
+      setCustomRuleRows(copiedRules.length?copiedRules.slice(0,20).map(row=>({
+        id:nextRowId.current++,label:row.label,value:row.value
+      })):[{id:nextRowId.current++,label:"",value:""}]);
+      setWantedSkills((source.legacyPostingDetails?.skillsWanted??[]).slice(0,30));
+      setImportantDateRows([{id:nextRowId.current++,label:"",date:""}]);
+      setRoundRows([]);
+      setExtraPackages([]);
+      setRoundPreset("NONE");
+      setAssessmentUrlLength(0);
+      deadlineTimeChosen.current=false;
+      markDirty();
+      saveBrowserDraft(form);
+      showToast({tone:"success",title:"Past drive copied",description:"Review this new draft. Application and assessment deadlines, external links and rounds were cleared."});
+    }catch(error){
+      setSaveError(tpoDriveFormErrorMessage(error));
+    }finally{
+      setLoadingCopy(false);
+    }
+  }
   // TPO-drives-41: per-user/college browser-only recovery for long-form drafts.
   // No passwords, tokens, email invitations or learner records are present here.
   // TPO-drives-43: lost POST replies have unknown commit outcome; never blind-retry.
@@ -206,6 +318,34 @@ export function PlacementJobCreateForm({
   useEffect(()=>{
     try{setUncertainCreate(localStorage.getItem(uncertainKey)==="1");}catch{}
   },[uncertainKey]);
+  useEffect(()=>{
+    if(!partialJobId)return;
+    let active=true;
+    void apiFetch<{job:{updatedAt:string;createdByUserId:string}}>(
+      `/api/placements/jobs/${encodeURIComponent(partialJobId)}`,
+      {credentials:"same-origin",timeoutMs:15000},
+    ).then(response=>{
+      if(!active)return;
+      const lastSaved=response.job?.updatedAt;
+      if(lastSaved&&Number.isFinite(Date.parse(lastSaved)))setLastServerSavedAt(lastSaved);
+    }).catch(()=>{/* Keep the server attribution unknown on a failed read. */});
+    return ()=>{active=false;};
+  },[partialJobId]);
+  useEffect(()=>{
+    if(autoCopyHandled.current)return;
+    const sourceId=new URLSearchParams(window.location.search).get("duplicateFrom");
+    if(!sourceId||!/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(sourceId))
+      return;
+    autoCopyHandled.current=true;
+    const task=window.setTimeout(()=>{
+      // Existing unsaved work wins over any URL-based copy request.
+      try{if(localStorage.getItem(backupKey))return;}catch{}
+      setCopyJobId(sourceId);
+      void loadCloneSource(sourceId);
+    },0);
+    return ()=>window.clearTimeout(task);
+    // Duplication is a one-time initial form seed, not a background sync.
+  },[backupKey]);
   const saveBrowserDraft=useCallback((form:HTMLFormElement)=>{
     if(clearedBackup.current)return;
     try{
@@ -217,10 +357,12 @@ export function PlacementJobCreateForm({
         }else values[field.name]=field.value;
       }
       localStorage.setItem(backupKey,JSON.stringify({values,checked,
-        companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset,partialDraft:createdJobRef.current}));
+        companyMode,companyRelationshipId,driveMode,applicationMode,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,
+        eligibilityPreset,importantDateRows,customRuleRows,roundRows,extraPackages,wantedSkills,partialDraft:createdJobRef.current}));
       setLastLocalSaveAt(Date.now());
     }catch{/* Storage may be unavailable in private mode; form still works. */}
-  },[backupKey,companyMode,companyRelationshipId,departmentFilter,selectedProgramIds,selectedCohortIds,selectedSectionIds,eligibilityPreset]);
+  },[backupKey,companyMode,companyRelationshipId,driveMode,applicationMode,departmentFilter,selectedProgramIds,selectedCohortIds,
+    selectedSectionIds,eligibilityPreset,importantDateRows,customRuleRows,roundRows,extraPackages,wantedSkills]);
   useEffect(()=>{
     // Defer restoration until the uncontrolled form fields have mounted.
     const task=window.setTimeout(()=>{
@@ -229,8 +371,12 @@ export function PlacementJobCreateForm({
         if(!raw||!formRef.current)return;
         const saved=JSON.parse(raw) as {values?:Record<string,string>;checked?:string[];
           companyMode?:"EXISTING"|"NEW";companyRelationshipId?:string;
+          driveMode?:"ON_CAMPUS"|"POOL"|"OFF_CAMPUS";
+          applicationMode?:"INTERNAL"|"HYBRID"|"EXTERNAL_ONLY";
           selectedProgramIds?:string[];selectedCohortIds?:string[];selectedSectionIds?:string[];
           departmentFilter?:string;eligibilityPreset?:DriveEligibilityPreset;
+          importantDateRows?:ImportantDateRow[];customRuleRows?:CustomRuleRow[];
+          roundRows?:Array<{id:number;kind:string;name:string}>;extraPackages?:ExtraPackageRow[];wantedSkills?:string[];
           partialDraft?:{jobId:string;relationshipId:string;fingerprint:string}};
         if(!saved||!saved.values||typeof saved.values!=="object")return;
         // TPO-drives-43: recover a saved partial draft before allowing another POST.
@@ -242,6 +388,10 @@ export function PlacementJobCreateForm({
           setPartialJobId(resume.jobId);
         }
         if(saved.companyMode==="EXISTING"||saved.companyMode==="NEW")setCompanyMode(saved.companyMode);
+        if(saved.driveMode==="ON_CAMPUS"||saved.driveMode==="POOL"||saved.driveMode==="OFF_CAMPUS")
+          setDriveMode(saved.driveMode);
+        if(saved.applicationMode==="INTERNAL"||saved.applicationMode==="HYBRID"||
+          saved.applicationMode==="EXTERNAL_ONLY")setApplicationMode(saved.applicationMode);
         if(saved.companyRelationshipId&&companies.some(c=>c.relationshipId===saved.companyRelationshipId))
           setCompanyRelationshipId(saved.companyRelationshipId);
         setSelectedProgramIds((saved.selectedProgramIds??[]).filter(id=>academicOptions.programs.some(p=>p.id===id)));
@@ -252,9 +402,40 @@ export function PlacementJobCreateForm({
         if(["OPEN","CGPA_6","CGPA_7","PCT_60","PCT_70"].includes(saved.eligibilityPreset??""))
           setEligibilityPreset(saved.eligibilityPreset!);
         if(isTpoRoundPresetKey(saved.values.roundPreset))setRoundPreset(saved.values.roundPreset);
+        if(Array.isArray(saved.importantDateRows)&&saved.importantDateRows.length<=20){
+          const dates=saved.importantDateRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.label==="string"&&typeof row.date==="string");
+          if(dates.length)setImportantDateRows(dates);
+        }
+        if(Array.isArray(saved.customRuleRows)&&saved.customRuleRows.length<=20){
+          const rules=saved.customRuleRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.label==="string"&&typeof row.value==="string");
+          if(rules.length)setCustomRuleRows(rules);
+        }
+        if(Array.isArray(saved.roundRows)&&saved.roundRows.length<=20){
+          setRoundRows(saved.roundRows.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.kind==="string"&&typeof row.name==="string"));
+        }
+        if(Array.isArray(saved.extraPackages)&&saved.extraPackages.length<=10){
+          setExtraPackages(saved.extraPackages.filter(row=>row&&typeof row.id==="number"&&
+            typeof row.name==="string"&&typeof row.ctcLpa==="string").map(row=>({
+            ...row,
+            fixedLpa:String(row.fixedLpa??""),variableLpa:String(row.variableLpa??""),
+            joiningBonusLpa:String(row.joiningBonusLpa??""),
+            stipendPerMonthInr:String(row.stipendPerMonthInr??""),
+            stipendMonths:String(row.stipendMonths??""),
+          })));
+        }
+        const restoredIds=[...(saved.importantDateRows??[]),...(saved.customRuleRows??[]),...(saved.roundRows??[]),...(saved.extraPackages??[])]
+          .map(row=>row.id).filter(id=>Number.isInteger(id)&&id>=0);
+        nextRowId.current=Math.max(nextRowId.current,...restoredIds.map(id=>id+1));
         setEnteredDriveTitle(String(saved.values.title??""));
         setNewEmployerName(String(saved.values.companyName??""));
         setNewEmployerDomain(String(saved.values.companyDomain??""));
+        setAssessmentUrlLength(String(saved.values.assessmentUrl??"").length);
+        if(Array.isArray(saved.wantedSkills)){
+          setWantedSkills(saved.wantedSkills.filter(skill=>typeof skill==="string"&&skill.length<=50).slice(0,30));
+        }else setWantedSkills(splitList(String(saved.values.skillsWanted??"")).slice(0,30));
         for(const field of Array.from(formRef.current.querySelectorAll<HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement>("input[name],textarea[name],select[name]"))){
           if(field instanceof HTMLInputElement&&field.type==="checkbox")field.checked=(saved.checked??[]).includes(field.name);
           else if(saved.values[field.name]!==undefined)field.value=saved.values[field.name];
@@ -303,6 +484,7 @@ export function PlacementJobCreateForm({
     const reviewPublish = submitter?.getAttribute("value") === "review-publish";
     await run(async()=>{
     try {
+      setSaveError(null);
       if (!activeSeason) {
         throw new Error(
           "Start an active placement season before creating an opportunity",
@@ -321,6 +503,7 @@ export function PlacementJobCreateForm({
       // TPO-drives-45: datetime-local is IST regardless of browser timezone.
       const deadlineRaw=String(data.get("applicationDeadline")??"").trim();
       const deadlineIso=deadlineRaw?driveDeadlineIstToIso(deadlineRaw):null;
+      if (!title) throw new Error("Please enter a job title.");
       if (title.length < 3) throw new Error("Job title: At least 3 characters.");
       if (title.length > 100) throw new Error("Job title must be no longer than 100 characters.");
       const minimumLpa = nullableDecimal(String(data.get("minimumLpa") ?? ""));
@@ -337,6 +520,7 @@ export function PlacementJobCreateForm({
         const name=String(data.get("companyName")??"").trim();
         const domain=String(data.get("companyDomain")??"").trim();
         const website=String(data.get("companyWebsite")??"").trim();
+        if(!name)throw new Error("Please enter company name.");
         if(name.length<2||name.length>150)
           throw new Error("Company name must be between 2 and 150 characters");
         if(!domain&&!website)
@@ -418,13 +602,38 @@ export function PlacementJobCreateForm({
         throw new Error("Check the host college and travel instructions.");
       const reportingRaw=String(data.get("poolReportingTime")??"").trim();
       const reportingTime=reportingRaw?driveDeadlineIstToIso(reportingRaw):null;
-      const importantDates=parseLegacyPairs(String(data.get("importantDates")??""),"date")
-       .map(entry=>({label:entry.label,at:driveDeadlineIstToIso(entry.value)}));
-      const customEligibilityRules=parseLegacyPairs(String(data.get("customEligibilityRules")??""),"rule");
+      const importantDates=importantDateRows.filter(row=>row.label.trim()||row.date.trim())
+        .map(row=>{
+          const label=row.label.trim();
+          if(!label)throw new Error("Label required when date is set");
+          if(!row.date)throw new Error("Date required when label is set");
+          if(label.toLowerCase()==="application deadline")
+            throw new Error("This label is reserved — use the Application deadline field above");
+          if(label.length>100)throw new Error("Important date labels must be at most 100 characters.");
+          return {label,at:driveDeadlineIstToIso(row.date+"T23:59")};
+        });
+      if(new Set(importantDates.map(row=>row.label.toLowerCase())).size!==importantDates.length)
+        throw new Error("Important date labels must be unique.");
+      const customEligibilityRules=customRuleRows.filter(row=>row.label.trim()||row.value.trim())
+        .map(row=>{
+          const label=row.label.trim(),value=row.value.trim();
+          if(!label||!value)throw new Error("Rule label and rule value are both required.");
+          if(label.length>160||value.length>200)
+            throw new Error("Rules must have labels at most 160 characters and values at most 200 characters.");
+          return {label,value};
+        });
+      const assessmentUrl=String(data.get("assessmentUrl")??"").trim();
+      if(assessmentUrl.length>2048)throw new Error("Assessment URL cannot exceed 2048 characters.");
+      if(assessmentUrl&&!/^https?:\/\//i.test(assessmentUrl))
+        throw new Error("Assessment URL must begin with http:// or https://.");
+      if(deadlineIso&&Date.parse(deadlineIso)<Date.now())
+        throw new Error("Application deadline cannot be in the past.");
       const assessmentRaw=String(data.get("assessmentDeadline")??"").trim();
       const assessmentDeadline=assessmentRaw?driveDeadlineIstToIso(assessmentRaw):null;
+      if(assessmentDeadline&&Date.parse(assessmentDeadline)<Date.now())
+        throw new Error("Assessment deadline cannot be in the past.");
       if(assessmentDeadline&&(!deadlineIso||Date.parse(assessmentDeadline)<=Date.parse(deadlineIso)))
-       throw new Error("Assessment deadline must be after application deadline.");
+        throw new Error("Assessment deadline must be after application deadline.");
       const graduationYearRaw=String(data.get("preferredGraduationYear")??"").trim();
       const gpaRaw=String(data.get("preferredMinimumGpa")??"").trim();
       const years = splitList(String(data.get("passingYears") ?? ""));
@@ -445,12 +654,47 @@ export function PlacementJobCreateForm({
           throw new Error(label + " must be between 0 and " + max + ".");
         }
       }
+      function moneyField(raw:string,max:number,label:string){
+        if(!raw.trim())return null;
+        const value=Number(raw);
+        if(!Number.isFinite(value)||value<0||value>max||Math.abs(Math.round(value*100)-value*100)>1e-7)
+          throw new Error(label+" must be between 0 and "+max+" with at most two decimal places.");
+        return value;
+      }
+      function durationField(raw:string,label:string){
+        if(!raw.trim())return null;
+        const value=Number(raw);
+        if(!Number.isInteger(value)||value<1||value>120)
+          throw new Error(label+" must be between 1 and 120 months.");
+        return value;
+      }
+      const defaultRoleTitle=title;
+      const validatedPackages=extraPackages.map(row=>{
+        const name=row.name.trim(),ctc=moneyField(row.ctcLpa,1000,"Package CTC");
+        if(name.length<2||name.length>200)throw new Error("Each package needs a name between 2 and 200 characters.");
+        if(ctc===null)throw new Error("Each additional package needs a CTC between 0 and 1000 LPA.");
+        const fixedLpa=moneyField(row.fixedLpa,1000,"Fixed CTC"),
+          variableLpa=moneyField(row.variableLpa,1000,"Variable CTC"),
+          joiningBonusLpa=moneyField(row.joiningBonusLpa,1000,"Joining bonus"),
+          stipendPerMonthInr=moneyField(row.stipendPerMonthInr,10_000_000,"Stipend per month"),
+          stipendMonths=durationField(row.stipendMonths,"Stipend duration");
+        if(stipendMonths!==null&&stipendPerMonthInr===null)
+          throw new Error("Add a monthly stipend when duration is set.");
+        return {name,ctcLpa:ctc,fixedLpa,variableLpa,joiningBonusLpa,
+          stipendPerMonthInr,stipendMonths,annualCtcInr:Math.round(ctc*100_000)};
+      });
+      const primaryJoiningBonus=moneyField(String(data.get("joiningBonusLpa")??""),1000,"Joining bonus");
+      const primaryStipendMonths=durationField(String(data.get("stipendMonths")??""),"Stipend duration");
+      if(primaryStipendMonths!==null&&!String(data.get("stipendPerMonthInr")??"").trim())
+        throw new Error("Add a monthly stipend when duration is set.");
+      if(new Set([defaultRoleTitle,...validatedPackages.map(row=>row.name)].map(name=>name.toLocaleLowerCase("en"))).size!==validatedPackages.length+1)
+        throw new Error("Each package must have a different name from the main job role and other packages.");
       const fingerprint=JSON.stringify({
         fields:Array.from(data.entries()).map(([key,value])=>[key,String(value)]),
         selectedProgramIds:[...effectiveProgramIds].sort(),
         selectedCohortIds:[...effectiveCohortIds].sort(),
         selectedSectionIds:[...effectiveSectionIds].sort(),
-        companyMode,companyRelationshipId,roundPreset,
+        companyMode,companyRelationshipId,driveMode,applicationMode,roundPreset,importantDateRows,customRuleRows,roundRows,extraPackages,
       });
       if(createdJobRef.current&&createdJobRef.current.fingerprint!==fingerprint)
         throw new Error("A draft has already been created. Open the existing draft to edit your latest changes.");
@@ -523,12 +767,14 @@ export function PlacementJobCreateForm({
           ).trim(),
           description,
           legacyPostingDetails:{
-            campusPool:{hostCollege,reportingTime,travelNote},
+            campusPool:{hostCollege:driveMode==="POOL"?hostCollege:"",
+              reportingTime:driveMode==="POOL"?reportingTime:null,
+              travelNote:driveMode==="POOL"?travelNote:""},
             portal:{studentsRegisterSeparately,name:studentsRegisterSeparately?portalName:"",
               url:studentsRegisterSeparately?portalUrl:""},
             skillsWanted,
             responsibilities:String(data.get("responsibilities")??"").trim(),
-            assessmentUrl:String(data.get("assessmentUrl")??"").trim()||null,
+            assessmentUrl:assessmentUrl||null,
             assessmentDeadline,importantDates,customEligibilityRules,
             candidatePreferences:{
               preferredDegree:String(data.get("preferredDegree")??"").trim(),
@@ -668,9 +914,54 @@ export function PlacementJobCreateForm({
         },
       );
 
+      // The default named package maps to the primary role option. Other rows
+      // remain non-primary options; retrying a partial save never duplicates them.
+      const savedRoles=await apiFetch<{roles:Array<{id:string;title:string;status:string;isPrimary:boolean}>}>(
+        `/api/placements/jobs/${encodeURIComponent(jobId)}/roles`,
+        {credentials:"same-origin",timeoutMs:30000},
+      );
+      const defaultRole=savedRoles.roles.find(role=>role.isPrimary&&role.status==="ACTIVE");
+      if(!defaultRole)throw new Error("Could not load the draft's default pay package.");
+      await requestJson(`/api/placements/jobs/${encodeURIComponent(jobId)}/roles/${encodeURIComponent(defaultRole.id)}`,"PATCH",{
+        joiningBonusLpa:primaryJoiningBonus,
+        stipendMonths:primaryStipendMonths,
+        stipendPerMonthInr:moneyField(String(data.get("stipendPerMonthInr")??""),10_000_000,"Stipend per month"),
+        fixedLpa:moneyField(String(data.get("fixedLpa")??""),1000,"Fixed CTC"),
+        variableLpa:moneyField(String(data.get("variableLpa")??""),1000,"Variable CTC"),
+      });
+      if(validatedPackages.length){
+        for(const pkg of validatedPackages){
+          if(savedRoles.roles.some(row=>row.title.trim().toLocaleLowerCase("en")===pkg.name.toLocaleLowerCase("en"))){
+            continue;
+          }
+          await requestJson(`/api/placements/jobs/${encodeURIComponent(jobId)}/roles`,"POST",{
+            title:pkg.name,
+            employmentType:(()=>{
+              const label=String(data.get("jobTypeLabel")??"Full-time");
+              return label==="Internship"?"INTERNSHIP":
+                label==="Contract"||label==="Apprenticeship"?"CONTRACT":"FULL_TIME";
+            })(),
+            workMode:String(data.get("workMode")??"ONSITE"),
+            locations:splitList(String(data.get("locations")??"")),
+            openings:null,
+            minimumAnnualCtcInr:pkg.annualCtcInr,
+            maximumAnnualCtcInr:pkg.annualCtcInr,
+            ctcLpa:pkg.ctcLpa,
+            fixedLpa:pkg.fixedLpa,
+            variableLpa:pkg.variableLpa,
+            joiningBonusLpa:pkg.joiningBonusLpa,
+            stipendPerMonthInr:pkg.stipendPerMonthInr,
+            stipendMonths:pkg.stipendMonths,
+          });
+        }
+      }
       // TPO-drives-39 / TPO-drives-43: read server rounds before retrying
       // individual creates; a lost POST response must not duplicate a round.
-      const planned=plannedTpoRoundRows(roundPreset);
+      const planned=roundRows.length?roundRows.map((row,index)=>({
+        sequence:index+1,kind:row.kind,name:row.name.trim()
+      })):plannedTpoRoundRows(roundPreset);
+      if(planned.some(row=>!row.name||row.name.length>100))
+        throw new Error("Each interview round requires a name of at most 100 characters.");
       if(planned.length){
         const saved=await apiFetch<{rounds:Array<{kind:string;name:string}>}>(
           `/api/placements/jobs/${encodeURIComponent(jobId)}/rounds`,
@@ -702,6 +993,7 @@ export function PlacementJobCreateForm({
       setPartialJobId(null);
       router.refresh();
     } catch (error) {
+      setSaveError(tpoDriveFormErrorMessage(error));
       showToast({
         tone: "error",
         title: "Could not create opportunity",
@@ -730,11 +1022,26 @@ export function PlacementJobCreateForm({
       className="min-w-0 space-y-[var(--lms-space-4)]"
     >
       <p role="status" aria-live="polite" className="max-w-[75ch] break-words text-xs leading-5 text-body">
-        {pending?"Saving changes…":lastLocalSaveAt?
-          "Local draft saved at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST — not yet submitted to the server.":
-          "Draft form changes are saved locally on this device. Create draft to save them to the server."}
+        {pending?"Saving changes…":lastServerSavedAt&&partialJobId?
+          "Last saved on server at "+new Intl.DateTimeFormat("en-IN",{
+            dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata",
+          }).format(new Date(lastServerSavedAt))+" IST · Draft created by your account; finish setup before publishing.":
+          partialJobId?"Draft exists on server · Last-saved timestamp unavailable; retry setup or open the draft.":
+          lastLocalSaveAt?
+          "Changes not saved to the server · Browser backup at "+new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",hour:"2-digit",minute:"2-digit",day:"2-digit",month:"short",year:"numeric"}).format(new Date(lastLocalSaveAt))+" IST.":
+          "Not saved yet · Your changes are backed up locally until you create the draft."}
       </p>
-      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+
+      {saveError?<div role="alert" className="rounded-lg border border-danger p-3 text-sm text-danger">
+        <strong>Changes not saved.</strong> {saveError}
+      </div>:null}
+      {existingDrive?<div role="alert" className="flex flex-wrap items-center gap-2 rounded-lg border border-warning p-3 text-sm">
+        <span>A drive for {selectedEmployer?.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).</span>
+        <Link href={basePath+"/jobs/"+encodeURIComponent(existingDrive.jobId)} className="font-semibold text-primary-text underline">Open it</Link>
+      </div>:null}
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_280px]">
+      <fieldset disabled={pending||loadingCopy} className="min-w-0 space-y-4">
+      <details className="group min-w-0 border-b border-border pb-[var(--lms-space-4)] lg:hidden">
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between text-base font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 [&::-webkit-details-marker]:hidden">Setup review <span aria-hidden="true" className="text-body transition-transform group-open:rotate-180 motion-reduce:transition-none">⌄</span></summary>
         <nav aria-label="Drive setup review" className="min-w-0 pt-3">
         <ol className="grid gap-3 border-y border-border sm:grid-cols-2 lg:grid-cols-4">
@@ -755,13 +1062,27 @@ export function PlacementJobCreateForm({
         </div>
         </nav>
       </details>
-      <details open={!activeSeason} className="min-w-0 border-b border-border pb-3">
-       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Placement season</summary>
+      <details open={!activeSeason||clonableDrives.length>0} className="min-w-0 border-b border-border pb-3">
+       <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Start from</summary>
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <p className="pb-[var(--lms-space-3)] text-sm text-body">
           Every drive belongs to the current operating season. Historical seasons remain read-only.
         </p>
-        <div className="pt-4">
+        <div className="grid gap-3 pt-4">
+          <label className="grid gap-1 text-sm font-semibold text-foreground">
+            Clone a past drive
+            <Select value={copyJobId} className={inputClass}
+              disabled={loadingCopy||pending||Boolean(partialJobId)}
+              onChange={event=>{setCopyJobId(event.target.value);void loadCloneSource(event.target.value);}}>
+              <option value="">Choose a past drive to copy</option>
+              {clonableDrives.map(role=><option key={role.jobId} value={role.jobId}>
+                {role.companyName} · {role.title} ({tpoDriveStatusLabel(role.status)})
+              </option>)}
+            </Select>
+          </label>
+          {loadingCopy?<p role="status" className="text-sm text-body">Loading the past drive…</p>:null}
+          {!clonableDrives.length?<p className="text-xs text-muted-foreground">No past drives to copy yet. Or just fill it in below.</p>:null}
+          <p className="text-xs text-body">New drives start in the current placement season; past applicants, dates and rounds are not copied.</p>
           {activeSeason ? (
             <>
               <p className="m-0 font-semibold text-foreground">
@@ -841,7 +1162,7 @@ export function PlacementJobCreateForm({
               </label>
               <label>
               <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                Employer
+                Company Name
               </span>
               <Select
                 className={inputClass}
@@ -893,7 +1214,7 @@ export function PlacementJobCreateForm({
             <div className="grid min-w-0 gap-4 sm:grid-cols-2">
               <label>
                 <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                  Company name
+                  Company Name
                 </span>
                 <Input
                   className={inputClass}
@@ -950,16 +1271,16 @@ export function PlacementJobCreateForm({
       <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
-            Opportunity
+            The drive
           </h2>
           <p className="mt-1 text-sm text-body">
             Create the learner-facing job opportunity and application window.
           </p>
         </div>
-        <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2">
+        <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)] pt-[var(--lms-space-4)] sm:grid-cols-2 md:grid-cols-3">
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Job title
+              Job Title
             </span>
             <Input
               className={inputClass}
@@ -969,12 +1290,12 @@ export function PlacementJobCreateForm({
               required
               minLength={3}
               maxLength={100}
-              placeholder="Software Development Engineer"
+              placeholder="e.g., Software Engineer"
             />
           </label>
           <label className="sm:col-span-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Description
+              Job Description
             </span>
             <Textarea
               className={textareaClass}
@@ -985,7 +1306,7 @@ export function PlacementJobCreateForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Employment type
+              Job Type
             </span>
             <Select
               className={inputClass}
@@ -996,6 +1317,27 @@ export function PlacementJobCreateForm({
                 <option key={type.label} value={type.label}>{type.label}</option>)}
             </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Job types are managed in Settings &gt; Job types. A switched-off type remains on existing drives but cannot be selected for new drives.</span>
+          </label>
+          <label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Mode
+            </span>
+            <Select className={inputClass} value={driveMode}
+              onChange={event=>{
+                const mode=event.target.value as "ON_CAMPUS"|"POOL"|"OFF_CAMPUS";
+                setDriveMode(mode);
+                setApplicationMode(mode==="OFF_CAMPUS"?"EXTERNAL_ONLY":"INTERNAL");
+                markDirty();
+              }}>
+              <option value="ON_CAMPUS">On campus</option>
+              <option value="POOL">Pool (at another college)</option>
+              <option value="OFF_CAMPUS">Off campus (company&apos;s site)</option>
+            </Select>
+            <span className="mt-1 block text-xs text-muted-foreground">
+              {driveMode==="POOL"?"Held at another college; your students travel there.":
+                driveMode==="OFF_CAMPUS"?"Students apply on the company's site; you track them here.":
+                "Students apply here; rounds at your college or online."}
+            </span>
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -1020,12 +1362,12 @@ export function PlacementJobCreateForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Locations
+              Location
             </span>
             <Input
               className={inputClass}
               name="locations"
-              placeholder="Hyderabad, Bengaluru"
+              placeholder="e.g. Bangalore, Remote"
             />
           </label>
           <label>
@@ -1043,51 +1385,16 @@ export function PlacementJobCreateForm({
           </label>
           <label>
             <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Minimum CTC (LPA)
-            </span>
-            <Input
-              className={inputClass}
-              name="minimumLpa"
-              type="number"
-              min={0}
-              max={1000}
-              step="0.1"
-            />
-          </label>
-          <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Maximum CTC (LPA)
-            </span>
-            <Input
-              className={inputClass}
-              name="maximumLpa"
-              type="number"
-              min={0}
-              max={1000}
-              step="0.1"
-            />
-          </label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Fixed CTC (LPA)
-          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.01"/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Variable CTC (LPA)
-          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.01"/></label>
-          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Stipend per month (INR)
-          </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
-          <label className="flex items-center gap-3 text-sm font-semibold text-body">
-            <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
-            Dream drive (college held-offer cap exception)
-          </label>
-          <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
               Application mode
             </span>
             <Select
               className={inputClass}
               name="applicationMode"
-              defaultValue="INTERNAL"
+              value={applicationMode}
+              onChange={event=>{
+                setApplicationMode(event.target.value as "INTERNAL"|"HYBRID"|"EXTERNAL_ONLY");
+                markDirty();
+              }}
             >
               <option value="INTERNAL">
                 LMS application
@@ -1101,9 +1408,9 @@ export function PlacementJobCreateForm({
             </Select>
             <span className="mt-1 block text-xs text-muted-foreground">Hybrid accepts LMS or employer applications. Employer-form-only applications are completed outside LMS; on-campus slot scheduling is not set up by this selection.</span>
           </label>
-          <label>
-            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Employer application URL
+          {applicationMode!=="INTERNAL"||driveMode==="OFF_CAMPUS"?<label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
+              Company application link
             </span>
             <Input
               className={inputClass}
@@ -1111,8 +1418,8 @@ export function PlacementJobCreateForm({
               type="url"
               placeholder="Required for hybrid/external-only"
             />
-            <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS employer registration portal link. A separate portal name is not saved by this workflow.</span>
-          </label>
+            <span className="mt-1 block text-xs text-muted-foreground">Use the HTTPS company registration link. Off-campus drives require this link.</span>
+          </label>:null}
           <div>
             <label>
               <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
@@ -1161,7 +1468,111 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
-      <details className="min-w-0 border-b border-border pb-6">
+      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Pay packages">
+        <h2 className="m-0 border-b border-border pb-3 text-base font-semibold text-foreground">Pay packages</h2>
+        <div className="grid min-w-0 gap-4 pt-4 sm:grid-cols-2 md:grid-cols-3">
+
+          <p className="sm:col-span-2 -mt-2 text-xs text-muted-foreground">Default package · main job role. Salary amounts are in LPA unless labelled otherwise.</p>
+          <label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Minimum CTC (LPA)
+            </span>
+            <Input
+              className={inputClass}
+              name="minimumLpa"
+              type="number"
+              min={0}
+              max={1000}
+              step="0.5"
+            />
+            <span className="mt-1 block text-xs text-muted-foreground">CTC Range, e.g. 6–10 LPA; use minimum and maximum fields.</span>
+          </label>
+          <label>
+            <span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+              Maximum CTC (LPA)
+            </span>
+            <Input
+              className={inputClass}
+              name="maximumLpa"
+              type="number"
+              min={0}
+              max={1000}
+              step="0.5"
+            />
+          </label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Fixed CTC (LPA)
+          </span><Input className={inputClass} name="fixedLpa" type="number" min={0} max={1000} step="0.5"/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Variable CTC (LPA)
+          </span><Input className={inputClass} name="variableLpa" type="number" min={0} max={1000} step="0.5"/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Stipend per month (INR)
+          </span><Input className={inputClass} name="stipendPerMonthInr" type="number" min={0} max={10000000} step={1}/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Joining bonus (LPA)
+          </span><Input className={inputClass} name="joiningBonusLpa" type="number" min={0} max={1000} step="0.5"/></label>
+          <label><span className="mb-1.5 block text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            Duration (months)
+          </span><Input className={inputClass} name="stipendMonths" type="number" min={1} max={120} step={1}/></label>
+          <div className="grid gap-1 rounded-lg border border-border bg-muted/30 p-3 text-sm">
+            <span className="font-semibold">Visibility</span>
+            <span className="text-body">College only · this drive stays within the selected college workspace.</span>
+            <span className="text-xs text-muted-foreground">Choose eligible departments, programs and batches below to narrow its audience.</span>
+          </div>
+          <div className="grid gap-3 border-t border-border pt-3 sm:col-span-2">
+            {extraPackages.map((pkg,index)=>(
+              <div key={pkg.id} className="grid gap-3 rounded-lg border border-border p-3 sm:grid-cols-2 lg:grid-cols-3">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Package name
+                  <Input className={inputClass} maxLength={200} placeholder="e.g. Digital, Ninja"
+                    aria-label={"Package "+(index+2)+" name"} value={pkg.name}
+                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,name:event.target.value}:row))}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">CTC (LPA)
+                  <Input className={inputClass} type="number" min={0} max={1000} step="0.5"
+                    aria-label={"Package "+(index+2)+" CTC in LPA"} value={pkg.ctcLpa}
+                    onChange={event=>setExtraPackages(rows=>rows.map(row=>row.id===pkg.id?{...row,ctcLpa:event.target.value}:row))}/>
+                </label>
+                {([
+                  ["fixedLpa","Fixed (LPA)",1000,"0.5"],
+                  ["variableLpa","Variable (LPA)",1000,"0.5"],
+                  ["joiningBonusLpa","Joining bonus (LPA)",1000,"0.5"],
+                  ["stipendPerMonthInr","Stipend / month (INR)",10000000,"1"],
+                  ["stipendMonths","Duration (months)",120,"1"],
+                ] as const).map(([field,label,max,step])=>(
+                  <label key={field} className="grid min-w-0 gap-1 text-xs font-semibold">{label}
+                    <Input className={inputClass} type="number" min={field==="stipendMonths"?1:0}
+                      max={max} step={step} value={pkg[field]}
+                      aria-label={"Package "+(index+2)+" "+label}
+                      onChange={event=>setExtraPackages(rows=>rows.map(row=>
+                        row.id===pkg.id?{...row,[field]:event.target.value}:row))}/>
+                  </label>
+                ))}
+                <Button variant="secondary" type="button" className="self-end text-danger"
+                  aria-label={"Remove package "+(index+2)}
+                  onClick={()=>{setExtraPackages(rows=>rows.filter(row=>row.id!==pkg.id));markDirty();}}>
+                  Remove package
+                </Button>
+              </div>
+            ))}
+            <Button variant="secondary" type="button" disabled={extraPackages.length>=10}
+              className="min-h-11 justify-self-start border-dashed md:min-h-9"
+              onClick={()=>{setExtraPackages(rows=>[...rows,{id:nextRowId.current++,name:"",ctcLpa:"",
+                    fixedLpa:"",variableLpa:"",joiningBonusLpa:"",stipendPerMonthInr:"",stipendMonths:""}]);markDirty();}}>
+              Add another package
+            </Button>
+            <p className="text-xs text-muted-foreground">
+              Additional pay tracks are saved as separate role options. Every bonus and stipend duration is stored with its named package.
+            </p>
+          </div>
+          <label className="flex items-center gap-3 text-sm font-semibold text-body">
+            <Checkbox name="isDream" className="h-4 w-4 accent-primary"/>
+            Dream drive (college held-offer cap exception)
+          </label>
+        </div>
+      </section>
+
+      <details open className="min-w-0 border-b border-border pb-6">
         <summary className="min-h-11 cursor-pointer text-base font-semibold text-foreground md:min-h-9">Additional job details</summary>
         <div className="pt-3">
           <h2 className="sr-only">Additional job details</h2>
@@ -1194,23 +1605,57 @@ export function PlacementJobCreateForm({
             </label>
             <p className="text-xs text-muted-foreground">This records the employer's separate portal; it does not automatically register students. Keep the application mode and primary employer URL consistent.</p>
           </fieldset>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Skills the company wants (up to 30, comma-separated; 50 characters each)
-            <Textarea name="skillsWanted" maxLength={1590} rows={2} className={inputClass} />
-            <span className="text-xs font-normal text-muted-foreground">Skill tags are informational until applicant matching explicitly uses them.</span>
-          </label>
           <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Responsibilities
-            <Textarea name="responsibilities" rows={4} maxLength={15000} className={inputClass}/>
+            <Textarea name="responsibilities" rows={6} maxLength={15000} className={textareaClass} placeholder="Responsibilities, duties and expectations"/>
           </label>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment URL
-            <Input name="assessmentUrl" type="url" className={inputClass} placeholder="https://..."/>
+            <Input name="assessmentUrl" type="url" maxLength={2048} className={inputClass} placeholder="https://..."
+              onChange={event=>setAssessmentUrlLength(event.target.value.length)}/>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-normal text-muted-foreground">{assessmentUrlLength}/2048 characters · HTTP or HTTPS</span>
+              <Button type="button" variant="secondary" disabled={assessmentUrlLength===0}
+                className="min-h-9 px-2 text-xs md:min-h-8"
+                onClick={()=>{
+                  const field=formRef.current?.elements.namedItem("assessmentUrl");
+                  if(!(field instanceof HTMLInputElement))return;
+                  field.value="";
+                  setAssessmentUrlLength(0);
+                  markDirty();
+                  if(formRef.current)saveBrowserDraft(formRef.current);
+                }}>Clear</Button>
+            </div>
           </label>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment deadline (IST)
             <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
           </label>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-            Important dates (up to 20; one Label | YYYY-MM-DDTHH:MM per line, IST)
-            <Textarea name="importantDates" rows={3} className={inputClass}/>
-          </label>
+          <fieldset className="grid gap-3 sm:col-span-2">
+            <legend className="text-sm font-semibold text-foreground">Important dates</legend>
+            <p className="text-xs text-muted-foreground">Add up to 20 dates. The Application deadline field above is reserved.</p>
+            {importantDateRows.map(row=>(
+              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Label
+                  <Input aria-label="Important date label" maxLength={100} placeholder="e.g. Screening round, Technical round"
+                    value={row.label} onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Date (IST)
+                  <Input aria-label="Important date" type="date" value={row.date}
+                    onChange={event=>setImportantDateRows(current=>current.map(item=>item.id===row.id?{...item,date:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <Button type="button" variant="secondary" disabled={importantDateRows.length<=1}
+                  title={importantDateRows.length<=1?"At least one row required":"Remove important date"}
+                  aria-label="Remove important date"
+                  onClick={()=>{setImportantDateRows(current=>current.filter(item=>item.id!==row.id));markDirty();}}
+                  className="min-h-11 text-danger md:min-h-9">Remove</Button>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" disabled={importantDateRows.length>=20}
+              onClick={()=>{setImportantDateRows(current=>[...current,{id:nextRowId.current++,label:"",date:""}]);markDirty();}}
+              className="min-h-11 border-dashed md:min-h-9">
+              Add date{importantDateRows.length>=20?" (max 20)":""}
+            </Button>
+          </fieldset>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred degree
             <Input name="preferredDegree" maxLength={160} className={inputClass}/>
           </label>
@@ -1226,17 +1671,39 @@ export function PlacementJobCreateForm({
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Preferred city
             <Input name="preferredCity" maxLength={160} className={inputClass}/>
           </label>
-          <label className="grid gap-2 text-[length:var(--lms-font-sm)] font-semibold sm:col-span-2 leading-4 text-[13px] text-[var(--lms-neutral-400)]">
-            Custom eligibility rules (up to 20; one Label | Value per line; informational)
-            <Textarea name="customEligibilityRules" rows={3} className={inputClass}/>
-          </label>
+          <fieldset className="grid gap-3 sm:col-span-2">
+            <legend className="text-sm font-semibold text-foreground">Custom eligibility rules</legend>
+            <p className="text-xs text-muted-foreground">Add your own rules (e.g. Work permit, Experience). Displayed to students, informational only. Max 20.</p>
+            {customRuleRows.map(row=>(
+              <div key={row.id} className="grid items-end gap-2 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)_auto]">
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule label
+                  <Input aria-label="Rule label" maxLength={160} placeholder="Label (e.g. Work permit)"
+                    value={row.label} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,label:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <label className="grid min-w-0 gap-1 text-xs font-semibold">Rule value
+                  <Input aria-label="Rule value" maxLength={200} placeholder="Value (e.g. Required)"
+                    value={row.value} onChange={event=>setCustomRuleRows(current=>current.map(item=>item.id===row.id?{...item,value:event.target.value}:item))}
+                    className={inputClass}/>
+                </label>
+                <Button type="button" variant="secondary" disabled={customRuleRows.length<=1}
+                  title={customRuleRows.length<=1?"At least one row required":"Remove custom rule"}
+                  aria-label="Remove custom rule"
+                  onClick={()=>{setCustomRuleRows(current=>current.filter(item=>item.id!==row.id));markDirty();}}
+                  className="min-h-11 text-danger md:min-h-9">Remove</Button>
+              </div>
+            ))}
+            <Button type="button" variant="secondary" disabled={customRuleRows.length>=20}
+              onClick={()=>{setCustomRuleRows(current=>[...current,{id:nextRowId.current++,label:"",value:""}]);markDirty();}}
+              className="min-h-11 border-dashed md:min-h-9">Add custom rule{customRuleRows.length>=20?" (max 20)":""}</Button>
+          </fieldset>
           <p className="sm:col-span-2 text-xs text-muted-foreground">Visibility and cross-college targeting are not implied by application mode. This drive remains scoped to its college; use eligible programs and cohorts below for enforced audience rules.</p>
         </div>
       </details>
-      <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+      <section className="min-w-0 border-b border-border border-l-[3px] border-l-primary pl-3 pb-[var(--lms-space-4)]">
         <div className="border-b border-border pb-[var(--lms-space-3)]">
           <h2 className="m-0 text-base font-semibold text-foreground">
-            Eligibility
+            Eligibility · Target Audience
           </h2>
           <p className="mt-1 text-sm text-body">
             Configure explainable numeric requirements now. Program/cohort scoping can remain empty when the opportunity is open across the college.
@@ -1262,7 +1729,7 @@ export function PlacementJobCreateForm({
                 Eligible programs
               </legend>
               <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
-                Leave all unchecked to make the opportunity available across programs.
+                Leave empty for every batch in placements. All programs are included unless you narrow the audience.
               </p>
               {visiblePrograms.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
@@ -1459,22 +1926,86 @@ export function PlacementJobCreateForm({
         </div>
       </section>
 
+      <section aria-label="Skills the company wants" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
+        <h2 className="mb-3 text-base font-semibold text-foreground">Skills the company wants</h2>
+          <div className="grid gap-2 sm:col-span-2">
+            <label htmlFor="drive-skills-input" className="text-sm font-semibold text-foreground">Skills the company wants</label>
+            <p className="text-xs text-muted-foreground">Type a skill and press Enter. Applicants get a skill match, but skills never decide who can apply. Up to 30 skills, 50 characters each.</p>
+            <input type="hidden" name="skillsWanted" value={wantedSkills.join(", ")} readOnly />
+            {wantedSkills.length>0?<div className="flex flex-wrap gap-2" aria-label="Skills selected">
+              {wantedSkills.map(skill=><span key={skill} className="inline-flex items-center gap-1 rounded-full border border-border px-2 py-1 text-xs">
+                {skill}
+                <Button variant="secondary" type="button" className="min-h-7 px-1 py-0 text-xs text-danger"
+                  aria-label={"Remove skill "+skill} onClick={()=>{setWantedSkills(items=>items.filter(item=>item!==skill));markDirty();}}>×</Button>
+              </span>)}
+            </div>:null}
+            <Input id="drive-skills-input" className={inputClass} value={skillDraft} maxLength={50}
+              disabled={wantedSkills.length>=30} placeholder="e.g. Java, SQL, React"
+              onChange={event=>{
+                if(event.target.value.includes(","))addSkills(event.target.value);
+                else setSkillDraft(event.target.value);
+              }}
+              onKeyDown={event=>{if(event.key==="Enter"||event.key===","){
+                event.preventDefault();addSkills(skillDraft);
+              }}}
+              onBlur={()=>{if(skillDraft.trim())addSkills(skillDraft);}}
+            />
+            <p className="text-xs text-muted-foreground">{wantedSkills.length} of 30 skills selected</p>
+          </div>
+      </section>
+
       <section aria-label="Planned rounds" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
-        <h2 className="font-semibold text-foreground">Interview rounds</h2>
+        <h2 className="font-semibold text-foreground">Rounds</h2>
         <label className="mt-3 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">
           Round template
           <Select name="roundPreset" value={roundPreset}
             onChange={event=>{
-              if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);markDirty();}
+              if(isTpoRoundPresetKey(event.target.value)){setRoundPreset(event.target.value);setRoundRows([]);markDirty();}
             }} className={inputClass}>
             {Object.entries(TPO_DRIVE_ROUND_PRESETS).map(([key,preset])=>
               <option key={key} value={key}>{preset.label}</option>)}
           </Select>
         </label>
-        <p role="status" className="mt-3 text-sm font-semibold text-body">{plannedTpoRoundRows(roundPreset).length} rounds planned</p>
-        <ol className="mt-2 list-decimal space-y-1 pl-6 text-sm text-body">
-          {plannedTpoRoundRows(roundPreset).map(round=><li key={round.sequence}>{round.name} · {round.kind}</li>)}
-        </ol>
+        <div className="mt-3 flex flex-wrap gap-2" aria-label="Round presets">
+          {Object.entries(TPO_DRIVE_ROUND_PRESETS).filter(([key])=>key!=="NONE").map(([key,preset])=>(
+            <Button key={key} variant="secondary" type="button"
+              onClick={()=>{setRoundPreset(key as TpoRoundPresetKey);setRoundRows([]);markDirty();}}>
+              {preset.label}
+            </Button>
+          ))}
+        </div>
+        <p role="status" className="mt-3 text-sm font-semibold text-body">
+          {roundRows.length||plannedTpoRoundRows(roundPreset).length} rounds planned
+        </p>
+        <div className="mt-2 space-y-2">
+          {(roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}))).map((round,index)=>(
+            <div key={round.id} className="grid items-center gap-2 rounded-lg border border-border p-2 sm:grid-cols-[150px_minmax(0,1fr)_auto]">
+              <Select aria-label={"Round "+(index+1)+" kind"} value={round.kind}
+                onChange={event=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
+                  setRoundRows(rows.map(item=>item.id===round.id?{...item,kind:event.target.value}:item));markDirty();
+                }}>
+                {["TALK","TEST","VENDOR_TEST","GD","INTERVIEW"].map(kind=><option key={kind} value={kind}>{kind}</option>)}
+              </Select>
+              <Input aria-label={"Round "+(index+1)+" name"} value={round.name} maxLength={100}
+                placeholder="Round name" onChange={event=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(row=>({...row,id:row.sequence}));
+                  setRoundRows(rows.map(item=>item.id===round.id?{...item,name:event.target.value}:item));markDirty();
+                }}/>
+              <Button type="button" variant="secondary" aria-label="Remove this round" title="Remove this round"
+                onClick={()=>{
+                  const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
+                  setRoundRows(rows.filter(item=>item.id!==round.id));setRoundPreset("NONE");markDirty();
+                }}>Remove</Button>
+            </div>
+          ))}
+        </div>
+        <Button variant="secondary" type="button" className="mt-3 min-h-11 border-dashed md:min-h-9"
+          disabled={roundRows.length>=20}
+          onClick={()=>{
+            const rows=roundRows.length?roundRows:plannedTpoRoundRows(roundPreset).map(item=>({...item,id:item.sequence}));
+            setRoundRows([...rows,{id:nextRowId.current++,kind:"INTERVIEW",name:""}]);markDirty();
+          }}>Add round</Button>
         <p className="mt-2 text-xs text-muted-foreground">
           The selected round template creates pending rounds with the draft. Review each round's
           name, kind and mode in the saved drive before sending any candidate invitations.
@@ -1483,11 +2014,32 @@ export function PlacementJobCreateForm({
       <details className="min-w-0 border-b border-border pb-3">
        <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold md:min-h-9">Who this reaches</summary>
       <section aria-label="Who this reaches" className="min-w-0 pb-[var(--lms-space-4)]">
-        <p className="mt-2 text-sm text-body">Eligible and excluded learner counts depend on saved cohort and marks evidence. Save the draft, then use the drive workspace eligibility preview to review actual counts before publishing. No reach estimate is fabricated on this form.</p>
+        <p role="status" className="mt-2 text-sm text-body">Eligibility preview unavailable before the draft is saved. Save the draft, then review eligible and excluded counts in the drive workspace before publishing.</p>
         <p className="mt-2 text-xs text-muted-foreground">Round templates are saved as pending during draft setup; scheduling, eligibility reach verification and recruiter invitations are managed in the saved drive workspace.</p>
       </section>
 
       </details>
+      </fieldset>
+      <aside aria-label="Setup review" className="sticky top-24 hidden rounded-xl border border-border bg-background p-4 lg:block">
+        <h2 className="m-0 text-base font-semibold text-foreground">Setup review</h2>
+        <p className="mt-1 text-xs text-body">Your milestones remain visible as you build the opportunity.</p>
+        <ol className="mt-4 space-y-4 border-l-2 border-border pl-4 text-sm">
+          {["Company","The drive","Eligibility","Publish review"].map((label,index)=>(
+            <li key={label} className="relative">
+              <span className="absolute -left-[23px] top-1 h-3 w-3 rounded-full border-2 border-primary bg-background" aria-hidden="true"/>
+              <span className="block text-xs font-semibold text-primary-text">Step {index+1} of 4</span>
+              <span className="mt-1 block font-semibold text-foreground">{label}</span>
+            </li>
+          ))}
+        </ol>
+        <div className="mt-4 border-t border-border pt-3 text-xs text-body">
+          <p>No students are notified until you confirm publication.</p>
+          {plannedTpoRoundRows(roundPreset).length===0&&roundRows.length===0?<p className="mt-2">No interview rounds added yet</p>:null}
+          {!hasEnteredEligibilityRule&&eligibilityPreset==="OPEN"?
+            <p className="mt-2">Open eligibility · verify reach after saving.</p>:null}
+        </div>
+      </aside>
+      </div>
       {publishMissing.length>0?<div role="alert" className="rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm">
         <p className="font-semibold">Complete {publishMissing.length} item(s) before reviewing publication</p>
         <ul className="mt-2 list-disc pl-5">{publishMissing.map(label=><li key={label}>{label}</li>)}</ul>
@@ -1496,14 +2048,16 @@ export function PlacementJobCreateForm({
       <section className="flex min-w-0 flex-col gap-3 border-t border-border py-4 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-sm text-body">Create a draft, then review the server reach, rounds and notifications before confirming publication.</p>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-2)] sm:flex-row sm:items-center">
-          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !activeSeason || uncertainCreate}>
-            {pending ? "Creating…" : "Create draft"}
+          <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
+            onClick={()=>{if(dirty)setCancelConfirmOpen(true);else router.push(basePath);}}>Cancel</Button>
+          <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !activeSeason || uncertainCreate || loadingCopy}>
+            {pending ? "Saving changes…" : "Save as draft"}
           </Button>
           <Button variant="secondary"
             type="submit"
             value="review-publish"
             aria-label="Create draft and review before publication"
-            disabled={pending || !activeSeason || uncertainCreate}
+            disabled={pending || !activeSeason || uncertainCreate || loadingCopy}
             className="w-full min-h-11 rounded-[var(--lms-control-radius)] border border-primary px-4 text-sm font-[650] text-primary-text disabled:opacity-50 sm:w-auto md:min-h-9"
           >
             Review &amp; publish
@@ -1528,6 +2082,10 @@ export function PlacementJobCreateForm({
         Do not submit a second drive.
       </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}
+      <ConfirmDialog open={cancelConfirmOpen} onOpenChange={setCancelConfirmOpen}
+        title="Discard unsaved changes?" description="Your changes will not be saved."
+        confirmLabel="Discard changes" cancelLabel="Keep editing" confirmVariant="danger"
+        onConfirm={()=>{setCancelConfirmOpen(false);clearDirty();router.push(basePath);}} />
       {guardDialog}
     </form>
   );

@@ -9,9 +9,9 @@ import { getFacultyDeliveryRoster } from "@/modules/attendance/faculty-service";
 
 const uuid = z.string().uuid();
 
-/** A report is authoritative only for the Faculty's current verified Section
- * roster. Historical/foreign learner rows may exist in persisted attempts, but
- * cannot affect counts, scores, questions, or the downloadable report. */
+/** Current-roster filtering is for current eligibility/absence only. Historic
+ * submissions by an authorized learner on this delivery remain reportable even
+ * after transfer; they must not be counted as currently missing. */
 export function facultyReportCurrentRosterRows<T extends {membershipId:string}>(
   records:readonly T[],roster:readonly {membershipId:string}[],
 ):T[] {
@@ -127,7 +127,6 @@ export function assignmentScoreSummary(
 ) {
   const percentages = rows.flatMap((row) => {
     if (
-      row.gradingStatus !== "GRADED" ||
       row.pointsAwarded === null ||
       !Number.isFinite(row.pointsAwarded) ||
       !Number.isFinite(maxPoints) ||
@@ -137,7 +136,7 @@ export function assignmentScoreSummary(
     ) {
       return [];
     }
-    return [Math.min(100, (row.pointsAwarded / maxPoints) * 100)];
+    return [Math.round(Math.min(100, (row.pointsAwarded / maxPoints) * 100))];
   });
   return {
     averagePercent:
@@ -186,7 +185,7 @@ export function scoreSummary(
   const averagePercent = graded.length
     ? Math.round(
         graded.reduce(
-          (sum, row) => sum + (row.score! / row.maxScore!) * 100,
+          (sum, row) => sum + Math.round((row.score! / row.maxScore!) * 100),
           0,
         ) / graded.length,
       )
@@ -209,17 +208,16 @@ export async function getFacultyQuizReport(
     "QUIZ_NOT_FOUND",
     "QUIZ_DELIVERY_MISMATCH",
   );
-  const [attempts, rosterScope, authoredQuiz] =
+  const [attempts, rosterRead, authoredQuiz] =
     await Promise.all([
       listQuizAttempts(
         context,
         quizId,
         quiz.deliveryId,
       ),
-      getFacultyDeliveryRoster(
-        context,
-        quiz.deliveryId,
-      ),
+      getFacultyDeliveryRoster(context, quiz.deliveryId)
+        .then(value => ({ok:true as const,value}))
+        .catch(() => ({ok:false as const})),
       getCourseQuiz(
         context,
         quizId,
@@ -228,7 +226,13 @@ export async function getFacultyQuizReport(
     ]);
   // Legacy report parity: retakes contribute only the learner's latest
   // attempt to standing, distribution and question accuracy.
-  const scopedAttempts=facultyReportCurrentRosterRows(attempts,rosterScope.roster);
+  // Roster failure must not hide the already-authorized attempt summary.
+  // Never infer non-attempting learners without a current roster.
+  const rosterScope=rosterRead.ok?rosterRead.value:null;
+  // An unavailable roster must never be treated as authorization to disclose
+  // historical or otherwise ineligible learner attempts.
+  const scopedAttempts=rosterScope
+    ?facultyReportCurrentRosterRows(attempts,rosterScope.roster):[];
   const latestAttempts =
     latestQuizAttemptsByLearner(scopedAttempts);
   const learners = new Set(
@@ -237,7 +241,7 @@ export async function getFacultyQuizReport(
     ),
   );
   const notAttemptedLearners =
-    rosterScope.roster.filter(
+    (rosterScope?.roster??[]).filter(
       (learner) =>
         !learners.has(learner.membershipId),
     );
@@ -261,6 +265,7 @@ export async function getFacultyQuizReport(
     scoreSummary(latestAttempts);
   return {
     quiz,
+    rosterUnavailable:rosterScope===null,
     attempts:scopedAttempts,
     latestAttempts,
     distribution:
@@ -274,7 +279,8 @@ export async function getFacultyQuizReport(
       ...latestScoreSummary,
       totalAttempts: scopedAttempts.length,
       eligibleLearners:
-        rosterScope.roster.length,
+        rosterScope?.roster.length??latestAttempts.length,
+      eligibleLearnersKnown:rosterScope!==null,
       uniqueLearners: learners.size,
       submittedLearners:
         latestAttempts.length,
@@ -301,26 +307,25 @@ export async function getFacultyAssignmentReport(
     "ASSIGNMENT_NOT_FOUND",
     "ASSIGNMENT_DELIVERY_MISMATCH",
   );
-  const [submissions, rosterScope] =
+  const [submissions, rosterRead] =
     await Promise.all([
-      listAssignmentSubmissions(
-        context,
-        assignmentId,
-        assignment.deliveryId,
-      ),
-      getFacultyDeliveryRoster(
-        context,
-        assignment.deliveryId,
-      ),
+      listAssignmentSubmissions(context,assignmentId,assignment.deliveryId),
+      getFacultyDeliveryRoster(context,assignment.deliveryId)
+        .then(value=>({ok:true as const,value}))
+        .catch(()=>({ok:false as const})),
     ]);
-  const scopedSubmissions=facultyReportCurrentRosterRows(submissions,rosterScope.roster);
+  const rosterScope=rosterRead.ok?rosterRead.value:null;
+  // A historical submission is not permission to view that learner after
+  // their enrollment ended; never drop the current-roster filter on failure.
+  const scopedSubmissions=rosterScope
+    ?facultyReportCurrentRosterRows(submissions,rosterScope.roster):[];
   const submittedMemberships = new Set(
     scopedSubmissions.map(
       (submission) => submission.membershipId,
     ),
   );
   const missingLearners =
-    rosterScope.roster.filter(
+    (rosterScope?.roster??[]).filter(
       (learner) =>
         !submittedMemberships.has(
           learner.membershipId,
@@ -339,12 +344,13 @@ export async function getFacultyAssignmentReport(
   );
   return {
     assignment,
+    rosterUnavailable:rosterScope===null,
     submissions:scopedSubmissions,
     missingLearners,
     distribution: scores.distribution,
     metrics: {
       eligibleLearners:
-        rosterScope.roster.length,
+        rosterScope?.roster.length??0,
       submitted: scopedSubmissions.length,
       missing: missingLearners.length,
       onTime:

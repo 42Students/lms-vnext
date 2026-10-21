@@ -47,11 +47,15 @@ export async function POST(
       projectId,
       parsed.data,
     );
+    // Old LMS exposed a separate Delete; do not reinterpret this explicit
+    // archive-confirmation path as permanent deletion. Client must present
+    // Archive versus Delete as distinct choices, both with optimistic token.
     // Archiving is reversible; it is not the legacy destructive Delete.
     // Recovery stays discoverable even when the archived workspace is hidden.
     return NextResponse.json({
       project,
       message: "Project archived",
+      destructive:false,legacyOperation:"ARCHIVE",
       recovery: {
         action: "RESTORE",
         href: "/api/projects/" + encodeURIComponent(projectId) + "/restore",

@@ -1,7 +1,5 @@
-import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCourseDiscussion } from "@/components/courses/learner-course-discussion";
-import { PageHeader } from "@/components/ui/page-header";
 import { getFacultyCourseWorkspace } from "@/modules/courses/faculty-course-service";
 
 export default async function FacultyCourseDiscussionsPage({
@@ -19,12 +17,11 @@ export default async function FacultyCourseDiscussionsPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader
-        eyebrow="Faculty · Course"
-        title="Discussions"
-        description={`${workspace.course.courseName} · ${workspace.course.sectionName}`}
-        actions={<Link href={`/teacher/courses/${encodeURIComponent(deliveryId)}/home`} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">← Course workspace</Link>}
-      />
+      <header className="min-w-0 border-b border-border pb-3">
+        <h2 className="text-base font-semibold text-foreground">Discussions</h2>
+        <p className="mt-1 text-sm text-body">Keep course conversations in one place and follow along easily.</p>
+        <p className="mt-1 text-xs text-muted-foreground">{workspace.course.courseName} · {workspace.course.sectionName}</p>
+      </header>
       <LearnerCourseDiscussion
         key={deliveryId}
         deliveryId={deliveryId}

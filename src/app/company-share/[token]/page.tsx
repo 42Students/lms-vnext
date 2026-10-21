@@ -11,6 +11,7 @@ import {getPublicCompanyApplicantShare} from "@/modules/placements/company-share
 import {companyShareApplicantHref} from "@/modules/placements/company-share/public-filter-model";
 import {publicApplicantExportHref} from "@/modules/placements/company-share/export-href-model";
 import {COMPANY_SHARE_COLUMNS,safeCompanyShareColumns} from "@/modules/placements/company-share/column-model";
+import {ShareCodeForm} from "./share-code-form";
 
 export const dynamic="force-dynamic";
 export const metadata={robots:{index:false,follow:false},title:"Shared applicants · 42Students",other:{referrer:"no-referrer"}};
@@ -21,65 +22,63 @@ export default async function CompanySharePage({
  const {page,q,access}=await searchParams;
  const proof=(await cookies()).get("company_share_access")?.value??null;
  const result=await getPublicCompanyApplicantShare(token,page??1,"VIEW",q??"",proof).catch(()=>null);
- if(result===null)return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
-  <ErrorState title="Shared applicants" description="This page is temporarily unavailable. Try Again."
-    action={<Link href={"/company-share/"+encodeURIComponent(token)}
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-[650] text-primary-text underline hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 text-sm">Try Again</Link>}/>
- </main>;
- if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto flex min-h-dvh min-w-0 max-w-xl flex-col justify-center px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:py-12`}>
-  <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-   <PageHeader title="Enter the 6-digit share code" />
-   <p className="max-w-prose break-words text-sm text-body leading-[22px]">Ask the placement cell for the code sent separately with this company share link.</p>
-   <p className="max-w-prose break-words text-xs text-muted-foreground leading-[20px]">A code cannot be emailed or resent from this page yet. If the invitation did not include one, ask the placement cell for access rather than retrying guessed codes.</p>
-   {access==="invalid"?<p role="alert" className="text-sm text-error leading-[22px]">
-    That code did not work, or this share is no longer available.</p>:null}
-   <form method="post" action={"/company-share/"+encodeURIComponent(token)+"/access"} className="space-y-4">
-    <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">6-digit code<span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-     <Input name="code" type="text" required inputMode="numeric" autoComplete="one-time-code"
-      pattern="[0-9]{6}" minLength={6} maxLength={6}
-      className="min-h-11 w-full max-w-full md:min-h-9" />
-    </label>
-    <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Open shared applicants</Button>
-   </form>
-   <p className="max-w-prose break-words text-xs text-muted-foreground leading-[20px]">After ten wrong codes within an hour the share is locked and the placement cell is notified.</p>
+ if(result===null)return <main className={`${authStyles.page} mx-auto min-h-dvh max-w-[1000px] px-4 py-12`}>
+  <section role="alert" className="mx-auto mt-12 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5">
+   <ErrorState title="We couldn't load this share" description="We could not load this share. Please retry." action={<Link href={"/company-share/"+encodeURIComponent(token)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-semibold text-body hover:border-primary hover:text-primary-text md:min-h-9">Retry</Link>}/>
   </section>
  </main>;
- if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto flex min-h-dvh max-w-xl min-w-0 flex-col justify-center px-4 pb-8 pt-24 min-[768px]:py-12`}>
-  <section role="alert" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
+ if(result.kind==="CODE_REQUIRED")return <main className={`${authStyles.page} mx-auto min-h-dvh max-w-[1000px] px-4 py-12`}>
+  <section className="mx-auto mt-12 min-w-0 max-w-[480px] rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
+   <h1 className="mb-4 break-words text-xl font-semibold leading-7 text-[var(--lms-heading)]">Applicants for {result.title}</h1>
+   <p className="mb-4 break-words text-sm leading-[22px] text-body">Shared with {result.companyName}. Enter the one-time code the placement cell sent you.</p>
+   {access==="invalid"?<p role="alert" className="mb-4 rounded-[var(--lms-control-radius)] border border-[var(--lms-error)] bg-[rgba(239,68,68,0.06)] px-3 py-2 text-sm text-error">That code did not work, or this share is no longer available.</p>:null}
+   <ShareCodeForm action={"/company-share/"+encodeURIComponent(token)+"/access"}/>
+   <p className="mt-3 text-xs leading-[20px] text-muted-foreground">If your invitation did not include a code, ask the placement cell. Email delivery is not available from this protected share.</p>
+   <p className="mt-3 break-words text-xs leading-[20px] text-muted-foreground">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
+  </section>
+ </main>;
+ if(result.kind!=="READY")return <main className={`${authStyles.page} mx-auto min-h-dvh max-w-[1000px] px-4 py-12`}>
+  <section role="alert" className="mx-auto mt-12 max-w-[480px] space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-5 md:p-6">
    <PageHeader title="This link is not valid any more." />
    <p className="text-sm text-body leading-[22px]">It may have expired or been withdrawn. Please ask the placement cell for a new one.</p>
    <Link href="/" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Home</Link>
   </section>
  </main>;
- const columns=safeCompanyShareColumns(result.selectedColumns);
+ const columns=["APPLICATION_ID",...safeCompanyShareColumns(result.selectedColumns).filter(key=>key!=="APPLICATION_ID")] as const;
  const href=(p:number)=>companyShareApplicantHref(token,p,result.search);
  const tableColumns: DataTableColumn<(typeof result.rows)[number]>[] = columns.map((key,index)=>({
   key,
   header: COMPANY_SHARE_COLUMNS[key],
   mobileLabel: COMPANY_SHARE_COLUMNS[key],
   mobilePriority: index===0?"primary":"secondary",
-  cell: row=>row.cells[key]??"Not recorded",
+  cell: row=>{
+   const value=key==="APPLICATION_ID"?row.applicationId:row.cells[key];
+   if(!value)return "-";
+   if(key==="STAGE")return value==="SHORTLISTED"?"Shortlisted":value;
+   if(key==="RESUME"||key==="GITHUB"||key==="PORTFOLIO"){
+    try{
+     const url=new URL(value);
+     if(url.protocol==="https:"&&!url.username&&!url.password)return <a href={url.href} target="_blank" rel="noopener noreferrer" className="font-semibold text-primary-text underline underline-offset-2 hover:text-[var(--lms-link-text)]">Open</a>;
+    }catch{}
+    return value==="Link not shown"?value:"-";
+   }
+   return value;
+  },
  }));
- return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-5xl space-y-4 px-4 pb-[max(2rem,env(safe-area-inset-bottom))] pt-24 min-[768px]:px-6 min-[768px]:py-12`}>
-  <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-40 grid select-none grid-cols-2 place-items-center overflow-hidden text-center text-lg font-semibold uppercase tracking-widest text-muted-foreground opacity-20 md:grid-cols-3">
-   {Array.from({length:18},(_,index)=><span key={index} className="block w-[150%] -rotate-30 whitespace-nowrap">{result.companyName} · confidential</span>)}
+ return <main className={`${authStyles.page} relative isolate mx-auto min-w-0 max-w-[1000px] space-y-4 px-4 py-12`}>
+  <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[1] flex -rotate-[20deg] scale-[1.4] select-none flex-wrap content-start overflow-hidden text-lg font-semibold text-muted-foreground opacity-[0.07]">
+   {Array.from({length:120},(_,index)=><span key={index} className="whitespace-nowrap px-9 py-7">{result.companyName} · confidential</span>)}
   </div>
-  <div className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
-  <section aria-label="Shared applicant summary" className="min-w-0 space-y-2 border-b border-[var(--lms-canvas-border)] pb-4">
-   <p className="text-sm text-muted-foreground leading-[22px]">42Students · Company applicant share</p>
-   <PageHeader title={"Shared with "+result.companyName} />
-   <p className="mt-1 max-w-3xl break-words [overflow-wrap:anywhere] text-base font-medium leading-6 text-foreground">{result.title}</p>
-   <p className="max-w-3xl break-words text-sm text-body leading-[22px]">
-    Shared by {result.collegeName} on {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))}
-    {" "}for {result.companyName}. Please do not forward this page.
-   </p>
-   <p className="max-w-3xl break-words text-sm text-body leading-[22px]">
-    The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"short",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.
-   </p>
-   <p className="max-w-3xl break-words text-xs text-muted-foreground leading-[20px]">
-    Current shortlisted applicants only. Access can be revoked. Only the placement cell\u0027s chosen columns are disclosed; private notes are never shared.
-   </p>
-   {result.shortlistBy?<p role="status" className="mt-2 border-l-2 border-primary bg-primary-subtle px-3 py-2 text-sm font-semibold text-body leading-[22px]">Please shortlist by {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(new Date(result.shortlistBy))}.</p>:null}
+  <div className="relative z-[2] min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-6">
+  <section aria-label="Shared applicant summary" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+   <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+    <h1 className="min-w-0 break-words text-xl font-semibold leading-7 text-[var(--lms-heading)]">{result.total.toLocaleString("en-IN")} applicants for {result.title}</h1>
+    <a href={publicApplicantExportHref(token,result.search)} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-semibold text-body hover:border-primary hover:text-primary-text md:min-h-9">Download list</a>
+   </div>
+   {result.shortlistBy?<p role="status" className="flex items-start gap-2 rounded-[var(--lms-control-radius)] border border-[var(--lms-info)] bg-[var(--lms-info-subtle)] px-3 py-2 text-sm text-body leading-[22px]"><span aria-hidden="true" className="font-bold text-[var(--lms-info)]">ⓘ</span><span>Please shortlist by {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.shortlistBy))}.</span></p>:null}
+   <p className="break-words text-sm text-muted-foreground leading-[22px]">Shared by the placement cell on {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.sharedAt))} for {result.companyName}. Please do not forward this page. Phone numbers appear only for shortlisted students.</p>
+   <p className="break-words text-xs text-muted-foreground leading-[20px]">The link works until {new Intl.DateTimeFormat("en-IN",{day:"numeric",month:"numeric",year:"numeric",timeZone:"Asia/Kolkata"}).format(new Date(result.expiresAt))}. Everything you open is logged.</p>
+   <p className="break-words text-xs text-muted-foreground leading-[20px]">Only the authorized shortlist and selected applicant details are shared. Private notes remain confidential.</p>
   </section>
   <form action={"/company-share/"+encodeURIComponent(token)} method="get"
     className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:flex-row md:flex-wrap md:items-end">
@@ -91,12 +90,12 @@ export default async function CompanySharePage({
     <a href={companyShareApplicantHref(token,1,"")} className="inline-flex min-h-11 items-center justify-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</a>
   </form>
   <p role="status" className="text-sm text-body leading-[22px]">
-   {result.total.toLocaleString("en-IN")} shortlisted applicants · Page {result.page} of {result.totalPages}
+   {result.total.toLocaleString("en-IN")} applicants · Page {result.page} of {result.totalPages}
   </p>
   <DataTable columns={tableColumns} rows={result.rows}
    getRowKey={row=>row.applicationId} caption="Shared applicants"
    empty={<div role="status" className="flex flex-wrap items-center justify-between gap-3">
-    <p className="text-sm text-body leading-[22px]">No current shortlist records on this page.</p>
+    <p className="text-sm text-body leading-[22px]">No applicants found.</p>
     {result.search?<Link href={companyShareApplicantHref(token,1,"")}
       className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear</Link>:null}
    </div>}/>

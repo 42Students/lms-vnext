@@ -8,6 +8,8 @@ import {
   isNull,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {placementBatchLifecycles} from "@/db/schema/placement-batches";
+import {effectiveTpoBatchRuleFields} from "./tpo-batch-rules-model";
 import {
   learnerProgramEnrollments,
   sectionEnrollments,
@@ -31,7 +33,7 @@ import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
 import { canAddPlacementHeldOffer, canShowLearnerSelfApply } from "./held-offer-policy";
-import { learnerJobApplyBlockers } from "./learner-job-apply-blockers-model";
+import { learnerJobApplyBlockers, learnerJobApplyGate } from "./learner-job-apply-blockers-model";
 import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
@@ -244,6 +246,13 @@ export async function listLearnerPlacementJobs(
     upliftPct: placementCollegeRules.upliftPct,
   }).from(placementCollegeRules)
     .where(eq(placementCollegeRules.collegeId, membership.collegeId)).limit(1);
+  // Apply the same validated batch rules as the own Rules page.
+  const [activeBatch]=await getDb().select({rulesOverride:placementBatchLifecycles.rulesOverride})
+    .from(placementBatchLifecycles).where(and(
+      eq(placementBatchLifecycles.collegeId,membership.collegeId),
+      eq(placementBatchLifecycles.cohortId,enrollments[0]!.cohortId),
+    )).limit(1);
+  const effectiveRules=rules?effectiveTpoBatchRuleFields(rules,activeBatch?.rulesOverride):null;
   const heldOffers = await loadPlacementHeldOfferFacts(
     membership.collegeId, membership.id,
   );
@@ -291,8 +300,8 @@ export async function listLearnerPlacementJobs(
       );
 
       const heldOfferEligible = canAddPlacementHeldOffer({
-        maxHeldOffers: rules?.maxHeldOffers ?? 1,
-        upliftPct: rules?.upliftPct ?? 40,
+        maxHeldOffers: effectiveRules?.maxHeldOffers ?? 1,
+        upliftPct: effectiveRules?.upliftPct ?? 40,
         nextAnnualCtcInr: row.roleOption.minimumAnnualCtcInr ??
           row.job.minimumAnnualCtcInr,
         isDream: row.job.isDream,
@@ -323,6 +332,7 @@ export async function listLearnerPlacementJobs(
         deadlinePassed,
         canApply: canShowLearnerSelfApply(applyContext),
         applicationBlockers: learnerJobApplyBlockers(applyContext),
+        applicationGate: learnerJobApplyGate({...applyContext,published:row.job.status==="PUBLISHED"}),
       };
     }),
   );

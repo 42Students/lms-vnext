@@ -15,7 +15,10 @@ export type LearnerShellAccess = {
   projectsEnabled: boolean;
   placementsEnabled: boolean;
   driveDayEnabled: boolean;
-  modules?: Record<"projects"|"placements"|"electives", boolean>;
+  modules: Record<"projects"|"placements"|"electives", boolean>;
+  /** An unavailable resolver is not equivalent to an explicit college off switch. */
+  accessUnavailable?: boolean;
+  disabledReason?: string;
 };
 
 export async function getLearnerShellAccess(
@@ -48,6 +51,7 @@ export async function getLearnerShellAccess(
         modules.placements.enabled &&
         placementParticipation?.status === "ELIGIBLE",
       driveDayEnabled,
+      accessUnavailable:false,
       modules: {
         projects: modules.projects.enabled,
         placements: modules.placements.enabled,
@@ -59,6 +63,8 @@ export async function getLearnerShellAccess(
       projectsEnabled: false,
       placementsEnabled: false,
       driveDayEnabled: false,
+      accessUnavailable:true,
+      disabledReason:"Module access is temporarily unavailable. Refresh the page to retry.",
       modules: { projects:false,placements:false,electives:false },
     };
   }

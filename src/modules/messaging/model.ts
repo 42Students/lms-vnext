@@ -92,3 +92,37 @@ export function previewAudience(requests: readonly OutboundSendRequest[], policy
     return {channel:request.channel,recipient,...decision};
   });
 }
+
+/** Exact Exotel job-update name normalization: DLT placeholders in a
+ * recruiter-provided display name must never be interpolated as template text. */
+export function sanitizeLegacyDltRecipientName(value:string|null|undefined):string{
+ const cleaned=(value??"").trim().replace(/\{#[^}]*#\}/g,"").trim();
+ return (cleaned||"User").slice(0,30);
+}
+/** A preview must use the college's live suppression set, not another
+ * tenant's unsubscribes or a stale client-provided allowlist. */
+export async function previewCollegeCampaignAudience(args:{
+ collegeId:string;requests:readonly OutboundSendRequest[];
+ loadSuppressed:(collegeId:string)=>Promise<ReadonlySet<string>>;
+ policyFor:(request:OutboundSendRequest)=>DeliveryPolicy;
+}){
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(args.collegeId))
+  throw new Error("INVALID_COLLEGE_SCOPE");
+ const requests=args.requests.map(request=>outboundSendSchema.parse(request));
+ if(requests.some(request=>request.channel!=="EMAIL"||
+    !request.purpose.startsWith("tpo-recruiter-campaign:")))
+  throw new Error("INVALID_CAMPAIGN_PURPOSE");
+ const suppressed=await args.loadSuppressed(args.collegeId);
+ return previewAudience(requests,request=>{
+  // Read each policy once: a live per-college unsubscribe snapshot must not
+  // be mixed with two inconsistent caller policy reads in one preview row.
+  const policy=args.policyFor(request);
+  return {...policy,suppressed:new Set([...policy.suppressed,...suppressed])};
+ });
+}
+export function suppressionOperatorMessage(reason:SuppressionReason):string{
+ if(reason==="nonprod-not-allowlisted")
+  return "Not attempted in development: recipient is outside the allowlist.";
+ if(reason==="unsubscribed")return "Unsubscribed for this college; not sent.";
+ return "Not sent: "+reason.replace(/-/g," ")+".";
+}

@@ -10,6 +10,7 @@ import {
   gte,
   inArray,
   isNotNull,
+  isNull,
   lte,
   or,
   sql,
@@ -97,6 +98,9 @@ const paginationFields = {
 export const tpoStudentsQuerySchema = z
   .object({
     collegeId: uuid,
+    // Legacy /table?everyone=true includes all college learners, including
+    // those not enrolled for placements. Default remains the placement pool.
+    everyone:yesNo.optional(),
     journeyState: z
       .enum(TPO_STUDENT_JOURNEY_STATES)
       .optional(),
@@ -275,8 +279,15 @@ export async function getTpoStudentsIntelligence(
     .select({
       membershipId: collegeMemberships.id,
       displayName: users.displayName,
+      legacyFirstName: users.legacyFirstName,
+      legacyLastName: users.legacyLastName,
+      legacyUserUniqueId: users.legacyUniqueId,
+      contactAvailable: sql<boolean>`${users.phoneE164} is not null`,
       email: users.email,
       rollNumber: learnerProfiles.rollNumber,
+      legacyLearnerId: learnerProfiles.legacyLearnerId,
+      legacyProfileUniqueId: learnerProfiles.legacyUniqueId,
+      resumeAvailable: sql<boolean>`${learnerProfiles.resumeObjectPath} is not null and ${learnerProfiles.resumeScanStatus} = 'CLEAN'`,
       profileDocument:learnerProfiles.profileDocument,
       registrationNumber:
         learnerProfiles.registrationNumber,
@@ -299,6 +310,9 @@ export async function getTpoStudentsIntelligence(
       twelfthPctBasisPoints:placementCandidateAcademicEvidence.twelfthPctBasisPoints,
       diplomaPctBasisPoints:placementCandidateAcademicEvidence.diplomaPctBasisPoints,
       undergraduatePctBasisPoints:placementCandidateAcademicEvidence.undergraduatePctBasisPoints,
+      postgraduatePctBasisPoints:placementCandidateAcademicEvidence.postgraduatePctBasisPoints,
+      academicImportedAt:placementCandidateAcademicEvidence.importedAt,
+      academicVerifiedBy:placementCandidateAcademicEvidence.verifiedByUserId,
       passingYear:placementCandidateAcademicEvidence.passingYear,
       gapYears:placementCandidateAcademicEvidence.gapYears,
       isLateralEntry:placementCandidateAcademicEvidence.isLateralEntry,
@@ -391,6 +405,34 @@ export async function getTpoStudentsIntelligence(
         eq(collegeMemberships.collegeId, college.id),
         eq(collegeMemberships.status, "ACTIVE"),
         eq(users.platformStatus, "ACTIVE"),
+        // Push directly translatable roster/academic predicates to SQL.
+        // Multi-table journey/profile filters still require derived evidence.
+        input.branchId?eq(departments.id,input.branchId):undefined,
+        input.programId?eq(programs.id,input.programId):undefined,
+        input.minCgpa!==undefined?gte(placementCandidateAcademicEvidence.cgpaHundredths,
+          Math.ceil(input.minCgpa*100)):undefined,
+        input.maxCgpa!==undefined?lte(placementCandidateAcademicEvidence.cgpaHundredths,
+          Math.floor(input.maxCgpa*100)):undefined,
+        input.cgpaRecorded===true?isNotNull(placementCandidateAcademicEvidence.cgpaHundredths):undefined,
+        input.cgpaRecorded===false?isNull(placementCandidateAcademicEvidence.cgpaHundredths):undefined,
+        input.maxActiveBacklogs!==undefined?lte(placementCandidateAcademicEvidence.activeBacklogs,
+          input.maxActiveBacklogs):undefined,
+        input.maxPastBacklogs!==undefined?lte(placementCandidateAcademicEvidence.pastBacklogs,
+          input.maxPastBacklogs):undefined,
+        input.minTenthPct!==undefined?gte(placementCandidateAcademicEvidence.tenthPctBasisPoints,
+          Math.ceil(input.minTenthPct*100)):undefined,
+        input.minTwelfthPct!==undefined?gte(placementCandidateAcademicEvidence.twelfthPctBasisPoints,
+          Math.ceil(input.minTwelfthPct*100)):undefined,
+        input.minDiplomaPct!==undefined?gte(placementCandidateAcademicEvidence.diplomaPctBasisPoints,
+          Math.ceil(input.minDiplomaPct*100)):undefined,
+        input.minUgPct!==undefined?gte(placementCandidateAcademicEvidence.undergraduatePctBasisPoints,
+          Math.ceil(input.minUgPct*100)):undefined,
+        input.passingYear!==undefined?eq(placementCandidateAcademicEvidence.passingYear,input.passingYear):undefined,
+        input.maxGapYears!==undefined?lte(placementCandidateAcademicEvidence.gapYears,input.maxGapYears):undefined,
+        input.isLateralEntry!==undefined?eq(placementCandidateAcademicEvidence.isLateralEntry,
+          input.isLateralEntry):undefined,
+        input.marksVerified===true?isNotNull(placementCandidateAcademicEvidence.verifiedAt):undefined,
+        input.marksVerified===false?isNull(placementCandidateAcademicEvidence.verifiedAt):undefined,
         input.batchId?eq(learnerProgramEnrollments.cohortId,input.batchId):undefined,
         or(
           eq(learnerProgramEnrollments.status,"ACTIVE"),
@@ -878,6 +920,9 @@ export async function getTpoStudentsIntelligence(
           });
 
     const source: TpoStudentSource = {
+      // Legacy learnerId/uniqueId/rollNumber correspond to scoped UUID
+      // membershipId/registrationNumber/rollNumber; never expose raw
+      // phone or object-storage resume URLs in this broad roster.
       membershipId: learner.membershipId,
       displayName: learner.displayName,
       email: learner.email,
@@ -903,6 +948,9 @@ export async function getTpoStudentsIntelligence(
           `${learner.membershipId}:${learner.cohortId}`,
         ) ?? null,
       participation,
+      // Legacy cgpa/percentage decimal fields are stored as integer
+      // hundredths/basis points. deriveTpoStudent performs the exact /100
+      // display conversion and keeps verifiedAt/source separate from scores.
       academicEvidence: {
         cgpaHundredths: learner.cgpaHundredths,
         activeBacklogs: learner.activeBacklogs,
@@ -937,7 +985,31 @@ export async function getTpoStudentsIntelligence(
       ambiguousSection,
     };
 
-    return deriveTpoStudent(source, now);
+    const derived=deriveTpoStudent(source, now);
+    // Legacy numeric learner ID and unique ID are import provenance only.
+    // Never use either instead of the college-scoped membership UUID.
+    // Contact details and private object keys require separate need-to-know
+    // authorization and must not leak through the bulk roster/export.
+    return {...derived,
+      legacyIdentity:{
+        learnerId:learner.legacyLearnerId,
+        uniqueId:learner.legacyProfileUniqueId??learner.legacyUserUniqueId,
+        firstName:learner.legacyFirstName,
+        lastName:learner.legacyLastName,
+      },
+      privateContactAvailability:{
+        mobile:learner.contactAvailable,
+        cleanResume:learner.resumeAvailable,
+        requiresAuthorizedDetailAccess:true as const,
+      },
+      academicProvenance:{
+        pgPct:learner.postgraduatePctBasisPoints==null?null:learner.postgraduatePctBasisPoints/100,
+        source:learner.academicSource,
+        importedAt:learner.academicImportedAt,
+        verifiedByUserId:learner.academicVerifiedBy,
+        verifiedAt:learner.verifiedAt,
+      },
+    };
   });
 
   // TPO-settings-audit-41: the stored preparation-course rule now participates
@@ -966,7 +1038,9 @@ export async function getTpoStudentsIntelligence(
   const rowsWithDebarment=prepStudentRows.map(row=>({...row,
     debarred:debarmentAvailable?debarredIds.has(row.membershipId):null,
   }));
-  const workingRows=selectTpoStudentWorkingSet(rowsWithDebarment,Boolean(input.batchId));
+  const workingRows=input.everyone
+    ? rowsWithDebarment
+    : selectTpoStudentWorkingSet(rowsWithDebarment,Boolean(input.batchId));
   const outcomeMatches=input.afterCollege?await readTpoAfterCollegeMatches(college.id,input.afterCollege):null;
   const filteredRows=!outcomeMatches?workingRows:!outcomeMatches.available?[]:
     workingRows.filter(row=>outcomeMatches.matched.has(row.membershipId)||

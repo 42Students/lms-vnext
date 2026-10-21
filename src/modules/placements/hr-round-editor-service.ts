@@ -33,6 +33,22 @@ export const HR_LEGACY_DRIVE_ACTION_COVERAGE = {
  selections: { legacy: "POST /drives/{jobId}/selections", vNext: null, state: "not-verified" },
 } as const;
 
+/** Recruiter round edits intentionally map destructive legacy removal to
+ * CANCELLED + durable event history. PENDING and owner-only CAS prevents
+ * rewriting a published or attended round, and a terminated drive is not
+ * reopened through the editor. Clients can offer an access-ended notice. */
+export const HR_ROUND_LIFECYCLE_COMPAT={
+  legacyDelete:"DELETE",vNextLifecycle:"CANCELLED",keepsHistory:true,
+  maxRoundNameLength:100,maxActiveRounds:12,
+  duplicatePolicy:"case-insensitive Unicode NFKC, excludes cancelled",
+} as const;
+export function hrRoundEditorUnavailableMessage(code:string){
+ return code==="PLACEMENT_JOB_NOT_FOUND"
+  ?"This drive is over or your recruiter access has ended. Review an active drive to manage rounds."
+  :code==="PLACEMENT_ROUND_STALE"
+   ?"The round changed. Refresh the active drive before continuing."
+   :"This round cannot be edited after scheduling, results, or interview slots are recorded.";
+}
 export async function editHrJobRound(context:RequestContext,rawJobId:unknown,raw:unknown){
  const jobId=z.string().uuid().parse(rawJobId),input=hrRoundFormSchema.parse(raw);
  if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)

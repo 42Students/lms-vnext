@@ -61,6 +61,21 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
  const visible=ordered.slice(
   (pagination.page-1)*HR_CONVERSATION_PAGE_SIZE,pagination.page*HR_CONVERSATION_PAGE_SIZE,
  );
+ // The heading reports unread across every authorized conversation, not
+ // just the current page, search, tab, or unread-only filter.
+ const [globalUnread] = accessibleIds.length ? await getDb().select({
+   total: sql<number>`count(*)::integer`,
+ }).from(placementTpoMessages)
+  .innerJoin(placementTpoMessageThreads,
+    eq(placementTpoMessageThreads.id,placementTpoMessages.threadId))
+  .where(and(
+    inArray(placementTpoMessages.threadId,accessibleIds),
+    eq(placementTpoMessageThreads.collegeId,collegeId),
+    eq(placementTpoMessageThreads.recruiterUserId,context.user.id),
+    eq(placementTpoMessages.senderType,"TPO"),
+    eq(placementTpoMessages.kind,"MESSAGE"),
+    isNull(placementTpoMessages.readAt),
+  )) : [{total:0}];
  const counts=visible.length?await getDb().select({
    threadId:placementTpoMessages.threadId,
    unread:sql<number>`count(*)::integer`,
@@ -92,5 +107,6 @@ export async function listHrConversations(context:RequestContext,raw:unknown={})
    preview:byPreview.get(t.id)??null,
   })),pages:pagination.pages,page:pagination.page,total:ordered.length,
   first:pagination.first,last:pagination.last,
+  unreadTotal:Number(globalUnread?.total??0),
   unreadInView:visible.reduce((total,row)=>total+(byThread.get(row.id)??0),0)};
 }

@@ -11,7 +11,7 @@ import {CoursesServiceError} from "./errors";
 
 export const superAdminCourseBulkSchema=z.strictObject({
  courseIds:z.array(z.uuid()).min(1).max(100).refine(ids=>new Set(ids).size===ids.length),
- visibleToStudents:z.boolean(),
+ visibleToStudents:z.preprocess(value=>value===0?false:value===1?true:value,z.boolean()),
  confirmed:z.literal(true),
 });
 
@@ -21,6 +21,10 @@ export const superAdminCourseBulkSchema=z.strictObject({
  * Published content visibility until a separate approved lifecycle exists. */
 export async function bulkSuperAdminCourseVisibility(context:RequestContext,raw:unknown){
  const input=superAdminCourseBulkSchema.parse(raw);
+ const limit=Number(process.env.COURSE_BULK_STATUS_MAX??"100");
+ const allowed=Number.isSafeInteger(limit)?Math.min(100,Math.max(1,limit)):100;
+ if(input.courseIds.length>allowed)
+  throw new CoursesServiceError("COURSE_VISIBILITY_BULK_TOO_LARGE");
  const acting=await resolveActingCollege(context,"courses.manage");
  const selected=await getDb().select({id:courses.id}).from(courses)
   .innerJoin(departments,eq(departments.id,courses.departmentId))

@@ -61,8 +61,8 @@ export function legacyLearnerScheduleView(view:string|null):LearnerRoundTimeBuck
 }
 const timeChoices: { value: LearnerRoundTimeBucket; label: string }[] = [
   { value:"all", label:"All" },
-  { value:"upcoming", label:"Upcoming" },
-  { value:"past", label:"Past schedule" },
+  { value:"upcoming", label:"Coming up" },
+  { value:"past", label:"Past" },
   { value:"unscheduled", label:"Awaiting schedule" },
 ];
 const defaults: LearnerRoundBrowseFilters = {
@@ -199,8 +199,10 @@ export function LearnerCareerRoundsWorkspace({
     setFilters((current) => ({ ...current, [key]: value }));
   };
   const rows = useMemo(
-    () => browseLearnerCareerRounds(rounds, kind, filters, nowMs),
-    [rounds, kind, filters, nowMs],
+    () => browseLearnerCareerRounds(rounds,kind,
+      filters.time==="past"&&filters.sort==="soonest"
+        ? {...filters,sort:"latest"} : filters,nowMs),
+    [rounds,kind,filters,nowMs],
   );
   const relevant = useMemo(
     () => browseLearnerCareerRounds(rounds, kind, defaults, nowMs),
@@ -312,6 +314,16 @@ export function LearnerCareerRoundsWorkspace({
           <StatusBadge tone={urgencyCount ? "warning" : "neutral"}>
             {urgencyCount} within seven days
           </StatusBadge>
+        </div>
+        <div className="flex flex-wrap items-center gap-2 text-sm">
+          <Link href="/learn/my-placements/schedule?view=coming"
+            className="font-semibold text-link underline underline-offset-4">
+            Full Schedule · Coming up
+          </Link>
+          <Link href="/learn/my-placements/schedule?view=past"
+            className="font-semibold text-link underline underline-offset-4">Past</Link>
+          <Link href="/learn/my-placements/schedule?view=calendar"
+            className="font-semibold text-link underline underline-offset-4">Calendar</Link>
         </div>
         <div className="flex gap-2 overflow-x-auto pb-2 md:flex-wrap" role="group" aria-label="Filter by schedule">
           {timeChoices.map(({ value, label }) => (
@@ -456,8 +468,14 @@ export function LearnerCareerRoundsWorkspace({
       ) : null}
       {visibleRows.length === 0 && relevant.length > 0 ? (
         <div role="status" className="flex min-h-44 flex-col items-center justify-center gap-3 rounded-xl border border-border bg-[var(--lms-neutral-50)] px-6 py-12 text-center">
-          <p className="text-sm font-semibold text-foreground">No rounds match your filters</p>
-          <p className="mt-2 text-sm text-body">Try a different date range or employer.</p>
+          <p className="text-sm font-semibold text-foreground">
+            {relevant.length===0 ? "Nothing scheduled yet" : "No rounds match your filters"}
+          </p>
+          <p className="mt-2 text-sm text-body">
+            {relevant.length===0
+              ? "Rounds, assessments and interviews appear here when the placement cell schedules them."
+              : "Try a different date range or employer."}
+          </p>
           <Button type="button"
             onClick={() => { setFilters(defaults); setDueBucket("all"); setMissingLinkOnly(false); }}
             variant="ghost" className="mt-3 min-h-11 min-[768px]:min-h-9 !text-[var(--lms-primary-text)] underline">

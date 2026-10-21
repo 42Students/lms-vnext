@@ -29,3 +29,11 @@ export function facultyAssessmentReportErrorCopy(kind:"assignment"|"quiz",error:
   return {title:FACULTY_REPORT_NOT_FOUND_MESSAGE,retry:false as const};
  return {title:"Couldn't load the report.",retry:true as const};
 }
+
+export function facultyReportRouteRecovery(assessmentId:unknown,deliveryId:unknown){
+ const idIsValid=z.string().uuid().safeParse(assessmentId).success;
+ const deliveryIsValid=z.string().uuid().safeParse(deliveryId).success;
+ return {title:idIsValid&&!deliveryIsValid?"Select a Section to view this report.":"Report not found.",
+   selectSection:idIsValid&&!deliveryIsValid,
+   href:"/teacher/courses"};
+}

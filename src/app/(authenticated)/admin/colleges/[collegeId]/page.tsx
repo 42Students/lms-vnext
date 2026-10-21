@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+
 import { collegeIdSchema } from "@/modules/colleges/validation";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { ErrorState } from "@/components/ui/error-state";
@@ -8,13 +8,27 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Tabs } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
 import {TenantRestoreAction} from "@/components/admin/tenant-restore-action";
 import { CollegeServiceError } from "@/modules/colleges/service";
 import { getSuperAdminTenantLifecycleDetail } from "@/modules/colleges/admin-tenant-lifecycle-service";
 import { tenantSetupLinksAvailable } from "@/modules/colleges/admin-tenant-lifecycle-model";
 import { superAdminVerificationHref } from "@/modules/verification/admin-links";
-export default async function TenantDetail({params}:{params:Promise<{collegeId:string}>}) {
+type ManageTab="web-address"|"sign-in"|"branding"|"admins"|"activity";
+const manageTabs:readonly {id:ManageTab;label:string;path:string;description:string}[]=[
+ {id:"web-address",label:"Web address",path:"subdomain",description:"Register and verify this college's domain before enabling sign-in."},
+ {id:"sign-in",label:"Sign-in",path:"signin",description:"Configure permitted college sign-in methods and review delivery readiness."},
+ {id:"branding",label:"Branding",path:"branding",description:"Update the college logo, favicon and appearance."},
+ {id:"admins",label:"Admins",path:"admins",description:"Review and manage active college administrators."},
+ {id:"activity",label:"Activity",path:"activity",description:"Audit only this college's changes; other tenants remain excluded."},
+];
+export default async function TenantDetail({params,searchParams}:{
+ params:Promise<{collegeId:string}>;
+ searchParams?:Promise<{tab?:string|string[]}>;
+}) {
  const {collegeId}=await params;
+ const requestedTab=(await searchParams)?.tab;
+ const tab:ManageTab=typeof requestedTab==="string"&&manageTabs.some(item=>item.id===requestedTab)?requestedTab as ManageTab:"web-address";
  const context=await getCurrentRequestContext();
  if (!collegeIdSchema.safeParse(collegeId).success) return <div className="min-w-0 space-y-4">
    <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges" />}/>
@@ -25,7 +39,13 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
  let item:Awaited<ReturnType<typeof getSuperAdminTenantLifecycleDetail>>;
  try {item=await getSuperAdminTenantLifecycleDetail(context,collegeId);}
  catch(error){
-   if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND") notFound();
+     if(error instanceof CollegeServiceError&&error.code==="COLLEGE_NOT_FOUND")
+    return <div className="min-w-0 space-y-4 md:ml-auto md:max-w-[980px]">
+     <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
+     <ErrorState title="Missing collegeId"
+      description="The college record is no longer available. Refresh the Colleges list and select a college to manage."
+      action={<Link href="/admin/colleges" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh Colleges list</Link>}/>
+    </div>;
    if(error instanceof AuthorizationError) throw error;
    return <div className="min-w-0 space-y-4">
      <PageHeader title="Manage College" actions={<PageBackLink href="/admin/colleges" label="Colleges"/>}/>
@@ -42,22 +62,42 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
   ["Country",item.country??"Not recorded"],
   ["Created (IST)",new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(item.createdAt)],
  ];
- return <div className="min-w-0 space-y-[var(--lms-space-6)]">
-  <PageHeader title={item.name} description="Read-only tenant identity and setup links in the authorized scope."
-   actions={<PageBackLink href="/admin/tenants" label="Tenant directory"/>}/>
-  <Banner tone="info" role="status">
-   Manage College is divided into separate pages for Branding, Admins, Sign-in Methods and Web address.
-   Save or discard edits in the active section before leaving it. Do not switch college scope
-   while a save is pending. This overview has no unsaved form changes to discard.
-  </Banner>
-  <div className="min-w-0">
-   <Tabs ariaLabel="College tabs" renderPanel={false} value="college" items={[
-    {value:"college",label:"College",href:`/admin/colleges/${encodeURIComponent(item.id)}`},
-    {value:"activity",label:"Activity",href:`/activity?collegeId=${encodeURIComponent(item.id)}`},
-   ]}/>
-
+ const base="/admin/colleges/"+encodeURIComponent(item.id);
+ const active=manageTabs.find(entry=>entry.id===tab)!;
+ return <div role="region" aria-label={"Manage College · "+item.name} className="min-w-0 w-full space-y-4 bg-surface p-4 md:ml-auto md:max-w-[980px] md:border md:border-border md:p-4">
+  <div className="flex min-w-0 flex-wrap items-center gap-2">
+   <Badge tone="info">ID: {item.id}</Badge>
+   <Badge tone="neutral">Org: {item.organizationName??item.organizationId}</Badge>
+   <Badge tone={item.status==="ACTIVE"?"success":"warning"}>{item.status}</Badge>
   </div>
-  <div className="grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">
+  <PageHeader title={item.name} description="Manage College · Select a setup tab. This panel is bound to the college identity above."
+   actions={<PageBackLink href="/admin/colleges" label="Close manage panel"/>}/>
+  <Banner tone="info" role="status">
+   Your selected college stays fixed when switching these setup tabs. Editing opens the authorized section
+   with its own save, confirmation and unsaved-change protections. Domains require manual host registration and verification.
+  </Banner>
+  <div className="min-w-0 border-b border-border pb-3">
+   <Tabs ariaLabel="Manage College tabs" renderPanel={false} value={tab}
+    items={manageTabs.map(entry=>({value:entry.id,label:entry.label,href:base+"?tab="+entry.id}))}/>
+  </div>
+  <section aria-label={active.label+" setup"} className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+   <h2 className="text-lg font-semibold text-foreground">{active.label}</h2>
+   <p className="text-sm text-body">{active.description}</p>
+   {active.id==="activity"?<div className="flex flex-wrap gap-3">
+    <Link href={"/activity?collegeId="+encodeURIComponent(item.id)}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">View scoped activity</Link>
+    <Link href={"/api/activity/admin-export?collegeId="+encodeURIComponent(item.id)}
+     className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Export activity CSV</Link>
+   </div>:<Link href={base+"/"+active.path}
+    className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+     Open {active.label} editor
+   </Link>}
+   {active.id==="web-address"?<p className="text-xs text-muted-foreground">Register the hostname and verify ownership in deployment infrastructure. DNS verification is a separate manual approval before production activation.</p>:null}
+   {active.id==="branding"?<p className="text-xs text-muted-foreground">Saving branding produces success and error feedback in the scoped editor; no other college is changed.</p>:null}
+  </section>
+  <details className="min-w-0 border-t border-border pt-3">
+   <summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Additional college setup links</summary>
+  <div className="mt-3 grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2">
    {tenantSetupLinksAvailable(item.status,item.organizationStatus) ? <>
    {context.adminScope?.collegeId===item.id ? <Link href="/admin/tenants/setup" className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Set up this college</Link> : null}
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/readiness`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Readiness</Link>
@@ -68,6 +108,7 @@ export default async function TenantDetail({params}:{params:Promise<{collegeId:s
    <Link href={`/admin/colleges/${encodeURIComponent(item.id)}/subdomain`} className="inline-flex min-h-11 md:min-h-9 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white">Web address</Link>
    </> : <p className="text-sm text-muted-foreground">Setup links are unavailable while this college or its organization is archived.</p>}
   </div>
+  </details>
   <dl className="grid gap-4 border-t border-border pt-4 md:grid-cols-2">
    {fields.map(([label,value])=><div key={label}><dt className="text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}</dt>
     <dd className="mt-1 break-words text-sm text-body">{value}</dd></div>)}

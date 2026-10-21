@@ -45,6 +45,16 @@ import { indiaAttendanceMonthWindow } from "./month-window";
 import {enqueueAttendanceParentSms,dispatchQueuedAttendanceParentSms} from "./parent-sms-service";
 
 
+/** Legacy-facing copy for recoverable schedule/correction errors.
+ * Internal permission and tenant failure details must not be exposed.
+ */
+export const adminAttendanceActionErrorCopy = {
+  SCHEDULE_EVENT_NOT_FOUND: "Class schedule not found",
+  CONTENT_DELIVERY_MISMATCH: "Class schedule not found",
+  ATTENDANCE_ROSTER_CONFLICT: "Learner is not enrolled in this class",
+  ATTENDANCE_VERSION_CONFLICT: "Attendance changed. Please refresh and try again.",
+} as const;
+
 const uuid = z.string().uuid();
 const correctionSchema = z.strictObject({
   collegeId: uuid,

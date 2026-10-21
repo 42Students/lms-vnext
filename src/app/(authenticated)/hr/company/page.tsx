@@ -1,4 +1,8 @@
 import {NeedsDoingChips} from "@/components/ui/needs-doing-chips";
+import {getDb} from "@/db/client";
+import {placementCompanies} from "@/db/schema";
+import {eq} from "drizzle-orm";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { SummaryStrip } from "@/components/ui/summary-strip";
 import { Pagination } from "@/components/ui/pagination";
 import { Tabs } from "@/components/ui/tabs";
@@ -65,7 +69,15 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
   if (!teamQuery.success || !teamPage.success) return <div className="min-w-0 max-w-full space-y-4"><PageHeader title="Company & Team" />
     <ErrorState title="Invalid team filter" description="Search must be 120 characters or fewer."
       action={<Link href="/hr/company?tab=team" className="min-h-11 md:min-h-9 inline-flex items-center text-primary-text hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear search</Link>} /></div>;
-  const result = await getRecruiterCompanyTeam(context, requestedCollegeId);
+  const result = await getRecruiterCompanyTeam(context, requestedCollegeId, tab==="team").catch(error=>{
+    if(error instanceof AuthorizationError)throw error;
+    return null;
+  });
+  if(!result)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Company & Team"/>
+    <ErrorState title="Could not load this" description="Your recruiter college access could not be loaded."
+      action={<Link href="/hr/company" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline">Retry</Link>}/>
+  </div>;
 
   if (result.status !== "READY") {
     return (
@@ -75,8 +87,8 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           description="Choose the college whose recruiter relationship you want to view. We never guess a college when more than one access grant is active."
         />
         {result.status==="NO_ACCESS"?<EmptyState
-          title="No active college access"
-          description="Your recruiter account has no active college access. Contact the placement cell that invited you."/>:
+          title="Open this on your college&apos;s placement address"
+          description="Your recruiter account has no active college session. Contact the placement cell that invited you."/>:
           <section className="space-y-3 border-b border-border pb-6">
             <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Choose a college</h2>
             <NeedsDoingChips label="Authorized colleges:" items={result.choices.map(grant=>({
@@ -88,9 +100,46 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
     );
   }
 
-  const jobs = await listOwnRecruiterPlacementJobs(context,result.grant.collegeId);
+  let jobs: Awaited<ReturnType<typeof listOwnRecruiterPlacementJobs>>;
+  try {
+    jobs = await listOwnRecruiterPlacementJobs(context,result.grant.collegeId);
+  } catch {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Company & Team"/>
+      <ErrorState title="Could not load this"
+        description="The company drive summary is unavailable. Retry to reload this college; no changes were made."
+        retryHref={"/hr/company?collegeId="+encodeURIComponent(result.grant.collegeId)+(tab==="team"?"&tab=team":"")}
+        retryLabel="Retry"/>
+    </div>;
+  }
   const overview = buildRecruiterCompanyOverview(jobs, result.grant.collegeId, result.company.relationshipId);
-  const attributedDriveCounts=await recruiterTeamAttributedDriveCounts(context,result.grant.collegeId,result.company.relationshipId,jobs);
+  let attributedDriveCounts: Record<string,number> = {};
+  let teamCountsUnavailable = false;
+  if (tab==="team") {
+    try {
+      attributedDriveCounts = await recruiterTeamAttributedDriveCounts(context,
+        result.grant.collegeId,result.company.relationshipId,jobs);
+    } catch { teamCountsUnavailable = true; }
+  }
+  // Public logo URL/industry are not present in the normalized relationship read.
+  // Resolve only the already-authorized company identity; never expose the private object path.
+  const [profile]=tab==="company" ? await getDb().select({
+    industry:placementCompanies.industry,logoPublicUrl:placementCompanies.logoPublicUrl,
+    verifiedAt:placementCompanies.verifiedAt,
+  }).from(placementCompanies).where(eq(placementCompanies.id,result.company.id)).limit(1) : [null];
+  const publicLogo=profile?.logoPublicUrl && /^https:\/\/[^\s]+$/i.test(profile.logoPublicUrl)?profile.logoPublicUrl:null;
+  const companyDomains=result.company.primaryDomain ? ["@"+result.company.primaryDomain.replace(/^@/,"")] : [];
+  if (tab==="team" && (!Array.isArray(result.team) ||
+    !result.team.every(member => typeof member.userId === "string" &&
+      typeof member.displayName === "string" && typeof member.isYou === "boolean"))) {
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Company & Team"/>
+      <ErrorState title="Team data is incomplete"
+        description="Could not load this team. Your company information is unchanged."
+        retryHref={"/hr/company?collegeId="+encodeURIComponent(result.grant.collegeId)+"&tab=team"}
+        retryLabel="Retry team"/>
+    </div>;
+  }
   const matchingTeam = searchHrTeam(result.team,teamQuery.data);
   const teamPageResult = hrTeamPage(matchingTeam,teamPage.data);
   const base = "/hr/company?collegeId=" + encodeURIComponent(result.grant.collegeId);
@@ -99,7 +148,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       <PageHeader
         title="Company & Team"
         description={"Your work with "+result.grant.collegeName}
-        actions={<Link href="/hr/profile"
+        actions={<Link href="/recruiter/profile"
           className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
           Your profile
         </Link>}/>
@@ -111,6 +160,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           href:"/hr/company?collegeId="+encodeURIComponent(grant.collegeId)+"&tab="+tab,
         }))}/> : null}
 
+      <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 md:p-[var(--lms-canvas-padding)]">
       <Tabs renderPanel={false} ariaLabel="Company and team sections" value={tab}
         items={[{value:"company",label:"Company",href:base+"&tab=company"},
           {value:"team",label:"Team",href:base+"&tab=team"},
@@ -119,28 +169,41 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
       {tab === "company" ? (
         <section className="border-b border-border pb-6">
           <div className="flex min-w-0 flex-col items-start gap-3 min-[768px]:flex-row min-[768px]:justify-between">
-            <div className="min-w-0">
+            <div className="flex min-w-0 items-start gap-4">
+              <span aria-label={"Company logo for "+result.company.name}
+                className="inline-flex size-16 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-muted text-2xl font-semibold text-foreground">
+                {publicLogo?<img src={publicLogo} alt="" className="h-full w-full object-contain"/>:
+                  result.company.name.slice(0,1).toUpperCase()}
+              </span>
               <div className="min-w-0">
                 <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">{result.company.name}</h2>
+                <div className="mt-1 flex flex-wrap items-center gap-2">
+                  {profile?.verifiedAt&&result.company.trusted?<Badge tone="success">Verified</Badge>:null}
+                  {companyDomains.length?<span className="break-all text-sm text-muted-foreground">{companyDomains.join(", ")}</span>:null}
+                </div>
+                {profile?.industry?<p className="mt-1 text-sm text-muted-foreground">{profile.industry}</p>:null}
+                <p className="mt-1 text-xs text-muted-foreground">{result.grant.collegeName}</p>
               </div>
-              <p className="mt-1 text-sm text-muted-foreground">{result.grant.collegeName}</p>
             </div>
-            <Badge  tone="neutral">Linked by the placement cell</Badge>
           </div>
           <dl className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Website</dt>
               <dd className="mt-1 text-sm text-foreground">{result.company.websiteUrl?.startsWith("https://")||result.company.websiteUrl?.startsWith("http://")
                 ? <a href={result.company.websiteUrl} target="_blank" rel="noopener noreferrer" className="max-w-full break-all min-h-11 md:min-h-9 inline-flex items-center text-link underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{result.company.websiteUrl}</a>
-                : "Not provided"}</dd>
+                : (result.company.websiteUrl??"Not provided")}</dd>
             </div>
             <div>
               <dt className="text-xs font-medium uppercase tracking-wide text-muted-foreground">Primary domain</dt>
               <dd className="mt-1 break-all text-sm text-foreground">{result.company.primaryDomain ? "@"+result.company.primaryDomain.replace(/^@/,"") : "Not provided"}</dd>
             </div>
           </dl>
-          <p className="mt-3 text-sm text-body">Industry not set</p>
-          <p className="mt-2 max-w-prose text-xs text-muted-foreground">One company for everyone at it. The placement cell manages the verified company relationship.</p>
+          <p className="mt-3 max-w-prose text-sm text-muted-foreground">
+            {companyDomains.length
+              ? "Colleges see this profile. Colleagues who sign in with a work email at "+companyDomains.join(" or ")+" join it."
+              : "Colleges see this profile. Your company comes from your work email."}
+            {" "}To change the name or logo, ask the placement cell.
+          </p>
           <section aria-label="Hiring footprint" className="mt-6 border-t border-border pt-6">
             <h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">Hiring footprint with this college</h3>
             <p className="mt-1 text-sm text-body">Only published and closed jobs at this exact employer-college relationship are counted. Jobs are not attributed to individual recruiters.</p>
@@ -182,6 +245,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
               className="min-h-11 min-w-0 w-full min-[768px]:min-h-9 min-[768px]:max-w-sm min-[768px]:flex-1"/>
             <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           </form>
+          {teamCountsUnavailable ? <p role="alert" className="mb-3 border-l-2 border-[var(--lms-warning-border)] bg-[var(--lms-warning-subtle)] p-3 text-sm text-warning-text">Could not load this team’s drive counts. Retry Team to restore counts.</p> : null}
           <p className="mt-2 text-xs text-muted-foreground">{matchingTeam.length} of {result.team.length} active teammates
             {" · Displaying "+teamPageResult.first+"–"+teamPageResult.last}
           </p>
@@ -189,7 +253,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
             <p role="status" className="mt-3 text-sm text-muted-foreground leading-[1.6]">
               {hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)}
             </p>:null}
-          {teamPageResult.rows.length===0 ? <EmptyState title="No matching teammates" description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}
+          {teamPageResult.rows.length===0 ? <EmptyState title={teamQuery.data?"No matching teammates":"Only you so far"} description={hrTeamRosterMessage(result.team,matchingTeam.length,teamQuery.data,teamPageResult.rows.length)??"No teammates on this page."}
             action={teamQuery.data ? <Link href={base+"&tab=team"} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Clear search</Link> : undefined}/> : (
             <div className="mt-4 min-w-0 divide-y divide-border border-y border-border">
               {teamPageResult.rows.map((member) => (
@@ -203,11 +267,11 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
                       {member.displayName || member.email || "Recruiter"}
                       {member.isYou ? <Badge tone="info" className="ml-2">You</Badge> : null}
                     </div>
-                      <div className="mt-1 break-all text-sm text-muted-foreground">{member.email ?? "Email not available"}</div>
-                      <p className="mt-1 text-xs text-muted-foreground">{attributedDriveCounts[member.userId]??0} drive(s) here</p>
+                      <div className="mt-1 break-all text-sm text-muted-foreground">{[member.title,member.email].filter(Boolean).join(" · ")||"Recruiter"}</div>
+                      <p className="mt-1 text-xs text-muted-foreground">{attributedDriveCounts[member.userId]??0} {attributedDriveCounts[member.userId]===1?"drive":"drives"} here</p>
                     </div>
                   </div>
-                  <div className="min-w-0 break-words text-sm text-muted-foreground">{member.title ?? "Recruiter"}</div>
+
                 </div>
               ))}
             </div>
@@ -215,6 +279,7 @@ export default async function HrCompanyPage({ searchParams }: PageProps) {
           {teamPageResult.pages>1 ? <Pagination label="Team roster pages" page={teamPageResult.page} pageCount={teamPageResult.pages} hrefForPage={page=>base+"&tab=team&q="+encodeURIComponent(teamQuery.data)+"&teamPage="+page}/> : null}
         </section>
       )}
+      </div>
     </div>
   );
 }

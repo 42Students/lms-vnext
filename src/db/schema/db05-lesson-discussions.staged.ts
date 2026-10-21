@@ -27,6 +27,11 @@ export const lessonContentDiscussionsStaged = pgTable(
     id: uuid("id").defaultRandom().primaryKey(),
     // Optional, college-scoped provenance only (not the vNext API identifier).
     legacyDiscussionId: integer("legacy_discussion_id"),
+    legacyClassId: integer("legacy_class_id"),
+    legacyCourseId: integer("legacy_course_id"),
+    legacyContentId: integer("legacy_content_id"),
+    legacyParentDiscussionId: integer("legacy_parent_discussion_id"),
+    legacySequence: integer("legacy_sequence"),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
@@ -87,6 +92,8 @@ export const lessonContentDiscussionsStaged = pgTable(
     index("lesson_content_discussions_content_created_idx")
       .on(table.lessonContentId, table.createdAt, table.id)
       .where(sql`${table.deletedAt} is null`),
+    index("lesson_content_discussions_content_sequence_idx").on(table.lessonContentId,table.sequence,table.id)
+      .where(sql`${table.deletedAt} is null`),
     index("lesson_content_discussions_author_idx")
       .on(table.authorMembershipId, sql`${table.createdAt} DESC`),
     index("lesson_content_discussions_parent_idx")
@@ -94,3 +101,60 @@ export const lessonContentDiscussionsStaged = pgTable(
       .where(sql`${table.parentDiscussionId} is not null`),
   ],
 );
+
+/** Stage-only importer. Source numeric lesson/class IDs MUST resolve through
+ * the selected college; never infer content from a source parent ID alone. */
+export const LEGACY_LESSON_DISCUSSION_TEXT_MAX=5000;
+
+export function legacyLessonDiscussionInputError(text:string):string|null{
+  const length=text.trim().length;
+  return length===0?"Enter a comment.":length>LEGACY_LESSON_DISCUSSION_TEXT_MAX
+    ?"Comment must be 5,000 characters or fewer.":null;
+}
+
+export type LegacyLessonDiscussionImport = {
+  legacyDiscussionId:number;legacyContentId:number;legacyParentId:number|null;
+  sequence:number|null;createdAt:Date;
+};
+
+export function mapLegacyLessonDiscussions(
+  rows:readonly LegacyLessonDiscussionImport[],
+  contentIdMap:ReadonlyMap<number,string>,
+  discussionIdMap:ReadonlyMap<number,string>,
+){
+  const mapped:Array<{legacyDiscussionId:number;lessonContentId:string;
+    parentDiscussionId:string|null;sequence:number;createdAt:Date}>=[];
+  const unresolved:number[]=[];
+  // Parent references must resolve inside the same content scope. A map of
+  // discussion UUIDs alone cannot prove this; reconcile all source rows in
+  // one college-scoped batch before accepting a reply.
+  const sourceContentByDiscussion=new Map<number,number>();
+  const duplicateIds=new Set<number>();
+  for(const row of rows){
+    if(sourceContentByDiscussion.has(row.legacyDiscussionId))
+      duplicateIds.add(row.legacyDiscussionId);
+    sourceContentByDiscussion.set(row.legacyDiscussionId,row.legacyContentId);
+  }
+  const sorted=[...rows].sort((a,b)=>(a.sequence??Number.MAX_SAFE_INTEGER)-
+    (b.sequence??Number.MAX_SAFE_INTEGER)||
+    a.createdAt.getTime()-b.createdAt.getTime()||
+    a.legacyDiscussionId-b.legacyDiscussionId);
+  sorted.forEach((row,index)=>{
+    const content=contentIdMap.get(row.legacyContentId);
+    const parent=row.legacyParentId===null?null:discussionIdMap.get(row.legacyParentId);
+    if(duplicateIds.has(row.legacyDiscussionId)||
+       !Number.isSafeInteger(row.legacyDiscussionId)||row.legacyDiscussionId<=0||
+       !Number.isSafeInteger(row.legacyContentId)||row.legacyContentId<=0||
+       !Number.isFinite(row.createdAt.getTime())||
+       (row.legacyParentId!==null&&(
+         !Number.isSafeInteger(row.legacyParentId)||row.legacyParentId<=0||
+         row.legacyParentId===row.legacyDiscussionId||
+         sourceContentByDiscussion.get(row.legacyParentId)!==row.legacyContentId))||
+       !content||(row.legacyParentId!==null&&!parent)){
+      unresolved.push(row.legacyDiscussionId);return;
+    }
+    mapped.push({legacyDiscussionId:row.legacyDiscussionId,lessonContentId:content,
+      parentDiscussionId:parent??null,sequence:row.sequence??index+1,createdAt:row.createdAt});
+  });
+  return {mapped,unresolved};
+}

@@ -1,6 +1,7 @@
 import "server-only";
 
 import { and, asc, count, eq, isNull, or, sql } from "drizzle-orm";
+import {z} from "zod";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, cohorts, colleges, courseSectionDeliveries,
@@ -28,7 +29,7 @@ export type CollegeSectionErrorCode =
   | "CLASS_CODE_CONFLICT"
   | "CLASS_HAS_DEPENDENCIES"
   | "CLASS_CAPACITY_BELOW_ENROLLMENT"
-  | "CLASS_MIN_SIZE_ABOVE_CAPACITY";
+  | "CLASS_STALE";
 
 export class CollegeSectionError extends Error {
   constructor(public readonly code: CollegeSectionErrorCode, message?: string) {
@@ -160,6 +161,8 @@ function mapError(error: unknown): never {
     case "sections_min_size_ck":
       throw new CollegeSectionError("CLASS_MIN_SIZE_ABOVE_CAPACITY");
   }
+  const pgError=error as {code?:string};
+  if(pgError?.code==="23503")throw new CollegeSectionError("CLASS_HAS_DEPENDENCIES");
   throw error;
 }
 
@@ -264,6 +267,36 @@ export async function updateCollegeSection(context: RequestContext,
   } catch (error) { return mapError(error); }
 }
 
+/** Legacy guarded delete: no historic enrollment, teaching, schedule or delivery may remain. */
+export async function deleteCollegeSection(context: RequestContext, sectionIdInput: unknown) {
+  const sectionId = collegeSectionIdSchema.parse(sectionIdInput);
+  const member = await ownCollege(context);
+  try {
+    return await getDb().transaction(async tx => {
+      const [row] = await tx.select({ id:sections.id, name:sections.name })
+        .from(sections)
+        .innerJoin(academicPeriods, and(
+          eq(academicPeriods.id,sections.academicPeriodId),
+          eq(academicPeriods.collegeId,member.collegeId),
+        ))
+        .where(eq(sections.id,sectionId)).for("update").limit(1);
+      if (!row) throw new CollegeSectionError("CLASS_NOT_FOUND");
+      if (await hasDependencies(tx,sectionId)) {
+        throw new CollegeSectionError("CLASS_HAS_DEPENDENCIES",
+          "This class has students or scheduled teaching records. Move or clear them before deleting.");
+      }
+      await tx.delete(sections).where(eq(sections.id,sectionId));
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_UPDATED,
+        organizationId:member.organizationId,collegeId:member.collegeId,
+        subjectType:"section",subjectId:row.id,subjectLabel:row.name,
+        summary:"Class deleted",metadata:{operation:"DELETE",className:row.name},
+      });
+      return { id:row.id,name:row.name };
+    });
+  } catch (error) { return mapError(error); }
+}
+
 /** Select menus are server-scoped. These are not permission grants for writes. */
 export async function listCollegeSectionOptions(context: RequestContext) {
   const member = await ownCollege(context);
@@ -299,4 +332,44 @@ export async function listCollegeSectionOptions(context: RequestContext) {
       .orderBy(asc(academicPeriods.startDate)),
   ]);
   return { cohorts: cohortChoices, periods: periodChoices };
+}
+
+/** Legacy deletion remains limited to a scoped dependency-free section.
+ * FK RESTRICT protects against concurrent child inserts. */
+export async function deleteCollegeSection(context:RequestContext,sectionIdInput:unknown,raw:unknown){
+ const id=collegeSectionIdSchema.parse(sectionIdInput);
+ const input=z.strictObject({
+  expectedUpdatedAt:z.iso.datetime({offset:true}),
+  confirm:z.literal(true),
+ }).parse(raw);
+ const member=await ownCollege(context);
+ try{
+  return await getDb().transaction(async tx=>{
+   const [row]=await tx.select({
+    id:sections.id,name:sections.name,code:sections.code,
+    status:sections.status,updatedAt:sections.updatedAt,
+    cohortId:sections.cohortId,
+   }).from(sections)
+    .innerJoin(cohorts,eq(cohorts.id,sections.cohortId))
+    .innerJoin(programs,eq(programs.id,cohorts.programId))
+    .innerJoin(departments,and(eq(departments.id,programs.departmentId),
+     eq(departments.collegeId,member.collegeId)))
+    .where(eq(sections.id,id)).for("update",{of:sections}).limit(1);
+   if(!row)throw new CollegeSectionError("CLASS_NOT_FOUND");
+   if(row.updatedAt.getTime()!==new Date(input.expectedUpdatedAt).getTime())
+    throw new CollegeSectionError("CLASS_STALE");
+   if(await hasDependencies(tx,id))throw new CollegeSectionError("CLASS_HAS_DEPENDENCIES");
+   const [deleted]=await tx.delete(sections).where(and(
+    eq(sections.id,id),eq(sections.cohortId,row.cohortId))).returning({id:sections.id});
+   if(!deleted)throw new CollegeSectionError("CLASS_STALE");
+   await recordActivityEventInTransaction(tx,context,{
+    eventType:ACTIVITY_EVENT_TYPES.ACADEMICS_CLASS_UPDATED,
+    organizationId:member.organizationId,collegeId:member.collegeId,
+    subjectType:"section",subjectId:id,subjectLabel:row.name,
+    summary:"Class deleted",
+    metadata:{action:"DELETE",cohortId:row.cohortId,code:row.code,previousStatus:row.status},
+   });
+   return {id:deleted.id,deleted:true as const};
+  });
+ }catch(error){return mapError(error);}
 }

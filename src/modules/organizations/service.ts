@@ -1,4 +1,5 @@
 import { and, asc, eq, ne, sql } from "drizzle-orm";
+import {z} from "zod";
 import { getDb } from "@/db/client";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
@@ -9,7 +10,7 @@ import {
   hasMembershipRole,
   isSuperAdmin,
 } from "@/modules/identity/context";
-import { requirePermission } from "@/modules/permissions/policy";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import {
   createOrganizationInputSchema,
   organizationIdSchema,
@@ -156,6 +157,10 @@ export async function createOrganization(
 ) {
   const input = createOrganizationInputSchema.parse(rawInput);
 
+  // Legacy create is a platform-global operation. A selected organization or
+  // college scope may rename its own organization but must not create siblings.
+  if(context.adminScope?.organizationId||context.adminScope?.collegeId)
+    throw new AuthorizationError("organization.manage");
   requirePermission(context, "organization.manage", {});
   await assertUniqueActiveName(input.name);
 
@@ -328,9 +333,26 @@ export async function listArchivedOrganizations(context:RequestContext){
   });
   return tx.select({
    id:organizations.id,name:organizations.name,createdAt:organizations.createdAt,
+   updatedAt:organizations.updatedAt,status:organizations.status,
   }).from(organizations).where(and(
    eq(organizations.status,"ARCHIVED"),
    organizationId?eq(organizations.id,organizationId):undefined,
   )).orderBy(asc(organizations.name)).limit(200);
  });
+}
+
+/** Explicit legacy recycle-bin dispatch. Only supported tenant entities may be
+ * restored here; academic objects keep their own specialized guarded routes. */
+export async function restoreArchivedEntity(context:RequestContext,raw:unknown){
+ const input=z.strictObject({
+  entityType:z.enum(["ORGANIZATION","COLLEGE"]),id:z.string().uuid(),
+ }).parse(raw);
+ if(!isSuperAdmin(context))requirePermission(context,"admin-scope.select");
+ if(input.entityType==="ORGANIZATION"){
+  const restored=await restoreOrganization(context,input.id);
+  return {entityType:input.entityType,restored};
+ }
+ const {restoreCollege}=await import("@/modules/colleges/service");
+ const restored=await restoreCollege(context,input.id);
+ return {entityType:input.entityType,restored};
 }

@@ -102,10 +102,21 @@ export const db10OutboundSuppressions = pgTable(
     channel: varchar("channel", { length: 16 }).notNull(),
     recipientHash: varchar("recipient_hash", { length: 64 }).notNull(),
     reason: varchar("reason", { length: 24 }).notNull(),
+    legacySuppressionId: integer("legacy_suppression_id"),
+    /** Never store source plaintext email or freeform notes here. */
+    legacyReasonCategory: varchar("legacy_reason_category",{length:24}),
+    legacyCreatedAt: timestamp("legacy_created_at",{withTimezone:true}),
+    clearActorUserId: uuid("clear_actor_user_id"),
+    clearReason: varchar("clear_reason",{length:500}),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     clearedAt: timestamp("cleared_at", { withTimezone: true }),
   },
   (t) => [
+    uniqueIndex("db10_outbound_suppressions_legacy_uq")
+      .on(t.organizationId,t.legacySuppressionId)
+      .where(sql`${t.legacySuppressionId} is not null`),
+    index("db10_outbound_suppression_history_idx")
+      .on(t.recipientHash,t.createdAt),
     uniqueIndex("db10_outbound_suppressions_active_uq")
       .on(t.organizationId, t.channel, t.recipientHash)
       .where(sql`${t.clearedAt} is null`),
@@ -114,7 +125,7 @@ export const db10OutboundSuppressions = pgTable(
     check("db10_outbound_suppressions_channel_ck",
       sql`${t.channel} in ('EMAIL','SMS','WHATSAPP')`),
     check("db10_outbound_suppressions_reason_ck",
-      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT','ADMIN_BLOCK')`),
+      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT','LEGACY_UNSPECIFIED','ADMIN_BLOCK','LEGACY_UNSPECIFIED')`),
     check("db10_outbound_suppressions_hash_ck",
       sql`${t.recipientHash} ~ '^[0-9a-f]{64}$'`),
     check("db10_outbound_suppressions_clear_order_ck",
@@ -150,13 +161,18 @@ export const db10GlobalEmailSuppressions = pgTable(
     clearedAt: timestamp("cleared_at", { withTimezone: true }),
   },
   (t) => [
+    uniqueIndex("db10_global_email_suppressions_legacy_uq")
+      .on(t.legacySuppressionId)
+      .where(sql`${t.legacySuppressionId} is not null`),
+    index("db10_global_email_suppression_history_idx")
+      .on(t.recipientHash,t.createdAt),
     uniqueIndex("db10_global_email_suppressions_active_uq")
       .on(t.recipientHash).where(sql`${t.clearedAt} is null`),
     index("db10_global_email_suppressions_created_idx").on(t.createdAt),
     check("db10_global_email_suppressions_hash_ck",
       sql`${t.recipientHash} ~ '^[0-9a-f]{64}$'`),
     check("db10_global_email_suppressions_reason_ck",
-      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT')`),
+      sql`${t.reason} in ('UNSUBSCRIBED','BOUNCE','COMPLAINT','LEGACY_UNSPECIFIED')`),
     check("db10_global_email_suppressions_clear_order_ck",
       sql`${t.clearedAt} is null or ${t.clearedAt} >= ${t.createdAt}`),
   ],

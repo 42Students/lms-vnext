@@ -112,6 +112,7 @@ function hasRecruiterGrant(
   if (
     !hasActiveRecruiter(context) ||
     context.recruiter?.userId !== context.user.id ||
+    !context.recruiter?.grants.length ||
     !resource.collegeId?.trim() ||
     !resource.placementCompanyRelationshipId?.trim()
   ) {
@@ -306,4 +307,22 @@ export function requirePermission(
   if (!can(context, permission, resource)) {
     throw new AuthorizationError(permission);
   }
+}
+
+/** Translation of trusted persisted membership/recruiter scope failures into
+ * precise UI states. Legacy FACULTY+ADMIN is a College Admin membership only
+ * after an explicit vetted role import; it is never inferred from a label.
+ */
+export function recruiterAccessDenialKind(input:{
+ selectedCollegeId:string|null;requestedCollegeId:string|null;
+ grantStatus:"ACTIVE"|"REVOKED"|"EXPIRED"|null;
+ grantExpiresAt:Date|null;now?:Date;
+}){
+ if(!input.selectedCollegeId||!input.requestedCollegeId)return "CHOOSE_COLLEGE";
+ if(input.selectedCollegeId!==input.requestedCollegeId)return "OTHER_COLLEGE";
+ if(input.grantStatus===null)return "NO_GRANT";
+ if(input.grantStatus!=="ACTIVE")return "GRANT_INACTIVE";
+ if(!input.grantExpiresAt||input.grantExpiresAt.getTime()<=(input.now??new Date()).getTime())
+  return "GRANT_EXPIRED";
+ return null;
 }

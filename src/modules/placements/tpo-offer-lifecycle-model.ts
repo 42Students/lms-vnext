@@ -9,11 +9,32 @@ export const TPO_OFFER_ACTIONS = [
   "EXTEND", "RECORD_ACCEPTED", "RECORD_DECLINED", "RECORD_JOINED", "WITHDRAW",
 ] as const;
 export type TpoOfferAction = (typeof TPO_OFFER_ACTIONS)[number];
+/** Preset reasons are editable starts, not evidence substitutions. */
+export const TPO_OFFER_REASON_PRESETS=[
+ "Recruiter requested expiry extension",
+ "Candidate confirmed acceptance with supporting evidence",
+ "Candidate declined after documented follow-up",
+ "Employer confirmed joining with supporting evidence",
+ "Employer withdrew the offer",
+ "Other — explain in detail",
+] as const;
+export function tpoOfferLegacyStatusCopy(status:string,actor:"COMPANY"|"STAFF"){
+ const statusLabel:Record<string,string>={
+  ISSUED:"Offer sent",ACCEPTED:"Accepted",DECLINED:"Declined",
+  WITHDRAWN:"Withdrawn",REVOKED:"Revoked",JOINED:"Joined",
+ };
+ return (statusLabel[status]??status.replaceAll("_"," "))+
+  (actor==="STAFF"?" · Recorded by placement cell":" · Company");
+}
+export function tpoOfferDistinctSelection(ids:readonly string[]){
+ const distinct=[...new Set(ids)];
+ return {ids:distinct,duplicateCount:ids.length-distinct.length};
+}
 
 export const tpoOfferLifecycleInputSchema = z.object({
   confirmed: z.literal(true),
   action: z.enum(TPO_OFFER_ACTIONS),
-  offerIds: z.array(z.string().uuid()).min(1).max(200).refine(
+  offerIds: z.array(z.string().uuid()).min(1).max(200,"Verify at most 200 selections at a time").refine(
     (ids) => new Set(ids).size === ids.length,
     "Duplicate offers are not allowed",
   ),
@@ -87,4 +108,65 @@ export function canRecordTpoOfferAction(
         (status === "ACCEPTED" &&
           (joiningStatus === null || joiningStatus === "PENDING"));
   }
+}
+
+/** Legacy selected/verified rows are selection-ledger states rather than
+ * premature ISSUED offers. Never invent a released offer for a selection.
+ */
+export function legacyTpoOfferDisplayStatus(input:{
+ offerStatus?:string|null;selectionStatus?:string|null;
+ expiresAt?:Date|null;now?:Date;
+}):"SELECTED"|"PENDING_VERIFICATION"|"RELEASED"|"ACCEPTED"|"DECLINED"|"EXPIRED"|"WITHDRAWN"|"REVOKED"|"UNKNOWN"{
+ if(input.offerStatus==="ACCEPTED")return "ACCEPTED";
+ if(input.offerStatus==="DECLINED")return "DECLINED";
+ if(input.offerStatus==="WITHDRAWN")return "WITHDRAWN";
+ if(input.offerStatus==="REVOKED")return "REVOKED";
+ if(input.offerStatus==="ISSUED"){
+  const now=input.now??new Date();
+  if(input.expiresAt&&input.expiresAt.getTime()<=now.getTime())return "EXPIRED";
+  return "RELEASED";
+ }
+ if(input.selectionStatus==="SELECTED")return "SELECTED";
+ if(input.selectionStatus==="PENDING_VERIFICATION")return "PENDING_VERIFICATION";
+ if(input.selectionStatus==="VERIFIED")return "PENDING_VERIFICATION";
+ if(input.selectionStatus==="RELEASED")return "RELEASED";
+ return "UNKNOWN";
+}
+
+/** Selection verification uses a distinct operation from offer lifecycle:
+ * every result gets its own diagnostic instead of hiding all failures.
+ * The actual writer must recheck persisted selection and college scope.
+ */
+export const tpoBulkVerifySelectionsSchema=z.strictObject({
+ confirmed:z.literal(true),
+ selectionIds:z.array(z.uuid())
+  .min(1,"Choose at least one selection")
+  .max(200,"Verify at most 200 selections at a time")
+  .refine(ids=>new Set(ids).size===ids.length,"Select distinct selections"),
+});
+export function tpoVerifySelectionBatch(
+ rows:readonly {id:string;status:string;collegeId:string}[],
+ collegeId:string,
+){
+ return rows.map(row=>({
+  selectionId:row.id,
+  ok:row.collegeId===collegeId&&row.status==="SELECTED",
+  error:row.collegeId!==collegeId?"Selection not available in your college":
+   row.status!=="SELECTED"?"Only selected candidates can be verified":null,
+ }));
+}
+
+/** The stored external-import acceptance is provisional. Acceptance cascade
+ * cannot mature before the 48-hour dispute window closes and a separate
+ * dispute/closure query confirms no challenge remains.
+ */
+export function externalTpoAcceptanceFinalization(input:{
+ channel:string|null;disputableUntil:Date|null;
+ disputed:boolean;now:Date;cascadeId:string|null;
+}):"NOT_EXTERNAL"|"WAITING_DISPUTE_WINDOW"|"DISPUTED"|"AWAITING_CASCADE"|"FINALIZED"{
+ if(input.channel!=="EXTERNAL_IMPORT")return "NOT_EXTERNAL";
+ if(input.disputed)return "DISPUTED";
+ if(!input.disputableUntil||input.disputableUntil.getTime()>input.now.getTime())
+  return "WAITING_DISPUTE_WINDOW";
+ return input.cascadeId?"FINALIZED":"AWAITING_CASCADE";
 }

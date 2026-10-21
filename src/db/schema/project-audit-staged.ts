@@ -1,5 +1,5 @@
 /**
- * W03 DB07 SOURCE-ONLY schema candidates. Do not import into db/schema/index.ts,
+ * W03 DB07 schema candidates. Meeting/resource audits promoted by 0196;
  * run against live endpoints or assume tables exist until W01 registers/replays
  * the corresponding Drizzle migration and verifies composite tenant/project FKs.
  *
@@ -7,7 +7,7 @@
  */
 import { desc, sql } from "drizzle-orm";
 import {
-  check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar,
+  bigint, check, foreignKey, index, integer, jsonb, pgTable, text, timestamp, uuid, varchar,
 } from "drizzle-orm/pg-core";
 import { projectInstances, projectMeetings, projectResources, projectSubmissions,
   projectTasks } from "./projects";
@@ -21,6 +21,8 @@ export const projectMeetingAuditHistoryStaged = pgTable("project_meeting_history
   projectId:uuid("project_id").notNull().references(()=>projectInstances.id,{onDelete:"restrict"}),
   meetingId:uuid("project_meeting_id").references(()=>projectMeetings.id,{onDelete:"restrict"}),
   meetingKey:varchar("meeting_key",{length:120}).notNull(),
+  legacyHistoryId:bigint("legacy_history_id",{mode:"bigint"}),
+  legacyOccurredAtLocal:varchar("legacy_occurred_at_local",{length:40}),
   actionType:varchar("action_type",{length:40}).notNull(),
   actorUserId:uuid("actor_user_id").references(()=>users.id,{onDelete:"restrict"}),
   actorUserType:varchar("actor_user_type",{length:20}),
@@ -39,6 +41,10 @@ export const projectMeetingAuditHistoryStaged = pgTable("project_meeting_history
     foreignColumns:[projectMeetings.projectId,projectMeetings.id]}).onDelete("restrict"),
   index("project_meeting_history_project_time_idx").on(t.projectId,t.createdAt),
   index("project_meeting_history_meeting_idx").on(t.meetingId,t.createdAt),
+  index("project_meeting_history_cursor_idx").on(t.projectId,desc(t.createdAt),desc(t.id)),
+  check("project_meeting_history_before_object_ck",sql`${t.beforeJson} is null or jsonb_typeof(${t.beforeJson})='object'`),
+  check("project_meeting_history_after_object_ck",sql`${t.afterJson} is null or jsonb_typeof(${t.afterJson})='object'`),
+  check("project_meeting_history_changed_array_ck",sql`${t.changedFields} is null or jsonb_typeof(${t.changedFields})='array'`),
   index("project_meeting_history_project_key_time_id_idx").on(t.projectId,t.meetingKey,desc(t.createdAt),desc(t.id)),
   check("project_meeting_history_updated_after_created_ck",sql`${t.updatedAt} >= ${t.createdAt}`),
   check("project_meeting_history_deleted_after_created_ck",sql`${t.deletedAt} is null or ${t.deletedAt} >= ${t.createdAt}`),
@@ -51,6 +57,8 @@ export const projectResourceAuditHistoryStaged=pgTable("project_resource_audit",
   /** Retain source resource ID even after resource deletion. */
   resourceId:uuid("project_resource_id"),
   resourceKey:varchar("resource_key",{length:120}).notNull(),
+  legacyHistoryId:bigint("legacy_history_id",{mode:"bigint"}),
+  legacyOccurredAtLocal:varchar("legacy_occurred_at_local",{length:40}),
   actionType:varchar("action_type",{length:40}).notNull(),
   actorUserId:uuid("actor_user_id").references(()=>users.id,{onDelete:"restrict"}),
   actorUserType:varchar("actor_user_type",{length:20}),
@@ -66,6 +74,10 @@ export const projectResourceAuditHistoryStaged=pgTable("project_resource_audit",
   // History references project only: resource key can outlive resource deletion.
   index("project_resource_audit_project_time_idx").on(t.projectId,t.createdAt),
   index("project_resource_audit_resource_idx").on(t.resourceId,t.createdAt),
+  index("project_resource_audit_cursor_idx").on(t.projectId,desc(t.createdAt),desc(t.id)),
+  check("project_resource_audit_before_object_ck",sql`${t.beforeJson} is null or jsonb_typeof(${t.beforeJson})='object'`),
+  check("project_resource_audit_after_object_ck",sql`${t.afterJson} is null or jsonb_typeof(${t.afterJson})='object'`),
+  check("project_resource_audit_changed_array_ck",sql`${t.changedFields} is null or jsonb_typeof(${t.changedFields})='array'`),
   check("project_resource_audit_updated_after_created_ck",sql`${t.updatedAt} >= ${t.createdAt}`),
   check("project_resource_audit_deleted_after_created_ck",sql`${t.deletedAt} is null or ${t.deletedAt} >= ${t.createdAt}`),
   check("project_resource_audit_action_nonempty_ck",sql`length(trim(${t.actionType})) > 0`),
@@ -129,3 +141,30 @@ export const projectTaskCommentsStaged=pgTable("project_task_comments",{
   check("w03_task_comments_deleted_after_created_ck",
     sql`${t.deletedAt} is null or ${t.deletedAt} >= ${t.createdAt}`),
 ]);
+
+
+/** Old meeting edits are shown as their own "Meeting change history", not
+ * confused with the generic project activity timeline. Kept staged until the
+ * coordinated immutable audit producer and composite FK migration are live. */
+export const PROJECT_MEETING_HISTORY_TITLE = "Meeting change history";
+export const PROJECT_AUDIT_LABELS:Readonly<Record<string,string>>={
+ CREATED:"Created", UPDATED:"Updated", DELETED:"Deleted",
+ RESCHEDULED:"Rescheduled", CANCELLED:"Cancelled",
+ RESTORED:"Restored", RESOURCE_ADDED:"Resource added",
+ RESOURCE_REMOVED:"Resource removed",
+};
+
+/** Audit snapshots are not authorization grants. Omit credential, contact,
+ * internal object path and transport fields from any frontend projection. */
+export function publicProjectAuditSnapshot(raw:Record<string,unknown>|null):
+ Record<string,unknown>|null{
+ if(!raw)return null;
+ const safe:Record<string,unknown>={};
+ const blocked=/(token|secret|password|credential|authorization|email|phone|object_?key|storage_?path|ip_?address)/i;
+ for(const [key,value] of Object.entries(raw)){
+  if(blocked.test(key))continue;
+  if(value===null||typeof value==="string"||typeof value==="number"||typeof value==="boolean")
+   safe[key]=value;
+ }
+ return safe;
+}

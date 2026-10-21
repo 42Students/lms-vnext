@@ -16,6 +16,9 @@ export async function POST(request:Request){
   const context=await getCurrentRequestContext();
   await requireTpoVerificationActor(context);
   await requireVerificationTables();
+  // Legacy review paths carried a learner ID and section in the URL.
+  // UUID membership, section, action and expectedVersion are now one
+  // validated JSON body, with the reviewer derived from the TPO session.
   const input=verificationReviewInput.parse(await request.json());
   const record=await reviewProfileVerification(context,input,
    createProfileVerificationRepository(verifyPrivateDocumentReceipt));
@@ -36,7 +39,14 @@ export async function POST(request:Request){
   if(error instanceof VerificationStateError){
    const status=error.code==="NOT_ALLOWED"?404:
      error.code==="REASON_REQUIRED"?400:error.code==="STALE_VERSION"?409:409;
-   return NextResponse.json({error:error.code==="NOT_ALLOWED"?"NOT_FOUND":error.code},{status});
+   const message=error.code==="STALE_VERSION"
+    ?"The student changed this after you opened it. Open it again to see what they sent."
+    :error.code==="REASON_REQUIRED"?"Say what needs to change"
+    :error.code==="INCOMPLETE_DOCUMENTS"?"Before sending: complete all required fields and documents"
+    :error.code==="NOT_ALLOWED"?"This verification record is not available."
+    :"Could not complete the review. Reload the student and try again.";
+   return NextResponse.json({error:error.code==="NOT_ALLOWED"?"NOT_FOUND":error.code,message},
+    {status,headers:{"Cache-Control":"private, no-store"}});
   }
   return apiErrorResponse(error);
  }

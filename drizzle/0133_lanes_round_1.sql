@@ -557,3 +557,12 @@ CREATE TABLE audit_finding_syncs (
 -- The JSONB contains informational legacy terms only: never use it to authorize
 -- learner visibility or eligibility, which are governed by college and policy tables.
 ALTER TABLE placement_jobs ADD COLUMN IF NOT EXISTS legacy_posting_details jsonb;
+
+-- [chat-14] Legacy class/term/account IDs are never HMAC inputs or UUIDs.
+-- Crosswalk (verified import only): old account_id -> users.id via scoped
+-- legacy_id_map; old membership_id -> college_memberships.id after matching
+-- the user's identity and college; old challenge ID -> new UUID only after
+-- purpose, issuer and lifetime checks. Raw OTP/code/token values are NOT
+-- imported: authentication challenge MACs are regenerated on fresh sign-in.
+-- This three-field disposition is documentary; it never modifies existing
+-- handoff credentials or retroactively extends token lifetime.

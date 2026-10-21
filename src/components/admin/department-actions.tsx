@@ -9,8 +9,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import { Dialog } from "@/components/ui/dialog";
-import { Dropdown } from "@/components/ui/dropdown";
-import { Menu, MenuItem } from "@/components/ui/menu";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
@@ -45,7 +43,7 @@ export function DepartmentActions({
 
   function rename() {
     if(pending||inFlightRef.current)return;
-    if(!nextName.trim()){setEditError("Enter a department name.");return;}
+    if(!nextName.trim()){setEditError("Please enter department name");return;}
     setEditError("");
     inFlightRef.current=true;
     startTransition(async () => {
@@ -63,7 +61,7 @@ export function DepartmentActions({
       if (!response.ok) {
         const message=payload?.error==="DEPARTMENT_NAME_CONFLICT"
           ? "That department name is already active in this college."
-          : payload?.fieldErrors?.name || response.status===400
+          : (Boolean(payload?.fieldErrors?.name) || response.status===400)
             ? "Check the department name and try again."
             : response.status===403
               ? "You do not have permission to update this department."
@@ -158,34 +156,44 @@ export function DepartmentActions({
   return (
     <>
       <div className="flex min-w-0 flex-col items-stretch gap-[var(--lms-space-2)] print:hidden sm:flex-row sm:items-center md:justify-end">
-      <Button
-        variant="secondary"
-        size="sm"
-        disabled={pending}
-        onClick={() => {
-          setNextName(name);
-          setEditError("");
-          setOpen(true);
-        }}
-      >
-        {DEPARTMENT_COPY.editButton}
+      <Button variant="secondary" size="sm" disabled={pending}
+        aria-label={"Edit department "+name} title="Edit department"
+        onClick={() => {setNextName(name);setEditError("");setOpen(true);}}>
+        <span aria-hidden="true">✎</span> {DEPARTMENT_COPY.editButton}
+      </Button>
+      <Button variant="secondary" size="sm" disabled={pending||hasDependencies}
+        aria-label={"Archive department "+name}
+        title={hasDependencies?"Resolve linked programs, courses and faculty or refresh unknown counts before archiving.":"Archive this department"}
+        onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>
+        <span aria-hidden="true">⌫</span> Archive
       </Button>
       <Dropdown label="Department actions" trigger="More" align="end" mobileSheet triggerClassName="md:!min-h-9">
         <Menu className="w-full min-w-0">
           <MenuItem disabled={pending || hasDependencies}
             title={hasDependencies ? "Move or resolve its programs, courses and faculty assignments before archiving." : "Archive this department"}
             onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>
-            Archive
+            Delete Department
           </MenuItem>
         </Menu>
       </Dropdown>
+      <Button size="sm" type="button" variant="danger" disabled={pending||hasDependencies}
+        title={hasDependencies?"Delete requires no active programs, courses or faculty assignments":"Delete (soft archive) department"}
+        onClick={()=>{setArchiveError("");setArchiveOpen(true);}}>Delete</Button>
       </div>
+      {archiveError&&!archiveOpen?<Alert tone="error" title="Department was not archived" className="mt-2">
+        <p>{archiveError}</p>
+        <div className="flex flex-wrap gap-2">
+          <Button type="button" variant="secondary" disabled={pending||hasDependencies}
+            onClick={()=>{setArchiveOpen(true);setArchiveError("");}}>Retry archive</Button>
+          <Button type="button" variant="ghost" onClick={()=>setArchiveError("")}>Dismiss</Button>
+        </div>
+      </Alert>:null}
       <Dialog
         open={open}
         onOpenChange={(next) => next ? (pending?undefined:setOpen(true)) : requestEditClose()}
         dismissible={!pending}
         title={DEPARTMENT_COPY.editTitle}
-        description="Department names stay unique within the active college."
+        description="Edit the department name in the college selected in the platform header. Moving it to another college is not permitted."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
@@ -222,10 +230,11 @@ export function DepartmentActions({
             setEditError("");
           }}
           maxLength={255}
-          aria-invalid={editError === "Enter a department name." || editError === "That department name is already active in this college."}
+          aria-invalid={Boolean(editError)}
+          aria-describedby={editError?"department-edit-error":undefined}
         />
-        {editError ? <Alert tone="error" className="mt-3">
-          <span><strong>{DEPARTMENT_COPY.updateFailed}.</strong> {editError}</span>
+        {editError ? <Alert tone="error" className="mt-3" title="Department was not updated">
+          <span id="department-edit-error">{editError}</span>
           <div><Button variant="ghost" type="button" disabled={pending}
             onClick={() => setEditError("")}>Dismiss error</Button></div>
         </Alert> : null}
@@ -238,8 +247,8 @@ export function DepartmentActions({
         open={archiveOpen}
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
         dismissible={!pending}
-        title="Archive department"
-        description={`Archive ${name}? This is allowed only when it has no linked programs, faculty assignments or courses.`}
+        title="Delete department"
+        description={`Delete ${name}? This is a soft delete. It can be done only after moving all linked programs, courses and faculty assignments.`}
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end [&>button]:w-full sm:[&>button]:w-auto">
             <Button
@@ -258,7 +267,7 @@ export function DepartmentActions({
             >
               {pending
                 ? "Archiving…"
-                : "Archive department"}
+                : "Yes, delete"}
             </Button>
           </div>
         }
@@ -271,7 +280,7 @@ export function DepartmentActions({
           </Alert>
         ) : null}
         <p className="m-0 max-w-prose text-sm text-body">
-          Archiving removes the department from active selections without deleting historical records.
+          Delete means soft archive: this removes the department from active selections without deleting historical records.
           All linked programs, courses and faculty assignments must be resolved first; dependencies
           are rechecked immediately before the archive. Reactivation is not available here.
         </p>

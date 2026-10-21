@@ -6,6 +6,9 @@ import { projectInstanceIdSchema } from "@/modules/projects/validation";
 import { ProjectsServiceError } from "@/modules/projects/errors";
 import { learnerProjectReadFailureDisposition } from "@/modules/projects/learner-project-detail-error-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import {getDb} from "@/db/client";
+import {projectInstances,projectMembers} from "@/db/schema";
+import {and,eq,isNull} from "drizzle-orm";
 import { LearnerProjectTabs } from "@/components/projects/learner-project-tabs";
 import { ProjectWorkspace } from "@/components/projects/project-workspace";
 import { LearnerProjectBoardSearch } from "@/components/projects/learner-project-board-search";
@@ -37,7 +40,29 @@ export default async function LearnerProjectPage({
 }) {
   const context = await getCurrentRequestContext();
   const { projectId } = await params;
-  if (!projectInstanceIdSchema.safeParse(projectId).success) notFound();
+  if (!projectInstanceIdSchema.safeParse(projectId).success) {
+    // Old LMS project links used integer IDs. Imported projects retain the
+    // original integer, but only a live member of this college can resolve it.
+    if (!/^[1-9]\d{0,9}$/.test(projectId) || Number(projectId)>2147483647 ||
+        !context.membership || context.membership.status!=="ACTIVE") notFound();
+    const [legacy]=await getDb().select({id:projectInstances.id})
+      .from(projectInstances)
+      .innerJoin(projectMembers,eq(projectMembers.projectId,projectInstances.id))
+      .where(and(eq(projectInstances.legacyProjectId,Number(projectId)),
+        eq(projectInstances.collegeId,context.membership.collegeId),
+        eq(projectMembers.membershipId,context.membership.id),
+        eq(projectMembers.role,"LEARNER"),isNull(projectMembers.endedAt)))
+      .limit(1);
+    if(!legacy)notFound();
+    await requireProjectReadAccess(context,legacy.id).catch(()=>notFound());
+    const original=await searchParams;
+    const retained=new URLSearchParams();
+    for(const [key,value] of Object.entries(original)){
+      if(typeof value==="string"&&value.length<=100)retained.set(key,value);
+    }
+    const suffix=retained.toString();
+    redirect("/learn/projects/"+encodeURIComponent(legacy.id)+(suffix?"?"+suffix:""));
+  }
   const { tab, taskSearch, priority: priorityInput, taskStatus: taskStatusInput, taskSort: taskSortInput, sprintId: sprintInput, releaseId: releaseInput, assignee: assigneeInput, taskId, activityCategory, activityFrom, activityTo, activityBeforeTime, activityBeforeId } = await searchParams;
   const activeSection =
     tab === "board" || tab === "tasks" || tab === "performance"

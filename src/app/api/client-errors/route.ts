@@ -52,26 +52,27 @@ export async function POST(request: Request) {
   catch { return NextResponse.json({ message: "Please check this report." }, { status: 400 }); }
   const parsed = browserErrorSchema.safeParse(body);
   if (!parsed.success) return NextResponse.json({ message: "Please check this report." }, { status: 400 });
-  const ip = request.headers.get("x-real-ip") ??
-    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
-  const session = request.headers.get("cookie") ?? "";
-  const ipHash = createHash("sha256").update(ip).digest("hex");
-  const sessionHash = createHash("sha256").update(ip + "|" + session).digest("hex");
-  const now = Date.now();
-  if (!acceptClientErrorRate("ip:" + ipHash, now, 20) ||
-      !acceptClientErrorRate("session:" + sessionHash, now, 10)) {
-    return NextResponse.json(
-      { message: "Too many reports. Please try again later." },
-      { status: 429, headers: { "Retry-After": "60" } },
-    );
+  // Resolve the signed-in account before applying limits. A shared college
+  // NAT must not exhaust a very small IP-only bucket and suppress all learners.
+  const context=await getCurrentRequestContext().catch(()=>null);
+  if(!context)return NextResponse.json({error:"AUTHENTICATION_REQUIRED"},{status:401});
+  const ip=request.headers.get("x-real-ip")??
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim()??"unknown";
+  const ipHash=createHash("sha256").update(ip).digest("hex");
+  const userHash=createHash("sha256").update(context.user.id).digest("hex");
+  const now=Date.now();
+  // Limits are process-local best effort; distributed deployments also need a
+  // shared gateway limiter. Neither source trusts a browser-supplied user ID.
+  if(!acceptClientErrorRate("user:"+userHash,now,10)||
+     !acceptClientErrorRate("ip:"+ipHash,now,100)){
+    return NextResponse.json({message:"Too many reports. Please try again later."},
+      {status:429,headers:{"Retry-After":"60"}});
   }
-  let identity: { userId?: string; collegeId?: string } = {};
-  try {
-    const context = await getCurrentRequestContext();
-    identity = { userId: context.user.id, collegeId: context.membership?.collegeId };
-  } catch {
-    // Anonymous failures are valid; never trust a client-supplied account ID.
-  }
+  const roleCategory=context.membership?.roles.includes("COLLEGE_ADMIN")?"COLLEGE_ADMIN":
+    context.membership?.roles.includes("FACULTY")?"FACULTY":
+    context.membership?.roles.includes("LEARNER")?"LEARNER":
+    context.recruiter?"RECRUITER":"OTHER";
+  const identity={userId:context.user.id,collegeId:context.membership?.collegeId,roleCategory};
   const report = parsed.data;
   // Root error boundaries intentionally send only the category and reference.
   const safeMessage = report.message ??
@@ -82,5 +83,7 @@ export async function POST(request: Request) {
     path: safeAlertPath(report.path), requestId: report.requestId,
     errorName: safeBrowserComponent({ name: report.name }), status: 500,
   });
+  // Telemetry is fire-and-forget. 202 is success even for clients that do
+  // not await the response; never show this endpoint's errors as a UI toast.
   return NextResponse.json({ received: true }, { status: 202 });
 }

@@ -77,6 +77,10 @@ export const facultyContactEditSchema = contactSchema.superRefine((value, ctx) =
   if (!value.contactMobile) ctx.addIssue({
     code: "custom", path: ["contactMobile"], message: "Primary mobile number is required",
   });
+  if (value.contactPhone && !value.contactMobile) ctx.addIssue({
+    code: "custom", path: ["contactMobile"],
+    message: "Primary mobile number is required when an alternate number is provided",
+  });
   if (value.contactPhone && value.contactPhone === value.contactMobile) ctx.addIssue({
     code: "custom", path: ["contactPhone"],
     message: "Alternate mobile number must differ from primary mobile number",
@@ -350,6 +354,13 @@ export type FacultyProfileDocument = z.infer<
   typeof facultyProfileDocumentSchema
 >;
 
+/** A legacy photo URL is an import hint, not an authorized public read grant.
+ * New documents persist only verified, owner-bound private receipt IDs.
+ */
+export const legacyFacultyProfileImageUrlSchema = z.string().trim().max(1024)
+  .refine(value => !value || /^https:\/\//i.test(value),
+    "Profile image URL must use HTTPS.");
+
 /** Non-identifying pre-migration exceptions. Never truncate historic lists. */
 export function facultyLegacyProfileExceptions(raw: unknown): string[] {
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) return ["Invalid legacy profile shape"];
@@ -365,11 +376,24 @@ export function facultyLegacyProfileExceptions(raw: unknown): string[] {
       issues.push(name + ": " + value.length + " rows require no-truncation migration review");
     }
   }
-  const contact = record.contact;
-  if (contact && typeof contact === "object" && !Array.isArray(contact)) {
-    const values = contact as Record<string, unknown>;
-    if (values.contactPhone && !values.contactMobile) issues.push("Alternate contact requires primary mobile");
-    if (values.contactPhone && values.contactPhone === values.contactMobile) issues.push("Duplicate primary and alternate mobile");
+  const contact = record.contact && typeof record.contact === "object" &&
+    !Array.isArray(record.contact)
+    ? record.contact as Record<string, unknown> : record;
+  const primary = typeof contact.contactMobile === "string" ? contact.contactMobile.trim() : "";
+  const alternate = typeof contact.contactPhone === "string" ? contact.contactPhone.trim() : "";
+  const email = typeof contact.contactMail === "string" ? contact.contactMail.trim() : "";
+  if (alternate && !primary) issues.push("Alternate contact requires primary mobile");
+  if (alternate && alternate === primary) issues.push("Duplicate primary and alternate mobile");
+  if (primary && !/^\\d{10}$/.test(primary)) issues.push("Primary mobile must have 10 digits");
+  if (alternate && !/^\\d{10,15}$/.test(alternate)) issues.push("Alternate mobile must have 10 to 15 digits");
+  if (email && !z.email().safeParse(email).success) issues.push("Invalid contact email");
+  const photo = record.profileImageUrl ?? record.profileImage;
+  if (typeof photo === "string" && !legacyFacultyProfileImageUrlSchema.safeParse(photo).success) {
+    issues.push("Profile image URL must use HTTPS.");
   }
+  // Sensitive legacy document URLs require a fresh private upload and an
+  // authorized, membership-bound receipt. Never copy raw refs into JSON.
+  if (record.identityDocuments != null || record.aadhaarNumber != null ||
+      record.panNumber != null) issues.push("Private identity evidence requires secure re-verification");
   return issues;
 }

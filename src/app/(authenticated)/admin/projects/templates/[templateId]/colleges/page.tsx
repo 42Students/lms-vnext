@@ -82,7 +82,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <FilterBar title="Filters">
     <form method="get" className="grid min-w-0 gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-2 lg:grid-cols-3">
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">College name or code
-        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="w-full" /></label>
+        <Input name="q" type="search" maxLength={100} defaultValue={data.query.q} className="w-full" placeholder="Search colleges..." /></label>
       <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Availability
         <Select name="status" defaultValue={data.query.status} className="w-full">
           {statuses.map(status => <option key={status}>{status}</option>)}

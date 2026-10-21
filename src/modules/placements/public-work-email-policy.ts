@@ -14,7 +14,15 @@ const DISPOSABLE=new Set(["mailinator.com","guerrillamail.com","tempmail.com",
  */
 const ACADEMIC_SUFFIXES=[".ac.in",".edu.in",".res.in",".edu",".ac.uk",
  ".edu.au",".ac.nz",".edu.sg",".ac.jp",".edu.cn"];
-export type WorkEmailIssue="PERSONAL"|"DISPOSABLE"|"ACADEMIC"|"IP_ADDRESS"|"INVALID"|null;
+export type WorkEmailIssue="PERSONAL"|"DISPOSABLE"|"ACADEMIC"|"IP_ADDRESS"|"INVALID"|"NO_MAIL"|null;
+export const PUBLIC_WORK_EMAIL_LEGACY_COPY:Readonly<Record<Exclude<WorkEmailIssue,null>,string>>={
+ INVALID:"Enter a valid company email or website",
+ PERSONAL:"Use a company email. Personal email (Gmail, Yahoo, Outlook and similar) can't be used",
+ DISPOSABLE:"Temporary email addresses can't be used",
+ ACADEMIC:"College and university addresses can't be used for a company",
+ IP_ADDRESS:"Use the company's domain name, not an IP address",
+ NO_MAIL:"This domain doesn't receive email. Check the spelling",
+};
 export function publicWorkEmailIssue(email:string):WorkEmailIssue{
  const parts=email.trim().toLowerCase().split("@");
  if(parts.length!==2||!parts[0]||!parts[1])return "INVALID";
@@ -36,9 +44,5 @@ export function publicWorkEmailIssue(email:string):WorkEmailIssue{
  return null;
 }
 export function publicWorkEmailIssueCopy(issue:Exclude<WorkEmailIssue,null>){
- return issue==="PERSONAL"?"Use a company work email, not a personal email address.":
-  issue==="DISPOSABLE"?"Temporary email addresses cannot be used. Enter your company email.":
-  issue==="ACADEMIC"?"Enter a company work email, not an academic address.":
-  issue==="IP_ADDRESS"?"Enter a company email with a valid domain name.":
-  "Enter a valid company work email address.";
+ return PUBLIC_WORK_EMAIL_LEGACY_COPY[issue];
 }

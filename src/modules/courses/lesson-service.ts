@@ -2,6 +2,7 @@ import {
   and,
   asc,
   eq,
+  isNull,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -9,7 +10,7 @@ import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { lessonMoveSchema, planLessonMove, collegeLessonBulkOrderSchema } from "./college-lesson-order-model";
-import { courseLessons } from "@/db/schema";
+import { courseLessons,lessonContents } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
   can,
@@ -31,7 +32,6 @@ import {
   createCourseLessonInputSchema,
   learningPathIdSchema,
   updateCourseLessonInputSchema,
-  type CreateCourseLessonInput,
   type UpdateCourseLessonInput,
 } from "./validation";
 
@@ -120,7 +120,7 @@ export async function listCourseLessons(
 
 export async function createCourseLesson(
   context: RequestContext,
-  rawInput: CreateCourseLessonInput,
+  rawInput: unknown,
 ) {
   const input =
     createCourseLessonInputSchema.parse(
@@ -141,6 +141,14 @@ export async function createCourseLesson(
       // in this transaction; path transition UPDATE conflicts with SHARE.
       await lockLiveLessonWriteAncestry(tx, path);
 
+      const [last]=await tx.select({
+        next:sql<number>`coalesce(max(${courseLessons.sequence}),-1)::int+1`,
+      }).from(courseLessons).where(and(
+       eq(courseLessons.learningPathId,path.id),eq(courseLessons.status,"ACTIVE"),
+       isNull(courseLessons.deletedAt),
+      ));
+      const sequence=input.sequence&&input.sequence>0?input.sequence:last?.next??0;
+      if(sequence>10000)throw new CoursesServiceError("LESSON_SEQUENCE_CONFLICT");
       const [created] = await tx
         .insert(courseLessons)
         .values({
@@ -149,8 +157,9 @@ export async function createCourseLesson(
           name: input.name,
           description:
             input.description ?? null,
-          sequence: input.sequence,
-          visibleToStudents: input.visibleToStudents ?? true,
+          sequence,
+          status:input.active===false?"ARCHIVED":"ACTIVE",
+          visibleToStudents:input.enabled??input.visibleToStudents??true,
         })
         .returning();
 
@@ -160,7 +169,8 @@ export async function createCourseLesson(
         organizationId: path.organizationId,
         subjectType: "course_lesson", subjectId: created.id,
         subjectLabel: created.name, summary: "Created lesson",
-        metadata: { learningPathId: path.id, sequence: created.sequence },
+        metadata: { learningPathId: path.id, sequence: created.sequence,
+          active:created.status==="ACTIVE",enabled:created.visibleToStudents },
       });
       return created;
     });
@@ -198,11 +208,27 @@ export async function updateCourseLesson(
   try {
     return await getDb().transaction(async (tx) => {
       await lockLiveLessonWriteAncestry(tx, path);
-      const {expectedUpdatedAt,...changes}=input;
+      const {expectedUpdatedAt,expectedVersion,active,enabled,visibleToStudents,sequence,...changes}=input;
+      // Legacy sequence=0 means keep the existing order on an update; only
+      // positive values intentionally reorder. Creation already appends for 0.
+      const orderChange=sequence!==undefined&&sequence>0?{sequence}:{};
+      // A lesson-deletion flag retains each child publication/draft state.
+      // Only rows removed *with* this lesson receive the provenance marker.
+      if(active===false){
+       await tx.update(lessonContents).set({
+        deletedWithLesson:true,updatedAt:new Date(),
+       }).where(and(eq(lessonContents.lessonId,lessonId),
+        eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.deletedWithLesson,false),
+        isNull(lessonContents.deletedAt)));
+      }
       const [updated] = await tx
       .update(courseLessons)
       .set({
         ...changes,
+        ...orderChange,
+        ...(active===false?{status:"ARCHIVED" as const}:{}),
+        ...((enabled??visibleToStudents)!==undefined?{visibleToStudents:enabled??visibleToStudents}:{}),
+        version:sql`${courseLessons.version}+1`,
         updatedAt:sql<Date>`greatest(${courseLessons.updatedAt} + interval '1 millisecond',clock_timestamp())`,
       })
       .where(
@@ -210,6 +236,7 @@ export async function updateCourseLesson(
           eq(courseLessons.id, lessonId),
           eq(courseLessons.status, "ACTIVE"),
           eq(courseLessons.learningPathId, current.learningPathId),
+          ...(expectedVersion===undefined?[]:[eq(courseLessons.version,expectedVersion)]),
           sql`date_trunc('milliseconds',${courseLessons.updatedAt}) = ${expectedUpdatedAt}::timestamptz`,
         ),
       )
@@ -278,10 +305,16 @@ export async function archiveCourseLesson(
       throw new CoursesServiceError("LESSON_NOT_FOUND");
     }
 
+    await tx.update(lessonContents).set({
+      deletedWithLesson:true,updatedAt:new Date(),
+    }).where(and(eq(lessonContents.lessonId,lessonId),
+      eq(lessonContents.status,"PUBLISHED"),
+      eq(lessonContents.deletedWithLesson,false),isNull(lessonContents.deletedAt)));
     const [updated] = await tx
       .update(courseLessons)
       .set({
         status: "ARCHIVED",
+        version:sql`${courseLessons.version}+1`,
         updatedAt: new Date(),
       })
       .where(and(
@@ -318,11 +351,17 @@ export async function restoreCourseLesson(context: RequestContext, lessonIdInput
     return await getDb().transaction(async tx => {
       await lockLiveLessonWriteAncestry(tx, path);
       const [restored] = await tx.update(courseLessons)
-        .set({ status: "ACTIVE", updatedAt: new Date() })
+        .set({ status: "ACTIVE",version:sql`${courseLessons.version}+1`, updatedAt: new Date() })
         .where(and(eq(courseLessons.id, lessonId),
           eq(courseLessons.learningPathId, path.id), eq(courseLessons.status, "ARCHIVED")))
         .returning();
       if (!restored) throw new CoursesServiceError("LESSON_NOT_FOUND");
+      // The parent archive never overwrites a child's own status; restore
+      // only descendants archived as part of that parent action.
+      await tx.update(lessonContents).set({
+       deletedWithLesson:false,updatedAt:new Date(),
+      }).where(and(eq(lessonContents.lessonId,lessonId),
+       eq(lessonContents.deletedWithLesson,true),isNull(lessonContents.deletedAt)));
       await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.COURSES_LESSON_UPDATED,
         organizationId: path.organizationId, collegeId: path.collegeId,

@@ -44,6 +44,9 @@ function mapStorageError(error: unknown): never {
     if (error.code === "PRIVATE_STORAGE_NOT_CONFIGURED" || error.code === "PRIVATE_STORAGE_BUCKET_UNSAFE") {
       throw new StorageFileError("STORAGE_NOT_CONFIGURED");
     }
+    if (error.code === "PRIVATE_STORAGE_PROVIDER_UNAVAILABLE") {
+      throw new StorageFileError("STORAGE_PROVIDER_UNAVAILABLE");
+    }
     throw new StorageFileError("STORAGE_SIZE_INVALID");
   }
   throw error;
@@ -302,6 +305,11 @@ export function legacyFileReadOptions(mode: LegacyFileReadMode, fileName: string
   };
 }
 
+/** Retained for support parity when the private R2 service is unavailable.
+ * Do not surface the bucket, signing headers or exception details.
+ */
+export const LEGACY_R2_NOT_CONFIGURED_COPY = "R2 storage is not configured";
+
 /** Legacy folder names are hints only, never generic presign permissions. */
 export const LEGACY_FILE_GRANT_ROUTE = {
   assignments: "/api/courses/assignments/[assignmentId]/file-upload",
@@ -316,6 +324,16 @@ export const LEGACY_FILE_GRANT_ROUTE = {
   "offer-letters": null,
   "jd-files": null,
 } as const;
+
+/** A legacy folder is a migration hint, not authority to mint a presign URL.
+ * Only a recognized feature route can validate the owning assignment, role,
+ * membership and college before it calls issueObjectUpload.
+ */
+export function resolveLegacyFileUploadRoute(folder: string): string | null {
+  if (!Object.prototype.hasOwnProperty.call(LEGACY_FILE_GRANT_ROUTE, folder))
+    throw new StorageFileError("STORAGE_NAME_INVALID");
+  return LEGACY_FILE_GRANT_ROUTE[folder as keyof typeof LEGACY_FILE_GRANT_ROUTE];
+}
 
 export const FILE_READ_TTL_SECONDS = 5 * 60;
 export const VIDEO_PLAYBACK_DEFAULT_TTL_SECONDS = 60 * 60;

@@ -18,3 +18,10 @@ export function signInCapabilities(method:z.infer<typeof collegeSignInMethodSche
  return {email:method!=="PHONE_ONLY",phone:method!=="EMAIL_ONLY",
  primary:method==="PHONE_ONLY"?"PHONE":method==="EMAIL_ONLY"?"EMAIL":method==="PHONE_AND_EMAIL"?"PHONE":"EMAIL"} as const;
 }
+
+/** Email-first and phone-first produce a visibly distinct legacy mini sketch. */
+export function signInChannelOrder(method:z.infer<typeof collegeSignInMethodSchema>){
+ const capabilities=signInCapabilities(method);
+ const ordered=capabilities.primary==="EMAIL"?["EMAIL","PHONE"] as const:["PHONE","EMAIL"] as const;
+ return ordered.filter(channel=>channel==="EMAIL"?capabilities.email:capabilities.phone);
+}

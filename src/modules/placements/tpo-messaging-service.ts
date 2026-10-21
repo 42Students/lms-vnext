@@ -25,6 +25,7 @@ import {
   placementTpoMessages,
   placementTpoMessageThreads,
 } from "@/db/schema/tpo-collaboration";
+import { placementDriveChangeRequests } from "@/db/schema/placement-drive-change-requests";
 import type { RequestContext } from "@/modules/identity/context";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -565,9 +566,11 @@ export async function sendThreadMessage(
 /** Employer-only reply path: persisted exact recruiter ownership wins over any TPO role. */
 export async function sendRecruiterThreadMessage(
  context: RequestContext, rawThreadId: unknown, rawBody: unknown,
+ rawQuoteId: unknown = null,
 ) {
  const id = threadIdSchema.parse(rawThreadId);
  const body = bodySchema.parse(rawBody);
+ const quoteId=z.string().uuid().nullable().parse(rawQuoteId??null);
  if (context.recruiter?.status !== "ACTIVE" ||
      context.recruiter.userId !== context.user.id)
    throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
@@ -585,10 +588,18 @@ export async function sendRecruiterThreadMessage(
    if(thread.jobId)await assertJobForThread(
      tx,thread.collegeId,thread.jobId,grant.companyRelationshipId,true,
    );
-   const now=new Date();
+   if(quoteId){
+     if(!thread.jobId)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+     const [request]=await tx.select({id:placementDriveChangeRequests.id})
+      .from(placementDriveChangeRequests)
+      .where(and(eq(placementDriveChangeRequests.id,quoteId),
+        eq(placementDriveChangeRequests.jobId,thread.jobId))).limit(1);
+     if(!request)throw new TpoMessagingError("TPO_MESSAGE_THREAD_NOT_FOUND");
+    }
+    const now=new Date();
    const [message]=await tx.insert(placementTpoMessages).values({
      threadId:thread.id,senderType:"RECRUITER",senderUserId:context.user.id,
-     body,createdAt:now,
+     body,changeRequestId:quoteId,createdAt:now,
    }).returning({id:placementTpoMessages.id});
    if(!message)throw new Error("RECRUITER_MESSAGE_PERSISTENCE_FAILED");
    await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
@@ -641,6 +652,7 @@ export async function readRecruiterThreadMessages(
     id:placementTpoMessages.id,senderType:placementTpoMessages.senderType,
     senderUserId:placementTpoMessages.senderUserId,
     body:placementTpoMessages.body,readAt:placementTpoMessages.readAt,
+    changeRequestId:placementTpoMessages.changeRequestId,
     createdAt:placementTpoMessages.createdAt,
   }).from(placementTpoMessages)
    .where(eq(placementTpoMessages.threadId,thread.id))

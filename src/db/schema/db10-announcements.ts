@@ -56,6 +56,15 @@ export const db10Announcements = pgTable(
     legacyAnnouncementId: bigint("legacy_announcement_id", { mode: "bigint" }),
     legacyReceiverValue: bigint("legacy_receiver_value", { mode: "bigint" }),
     legacySenderId: bigint("legacy_sender_id", { mode: "bigint" }),
+    legacySenderType: varchar("legacy_sender_type",{length:40}),
+    legacyReceiverType: varchar("legacy_receiver_type",{length:40}),
+    legacyReceiverLabel: varchar("legacy_receiver_label",{length:160}),
+    legacyOriginalTitle: text("legacy_original_title"),
+    legacyOriginalMessage: text("legacy_original_message"),
+    legacySourceCreatedLocal: timestamp("legacy_source_created_local",{withTimezone:false}),
+    legacySourceUpdatedLocal: timestamp("legacy_source_updated_local",{withTimezone:false}),
+    legacySourceTimeZone: varchar("legacy_source_time_zone",{length:80}),
+    legacyWasTitleMissing: boolean("legacy_was_title_missing"),
     legacyWasDeleted: boolean("legacy_was_deleted"),
     organizationId: uuid("organization_id").notNull()
       .references(() => organizations.id, { onDelete: "restrict" }),
@@ -73,6 +82,8 @@ export const db10Announcements = pgTable(
     isPinned: boolean("is_pinned").notNull().default(false),
     buttonLabel: varchar("button_label", { length: 60 }),
     buttonUrl: varchar("button_url", { length: 500 }),
+    /** Raw legacy links are never delivered directly; validate before mapping. */
+    legacyButtonUrl: text("legacy_button_url"),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
     deletedByUserId: uuid("deleted_by_user_id")
       .references(() => users.id, { onDelete: "restrict" }),

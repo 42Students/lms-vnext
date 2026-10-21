@@ -1,17 +1,15 @@
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { TrackerIssueSavedViews } from "@/components/tracker/tracker-issue-saved-views";
+import { TrackerIssuesFilterBar } from "@/components/tracker/tracker-issues-filter-bar";
 import { TrackerIssueBulkActions } from "@/components/tracker/tracker-issue-bulk-actions";
 import { PageHeader } from "@/components/ui/page-header";
 import { Banner } from "@/components/ui/banner";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
-import { Button } from "@/components/ui/button";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { listBugTrackerIssuesForAdmin } from "@/modules/bug-tracker/admin-service";
 import {
@@ -97,10 +95,13 @@ export default async function TrackerIssuesPage({
   return (
     <div className="min-w-0 space-y-4">
       <PageHeader
+        eyebrow="42 Tracker"
         title="Issues"
-        description="Private Super Admin triage. Engineering notes and attachment metadata are never exposed through a public list."
+        description={"Showing " + page.items.length + (page.nextCursor ? "+" : "") + " " +
+          (page.items.length === 1 && !page.nextCursor ? "issue" : "issues") +
+          " in this view. Search what has already been reported before adding another."}
         actions={<Link href="/tracker"
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-sm font-semibold text-primary-text md:min-h-9">
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
           Report issue
         </Link>}
       />
@@ -114,94 +115,57 @@ export default async function TrackerIssuesPage({
         sort:current.sort,
       }).toString()} />
 
-      <form className="grid min-w-0 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-[minmax(0,1fr)_auto]">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Search
-          <Input className="min-h-11 w-full md:min-h-9" name="q" defaultValue={current.q ?? ""} placeholder="Search ID, description or page" />
-        </label>
-        <div className="flex min-w-0 flex-wrap items-center gap-2 max-[767px]:[&>button]:flex-1">
-          <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">Apply filters</Button>
-          <Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-            Reset
-          </Link>
-        </div>
-        <details open={Boolean(current.reporter || current.status || current.severity || current.environment || current.sort!=="newest")}
-          className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-2 md:col-span-2">
-          <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">More filters</summary>
-          <div className="mt-2 grid min-w-0 gap-3 md:grid-cols-2 lg:grid-cols-3">
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Reporter
-          <Input className="min-h-11 w-full md:min-h-9" name="reporter" defaultValue={current.reporter??""} maxLength={100} placeholder="Reporter name"/>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Status
-          <Select className="min-h-11 w-full md:min-h-9" name="status" defaultValue={current.status ?? ""}>
-            <option value="">All statuses</option>
-            {BUG_STATUSES.map((x) => <option key={x} value={x}>{x}</option>)}
-          </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Severity
-          <Select className="min-h-11 w-full md:min-h-9" name="severity" defaultValue={current.severity ?? ""}>
-            <option value="">All severities</option>
-            {BUG_SEVERITIES.map((x) => <option key={x} value={x}>{x}</option>)}
-          </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Environment
-          <Select className="min-h-11 w-full md:min-h-9" name="environment" defaultValue={current.environment ?? ""}>
-            <option value="">All environments</option>
-            {BUG_ENVIRONMENTS.map((x) => <option key={x} value={x}>{x}</option>)}
-          </Select>
-        </label>
-        <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-          Sort
-          <Select className="min-h-11 w-full md:min-h-9" name="sort" defaultValue={current.sort}>
-            <option value="newest">Newest first</option>
-            <option value="oldest">Oldest first</option>
-          </Select>
-        </label>
-          </div>
-        </details>
-      </form>
+      <TrackerIssuesFilterBar
+        initial={{q:current.q??"",status:current.status??"",environment:current.environment??"",
+          reporter:current.reporter??"",severity:current.severity??"",sort:current.sort}}
+        statuses={BUG_STATUSES} environments={BUG_ENVIRONMENTS} severities={BUG_SEVERITIES}
+      />
 
       <p role="status" className="text-sm text-muted-foreground">
-        Showing {page.items.length} issues on this page (up to 20 per page). Filters remain applied when you load more.
+        Showing {page.items.length} {page.items.length===1?"issue":"issues"} on this page (20 per page). Filters remain applied when you load more.
       </p>
-      <TrackerIssueBulkActions rows={page.items.map(issue=>({publicId:issue.publicId,version:issue.version,status:issue.status}))} />
 
       {page.items.length === 0 ? (
         <EmptyState title="No matching issues." description="Review and triage reported LMS issues."
           action={<Link href="/tracker/issues" className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 font-semibold text-link">Reset</Link>}/>
       ) : (
-        <div className="divide-y divide-[var(--lms-canvas-border)]">
-          {page.items.map((issue) => (
-            <article key={issue.id} className="min-w-0 py-4">
-              <div className="flex min-w-0 flex-col gap-2">
-                <div className="min-w-0">
-
-                  <h2 className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">
-                    <Link className="inline-flex min-h-11 md:min-h-9 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={`/tracker/issues/${encodeURIComponent(issue.publicId)}`}>
-                      {issue.publicId} · {issue.issueType}
-                    </Link>
+        <div className="grid min-w-0 gap-3" role="list" aria-label="Reported issues">
+          {page.items.map(issue=>(
+            <article key={issue.id} role="listitem" className="min-w-0">
+              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)}
+                className="block min-w-0 rounded-[10px] border border-border bg-surface p-4 no-underline hover:border-[var(--lms-primary)] hover:shadow-sm focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+                <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+                  <h2 className="m-0 break-words text-sm font-semibold text-link">
+                    {issue.publicId} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")||issue.issueType}
                   </h2>
                   <div className="flex flex-wrap gap-2">
-                    <StatusBadge tone={issue.status==="CLOSED"?"success":issue.status==="NEW"||issue.status==="READY_FOR_RETEST"?"warning":"info"}>{issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
-                    <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":issue.severity==="MAJOR"?"warning":"neutral"}>{issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,value=>value.toUpperCase())}</StatusBadge>
-                    <StatusBadge>{issue.environment}</StatusBadge>
+                    <StatusBadge tone={issue.severity==="BLOCKER"||issue.severity==="CRITICAL"?"error":
+                      issue.severity==="MAJOR"?"warning":"neutral"}>
+                      {issue.severity.toLowerCase().replaceAll("_"," ").replace(/^./,c=>c.toUpperCase())}
+                    </StatusBadge>
+                    <StatusBadge tone={issue.status==="CLOSED"?"success":
+                      issue.status==="NEW"||issue.status==="READY_FOR_RETEST"?"warning":"info"}>
+                      {issue.status.toLowerCase().replaceAll("_"," ").replace(/^./,c=>c.toUpperCase())}
+                    </StatusBadge>
                   </div>
-                  <p className="mt-1 line-clamp-2 max-w-3xl break-words [overflow-wrap:anywhere] text-sm leading-6 text-body">{issue.description}</p>
-                  <p className="mt-2 max-w-3xl break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">
-                    {issue.reporterName} · {issue.accountRole} · {[issue.page,issue.screen,issue.section].filter(Boolean).join(" › ")} · {issue.createdAt.toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })}
-                  </p>
                 </div>
-
-              </div>
+                <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body [overflow-wrap:anywhere]">{issue.description}</p>
+                <dl className="mt-3 grid min-w-0 gap-2 border-t border-border pt-3 text-xs text-muted-foreground sm:grid-cols-3">
+                  <div><dt className="font-semibold">Reporter</dt><dd>{issue.reporterName}</dd></div>
+                  <div><dt className="font-semibold">Environment</dt>
+                    <dd>{issue.environment.toLowerCase().replace(/^./,c=>c.toUpperCase()).replaceAll("_"," ")}</dd></div>
+                  <div><dt className="font-semibold">Reported</dt>
+                    <dd>{issue.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</dd></div>
+                </dl>
+              </Link>
             </article>
           ))}
         </div>
       )}
 
+      <TrackerIssueBulkActions rows={page.items.map(issue=>({
+        publicId:issue.publicId,version:issue.version,status:issue.status
+      }))} />
       {page.nextCursor ? (
         <div className="flex justify-center">
           <Link

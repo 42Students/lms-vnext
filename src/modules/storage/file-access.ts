@@ -35,8 +35,11 @@ export async function authorizeLegacyFileReadGrant(
   input: { mode: LegacyFileReadMode; fileName: string },
 ) {
   return authorizeOrNotFound(async () => {
+    // Reject a malformed legacy display name without probing an owning row.
+    // The callback is the ONLY source of an authorized, tenant-bound object.
+    const options = legacyFileReadOptions(input.mode, input.fileName);
     const file = await resolveAuthorizedObject();
-    const grant = await issueObjectReadUrl(file, legacyFileReadOptions(input.mode, input.fileName));
+    const grant = await issueObjectReadUrl(file, options);
     return {
       url: grant.url,
       expiresAt: grant.expiresAt,
@@ -62,4 +65,26 @@ export function legacyFolderDeclarationError(rawFolder: string):
     "offer-letters","jd-files",
   ];
   return allowed.includes(rawFolder) ? null : "FOLDER_NOT_ALLOWED";
+}
+
+/** Helpful legacy folder feedback without exposing whether an object exists. */
+export function legacyFolderClientErrorMessage(folder: string): string | null {
+ const code=legacyFolderDeclarationError(folder);
+ return code==="INVALID_FOLDER_PATH"?"Invalid folder path":
+  code==="FOLDER_NOT_ALLOWED"?"Folder is not allowed":null;
+}
+
+/** A legacy delete is a RESOURCE mutation, never a public filename deletion.
+ * Resolve and authorize the owning row before the caller soft-deletes it and
+ * asks its storage lifecycle to remove the now-unreferenced object.
+ */
+export async function authorizeLegacyFileDelete<T>(
+ resolveAuthorizedResource:()=>Promise<T>,
+ softDeleteAuthorizedResource:(resource:T)=>Promise<void>,
+):Promise<{deleted:true}> {
+ return authorizeOrNotFound(async()=>{
+  const resource=await resolveAuthorizedResource();
+  await softDeleteAuthorizedResource(resource);
+  return {deleted:true as const};
+ });
 }

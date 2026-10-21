@@ -27,6 +27,13 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  const source=db.select({
   id:aliasedColumn(collegeMemberships.id,"admin_role_membership_id"),
   status:aliasedColumn(collegeMemberships.status,"admin_role_membership_status"),
+  // Legacy person IDs are import provenance, not vNext membership keys. A
+  // shared user may have a different faculty or learner row in each college.
+  collegeId:aliasedColumn(collegeMemberships.collegeId,"admin_role_college_id"),
+  organizationId:aliasedColumn(colleges.organizationId,"admin_role_organization_id"),
+  userId:aliasedColumn(users.id,"admin_role_user_id"),
+  suspendedAt:collegeMemberships.suspendedAt,
+  legacyMembershipId:collegeMemberships.legacyMembershipId,
   joinedAt:collegeMemberships.createdAt,
   name:aliasedColumn(users.displayName,"admin_role_user_name"),
   platformStatus:users.platformStatus,
@@ -35,12 +42,31 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
   departmentName:departments.name,
   employmentType:facultyProfiles.employmentType,
   academicTitle:facultyProfiles.academicTitle,
+  facultyDepartmentId:facultyProfiles.primaryDepartmentId,
+  legacyFacultyId:facultyProfiles.legacyFacultyId,
+  legacyFacultyCode:facultyProfiles.legacyFacultyCode,
+  legacyLearnerId:learnerProfiles.legacyLearnerId,
+  legacyUniqueId:learnerProfiles.legacyUniqueId,
+  registrationNumber:learnerProfiles.registrationNumber,
   mentorRole:sql<boolean>`exists(select 1 from membership_roles mentor_role where mentor_role.membership_id=${collegeMemberships.id} and mentor_role.role='MENTOR')`.as("admin_role_mentor"),
   gender:sql<string|null>`coalesce(
     ${facultyProfiles.profileDocument}->'personalDetails'->>'gender',
     ${learnerProfiles.profileDocument}->'personalDetails'->>'gender'
   )`.as("admin_person_gender"),
   rollNumber:learnerProfiles.rollNumber,
+  // Legacy learner.contactMail/contactMobile can differ from the globally
+  // verified account identity. Display the learner profile's recorded
+  // contact first, with the canonical user account as a safe fallback.
+  learnerContactEmail:sql<string|null>`coalesce(
+    nullif(${learnerProfiles.profileDocument}->'personalDetails'->>'contactMail',''),
+    nullif(${learnerProfiles.profileDocument}->'personalDetails'->>'email',''),
+    ${users.email}
+  )`.as("admin_learner_contact_email"),
+  learnerContactMobile:sql<string|null>`coalesce(
+    nullif(${learnerProfiles.profileDocument}->'personalDetails'->>'contactMobile',''),
+    nullif(${learnerProfiles.profileDocument}->'personalDetails'->>'mobile',''),
+    ${users.phoneE164}
+  )`.as("admin_learner_contact_mobile"),
   className:sql<string|null>`(
     select s.name
     from section_enrollments se
@@ -57,6 +83,22 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
       and se.status='ACTIVE' and e.status='ACTIVE'
     order by se.created_at desc limit 1
   )`.as("admin_learner_class"),
+  // A learner can belong to more than one active academic section. The old
+  // grid showed one class, while details must not silently discard the rest.
+  classNames:sql<string|null>`(
+    select string_agg(distinct s.name, ', ' order by s.name)
+    from section_enrollments se
+    join learner_program_enrollments e on e.id=se.learner_enrollment_id
+    join sections s on s.id=se.section_id and s.cohort_id=e.cohort_id
+      and s.academic_period_id=se.academic_period_id
+    join cohorts class_cohort on class_cohort.id=s.cohort_id
+    join programs class_program on class_program.id=class_cohort.program_id
+      and class_program.id=e.program_id
+    join departments d on d.id=class_program.department_id
+      and d.college_id=${selected.collegeId}
+    where e.membership_id=${collegeMemberships.id}
+      and e.status='ACTIVE' and se.status='ACTIVE'
+  )`.as("admin_learner_classes"),
  }).from(collegeMemberships)
  .innerJoin(colleges,and(eq(colleges.id,collegeMemberships.collegeId),
   eq(colleges.id,selected.collegeId),
@@ -92,18 +134,36 @@ export async function listAdminScopedPeople(context:RequestContext,role:"FACULTY
  const fmt=new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"});
  return {query:{...query,page},total,totalPages,items:rows.map(row=>({
   id:row.id,title:row.name||"Unnamed person",subtitle:row.collegeName+" · "+role,
-  status:row.status,
+  // Legacy suspendedAt means this membership cannot act in the college;
+  // a platform block also prevents sign-in even if membership stayed ACTIVE.
+  status:row.status==="ACTIVE"&&(row.platformStatus!=="ACTIVE"||row.suspendedAt)
+    ?"SUSPENDED":row.status,
   details:[
    ...(role==="FACULTY"?[
     "Department: "+(row.departmentName??"Not assigned"),
-    "Type: "+(row.mentorRole?"Mentor":row.employmentType??"Not set"),
+    "Department ID: "+(row.facultyDepartmentId??"Not assigned"),
+    "Type: "+(row.employmentType??row.academicTitle??"Not set"),
+    "Faculty type: "+(row.employmentType??"Not set"),
     "Mentor membership: "+(row.mentorRole?"Active":"Not assigned"),
     "Academic title: "+(row.academicTitle??"Not set"),
+    "Faculty code: "+(row.legacyFacultyCode??"Not recorded"),
+    "Legacy faculty ID: "+(row.legacyFacultyId??"Not recorded"),
     "Gender: "+(row.gender||"Not recorded"),
     "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded"),
    ]:["Roll number: "+(row.rollNumber??"Not recorded"),"Class: "+(row.className??"Not assigned"),
+     "Classes: "+(row.classNames??"Not assigned"),
+     "Student ID: "+(row.legacyUniqueId??"Not recorded"),
+     "Registration number: "+(row.registrationNumber??"Not recorded"),
+     "Legacy learner ID: "+(row.legacyLearnerId??"Not recorded"),
      "Gender: "+(row.gender||"Not recorded"),
-     "Email: "+(row.email??"Not recorded"),"Mobile: "+(row.phone??"Not recorded")]),
+     "Email: "+(row.learnerContactEmail??"Not recorded"),
+     "Mobile: "+(row.learnerContactMobile??"Not recorded")]),
+   "College ID: "+row.collegeId,
+   "Organization ID: "+row.organizationId,
+   "Membership ID: "+row.id,
+   "Platform account ID: "+row.userId,
+   "Legacy membership ID: "+(row.legacyMembershipId??"Not recorded"),
+   "Membership suspension: "+(row.suspendedAt?"Suspended":"Not suspended"),
    "Platform account: "+row.platformStatus,"Joined: "+fmt.format(row.joinedAt)+" IST",
    "Contact shown only within selected college administrative scope.",
   ],

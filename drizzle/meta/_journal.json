@@ -1261,6 +1261,195 @@
       "when": 1792352111266,
       "tag": "0179_lane15_company_role_legacy_bounds",
       "breakpoints": true
+    },
+    {
+      "idx": 180,
+      "version": "7",
+      "when": 1792352171266,
+      "tag": "0180_lane15_application_history_query_indexes",
+      "breakpoints": true
+    },
+    {
+      "idx": 181,
+      "version": "7",
+      "when": 1792352231266,
+      "tag": "0181_lane15_academic_program_batch_import",
+      "breakpoints": true
+    },
+    {
+      "idx": 182,
+      "version": "7",
+      "when": 1792352291266,
+      "tag": "0182_lane15_academic_section_group_import",
+      "breakpoints": true
+    },
+    {
+      "idx": 183,
+      "version": "7",
+      "when": 1792352351266,
+      "tag": "0183_lane15_academic_faculty_schedule_import",
+      "breakpoints": true
+    },
+    {
+      "idx": 184,
+      "version": "7",
+      "when": 1792352411266,
+      "tag": "0184_lane15_independent_email_link_proofs",
+      "breakpoints": true
+    },
+    {
+      "idx": 185,
+      "version": "7",
+      "when": 1792352471266,
+      "tag": "0185_lane15_bug_tracker_legacy_lookup",
+      "breakpoints": true
+    },
+    {
+      "idx": 186,
+      "version": "7",
+      "when": 1792352531266,
+      "tag": "0186_lane15_assignment_snapshot_legacy_identity",
+      "breakpoints": true
+    },
+    {
+      "idx": 187,
+      "version": "7",
+      "when": 1792352591266,
+      "tag": "0187_lane15_membership_legacy_role_translation",
+      "breakpoints": true
+    },
+    {
+      "idx": 188,
+      "version": "7",
+      "when": 1792352651266,
+      "tag": "0188_lane15_private_profile_legacy_provenance",
+      "breakpoints": true
+    },
+    {
+      "idx": 189,
+      "version": "7",
+      "when": 1792352711266,
+      "tag": "0189_lane15_college_legacy_fields",
+      "breakpoints": true
+    },
+    {
+      "idx": 190,
+      "version": "7",
+      "when": 1792352771266,
+      "tag": "0190_lane15_suppression_legacy_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 191,
+      "version": "7",
+      "when": 1792352831266,
+      "tag": "0191_lane15_upload_receipt_legacy_import",
+      "breakpoints": true
+    },
+    {
+      "idx": 192,
+      "version": "7",
+      "when": 1792352891266,
+      "tag": "0192_lane15_saved_job_source_ids",
+      "breakpoints": true
+    },
+    {
+      "idx": 193,
+      "version": "7",
+      "when": 1792352951266,
+      "tag": "0193_lane15_elective_source_ids",
+      "breakpoints": true
+    },
+    {
+      "idx": 194,
+      "version": "7",
+      "when": 1792353011266,
+      "tag": "0194_lane15_department_legacy_name_bounds",
+      "breakpoints": true
+    },
+    {
+      "idx": 195,
+      "version": "7",
+      "when": 1792353071266,
+      "tag": "0195_lane15_db10_skills_catalog",
+      "breakpoints": true
+    },
+    {
+      "idx": 196,
+      "version": "7",
+      "when": 1792353131266,
+      "tag": "0196_lane15_project_change_history",
+      "breakpoints": true
+    },
+    {
+      "idx": 197,
+      "version": "7",
+      "when": 1792353191266,
+      "tag": "0197_lane15_placement_external_pending_private_refs",
+      "breakpoints": true
+    },
+    {
+      "idx": 198,
+      "version": "7",
+      "when": 1792353251266,
+      "tag": "0198_lane15_audit_finding_file_ledger",
+      "breakpoints": true
+    },
+    {
+      "idx": 199,
+      "version": "7",
+      "when": 1792353311266,
+      "tag": "0199_lane15_org_override_retirement",
+      "breakpoints": true
+    },
+    {
+      "idx": 200,
+      "version": "7",
+      "when": 1792353371266,
+      "tag": "0200_lane15_learner_import_batch_undo",
+      "breakpoints": true
+    },
+    {
+      "idx": 201,
+      "version": "7",
+      "when": 1792353431266,
+      "tag": "0201_lane15_discussion_soft_delete_snapshot",
+      "breakpoints": true
+    },
+    {
+      "idx": 202,
+      "version": "7",
+      "when": 1792353491266,
+      "tag": "0202_lane15_branding_signin_data_policy",
+      "breakpoints": true
+    },
+    {
+      "idx": 203,
+      "version": "7",
+      "when": 1792353551266,
+      "tag": "0203_lane15_preuser_onboarding_challenges",
+      "breakpoints": true
+    },
+    {
+      "idx": 204,
+      "version": "7",
+      "when": 1792353611266,
+      "tag": "0204_lane15_faculty_avatar_cleanup",
+      "breakpoints": true
+    },
+    {
+      "idx": 205,
+      "version": "7",
+      "when": 1792353671266,
+      "tag": "0205_lane15_assignment_grade_events",
+      "breakpoints": true
+    },
+    {
+      "idx": 206,
+      "version": "7",
+      "when": 1792353731266,
+      "tag": "0206_lane15_assignment_resource_builder",
+      "breakpoints": true
     }
   ]
 }

@@ -42,11 +42,11 @@ export default async function CollegeAssignmentsPage({
   ]);
   if(dataResult.status==="rejected")return <div className="min-w-0 space-y-4">
     <PageHeader title="Assignments"/>
-    <ErrorState title="Assignments unavailable"
-      description="The assignment directory could not be loaded. Your filters have not changed."
+    <ErrorState title="Assignments could not be loaded"
+      description="Assignments could not be loaded. Your filters have not changed; retry to load the list."
       action={<Link href={collegeAssessmentHref("ASSIGNMENT",query)}
         className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
-        Retry loading assignments
+        Retry
       </Link>}/>
   </div>;
   const data=dataResult.value;

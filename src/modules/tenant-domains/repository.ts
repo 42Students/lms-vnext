@@ -147,40 +147,77 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
   },
 
   async createDomain(input) {
-    const db = getDb();
-
-    try {
-      const [created] = await db
-        .insert(tenantDomains)
-        .values({
-          collegeId: input.collegeId,
-          host: input.host,
-          verificationToken: input.verificationToken,
-        })
-        .returning({ id: tenantDomains.id });
-
-      if (!created) {
-        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
-      }
-
-      const domain = await loadDomainFromDb(created.id);
-      if (!domain) {
-        throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
-      }
+    const db=getDb();
+    // Retired hosts preserve ownership and require a reviewed release.
+    const [retired]=await db.select({id:tenantDomains.id}).from(tenantDomains)
+      .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`,
+        sql`${tenantDomains.deletedAt} is not null`)).limit(1);
+    if(retired)throw new TenantDomainServiceError("HOST_CONFLICT");
+    try{
+      const domainId=await db.transaction(async tx=>{
+        await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
+          collegeId:input.collegeId,organizationId:input.organizationId,
+        });
+        const [created]=await tx.insert(tenantDomains).values({
+          collegeId:input.collegeId,host:input.host,
+          verificationToken:input.verificationToken,
+        }).returning({id:tenantDomains.id});
+        if(!created)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+        await tx.insert(activityEvents).values({
+          organizationId:input.organizationId,collegeId:input.collegeId,
+          actorUserId:input.context.user.id,module:"PLATFORM",
+          eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+          subjectType:"tenant_domain",subjectId:created.id,
+          summary:"Super Admin added a custom college domain",
+          metadata:{action:"CREATE_CUSTOM_HOST",host:input.host,pendingDnsVerification:true},
+        });
+        return created.id;
+      });
+      const domain=await loadDomainFromDb(domainId);
+      if(!domain)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       return domain;
-    } catch (error) {
-      if (error instanceof TenantDomainServiceError) {
-        throw error;
-      }
-      if (isUniqueViolation(error)) {
-        const existing = await loadDomainByHostFromDb(input.host);
-        if (existing?.collegeId === input.collegeId) {
-          return existing;
-        }
+    }catch(error){
+      if(error instanceof TenantDomainServiceError)throw error;
+      if(isUniqueViolation(error)){
+        const existing=await loadDomainByHostFromDb(input.host);
+        if(existing?.collegeId===input.collegeId)return existing;
         throw new TenantDomainServiceError("HOST_CONFLICT");
       }
       throw error;
     }
+  },
+
+  async ensureToken(input) {
+    await getDb().transaction(async tx=>{
+      const [row]=await tx.select({
+        id:tenantDomains.id,collegeId:tenantDomains.collegeId,
+        organizationId:colleges.organizationId,status:colleges.status,
+        host:tenantDomains.host,isVerified:tenantDomains.isVerified,
+        verificationToken:tenantDomains.verificationToken,
+      }).from(tenantDomains).innerJoin(colleges,eq(colleges.id,tenantDomains.collegeId))
+       .where(and(eq(tenantDomains.id,input.domainId),isNull(tenantDomains.deletedAt)))
+       .for("update").limit(1);
+      if(!row||row.status!=="ACTIVE")throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+      await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
+        collegeId:row.collegeId,organizationId:row.organizationId,
+      });
+      if(row.host!==input.expectedHost)throw new TenantDomainServiceError("DOMAIN_HOST_STALE");
+      if(row.isVerified||row.verificationToken)return;
+      await tx.update(tenantDomains).set({
+        verificationToken:input.token,lastCheckedAt:null,lastCheckResult:null,updatedAt:new Date(),
+      }).where(eq(tenantDomains.id,row.id));
+      await tx.insert(activityEvents).values({
+        organizationId:row.organizationId,collegeId:row.collegeId,
+        actorUserId:input.context.user.id,module:"PLATFORM",
+        eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+        subjectType:"tenant_domain",subjectId:row.id,
+        summary:"Super Admin issued a custom domain DNS challenge",
+        metadata:{action:"ENSURE_DNS_TOKEN",host:row.host},
+      });
+    });
+    const domain=await loadDomainFromDb(input.domainId);
+    if(!domain)throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
+    return domain;
   },
 
   async editDomainHost(input) {
@@ -208,8 +245,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         if(row.host===input.host)return;
         const [taken]=await tx.select({id:tenantDomains.id})
           .from(tenantDomains)
-          .where(and(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`,
-            sql`${tenantDomains.deletedAt} is null`)).limit(1);
+          .where(sql<boolean>`lower(${tenantDomains.host}) = ${input.host}`).limit(1);
         if(taken&&taken.id!==row.id)
           throw new TenantDomainServiceError("HOST_CONFLICT");
         const now=new Date();
@@ -245,6 +281,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         .select({
           id: tenantDomains.id,
           collegeId: tenantDomains.collegeId,
+          organizationId:colleges.organizationId,
           isVerified: tenantDomains.isVerified,
           isPrimary: tenantDomains.isPrimary,
           host: tenantDomains.host,
@@ -252,6 +289,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
           verifiedAt: tenantDomains.verifiedAt,
         })
         .from(tenantDomains)
+        .innerJoin(colleges,eq(colleges.id,tenantDomains.collegeId))
         .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
         .for("update")
         .limit(1);
@@ -259,6 +297,9 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       if (!current) {
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       }
+      await assertPersistedPlatformPermission(tx,input.context,"college.manage",{
+        collegeId:current.collegeId,organizationId:current.organizationId,
+      });
       // In-flight DNS verification cannot confirm a host that was edited.
       if(current.host!==input.expectedHost ||
          current.verificationToken!==input.expectedToken)
@@ -297,9 +338,21 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
               : current.verifiedAt,
           lastCheckedAt: input.checkedAt,
           lastCheckResult: input.result,
+          // Never store raw DNS TXT values (which may contain challenge
+          // secrets). Keep a finite, human-readable failure category only.
+          lastFoundValues:input.result==="TXT_VALUE_MISMATCH"?"TXT value does not match":null,
           updatedAt: input.checkedAt,
         })
         .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)));
+      await tx.insert(activityEvents).values({
+        organizationId:current.organizationId,collegeId:current.collegeId,
+        actorUserId:input.context.user.id,module:"PLATFORM",
+        eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+        subjectType:"tenant_domain",subjectId:domainId,
+        summary:"Super Admin checked custom domain DNS verification",
+        metadata:{action:"VERIFY_CUSTOM_HOST",host:current.host,
+          verified:input.verified,result:input.result},
+      });
     });
 
     const domain = await loadDomainFromDb(domainId);
@@ -309,7 +362,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
     return domain;
   },
 
-  async setPrimary(domainId) {
+  async setPrimary(domainId,context) {
     const db = getDb();
 
     await db.transaction(async (tx) => {
@@ -317,9 +370,11 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
         .select({
           id: tenantDomains.id,
           collegeId: tenantDomains.collegeId,
+          organizationId:colleges.organizationId,
           isVerified: tenantDomains.isVerified,
         })
         .from(tenantDomains)
+        .innerJoin(colleges,eq(colleges.id,tenantDomains.collegeId))
         .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)))
         .for("update")
         .limit(1);
@@ -327,6 +382,9 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
       if (!target) {
         throw new TenantDomainServiceError("DOMAIN_NOT_FOUND");
       }
+      await assertPersistedPlatformPermission(tx,context,"college.manage",{
+        collegeId:target.collegeId,organizationId:target.organizationId,
+      });
       if (!target.isVerified) {
         throw new TenantDomainServiceError("DOMAIN_NOT_VERIFIED");
       }
@@ -358,6 +416,14 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
           updatedAt: new Date(),
         })
         .where(eq(tenantDomains.id, target.id));
+      await tx.insert(activityEvents).values({
+        organizationId:target.organizationId,collegeId:target.collegeId,
+        actorUserId:context.user.id,module:"PLATFORM",
+        eventType:"PLATFORM_COLLEGE_SUBDOMAIN_CHANGED",importance:"HIGH",
+        subjectType:"tenant_domain",subjectId:target.id,
+        summary:"Super Admin changed the primary custom college domain",
+        metadata:{action:"SET_PRIMARY",verified:true},
+      });
     });
 
     const domain = await loadDomainFromDb(domainId);

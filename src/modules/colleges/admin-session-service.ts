@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,or,sql} from "drizzle-orm";
+import {and,asc,desc,eq,inArray,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,membershipRoles,users} from "@/db/schema";
@@ -66,6 +66,59 @@ export async function listCollegeAdminSessionTargets(ctx:RequestContext,rawColle
   }
  }
  return {college,items:[...map.values()],truncated:rows.length>500};
+ });
+}
+
+/** Server-side, stable 25-person pages. Joining roles before LIMIT without a
+ * groupBy would cut off people with multiple roles and miscount the directory.
+ * Authorization is renewed inside the read transaction, not just at entry. */
+export async function listCollegeAdminSessionTargetsPage(
+ ctx:RequestContext,rawCollegeId:unknown,rawPage:unknown=1,
+ roleFilter:"ALL"|"COLLEGE_ADMIN"|"TPO"="ALL",
+){
+ const page=adminSessionHistoryPageSchema.parse(rawPage),pageSize=25;
+ if(!isSuperAdmin(ctx))throw new AuthorizationError("college.manage");
+ const collegeId=z.uuid().parse(rawCollegeId);
+ const college=await getSuperAdminTenantLifecycleDetail(ctx,collegeId);
+ requirePermission(ctx,"college.manage",{collegeId,organizationId:college.organizationId});
+ return getDb().transaction(async tx=>{
+  await assertPersistedPlatformPermission(tx,ctx,"college.manage",{
+   organizationId:college.organizationId,collegeId:college.id,
+  });
+  const roleCondition=and(eq(membershipRoles.membershipId,collegeMemberships.id),
+   inArray(membershipRoles.role,roleFilter==="ALL"?["COLLEGE_ADMIN","TPO"]:[roleFilter]));
+  const scope=and(eq(collegeMemberships.collegeId,college.id),
+   inArray(collegeMemberships.status,["ACTIVE","SUSPENDED"]));
+  const [counts]=await tx.select({
+   total:sql<number>`count(distinct ${collegeMemberships.id})::integer`,
+  }).from(collegeMemberships)
+   .innerJoin(membershipRoles,roleCondition).where(scope);
+  const total=Number(counts?.total??0),pageCount=Math.max(1,Math.ceil(total/pageSize));
+  const pageRows=await tx.select({
+   userId:users.id,name:users.displayName,email:users.email,
+   membershipId:collegeMemberships.id,status:collegeMemberships.status,
+  }).from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,roleCondition)
+   .where(scope)
+   .groupBy(collegeMemberships.id,users.id)
+   .orderBy(asc(users.displayName),asc(users.id))
+   .limit(pageSize).offset((page-1)*pageSize);
+  const byMembership=new Map<string,AdminSessionTarget>(pageRows.map(row=>[
+   row.membershipId,{...row,roles:[] as string[]},
+  ]));
+  if(pageRows.length){
+   const roles=await tx.select({
+    membershipId:membershipRoles.membershipId,role:membershipRoles.role,
+   }).from(membershipRoles).where(inArray(
+    membershipRoles.membershipId,pageRows.map(row=>row.membershipId),
+   )).orderBy(asc(membershipRoles.role));
+   for(const role of roles){
+    const target=byMembership.get(role.membershipId);
+    if(target&&!target.roles.includes(role.role))target.roles.push(role.role);
+   }
+  }
+  return {college,items:[...byMembership.values()],total,page,pageCount,pageSize,truncated:false};
  });
 }
 

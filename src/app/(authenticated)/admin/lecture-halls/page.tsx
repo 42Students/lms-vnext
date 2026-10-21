@@ -5,6 +5,8 @@ import { LectureHallManager } from "@/components/admin/lecture-hall-manager";
 import { EmptyState } from "@/components/ui/empty-state";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { Alert } from "@/components/ui/alert";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
@@ -28,8 +30,7 @@ export default async function SuperAdminLectureHallsPage({
   if (!collegeId) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader  title="Lecture Halls"
       description="Lecture hall administration requires an exact college safety scope." />
-    <EmptyState title="Select a college to continue"
-      description="Choose a college in the header above to see its lecture halls. This workspace requires one selected college; global multi-college search is not available." />
+    <Alert tone="warning">Select a college to continue. Choose a college in the header to manage lecture halls.</Alert>
   </div>;
   requireSuperAdminSelectedCollege(context,"academics.manage");
 
@@ -85,6 +86,13 @@ export default async function SuperAdminLectureHallsPage({
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader  title="Lecture Halls"
       description={`Rooms available for scheduling classes in ${halls.collegeName}. Changes are restricted to this selected college.`} />
+    <Tabs ariaLabel="Academic Setup" renderPanel={false} value="/admin/lecture-halls"
+      items={[
+       {value:"/admin/academics",label:"Academic Setup",href:"/admin/academics"},
+       {value:"/admin/programs",label:"Programs",href:"/admin/programs"},
+       {value:"/admin/electives",label:"Electives",href:"/admin/electives"},
+       {value:"/admin/lecture-halls",label:"Lecture Halls",href:"/admin/lecture-halls"},
+      ]}/>
     <section aria-label="Lecture hall filters" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
       <form action="/admin/lecture-halls" method="get" aria-label="Filter lecture halls" className="min-w-0 space-y-[var(--lms-space-3)]">
         <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">

@@ -21,6 +21,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
  const [notice,setNotice]=useState<string|null>(null);
  const [loading,setLoading]=useState(true);
  const [openingMaterialId,setOpeningMaterialId]=useState<string|null>(null);
+ const openingRef=useRef<string|null>(null);
  const uri="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+"/materials"+
   (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
  const [prevUri,setPrevUri]=useState(uri);
@@ -47,31 +48,39 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   return ()=>controller.abort();
  },[uri]);
  async function openFile(materialId:string){
-  if(openingMaterialId)return;
+  if(openingRef.current)return;
+  openingRef.current=materialId;
   setOpeningMaterialId(materialId);setError(null);
+  // Reserve the destination synchronously, while the user gesture exists.
+  // No object keys or signed URLs are stored in component state.
+  const popup=window.open("about:blank","_blank");
+  if(popup)popup.opener=null;
+  const controller=new AbortController();
+  const timeout=window.setTimeout(()=>controller.abort(),12000);
   try{
    const grantUrl="/api/courses/lesson-contents/"+encodeURIComponent(contentId)+
     "/materials/"+encodeURIComponent(materialId)+"/url"+
     (deliveryId?"?deliveryId="+encodeURIComponent(deliveryId):"");
-   const response=await fetch(grantUrl,{cache:"no-store",credentials:"same-origin"});
-   if(!response.ok){
-    throw new Error(response.status===503?"Resource storage unavailable. Try again.":
-     response.status===404?"Resource not available.":
-     response.status===409?"The file is not ready. Try again shortly.":
-     "Cannot sign Resource file URL. Try again.");
-   }
+   const response=await fetch(grantUrl,{cache:"no-store",credentials:"same-origin",
+    signal:controller.signal});
+   if(!response.ok)throw new Error("Resource file is unavailable. Contact your instructor.");
    const data:unknown=await response.json();
    const parsed=data&&typeof data==="object"&&"data" in data?data.data:null;
    const signed=parsed&&typeof parsed==="object"&&"url" in parsed?parsed.url:null;
-   if(typeof signed!=="string")throw new Error("Cannot sign Resource file URL. Try again.");
+   if(typeof signed!=="string")throw new Error("Resource file is unavailable. Contact your instructor.");
    const target=new URL(signed);
    if(target.protocol!=="https:"||target.username||target.password)
-    throw new Error("Cannot sign Resource file URL. Try again.");
-   if(currentUriRef.current===uri)window.location.assign(target.href);
-  }catch(cause){
+    throw new Error("Resource file is unavailable. Contact your instructor.");
+   if(currentUriRef.current!==uri){popup?.close();return;}
+   if(popup&&!popup.closed)popup.location.replace(target.href);
+   else window.location.assign(target.href); // Popup-blocked fallback
+  }catch{
+   popup?.close();
    if(currentUriRef.current===uri)
-    setError(cause instanceof Error?cause.message:"Resource storage unavailable. Try again.");
+    setError("Resource file is unavailable. Contact your instructor.");
   }finally{
+   window.clearTimeout(timeout);
+   openingRef.current=null;
    if(currentUriRef.current===uri)setOpeningMaterialId(null);
   }
  }
@@ -85,8 +94,9 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
   if(busy)return;
   if(action==="REMOVE"&&!window.confirm("Remove this material? Students will no longer see it."))return;
   const trimmed={title:draft.title.trim(),notes:draft.notes.trim()||null,externalUrl:draft.externalUrl.trim()};
-  if(action!=="REMOVE"&&(!trimmed.title||!facultyContentExternalHref("RESOURCE",trimmed.externalUrl))){
-   setError("Enter a material title and a secure HTTPS link.");return;
+  if(action!=="REMOVE"&&!trimmed.title){setError("Enter a material title.");return;}
+  if(action!=="REMOVE"&&!facultyContentExternalHref("RESOURCE",trimmed.externalUrl)){
+   setError("Enter a valid HTTPS URL without credentials or spaces.");return;
   }
   setBusy(true);setError(null);setNotice(null);
   try{
@@ -109,7 +119,12 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
    <h4 className="text-sm font-semibold text-foreground">Materials ({materials.length}/20)</h4>
    {loading?<span role="status" className="text-xs">Loading…</span>:null}
   </div>
-  {!loading&&!materials.length?<p className="text-xs text-muted-foreground">No additional materials.</p>:null}
+  {!loading&&!materials.length?<p className="text-xs text-muted-foreground">No Resource materials.</p>:null}
+  {materials.some(material=>material.kind==="FILE"&&material.uploadStatus!=="READY")?
+   <Alert tone="warning" role="status">Some Resource files are unavailable. Contact your instructor.</Alert>:null}
+  {editable?<p role="status" className="text-xs text-muted-foreground">
+   Audience: {deliveryId?"Selected Section":"Shared course"}. Change the audience in the parent content editor before adding files. Verified private file uploads are managed separately; unverified files cannot be made available to learners.
+  </p>:null}
   <ul className="space-y-2">
    {materials.map(material=><li key={material.id} className="flex flex-wrap items-start gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2">
     <div className="min-w-0 flex-1">
@@ -117,7 +132,7 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
      {material.notes?<p className="whitespace-pre-wrap text-xs text-body">{material.notes}</p>:null}
      {material.kind==="LINK"&&facultyContentExternalHref("RESOURCE",material.externalUrl)?
       <a href={facultyContentExternalHref("RESOURCE",material.externalUrl)!} target="_blank" rel="noopener noreferrer"
-       className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open link</a>:
+       className="inline-flex min-h-11 items-center text-xs font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9">Open</a>:
       material.kind==="FILE"?<div className="flex items-center gap-2">
        {material.uploadStatus==="READY"?
         <Button size="sm" type="button" variant="secondary"
@@ -125,9 +140,9 @@ export function LessonResourceMaterialsControl({contentId,deliveryId,editable=fa
          loading={openingMaterialId===material.id}
          disabled={busy||openingMaterialId!==null}
          onClick={()=>void openFile(material.id)}>
-         {openingMaterialId===material.id?"Preparing file…":"Open file"}
+         {openingMaterialId===material.id?"Preparing file…":"Open"}
         </Button>:
-        <span className="text-xs text-muted-foreground">Checking file</span>}
+        <span role="status" className="text-xs text-muted-foreground">File unavailable</span>}
       </div>:null}
     </div>
     {editable&&material.kind==="LINK"?<div className="flex gap-2">

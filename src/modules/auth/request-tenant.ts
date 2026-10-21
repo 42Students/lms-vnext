@@ -138,3 +138,20 @@ export async function resolveRequestTenant(
 export function clearRequestTenantCacheForTests() {
   cache.clear();
 }
+
+/** Public bootstrap compatibility. Never serialize guessed or unverified
+ * Host/X-Forwarded-Host values as college identities. Versioned fields let
+ * old consumers upgrade without accidentally treating branding as auth. */
+export function publicRequestTenantSnapshot(value:RequestTenant){
+ const base={version:1 as const,resolvedHost:value.host,
+   isPlatform:value.kind==="platform",isVerifiedCollege:value.kind==="college"};
+ if(value.kind!=="college")return {...base,collegeId:null,organizationId:null,
+   canonicalHost:null,redirectToCanonical:false};
+ return {...base,collegeId:value.collegeId,
+  organizationId:value.organizationId,canonicalHost:value.canonicalHost??value.host,
+  redirectToCanonical:value.shouldRedirectToCanonicalHost===true};
+}
+/** Limit the effect of a just-verified or deleted DNS domain until next read. */
+export function invalidateRequestTenantHost(host:string){
+ try{cache.delete(normalizeRequestHost(hostWithoutPort(host)));}catch{/* Invalid host was never cached. */}
+}

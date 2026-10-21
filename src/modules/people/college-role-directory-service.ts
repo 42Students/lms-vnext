@@ -301,14 +301,28 @@ export async function listCollegeRoleDirectory(
       ) : undefined,
     )).as("college_role_directory");
 
+  // Numeric-aware historical roll sorting must happen BEFORE pagination;
+  // sorting the returned page alone loses records at page boundaries.
+  // A scalar learner-profile subquery keeps college/membership filtering
+  // authoritative in the outer request-scoped directory query.
+  const rollValue=sql`coalesce((select ${learnerProfiles.rollNumber}
+    from ${learnerProfiles}
+    where ${learnerProfiles.membershipId}=${query.membershipId}
+    limit 1),'')`;
+  const numericRoll=sql`nullif(regexp_replace(${rollValue},'[^0-9]','','g'),'')::numeric`;
   const [counts, baseRows] = await Promise.all([
     db.select({ total: count() }).from(query),
     db.select().from(query)
       .orderBy(
-        filter.sort === "NEWEST" ? desc(query.joinedAt) :
+        filter.sort === "ROLL" && kind==="LEARNER"
+          ? sql`${numericRoll} asc nulls last` :
+          filter.sort === "ROLL_DESC" && kind==="LEARNER"
+          ? sql`${numericRoll} desc nulls last` :
+          filter.sort === "NEWEST" ? desc(query.joinedAt) :
           filter.sort === "OLDEST" ? asc(query.joinedAt) :
           filter.sort === "NAME_DESC" ? desc(sql`lower(coalesce(${query.name}, ''))`) :
           asc(sql`lower(coalesce(${query.name}, ''))`),
+        filter.sort.startsWith("ROLL") ? asc(rollValue) : asc(query.membershipId),
         asc(query.membershipId),
       )
       .limit(filter.pageSize)
@@ -321,7 +335,12 @@ export async function listCollegeRoleDirectory(
         enrollmentId: learnerProgramEnrollments.id,
         programName: programs.name,
         cohortName: cohorts.name,
+        departmentName: departments.name,
+        rollNumber: learnerProfiles.rollNumber,
+        registrationNumber: learnerProfiles.registrationNumber,
+        legacyUniqueId: learnerProfiles.legacyUniqueId,
       }).from(learnerProgramEnrollments)
+        .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,learnerProgramEnrollments.membershipId))
         .innerJoin(programs, eq(programs.id, learnerProgramEnrollments.programId))
         .innerJoin(cohorts, and(
           eq(cohorts.id, learnerProgramEnrollments.cohortId),
@@ -378,6 +397,19 @@ export async function listCollegeRoleDirectory(
         ))
         .groupBy(courseTeachingAssignments.membershipId)
     : [];
+  const facultyDirectoryDetails=kind==="FACULTY"&&ids.length
+    ? await db.select({
+        membershipId:facultyProfiles.membershipId,
+        departmentName:departments.name,
+        employmentType:facultyProfiles.employmentType,
+      }).from(facultyProfiles)
+        .leftJoin(departments,and(
+          eq(departments.id,facultyProfiles.primaryDepartmentId),
+          eq(departments.collegeId,collegeId),
+        ))
+        .where(inArray(facultyProfiles.membershipId,ids))
+    : [];
+  const facultyByMembership=new Map(facultyDirectoryDetails.map(row=>[row.membershipId,row]));
   const academicMap = new Map(academic.map((item) => [item.enrollmentId, item]));
   const sectionsByMembership = new Map<string, string[]>();
   for (const section of activeSections) {
@@ -391,6 +423,7 @@ export async function listCollegeRoleDirectory(
   const teachingCount = new Map(facultyAssignments.map((item) => [item.membershipId, item.total]));
   const items: CollegeRoleDirectoryRow[] = baseRows.map((person) => {
     const study = studentByMembership.get(person.membershipId);
+    const staff = facultyByMembership.get(person.membershipId);
     return {
       membershipId: person.membershipId,
       name: person.name?.trim() || "Unnamed member",
@@ -402,6 +435,10 @@ export async function listCollegeRoleDirectory(
       cohort: study?.cohortName ?? null,
       sections: sectionsByMembership.get(person.membershipId) ?? [],
       activeTeachingAssignments: teachingCount.get(person.membershipId) ?? 0,
+      rollNumber:study?.rollNumber??null,registrationNumber:study?.registrationNumber??null,
+      legacyUniqueId:study?.legacyUniqueId??null,
+      department:study?.departmentName??staff?.departmentName??null,
+      employmentType:staff?.employmentType??null,
     };
   });
   // COL-people-13: exact scoped directory metrics, independent of page filters.

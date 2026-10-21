@@ -12,10 +12,10 @@ type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCod
 
 /** College Admin may grade a shared offering assignment in each of its classes. */
 export function CollegeAssignmentReview({
- assignmentId,offeringId,specificDeliveryId,maxPoints,status,deliveries,filesEnabled,
+ assignmentId,offeringId,specificDeliveryId,maxPoints,status,deliveries,filesEnabled,gradedLearners,
 }:{
  assignmentId:string;offeringId:string;specificDeliveryId:string|null;
- maxPoints:number;status:string;deliveries:Delivery[];filesEnabled:boolean;
+ maxPoints:number;status:string;deliveries:Delivery[];filesEnabled:boolean;gradedLearners?:number;
 }){
  const options=deliveries.filter(item=>item.offeringId===offeringId&&
   (!specificDeliveryId||item.deliveryId===specificDeliveryId));
@@ -24,13 +24,15 @@ export function CollegeAssignmentReview({
  const [bulkStatus,setBulkStatus]=useState("");
  const [retryAllowed,setRetryAllowed]=useState(false);
  const [failedIds,setFailedIds]=useState<string[]>([]);
+ const [failureDetails,setFailureDetails]=useState<{reason:string}[]>([]);
+ const [breakdown,setBreakdown]=useState<{published:number;skippedUngraded:number;alreadyPublished:number;failed:number}|null>(null);
  const [progress,setProgress]=useState("");
  const [retryScope,setRetryScope]=useState<string|null>(null);
  const [confirmBulk,setConfirmBulk]=useState<{deliveryId:string|null;retryOnly:string[]|null}|null>(null);
  const router=useRouter();
  async function publishAllGrades(selectedDeliveryId:string|null,retryOnly:readonly string[]|null=null){
   if(bulkBusy)return;
-  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);
+  setBulkBusy(true);setBulkStatus("");setRetryAllowed(false);setFailedIds([]);setFailureDetails([]);setBreakdown(null);
   setProgress("Processing graded submissions on the server…");
   try{
    const response=await fetch(
@@ -46,20 +48,26 @@ export function CollegeAssignmentReview({
     "Grade publication failed. Reload and retry; completed grades remain published.");
    const receipt=result as {
     published?:unknown;failed?:unknown;remaining?:unknown;
-    failedIds?:unknown;receiptId?:unknown;
+    failedIds?:unknown;receiptId?:unknown;skippedUngraded?:unknown;
+    alreadyPublished?:unknown;failureDetails?:unknown;
    };
    if(typeof receipt.published!=="number"||typeof receipt.failed!=="number"||
       typeof receipt.remaining!=="number"||!Array.isArray(receipt.failedIds)||
+      typeof receipt.skippedUngraded!=="number"||typeof receipt.alreadyPublished!=="number"||
       typeof receipt.receiptId!=="string"){
     throw Error("Publication result could not be verified. Reload before retrying.");
    }
    const remaining=receipt.remaining;
    const failed=receipt.failedIds.filter((id):id is string=>typeof id==="string");
    setFailedIds(failed);
+   setBreakdown({published:receipt.published,failed:receipt.failed,
+    skippedUngraded:receipt.skippedUngraded,alreadyPublished:receipt.alreadyPublished});
+   const details=Array.isArray(receipt.failureDetails)?receipt.failureDetails:[];
+   setFailureDetails(details.filter((row):row is {reason:string}=>Boolean(row)&&typeof row==="object"&&
+    "reason" in row&&typeof row.reason==="string").map(row=>({reason:row.reason})));
    setRetryScope(selectedDeliveryId);
    setRetryAllowed(remaining>0);
-   setBulkStatus(receipt.published+" grade(s) published; "+receipt.failed+
-    " failed. "+(remaining>0?remaining+" grades remain. Continue or retry.":"All graded submissions in this scope are published.")+
+   setBulkStatus((remaining>0?remaining+" grades remain. Continue or retry.":"All graded submissions in this scope are published.")+
     " Audit receipt: "+receipt.receiptId.slice(0,8)+".");
    router.refresh();
   }catch(cause){
@@ -87,16 +95,34 @@ export function CollegeAssignmentReview({
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
     maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
-   {status==="PUBLISHED"?<Button variant="primary" type="button" loading={bulkBusy} disabled={bulkBusy} onClick={()=>setConfirmBulk({deliveryId:selected.deliveryId,retryOnly:null})}
+   {status==="PUBLISHED"?<Button variant="primary" type="button" loading={bulkBusy} disabled={bulkBusy||gradedLearners===0}
+   title={gradedLearners===0?"Nothing graded yet":undefined}
+   onClick={()=>setConfirmBulk({deliveryId:selected.deliveryId,retryOnly:null})}
     className="min-h-11 md:min-h-9">
     {bulkBusy?"Publishing…":"Publish grades"}
    </Button>:null}
    {status==="PUBLISHED"&&options.length>1&&!specificDeliveryId?
-    <Button variant="secondary" type="button" loading={bulkBusy} disabled={bulkBusy}
+    <Button variant="secondary" type="button" loading={bulkBusy} disabled={bulkBusy||gradedLearners===0}
      onClick={()=>setConfirmBulk({deliveryId:null,retryOnly:null})}
      className="min-h-11 md:min-h-9">Publish all sections</Button>:null}
   </div>
+  {status==="PUBLISHED"&&gradedLearners===0?<p role="status" className="text-xs text-muted-foreground">Nothing graded yet</p>:null}
   {bulkBusy?<Alert tone="info" role="status">Publishing graded submissions for this assignment. {progress}</Alert>:null}
+  {breakdown?<section aria-label="Grade publication results" className="rounded border border-border p-3">
+   <h3 className="text-sm font-semibold">Grade publication results</h3>
+   <dl className="mt-3 grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+    {([["Published",breakdown.published],["Skipped (ungraded)",breakdown.skippedUngraded],
+      ["Already published",breakdown.alreadyPublished],["Failed",breakdown.failed]] as const).map(([label,value])=>
+      <div key={label}><dt className="text-xs text-muted-foreground">{label}</dt>
+       <dd className="text-lg font-semibold tabular-nums">{value}</dd></div>)}
+   </dl>
+   {failureDetails.length?<div className="mt-3 border-t border-border pt-3">
+    <h4 className="font-semibold">Could not publish</h4>
+    <ol className="mt-2 list-inside list-decimal space-y-1 text-sm text-body">
+     {failureDetails.map((item,index)=><li key={index}>Submission {index+1}: {item.reason}</li>)}
+    </ol>
+   </div>:null}
+  </section>:null}
   {bulkStatus?<Alert tone={retryAllowed?"warning":"success"} role="status">{bulkStatus}</Alert>:null}
   {retryAllowed&&status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy}
    onClick={()=>setConfirmBulk({deliveryId:retryScope,retryOnly:failedIds.length?[...failedIds]:null})}
@@ -108,7 +134,9 @@ export function CollegeAssignmentReview({
    title={confirmBulk?.retryOnly?"Retry publishing failed grades?":"Publish grades?"}
    description={confirmBulk?.retryOnly?
     "Retry publication of "+confirmBulk.retryOnly.length+" failed grades?":
-    (confirmBulk?.deliveryId===null?"Publish all graded submissions across the assignment?":"Publish grades for every graded submission in this Section?")+" Published results become visible to learners."}
+    "Publish all graded submissions? "+(confirmBulk?.deliveryId===null?
+      "This includes every Section on this assignment.":"Only this selected Section is included.")+
+      " Students can then view their published grades."}
    confirmLabel={confirmBulk?.retryOnly?"Retry failed grades":"Publish grades"}
    confirmVariant="primary" pending={bulkBusy}
    onConfirm={()=>{

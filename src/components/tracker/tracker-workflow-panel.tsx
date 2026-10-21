@@ -47,7 +47,16 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
   const [regressionTestStatus, setRegressionTestStatus] = useState(issue.regressionTestStatus);
   const [productionVerified, setProductionVerified] = useState(issue.productionVerified);
   const [retestNote, setRetestNote] = useState("");
-  useEffect(() => { setStatus(issue.status); setResolution(issue.resolution ?? ""); }, [issue.status, issue.resolution, issue.version]);
+  useEffect(() => {
+    setStatus(issue.status); setResolution(issue.resolution ?? "");
+    setAffectedLayer(issue.affectedLayer ?? ""); setRootCause(issue.rootCause ?? "");
+    setFixNotes(issue.fixNotes ?? ""); setFrontendCommitSha(issue.frontendCommitSha ?? "");
+    setBackendCommitSha(issue.backendCommitSha ?? "");
+    setRegressionTestStatus(issue.regressionTestStatus);
+    setProductionVerified(issue.productionVerified); setRetestNote("");
+  }, [issue.publicId, issue.version, issue.status, issue.resolution, issue.affectedLayer,
+      issue.rootCause, issue.fixNotes, issue.frontendCommitSha, issue.backendCommitSha,
+      issue.regressionTestStatus, issue.productionVerified]);
   function changeStatus(nextStatus: string) {
     if (pending || !canManage || nextStatus === status) return;
     setStatus(nextStatus);
@@ -114,7 +123,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
   return (
     <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
       <div>
-        <h2 className="m-0 text-lg font-semibold text-foreground">Engineering workflow</h2>
+        <h2 className="m-0 text-lg font-semibold text-foreground">Issue status</h2>
         <p className="mt-1 text-sm text-body">Super Admin only. Version {issue.version}; stale writes are rejected.</p>
       </div>
       <div className="grid min-w-0 gap-4 sm:grid-cols-2">
@@ -125,6 +134,11 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           </Select>
           {pending ? <span role="status" className="text-xs text-muted-foreground">Updating status…</span> : null}
         </label>
+      </div>
+      <details className="min-w-0 border-t border-border pt-3">
+        <summary className="min-h-11 cursor-pointer text-base font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Engineering details</summary>
+        <p className="mb-4 text-sm text-body">Root cause, fix commits, regression coverage and production verification</p>
+        <div className="grid min-w-0 gap-4 sm:grid-cols-2">
         <label className="grid min-w-0 gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Resolution
           <Select className="w-full min-w-0" value={resolution} onChange={(e) => setResolution(e.target.value)}>
@@ -146,7 +160,7 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           </Select>
         </label>
         <details className="min-w-0 sm:col-span-2">
-          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Engineering evidence</summary>
+          <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Commit evidence</summary>
           <div className="grid min-w-0 gap-4 pt-2 sm:grid-cols-2">
         <label className="min-w-0 font-semibold sm:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
           Root cause
@@ -179,19 +193,20 @@ export function TrackerWorkflowPanel({ issue, canManage = true }: { issue: Track
           Production verified
         </label>
       </div>
-      <Button disabled={pending} loading={pending} onClick={save} className="min-h-11 w-full sm:w-auto md:min-h-9">
-        {pending ? "Saving…" : "Save workflow"}
-      </Button>
+        <Button disabled={pending} loading={pending} onClick={save} className="mt-4 min-h-11 w-full sm:w-auto md:min-h-9">
+          {pending ? "Saving…" : "Save details"}
+        </Button>
+      </details>
 
       {issue.status === "READY_FOR_RETEST" ? (
         <div className="space-y-3 border-t border-border pt-4">
           <h3 className="m-0 text-base font-semibold text-foreground">Ready for retest</h3>
           <p className="text-sm font-semibold text-body">Does it work now?</p>
           <p className="text-sm text-body">Check the same flow once more. One click sends it back to engineering or closes it.</p>
-          <Textarea className="w-full min-w-0" value={retestNote} maxLength={1000} placeholder="Optional retest note" onChange={(e) => setRetestNote(e.target.value)} />
+          <Textarea className="w-full min-w-0" value={retestNote} maxLength={1000} placeholder="Optional note — what did you observe?" onChange={(e) => setRetestNote(e.target.value)} />
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
-            <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>
             <Button variant="danger" disabled={pending} loading={pending} onClick={() => retest("FAIL")} className="min-h-11 w-full md:min-h-9 md:w-auto">Still broken</Button>
+            <Button disabled={pending} loading={pending} onClick={() => retest("PASS")} className="min-h-11 w-full md:min-h-9 md:w-auto">Works now</Button>
           </div>
         </div>
       ) : null}

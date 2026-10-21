@@ -1,6 +1,6 @@
 import { z } from "zod";
 import {COURSE_TEACHING_ROLES} from "@/modules/courses/constants";
-export const COLLEGE_CONTACTS_PAGE_SIZE=20;
+export const COLLEGE_CONTACTS_PAGE_SIZE=10;
 // URL pagination must be decimal digits; z.coerce.number also accepts
 // hexadecimal, exponent notation and whitespace supplied by a forged URL.
 const decimalContactInteger = (min: number, max: number) => z.union([
@@ -93,12 +93,29 @@ export function clearedCollegeContactsHref(tab:CollegeContactsQuery["tab"]):stri
 }
 export function parseCollegeContactsSearchParams(raw:Record<string,string|string[]|undefined>){
  const entries:[string,string][]=[];
+ const legacyView=raw.view;
+ const legacyTab=raw.tab;
  for(const [key,value] of Object.entries(raw)){
+  if(key==="view"||key==="pageNumber")continue;
   if(Array.isArray(value))throw new Error("INVALID_CONTACT_FILTERS");
   if(value!==undefined&&value!=="")entries.push([key,value]);
  }
- // Object.fromEntries retains "__proto__" as an own key for strict Zod rejection.
- const normalized=Object.fromEntries(entries);
+ const normalized:Record<string,string>=Object.fromEntries(entries);
+ // Only legacy view supports repeated values, taking the first as the old
+ // router did. Explicit tab takes priority and remains strictly validated.
+ if(legacyTab===undefined&&legacyView!==undefined){
+  const value=Array.isArray(legacyView)?legacyView[0]:legacyView;
+  const lowered=(value??"").toLowerCase();
+  normalized.tab=lowered==="faculty"?"FACULTY":
+   lowered==="students"||lowered==="student"||lowered==="learner"?"STUDENT":"ALL";
+ }
+ const legacyPage=raw.pageNumber;
+ if(legacyPage!==undefined&&!Array.isArray(legacyPage)&&raw.page===undefined&&/^-?\d+$/.test(legacyPage))
+  normalized.page=String(Math.max(1,Number(legacyPage)+1));
+ if(normalized.page!==undefined&&/^-?\d+$/.test(normalized.page))
+  normalized.page=String(Math.max(1,Number(normalized.page)));
+ if(normalized.pageSize!==undefined&&/^-?\d+$/.test(normalized.pageSize)&&Number(normalized.pageSize)<=0)
+  normalized.pageSize=String(COLLEGE_CONTACTS_PAGE_SIZE);
  const filter=collegeContactsQuerySchema.parse(normalized);
  if(!contactDateWindowValid(filter))throw new Error("INVALID_CONTACT_DATE_WINDOW");
  if(!contactAcademicFiltersCompatible(filter))throw new Error("INVALID_CONTACT_ACADEMIC_COMBINATION");
@@ -125,6 +142,8 @@ export function collegeContactsWithoutMemberHref(filter:CollegeContactsQuery):st
 /** The public error explanation must not echo query values, memberships or internal stack traces. */
 export function collegeContactFilterMessage(error:unknown):string {
  if(error instanceof z.ZodError){
+  if(error.issues.some(issue=>issue.path[0]==="pageSize"))
+   return "Choose 10, 20 or 50 contacts per page (25 remains supported for older saved views). No contacts were loaded.";
   if(error.issues.some(issue=>issue.path[0]==="programId"))
    return "Program ID must be a valid identifier. No contacts were loaded.";
   if(error.issues.some(issue=>issue.path[0]==="facultyDepartmentId"))

@@ -6,6 +6,7 @@ import {
   eq,
   isNull,
   isNotNull,
+  inArray,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -698,6 +699,101 @@ export async function archiveProjectTemplate(
         activeCollegeAssignments:0},groupKey:"template:"+templateId,
     });
     return archived;
+  });
+}
+
+
+/** Legacy bulk assignment API: compare the entire selected college set while
+ * the template row is locked, then apply additions/removals as one transaction.
+ * A selected organization scopes both the expected and effective sets.
+ */
+export async function replaceProjectTemplateCollegeAssignments(
+  context:RequestContext,templateIdInput:string,
+  desiredCollegeIds:readonly string[],expectedCollegeIds:readonly string[],
+){
+  const templateId=projectTemplateIdSchema.parse(templateIdInput);
+  requirePermission(context,"project-template.assign");
+  // College-only acting scopes must not silently replace unseen assignments.
+  if(context.adminScope?.collegeId)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+  const targetIds=[...new Set([...desiredCollegeIds,...expectedCollegeIds])];
+  const validated=targetIds.map(id=>collegeIdSchema.parse(id));
+  return getDb().transaction(async tx=>{
+    const [template]=await tx.select().from(projectTemplates)
+      .where(eq(projectTemplates.id,templateId)).for("update").limit(1);
+    if(!template)throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_FOUND");
+    await assertPersistedPlatformPermission(tx,context,"project-template.assign");
+    // All requested colleges must exist, be active and belong to the chosen
+    // organization before any write; never leak another tenant's details.
+    if(validated.length){
+      const allowed=await tx.select({id:colleges.id}).from(colleges)
+        .where(and(inArray(colleges.id,validated),
+          eq(colleges.status,"ACTIVE"),
+          context.adminScope?.organizationId?
+            eq(colleges.organizationId,context.adminScope.organizationId):undefined));
+      if(allowed.length!==validated.length)
+        throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
+      for(const id of validated){
+        const college=await loadProjectCollegeScope(id);
+        requirePermission(context,"project-template.assign",{
+          organizationId:college.organizationId,collegeId:id,
+        });
+      }
+    }
+    const existing=await tx.select({id:projectTemplateCollegeAssignments.id,
+      collegeId:projectTemplateCollegeAssignments.collegeId})
+      .from(projectTemplateCollegeAssignments)
+      .innerJoin(colleges,eq(colleges.id,projectTemplateCollegeAssignments.collegeId))
+      .where(and(eq(projectTemplateCollegeAssignments.templateId,templateId),
+        isNull(projectTemplateCollegeAssignments.revokedAt),
+        context.adminScope?.organizationId?
+          eq(colleges.organizationId,context.adminScope.organizationId):undefined))
+      .for("update");
+    const current=existing.map(item=>item.collegeId).sort();
+    const expected=[...expectedCollegeIds].sort();
+    if(current.length!==expected.length||
+       current.some((id,index)=>id!==expected[index]))
+      throw new ProjectsServiceError("PROJECT_TEMPLATE_ASSIGNMENT_CONFLICT");
+    const desired=new Set(desiredCollegeIds);
+    const old=new Set(current);
+    const removals=existing.filter(item=>!desired.has(item.collegeId));
+    const additions=desiredCollegeIds.filter(id=>!old.has(id));
+    if(additions.length && (template.status!=="PUBLISHED"||template.publishedVersion===null))
+      throw new ProjectsServiceError("PROJECT_TEMPLATE_NOT_PUBLISHED");
+    let versionId:string|null=null;
+    if(additions.length){
+      const [version]=await tx.select({id:projectTemplateVersions.id})
+       .from(projectTemplateVersions)
+       .where(and(eq(projectTemplateVersions.templateId,templateId),
+         eq(projectTemplateVersions.version,template.publishedVersion!))).limit(1);
+      if(!version)throw new ProjectsServiceError("PROJECT_TEMPLATE_VERSION_NOT_FOUND");
+      versionId=version.id;
+    }
+    const now=new Date();
+    for(const row of removals){
+      await tx.update(projectTemplateCollegeAssignments).set({revokedAt:now})
+        .where(eq(projectTemplateCollegeAssignments.id,row.id));
+    }
+    for(const collegeId of additions){
+      await tx.insert(projectTemplateCollegeAssignments).values({
+        templateId,templateVersionId:versionId!,collegeId,
+        assignedByUserId:context.user.id,
+      });
+    }
+    for(const collegeId of [...additions,...removals.map(row=>row.collegeId)]){
+      const assigned=desired.has(collegeId);
+      await recordActivityEventInTransaction(tx,context,{
+        eventType:assigned?ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_ASSIGNED:
+          ACTIVITY_EVENT_TYPES.PROJECTS_TEMPLATE_COLLEGE_REVOKED,
+        collegeId,subjectType:"project_template",subjectId:templateId,
+        subjectLabel:template.title,
+        summary:assigned?"Project template assigned to college":"Project template removed from college",
+        metadata:{bulk:true,expectedCollegeIds:expected,desiredCollegeIds:[...desired]},
+        groupKey:"template:"+templateId,
+      });
+    }
+    return {collegeIds:[...desired].sort(),added:additions,
+      removed:removals.map(row=>row.collegeId),unchanged:current.filter(id=>desired.has(id))};
   });
 }
 

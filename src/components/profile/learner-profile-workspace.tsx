@@ -27,6 +27,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/toast";
 import { learnerProfileDocumentSchema, type LearnerProfileDocument } from "@/modules/people/profile-validation";
+import {formatProfileDateDayFirst,LEARNER_PROFILE_FIELD_LIMITS} from "@/modules/people/legacy-profile-display";
 
 type CollectionKey =
   | "experiences"
@@ -48,7 +49,7 @@ type Field = {
 
 const collectionLabels: Record<CollectionKey, string> = {
   experiences: "Experience",
-  education: "Education/Qualification",
+  education: "Qualifications",
   skills: "Skills",
   projects: "Projects",
   certifications: "Certifications",
@@ -76,7 +77,7 @@ const fields: Record<CollectionKey, Field[]> = {
     { key: "institution", label: "Institution" },
     { key: "startYear", label: "Start year" },
     { key: "endYear", label: "End year" },
-    { key: "gradingType", label: "Grading type", type: "select", options: ["", "CGPA", "Percentage", "Grade"] },
+    { key: "gradingType", label: "Grading type", type: "select", options: ["", "CGPA", "GPA", "Percentage", "Grade"] },
     { key: "gradeObtained", label: "Grade obtained" },
     { key: "maxGrade", label: "Maximum grade" },
     { key: "qualifyingExam", label: "Qualifying exam" },
@@ -463,7 +464,7 @@ export function LearnerProfileWorkspace(props: {
     section: "education" | "skills" | "projects",
     items: LearnerProfileDocument[typeof section],
     onDone?: () => void,
-    successTitle: "Added" | "Saved" | "Removed" = "Saved",
+    successTitle: "Added successfully" | "Updated successfully" | "Deleted successfully" = "Updated successfully",
   ) {
     void guardedRun(async () => {
       try {
@@ -524,7 +525,7 @@ export function LearnerProfileWorkspace(props: {
     const finished = () => { setCollection(null); setEditingId(null); setItemDraft({}); };
     if (collection === "education" || collection === "skills" || collection === "projects") {
       saveOwnedSection(collection, nextItems as LearnerProfileDocument[typeof collection], finished,
-        editingId ? "Saved" : "Added");
+        editingId ? "Updated successfully" : "Added successfully");
     } else {
       saveDocument({ ...document, [collection]: nextItems } as LearnerProfileDocument,
         finished, document, editingId ? "Updated successfully" : "Added successfully");
@@ -539,7 +540,7 @@ export function LearnerProfileWorkspace(props: {
     if(!confirmation || !(await askConfirm(confirmation)))return;
     const items = current.filter((item) => String(item.id) !== id);
     if (section === "education" || section === "skills" || section === "projects") {
-      saveOwnedSection(section, items as LearnerProfileDocument[typeof section], undefined, "Removed");
+      saveOwnedSection(section, items as LearnerProfileDocument[typeof section], undefined, "Deleted successfully");
     } else {
       saveDocument({ ...document, [section]: items } as LearnerProfileDocument,
         undefined, document, "Deleted successfully");
@@ -691,14 +692,16 @@ export function LearnerProfileWorkspace(props: {
         </Card>
         <Card id="job-preferences" title="Job Preferences"
           action={<Button className="min-h-11 md:min-h-9" variant="secondary" disabled={pending}
-            onClick={()=>{setJobPrefsDraft(document.jobPreferences);setRolePrefsInput(document.jobPreferences.rolePreferences.join("\n"));setJobPrefsEditing(true);}}>
+            onClick={()=>{setJobPrefsDraft(document.jobPreferences);setRolePrefsInput(document.jobPreferences.rolePreferences.join("\n") || document.jobPreferences.rolePreference);setJobPrefsEditing(true);}}>
             Edit preferences
           </Button>}>
           <div className="grid gap-3 md:grid-cols-2">
-            <Value label="Role Preference" value={document.jobPreferences.rolePreferences.join(", ")}/>
+            <Value label="Role Preference" value={document.jobPreferences.rolePreferences.join(", ") || document.jobPreferences.rolePreference}/>
             <Value label="Specific Role Preference" value={document.jobPreferences.specificRolePreference}/>
             <Value label="Work Shift Preference" value={document.jobPreferences.workShiftPreference}/>
             <Value label="Preferred Employment City" value={document.jobPreferences.preferredEmploymentCity}/>
+            <Value label="Exam Slot Preference" value={document.jobPreferences.examSlotPreference || "No preference"}/>
+            <Value label="Job Notifications Enabled" value={document.jobPreferences.jobNotificationsEnabled ? "On" : "Off"}/>
           </div>
         </Card>
         <Card id="social-profiles" title="Social profiles"
@@ -724,7 +727,7 @@ export function LearnerProfileWorkspace(props: {
         <Card id="personal-details" title="Personal Details">
           <div className="grid gap-4 md:grid-cols-3">
             <Value label="Gender" value={document.personalDetails.gender} />
-            <Value label="Date of birth" value={document.personalDetails.dateOfBirth} />
+            <Value label="Date of birth" value={formatProfileDateDayFirst(document.personalDetails.dateOfBirth)} />
             <Value label="Blood group" value={document.personalDetails.bloodGroup} />
           </div>
         </Card>
@@ -773,12 +776,16 @@ export function LearnerProfileWorkspace(props: {
         const items = (section === "metadata"
           ? document.metadata.filter(item=>!isLearnerShowcaseKey(item.key))
           : document[section]) as Array<Record<string, unknown>>;
+        const displayItems = section === "education" ? [...items].sort((left,right) =>
+          Number(Boolean(right.isRecentEducation)) - Number(Boolean(left.isRecentEducation)) ||
+          (Number(right.startYear) || 0) - (Number(left.startYear) || 0) ||
+          (Number(right.endYear) || 0) - (Number(left.endYear) || 0)) : items;
         return (
           <Card key={section} id={section} title={collectionLabels[section]} action={<Button className="min-h-11 md:min-h-9" size="sm" disabled={!learnerProfileCollectionMayEdit(pending,contactPending)}
             onClick={() => openCollection(section)}>Add</Button>}>
-            {items.length ? (
+            {displayItems.length ? (
               <div className="space-y-2">
-                {items.map((item) => {
+                {displayItems.map((item) => {
                   const summary = itemTitle(section, item);
                   return (
                     <div key={String(item.id)} className="flex min-w-0 flex-col items-start gap-2 border-t border-border py-3 sm:flex-row sm:items-center sm:justify-between sm:gap-3">
@@ -900,7 +907,7 @@ export function LearnerProfileWorkspace(props: {
           <fieldset className="grid gap-4 md:grid-cols-3">
             <legend className="text-sm font-semibold text-foreground">Personal details</legend>
             <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Gender<Select className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.personalDetails.gender} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, gender: event.target.value as LearnerProfileDocument["personalDetails"]["gender"] } })}>{["", "Male", "Female", "Other", "Prefer not to say"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
-            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Date of birth<Input className="mt-[6px] min-h-11 md:min-h-9" type="date" value={detailsDraft.personalDetails.dateOfBirth} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, dateOfBirth: event.target.value } })} /></label>
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Date of birth<Input className="mt-[6px] min-h-11 md:min-h-9" type="date" lang="en-GB" title="Date of birth (DD-MM-YYYY)" value={detailsDraft.personalDetails.dateOfBirth} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, dateOfBirth: event.target.value } })} /></label>
             <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Blood group<Select className="mt-[6px] min-h-11 md:min-h-9" value={detailsDraft.personalDetails.bloodGroup} onChange={(event) => setDetailsDraft({ ...detailsDraft, personalDetails: { ...detailsDraft.personalDetails, bloodGroup: event.target.value as LearnerProfileDocument["personalDetails"]["bloodGroup"] } })}>{["", "A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((value) => <option key={value || "none"} value={value}>{value || "Not specified"}</option>)}</Select></label>
           </fieldset>
 
@@ -955,13 +962,14 @@ export function LearnerProfileWorkspace(props: {
         footer={<>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeJobPreferences}>Cancel</Button>
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>saveDocument({...document,jobPreferences:{...jobPrefsDraft,
-              rolePreferences:rolePrefsInput.split(/\r?\n/).map(role=>role.trim()).filter(Boolean)}},
+              rolePreferences:rolePrefsInput.split(/\r?\n/).map(role=>role.trim()).filter(Boolean),
+              rolePreference:rolePrefsInput.split(/\r?\n/).map(role=>role.trim()).find(Boolean) ?? jobPrefsDraft.rolePreference}},
               ()=>setJobPrefsEditing(false))}>
             {pending?"Saving…":"Save"}
           </Button>
         </>}>
         <div className="grid gap-4">
-          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Role Preference (multiple)
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Role Preference
             <Textarea value={rolePrefsInput} maxLength={800}
               placeholder={"Software Engineer\nData Analyst"}
               onChange={event=>setRolePrefsInput(event.target.value)}
@@ -981,13 +989,31 @@ export function LearnerProfileWorkspace(props: {
               <option value="NIGHT">Night</option>
               <option value="ROTATIONAL">Rotational</option>
               <option value="FLEXIBLE">Flexible</option>
+              <option value="REMOTE">Remote</option>
             </Select>
           </label>
           <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Preferred Employment City
             <Input className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.preferredEmploymentCity} maxLength={120}
               onChange={event=>setJobPrefsDraft(current=>({...current,preferredEmploymentCity:event.target.value}))}/>
           </label>
-          <p className="text-xs text-muted-foreground">These preferences are learner-authored and do not change placement eligibility.</p>
+          <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Exam Slot Preference
+            <Select className="mt-[6px] min-h-11 md:min-h-9" value={jobPrefsDraft.examSlotPreference}
+              onChange={event=>setJobPrefsDraft(current=>({...current,examSlotPreference:event.target.value as LearnerProfileDocument["jobPreferences"]["examSlotPreference"]}))}>
+              <option value="">No preference</option>
+              <option value="Morning">Morning</option>
+              <option value="Afternoon">Afternoon</option>
+              <option value="Evening">Evening</option>
+            </Select>
+          </label>
+          <label className="flex min-h-11 items-center gap-3 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+            <Checkbox checked={jobPrefsDraft.jobNotificationsEnabled} disabled={pending}
+              onChange={event=>setJobPrefsDraft(current=>({...current,jobNotificationsEnabled:event.target.checked}))}/>
+            Job Notifications Enabled
+          </label>
+          <p className="text-xs text-muted-foreground">These are your profile preferences. Placement alert delivery has separate choices in{" "}
+            <Link href="/learn/my-placements/notification-preferences" className="font-semibold text-primary-text underline">
+              Placement notification choices
+            </Link>. Essential academic and security messages are unaffected.</p>
         </div>
       </Dialog>
 
@@ -995,7 +1021,9 @@ export function LearnerProfileWorkspace(props: {
         open={collection !== null}
         onOpenChange={(open) => {if(!open)closeCollection();}}
         title={collection ? (editingId ? "Edit " : "Add ") + collectionLabels[collection] : "Edit profile entry"}
-        footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={saveCollection}>{pending ? "Saving…" : "Save"}</Button></>}
+        footer={<><Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pending} onClick={closeCollection}>Cancel</Button><Button className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending || (collection==="education" &&
+              (!String(itemDraft.educationType??"").trim() || !String(itemDraft.institution??"").trim()))}
+              onClick={saveCollection}>{pending ? "Saving…" : editingId ? "Save" : "Add"}</Button></>}
       >
         {collection ? (
           <div className="grid gap-4 md:grid-cols-2">
@@ -1008,11 +1036,33 @@ export function LearnerProfileWorkspace(props: {
                   onChange={name=>setItemDraft(current=>({...current,name}))}/>;
               if(collection==="education"&&field.key==="educationType")
                 return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
-                  <Select className="mt-[6px] min-h-11 md:min-h-9" value={value}
-                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,[field.key]:event.target.value});}}>
+                  <Select className="mt-[6px] min-h-11 md:min-h-9" required aria-required="true" value={value}
+                    onChange={event=>{setEducationError(null);setItemDraft({...itemDraft,
+                      educationType:event.target.value,program:"",specialization:"",qualifyingExam:"",examDetails:{}});}}>
                     <option value="">Choose education type</option>
                     {LEARNER_EDUCATION_TYPES.map(option=><option key={option} value={option}>{option}</option>)}
                   </Select>
+                </label>;
+              if(collection==="education"&&field.key==="program")
+                return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
+                  <Input className="mt-[6px] min-h-11 md:min-h-9 w-full"
+                    value={value} maxLength={200} list="learner-program-suggestions"
+                    onChange={event=>setItemDraft(current=>({...current,program:event.target.value,specialization:""}))}/>
+                  <datalist id="learner-program-suggestions">
+                    {[...new Set(document.education.filter(item=>item.educationType===itemDraft.educationType)
+                      .map(item=>item.program).filter(Boolean))].map(option=><option key={option} value={option}/>)}
+                  </datalist>
+                </label>;
+              if(collection==="education"&&field.key==="institution")
+                return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
+                  <Input className="mt-[6px] min-h-11 md:min-h-9 w-full" required aria-required="true"
+                    list="learner-institution-suggestions" value={value} maxLength={300}
+                    onChange={event=>{setEducationError(null);setItemDraft(current=>({...current,institution:event.target.value}));}}/>
+                  <datalist id="learner-institution-suggestions">
+                    {[...new Set(document.education.map(item=>item.institution).filter(Boolean))]
+                      .map(option=><option key={option} value={option}/>)}
+                  </datalist>
+                  <span className="mt-1 block text-xs font-normal text-muted-foreground">Start typing to reuse a saved institution, or enter another institution.</span>
                 </label>;
               if(collection==="education"&&field.key==="qualifyingExam")
                 return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}
@@ -1023,9 +1073,9 @@ export function LearnerProfileWorkspace(props: {
                     {learnerQualifyingExamSuggestions(String(itemDraft.educationType??"")).map(option=><option key={option} value={option}/>)}
                   </datalist>
                 </label>;
-              if (field.type === "textarea") return <label key={field.key} className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Textarea className="mt-[6px]" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
+              if (field.type === "textarea") return <label key={field.key} className="font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Textarea className="mt-[6px]" maxLength={LEARNER_PROFILE_FIELD_LIMITS[field.key]} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
               if (field.type === "select") return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Select className="mt-[6px] min-h-11 md:min-h-9" value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })}>{field.options?.map((option) => <option key={option || "none"} value={option}>{option || "Not specified"}</option>)}</Select></label>;
-              return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Input className="mt-[6px] min-h-11 md:min-h-9" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
+              return <label key={field.key} className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">{field.label}<Input className="mt-[6px] min-h-11 md:min-h-9" type={field.type === "date" ? "date" : field.type === "url" ? "url" : "text"} maxLength={LEARNER_PROFILE_FIELD_LIMITS[field.key]} value={value} onChange={(event) => setItemDraft({ ...itemDraft, [field.key]: event.target.value })} /></label>;
             })}
             {collection==="education"?<label className="flex items-center gap-2 text-sm text-body md:col-span-2">
               <Checkbox checked={Boolean(itemDraft.isCurrentlyPursuing)}

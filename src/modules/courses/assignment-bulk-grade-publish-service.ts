@@ -1,6 +1,6 @@
 import "server-only";
 
-import {and,asc,count,eq,inArray} from "drizzle-orm";
+import {and,asc,count,eq,inArray,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {assignmentSubmissions} from "@/db/schema";
@@ -51,6 +51,18 @@ export async function publishAssignmentGradeBatch(
     input.deliveryId?eq(assignmentSubmissions.deliveryId,input.deliveryId):undefined,
   );
   const db=getDb();
+  const visibleScope=and(
+   eq(assignmentSubmissions.assignmentId,assignmentId),
+   input.deliveryId?eq(assignmentSubmissions.deliveryId,input.deliveryId):undefined,
+   input.submissionIds?inArray(assignmentSubmissions.id,input.submissionIds):undefined,
+  );
+  // Classification is independent of actual publications; a previously
+  // published grade and an ungraded submission are skips, not failures.
+  const [classification]=await db.select({
+   total:count(),
+   skippedUngraded:sql<number>`count(*) filter (where ${assignmentSubmissions.gradingStatus}<>'GRADED')::int`,
+   alreadyPublished:sql<number>`count(*) filter (where ${assignmentSubmissions.gradePublished}=true)::int`,
+  }).from(assignmentSubmissions).where(visibleScope);
   const [initial]=await db.select({total:count()}).from(assignmentSubmissions).where(conditions);
   const rows=await db.select({
     id:assignmentSubmissions.id,version:assignmentSubmissions.version,
@@ -60,14 +72,15 @@ export async function publishAssignmentGradeBatch(
     .orderBy(asc(assignmentSubmissions.id)).limit(MAX_BATCH);
   let published=0;
   const failedIds:string[]=[];
+  const failedRows:{submissionId:string;reason:string}[]=[];
   for(const row of rows){
     try{
       await publishAssignmentGrade(context,row.id,{expectedVersion:row.version});
       published++;
     }catch{
-      // A stale concurrent version or temporarily unavailable recipient must
-      // never be counted as published. Safe retry re-reads persisted versions.
+      // Report safe, non-identifying failure reasons, never raw DB error text.
       failedIds.push(row.id);
+      failedRows.push({submissionId:row.id,reason:"Concurrent grade change or temporary publication failure; retry with the latest version."});
     }
   }
   const [after]=await db.select({total:count()}).from(assignmentSubmissions).where(conditions);
@@ -81,12 +94,17 @@ export async function publishAssignmentGradeBatch(
       assignmentId,deliveryId:input.deliveryId??null,
       initiallyPending:initial?.total??0,processed:rows.length,
       published,failed:failedIds.length,remaining,
+      skippedUngraded:classification?.skippedUngraded??0,
+      alreadyPublished:classification?.alreadyPublished??0,
     },
     groupKey:"course-assignment:"+assignmentId+":grading",
     dedupeKey:"course-assignment:"+assignmentId+":bulk-grades:"+input.requestId,
   });
   return {
-    published,failed:failedIds.length,failedIds,remaining,
+    published,failed:failedIds.length,failedIds,
+    failureDetails:failedRows,remaining,
+    skippedUngraded:classification?.skippedUngraded??0,
+    alreadyPublished:classification?.alreadyPublished??0,
     processed:rows.length,batchLimit:MAX_BATCH,
     complete:remaining===0,receiptId:receipt.id,
   };

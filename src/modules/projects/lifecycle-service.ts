@@ -4,6 +4,7 @@ import {
   eq,
   ne,
   isNull,
+  or,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
@@ -26,6 +27,7 @@ import {
 } from "./errors";
 import {
   requireProjectLifecycleMutationAccess,
+  requireProjectReadAccess,
 } from "./access";
 import {
   projectReleaseIdSchema,
@@ -862,3 +864,20 @@ export const LEGACY_PROJECT_SPRINT_TRANSITIONS = {
  completeSprint:{from:"ACTIVE",to:"COMPLETED",adminWriter:"completeProjectSprint",mentorAction:"COMPLETE"},
  reopenSprint:{from:"COMPLETED",to:"ACTIVE",adminWriter:"reopenProjectSprint",mentorAction:"REOPEN"},
 } as const;
+
+/** Legacy project/sprintKey deep-link lookup. The key is only meaningful
+ * inside a project; a duplicated historical alias is ambiguous and must
+ * never select the first arbitrary sprint. New links use the UUID. */
+export async function resolveLegacySprintHref(ctx:RequestContext,projectIdRaw:string,rawKey:string){
+ const scope=await requireProjectReadAccess(ctx,projectIdRaw);
+ const key=rawKey.trim();
+ if(!key||key.length>120||/[/?#]/.test(key))throw new ProjectsServiceError("PROJECT_SPRINT_NOT_FOUND");
+ const rows=await getDb().select({id:projectSprints.id,templateKey:projectSprints.templateKey})
+  .from(projectSprints).where(and(eq(projectSprints.projectId,scope.project.id),
+   isNull(projectSprints.deletedAt),
+   or(eq(projectSprints.legacySprintKey,key),eq(projectSprints.templateKey,key))))
+  .limit(2);
+ if(rows.length!==1)throw new ProjectsServiceError("PROJECT_SPRINT_NOT_FOUND");
+ return {projectId:scope.project.id,sprintId:rows[0]!.id,
+  href:"/learn/projects/"+encodeURIComponent(scope.project.id)+"/sprints/"+encodeURIComponent(rows[0]!.id)};
+}

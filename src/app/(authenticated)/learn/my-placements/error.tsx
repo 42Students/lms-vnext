@@ -1,6 +1,7 @@
 "use client";
 
 import { PageHeader } from "@/components/ui/page-header";
+import {Banner} from "@/components/ui/banner";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
@@ -12,7 +13,8 @@ export default function LearnerPlacementsError({
 }) {
   return (
     <section role="alert" className="min-w-0 space-y-4">
-      <PageHeader title={"We could not load your placements"} />
+      <PageHeader title="My Placements" />
+      <Banner tone="error">We could not load this page. Retry the placement view.</Banner>
       <p className="mt-2 text-sm text-body">
         Your data is safe. Check your connection and try again. This is a loading problem, not an empty account.
       </p>

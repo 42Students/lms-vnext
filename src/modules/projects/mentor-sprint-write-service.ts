@@ -4,7 +4,7 @@ import { randomUUID } from "node:crypto";
 import { and, desc, eq, ne, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { mayCloseProjectSprint } from "./sprint-close-policy";
-import { projectInstances, projectReleases, projectSprints, projectTasks, projectMembers } from "@/db/schema";
+import { projectInstances, projectReleases, projectSprints, projectTasks, projectMembers, activityEvents } from "@/db/schema";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import type { RequestContext } from "@/modules/identity/context";
@@ -177,7 +177,8 @@ export async function transitionMentorProjectSprint(
       eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
       collegeId:scope.collegeId,organizationId:scope.organizationId,
       subjectType:"project_sprint",subjectId:updated.id,
-      subjectLabel:updated.title,summary:"Project sprint status updated",
+      subjectLabel:updated.title,summary:input.action==="COMPLETE"?"Project sprint completed":
+       input.action==="REOPEN"?"Project sprint reopened":"Project sprint started",
       metadata:{
         projectId:scope.project.id,sprintId:updated.id,
         action:input.action,from:sprint.status,to:updated.status,
@@ -190,6 +191,30 @@ export async function transitionMentorProjectSprint(
       groupKey:"project:"+scope.project.id,
       dedupeKey:"project-sprint:"+updated.id+":transition:"+randomUUID(),
     });
-    return updated;
+    return {...updated,message:input.action==="COMPLETE"?"Sprint completed":
+      input.action==="REOPEN"?"Sprint reopened":"Sprint started",projectStatus:input.action==="COMPLETE"?project.status:"ACTIVE"};
   });
+}
+
+/** Durable transition attribution comes from audited events rather than
+ * mutable sprint creator/updater columns, and is always scoped to this college. */
+export async function getMentorSprintTransitionHistory(
+ context:RequestContext,rawParams:unknown,
+){
+ const params=mentorSprintTransitionParamsSchema.parse(rawParams);
+ const scope=await mentorSprintWriteScope(context,params.projectId);
+ const events=await getDb().select({
+  actorUserId:activityEvents.actorUserId,actorMembershipId:activityEvents.actorMembershipId,
+  createdAt:activityEvents.createdAt,metadata:activityEvents.metadata,
+ }).from(activityEvents).where(and(
+  eq(activityEvents.collegeId,scope.collegeId),
+  eq(activityEvents.organizationId,scope.organizationId),
+  eq(activityEvents.subjectType,"project_sprint"),
+  eq(activityEvents.subjectId,params.sprintId),
+  eq(activityEvents.eventType,ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED),
+ )).orderBy(desc(activityEvents.createdAt)).limit(100);
+ return events.filter(event=>["START","COMPLETE","REOPEN"].includes(String(event.metadata?.action)))
+  .map(event=>({action:String(event.metadata?.action),at:event.createdAt,
+    actorUserId:event.actorUserId,actorMembershipId:event.actorMembershipId,
+    from:event.metadata?.from,to:event.metadata?.to}));
 }

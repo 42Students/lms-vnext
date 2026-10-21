@@ -23,13 +23,15 @@ const WORKSPACES = [
 ] as const;
 
 /** Former assessment/skills/learning/knowledge/agent/analytics pillars are
- * intentionally consolidated into the four non-predictive product pillars.
+ * intentionally adapted into six non-predictive product pillars.
  * These descriptions make no promise of autonomous assessment or AI insight.
  */
 const PILLARS = [
   { title: "Learning", description: "Courses, lessons, assignments, assessments and academic progress." },
   { title: "Projects", description: "Teamwork, mentor feedback, milestones and portfolio evidence." },
   { title: "Placements", description: "Student eligibility, applications, interviews, offers and joining." },
+  { title: "Assessments", description: "Faculty-authored assignments, quizzes and reviewable results." },
+  { title: "Operations", description: "Academic administration, cohort planning and verified reporting." },
   { title: "Integrations", description: "Connected workflows between academic delivery, projects and placement operations." },
 ] as const;
 
@@ -42,16 +44,17 @@ const LIFECYCLE = ["Discover", "Learn", "Build", "Demonstrate", "Interview", "Gr
 export default function PlatformMarketingPage() {
   return <MarketingLayout path="/platform" pageTitle="Platform"
       pageDescription="One connected platform for learning, projects and placements.">
-    <MarketingHero eyebrow="42 LMS platform"
+    <MarketingHero eyebrow="The platform"
       title="One connected platform for learning, projects and placements."
       description="Connect academic delivery, guided projects, assessments and recruitment in one place, with people responsible for teaching, feedback and decisions."
       showExploreLink={false} />
 
     <MarketingFeatureGrid title="Every role has a purpose-built workspace" items={WORKSPACES} />
-    <MarketingFeatureGrid title="Connected platform pillars" items={PILLARS} />
+    <MarketingFeatureGrid title="Everything you need to develop talent" items={PILLARS} />
 
-    <section className="min-w-0 space-y-4 border-y border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] py-6"
+    <section className="relative left-1/2 w-screen -translate-x-1/2 border-y border-[var(--lms-canvas-border)] bg-[#eaf6f6] py-14 min-[768px]:py-20"
       aria-labelledby="platform-workflows-heading">
+      <div className="mx-auto max-w-[1180px] space-y-4 px-5">
       <h2 id="platform-workflows-heading" className="text-[20px] font-semibold leading-7 text-[var(--lms-heading)]">
         Workflows connected across learning and hiring
       </h2>
@@ -64,6 +67,7 @@ export default function PlatformMarketingPage() {
           {label}
         </li>)}
       </ul>
+      </div>
     </section>
 
     <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-[var(--lms-canvas-padding)]"
@@ -76,7 +80,7 @@ export default function PlatformMarketingPage() {
           <span className="rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-3 py-2 text-sm font-semibold">
             {step}
           </span>
-          {index<LIFECYCLE.length-1?<span aria-hidden="true" className="text-[var(--lms-muted-text)]">→</span>:null}
+          {index<LIFECYCLE.length-1?<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="text-[var(--lms-primary-text)]"><path d="M4 12h16m-6-6 6 6-6 6"/></svg>:null}
         </li>)}
       </ol>
       <p className="text-sm leading-6 text-body">The steps are managed by learners, educators, mentors and placement teams.</p>

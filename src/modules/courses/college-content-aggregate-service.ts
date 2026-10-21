@@ -5,6 +5,7 @@ import { alias } from "drizzle-orm/pg-core";
 import { getDb } from "@/db/client";
 import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
 import {resourceMaterialsRuntimeEnabled} from "./resource-material-readiness";
+import {parseLegacyResourceMaterialDrafts} from "./lesson-resource-materials-service";
 import { aliasedColumn } from "@/db/aliased-column";
 import {
   academicPeriods,
@@ -17,6 +18,7 @@ import {
   courses,
   departments,
   lessonContents,
+  lessonVideoAssets,
   programs,
 } from "@/db/schema";
 import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
@@ -81,6 +83,9 @@ export async function listCollegeContentAggregate(
     throw new AuthorizationError("courses.read");
   const scoped = db.select({
     id: aliasedColumn(lessonContents.id, "content_id"),
+    lessonId: aliasedColumn(lessonContents.lessonId, "content_lesson_id"),
+    // Only the server reads historical JSON; never send raw legacy payloads.
+    legacyNotes: aliasedColumn(lessonContents.notes, "content_legacy_notes"),
     title: aliasedColumn(lessonContents.title, "content_title"),
     contentType: aliasedColumn(lessonContents.contentType, "content_content_type"),
     status: aliasedColumn(lessonContents.status, "content_status"),
@@ -167,9 +172,36 @@ export async function listCollegeContentAggregate(
      .where(inArray(lessonContentMaterials.lessonContentId,items.map(item=>item.id)))
      .groupBy(lessonContentMaterials.lessonContentId):[];
   const materialById=new Map(materialCounts.map(row=>[row.contentId,row.total]));
-  const annotated=items.map(item=>({
-    ...item,materialsCount:materialsReady?materialById.get(item.id)??0:null,
-  }));
+  // Registered, clean, active storage rows are the only ones safe to open.
+  // Do not return objectKey or unsigned historical storageKey.
+  const videoAssets=kind==="VIDEO"&&items.length?await db.select({
+    id:lessonVideoAssets.id,lessonContentId:lessonVideoAssets.lessonContentId,
+    lessonId:lessonVideoAssets.lessonId,deliveryId:lessonVideoAssets.deliveryId,
+  }).from(lessonVideoAssets).where(and(
+    inArray(lessonVideoAssets.lessonContentId,items.map(item=>item.id)),
+    eq(lessonVideoAssets.collegeId,collegeId),
+    eq(lessonVideoAssets.processingStatus,"READY"),
+    eq(lessonVideoAssets.scanStatus,"CLEAN"),
+    isNull(lessonVideoAssets.deletedAt),
+  )):[];
+  const annotated=items.map(({legacyNotes,...item})=>{
+    const parsedLegacy=kind==="RESOURCE"?parseLegacyResourceMaterialDrafts(legacyNotes):[];
+    const readyCount=materialsReady?materialById.get(item.id)??0:null;
+    const matchedVideo=item.contentType==="VIDEO"?videoAssets.find(asset=>
+      asset.lessonContentId===item.id&&asset.lessonId===item.lessonId&&
+      (!asset.deliveryId||asset.deliveryId===item.deliveryId||!item.deliveryId)):null;
+    const accessibleDelivery=matchedVideo?
+      (matchedVideo.deliveryId??item.deliveryId??sectionOptions.find(section=>section.offeringId===item.offeringId)?.deliveryId??null):null;
+    return {...item,
+      materialsCount:readyCount,
+      // Legacy JSON has not been imported into verified private storage.
+      legacyMaterialsPending:kind==="RESOURCE"&&readyCount===0?parsedLegacy.length:0,
+      legacyFilesPending:kind==="RESOURCE"&&readyCount===0?
+        parsedLegacy.filter(draft=>draft.needsVerifiedFileImport).length:0,
+      playback:matchedVideo&&accessibleDelivery?
+        {videoId:matchedVideo.id,deliveryId:accessibleDelivery}:null,
+    };
+  });
   return {
     kind, query, sectionOptions, materialCountsReady:materialsReady, view:live?.view??"ALL", from:live?.from, to:live?.to, items:annotated, total,
     totalPages: collegeContentPageCount(total),

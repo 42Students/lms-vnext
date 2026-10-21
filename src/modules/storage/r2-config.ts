@@ -25,12 +25,15 @@ export function getPrivateR2Config(
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_NOT_CONFIGURED");
   }
   const keyPrefix = env.R2_PRIVATE_PREFIX?.trim() ?? "";
-  if (keyPrefix && (!keyPrefix.endsWith("/") || keyPrefix.startsWith("/") || keyPrefix.includes(".."))) {
+  if (keyPrefix && (!keyPrefix.endsWith("/") || keyPrefix.startsWith("/") ||
+      keyPrefix.includes("..") || keyPrefix.includes("\\") ||
+      keyPrefix.includes("//") || /[\\x00-\\x1f]/.test(keyPrefix))) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
   }
   if (bucket === env.R2_BUCKET_NAME?.trim()) {
     const sharedBucketAllowed =
-      env.APP_ENV === "development" && keyPrefix.length > 0;
+      env.APP_ENV === "development" && keyPrefix.length > 0 &&
+      !env.R2_PUBLIC_URL?.trim();
     if (!sharedBucketAllowed) {
       throw new PrivateObjectStorageError("PRIVATE_STORAGE_BUCKET_UNSAFE");
     }
@@ -43,3 +46,9 @@ export function getPrivateR2Config(
     ...(keyPrefix ? { keyPrefix } : {}),
   };
 }
+
+/** A public legacy base URL must never be returned as a private read grant.
+ * All vNext callers authorize a resource then sign its private object key.
+ */
+export const PRIVATE_R2_SETUP_MESSAGE =
+ "Private document storage is not set up yet. Please try again later.";

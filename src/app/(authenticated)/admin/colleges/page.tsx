@@ -1,4 +1,7 @@
 import {Button} from "@/components/ui/button";
+import {inArray,sql} from "drizzle-orm";
+import {getDb} from "@/db/client";
+import {collegeMemberships} from "@/db/schema";
 import {Select} from "@/components/ui/select";
 import {Input} from "@/components/ui/input";
 import Link from "next/link";
@@ -192,6 +195,19 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     organizationName:organizationNames.get(college.organizationId)??("Org #"+college.organizationId.slice(0,8)),
     canManage:organizationsResult.ok&&canManageCollegeDirectoryRow(context,college),
   }));
+  // Legacy popularity favored colleges with meaningful activity rather than
+  // alphabetical ties. vNext does not retain search-click analytics; use
+  // the registered membership population ONLY for the already-authorized
+  // list of colleges. Failed stats reads must not blank the directory.
+  const popularityRead=rows.length?await getDb().select({
+   collegeId:collegeMemberships.collegeId,
+   total:sql<number>`count(*)::integer`,
+  }).from(collegeMemberships)
+   .where(inArray(collegeMemberships.collegeId,rows.map(row=>row.id)))
+   .groupBy(collegeMemberships.collegeId)
+   .then(value=>({ok:true as const,value}))
+   .catch(()=>({ok:false as const,value:[]})):({ok:true as const,value:[]});
+  const popularity=new Map(popularityRead.value.map(item=>[item.collegeId,item.total]));
   const {q,pageSize}=filters;
   const state=typeof raw.state==="string"?raw.state.trim():"";
   const city=typeof raw.city==="string"?raw.city.trim():"";
@@ -211,6 +227,7 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
     }
   }
   const matches=primary.sort((a,b)=>b.score-a.score||
+    (popularity.get(b.item.id)??0)-(popularity.get(a.item.id)??0)||
     a.item.name.localeCompare(b.item.name,"en-IN")||a.item.id.localeCompare(b.item.id))
     .map(entry=>entry.item);
   const pages=Math.max(1,Math.ceil(matches.length/pageSize));
@@ -293,6 +310,9 @@ export default async function CollegesPage({searchParams}:{searchParams:Promise<
        <Link href={href(page)} className="inline-flex min-h-11 items-center text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 underline-offset-4">Refresh directory</Link>
       </form>
       <p role="status" className="text-sm text-muted-foreground tabular-nums">{q||state||city||orgId?matches.length+" of "+rows.length:rows.length} colleges · Page {page} of {pages}</p>
+      <p className="text-xs text-muted-foreground">{popularityRead.ok
+       ?"Search ranks exact/prefix, synonym and bounded fuzzy matches first, then authorized membership activity. Historic click popularity is not retained."
+       :"Membership popularity is temporarily unavailable; exact, synonym and fuzzy ranking remain available."}</p>
       <DataTable columns={columns} rows={visible} getRowKey={college=>college.id}
         caption="Colleges"
         empty={<EmptyState title={q||state||city||orgId ? "No colleges match your search" : "No active colleges in this scope"}

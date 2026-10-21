@@ -13,13 +13,14 @@ export async function POST(request:Request,{params}:{params:Promise<{threadId:st
  const form=await request.formData().catch(()=>null);
  const parsed=hrRecruiterReplySchema.safeParse({
   threadId:(await params).threadId,body:form?.get("body"),
+   quoteId:form?.get("quoteId")||undefined,
  });
  if(!parsed.success)return NextResponse.json({error:"INVALID_BODY"},{status:400});
  try{
   const context=await getCurrentRequestContext();
   if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
    return NextResponse.json({error:"FORBIDDEN"},{status:403});
-  const receipt=await sendRecruiterThreadMessage(context,parsed.data.threadId,parsed.data.body);
+  const receipt=await sendRecruiterThreadMessage(context,parsed.data.threadId,parsed.data.body,parsed.data.quoteId);
   if(request.headers.get("accept")?.includes("application/json"))
    return NextResponse.json({sent:true,id:receipt.id,threadId:receipt.threadId});
  }catch(error){

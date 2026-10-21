@@ -18,7 +18,7 @@ const ACCESS_EVENTS=[
  "MODULE_ACCESS_BULK_SET",
  "COLLEGE_FEATURE_TOGGLE",
 ] as const;
-export async function listCollegeFeatureHistory(context:RequestContext,collegeRaw:string,raw:unknown={}){
+export async function listCollegeFeatureHistory(context:RequestContext,collegeRaw:string,raw:unknown={},requestedPageSize:15|50=50){
  const collegeId=z.uuid().parse(collegeRaw);
  const cursor=collegePolicyHistoryQuery.parse(raw);
  const verified=await getSuperAdminCollegeFeatureSnapshot(context,collegeId);
@@ -33,14 +33,14 @@ export async function listCollegeFeatureHistory(context:RequestContext,collegeRa
  const rows=await getDb().select({event:activityEvents,actorName:users.displayName})
   .from(activityEvents).leftJoin(users,eq(users.id,activityEvents.actorUserId))
   .where(conditions)
-  .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(51);
- const items=rows.slice(0,50);
+  .orderBy(desc(activityEvents.occurredAt),desc(activityEvents.id)).limit(requestedPageSize+1);
+ const items=rows.slice(0,requestedPageSize);
  const last=items[items.length-1];
  return {college:verified.college,items:safeFullModuleHistory(items.map(x=>({
   id:x.event.id,occurredAt:x.event.occurredAt,actorName:x.actorName,
   metadata:x.event.metadata,eventType:x.event.eventType,
   subjectType:x.event.subjectType,subjectId:x.event.subjectId,
- }))),nextCursor:rows.length>50&&last?{
+ }))),nextCursor:rows.length>requestedPageSize&&last?{
   beforeOccurredAt:last.event.occurredAt,beforeId:last.event.id,
  }:null};
 }

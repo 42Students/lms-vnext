@@ -32,6 +32,8 @@ export function MentorSprintCreate({
     releases.find(item=>item.status!=="SHIPPED")?.id??releaseId;
   const [chosenReleaseId,setChosenReleaseId]=useState(initialReleaseId);
   const chosenRelease=releases.find(item=>item.id===chosenReleaseId);
+  const sprintKeyPreview=title.trim().toLowerCase().normalize("NFKD")
+    .replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,64);
   const dirty=Boolean(title||description||goal||done||startDate||endDate||dueDate||chosenReleaseId!==initialReleaseId);
   function discardDraft(){
     setOpen(false);setTitle("");setDescription("");setGoal("");setDone("");
@@ -61,11 +63,11 @@ export function MentorSprintCreate({
   }
 
   return <>
-    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)}>
+    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)} className="min-h-11 md:min-h-9">
       Add sprint
     </Button>
     <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Create sprint"
-      description="Create a planned sprint with goal, dates and definition of done in this release. Sprints are saved individually, not as one atomic plan."
+      description="Add a sprint to your plan. Its title is kept when its generated key is assigned. Individual sprints save separately so other planned work is not overwritten."
       footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
         <Button className="w-full sm:w-auto" variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
         <Button className="w-full sm:w-auto" loading={busy} disabled={busy||!title.trim()||title.trim().length>200||
@@ -88,6 +90,7 @@ export function MentorSprintCreate({
           <Input maxLength={200} value={title}
             onChange={e=>setTitle(e.target.value)} required />
         </label>
+        {title.trim()?<p className="text-xs text-muted-foreground">Sprint key preview: {sprintKeyPreview||"Not available"} · Assigned to {chosenRelease?.title??"the selected release"}.</p>:null}
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Description
           <Textarea value={description} maxLength={4000}
             onChange={e=>setDescription(e.target.value)}

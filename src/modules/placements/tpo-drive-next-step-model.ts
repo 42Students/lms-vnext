@@ -19,6 +19,8 @@ export type TpoDriveNextStepInput = {
   deadlinePassed?: boolean;
   pendingSelections?: number;
   pendingRequests: number;
+  /** REQUEST is a recruiter request, not a created placement job. */
+  recruiterRequestId?: string;
   nonApplicantCount?: number;
   canRemindNonApplicants?: boolean;
   deadlineMissing?: boolean;
@@ -32,7 +34,24 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
 } {
   const root = "/tpo/placements/jobs/" + encodeURIComponent(input.jobId);
   const actions: TpoDriveAction[] = [];
-  if (input.status === "DRAFT") {
+  if (input.status === "REQUEST" || input.status === "SENT_BACK") {
+    // The request has no job identity until explicit approval. Link to its
+    // college-scoped decision view; never send it to the job publish route.
+    const requestsHref = "/tpo/placements/lifecycle?view=REQUESTS";
+    actions.push({
+      label: "Approve for later",
+      description: "Approve the recruiter request as a draft; no students are told until publishing.",
+      href: requestsHref,
+    }, {
+      label: "Request a change",
+      description: "Tell the recruiter what needs to change before approval.",
+      href: requestsHref,
+    }, {
+      label: "Decline this request",
+      description: "Record a reason and notify the recruiter in the app.",
+      href: requestsHref,
+    });
+  } else if (input.status === "DRAFT") {
     actions.push(input.publishAllowed ? {
       label: "Publish",
       description: "Review the eligibility and announcement before publishing.",
@@ -106,6 +125,29 @@ export function projectTpoDriveNextStep(input: TpoDriveNextStepInput): {
       description: "Review this drive's final applicant record.",
       href: root + "/applicants-pipeline",
     });
+  }
+  if(input.status==="PUBLISHED"){
+    const score=(action:TpoDriveAction)=>{
+      const name=action.label;
+      if(name.startsWith("Review ")&&name.includes("request"))return 0;
+      if(name.startsWith("Review and apply"))return 1;
+      if(name.startsWith("Verify and release"))return 2;
+      if(name==="Set deadline")return 3;
+      if(name.startsWith("Share"))return 4;
+      if(name.startsWith("Add students"))return 5;
+      if(name.startsWith("Remind"))return 6;
+      return name==="Close drive"?8:7;
+    };
+    actions.sort((a,b)=>score(a)-score(b));
+    const noAttention=actions.every(action=>
+      action.label==="Applicants"||action.label==="Close drive");
+    if(noAttention){
+      return {primary:{
+        label:"No action needed",
+        description:"Nothing needs your attention right now. Review the drive record if you need to make a change.",
+        href:root,
+      },more:actions.slice(0,3)};
+    }
   }
   return { primary: actions[0]!, more: actions.slice(1, 4) };
 }

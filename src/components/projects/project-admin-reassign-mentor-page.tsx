@@ -85,13 +85,17 @@ export async function ProjectAdminReassignMentorPage({
   const mentors=mentorsRead.status==="fulfilled"?mentorsRead.value:[];
   const workload=workloadRead.value;
 
-  const mentorCounts = workload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
+  const sortedWorkload = [...workload].sort((left, right) =>
+    right.activeWorkspaces - left.activeWorkspaces ||
+    (left.mentorName ?? "").localeCompare(right.mentorName ?? "", "en-IN"),
+  );
+  const mentorCounts = sortedWorkload.filter(row => row.mentorMembershipId !== null).map(row => row.activeWorkspaces);
   return (
     <div className="min-w-0 space-y-[16px]">
       <div className="min-w-0">
         <PageBackLink href={basePath} label="Back to workspaces" />
         <PageHeader title="Bulk mentor reassignment"
-          description="Move selected non-archived project workspaces to a new primary mentor." />
+          description="Move multiple active workspaces to a new mentor at once" />
       </div>
       <ProjectAdminNav basePath={basePath} active="workspaces" />
       {mentorsRead.status==="rejected"?<ErrorState
@@ -116,7 +120,7 @@ export async function ProjectAdminReassignMentorPage({
           })}
         </div>
       </Disclosure>
-      <Disclosure title="Filters" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen={Boolean(mentorSearch || fromMentorId || query.q || query.status)}>
+      <Disclosure title="Filter by current mentor" className="border-b border-border pb-4" contentClassName="space-y-4 pt-3" defaultOpen>
       <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-border pb-4 md:grid-cols-[minmax(0,1fr)_auto_auto]"
         aria-label="Search all eligible mentors">
         {query.q?<Input type="hidden" name="q" value={query.q}/>:null}
@@ -149,19 +153,18 @@ export async function ProjectAdminReassignMentorPage({
         {query.status ? <Input type="hidden" name="status" value={query.status} /> : null}
         {query.pageSize ? <Input type="hidden" name="pageSize" value={query.pageSize} /> : null}
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-          Filter by current mentor
+          Current mentor
           <Select name="fromMentorId" defaultValue={fromMentorId ?? ""}
-            className="w-full">
-            <option value="">All mentors</option>
+            className="w-full min-w-[240px]">
+            <option value="">Any mentor — search by name</option>
             <option value="UNASSIGNED">Unassigned</option>
             {mentors.map(mentor => <option key={mentor.membershipId} value={mentor.membershipId}>
               {mentor.displayName ?? mentor.email ?? "Mentor"}
             </option>)}
           </Select>
         </label>
-        <Button type="submit" className="min-h-11 w-full md:min-h-9">
-          Apply mentor filter
-        </Button>
+        <Button type="submit" className="min-h-11 w-full md:min-h-9">Apply mentor filter</Button>
+        {fromMentorId ? <Link href={basePath + "/reassign-mentor"} className="text-sm font-semibold underline">Clear current mentor</Link> : null}
       </form>
       </Disclosure>
       {mentorsRead.status==="fulfilled"?<ProjectMentorReassignment

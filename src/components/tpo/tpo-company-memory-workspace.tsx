@@ -12,6 +12,7 @@ import chartStyles from "./legacy-company-bar.module.css";
 
 import Link from "next/link";
 import {TpoCompanyTeamConversation} from "./tpo-company-team-conversation";
+import {TpoPublicJoinLinkCard} from "./tpo-public-join-link-card";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {Dropdown} from "@/components/ui/dropdown";
 import {TpoCompanyMemoryDriveGrid} from "./tpo-company-memory-drive-grid";
@@ -110,6 +111,7 @@ export function TpoCompanyMemoryWorkspace({
   const [phase, setPhase] = useState<Phase>("loading");
   const [error, setError] = useState("");
   const [driveSearch,setDriveSearch]=useState("");
+  const [countsWarning,setCountsWarning]=useState("");
   // Capture once on mount; expiry labels must not call Date.now during render.
   const [renderedAt] = useState(currentTimeMs);
   // A newer retry or route change must win over a slower older response.
@@ -160,8 +162,22 @@ export function TpoCompanyMemoryWorkspace({
     setCompany(null);
     setPhase("loading");
     setError("");
+    setCountsWarning("");
     void load(controller.signal).then(result => {
       if(!controller.signal.aborted&&activeLoad.current===controller)applyLoad(result);
+    });
+  }
+  function retryCounts() {
+    activeLoad.current?.abort();
+    const controller=new AbortController();
+    activeLoad.current=controller;
+    setCountsWarning("Refreshing company numbers…");
+    void load(controller.signal).then(result=>{
+      if(controller.signal.aborted||activeLoad.current!==controller)return;
+      if(result?.phase==="ready"&&result.company){
+        setCompany(result.company);
+        setCountsWarning("");
+      }else setCountsWarning("Couldn't refresh company numbers. Showing the last successfully loaded company details.");
     });
   }
 
@@ -270,16 +286,22 @@ export function TpoCompanyMemoryWorkspace({
         ))}
       </div>
 
-      {company.studentsHired == null ? (
+      {company.studentsHired == null || countsWarning || company.driveCountsWarning ? (
         <div role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm text-muted-foreground">
-          Students-placed counts are unavailable for this college&apos;s selected placement rule. No estimated zero is shown.
+          {company.driveCountsError || countsWarning || "Students-placed counts are unavailable for this college's selected placement rule. No estimated zero is shown."}
+          <Button variant="secondary" type="button" disabled={phase!=="ready"}
+            onClick={retryCounts} className="ml-3 min-h-11 md:min-h-9">Retry counts</Button>
         </div>
       ) : null}
 
       {company.hiredPerYear.length>0?(
         <section aria-label="Students placed, by year" className="border-b border-border py-4">
           <h2 className="font-semibold text-foreground">Students placed, by year</h2>
-          <p className="mt-1 text-xs text-muted-foreground">Years hiring: {company.hiredPerYear.length}. Counts are distinct confirmed JOINED learners with a recorded joining year, not estimated offers.</p>
+          <p className="mt-1 text-xs text-muted-foreground">
+            Years hiring: {company.hiredPerYear.length}. This annual chart reflects distinct confirmed JOINED learners
+            by recorded joining year. The students placed total above may use a different placement-rule measure;
+            annual joined counts must not be interpreted as annual placement totals.
+          </p>
           <ul className="mt-3 space-y-3">
             {company.hiredPerYear.map(item=>(
               <li key={item.year} className="grid min-w-0 grid-cols-[3.5rem_minmax(0,1fr)_3rem] items-center gap-2 text-sm sm:grid-cols-[4rem_minmax(0,1fr)_3rem] sm:gap-3">
@@ -292,11 +314,23 @@ export function TpoCompanyMemoryWorkspace({
           </ul>
         </section>
       ):null}
-      {company.canonicalCompanyId?<TpoCompanyTeamConversation
-        companyId={company.canonicalCompanyId} companyName={company.name}
-        actorMembershipId={actorMembershipId}/>:<p role="status" className="text-sm text-body">
-        Link this company to an authorized college employer before starting a private Team conversation.
-      </p>}
+      {company.canonicalCompanyId?<section aria-label="Company link and access" className="border-b border-border py-4">
+        <TpoPublicJoinLinkCard key={company.canonicalCompanyId} scope="COMPANY"
+          companyId={company.canonicalCompanyId} companyName={company.name}
+          initial={{ready:false,domain:null,link:null}}/>
+        <p className="mt-2 text-xs text-muted-foreground">Company trust and drive-review policy are controlled through the linked college company record.</p>
+        <Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
+          href={"/tpo/companies/"+encodeURIComponent(company.canonicalCompanyId)}>
+          Trust and review settings
+        </Link>
+      </section>:(
+        <section aria-label="Company link unavailable" className="border-b border-border py-4">
+          <h2 className="font-semibold text-foreground">Company link and trust</h2>
+          <p className="mt-2 text-sm text-body">No verified college company is linked to this name yet. Link it before editing the domain, trust or recruiter join link.</p>
+          <Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
+            href="/tpo/companies">Find a college company</Link>
+        </section>
+      )}
       <div className="grid min-w-0 gap-4 xl:grid-cols-2 xl:gap-6">
         <div className="min-w-0 space-y-4">
           <section className="border-b border-border py-4">
@@ -353,6 +387,14 @@ export function TpoCompanyMemoryWorkspace({
         </div>
 
         <div className="min-w-0 space-y-4">
+          {company.canonicalCompanyId?<TpoCompanyTeamConversation
+            companyId={company.canonicalCompanyId} companyName={company.name}
+            actorMembershipId={actorMembershipId}/>:
+            <section aria-label="Company Team conversation" className="border-b border-border py-4">
+              <h2 className="font-semibold text-foreground">Team conversation</h2>
+              <p className="mt-2 text-sm text-body">Link this company to a verified college employer before starting a private Team conversation.</p>
+              <Link href="/tpo/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Find company</Link>
+            </section>}
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
             {company.drives.length===0?

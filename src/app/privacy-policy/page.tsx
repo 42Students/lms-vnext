@@ -1,9 +1,26 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 
-export const metadata: Metadata = { title: "Privacy | 42LMS" };
+export const runtime = "nodejs";
+export const metadata: Metadata = {
+  title: "Privacy Policy | 42LMS",
+  description: "How 42LMS collects, uses, shares and protects your information.",
+  alternates: { canonical: "https://42lms.com/privacy-policy" },
+  robots: { index: true, follow: true },
+};
 
-/** Preserve the public/mobile privacy URL using the full existing legacy policy. */
-export default function PrivacyPolicyPage() {
-  redirect("/assets/static/privacy-policy-view.html");
+/** Serve the checked-in Android/web policy at its stable, indexed URL.
+ * Rendering the trusted, versioned static body keeps all legacy #section
+ * anchors without redirecting mobile/web visitors to an asset path. */
+export default async function PrivacyPolicyPage() {
+  const html = await readFile(join(process.cwd(),
+    "public/assets/static/privacy-policy-view.html"), "utf8");
+  const documentBody = /<body[^>]*>([\s\S]*?)<\/body>/i.exec(html)?.[1];
+  if (!documentBody) throw new Error("Bundled 42LMS privacy policy is incomplete");
+  return <>
+    <link rel="stylesheet" href="/assets/static/static-page.css" />
+    <main aria-label="42LMS Privacy Policy"
+      dangerouslySetInnerHTML={{ __html: documentBody }} />
+  </>;
 }

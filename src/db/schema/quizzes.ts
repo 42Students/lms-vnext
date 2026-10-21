@@ -44,6 +44,12 @@ export const courseQuizzes = pgTable(
     legacyFacultyId: integer("legacy_faculty_id"),
     legacyActive: boolean("legacy_active"),
     legacyEnabled: boolean("legacy_enabled"),
+    legacyDeletedAt: timestamp("legacy_deleted_at",{withTimezone:true}),
+    legacyQuizVersion: integer("legacy_quiz_version"),
+    legacyResultsReleased: boolean("legacy_results_released"),
+    /** Preserve totals beyond the vNext scoring bound without changing live points. */
+    legacyTotalPoints: bigint("legacy_total_points",{mode:"bigint"}),
+    legacyDueAtLocal: varchar("legacy_due_at_local",{length:64}),
     title: text("title").notNull(),
     description: text("description"),
     dueAt: timestamp("due_at", {
@@ -129,6 +135,9 @@ export const courseQuizzes = pgTable(
     index(
       "course_quizzes_lesson_status_idx",
     ).on(table.lessonId, table.status),
+    index("course_quizzes_legacy_identity_idx")
+      .on(table.legacyCourseId,table.legacyClassId,table.legacyQuizId)
+      .where(sql`${table.legacyQuizId} is not null`),
     index(
       "course_quizzes_delivery_status_idx",
     ).on(table.deliveryId, table.status),
@@ -157,6 +166,10 @@ export const quizQuestions = pgTable(
         onDelete: "restrict",
       }),
     legacyQuestionId: integer("legacy_question_id"),
+    legacySortOrder: integer("legacy_sort_order"),
+    legacyQuestionType: varchar("legacy_question_type",{length:50}),
+    deletedAt: timestamp("deleted_at",{withTimezone:true}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     questionType:
       quizQuestionTypeEnum(
         "question_type",
@@ -179,6 +192,9 @@ export const quizQuestions = pgTable(
     uniqueIndex(
       "quiz_questions_quiz_sequence_uq",
     ).on(table.quizId, table.sequence),
+    index("quiz_questions_active_order_idx")
+      .on(table.quizId,table.sequence,table.id)
+      .where(sql`${table.deletedAt} is null`),
     index("quiz_questions_quiz_idx").on(
       table.quizId,
     ),
@@ -203,6 +219,9 @@ export const quizOptions = pgTable(
         onDelete: "restrict",
       }),
     legacyOptionId: integer("legacy_option_id"),
+    legacySortOrder: integer("legacy_sort_order"),
+    deletedAt: timestamp("deleted_at",{withTimezone:true}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     optionText: text("option_text").notNull(),
     isCorrect: boolean("is_correct")
       .notNull()
@@ -218,6 +237,9 @@ export const quizOptions = pgTable(
     uniqueIndex(
       "quiz_options_question_sequence_uq",
     ).on(table.questionId, table.sequence),
+    index("quiz_options_active_order_idx")
+      .on(table.questionId,table.sequence,table.id)
+      .where(sql`${table.deletedAt} is null`),
     index("quiz_options_question_idx").on(
       table.questionId,
     ),
@@ -254,6 +276,9 @@ export const quizAttempts = pgTable(
     legacyMaxScore: bigint("legacy_max_score", { mode: "bigint" }),
     legacyDeleted: boolean("legacy_deleted"),
     legacyUpdatedAt: timestamp("legacy_updated_at", { withTimezone: true }),
+    legacySubmittedLocal: timestamp("legacy_submitted_local",{withTimezone:false}),
+    legacySourceTimeZone: varchar("legacy_source_time_zone",{length:80}),
+    deletedAt: timestamp("deleted_at",{withTimezone:true}),
     attemptNumber: integer("attempt_number")
       .notNull(),
     score: integer("score").notNull(),
@@ -280,6 +305,9 @@ export const quizAttempts = pgTable(
     index(
       "quiz_attempts_quiz_delivery_idx",
     ).on(table.quizId, table.deliveryId),
+    index("quiz_attempts_current_history_idx")
+      .on(table.quizId,table.membershipId,table.submittedAt,table.id)
+      .where(sql`${table.deletedAt} is null`),
     index(
       "quiz_attempts_membership_idx",
     ).on(table.membershipId),

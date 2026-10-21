@@ -9,6 +9,9 @@ import {
   cohortProgressionState,
   cohorts,
   collegeMemberships,
+  colleges,
+  groupBackedClassOfferings,
+  lmsGroups,
   courses,
   departments,
   learnerProgramEnrollments,
@@ -57,6 +60,7 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
   const db = getDb();
   const source = db.select({
     id: aliasedColumn(programTerms.id, "sem_id"),
+    legacySemesterId: aliasedColumn(programTerms.legacySemesterId, "sem_legacy_id"),
     updatedAt: sql<Date>`${programTerms.updatedAt}`.mapWith(programTerms.updatedAt).as("term_updated_at"),
     name: aliasedColumn(programTerms.name, "sem_name"),
     termNumber: aliasedColumn(programTerms.termNumber, "sem_term_number"),
@@ -93,10 +97,11 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
         ilike(programTerms.name, likePattern(query.q)),
         ilike(programs.name, likePattern(query.q)),
         ilike(programs.code, likePattern(query.q)),
+        sql<boolean>`${programTerms.termNumber}::text ilike ${likePattern(query.q)}`,
       ) : undefined,
     )).as("college_semester_directory");
 
-  const [totalRows, rawItems, programChoices] = await Promise.all([
+  const [totalRead,itemsRead,programsRead] = await Promise.allSettled([
     db.select({ total: count() }).from(source),
     db.select().from(source)
       .orderBy(asc(source.programName), asc(source.termNumber), asc(source.id))
@@ -104,6 +109,10 @@ export async function listCollegeSemesters(context: RequestContext, raw: unknown
       .offset((query.page - 1) * query.pageSize),
     availablePrograms(collegeId),
   ]);
+  if(totalRead.status==="rejected"||itemsRead.status==="rejected")
+    throw new Error("SEMESTERS_UNAVAILABLE");
+  if(programsRead.status==="rejected")throw new Error("PROGRAMS_UNAVAILABLE");
+  const totalRows=totalRead.value,rawItems=itemsRead.value,programChoices=programsRead.value;
   const ids = rawItems.map((item) => item.id);
   const courseCounts = ids.length
     ? await db.select({
@@ -194,6 +203,9 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
         ilike(cohorts.name, likePattern(query.q)),
         ilike(cohorts.code, likePattern(query.q)),
         ilike(programs.name, likePattern(query.q)),
+        ilike(cohorts.academicYear, likePattern(query.q)),
+        sql<boolean>`${cohorts.status}::text ilike ${likePattern(query.q)}`,
+        sql<boolean>`${cohortProgressionState.currentTermNumber}::text ilike ${likePattern(query.q)}`,
       ) : undefined,
     )).as("college_batches_directory");
 
@@ -246,4 +258,100 @@ export async function listCollegeBatches(context: RequestContext, raw: unknown) 
     total,
     totalPages: academicDirectoryPageCount(total, query.pageSize),
   };
+}
+
+
+/**
+ * Legacy autocomplete is independent of the paged management directory.
+ * Only UUID identifiers scoped to the acting college are returned: imported
+ * numeric college/program/batch IDs are never accepted as tenant selectors.
+ */
+export async function searchCollegeBatchAutocomplete(
+  context: RequestContext, search: string, limit = 20,
+) {
+  const collegeId = await requireAdminCollege(context);
+  const q = search.trim().slice(0, 100);
+  const bounded = Math.max(1, Math.min(Math.trunc(limit) || 20, 50));
+  const db = getDb();
+  return db.select({
+    id: cohorts.id, name: cohorts.name, code: cohorts.code,
+    programId: programs.id, programName: programs.name,
+    collegeId: colleges.id, organizationId: colleges.organizationId,
+    startDate: cohorts.startDate, endDate: cohorts.endDate,
+    academicYear: cohorts.academicYear, status: cohorts.status,
+    semesterNumber: cohortProgressionState.currentTermNumber,
+  }).from(cohorts)
+    .innerJoin(programs, eq(programs.id, cohorts.programId))
+    .innerJoin(departments, and(eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, collegeId)))
+    .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+    .leftJoin(cohortProgressionState, eq(cohortProgressionState.cohortId, cohorts.id))
+    .where(q ? or(
+      ilike(cohorts.name, likePattern(q)), ilike(cohorts.code, likePattern(q)),
+      ilike(programs.name, likePattern(q)), ilike(cohorts.academicYear, likePattern(q)),
+      sql<boolean>`${cohortProgressionState.currentTermNumber}::text ilike ${likePattern(q)}`,
+    ) : undefined)
+    .orderBy(asc(programs.name), asc(cohorts.name)).limit(bounded);
+}
+
+export async function searchCollegeSemesterAutocomplete(
+  context: RequestContext, search: string, programId?: string, limit = 20,
+) {
+  const collegeId = await requireAdminCollege(context);
+  const q = search.trim().slice(0, 100);
+  const bounded = Math.max(1, Math.min(Math.trunc(limit) || 20, 50));
+  return getDb().select({
+    id: programTerms.id, name: programTerms.name,
+    semesterNumber: programTerms.termNumber,
+    programId: programs.id, programName: programs.name,
+    collegeId: departments.collegeId,
+    isActive: programTerms.isActive,
+  }).from(programTerms)
+    .innerJoin(programs, eq(programs.id, programTerms.programId))
+    .innerJoin(departments, and(eq(departments.id, programs.departmentId),
+      eq(departments.collegeId, collegeId)))
+    .where(and(
+      programId ? eq(programTerms.programId, programId) : undefined,
+      q ? or(ilike(programTerms.name, likePattern(q)),
+        ilike(programs.name, likePattern(q)),
+        sql<boolean>`${programTerms.termNumber}::text ilike ${likePattern(q)}`) : undefined,
+    ))
+    .orderBy(asc(programs.name), asc(programTerms.termNumber)).limit(bounded);
+}
+
+/**
+ * Content audience enumeration, not the management class list. GROUP_BACKED
+ * entries remain separate from primary sections and never inflate batch
+ * section/learner totals.
+ */
+export async function listCollegeContentClassAudience(context: RequestContext) {
+  const collegeId = await requireAdminCollege(context);
+  const db = getDb();
+  const [registered, grouped] = await Promise.all([
+    db.select({
+      id: sections.id, name: sections.name,
+      academicPeriodId: sections.academicPeriodId,
+    }).from(sections)
+      .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, and(eq(departments.id, programs.departmentId),
+        eq(departments.collegeId, collegeId)))
+      .where(eq(sections.status, "ACTIVE")),
+    db.select({
+      id: groupBackedClassOfferings.id, name: groupBackedClassOfferings.name,
+      academicPeriodId: groupBackedClassOfferings.academicPeriodId,
+    }).from(groupBackedClassOfferings)
+      .innerJoin(lmsGroups, and(eq(lmsGroups.id, groupBackedClassOfferings.rosterGroupId),
+        eq(lmsGroups.collegeId, collegeId)))
+      .innerJoin(academicPeriods, and(
+        eq(academicPeriods.id, groupBackedClassOfferings.academicPeriodId),
+        eq(academicPeriods.collegeId, collegeId)))
+      .where(and(eq(groupBackedClassOfferings.status, "ACTIVE"),
+        eq(lmsGroups.status, "ACTIVE"),
+        isNull(lmsGroups.deletedAt))),
+  ]);
+  return [
+    ...registered.map(row => ({...row, kind: "SECTION" as const})),
+    ...grouped.map(row => ({...row, kind: "GROUP_BACKED" as const})),
+  ];
 }

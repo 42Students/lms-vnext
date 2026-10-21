@@ -64,7 +64,7 @@ export function bugScreenshotType(raw: string): {
 } {
   const type = raw.trim().toLowerCase().split(";")[0]?.trim() ?? "";
   if (!Object.prototype.hasOwnProperty.call(fileTypes, type)) {
-    throw new BugTrackerAttachmentError("INVALID_FILE");
+    throw new BugTrackerAttachmentError("INVALID_FILE","Screenshot must be a PNG, JPEG or WebP image.");
   }
   const contentType = type as keyof typeof fileTypes;
   return { contentType, extension: fileTypes[contentType] };
@@ -105,7 +105,7 @@ function assertFileSize(bytes: number) {
   ) {
     throw new BugTrackerAttachmentError(
       "INVALID_FILE",
-      "Screenshot must be between 1 byte and 8 MB",
+      "Screenshot is empty or larger than 8 MB. Choose an image up to 8 MB.",
     );
   }
 }
@@ -153,4 +153,16 @@ export function validateBugScreenshotConfirmation(input: {
     contentType: mime.contentType,
     sizeBytes: input.storedLength,
   };
+}
+
+// Map provisional-upload, missing-file and invalid image failures to
+// actionable copy without revealing private signed object URLs.
+export function bugScreenshotErrorMessage(error:unknown):string{
+ if(error instanceof BugTrackerAttachmentError){
+  if(error.code==="TOO_MANY_ATTACHMENTS")return "A report can have up to 3 screenshots.";
+  if(error.code==="INVALID_STORAGE_KEY")return "Screenshot not found. Upload it again.";
+  return error.message&&error.message!=="INVALID_FILE"?error.message:
+   "Invalid file. Choose a PNG, JPEG or WebP screenshot up to 8 MB.";
+ }
+ return "Screenshot unavailable. Check the file and try again.";
 }

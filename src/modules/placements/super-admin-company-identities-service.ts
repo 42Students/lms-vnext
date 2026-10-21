@@ -13,8 +13,10 @@ import {companyDomainCommandSchema,companyAliasCommandSchema,
 import {canonicalCompanyAlias} from "./company-curation-alias-model";
 
 function requireGlobal(context:RequestContext){
- if(!isSuperAdmin(context)||context.adminScope?.collegeId||context.adminScope?.organizationId)
-  throw new AuthorizationError("admin-scope.select");
+ // Domain/alias registry mutations target a platform company identity, not
+ // the acting college. A selected college must not silently narrow a global
+ // catalogue operation, nor prevent a verified Super Admin from doing it.
+ if(!isSuperAdmin(context))throw new AuthorizationError("admin-scope.select");
  requirePermission(context,"admin-scope.select");
 }
 export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:unknown){
@@ -33,9 +35,21 @@ export async function changeSuperAdminCompanyDomain(context:RequestContext,raw:u
     .where(eq(placementCompanyDomains.companyId,company.id)).for("update");
   const own=current.find(d=>d.domain.toLowerCase()===domain);
   if(cmd.action==="ADD"){
-   const [taken]=await tx.select({companyId:placementCompanyDomains.companyId})
-     .from(placementCompanyDomains).where(ilike(placementCompanyDomains.domain,domain)).limit(1);
-   if(taken&&taken.companyId!==company.id)throw new Error("Domain belongs to another company.");
+   // An older imported canonical domain can predate child-domain backfill.
+   // Treat both registries as authoritative until migration reconciliation.
+   const [primaryOwner]=await tx.select({id:placementCompanies.id,name:placementCompanies.name})
+    .from(placementCompanies).where(and(
+     ilike(placementCompanies.primaryDomain,domain),
+     ne(placementCompanies.id,company.id))).limit(1);
+   if(primaryOwner)
+    throw new Error("Domain belongs to "+primaryOwner.name+". Merge them instead.");
+   const [taken]=await tx.select({companyId:placementCompanyDomains.companyId,
+      companyName:placementCompanies.name})
+     .from(placementCompanyDomains)
+     .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyDomains.companyId))
+     .where(ilike(placementCompanyDomains.domain,domain)).limit(1);
+   if(taken&&taken.companyId!==company.id)
+    throw new Error("Domain belongs to "+taken.companyName+". Merge them instead.");
    if(!own){
     await tx.insert(placementCompanyDomains).values({
       companyId:company.id,domain,addedByUserId:context.user.id,
@@ -72,12 +86,13 @@ export async function changeSuperAdminCompanyAlias(context:RequestContext,raw:un
    throw new Error("This is already the company's canonical name.");
   const [otherName]=await tx.select({id:placementCompanies.id}).from(placementCompanies)
    .where(and(ilike(placementCompanies.name,alias),ne(placementCompanies.id,company.id))).limit(1);
-  if(cmd.action==="ADD"&&otherName)throw new Error("Other name conflicts with another company.");
+  if(cmd.action==="ADD"&&otherName)
+   throw new Error("Other name conflicts with another company. Merge them instead.");
   const [existing]=await tx.select().from(placementCompanyAliases)
    .where(ilike(placementCompanyAliases.alias,alias)).limit(1);
   if(cmd.action==="ADD"){
    if(existing&&existing.companyId!==company.id)
-    throw new Error("Other name is already registered to another company.");
+    throw new Error("Other name is already registered to another company. Merge them instead.");
    if(!existing)await tx.insert(placementCompanyAliases).values({
     companyId:company.id,alias,addedByUserId:context.user.id,
    });

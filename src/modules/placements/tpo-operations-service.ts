@@ -860,16 +860,18 @@ export async function listPlacementOperationsJobPage(
   const ids = rows.map(({job}) => job.id);
   const counts = await db.select({
     jobId: placementApplications.jobId,
-    submitted: sql<number>`count(*)::int`,
+    submitted: sql<number>`count(*) filter (where ${placementApplications.status} = 'SUBMITTED')::int`,
+    applicants: sql<number>`count(*)::int`,
   }).from(placementApplications)
     .innerJoin(placementJobs, eq(placementJobs.id, placementApplications.jobId))
     .where(and(
       eq(placementJobs.collegeId, collegeId),
       isNull(placementJobs.archivedAt),
       inArray(placementApplications.jobId, ids),
-      eq(placementApplications.status, "SUBMITTED"),
     )).groupBy(placementApplications.jobId);
-  const countsByJob = new Map(counts.map(row => [row.jobId, Number(row.submitted)] as const));
+  const countsByJob = new Map(counts.map(row => [row.jobId, {
+    submitted:Number(row.submitted),applicants:Number(row.applicants),
+  }] as const));
   return {
     total, totalPages, page, pageSize: filters.pageSize,
     items: rows.map(({job, company}) => ({
@@ -879,10 +881,13 @@ export async function listPlacementOperationsJobPage(
         employmentType: job.employmentType,
         locations: job.locations,
         publishedAt: job.publishedAt,
+        createdAt: job.createdAt,
+        jobTypeLabel: job.jobTypeLabel,
         company: {id: company.id, name: company.name},
       },
       company: {id: company.id, name: company.name},
-      metrics: {submittedApplications: countsByJob.get(job.id) ?? 0},
+      metrics: {submittedApplications: countsByJob.get(job.id)?.submitted ?? 0,
+        applicants:countsByJob.get(job.id)?.applicants ?? 0},
     })),
   };
 }

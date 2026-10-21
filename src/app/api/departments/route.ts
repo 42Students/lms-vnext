@@ -1,5 +1,8 @@
 import { NextResponse } from "next/server";
 import { getCurrentRequestContext } from "@/auth/request-context";
+import { SessionAuthenticationError } from "@/auth/session";
+import { isSuperAdmin } from "@/modules/identity/context";
+import { listColleges } from "@/modules/colleges/service";
 import { isSameOriginRequest } from "@/auth/origin";
 import {
   createDepartment,
@@ -12,12 +15,23 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
-    const collegeId =
-      new URL(request.url).searchParams.get("collegeId") ?? "";
-
+    const query = new URL(request.url).searchParams;
+    if ([...query.keys()].some(key => query.getAll(key).length > 1))
+      return NextResponse.json({ error: "INVALID_FILTERS", message: "Provide one college or organization scope." }, { status: 400 });
+    const collegeId = query.get("collegeId") || context.membership?.collegeId || "";
+    if (!collegeId && isSuperAdmin(context)) {
+      // Legacy fetchAll is allowed only for the platform administrator. Each
+      // college is still read through the central scoped permission service.
+      const colleges = await listColleges(context, query.get("organizationId"));
+      const inventories = await Promise.all(colleges.map(college => listDepartments(context,college.id)));
+      const items = inventories.flat();
+      return NextResponse.json({ status: "OK", message: "OK", data: items, departments: items });
+    }
     const items = await listDepartments(context, collegeId);
-    return NextResponse.json({ departments: items });
+    return NextResponse.json({ status: "OK", message: "OK", data: items, departments: items });
   } catch (error) {
+    if (error instanceof SessionAuthenticationError)
+      return NextResponse.json({ error: "UNAUTHENTICATED", message: "Authentication required" }, { status: 401 });
     return apiErrorResponse(error);
   }
 }
@@ -52,8 +66,8 @@ export async function POST(request: Request) {
     );
 
     return NextResponse.json(
-      { department },
-      { status: 201 },
+      { status: "OK", message: "OK", data: department, department },
+      { status: 200 },
     );
   } catch (error) {
     return apiErrorResponse(error);

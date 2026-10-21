@@ -435,6 +435,14 @@ const placementRoleOptionFieldsSchema = z
       .max(100_000_000)
       .nullable()
       .optional(),
+    // Legacy named pay packages may include separate fixed/variable amounts,
+    // joining bonus and internship duration, persisted on existing role rows.
+    ctcLpa: z.number().min(0).max(1000).nullable().optional(),
+    fixedLpa: z.number().min(0).max(1000).nullable().optional(),
+    variableLpa: z.number().min(0).max(1000).nullable().optional(),
+    joiningBonusLpa: z.number().min(0).max(1000).nullable().optional(),
+    stipendPerMonthInr: z.number().min(0).max(10_000_000).nullable().optional(),
+    stipendMonths: z.number().int().min(1).max(120).nullable().optional(),
   })
   .strict();
 
@@ -543,6 +551,8 @@ export const candidateAcademicEvidenceInputSchema = z
       .nullable()
       .optional()
       .default(null),
+    postgraduatePercentage: percentageSchema.nullable().optional().default(null),
+    hasPostgraduateQualification:z.boolean().nullable().optional().default(null),
     gapYears: z
       .number()
       .int()
@@ -617,6 +627,7 @@ export const placementEligibilityPolicyInputSchema = z
       .nullable()
       .optional()
       .default(null),
+    minPostgraduatePercentage:percentageSchema.nullable().optional().default(null),
     minPctThroughout: percentageSchema
       .nullable().optional().default(null),
     maxGapYears: z

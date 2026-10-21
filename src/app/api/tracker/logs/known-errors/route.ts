@@ -8,7 +8,8 @@ export const runtime = "nodejs";
 
 export async function GET(request: Request) {
   if (!logAlertsRuntimeEnabled()) {
-    return NextResponse.json({ error: "DB10_LOG_ALERTS_MIGRATIONS_PENDING" }, { status: 503 });
+    return NextResponse.json({error:"DB10_LOG_ALERTS_MIGRATIONS_PENDING",message:"Known Errors are unavailable until the log-alert schema is verified."},
+      {status:503,headers:{"Cache-Control":"private, no-store","Retry-After":"60"}});
   }
   try {
     const context = await getCurrentRequestContext();

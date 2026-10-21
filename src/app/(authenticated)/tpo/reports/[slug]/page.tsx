@@ -7,8 +7,10 @@ import { Alert } from "@/components/ui/alert";
 
 export default async function UnknownTpoReportPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
@@ -23,14 +25,22 @@ export default async function UnknownTpoReportPage({
     packages: "ctc", package: "ctc",
     "unplaced-students": "unplaced",
     offers: "offers-acceptance", acceptance: "offers-acceptance",
-    joining: "joining-status", outcomes: "joining-status",
+    joining: "joining-status", outcomes: "after-college",
     reasons: "failure-reasons", failure: "failure-reasons",
     "recruiter-leads": "leads", "recruiter-engagement": "leads",
     "lead-funnel": "leads", naac: "accreditation", nirf: "accreditation",
     aftercollege: "after-college",
   };
   const destination = aliases[slug.trim().toLowerCase()];
-  if (destination) redirect("/tpo/reports/" + destination);
+  if (destination) {
+    const query = await searchParams;
+    const safe = new URLSearchParams();
+    for (const key of ["seasonId", "jobId", "batchId", "branchId", "companyId"] as const) {
+      const value = query[key];
+      if (typeof value === "string" && /^[0-9a-f]{8}(-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i.test(value)) safe.set(key,value);
+    }
+    redirect("/tpo/reports/" + destination + (safe.size ? "?" + safe.toString() : ""));
+  }
   return (
     <div className="min-w-0 space-y-4">
       <PageHeader

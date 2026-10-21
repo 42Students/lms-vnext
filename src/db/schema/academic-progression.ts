@@ -38,3 +38,20 @@ export const cohortProgressionEvents = pgTable("cohort_progression_events", {
   check("cohort_progression_events_transition_ck", sql`(${t.eventKind} = 'PROMOTION' and ${t.toTermNumber} = ${t.fromTermNumber} + 1) or (${t.eventKind} = 'CORRECTION' and ${t.toTermNumber} = ${t.fromTermNumber})`),
   check("cohort_progression_events_version_ck", sql`${t.stateVersion} >= 1`),
 ]);
+
+/** Legacy academic-year labels are not generic dates. Preserve start-year identity. */
+export function academicYearLabel(start:number|null):string|null {
+ if(start===null||!Number.isInteger(start)||start<1900||start>9998)return null;
+ return String(start)+"-"+String(start+1);
+}
+export function parseLegacyAcademicYearStart(raw:string):number|null {
+ const match=/^(\d{4})(?:\s*[-/]\s*(\d{2}|\d{4}))?$/.exec(raw.trim());
+ if(!match)return null;
+ const start=Number(match[1]);
+ if(start<1900||start>9998)return null;
+ if(match[2]){
+   const end=Number(match[2]);
+   if(end!==start+1&&end!==(start+1)%100)return null;
+ }
+ return start;
+}

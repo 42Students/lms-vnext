@@ -65,3 +65,23 @@ export const identityDeviceSessions = pgTable(
     ),
   ],
 );
+
+/**
+ * Retirement crosswalk (legacy JTI blacklist/session rows are never imported):
+ *  - legacy.id -> retired INTEGER primary key, NOT our UUID session id.
+ *  - legacy.user_id -> users UUID only via authenticated identity mapping.
+ *  - legacy.token_jti -> discard entirely; NEVER a credential_digest.
+ *  - legacy.role -> no longer session authority; active college x role choice is resolved live.
+ *  - legacy.device_info -> optional deviceName / userAgent, display-only.
+ *  - legacy.created_at -> historical event evidence only; a new session is minted at login.
+ *  - legacy.expires_at -> historical lifetime, not a new login grant.
+ *  - legacy.revoked_at -> historical revocation evidence, never reactivate.
+ *  - legacy.last_used_at -> read-only lastSeenAt display if safely converted,
+ *      NOT evidence of a still-active session.
+ *  - legacy.updated_at -> independent audit edit time, NOT lastSeenAt.
+ *  - legacy.active/revoked flag -> no live session without a freshly minted HMAC token.
+ * Migration disposition: retire old rows, require owner approval for secure purge.
+ * Native, third-party and session-bound consumers must be inventoried before
+ * deletion; this runtime adapter deliberately cannot translate legacy JWTs.
+ */
+export function canImportLegacyDeviceSessionAsActive(): false { return false; }

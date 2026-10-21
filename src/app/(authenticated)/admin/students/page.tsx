@@ -67,9 +67,16 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
+  <section aria-label="Student support and retention policy" className="min-w-0 border-b border-border pb-3 text-sm text-body">
+   <h2 className="font-semibold text-foreground">Account access and support</h2>
+   <p className="mt-1">The legacy Impersonate action is retired. This membership-based workspace does not exchange Super Admin tokens for a learner session or replace active session credentials. Use the student row's audited profile, history and membership controls for support.</p>
+   <p className="mt-1">The legacy permanent Delete action is retired for learners with attendance, submissions, placement or audit records. Suspend or end college access instead; historical records remain available under their original identity.</p>
+   <Link href="/admin/people" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Open audited membership controls</Link>
+  </section>
   {filtersUnavailable?<Alert tone="warning">Academic filter choices could not be loaded. Student directory rows remain available; edit and class-move actions are temporarily disabled. <Link href="/admin/students" className="font-semibold underline">Retry academic filters</Link></Alert>:null}
   {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
   {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
+  <AdminScopedReadPage headingMode="section" intro={<>
   {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-4"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
   {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-4">
     <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
@@ -82,13 +89,13 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
     </details>
   </section>:null}
-  <AdminScopedReadPage headingMode="section" peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
-  exportPath="/api/admin/students/export" exportFilename="super-admin-students-ist.csv"
+  </>} peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
+  exportPath="/api/admin/students/export" exportFilename="students.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}
   renderBulkActions={rows=><details className="min-w-0 border-b border-border pb-3">
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Bulk module access controls</summary>
-    <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
+    <div className="min-w-0 pt-3"><SuperAdminStudentBulkAccess collegeId={context.adminScope?.collegeId??""} learners={rows.map(row=>({id:row.id,name:row.title}))}/></div>
    </details>}
   renderRowActions={row=><div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-start [&>div]:w-full sm:[&>div]:w-auto">
     <ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>

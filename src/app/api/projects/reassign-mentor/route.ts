@@ -50,7 +50,10 @@ export async function POST(request: Request) {
         context,
         normalized,
       );
-    return NextResponse.json(result);
+    return NextResponse.json({...result,
+      partialSuccess:result.failures.length>0&&result.reassignedCount>0,
+      failedProjects:result.failures,
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }

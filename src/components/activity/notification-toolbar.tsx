@@ -18,6 +18,9 @@ export function NotificationToolbar({
   markAllEndpoint = "/api/notifications/read-all",
   confirmMarkAll = false,
   confirmMessage = "Mark all unread Mentor notifications in this college as read?",
+  categories = [],
+  selectedCategory,
+  categoryParam = "category",
 }: {
   view: "all" | "unread";
   unreadCount: number;
@@ -26,6 +29,9 @@ export function NotificationToolbar({
   markAllEndpoint?: string;
   confirmMarkAll?: boolean;
   confirmMessage?: string;
+  categories?: readonly {id:string;label:string;unread:number}[];
+  selectedCategory?: string;
+  categoryParam?: "category" | "tab";
 }) {
   const router = useRouter();
   const { showToast } = useToast();
@@ -50,17 +56,18 @@ export function NotificationToolbar({
   }
 
   return (
-    <div className="flex min-w-0 flex-col items-stretch gap-3 border-b border-[var(--lms-canvas-border)] pb-4 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between">
-      <div className="grid w-full min-w-0 grid-cols-1 md:grid-cols-2 gap-2 min-[768px]:flex min-[768px]:w-auto min-[768px]:flex-wrap" role="group" aria-label="Notification filter">
+    <div className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+      <div className="flex min-w-0 flex-wrap gap-2" role="group" aria-label="Notification filter">
         <Link
-          href={baseHref + "?view=all"}
+          href={baseHref + "?view=all" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "all" ? "page" : undefined}
           className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "all" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
           {allLabel}
         </Link>
         <Link
-          href={baseHref + "?view=unread"}
+          href={baseHref + "?view=unread" + (selectedCategory&&selectedCategory!=="all"?"&"+categoryParam+"="+encodeURIComponent(selectedCategory):"")}
           aria-current={view === "unread" ? "page" : undefined}
           className={`inline-flex min-h-11 min-[768px]:min-h-9 min-w-0 items-center justify-center break-words rounded-[var(--lms-filter-radius,8px)] border px-3 text-center text-sm font-medium leading-5 transition-colors duration-150 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] ${view === "unread" ? "border-primary bg-primary text-on-primary hover:bg-primary-hover" : "border-border text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text"}`}
         >
@@ -76,6 +83,27 @@ export function NotificationToolbar({
       >
         {pending ? "Marking…" : "Mark all as read"}
       </Button>
+      </div>
+      {categories.length?(
+        <nav aria-label="Notification categories" className="flex min-w-0 gap-2 overflow-x-auto pb-1 sm:flex-wrap sm:overflow-visible">
+          {categories.map(item=>{
+            const query=new URLSearchParams({view});
+            if(item.id!=="all")query.set(categoryParam,item.id);
+            const link=baseHref+"?"+query.toString();
+            const active=item.id===(selectedCategory??"all");
+            return <Link key={item.id} href={link} scroll={false}
+              aria-current={active?"page":undefined}
+              aria-label={item.label+" ("+item.unread+" in loaded view)"}
+              className={"inline-flex min-h-11 shrink-0 items-center gap-2 rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+(
+                active?"border-primary bg-primary-subtle text-primary-text":"border-border text-body hover:border-primary"
+              )}>
+              <span aria-hidden="true">{item.id==="all"?"◈":item.id==="college"?"▣":item.id==="department"?"◇":item.id==="faculty"?"▤":item.id==="personal"?"●":"•"}</span>
+              {item.label}
+              <span aria-hidden="true" className="tabular-nums text-xs text-muted-foreground">({item.unread})</span>
+            </Link>;
+          })}
+        </nav>
+      ):null}
       {confirmMarkAll ? <ConfirmActionDialog
         open={confirmOpen}
         title="Mark all as read"

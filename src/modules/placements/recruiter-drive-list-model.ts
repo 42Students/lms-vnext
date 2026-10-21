@@ -1,5 +1,13 @@
 import { z } from "zod";
 
+/** Explicit vNext owner decision: ALL means all visible, recruiter-owned
+ * published and closed drives, not an unrestricted college-wide global list.
+ * Pending approvals live in WAITING; drafts remain in the authoring workspace.
+ * The 100-character title search is an intentional validated limit. */
+export const RECRUITER_DRIVE_ALL_VIEW_POLICY={
+ scope:"AUTHORIZED_OWN_PUBLISHED_AND_CLOSED",queryMaxChars:100,
+ includesPendingApprovals:false,includesDrafts:false,
+} as const;
 export const recruiterDriveListQuerySchema = z.object({
   view: z.preprocess(value=>typeof value==="string"?value.toUpperCase():value,z.enum(["ALL","LIVE","CLOSED","WAITING"]).default("ALL")),
   collegeId: z.string().uuid().optional(),

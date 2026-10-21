@@ -80,7 +80,7 @@ function FacultyContentOrderEditorInner({
         router.refresh();
         showToast({
           tone: "success",
-          title: "Section order saved",
+          title: "Order updated",
           description:
             "Learners in this Section will use this content order.",
         });
@@ -88,7 +88,7 @@ function FacultyContentOrderEditorInner({
         showToast({
           tone: "error",
           title:
-            "Could not save Section order",
+            "Could not update order",
           description:
             error instanceof Error
               ? error.message
@@ -104,7 +104,7 @@ function FacultyContentOrderEditorInner({
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-center gap-2">
             <p className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
-              Section content order
+              Content order
             </p>
             {!enabled ? (
               <StatusBadge tone="warning">
@@ -114,7 +114,8 @@ function FacultyContentOrderEditorInner({
           </div>
           <p className="mt-1 max-w-[65ch] break-words text-xs leading-5 text-muted-foreground">
             Reorder shared and Section-specific lesson content for this
-            Section only. Assessments keep their own sequence.
+            class only. Use the arrow buttons to move an item; drag sorting is
+            not required for keyboard users. Assessments keep their own sequence.
           </p>
         </div>
         <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row sm:items-center">
@@ -130,7 +131,7 @@ function FacultyContentOrderEditorInner({
           disabled={!enabled || pending || !dirty}
           onClick={save}
         >
-          {pending ? "Saving…" : dirty ? "Save order" : "Order saved"}
+          {pending ? "Saving…" : dirty ? "Update order" : "Order updated"}
         </Button>
         </div>
       </div>
@@ -144,7 +145,7 @@ function FacultyContentOrderEditorInner({
               key={id}
               className="flex min-w-0 items-center gap-2 py-2 sm:gap-3"
             >
-              <span className="w-6 shrink-0 text-xs font-semibold text-muted-foreground">
+              <span aria-hidden="true" className="w-6 shrink-0 text-xs font-semibold text-muted-foreground">
                 {index + 1}.
               </span>
               <span className="min-w-0 flex-1 break-words text-sm text-body">
@@ -154,7 +155,7 @@ function FacultyContentOrderEditorInner({
                 type="button"
                 size="icon"
                 variant="secondary"
-                aria-label={`Move ${item.title} up`}
+                aria-label={`Move ${item.title} up in class content order`}
                 disabled={
                   !enabled ||
                   pending ||
@@ -170,7 +171,7 @@ function FacultyContentOrderEditorInner({
                 type="button"
                 size="icon"
                 variant="secondary"
-                aria-label={`Move ${item.title} down`}
+                aria-label={`Move ${item.title} down in class content order`}
                 disabled={
                   !enabled ||
                   pending ||

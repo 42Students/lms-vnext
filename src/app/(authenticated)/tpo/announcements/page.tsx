@@ -25,6 +25,7 @@ import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {EmptyState} from "@/components/ui/empty-state";
 import {hasMembershipRole} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {requirePersistedTpoMembership} from "@/modules/placements/tpo-persisted-actor-service";
 import {placementTableExists} from "@/modules/placements/staged-tables";
 import {listTpoPlacementAnnouncements,countUnreadTpo42Announcements} from "@/modules/announcements/tpo-placement-read-service";
@@ -32,6 +33,13 @@ import {previewTpoCollegeAnnouncementVisibility,previewTpoPlacementAudience} fro
 import {announcementPreviewScope,tpoAudiencePreviewQuery} from "@/modules/announcements/tpo-audience-preview-query";
 import {tpoAnnouncementTabSchema} from "@/modules/announcements/tpo-placement-read-model";
 type Props={searchParams:Promise<{tab?:string|string[];audience?:string|string[];targetId?:string|string[];targetIds?:string|string[];noticeError?:string|string[];sentNotice?:string|string[];page?:string|string[];mine?:string|string[];noticeSuccess?:string|string[]}>};
+
+// A scheduled notice is not sent when it is drafted. The effective publish
+// clock starts no earlier than scheduledAt; delayed worker delivery can only
+// shorten the remaining Undo window, never extend it past the old rule.
+function noticeUndoAnchor(row:{createdAt:Date;scheduledAt:Date|null}):Date {
+ return row.scheduledAt&&row.scheduledAt>row.createdAt?row.scheduledAt:row.createdAt;
+}
 export default async function TpoAnnouncements({searchParams}:Props){
  const context=await getCurrentRequestContext();
  if(!context.membership||!hasMembershipRole(context,"TPO"))redirect("/dashboard");
@@ -47,7 +55,11 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const pageValue=Array.isArray(raw.page)?raw.page[0]:raw.page;
  const page=pageValue&&/^[1-9][0-9]{0,3}$/.test(pageValue)?Math.min(1000,Number(pageValue)):1;
  const showTeam=Array.isArray(raw.mine)?raw.mine[0]==="0":raw.mine==="0";
- const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page,showTeam?"COLLEGE":"MINE");
+ const result=await listTpoPlacementAnnouncements(context,tab.data,new Date(),page,showTeam?"COLLEGE":"MINE")
+  .catch((error:unknown)=>{
+   if(error instanceof AuthorizationError)throw error;
+   return {status:"FAILED" as const,items:[]};
+  });
  const from42Unread=await countUnreadTpo42Announcements(context).catch(()=>null);
  const targetedReady=await placementTableExists("placement_tpo_notice_audiences")&&
   await placementTableExists("placement_tpo_notice_recipients");
@@ -56,9 +68,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
  const sentId=first(raw.sentNotice);
  const sent=result.status==="READY"&&tab.data==="yours"&&sentId?
   result.items.find(row=>row.id===sentId&&row.senderUserId===context.user.id&&
-    canUndoTpoAnnouncementSend(row.createdAt,new Date())):null;
+    canUndoTpoAnnouncementSend(noticeUndoAnchor(row),new Date())):null;
  const query=tpoAudiencePreviewQuery.safeParse({
-  audience:first(raw.audience)??"COLLEGE",
+  audience:first(raw.audience)??"PLACEMENTS",
   targetId:first(raw.targetId)||undefined,
   targetIds:raw.targetIds?(Array.isArray(raw.targetIds)?raw.targetIds:[raw.targetIds]):undefined,
  });
@@ -93,7 +105,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
      aria-label="Announcement audience preview">
      <Input type="hidden" name="tab" value="yours"/>
      <TpoNoticeAudiencePicker
-      initialAudience={query.success?query.data.audience:"COLLEGE"}
+      initialAudience={query.success?query.data.audience:"PLACEMENTS"}
       initialTarget={first(raw.targetId)??""}
       initialTargets={query.success?query.data.targetIds??[]:[]} options={targetOptions}/>
      <Button variant="secondary" type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Preview audience</Button>
@@ -115,7 +127,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
     </Alert>:null}
    <TpoNoticeDraftGuard formId="tpo-notice-create" actorId={context.user.id}/>
    <form id="tpo-notice-create" action="/api/placements/tpo/announcements" method="post" className="mt-4 min-w-0 space-y-4">
-    <Input type="hidden" name="audience" value={query.success?query.data.audience:"COLLEGE"}/>
+    <Input type="hidden" name="audience" value={query.success?query.data.audience:"PLACEMENTS"}/>
     {query.success&&query.data.targetId?<Input type="hidden" name="targetId" value={query.data.targetId}/>:null}
     {query.success?query.data.targetIds?.map(id=><Input key={id} type="hidden" name="targetIds" value={id}/>):null}
     <label className="grid gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
@@ -148,8 +160,10 @@ export default async function TpoAnnouncements({searchParams}:Props){
    </form>
   </section></TpoNoticeComposerDialog>:null}/>
   {first(raw.noticeSuccess)==="DELETED"?<InlineNotice tone="success" message="Deleted. Its notices were taken back."/>:null}
+  {first(raw.noticeSuccess)==="SAVED"?<InlineNotice tone="success" message="Saved"/>:null}
+  {first(raw.noticeSuccess)==="SCHEDULED"?<InlineNotice tone="success" message="Scheduled"/>:null}
   {noticeError?<InlineNotice tone="error" message={noticeError}/>:null}
-  {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={sent.createdAt.toISOString()}/>:null}
+  {sent?<TpoNoticeUndoToast id={sent.id} version={sent.version} createdAt={noticeUndoAnchor(sent).toISOString()}/>:null}
   <Tabs ariaLabel="Announcement tabs" renderPanel={false} value={tab.data} items={([
     ["yours","To your students"],["from-42","From 42"],["deleted","Recently removed"]
   ] as const).map(([value,label])=>({
@@ -167,7 +181,12 @@ export default async function TpoAnnouncements({searchParams}:Props){
         "border-[var(--lms-primary)] bg-[var(--lms-primary-subtle)] text-[var(--lms-primary-text)]":
         "border-[var(--lms-canvas-border)] bg-surface text-[var(--lms-body-text)] hover:border-[var(--lms-primary)]")}>All team notices</Link>
    </nav>:null}
-  {result.status==="NOT_REGISTERED"?<Alert tone="warning">
+  {result.status==="FAILED"?<Alert tone="error">
+   <h2 className="font-semibold text-foreground">Couldn't load announcements</h2>
+   <p className="mt-2 text-sm text-body">Announcements could not be loaded. Your filters are unchanged.</p>
+   <Link href={"/tpo/announcements?"+new URLSearchParams({tab:tab.data,page:String(page),...(showTeam?{mine:"0"}:{})}).toString()}
+    className="mt-2 inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline md:min-h-9">Retry</Link>
+  </Alert>:result.status==="NOT_REGISTERED"?<Alert tone="warning">
    <h2 className="font-semibold text-foreground">Announcement storage pending</h2>
    <p className="mt-2 text-sm text-body">The announcements table has not been registered. No notices or audience counts are inferred from unrelated notifications.</p>
   </Alert>:result.items.length?<ol aria-label="tpo announcements entries" className="min-w-0 divide-y divide-[var(--lms-canvas-border)]">
@@ -276,7 +295,7 @@ export default async function TpoAnnouncements({searchParams}:Props){
       </Button>
      </form>:null}
     {tab.data==="yours"&&
-     canUndoTpoAnnouncementSend(row.createdAt,new Date())?
+     canUndoTpoAnnouncementSend(noticeUndoAnchor(row),new Date())?
      <form method="post" action={"/api/placements/tpo/announcements/"+row.id+"/lifecycle"}
       className="min-w-0">
       <Input type="hidden" name="expectedVersion" value={row.version}/>
@@ -286,7 +305,9 @@ export default async function TpoAnnouncements({searchParams}:Props){
       </Button>
      </form>:null}
     </div>:null}
-    {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}/>:null}
+    {tab.data==="yours"?<TpoNoticeReadProgress id={row.id}
+      status={row.scheduledAt&&new Date(row.scheduledAt)>new Date()?"SCHEDULED":
+       row.expiresAt&&new Date(row.expiresAt)<=new Date()?"ENDED":"SENT"}/>:null}
    </li>)}
   </ol>:<EmptyState title="No announcements from this sender yet"/>}
   {result.status==="READY"&&(result.page>1||result.hasMore)?<nav aria-label="Announcement pages"

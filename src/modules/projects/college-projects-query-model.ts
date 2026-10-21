@@ -15,7 +15,10 @@ const schema = z.object({
   status: z.enum(statuses).optional(),
   view: z.enum(["cards", "table"]).default("cards"),
   page: positivePageNumber(100000, 1),
-  pageSize: z.union([z.number().int().min(10).max(100), z.string().regex(/^[0-9]+$/).transform(Number).pipe(z.number().int().min(10).max(100))]).default(25),
+  pageSize: z.union([
+    z.number().int().refine(value=>COLLEGE_PROJECTS_PAGE_SIZES.some(size=>size===value)),
+    z.string().regex(/^(?:10|20|50|100)$/).transform(Number),
+  ]).default(DEFAULT_COLLEGE_PROJECTS_PAGE_SIZE),
 });
 
 function first(value: string | string[] | undefined) {
@@ -37,12 +40,16 @@ export function parseCollegeProjectsQuery(
   const view = first(params.view);
   const page = first(params.page);
   const pageSize = first(params.pageSize);
+  // Old bookmarks may carry obsolete status/rows values. Do not turn a
+  // harmless stale facet into an empty/error page or lose a valid deep page.
+  const validStatus=statuses.some(value=>value===status);
+  const validSize=typeof pageSize==="string"&&/^(?:10|20|50|100)$/.test(pageSize);
   return schema.safeParse({
     ...(q ? { q } : {}),
-    ...(status ? { status } : {}),
+    ...(validStatus ? { status } : {}),
     ...(view ? { view } : {}),
     ...(page !== undefined ? { page } : {}),
-    ...(pageSize !== undefined ? { pageSize } : {}),
+    ...(validSize ? { pageSize } : {}),
   });
 }
 
@@ -68,7 +75,7 @@ export function canonicalCollegeProjectsPageHref(
   if (query.q) params.set("q", query.q);
   if (query.status) params.set("status", query.status);
   if (query.view !== "cards") params.set("view", query.view);
-  if (query.pageSize !== 25) params.set("pageSize", String(query.pageSize));
+  if (query.pageSize !== DEFAULT_COLLEGE_PROJECTS_PAGE_SIZE) params.set("pageSize", String(query.pageSize));
   if (lastPage > 1) params.set("page", String(lastPage));
   const suffix = params.toString();
   return "/college/projects" + (suffix ? "?" + suffix : "");

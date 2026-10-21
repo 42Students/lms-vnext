@@ -1,6 +1,7 @@
 "use client";
 import { Switch } from "@/components/ui/selection-controls";
 import { Button } from "@/components/ui/button";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {useState} from "react";
 import {apiFetch} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -22,10 +23,17 @@ export function TpoVerificationSwitch({initialEnabled,collegeId}:{initialEnabled
   }catch(e){setError(e instanceof Error?e.message:friendlyApiError({network:true}));}
   finally{setBusy(false);}
  }
- return <section aria-label="Placement-cell verification setting" className="min-w-0 space-y-[var(--lms-space-2)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)]">
+ return <section aria-label="Placement-cell verification setting" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
-   <Switch label="The placement cell can verify profiles" checked={enabled} disabled={busy}
-    onChange={event=>void save(event.target.checked)}/>
+   <div className="min-w-0 space-y-1">
+    <h3 className="font-semibold">The placement cell can verify profiles</h3>
+    <p className="text-xs text-muted-foreground">Placement cell admins get this same page. Every decision is recorded with the name of who made it.</p>
+   </div>
+   <div className="flex items-center gap-2">
+    <StatusBadge tone={enabled?"success":"neutral"}>{enabled?"Enabled":"Disabled"}</StatusBadge>
+    <Switch label="The placement cell can verify profiles" checked={enabled} disabled={busy}
+     onChange={event=>void save(event.target.checked)}/>
+   </div>
   </div>
   <p className="text-xs text-muted-foreground">Only explicitly granted TPO verifiers may review while enabled. This setting is scoped to the selected college.</p>
   {busy?<p role="status" className="text-xs">Saving setting…</p>:null}

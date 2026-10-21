@@ -1,5 +1,12 @@
 import { z } from "zod";
 
+/** Legacy drives transition DRAFT -> PUBLISHED -> CLOSED; recruiter
+ * REQUEST / SENT_BACK / REJECTED live in the separate drive request flow,
+ * and CANCELLED is an audited cancellation, not a published drive state. */
+export const legacyTpoDriveLifecycleLabels = {
+ REQUEST: "Request", SENT_BACK: "Sent back", REJECTED: "Rejected",
+ DRAFT: "Draft", PUBLISHED: "Live", CLOSED: "Closed", CANCELLED: "Cancelled",
+} as const;
 export const tpoDriveLifecycleSchema = z.object({
   action: z.enum(["PUBLISH", "CLOSE", "REOPEN"]),
   expectedStatus: z.enum(["DRAFT", "PUBLISHED", "CLOSED"]),
@@ -58,6 +65,10 @@ export function evaluateTpoDriveLifecycle(
     if (!facts.deadlineValid) blockers.push("APPLICATION_DEADLINE_PASSED");
   }
   if (action === "REOPEN") {
+    // Legacy CLOSED is terminal. Retain vNext's explicit REOPEN preflight,
+    // but do not silently reopen a finalised legacy drive. A reopened drive
+    // needs a separately authorised owner decision and migration-safe policy.
+    blockers.push("CLOSED_DRIVE_TERMINAL");
     if (facts.appliedResultCount > 0) blockers.push("APPLIED_RESULTS_EXIST");
     if (facts.acceptedOfferCount > 0) blockers.push("ACCEPTED_OFFERS_EXIST");
   }
@@ -67,7 +78,8 @@ export function evaluateTpoDriveLifecycle(
 /** Human-readable preflight explanations shown in the drive workspace. */
 export function tpoDriveReadinessMessage(code: string): string {
   const messages: Record<string, string> = {
-    STALE_JOB_STATUS: "The drive status has changed. Refresh the page.",
+    STALE_JOB_STATUS: "The drive status has changed. Refresh the page and review the source and destination statuses.",
+    CLOSED_DRIVE_TERMINAL: "Closed drives are final. Create a new drive instead of reopening this one.",
     SEASON_NOT_ACTIVE: "The placement season is not active.",
     COMPANY_NOT_ACTIVE: "The company is not active.",
     NO_ACTIVE_ROLE: "Add an active role before publishing.",

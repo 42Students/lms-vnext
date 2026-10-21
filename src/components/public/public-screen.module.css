@@ -49,3 +49,81 @@
 
 .loadingHost { margin-top: 24px; text-align: left; }
 .loadingHost > :global(section) { border: none; background: transparent; padding: 0; box-shadow: none; }
+
+/* Public 404/500 keep the old LMS borderless status anatomy rather than the
+   branded sign-in recovery card. Shared theme tokens remain the source. */
+.legacyErrorPage {
+  display: grid;
+  min-height: 70vh;
+  place-items: center;
+  background: #fafbfc;
+  color: var(--lms-heading, #172033);
+  font-family: var(--font-inter), Inter, Lato, system-ui, sans-serif;
+}
+.legacyErrorPage .center {
+  display: flex;
+  min-height: 70vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: max(32px, env(safe-area-inset-top)) 32px max(32px, env(safe-area-inset-bottom));
+}
+.legacyErrorPage .card {
+  width: min(100%, 540px);
+  padding: 32px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+.statusNumeral {
+  display: block;
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  color: #1e9aa8;
+}
+.legacyTitle {
+  margin: 12px 0 0;
+  color: #1a1d21;
+  font-size: 24px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+.legacyErrorPage .message { max-width: 420px; }
+.legacyErrorPage .actions { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: center; gap: 12px; }
+.legacyErrorPage .actions > * { min-width: 0; width: auto; }
+.legacyServerError { min-height: 100vh; }
+.legacyServerError .center { min-height: 100vh; }
+.legacyErrorPage .secondary {
+  border: 1px solid #1e9aa8;
+  border-radius: 999px;
+  background: #fff;
+  color: #1e9aa8;
+  padding: 12px 24px;
+  font-weight: 600;
+}
+.legacyErrorPage .primary {
+  border: 1px solid #1e9aa8;
+  border-radius: 999px;
+  background: #1e9aa8;
+  color: #fff;
+  padding: 12px 24px;
+  font-weight: 600;
+}
+.legacyErrorPage .primary:hover { background: #167c88; }
+.legacyErrorPage .secondary:hover { background: #eaf8f9; }
+.legacyErrorPage .primary, .legacyErrorPage .secondary { min-height: 44px; }
+.legacyErrorPage a:focus-visible, .legacyErrorPage button:focus-visible {
+  outline: 2px solid var(--lms-primary-text, #168993);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .legacyErrorPage .center { min-height: 70vh; padding: 24px 16px; }
+  .legacyServerError .center { min-height: 100vh; }
+  .legacyErrorPage .card { padding: 32px 12px; }
+  .legacyErrorPage .actions { flex-direction: row; flex-wrap: wrap; }
+  .legacyErrorPage .actions > * { width: auto; }
+}

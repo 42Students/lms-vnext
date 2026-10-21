@@ -6,6 +6,9 @@ import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
 import {dispatchRecruiterUnreadMessageDigests} from "@/modules/placements/recruiter-message-email-dispatch-service";
 export const runtime="nodejs";
+// The legacy job waited 90 seconds after process startup. Our external
+// dev CronJob invokes this authenticated worker on five-minute ticks.
+const STARTUP_GRACE_MS=90_000;
 function allowed(request:Request){
  const secret=process.env.RECRUITER_MESSAGE_WORKER_SECRET??"";
  const authorization=request.headers.get("authorization")??"";
@@ -21,6 +24,9 @@ function allowed(request:Request){
 export async function POST(request:Request){
  if(!isSameOriginRequest(request)||!allowed(request))
   return NextResponse.json({error:"FORBIDDEN"},{status:403});
+ if(process.uptime()*1_000<STARTUP_GRACE_MS)
+  return NextResponse.json({skipped:true,reason:"STARTUP_GRACE",retryOnNextTick:true},
+   {headers:{"Cache-Control":"no-store"}});
  try{
   const result=await executeScheduledJobWithLease(
    postgresScheduledJobLeaseStore,

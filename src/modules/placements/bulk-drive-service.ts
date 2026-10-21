@@ -405,6 +405,16 @@ export async function bulkAddLearnersToDrive(
   return { results, counts: bulkDriveCounts(results) };
 }
 
+/** Outbox migration: each learner bell and its application share a DB
+ * transaction. The TPO summary bell follows only successful new additions;
+ * replayed applications do not enqueue another bell. These are durable
+ * in-app rows, NOT evidence of sent SMS or email. No external retry worker
+ * is enabled here; DB rollbacks can be safely retried by the caller. */
+export const BULK_DRIVE_NOTIFICATION_DELIVERY={
+ learner:"TRANSACTIONAL_IN_APP",summary:"DURABLE_POST_ADDITION",
+ external:"NOT_CONFIGURED",retry:"REPLAY_SAFE",
+} as const;
+
 /** Exact migration guide for legacy TpoApplicantController entry points.
  * All vNext writes require a same-origin authenticated TPO, persisted
  * college-owned UUID scope and validated payloads. Do not interpret a

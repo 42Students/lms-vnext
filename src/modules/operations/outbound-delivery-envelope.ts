@@ -14,6 +14,103 @@ import {
   type OutboundDeliveryIntent,
 } from "./outbound-delivery-contract";
 
+
+/** Legacy assignment/quiz and interview reminder merge fields, converted to
+ * IST with the original old-LMS keys. This is a pure producer-side mapper,
+ * not a send action: it must enter a registered, permission-checked template
+ * before any outbound transport is enabled. No plaintext is stored here.
+ */
+function reminderInstant(value: Date | string): Date {
+  const result=value instanceof Date ? value : new Date(value);
+  if(!Number.isFinite(result.getTime()))throw new OutboundDeliveryError("INVALID_OUTBOUND_INTENT");
+  return result;
+}
+function indiaReminderParts(instant: Date | string) {
+  const date=reminderInstant(instant);
+  const format=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",year:"numeric",month:"short",day:"2-digit",
+    hour:"2-digit",minute:"2-digit",hour12:true,
+  });
+  const entries=Object.fromEntries(format.formatToParts(date).map(part=>[part.type,part.value]));
+  return {
+    day:String(Number(entries.day)),
+    paddedDay:entries.day??"",
+    month:entries.month??"",
+    year:entries.year??"",
+    hour:String(Number(entries.hour)),
+    paddedHour:entries.hour??"",
+    minute:entries.minute??"",
+    period:(entries.dayPeriod??"").toUpperCase(),
+  };
+}
+export type AssignmentReminderTemplateInput={
+  learnerName:string;
+  assignmentName?:string|null;
+  contentType?:"ASSIGNMENT"|"QUIZ"|string|null;
+  dueAt?:Date|string|null;
+  assignmentId:string;
+  courseId?:string|null;
+  courseSlug?:string|null;
+  courseName?:string|null;
+};
+export function legacyAssignmentReminderVariables(input:AssignmentReminderTemplateInput){
+  if(!input.assignmentId.trim())throw new OutboundDeliveryError("INVALID_OUTBOUND_INTENT");
+  const at=input.dueAt?indiaReminderParts(input.dueAt):null;
+  return {
+    learnerName:input.learnerName.trim(),
+    assignmentName:input.assignmentName?.trim()||"Assignment",
+    contentType:input.contentType?.trim().toUpperCase()==="QUIZ"?"QUIZ":"ASSIGNMENT",
+    contentLabel:input.contentType?.trim().toUpperCase()==="QUIZ"?"Quiz":"Assignment",
+    ...(at?{dueDate:`${at.day} ${at.month} ${at.year}, ${at.hour}:${at.minute} ${at.period}`}:{}),
+    assignmentId:input.assignmentId,
+    ...(input.courseId?{courseId:input.courseId}:{}),
+    ...(input.courseSlug?{courseSlug:input.courseSlug}:{}),
+    ...(input.courseName?{courseName:input.courseName}:{}),
+  };
+}
+/** The legacy interview notifications display the stage in title case with
+ * a final "Round" suffix, not the internal enum value. */
+export function legacyInterviewRoundLabel(raw:string|null|undefined):string {
+ const value=(raw??"").trim();
+ if(!value)return "Interview";
+ const key=value.replace(/[ _-]+/g," ").replace(/\s+round$/i,"").trim().toUpperCase();
+ const known:Record<string,string>={
+  SCREENING:"Screening Round",TECHNICAL:"Technical Round",HR:"HR Round",
+  MANAGERIAL:"Managerial Round",FINAL:"Final Round",
+ };
+ return known[key]??(/\s+round$/i.test(value)?value:value+" Round");
+}
+export type InterviewReminderTemplateInput={
+  learnerName:string;jobTitle:string;companyName:string;
+  applicationId:string;interviewId:string;
+  appliedAt?:Date|string|null;
+  scheduledAt?:Date|string|null;
+  interviewMode?:string|null;
+  interviewLocation?:string|null;
+  roundName?:string|null;
+  roundDescription?:string|null;
+};
+export function legacyInterviewReminderVariables(input:InterviewReminderTemplateInput){
+  if(!input.applicationId.trim()||!input.interviewId.trim())
+    throw new OutboundDeliveryError("INVALID_OUTBOUND_INTENT");
+  const date=input.scheduledAt?indiaReminderParts(input.scheduledAt):null;
+  const applied=input.appliedAt?indiaReminderParts(input.appliedAt):null;
+  return {
+    learnerName:input.learnerName.trim(),jobTitle:input.jobTitle,
+    companyName:input.companyName,applicationId:input.applicationId,
+    interviewId:input.interviewId,
+    roundName:legacyInterviewRoundLabel(input.roundName),
+    roundDescription:input.roundDescription?.trim()||"",
+    ...(applied?{applicationDate:`${applied.paddedDay} ${applied.month} ${applied.year}`}:{}),
+    ...(date?{
+      interviewDate:`${date.paddedDay} ${date.month} ${date.year}`,
+      interviewTime:`${date.paddedHour}:${date.minute} ${date.period}`,
+    }:{}),
+    ...(input.interviewMode?{interviewMode:input.interviewMode}:{}),
+    ...(input.interviewLocation?{interviewLocation:input.interviewLocation}:{}),
+  };
+}
+
 /**
  * v1 envelope intentionally contains NO plaintext recipient, invitation URL,
  * merge data, token or rendered message. DB rows and logs may store only this

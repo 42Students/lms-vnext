@@ -1760,11 +1760,33 @@ export function buildAcademicsPlan(snapshot: Snapshot, base: Plan, config: Acade
       continue;
     }
     const opts = [...(optionsOfQuestion.get(question.newId) ?? [])].sort((a, b) => a.data.sequence - b.data.sequence);
+    // Stage-to-target foreign-key preflight. The old option mapper can
+    // normalize malformed IDs: NEVER silently import a partial answer when
+    // any selected option is dangling or points to a different question.
+    // Quarantine this row, preserving its legacy ID in the rejection ledger.
+    const rawSelected = str(row.selected_option_ids) ?? "";
+    const legacySelected = parseOptionIds(row.selected_option_ids);
+    if (rawSelected && !["[]", "null"].includes(rawSelected.trim().toLowerCase()) &&
+        legacySelected.length === 0) {
+      notes.answerOptionIdsUnresolved += 1;
+      c.reject("quiz_answer", row, "INVALID_VALUE");
+      continue;
+    }
     const selected: string[] = [];
-    for (const legacyOption of parseOptionIds(row.selected_option_ids)) {
+    let unresolved = false;
+    for (const legacyOption of legacySelected) {
       const planned = optionByLegacy.get(legacyOption);
       if (planned && planned.data.questionId === question.newId) selected.push(planned.newId);
-      else notes.answerOptionIdsUnresolved += 1;
+      else { notes.answerOptionIdsUnresolved += 1; unresolved = true; }
+    }
+    // A persisted answer must reference only options present in its
+    // question's snapshot, with no missing option or duplicate mapped ID.
+    const validOptions = new Set(opts.map(option => option.newId));
+    if (unresolved || selected.some(id => !validOptions.has(id)) ||
+        new Set(selected).size !== selected.length ||
+        (question.data.questionType === "SINGLE_CHOICE" && selected.length > 1)) {
+      c.reject("quiz_answer", row, "PARENT_REJECTED");
+      continue;
     }
     const awarded = toIntRoundHalfUp(row.points_awarded, rounding);
     if (awarded === null || awarded < 0 || awarded > question.data.points) {

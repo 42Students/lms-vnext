@@ -57,8 +57,12 @@ export async function requireProjectManageAccess(
   // recruiter or learner must not distinguish a real foreign ID from a guess.
   if(!isSuperAdmin(context)&&!hasMembershipRole(context,"COLLEGE_ADMIN"))
     throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
-  const scope =
-    await loadProjectScope(projectIdInput);
+  // A selected Super Admin college must match the workspace tenant, even
+  // if another active organization context previously granted access.
+  const scope = await loadProjectScope(projectIdInput);
+  if(isSuperAdmin(context)&&context.adminScope?.collegeId&&
+     context.adminScope.collegeId!==scope.collegeId)
+    throw new ProjectsServiceError("PROJECT_ACCESS_DENIED");
 
   if (
     !can(context, "projects.manage", {

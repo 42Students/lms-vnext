@@ -1,6 +1,6 @@
 import "server-only";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
-import {and,asc,eq,inArray,ne,lt,gt,gte,notExists,not,or,sql} from "drizzle-orm";
+import {and,asc,desc,eq,exists,ilike,inArray,ne,lt,gt,gte,notExists,not,or,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {activityEvents,collegeMemberships,inAppNotifications,placementApplications,
  placementApplicationScreenings,placementJobRounds,placementJobs,placementLearnerRequests,users} from "@/db/schema";
@@ -26,13 +26,16 @@ function viewSlot(s:typeof slots.$inferSelect,outcome?:string){
   durationMinutes:Math.round((s.endsAt.getTime()-s.startsAt.getTime())/60000),
   mode:virtual?"VIRTUAL":"ON_CAMPUS",venue:virtual?null:s.room,
   meetingUrl:virtual?s.room:null,interviewer:s.panel,outcomeNote:null,
-  version:s.version};
+  version:s.version,interviewType:s.legacyInterviewType,
+  roundDescription:s.legacyRoundDescription};
 }
 export type CollegeRoundSlotAppointmentFilters = {
  appointmentPage?:number;
  appointmentStatus?:"ALL"|"UPCOMING"|"COMPLETED"|"CANCELLED";
  appointmentMode?:"ALL"|"ON_CAMPUS"|"VIRTUAL";
  appointmentSearch?:string;
+ appointmentPageSize?:number;
+ appointmentSort?:"DATE_ASC"|"DATE_DESC";
  preferredApplicationId?:string;
 };
 /** Source-of-truth candidate appointments, filtered and paged before capping.
@@ -59,15 +62,28 @@ export async function getCollegeRoundSlotAppointments(
    :status==="UPCOMING"
     ?and(eq(slots.status,"BOOKED"),not(done),not(noShow),gte(slots.startsAt,now))
     :undefined;
- const search=filters.appointmentSearch?.trim().toLowerCase().slice(0,120)??"";
+ const search=filters.appointmentSearch?.trim().slice(0,120)??"";
+ const searchPattern="%"+search.replace(/[%_\\]/g,part=>"\\"+part)+"%";
+ const candidateNameMatch=search?exists(db.select({id:placementApplications.id})
+  .from(placementApplications)
+  .innerJoin(collegeMemberships,and(
+    eq(collegeMemberships.id,placementApplications.membershipId),
+    eq(collegeMemberships.collegeId,collegeId),
+  ))
+  .innerJoin(users,eq(users.id,collegeMemberships.userId))
+  .where(and(
+    eq(placementApplications.id,slots.applicationId),
+    ilike(users.displayName,searchPattern),
+  ))):undefined;
  const roomVirtual=sql`${slots.room} like 'https://%'`;
  const bookingWhere=and(
   eq(slots.jobId,job.id),inArray(slots.status,["BOOKED","CANCELLED"]),
   stateWhere,
   filters.appointmentMode==="VIRTUAL"?roomVirtual:
    filters.appointmentMode==="ON_CAMPUS"?not(roomVirtual):undefined,
-  search?(/^[0-9a-f-]+$/.test(search)?
-   sql`cast(${slots.applicationId} as text) like ${"%"+search+"%"}`:sql`false`):undefined,
+  search&&!job.title.toLowerCase().includes(search.toLowerCase())
+   ?or(sql`cast(${slots.applicationId} as text) ilike ${searchPattern}`,
+      candidateNameMatch):undefined,
  );
  const candidateWhere=and(
   eq(placementApplications.jobId,job.id),eq(placementApplications.status,"SUBMITTED"),
@@ -111,13 +127,15 @@ export async function getCollegeRoundSlotAppointments(
  }
  const candidateTotal=candidateCount[0]?.total??0;
  const appointmentTotal=appointmentCount[0]?.total??0;
- const appointmentPageSize=filters.appointmentPage===undefined?2000:50;
+ const appointmentPageSize=filters.appointmentPage===undefined?2000:
+   [10,20,50,100].includes(filters.appointmentPageSize??20)?filters.appointmentPageSize??20:20;
  const appointmentPages=Math.max(1,Math.ceil(appointmentTotal/appointmentPageSize));
  const requested=filters.appointmentPage;
  const appointmentPage=requested!==undefined&&Number.isSafeInteger(requested)&&requested>0
   ?Math.min(requested,appointmentPages):1;
  const bookings=await db.select().from(slots).where(bookingWhere)
-  .orderBy(asc(slots.startsAt),asc(slots.id))
+  .orderBy(filters.appointmentSort==="DATE_DESC"?desc(slots.startsAt):asc(slots.startsAt),
+    filters.appointmentSort==="DATE_DESC"?desc(slots.id):asc(slots.id))
   .limit(appointmentPageSize).offset((appointmentPage-1)*appointmentPageSize);
  const ids=bookings.map(row=>row.id);
  const events=ids.length?await db.select({id:activityEvents.id,subjectId:activityEvents.subjectId,
@@ -237,6 +255,7 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     const [saved]=await tx.insert(slots).values({
      jobId:job.id,roundId:a.roundId,applicationId:a.applicationId,
      startsAt:start,endsAt:end,room,panel:a.interviewer,status:"BOOKED",
+     legacyInterviewType:a.interviewType??null,legacyRoundDescription:a.roundDescription??null,
      source:"TPO",confirmedAt:new Date(),changedByUserId:ctx.user.id,
     }).returning();
     booked=saved;
@@ -249,6 +268,8 @@ export async function mutateCollegeRoundSlotInterview(ctx:RequestContext,rawJobI
     if(!old||old.version!==cmd.expectedVersion||old.roundId!==a.roundId||
       old.applicationId!==a.applicationId)throw Error("Interview changed; refresh and retry.");
     const [saved]=await tx.update(slots).set({startsAt:start,endsAt:end,room,
+     legacyInterviewType:a.interviewType??old.legacyInterviewType,
+     legacyRoundDescription:a.roundDescription??old.legacyRoundDescription,
      panel:a.interviewer,version:old.version+1,changedByUserId:ctx.user.id,updatedAt:new Date()})
      .where(and(eq(slots.id,old.id),eq(slots.version,old.version))).returning();
     if(!saved)throw Error("Interview changed; refresh and retry.");

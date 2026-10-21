@@ -159,7 +159,7 @@ export function QuizAttemptControl({
 
     try {
       if(attemptsUsed===0 && progressStatus==="MISSED" && resultsPublished && status==="CLOSED"){
-        const response=await fetch(`/api/courses/quizzes/${quizId}?deliveryId=${encodeURIComponent(deliveryId)}`);
+        const response=await fetch(`/api/courses/quizzes/${quizId}?deliveryId=${encodeURIComponent(deliveryId)}&includeCorrectAnswers=true`);
         if(!response.ok)throw new Error(await courseApiError(response));
         const payload=await response.json() as {quiz:QuizView};
         if(!payload.quiz.resultsVisible)throw new Error("Quiz answer key has not been released yet.");

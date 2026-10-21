@@ -68,7 +68,7 @@ type NativeProps<Row>=TpoSpreadsheetGridProps<Row>;
 /** AG Grid uses the same Row props as the existing TPO fallback. */
 export function TpoGrid<Row>({
  rows,columns,rowKey,selection,rowActions,openPrimary,mobilePrimaryKeys,
- mobileActionsCollapsible=false,storageKey,integratedWorkspace=false,
+ mobileActionsCollapsible=false,storageKey,integratedWorkspace=false,defaultVisibleKeys,
 }:NativeProps<Row>){
  const router=useRouter(),pathname=usePathname(),params=useSearchParams();
  const api=useRef<GridApi<Row>|null>(null);
@@ -78,7 +78,8 @@ export function TpoGrid<Row>({
  const permittedCsv=permitted.join(",");
  const queryColumns=params.get("columns")??"";
  const selectedKeys=parseTpoGridColumns(queryColumns,permitted);
- const activeKeys=selectedKeys.length?selectedKeys:permitted;
+ const defaultKeys=defaultVisibleKeys?.filter(key=>permitted.includes(key))??permitted;
+ const activeKeys=selectedKeys.length?selectedKeys:defaultKeys;
  const display=chosenTpoGridColumns(columns,activeKeys);
  const layoutKey=storageKey?storageKey+GRID_LAYOUT_SUFFIX:null;
  const displayedIds=useMemo(()=>rows.map(rowKey),[rows,rowKey]);
@@ -107,7 +108,7 @@ export function TpoGrid<Row>({
   selection.onChange(selectedGridIdsWithin(next,allowedIds));
  },[selection,allowedCsv,allowedIds]);
  const choose=useCallback((keys:string[])=>{
-  const all=keys.length===permitted.length&&keys.every((key,index)=>key===permitted[index]);
+  const all=keys.length===defaultKeys.length&&keys.every((key,index)=>key===defaultKeys[index]);
   const next=updateTpoGridQuery(new URLSearchParams(params.toString()),{columns:all?"":keys.join(",")},false);
   if(storageKey){
    try{
@@ -116,7 +117,7 @@ export function TpoGrid<Row>({
    }catch{/* Optional local preference. */}
   }
   router.replace(pathname+(next.size?"?"+next.toString():""),{scroll:false});
- },[params,pathname,router,permittedCsv,storageKey]);
+ },[params,pathname,router,permittedCsv,storageKey,defaultKeys.join(",")]);
  // Restore only widths/pinning for columns in the current authorized schema.
  useEffect(()=>{
   const current=api.current;
@@ -216,10 +217,10 @@ export function TpoGrid<Row>({
    ):undefined,
    tooltipValueGetter:p=>p.data?col.tooltip?.(p.data):undefined,
    cellRenderer:openPrimary?.columnKey===col.key
-    ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="px-0 text-left underline"
+    ?(p:{data?:Row})=>p.data?<Button variant="ghost" className="min-h-9 px-0 text-left underline"
       aria-label={openPrimary.ariaLabel(p.data)} onClick={()=>openPrimary.onOpen(p.data!)}>
-      {cellValue(col.read(p.data))}</Button>:null
-    :undefined,
+      {col.render?col.render(p.data):cellValue(col.read(p.data))}</Button>:null
+    :col.render?(p:{data?:Row})=>p.data?col.render!(p.data):null:undefined,
   });
   if(rowActions)result.push({
    colId:"__actions",headerName:"Actions",width:220,minWidth:160,sortable:false,

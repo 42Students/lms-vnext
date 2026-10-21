@@ -19,6 +19,7 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
   if (actor.collegeId !== body.collegeId) throw new AuthorizationError("people.manage");
   const rows = parseFacultyBulkCsv(body.csv);
   const seen = new Set<string>();
+  const seenEmails = new Set<string>();
   const results: Array<{
     row: number; name: string; status: "CREATED"|"SKIPPED"|"FAILED"; message: string;
   }> = [];
@@ -30,21 +31,29 @@ export async function importFacultyCsv(context: RequestContext, input: unknown) 
       continue;
     }
     seen.add(entry.phoneE164);
+    const normalizedEmail = entry.email?.toLowerCase();
+    if (normalizedEmail && seenEmails.has(normalizedEmail)) {
+      results.push({row:index+1,name,status:"SKIPPED",message:"Duplicate email in this file"});
+      continue;
+    }
+    if (normalizedEmail) seenEmails.add(normalizedEmail);
     try {
       await onboardPersonWithRuntime(context, {
         collegeId: actor.collegeId, displayName: name,
         phoneE164: entry.phoneE164, ...(entry.email?{email:entry.email}:{}),
         roles:entry.facultyType==="MENTOR"?["FACULTY","MENTOR"]:["FACULTY"],
       });
-      results.push({row:index+1,name,status:"CREATED",message:"Faculty membership onboarded"});
+      results.push({row:index+1,name,status:"CREATED",message:"Faculty registered successfully! They can now login with their mobile number."});
     } catch(error) {
       const code=error && typeof error === "object" && "code" in error ? String(error.code) : "";
       results.push({row:index+1,name,status:"FAILED",
-        message:code==="IDENTITY_COLLISION"?"Email or mobile already belongs to another identity":
+        message:code==="IDENTITY_COLLISION"?"Email or mobile already registered; verify this faculty record before retrying":
           "Could not onboard this record. Check the identity and college permissions."});
     }
   }
-  return {total:rows.length,created:results.filter(x=>x.status==="CREATED").length,
+  const created=results.filter(x=>x.status==="CREATED").length;
+  return {total:rows.length,created,
     failed:results.filter(x=>x.status==="FAILED").length,
-    skipped:results.filter(x=>x.status==="SKIPPED").length,results};
+    skipped:results.filter(x=>x.status==="SKIPPED").length,results,
+    successMessage:created>0?"Faculty registered successfully! They can now login with their mobile number.":null};
 }

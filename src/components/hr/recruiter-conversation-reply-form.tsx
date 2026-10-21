@@ -8,15 +8,21 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {isVerifiedHrReplyReceipt,hrReplyErrorMessage} from "@/modules/placements/hr-conversation-send-feedback-model";
 /** Never carry a recruiter draft across two different employer-college threads. */
-export function RecruiterConversationReplyForm({threadId}:{threadId:string}){
- return <RecruiterConversationReplyFormState key={threadId} threadId={threadId}/>;
+export function RecruiterConversationReplyForm({threadId,quoteId,quoteLabel}:{
+ threadId:string;quoteId?:string|null;quoteLabel?:string|null;
+}){
+ return <RecruiterConversationReplyFormState key={threadId+":"+(quoteId??"")} threadId={threadId}
+   quoteId={quoteId} quoteLabel={quoteLabel}/>;
 }
-function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
+function RecruiterConversationReplyFormState({threadId,quoteId,quoteLabel}:{
+ threadId:string;quoteId?:string|null;quoteLabel?:string|null;
+}){
  const router=useRouter();
  const {run:runGuarded}=useGuardedAction({timeoutMs:15000});
  const formRef=useRef<HTMLFormElement>(null);
  const submitPendingRef=useRef(false);
  const [body,setBody]=useState("");
+ const [selectedQuote,setSelectedQuote]=useState(quoteId??null);
  const [sending,setSending]=useState(false);
  const [notice,setNotice]=useState("");
  const [leaveHref,setPendingLeave]=useState<string|null>(null);
@@ -63,6 +69,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   try{
    const form=new FormData();
    form.set("body",message);
+    if(selectedQuote)form.set("quoteId",selectedQuote);
    const response=await runGuarded(()=>fetch("/api/placements/recruiter/conversations/"+threadId+"/reply",{
     method:"POST",body:form,credentials:"same-origin",redirect:"error",
     headers:{Accept:"application/json"},
@@ -76,6 +83,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   }
   if(confirmed){
    setBody("");
+   setSelectedQuote(null);
    // Confirm that the current authorized thread remains readable before
    // claiming the refreshed conversation is visible to the recruiter.
    try{
@@ -87,11 +95,15 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
     setNotice("Message sent, but the conversation could not refresh. Retry to load the latest messages.");
    }
    router.refresh();
-  }else setNotice("Could not send. "+feedback);
+  }else setNotice("Message was not sent. Could not send. "+feedback);
   }finally{submitPendingRef.current=false;setSending(false);}
  }
  return <form ref={formRef} onSubmit={submit} className="min-w-0 max-w-4xl space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
   <h2 className="text-lg font-semibold leading-7 text-foreground">Reply to placement cell</h2>
+  {selectedQuote?<div className="flex min-w-0 flex-wrap items-center gap-2 border-l-2 border-[var(--lms-primary)] bg-surface-secondary px-3 py-2 text-sm text-body">
+    <span>Discussing change request: {quoteLabel??selectedQuote}</span>
+    <Button type="button" size="sm" variant="secondary" disabled={sending} onClick={()=>setSelectedQuote(null)}>Remove quote</Button>
+  </div>:null}
   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
    <Textarea value={body} onChange={event=>setBody(event.target.value)}
     onKeyDown={event=>{if(event.key==="Enter"&&(event.ctrlKey||event.metaKey)){event.preventDefault();formRef.current?.requestSubmit();}}}
@@ -102,7 +114,7 @@ function RecruiterConversationReplyFormState({threadId}:{threadId:string}){
   <p className="text-xs text-muted-foreground leading-5">
    <span className={body.trim().length>4000?"font-semibold text-error":undefined}>{body.trim().length}/4000 characters</span> · Press Ctrl or Cmd+Enter to send. Replies stay in this employer-college thread and are reauthorized when sent.
   </p>
-  {notice?<InlineNotice tone={notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
+  {notice?<InlineNotice tone={notice.startsWith("Message was not sent")||notice.startsWith("Could not")||notice.startsWith("Write a")||notice.startsWith("Keep a")?"error":"info"} message={notice}/>:null}
   <div className="flex min-w-0 flex-col items-stretch gap-2 min-[768px]:flex-row min-[768px]:items-center">
   <Button type="submit" disabled={sending} loading={sending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
    {sending?"Sending…":"Send reply"}

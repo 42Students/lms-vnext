@@ -26,6 +26,9 @@ export type LearnerPlacementJobItem = {
     id: string;
     title: string;
     description: string;
+    responsibilities?: string | null;
+    targetDepartmentName?: string | null;
+    targetProgramName?: string | null;
     employmentType: string;
     jobTypeLabel?: string | null;
     workMode: string;
@@ -69,6 +72,7 @@ export type LearnerPlacementJobItem = {
     channel: string;
     status: string;
     eligibilityStatus: string;
+    stage?: string | null;
     submittedAt: string;
     withdrawnAt: string | null;
   } | null;
@@ -635,6 +639,22 @@ function postedAtLabel(value: string | null | undefined): string {
   }).format(date);
 }
 
+/** Legacy chip stages are independent of application channel. */
+function learnerApplicationStageLabel(status:string){
+  switch(status.toUpperCase()){
+    case "SUBMITTED":case "APPLIED":return "Applied";
+    case "SHORTLISTED":return "Shortlisted";
+    case "ASSESSMENT":return "Assessment";
+    case "INTERVIEW":return "Interview";
+    case "WAITLISTED":return "Waitlisted";
+    case "OFFERED":case "ISSUED":return "Offered";
+    case "HIRED":case "ACCEPTED":return "Hired";
+    case "REJECTED":case "DECLINED":return "Rejected";
+    case "WITHDRAWN":return "Withdrawn";
+    default:return humanize(status);
+  }
+}
+
 export function LearnerPlacementJobs({
   items,snapshotNowIso=null,returnQuery="",savedJobIds=[],
 }: {
@@ -652,9 +672,17 @@ export function LearnerPlacementJobs({
     );
   }
 
+  const byDrive = new Map<string,LearnerPlacementJobItem[]>();
+  for(const item of items){
+    const roles=byDrive.get(item.job.id)??[];
+    roles.push(item);
+    byDrive.set(item.job.id,roles);
+  }
+  const grouped=[...byDrive.values()].flatMap(roles=>
+    roles.map((item,index)=>({item,firstRole:index===0,roleCount:roles.length})));
   return (
     <div className="grid min-w-0 gap-4">
-      {items.map((item) => {
+      {grouped.map(({item,firstRole,roleCount}) => {
         const failedChecks =
           item.eligibility.checks.filter(
             (check) => check.status === "FAIL",
@@ -667,13 +695,15 @@ export function LearnerPlacementJobs({
         return (
           <article
             key={item.roleOption.id}
-            className="min-w-0 border-b border-border py-4 first:pt-0 last:pb-0 md:py-5"
+            className={"min-w-0 py-4 first:pt-0 last:pb-0 md:py-5 "+(firstRole?"border-t border-border":"border-t border-dashed border-border/60")}
+             aria-label={item.job.title+" · "+item.roleOption.title}
           >
             <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
               <div className="min-w-0">
                 <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-                  {item.company.name}
+                  {firstRole?item.company.name:item.job.title}
                 </p>
+                {firstRole?<p className="mt-1 text-sm font-semibold text-foreground">{item.job.title}{roleCount>1?" · "+roleCount+" role options":""}</p>:null}
                 <h2 className="mt-1 break-words text-xl font-semibold text-foreground">
                   <Link
                     href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery) ?? "/learn/my-placements/jobs"}
@@ -697,7 +727,7 @@ export function LearnerPlacementJobs({
               <LearnerSaveDriveButton jobId={item.job.id} jobTitle={item.job.title} initialSaved={savedJobIds.includes(item.job.id)}/>
                {item.application ? (
                  <StatusBadge tone={item.application.status==="SUBMITTED"?"success":"neutral"}>
-                   {item.application.status==="SUBMITTED"?"Applied":humanize(item.application.status)}
+                   {learnerApplicationStageLabel(item.application.stage??item.application.status)}
                  </StatusBadge>
                ) : null}
               <StatusBadge

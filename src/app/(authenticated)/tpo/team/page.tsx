@@ -1,208 +1,67 @@
-import { Badge } from "@/components/ui/badge";
-import {Avatar} from "@/components/ui/avatar";
-import { Tabs } from "@/components/ui/tabs";
-import {TPO_OWNER_PAGE_COPY} from "@/modules/placements/tpo-page-copy";
-import {readTpoTeamAskWorkload} from "@/modules/placements/tpo-team-workload-service";
-import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
-import {TpoTeamAwayForm} from "@/components/tpo/tpo-team-away-form";
-import {TpoTeamAssignUnowned} from "@/components/tpo/tpo-team-assign-unowned";
-import {TpoTeamHandover} from "@/components/tpo/tpo-team-handover";
-import {readTpoUnownedWork} from "@/modules/placements/tpo-team-unowned-service";
-import {readTpoTeamOwnershipWorkload} from "@/modules/placements/tpo-team-ownership-workload-service";
-import {TpoTeamSearch} from "@/components/tpo/tpo-team-search";
-import {TpoTeamThreadCreate} from "@/components/tpo/tpo-team-forms";
-import Link from "next/link";
-import {TpoLiveRefresh} from "@/components/tpo/tpo-live-refresh";
-import {redirect} from "next/navigation";
-import {z} from "zod";
-import {getCurrentRequestContext} from "@/auth/request-context";
-import {PageHeader} from "@/components/ui/page-header";
-import {EmptyState} from "@/components/ui/empty-state";
-import {Alert} from "@/components/ui/alert";
-import {Disclosure} from "@/components/ui/disclosure";
-import {hasPlacementTeamMembership} from "@/modules/placements/placement-team-access-model";
-import {listMyTpoInternalThreads} from "@/modules/placements/tpo-team-internal-read-service";
-import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
-import {parseTpoTeamTab} from "@/modules/placements/tpo-team-tabs-model";
-import {TPO_TEAM_ROLE_LABELS} from "@/modules/placements/tpo-settings-read-model";
-import {sortTpoPeople,type TpoPeopleSort} from "@/modules/placements/tpo-team-people-sort-model";
-import {filterTpoTeamConversations,tpoTeamConversationCounts,tpoTeamConversationFilterSchema} from "@/modules/placements/tpo-team-conversation-filter-model";
+import { redirect } from "next/navigation";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { hasPlacementTeamMembership } from "@/modules/placements/placement-team-access-model";
 
-const tabSchema=z.object({tab:z.enum(["conversations","people"]).optional(),sort:z.enum(["WORK","OVERDUE","NAME"]).optional(),q:z.string().max(120).optional(),filter:tpoTeamConversationFilterSchema.optional(),page:z.coerce.number().int().min(1).max(1000).optional()}).strict();
-export default async function TpoTeamPage({searchParams}:{
- searchParams:Promise<{tab?:string|string[];sort?:string|string[];q?:string|string[];filter?:string|string[];page?:string|string[];c?:string|string[];m?:string|string[]}>}) {
- const context=await getCurrentRequestContext();
- if(!context.membership||!hasPlacementTeamMembership(context))redirect("/dashboard");
- const raw=await searchParams;
- const threadId=Array.isArray(raw.c)?raw.c[0]:raw.c;
- const messageId=Array.isArray(raw.m)?raw.m[0]:raw.m;
- if(threadId&&z.string().uuid().safeParse(threadId).success){
-  const target=messageId&&z.string().uuid().safeParse(messageId).success?
-   "?m="+encodeURIComponent(messageId):"";
-  redirect("/tpo/team/"+encodeURIComponent(threadId)+target);
- }
- const tabInput=Array.isArray(raw.tab)?raw.tab[0]:raw.tab;
- const parsed=tabSchema.safeParse({tab:tabInput==="members"?"people":tabInput,
-  sort:Array.isArray(raw.sort)?raw.sort[0]:raw.sort,
-  q:Array.isArray(raw.q)?raw.q[0]:raw.q,
-  filter:Array.isArray(raw.filter)?raw.filter[0]:raw.filter,
-  page:Array.isArray(raw.page)?raw.page[0]:raw.page});
- const tab=parsed.success?parseTpoTeamTab(parsed.data.tab):"conversations";
- const team=await getTpoPlacementTeam(context,context.membership.collegeId);
- const peopleSort:TpoPeopleSort=parsed.success?(parsed.data.sort??"WORK"):"WORK";
- // Deprecated faculty/student coordinator duties are not placement-team roles.
- const activeTeam=team.members.filter(member=>member.roles.includes("TPO")||
-  member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN"));
- const workload=tab==="people"?await readTpoTeamAskWorkload(context).catch(()=>({ready:false as const,items:[]})):null;
- const unowned=tab==="people"?await readTpoUnownedWork(context).catch(()=>({ready:false as const,drives:0,companies:0})):null;
- const workloadByMember=new Map((workload?.items??[]).map(row=>[row.membershipId,row] as const));
- const ownerWorkload=tab==="people"?await readTpoTeamOwnershipWorkload(context).catch(()=>({ready:false as const,drivesReady:false,asksReady:false,items:[]})):null;
- const ownerByMember=new Map((ownerWorkload?.items??[]).map(row=>[row.membershipId,row] as const));
- const people=sortTpoPeople(activeTeam.map(member=>({
-  ...member,openAsks:workloadByMember.get(member.membershipId)?.openAsks??0,
-  overdueAsks:workloadByMember.get(member.membershipId)?.overdueAsks??0,
-  liveDrives:ownerByMember.get(member.membershipId)?.liveDrives??0,
-  draftDrives:ownerByMember.get(member.membershipId)?.draftDrives??0,
-  companies:ownerByMember.get(member.membershipId)?.companies??0,
-  overdueFollowups:ownerByMember.get(member.membershipId)?.overdueFollowups??0,
-  waitingOnOthers:ownerByMember.get(member.membershipId)?.waitingOnOthers??0,
- })),peopleSort);
- const awayState=tab==="people"?await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]})):null;
- const awayByMember=new Map<string,Date>((awayState?.items??[]).map(row=>[row.membershipId,row.awayUntil] as const));
- const search=parsed.success?(parsed.data.q??""):"";
- const conversationPage=parsed.success?(parsed.data.page??1):1;
- const conversations=tab==="conversations"?await listMyTpoInternalThreads(context,search,conversationPage)
-  .catch(()=>({status:"FAILED" as const,items:[]})):null;
- const filter=parsed.success?(parsed.data.filter??"FOLLOWING"):"FOLLOWING";
- const conversationCounts=conversations?.status==="READY"?tpoTeamConversationCounts(conversations.items):null;
- const visibleConversations=conversations?.status==="READY"?filterTpoTeamConversations(conversations.items,filter):[];
- return <div className="min-w-0 space-y-4">
-  <TpoLiveRefresh intervalMs={30000}/>
-  <PageHeader title={TPO_OWNER_PAGE_COPY.team}
-   description="Who does what, and what you decided. Recruiters and students never see this." />
-  <Tabs ariaLabel="Team tabs" renderPanel={false} value={tab}
-   items={(["conversations","people"] as const).map(item=>({
-     value:item, label:item==="people"?"People":"Conversations", href:"/tpo/team?tab="+item,
-   }))} />
-  {tab==="people"?<section className="min-w-0 space-y-4">
-    <p role="status" className="text-sm text-body leading-[1.6]">{people.length} people</p>
-    {unowned?.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
-      members={activeTeam.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
-       .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}
-    <Disclosure title="About placement team" className="border-b border-border" contentClassName="py-3">
-      <p className="text-xs text-muted-foreground">The college&apos;s TPO and college-admin accounts are always in the team. Everyone in it can do everything in placements.</p>
-    </Disclosure>
-    <nav aria-label="Sort team people" className="flex min-w-0 flex-wrap items-center gap-2 text-[13px]">
-      <span className="font-semibold">Sort:</span>
-      {([["WORK","Most assigned duties"],["OVERDUE","Overdue first"],["NAME","Name"]] as const).map(([value,label])=>
-       <Link key={value} href={"/tpo/team?tab=people&sort="+value}
-        aria-current={peopleSort===value?"page":undefined}
-        className={(peopleSort===value?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-on-primary min-[768px]:min-h-9":"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] px-3 py-2 text-body hover:border-primary hover:bg-primary-subtle hover:text-primary-text min-[768px]:min-h-9")+" focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"}>
-        {label}
-       </Link>)}
-      {!workload?.ready?<span className="text-xs text-muted-foreground">Ask workload is not available yet.</span>:null}
-    </nav>
-    {people.length?<ul className="grid gap-3 min-[768px]:grid-cols-2">
-      {people.map(member=><li key={member.membershipId} className="min-w-0 border-b border-border py-4">
-       <div className="flex items-center gap-3">
-        <Avatar name={member.displayName} size="md" />
-        <h2 className="min-w-0 break-words font-semibold text-foreground">{member.displayName}
-         {member.membershipId===context.membership?.id?<span className="ml-2 rounded-[var(--lms-control-radius)] border border-border px-2 py-0.5 text-xs">You</span>:null}
-        </h2>
-       </div>
-       {awayByMember.get(member.membershipId)?<p className="mt-2 text-xs text-warning-text">
-        Away until {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})
-         .format(awayByMember.get(member.membershipId)!)} IST
-       </p>:null}
-       {member.membershipId===context.membership?.id&&awayState?.ready?
-        <Disclosure title="Away status" className="mt-3 border-t border-border" contentClassName="pb-3">
-         <TpoTeamAwayForm until={awayByMember.get(member.membershipId)?.toISOString()??null}/>
-        </Disclosure>:null}
-       <p className="mt-2 text-sm text-body">{member.roles.filter(role=>role==="TPO"||role==="TPO_ADMIN"||role==="COLLEGE_ADMIN").map(role=>TPO_TEAM_ROLE_LABELS[role]).join(" · ")}</p>
-       {workload?.ready?<p className="mt-2 text-xs text-muted-foreground">
-        {member.openAsks} open {member.openAsks===1?"ask":"asks"} · {member.overdueAsks} overdue
-       </p>:null}
-       {ownerWorkload?.ready?<dl aria-label="Placement workload" className="mt-3 grid grid-cols-2 gap-2 text-xs min-[768px]:grid-cols-3">
-        {([["Live drives",member.liveDrives,"/tpo/placements"],
-          ["Draft drives",member.draftDrives,"/tpo/placements"],
-          ["Companies",member.companies,"/tpo/recruiters?view=companies"],
-          ["Overdue follow-ups",member.overdueFollowups,"/tpo/recruiters?due=1"],
-          ["Waiting on teammates",member.waitingOnOthers,"/tpo/team?tab=conversations&filter=ASKS"]] as const)
-         .map(([label,count,href])=><div key={label}>
-         <dt className="text-muted-foreground">{label}</dt>
-         <dd className="font-semibold">
-          {label.includes("drives")&&!ownerWorkload.drivesReady?"Unavailable":
-           <Link href={href} title={"Open "+label.toLowerCase()+" records"}
-            className="text-link underline underline-offset-2 lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] max-[767px]:min-h-11 max-[767px]:inline-flex max-[767px]:items-center">{count}</Link>}
-         </dd>
-        </div>)}
-       </dl>:null}
-       {ownerWorkload?.drivesReady&&member.membershipId!==context.membership?.id&&
-        (member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))?
-        <Disclosure title="Hand over work" className="mt-3 border-t border-border" contentClassName="pb-3">
-        <TpoTeamHandover sourceMembershipId={member.membershipId}
-         sourceName={member.displayName}
-         members={activeTeam.filter(candidate=>(candidate.roles.includes("TPO")||candidate.roles.includes("COLLEGE_ADMIN"))&&
-          candidate.membershipId!==member.membershipId)
-          .map(candidate=>({membershipId:candidate.membershipId,displayName:candidate.displayName}))}/>
-        </Disclosure>:null}
-       {member.studentDuties.length?<p className="mt-2 text-xs text-muted-foreground">
-         {member.studentDuties.length} recorded drive-day duties
-       </p>:null}
-      </li>)}
-    </ul>:<EmptyState title="No active team assignments" description="No members match this college's currently active role evidence." />}
-  </section>:<section className="min-w-0 border-b border-border py-4">
-    <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Internal conversations</h2>
-    <div className="mt-3"><TpoTeamSearch value={search}/></div>
-    {conversationCounts?<p className="mt-2 text-xs text-muted-foreground">Counts are for the conversations on this page.</p>:null}
-    {conversationCounts?<nav aria-label="Filter team conversations" className="mt-3 flex min-w-0 flex-wrap items-center gap-2">
-     {(["ALL","FOLLOWING","UNREAD","TOPICS","DECISIONS",...(conversations?.status==="READY"&&conversations.asksReady?["ASKS","AT_ME"] as const:[])] as const).map(key=><Link key={key}
-      href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter:key,...(search?{q:search}:{})}).toString()}
-      aria-current={filter===key?"page":undefined}
-      className={filter===key?"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-3 py-2 text-sm text-on-primary min-[768px]:min-h-9":"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-body hover:border-primary min-[768px]:min-h-9"}>
-      {key==="ALL"?"All":key==="FOLLOWING"?"Following":key==="UNREAD"?"Unread":key==="TOPICS"?"Topics":key==="DECISIONS"?"Decisions":key==="ASKS"?"Asks":"@ Me"} ({conversationCounts[key]})
-     </Link>)}
-    </nav>:null}
-    <Link href="/tpo/team/everyone" className="mt-3 block border-b border-border py-4 font-semibold text-link lms-inline-link max-[767px]:min-h-11">Everyone → <span className="mt-1 block text-xs font-normal text-body">Everyone in the placement team, including people who join later. You can mute it, not leave it.</span></Link>
-    {conversations?.status==="READY"?<Disclosure title="Start a private placement team conversation" className="mt-3 border-b border-border" contentClassName="pb-3"><TpoTeamThreadCreate actorUserId={context.user.id} members={team.members.filter(
-      member=>member.membershipId!==context.membership?.id&&
-      (member.roles.includes("TPO")||member.roles.includes("TPO_ADMIN")||member.roles.includes("COLLEGE_ADMIN")))
-      .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/></Disclosure>:null}
-    {conversations?.status==="FAILED"?<Alert tone="error">
-     Could not load conversations right now. Your search has been kept.
-     <Link className="ml-2 font-semibold text-link underline lms-inline-link max-[767px]:min-h-11 max-[767px]:inline-flex max-[767px]:items-center" href={"/tpo/team?tab=conversations"+(search?"&q="+encodeURIComponent(search):"")}>Retry conversations</Link>
-    </Alert>:null}
-    {conversations?.status==="NOT_REGISTERED"?
-      <Alert tone="warning">Private placement-team conversations require the unregistered internal messaging migration. No messages were inferred from recruiter conversations.</Alert>:
-      conversations?.status==="FAILED"?null:
-      visibleConversations.length?<ul className="mt-3 divide-y divide-border">{visibleConversations.map(row=>
-       <li key={row.id} className="min-w-0 py-3">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-         <Link className="min-w-0 break-words font-semibold text-link lms-inline-link hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] max-[767px]:min-h-11 max-[767px]:inline-flex max-[767px]:items-center" href={"/tpo/team/"+row.id}>🔒 {row.topic}</Link>
-         {row.unreadCount>0 ? <Badge aria-label={row.unreadCount+" unread updates"}
-           tone="neutral">
-          {row.unreadCount} unread
-         </Badge>:null}
-        </div>
-        <p className="mt-1 truncate text-xs text-body min-w-0">With {row.counterpartName??"Team member"} · Private conversation</p>
-        {row.searchSnippet??row.lastPreview?<p className="mt-1 truncate text-xs text-muted-foreground min-w-0">{row.searchSnippet??row.lastPreview}</p>:null}
-        {conversations?.status==="READY"&&conversations.asksReady&&row.openAsks>0?<p className="mt-1 text-xs text-body">{row.openAsks} open {row.openAsks===1?"ask":"asks"}{row.asksForMe>0?" · "+row.asksForMe+" assigned to you":""}</p>:null}
-        <p className="mt-1 text-xs text-muted-foreground">Last activity · {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(row.lastActivityAt)} IST</p>
-       </li>)}</ul>:
-       <div className="mt-2 space-y-2 text-sm text-body"><EmptyState title={search||filter!=="ALL"?"No conversations match these filters. Clear filters to see all.":"No private team conversations yet. Everyone is always available."}/>{search||filter!=="ALL"?<Link href="/tpo/team?tab=conversations" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline lms-inline-link">Clear filters</Link>:null}</div>}
-    {conversations?.status==="READY" && (conversations.page>1||conversations.hasMore)?
-     <nav aria-label="Team conversation pages" className="mt-4 flex flex-wrap items-center gap-3">
-      <span className="text-sm text-body">Page {conversations.page}</span>
-      {conversations.page>1?<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[8px] md:rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
-       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
-        ...(search?{q:search}:{}),page:String(conversations.page-1)}).toString()}>Previous</Link>:null}
-      {conversations.hasMore?<Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 py-3 text-link lms-inline-link"
-       href={"/tpo/team?"+new URLSearchParams({tab:"conversations",filter,
-        ...(search?{q:search}:{}),page:String(conversations.page+1)}).toString()}>Show older</Link>:null}
-     </nav>:null}
-    <Link href="/tpo/messages" className="mt-3 inline-flex min-h-11 items-center text-link lms-inline-link min-[768px]:min-h-9">
-      Open existing recruiter communications
-    </Link>
-  </section>}
- </div>;
+type LegacyTeamSearch = Record<string, string | string[] | undefined>;
+
+function first(value: string | string[] | undefined): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
+
+/**
+ * The old /tpo/team path is a bookmark-only shim, not another workspace.
+ * The Team conversations destination is Messages > Team; member management
+ * belongs in Settings > People. Preserve conversation search/deep links while
+ * discarding all query parameters on the people branch, exactly as the old LMS.
+ */
+export default async function TpoTeamLegacyRedirect({
+  searchParams,
+}: {
+  searchParams: Promise<LegacyTeamSearch>;
+}) {
+  const context = await getCurrentRequestContext();
+  if (!context.membership || !hasPlacementTeamMembership(context)) {
+    redirect("/dashboard");
+  }
+
+  const params = await searchParams;
+  const tab = first(params.tab)?.toLowerCase();
+  // Keep the old conversation/person/recruiter tabs addressable from bookmarks.
+  // The canonical Messages route owns the Recruiters and Team tabs; Settings
+  // owns the People roster. The current role and college remain server-scoped.
+  if (tab === "people" || tab === "members" || tab === "roster") {
+    redirect("/tpo/settings?tab=team");
+  }
+  if(tab==="recruiters"||tab==="recruiter"){
+    const q=first(params.q)?.trim().slice(0,120)??"";
+    const target=new URLSearchParams({tab:"recruiters"});
+    if(q)target.set("q",q);
+    redirect("/tpo/messages?"+target.toString());
+  }
+
+  const thread=first(params.thread)??first(params.conversationId);
+  if(thread&&/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(thread)){
+    // Existing vNext thread detail is the authorized selected-conversation pane.
+    redirect("/tpo/team/"+thread);
+  }
+  const target = new URLSearchParams({ tab: "team" });
+  for (const [key, value] of Object.entries(params)) {
+    if (key === "tab" || !/^[a-zA-Z][a-zA-Z0-9_-]{0,63}$/.test(key)) {
+      continue;
+    }
+    const values = Array.isArray(value) ? value : value === undefined ? [] : [value];
+    for (const item of values.slice(0, 10)) {
+      if (item.length <= 2000 && !/[\u0000-\u001f\u007f]/.test(item)) {
+        target.append(key, item);
+      }
+    }
+  }
+  // Old object/ask/bookmark references become scoped Team search terms
+  // where the new membership model has no global object selector.
+  if(!target.has("q")){
+    const object=first(params.object)??first(params.ask)??first(params.about);
+    if(object&&object.length>=2&&object.length<=120&&
+      !/[\u0000-\u001f\u007f]/.test(object))target.set("q",object);
+  }
+  redirect("/tpo/messages?" + target.toString());
 }

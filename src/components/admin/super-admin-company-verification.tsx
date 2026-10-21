@@ -35,11 +35,12 @@ export function SuperAdminCompanyVerification({companyId,name,verified}:{
   </Button>
   <ConfirmDialog open={confirm} onOpenChange={open=>{if(!busy)setConfirm(open);}}
    title={verified?"Remove global company verification?":"Verify company globally?"}
-   description={(verified?"Unverify ":"Verify ")+name+" globally for 42?"}
+   description={(verified?"Unverify ":"Verify ")+name+" globally for 42? Canonical company verification is separate from email-domain verification and recruiter grants."}
    confirmLabel={verified?"Confirm unverify":"Confirm verify"} confirmVariant={verified?"danger":"primary"}
    pending={busy} onConfirm={()=>void save()}>
    <div className="min-w-0 space-y-3">
     <p className="m-0 break-words text-sm leading-5 text-body"><strong className="font-semibold text-foreground">{name}</strong> · {verified?"Verified → Unverified":"Unverified → Verified"}</p>
+    <Alert tone="info">The canonical company identity is shared across linked college relationships. This change does not automatically verify unverified email domains or grant recruiters access.</Alert>
     {error?<Alert tone="error">{error}</Alert>:null}
    </div>
   </ConfirmDialog>

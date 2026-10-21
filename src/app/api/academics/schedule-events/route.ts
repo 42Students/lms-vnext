@@ -12,17 +12,21 @@ export const runtime = "nodejs";
 export async function GET(request: Request) {
   try {
     const context = await getCurrentRequestContext();
-    const sectionId =
-      new URL(request.url).searchParams.get(
-        "sectionId",
-      ) ?? "";
+    const params=new URL(request.url).searchParams;
+    const section=params.get("sectionId"),oldClass=params.get("classId");
+    if(section&&oldClass&&section!==oldClass)
+      return NextResponse.json({error:"AMBIGUOUS_SECTION"},{status:400});
+    // Historical numeric class IDs are not UUID section grants.
+    const sectionId=section??oldClass??"";
     const events =
       await listSectionScheduleEvents(
         context,
         sectionId,
       );
 
-    return NextResponse.json({ events });
+    return NextResponse.json({events,
+      count:events.length,sectionId,
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);
   }
@@ -38,7 +42,16 @@ export async function POST(request: Request) {
 
   try {
     const context = await getCurrentRequestContext();
-    const body = await request.json();
+    let body:unknown;
+    try{body=await request.json();}
+    catch{return NextResponse.json({error:"INVALID_REQUEST"},{status:400});}
+    if(typeof body==="object"&&body!==null&&!Array.isArray(body)){
+      const record=body as Record<string,unknown>;
+      if(record.sectionId===undefined&&typeof record.classId==="string"){
+        const {classId,...rest}=record;
+        body={...rest,sectionId:classId};
+      }
+    }
     const event =
       await createSectionScheduleEvent(
         context,

@@ -36,6 +36,7 @@ import { projectTemplateIdSchema } from "@/modules/projects/validation";
 function formatDate(value: Date) {
   return new Intl.DateTimeFormat("en-IN", {
     timeZone: "Asia/Kolkata", dateStyle: "medium",
+    timeStyle: "short",
   }).format(value) + " IST";
 }
 
@@ -119,7 +120,14 @@ export async function SuperAdminTemplateSubviewPage({
       error instanceof ProjectsServiceError &&
       error.code === "PROJECT_TEMPLATE_NOT_FOUND"
     ) {
-      notFound();
+      return <div className="min-w-0 space-y-4">
+        <ProjectAdminNav basePath="/admin/projects" active="templates"/>
+        <PageHeader title="Template"/>
+        <div role="alert" className="border-y border-warning-border bg-warning-subtle px-4 py-3 text-sm">
+          <p className="font-semibold">Template not found</p>
+          <Link href="/admin/projects/templates" className="mt-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">← Back to templates</Link>
+        </div>
+      </div>;
     }
 
     // Data-layer outages and an expired/revoked permission must not crash a
@@ -128,7 +136,7 @@ export async function SuperAdminTemplateSubviewPage({
     // exception text or version JSON to an unverified viewer.
     return <div className="min-w-0 space-y-[var(--lms-space-5)]">
       <ProjectAdminNav basePath="/admin/projects" active="templates"/>
-      <PageHeader title="Template section"/>
+      <PageHeader title="Template"/>
       <ErrorState title="Failed to load template"
         description="Template could not be loaded. Review your access and try again."
         action={<Link href={"/admin/projects/templates/"+encodeURIComponent(templateId)+"/"+section}
@@ -195,26 +203,35 @@ export async function SuperAdminTemplateSubviewPage({
         active="templates"
       />
 
-      <PageBackLink href="/admin/projects/templates" label="Template catalogue" />
       <PageHeader
         title={detail.template.title}
-        description={
-          detail.template.summary ??
-          "Read-only global project template details."
-        }
-        actions={
-          <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-            {detail.template.status === "PUBLISHED" ? (
-              <Link href={"/admin/projects/workspaces/new?templateId=" + encodeURIComponent(detail.template.id)}
-                className="inline-flex min-h-11 items-center justify-center text-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-3.5 text-sm font-[650] text-[var(--lms-on-primary)] hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
-                Use this template · Create workspace →
-              </Link>
-            ) : null}
-          </div>
-        }
+        description={section==="versions"
+          ?"Browse the complete version history, compare a revision against the current template, then roll back if needed."
+          :section==="tasks"
+            ?"The tasks every workspace created from this template starts with."
+            :section==="resources"
+              ?"Resources attached to every workspace created from this template."
+              :section==="sprints"
+                ?"The sprints every workspace created from this template starts with."
+                :detail.template.summary??"Read-only global project template details."}
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2">
+          <PageBackLink href="/admin/projects/templates" label="Back to templates"/>
+          {detail.template.status==="PUBLISHED"?
+            <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] md:min-h-9">
+              Use this template
+            </Link>:
+            <span aria-disabled="true" title="Only a published template can be used to create a workspace"
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-4 text-sm text-muted-foreground md:min-h-9">
+              Use this template
+            </span>}
+        </div>}
       />
 
-      <div className="flex min-w-0 flex-wrap items-center gap-2"><StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge><StatusBadge>Current version {detail.template.currentVersion}</StatusBadge></div>
+      <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <StatusBadge tone={detail.template.status==="PUBLISHED"?"success":detail.template.status==="ARCHIVED"?"neutral":"warning"}>{detail.template.status}</StatusBadge>
+        <StatusBadge>Version {detail.template.currentVersion}</StatusBadge>
+      </div>
       <SuperAdminTemplateTabs
         templateId={detail.template.id}
         active={section}
@@ -246,11 +263,13 @@ export async function SuperAdminTemplateSubviewPage({
           title={detail.template.title} summary={detail.template.summary}
           currentVersion={detail.template.currentVersion} blueprint={blueprint}/>:null}
       <p className="m-0 text-xs text-muted-foreground leading-[20px]">
-        The sections below reflect the current template version.
-        Published and college-assigned versions may differ.
+        The sections below reflect the current template version. Published and college-assigned versions may differ.
+        {detail.template.status==="ARCHIVED"?" This template is archived and editing is disabled.":""}
+        {!can(context,"project-template.manage")?" You can review this template but cannot edit it.":""}
       </p>
 
       {section === "sprints" ? (
+        blueprint&&can(context,"project-template.manage")&&detail.template.status!=="ARCHIVED"?null:
         !currentVersion ? (
           <NoItems
             title="Current version unavailable"
@@ -332,6 +351,7 @@ export async function SuperAdminTemplateSubviewPage({
       ) : null}
 
       {section === "tasks" ? (
+        blueprint&&can(context,"project-template.manage")&&detail.template.status!=="ARCHIVED"?null:
         !currentVersion ? (
           <NoItems
             title="Current version unavailable"
@@ -339,8 +359,8 @@ export async function SuperAdminTemplateSubviewPage({
           />
         ) : tasks.length === 0 ? (
           <NoItems
-            title="No tasks configured"
-            description="The current template version has no recorded tasks."
+            title="No tasks yet."
+            description="Add task to start planning the work that new workspaces receive."
           />
         ) : (
           <section
@@ -579,24 +599,26 @@ export async function SuperAdminTemplateSubviewPage({
             action={<Link href={templateVersionHistoryHref(templateId,1)} className="font-semibold text-primary-text">Retry version history</Link>}/>
         ) : detail.versions.length === 0 ? (
           <NoItems
-            title="No version history"
-            description="No version records are available for this template."
+            title="No version history available"
+            description="No version records are available for this template. Check the selected template or retry."
           />
         ) : (
           <section
             aria-label="Template version history"
-            className="min-w-0 space-y-3"
+            className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4"
           >
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="m-0 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
-                Version history
+                Template versions
               </h2>
               <StatusBadge>
-                {historyPaging?.total ?? detail.versions.length} versions
+                Version {detail.template.currentVersion}
               </StatusBadge>
             </div>
 
             {detail.versions.map((version) => {
+              const originalEvent=legacyEvents.find(event=>event.legacyTemplateVersion===version.version);
+              const isCurrent=version.version===detail.template.currentVersion;
               const labels =
                 templateVersionLabels(
                   version.version,
@@ -612,28 +634,24 @@ export async function SuperAdminTemplateSubviewPage({
               return (
                 <article
                   key={version.id}
-                  className="min-w-0 border-b border-border py-4 last:border-b-0"
+                  className="min-w-0 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div className="min-w-0 flex-1">
                       <h3 className="m-0 break-words text-base font-semibold text-foreground">
-                        Version {version.version} ·{" "}
-                        {version.title}
+                        Version {version.version} {isCurrent?<StatusBadge tone="info">Current</StatusBadge>:null}
                       </h3>
+                      <p className="mt-1 text-sm text-muted-foreground">{version.changeNote?.trim()||originalEvent?.notes?.trim()||"—"}</p>
                       <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
-                        Created{" "}
-                        <time
-                          dateTime={version.createdAt.toISOString()}
-                        >
-                          {formatDate(
-                            version.createdAt,
-                          )}
+                        <time dateTime={(originalEvent?.changedAt??version.createdAt).toISOString()}>
+                          {formatDate(originalEvent?.changedAt??version.createdAt)}
                         </time>
                       </p>
                     </div>
 
                     <div className="flex flex-wrap gap-2">
-                      {labels.map((label) => (
+                      {originalEvent?.actionType?<StatusBadge tone="neutral">{originalEvent.actionType.replaceAll("_"," ")}</StatusBadge>:null}
+                      {labels.filter(label=>label!=="Current").map((label) => (
                         <StatusBadge
                           key={label}
                           tone={
@@ -648,21 +666,25 @@ export async function SuperAdminTemplateSubviewPage({
                     </div>
                   </div>
 
-                  <Link href={templateVersionComparisonHref(detail.template.id, version.id)}
-                    className="mt-3 inline-flex min-h-11 items-center break-words text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
-                    Compare changes and inspect snapshot →
-                  </Link>
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
+                    <Link href={templateVersionComparisonHref(detail.template.id,version.id)+"?from=versions"+(historyPaging?"&page="+historyPaging.page:"")+"#compare"}
+                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">
+                      Compare changes
+                    </Link>
+                    {isCurrent?<span aria-disabled="true" title="This is the template's current content"
+                      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-muted px-3 text-sm text-muted-foreground md:min-h-9">Roll back</span>:
+                      <Link href={templateVersionComparisonHref(detail.template.id,version.id)+"?from=versions"+(historyPaging?"&page="+historyPaging.page:"")}
+                        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9"
+                        title="Compare this revision before rollback">
+                        Roll back
+                      </Link>}
+                    {!isCurrent?<span className="text-xs text-muted-foreground">Review changed fields before enabling rollback.</span>:null}
+                  </div>
 
-                  {version.summary ? (
-                    <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
-                      {version.summary}
-                    </p>
-                  ) : null}
-
-                  <p className="mt-3 break-words text-sm text-body leading-[22px]">
-                    {version.changeNote ||
-                      "No change note recorded."}
-                  </p>
+                  {version.summary?<div className="mt-3">
+                    <p className="text-xs font-semibold text-muted-foreground">Version summary</p>
+                    <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{version.summary}</p>
+                  </div>:null}
 
                   <dl className="mt-4 grid gap-3 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
                     <DetailField
@@ -695,7 +717,7 @@ export async function SuperAdminTemplateSubviewPage({
                 <dl className="mt-3 grid gap-2 sm:grid-cols-2">
                   <DetailField label="Legacy event ID" value={event.legacyEventId??"—"}/>
                   <DetailField label="Action" value={event.actionType??"Unknown"}/>
-                  <DetailField label="Notes" value={event.notes??"No notes recorded."}/>
+                  <DetailField label="Notes" value={event.notes??"—"}/>
                 </dl>
                 {event.snapshot?<pre className="mt-3 max-h-72 overflow-auto whitespace-pre-wrap break-all rounded border border-border p-3 text-xs">{JSON.stringify(event.snapshot,null,2)}</pre>:null}
               </details>)}

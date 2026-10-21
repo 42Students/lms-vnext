@@ -65,8 +65,7 @@ function loadLoginAttempt(): SavedAttempt | null {
 
 const ERROR_MESSAGES: Record<string, string> = {
   INVALID_CONTACT: "Enter a valid phone number or email address.",
-  NOT_REGISTERED:
-    "This number isn't registered. Check it, or sign in with your email.",
+  NOT_REGISTERED: "Sign-in is not available for these details. Check your contact and try again.",
   NO_ACCOUNT_FOR_DOMAIN:
     "No account was found for this contact on this college's site.",
   ACCOUNT_DISABLED:
@@ -95,7 +94,7 @@ const ERROR_MESSAGES: Record<string, string> = {
     "This administrator account needs both a verified phone number and email address.",
   CHANNEL_DISABLED: "This college does not allow that sign-in method. Select an available method.",
   LOGIN_METHOD_DISABLED: "This college does not allow that sign-in method. Select an available method.",
-  INVALID_EMAIL: "We couldn't find an account with that email.",
+  INVALID_EMAIL: "Sign-in is not available for these details. Check your contact and try again.",
   MOBILE_AUTH_TIMEOUT: "That took too long. Check your connection and try again.",
   EMAIL_NOT_FOUND: "No email is saved on this account. Use the code sent to your phone.",
   COMPANY_EMAIL_REQUIRED:
@@ -113,6 +112,10 @@ const RESTART_ERRORS = new Set([
   "INVALID_ATTEMPT",
   "OTP_ATTEMPTS_EXCEEDED",
   "ACCOUNT_SUSPENDED",
+  "ACCOUNT_DISABLED",
+  "ACCOUNT_UNAVAILABLE",
+  "WRONG_TENANT",
+  "INVALID_CHOICE",
 ]);
 
 /**
@@ -151,6 +154,16 @@ export function LoginForm({
   allowedChannels?: readonly Channel[];
 }) {
   const [channel, setChannel] = useState<Channel>(defaultChannel);
+  const [recruiterEntry, setRecruiterEntry] = useState(false);
+  useEffect(() => {
+    const query = new URLSearchParams(window.location.search);
+    setRecruiterEntry(query.get("recruiter") === "email");
+    if (query.get("auth") === "handoff-retired") {
+      // Legacy handoff target labels are unauthenticated local hints. Never
+      // reuse them after retiring cross-host raw-token handoff.
+      window.localStorage.removeItem("lms_handoff_target_label");
+    }
+  }, []);
   const errorSummaryRef=useRef<HTMLDivElement>(null);
   const contactRef=useRef<HTMLInputElement>(null);
   const [contact, setContact] = useState("");
@@ -165,6 +178,8 @@ export function LoginForm({
   const [notice, setNotice] = useState<string | null>(null);
   const [cooldown, setCooldown] = useState(0);
   const [emailCooldown, setEmailCooldown] = useState(0);
+  const [emailResends,setEmailResends]=useState(0);
+  const codeRef=useRef<HTMLInputElement>(null);
 
   useEffect(()=>{if(error)errorSummaryRef.current?.focus();},[error]);
   useEffect(() => {
@@ -197,11 +212,10 @@ export function LoginForm({
     const safeRetry = typeof retryAfterSeconds === "number" &&
       Number.isInteger(retryAfterSeconds) && retryAfterSeconds >= 1 &&
       retryAfterSeconds <= 3600 ? retryAfterSeconds : null;
-    const known = (errorCode==="NOT_REGISTERED"||errorCode==="INVALID_EMAIL") && channel==="EMAIL"
-      ?"We couldn't find an account with that email.":errorCode==="OTP_DELIVERY_FAILED"&&channel==="EMAIL"
+    const known = (errorCode==="NOT_REGISTERED"||errorCode==="INVALID_EMAIL")
+      ?"Sign-in is not available for these details. Check your contact and try again.":errorCode==="OTP_DELIVERY_FAILED"&&channel==="EMAIL"
       ?"We couldn't send the email just now. Try again.":errorCode==="NO_ACCOUNT_FOR_DOMAIN"
-      ?(channel==="EMAIL"?"This email isn't registered at this college.":"This number isn't registered at this college.")+
-       " If you belong to another college, use the main sign-in page (42lms.com).":
+      ?"These details cannot sign in at this college. Check the address or use the main sign-in page (42lms.com).":
        (errorCode==="CHANNEL_DISABLED"||errorCode==="LOGIN_METHOD_DISABLED")
       ?(channel==="EMAIL"?"This college signs in with a mobile number. Use your phone number instead.":
         "This college signs in with email. Use your email instead."):
@@ -213,15 +227,12 @@ export function LoginForm({
     if(safeRetry !== null)setCooldown(Math.max(cooldown,safeRetry));
     setErrorCode(errorCode ?? null);
     if (errorCode && RESTART_ERRORS.has(errorCode)) {
-      setCooldown(0);
+      // A verification lockout must never clear a server-provided retry window.
+      setCooldown(safeRetry ?? 0);
       setCode("");
       setSecondCode("");
-      saveLoginAttempt(null);
-    } else if(errorCode==="WRONG_TENANT"||errorCode==="INVALID_CHOICE"){
       setAttempt(null);
       saveLoginAttempt(null);
-      setCode("");
-      setSecondCode("");
     }
   }
 
@@ -269,6 +280,7 @@ export function LoginForm({
       });
       setCode("");
       setSecondCode("");
+      setEmailResends(0);
       setCooldown(RESEND_SECONDS);
     } catch {
       setError("That took too long. Check your connection and try again.");
@@ -281,6 +293,13 @@ export function LoginForm({
   async function verify(event: React.FormEvent) {
     event.preventDefault();
     if (busy || !attempt) return;
+    if(!code.trim()){
+      setError("OTP is required");codeRef.current?.focus();return;
+    }
+    if (!/^[0-9]{4,6}$/.test(code.trim()) ||
+        (attempt.requiresSecondFactor && !/^[0-9]{4,6}$/.test(secondCode.trim()))) {
+      setError("The code is 4 to 6 digits");codeRef.current?.focus();return;
+    }
     setBusy(true);
     setError(null);
     try {
@@ -308,7 +327,7 @@ export function LoginForm({
   }
 
   async function sendEmailCode() {
-    if (busy || !attempt) return;
+    if (busy || !attempt||emailResends>=5) return;
     setBusy(true);
     setError(null);
     setNotice(null);
@@ -321,6 +340,7 @@ export function LoginForm({
       if (!result.ok) return fail(result.data.error,result.data.retryAfterSeconds);
       setNotice(`We emailed a code to ${result.data.maskedEmail ?? "you"}. It expires in 5 minutes.`);
       setEmailCooldown(EMAIL_RESEND_SECONDS);
+      setEmailResends(count=>Math.min(5,count+1));
       setCooldown(RESEND_SECONDS);
       if (attempt) saveLoginAttempt({
         attempt,
@@ -346,13 +366,13 @@ export function LoginForm({
 
   return (
     <div className="login-form w-full max-w-md" data-step={attempt ? "code" : "contact"} aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
-      <h2 className="m-0 text-2xl font-semibold text-[var(--lms-heading)]">
+      <h1 className="m-0 text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">
         {attempt?"Enter your code":"Sign in"}
-      </h2>
+      </h1>
       <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
         {attempt ? "We sent a code to "+attempt.maskedContact+".":
           channel==="PHONE"?"Use your registered mobile number.":
-          "Use your registered email address."}
+          recruiterEntry ? "Recruiter? Sign in with email." : "Use your registered email address."}
       </p>
 
       {error ? (
@@ -365,7 +385,9 @@ export function LoginForm({
       ) : null}
       {collegeName && (errorCode === "NO_ACCOUNT_FOR_DOMAIN" || errorCode === "WRONG_TENANT") ? (
         <p className="mt-2 text-sm text-body leading-[22px]">
-          This account may belong to another college.{" "}
+          {recruiterEntry
+            ? "Recruiters must use the college placement address listed in their invitation email. "
+            : "This account may belong to another college. "}
           <a href="https://42lms.com/login" className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Use the main sign-in page (42lms.com)
           </a>
@@ -385,8 +407,10 @@ export function LoginForm({
           {allowedChannels.length>1?<div
             role="tablist"
             aria-label="Sign in method"
-            className="grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1"
+            className="relative grid grid-cols-2 gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1"
           >
+            <span aria-hidden="true" className={"pointer-events-none absolute inset-y-1 left-1 w-[calc(50%-6px)] rounded-lg bg-surface shadow-sm transition-transform duration-150 " +
+              (channel === "PHONE" ? "translate-x-[calc(100%+4px)]" : "")}/>
             {(["EMAIL", "PHONE"] as const).filter(value=>allowedChannels.includes(value)).map((value) => (
               <Button variant="ghost"
                 key={value}
@@ -423,8 +447,8 @@ export function LoginForm({
                 }}
                 className={
                   channel === value
-                    ? "min-h-11 rounded-[var(--lms-control-radius)] bg-surface text-sm font-semibold text-primary-text shadow-none md:min-h-9 "
-                    : "min-h-11 rounded-[var(--lms-control-radius)] text-sm font-medium text-body hover:bg-primary-subtle hover:text-primary-text md:min-h-9 "
+                    ? "relative z-10 min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-semibold text-primary-text shadow-none md:min-h-9 "
+                    : "relative z-10 min-h-11 rounded-[var(--lms-control-radius)] !bg-transparent text-sm font-medium text-body hover:text-primary-text md:min-h-9 "
                 }
               >
                 {value === "PHONE" ? "Phone" : "Email"}
@@ -439,7 +463,9 @@ export function LoginForm({
             <span className="mb-1 block text-sm font-medium text-foreground">
               {channel === "PHONE" ? "Mobile number" : "Email"}
             </span>
-            <Input
+            <div className="relative">
+              {channel === "PHONE" ? <span aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-3 z-10 inline-flex items-center border-r border-border pr-3 text-sm font-semibold text-foreground">+91</span> : null}
+            <Input className={channel === "PHONE" ? "pl-[58px]" : undefined}
               name="contact" ref={contactRef}
               aria-invalid={Boolean(contactError)}
               aria-describedby={contactError ? "login-contact-error" : undefined}
@@ -449,11 +475,12 @@ export function LoginForm({
               inputMode={channel === "PHONE" ? "tel" : "email"}
               autoComplete={channel === "PHONE" ? "tel" : "email"}
               placeholder={
-                channel === "PHONE" ? "98765 43210" : "you@example.com"
+                channel === "PHONE" ? "Enter mobile number" : "you@example.com"
               }
               required
               autoFocus
             />
+            </div>
             {contactError ? (
               <span role="alert" id="login-contact-error" className="mt-1 block text-sm text-error">{contactError}</span>
             ) : null}
@@ -465,7 +492,7 @@ export function LoginForm({
             className="min-h-11 w-full md:min-h-9"
             disabled={busy}
           >
-            {busy ? "Sending code…" : "Continue"}
+            {busy ? "Sending code…" : "Send code"}
           </Button>
           <LoginConsent />
         </form>
@@ -486,7 +513,7 @@ export function LoginForm({
             </p>
           ) : (
             <p className="m-0 text-sm text-body leading-[22px]">
-              We sent a 6-digit code to{" "}
+              We sent a one-time code to{" "}
               <strong className="text-foreground">
                 {attempt.maskedContact}
               </strong>
@@ -503,13 +530,14 @@ export function LoginForm({
             </span>
             <Input
               name="code"
+              ref={codeRef}
               value={code}
               onChange={(event) =>
                 setCode(event.target.value.replace(/\D/g, "").slice(0, 6))
               }
               inputMode="numeric"
               autoComplete="one-time-code"
-              placeholder="Enter the code"
+              placeholder="Enter OTP"
               maxLength={6}
               className="text-center text-lg tracking-[0.4em]"
               required
@@ -540,14 +568,15 @@ export function LoginForm({
             </label>
           ) : null}
 
+          <p className="text-xs text-muted-foreground">The code is 4 to 6 digits. Codes expire after five minutes. You have up to five verification attempts; email resend limit is five.</p>
           <Button
             type="submit"
             className="min-h-11 w-full md:min-h-9"
             disabled={
               busy ||
               Boolean(errorCode && RESTART_ERRORS.has(errorCode)) ||
-              code.length < 6 ||
-              (attempt.requiresSecondFactor === true && secondCode.length < 6)
+              code.length < 4 ||
+              (attempt.requiresSecondFactor === true && secondCode.length < 4)
             }
           >
             {busy ? "Verifying…" : "Verify and sign in"}
@@ -567,10 +596,10 @@ export function LoginForm({
               <Button variant="ghost"
                 type="button"
                 onClick={() => void sendEmailCode()}
-                disabled={busy || emailCooldown > 0}
+                disabled={busy || emailCooldown > 0 || emailResends>=5}
                 className="inline-flex min-h-11 items-center font-medium text-primary-text underline-offset-2 hover:underline disabled:text-muted-foreground disabled:no-underline md:min-h-9"
               >
-                {emailCooldown>0?`Email another code in ${emailCooldown}s`:"Get the code by email"}
+                {emailResends>=5?"Email resend limit reached":emailCooldown>0?`Email another code in ${emailCooldown}s`:"Email me instead"}
               </Button>
             ) : null}
           </div>

@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,eq} from "drizzle-orm";
+import {and,asc,desc,eq,gt,inArray} from "drizzle-orm";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
@@ -11,6 +11,7 @@ import {activityEvents,collegeMemberships,learnerProfiles,placementApplications,
  placementApplicationStatusHistory,placementJobRoleOptions,placementJobs,
  placementJobRounds,placementOffers,users} from "@/db/schema";
 import {placementApplicationNotes} from "@/db/schema/placement-application-notes";
+import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
 import {placementCollegeApplicationStages,placementCollegeApplicationStageHistory}
  from "@/db/schema/placement-college-application-stages";
 import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -29,7 +30,9 @@ async function scoped(ctx:RequestContext,rawJobId:unknown,rawId:unknown){
   name:users.displayName,email:users.email,phone:users.phoneE164,
   membershipId:collegeMemberships.id,rollNumber:learnerProfiles.rollNumber,
   role:placementJobRoleOptions.title,
-  source:placementApplications.channel,status:placementApplications.status,
+  source:placementApplications.channel,sourceProvider:placementApplications.sourceProvider,
+  papRequested:placementApplications.papRequested,
+  version:placementApplications.version,status:placementApplications.status,
   submittedAt:placementApplications.submittedAt,
   withdrawnAt:placementApplications.withdrawnAt,
   eligibilityStatus:placementApplications.eligibilityStatus,
@@ -46,8 +49,84 @@ async function scoped(ctx:RequestContext,rawJobId:unknown,rawId:unknown){
  if(!application)throw Error("Application not found in this college drive");
  return {collegeId,jobId,application};
 }
-export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown,id:unknown){
+/** All-job, college-scoped learner summary backing legacy AdminJobController.
+ * The caller must have a selected college, and both membership and each job
+ * are filtered by that college. Future interview slots are read separately
+ * and joined by application ID, not by a cross-tenant learner email.
+ */
+export async function getCollegeLearnerPlacementSummary(
+ ctx:RequestContext,rawMembershipId:unknown,
+){
+ const collegeId=await requireCollegePlacementAdmin(ctx);
+ const membershipId=uuid.parse(rawMembershipId);
+ const db=getDb();
+ const [member]=await db.select({id:collegeMemberships.id})
+  .from(collegeMemberships).where(and(
+   eq(collegeMemberships.id,membershipId),
+   eq(collegeMemberships.collegeId,collegeId))).limit(1);
+ if(!member)throw Error("Learner not found in this college");
+ const portfolio=await db.select({
+  id:placementApplications.id,jobId:placementApplications.jobId,
+  job:placementJobs.title,role:placementJobRoleOptions.title,
+  status:placementApplications.status,
+  submittedAt:placementApplications.submittedAt,
+ }).from(placementApplications)
+  .innerJoin(placementJobs,and(eq(placementJobs.id,placementApplications.jobId),
+   eq(placementJobs.collegeId,collegeId)))
+  .innerJoin(placementJobRoleOptions,
+   eq(placementJobRoleOptions.id,placementApplications.roleOptionId))
+  .where(eq(placementApplications.membershipId,membershipId))
+  .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id))
+  .limit(501);
+ const applications=portfolio.slice(0,500);
+ if(!applications.length)
+  return {membershipId,applications:[],hasMore:false};
+ const upcoming=await db.select({
+  applicationId:placementRoundCandidateSlots.applicationId,
+  slotId:placementRoundCandidateSlots.id,
+  startsAt:placementRoundCandidateSlots.startsAt,
+  endsAt:placementRoundCandidateSlots.endsAt,
+  room:placementRoundCandidateSlots.room,
+  round:placementJobRounds.name,
+ }).from(placementRoundCandidateSlots)
+  .innerJoin(placementApplications,and(
+   eq(placementApplications.id,placementRoundCandidateSlots.applicationId),
+   eq(placementApplications.membershipId,membershipId)))
+  .innerJoin(placementJobs,and(
+   eq(placementJobs.id,placementApplications.jobId),
+   eq(placementJobs.collegeId,collegeId),
+   eq(placementJobs.id,placementRoundCandidateSlots.jobId)))
+  .innerJoin(placementJobRounds,and(
+   eq(placementJobRounds.id,placementRoundCandidateSlots.roundId),
+   eq(placementJobRounds.jobId,placementJobs.id),
+   eq(placementJobRounds.kind,"INTERVIEW")))
+  .where(and(
+   inArray(placementRoundCandidateSlots.applicationId,applications.map(row=>row.id)),
+   eq(placementRoundCandidateSlots.status,"BOOKED"),
+   gt(placementRoundCandidateSlots.startsAt,new Date())))
+  .orderBy(asc(placementRoundCandidateSlots.startsAt),asc(placementRoundCandidateSlots.id))
+  .limit(501);
+ const nextByApplication=new Map<string,(typeof upcoming)[number]>();
+ for(const slot of upcoming)if(slot.applicationId&&!nextByApplication.has(slot.applicationId))
+  nextByApplication.set(slot.applicationId,slot);
+ return {
+  membershipId,hasMore:portfolio.length>500,upcomingTruncated:upcoming.length>500,
+  applications:applications.map(row=>({
+   ...row,
+   nextInterview:nextByApplication.get(row.id)??null,
+  })),
+ };
+}
+
+/** History page is 0-based for the backend-compatible status-history reader.
+ * Every date tie is ordered by immutable row UUID; pages preserve ASC legacy
+ * sequence without silently truncating after the first hundred events. */
+export async function getCollegeApplicationDetail(
+ ctx:RequestContext,job:unknown,id:unknown,rawHistoryPage:unknown=0,
+){
+ const historyPage=z.coerce.number().int().min(0).max(100000).parse(rawHistoryPage);
  const {application,jobId}=await scoped(ctx,job,id);
+ const learnerPortfolio=await getCollegeLearnerPlacementSummary(ctx,application.membershipId);
  const db=getDb();
  const [screening,history,stage,notes,rounds,offers]=await Promise.all([
   db.select().from(placementApplicationScreenings)
@@ -57,16 +136,20 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
     when:placementApplicationStatusHistory.createdAt})
     .from(placementApplicationStatusHistory)
     .where(eq(placementApplicationStatusHistory.applicationId,application.id))
-    .orderBy(asc(placementApplicationStatusHistory.createdAt)).limit(100),
+    .orderBy(asc(placementApplicationStatusHistory.createdAt),
+      asc(placementApplicationStatusHistory.id))
+    .limit(101).offset(historyPage*100),
   db.select().from(placementCollegeApplicationStages)
     .where(and(eq(placementCollegeApplicationStages.jobId,jobId),
       eq(placementCollegeApplicationStages.applicationId,application.id))).limit(1),
   db.select({id:placementApplicationNotes.id,body:placementApplicationNotes.body,
-    createdAt:placementApplicationNotes.createdAt})
+    createdAt:placementApplicationNotes.createdAt,
+    authorUserId:placementApplicationNotes.authorUserId})
     .from(placementApplicationNotes)
     .where(and(eq(placementApplicationNotes.applicationId,application.id),
       eq(placementApplicationNotes.side,"TPO")))
-    .orderBy(desc(placementApplicationNotes.createdAt)).limit(100),
+    .orderBy(desc(placementApplicationNotes.createdAt),
+      desc(placementApplicationNotes.id)).limit(101),
   db.select({id:placementJobRounds.id,name:placementJobRounds.name,
     testUrl:placementJobRounds.testUrl,scheduledAt:placementJobRounds.scheduledAt})
     .from(placementJobRounds).where(and(eq(placementJobRounds.jobId,jobId),
@@ -99,18 +182,35 @@ export async function getCollegeApplicationDetail(ctx:RequestContext,job:unknown
     when:placementCollegeApplicationStageHistory.movedAt})
     .from(placementCollegeApplicationStageHistory)
     .where(eq(placementCollegeApplicationStageHistory.stageId,stage[0].id))
-    .orderBy(asc(placementCollegeApplicationStageHistory.movedAt)).limit(100):[],
+    .orderBy(asc(placementCollegeApplicationStageHistory.movedAt),
+      asc(placementCollegeApplicationStageHistory.id)).limit(101):[],
   db.select({from:placementApplicationScreeningHistory.fromStatus,
    to:placementApplicationScreeningHistory.toStatus,
    reason:placementApplicationScreeningHistory.candidateMessage,
    when:placementApplicationScreeningHistory.createdAt})
    .from(placementApplicationScreeningHistory)
    .where(eq(placementApplicationScreeningHistory.applicationId,application.id))
-   .orderBy(asc(placementApplicationScreeningHistory.createdAt)).limit(100),
+   .orderBy(asc(placementApplicationScreeningHistory.createdAt),
+     asc(placementApplicationScreeningHistory.id)).limit(101),
  ]);
- return {application,screening:screening[0]??null,
-  stage:stage[0]?.stage??null,stageHistory,screeningHistory,history,
-  notes,rounds,offers,
+ const rejectionReason=stageHistory.filter(row=>row.to==="REJECTED").at(-1)?.reason??
+    screeningHistory.filter(row=>row.to==="REJECTED").at(-1)?.reason??null;
+ const latestNote=notes[0]??null;
+ return {application:{...application,rejectionReason},learnerPortfolio,
+  screening:screening[0]??null,
+  stage:stage[0]?.stage??null,stageHistory:stageHistory.slice(0,100),
+  screeningHistory:screeningHistory.slice(0,100),
+  history:history.slice(0,100),
+  historyPagination:{page:historyPage,pageSize:100,hasMore:history.length>100,
+   nextPage:history.length>100?historyPage+1:null},
+  historyTruncated:history.length>100,
+  stageHistoryHasMore:stageHistory.length>100,
+  screeningHistoryHasMore:screeningHistory.length>100,
+  notes:notes.slice(0,100),notesHasMore:notes.length>100,
+  internalNotes:latestNote?.body??null,
+  internalNoteVersion:latestNote?.id??null,
+  offerLetterUrl:offers.at(-1)?.offerLetterUrl??null,
+  rounds,offers,
   scoring:{available:false,reason:"No persisted screening score is available for this application."},
   resume:{available:Boolean(resumeUrl),url:resumeUrl,
    reason:resumeUrl?"Open the verified resume through the authorized document route.":
@@ -218,4 +318,49 @@ export async function rescreenCollegeApplication(ctx:RequestContext,job:unknown,
   return {status:result.status,checks:result.checks,
    override:result.override,reviewedAt:new Date().toISOString()};
  });
+}
+
+
+/** Global status reports must not query each application individually. The
+ * IDs may be on several drives, but every returned row joins an application
+ * and a job in the signed acting college. A missing/foreign ID yields no row,
+ * not a cross-tenant existence oracle. Sorting is application, time, UUID. */
+const batchHistoryInput=z.strictObject({
+ applicationIds:z.array(z.string().uuid()).min(1).max(100)
+  .refine(ids=>new Set(ids).size===ids.length),
+ newStatus:z.string().trim().min(1).max(24).optional(),
+ page:z.number().int().min(0).max(100000).default(0),
+ size:z.number().int().min(1).max(500).default(100),
+});
+export async function listCollegeApplicationStatusHistoryBatch(
+ ctx:RequestContext,raw:unknown,
+){
+ const input=batchHistoryInput.parse(raw);
+ const collegeId=await requireCollegePlacementAdmin(ctx);
+ const rows=await getDb().select({
+  id:placementApplicationStatusHistory.id,
+  applicationId:placementApplicationStatusHistory.applicationId,
+  from:placementApplicationStatusHistory.fromStatus,
+  to:placementApplicationStatusHistory.toStatus,
+  reason:placementApplicationStatusHistory.reason,
+  when:placementApplicationStatusHistory.createdAt,
+ }).from(placementApplicationStatusHistory)
+ .innerJoin(placementApplications,eq(
+  placementApplications.id,placementApplicationStatusHistory.applicationId))
+ .innerJoin(placementJobs,and(
+  eq(placementJobs.id,placementApplications.jobId),
+  eq(placementJobs.collegeId,collegeId)))
+ .where(and(
+  inArray(placementApplicationStatusHistory.applicationId,input.applicationIds),
+  input.newStatus?eq(placementApplicationStatusHistory.toStatus,input.newStatus):undefined,
+ ))
+ .orderBy(asc(placementApplicationStatusHistory.applicationId),
+   asc(placementApplicationStatusHistory.createdAt),
+   asc(placementApplicationStatusHistory.id))
+ .limit(input.size+1).offset(input.page*input.size);
+ return {
+  rows:rows.slice(0,input.size),
+  page:input.page,pageSize:input.size,
+  hasMore:rows.length>input.size,
+ };
 }

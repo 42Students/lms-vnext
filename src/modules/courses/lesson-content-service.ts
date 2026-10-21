@@ -7,6 +7,9 @@ import {
   or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {z} from "zod";
+import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
+import {resourceMaterialLinkSchema,resourceMaterialsWriteReady} from "./lesson-resource-materials-model";
 import { lockLiveLessonWriteAncestry } from "./lesson-write-ancestry";
 import { lessonContentOrderRuntimeEnabled } from "./lesson-content-order-readiness";
 // Learner-only visibility helper is dynamically loaded below; browser seed uses this service without it.
@@ -106,6 +109,7 @@ function normalizedContentValues(
     deliveryId: input.deliveryId ?? null,
     contentType: input.contentType,
     title: input.title,
+    visibleToStudents:input.visibleToStudents??true,
     points: input.points,
     notes: input.notes ?? null,
     externalUrl: null as string | null,
@@ -169,6 +173,7 @@ function mergedContentInput(
     lessonId: current.lessonId,
     deliveryId: current.deliveryId,
     title: input.title ?? current.title,
+    visibleToStudents:input.visibleToStudents??current.visibleToStudents,
     points: input.points ?? current.points,
     sequence:
       input.sequence ?? current.sequence,
@@ -406,12 +411,22 @@ export async function listLessonContents(
 
 export async function createLessonContent(
   context: RequestContext,
-  rawInput: CreateLessonContentInput,
+  rawInput: CreateLessonContentInput & {resourceMaterials?:unknown;resource_materials?:unknown},
 ) {
-  const input =
-    createLessonContentInputSchema.parse(
-      rawInput,
-    );
+  // Legacy RESOURCE can create several link materials in one atomic mutation.
+  // FILE children must pass the private upload + scan flow independently.
+  const materialSource=rawInput.resourceMaterials??rawInput.resource_materials;
+  const materialLinks=materialSource===undefined?[]:z.array(
+    resourceMaterialLinkSchema.extend({kind:z.literal("LINK").default("LINK")})
+  ).max(20).parse(materialSource);
+  if(materialLinks.length&&!resourceMaterialsWriteReady())
+    throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
+  if(materialLinks.length&&rawInput.contentType!=="RESOURCE")
+    throw new CoursesServiceError("CONTENT_TYPE_SHAPE_INVALID");
+  const normalizedRaw=materialLinks.length&&rawInput.contentType==="RESOURCE"&&
+    !rawInput.notes&&!rawInput.externalUrl&&!rawInput.storageKey
+      ?{...rawInput,notes:"Resource materials"}:rawInput;
+  const input=createLessonContentInputSchema.parse(normalizedRaw);
   const lesson =
     await loadCourseLessonScope(
       input.lessonId,
@@ -467,7 +482,14 @@ export async function createLessonContent(
         ),
       )
       .returning();
-
+    if(materialLinks.length)await tx.insert(lessonContentMaterials).values(
+      materialLinks.map((material,index)=>({
+        lessonContentId:created.id,kind:"LINK",
+        title:material.title,notes:material.notes,
+        externalUrl:material.externalUrl,sequence:index,
+        createdByUserId:context.user.id,uploadStatus:"READY",scanStatus:"PENDING",
+      })),
+    );
     return created;
   });
 }
@@ -510,6 +532,7 @@ export async function updateLessonContent(
     .update(lessonContents)
     .set({
       title: normalized.title,
+      visibleToStudents:normalized.visibleToStudents,
       points: normalized.points,
       notes: normalized.notes,
       externalUrl: normalized.externalUrl,

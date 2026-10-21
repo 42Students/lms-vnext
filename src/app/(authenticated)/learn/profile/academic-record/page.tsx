@@ -20,13 +20,24 @@ export default async function LearnerAcademicRecordPage(){
  ]);
  const evidence = evidenceResult.value;
  const provenance = evidence?.source === "VERIFIED"
-   ? "College-verified placement evidence" : evidence ? "Learner-provided placement evidence" : null;
+   ? "Verified" : evidence ? "Self-reported" : null;
+ const provenanceDetail=evidence?.source==="VERIFIED"
+   ? "College-verified placement evidence" : evidence?"Learner-provided placement evidence":null;
+ const recordedAt=(value:Date|null|undefined)=>value?
+  new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST":
+  "Not recorded";
+ const importBatchId=typeof evidence?.sourceMetadata?.importBatchId==="string"
+   ?evidence.sourceMetadata.importBatchId:null;
  const scores = evidence ? [
   {label:"CGPA",value:evidence.cgpa,suffix:""},
   {label:"10th percentage",value:evidence.tenthPercentage,suffix:"%"},
   {label:"12th percentage",value:evidence.twelfthPercentage,suffix:"%"},
   {label:"Diploma percentage",value:evidence.diplomaPercentage,suffix:"%"},
   {label:"Undergraduate percentage",value:evidence.undergraduatePercentage,suffix:"%"},
+  {label:"Active backlogs",value:evidence.activeBacklogs,suffix:""},
+  {label:"Past backlogs",value:evidence.pastBacklogs,suffix:""},
+  {label:"Gap years",value:evidence.gapYears,suffix:""},
+  {label:"Passing year",value:evidence.passingYear,suffix:""},
  ] : [];
  const scoreLabel=(value:number|null,suffix:string) =>
   value===null||!Number.isFinite(value) ? "Not recorded" :
@@ -78,6 +89,27 @@ export default async function LearnerAcademicRecordPage(){
       <dd className="mt-1 text-sm font-semibold tabular-nums text-foreground">{scoreLabel(row.value,row.suffix)}</dd>
       {row.value!==null ? <dd className="mt-1 text-xs text-muted-foreground">{provenance}</dd> : null}
      </div>)}
+     <div className="border-b border-border pb-3">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lateral entry</dt>
+      <dd className="mt-1 text-sm font-semibold text-foreground">{evidence.isLateralEntry?"Yes":"No"}</dd>
+      <dd className="mt-1 text-xs text-muted-foreground">{provenanceDetail}</dd>
+     </div>
+     <div className="border-b border-border pb-3">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender</dt>
+      <dd className="mt-1 text-sm text-foreground">Not recorded in placement academic evidence</dd>
+     </div>
+     <div className="border-b border-border pb-3">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Imported at</dt>
+      <dd className="mt-1 text-sm tabular-nums text-foreground">{recordedAt(evidence.importedAt)}</dd>
+     </div>
+     <div className="border-b border-border pb-3">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last updated</dt>
+      <dd className="mt-1 text-sm tabular-nums text-foreground">{recordedAt(evidence.updatedAt)}</dd>
+     </div>
+     {importBatchId?<div className="border-b border-border pb-3">
+      <dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Import batch reference</dt>
+      <dd className="mt-1 break-all text-xs text-foreground">{importBatchId}</dd>
+     </div>:null}
     </dl>
    </>}
    <p className="mt-4 max-w-3xl text-xs leading-5 text-muted-foreground">

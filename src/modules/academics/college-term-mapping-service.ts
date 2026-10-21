@@ -240,6 +240,8 @@ export async function updateCollegeTermMapping(
         id: programTermCourses.id,
         displayOrder: programTermCourses.displayOrder,
         credits: programTermCourses.credits,
+        type: programTermCourses.type,
+        legacyIsMandatory: programTermCourses.legacyIsMandatory,
       }).from(programTermCourses)
         .where(eq(programTermCourses.programTermId, subject.termId))
         .orderBy(asc(programTermCourses.displayOrder), asc(programTermCourses.id))
@@ -249,16 +251,27 @@ export async function updateCollegeTermMapping(
       // vNext reorders one scoped mapping by a 1-based position, not by
       // replacing all mappingIds. A full-list legacy reorder adapter would
       // need its own validated set-equality contract and endpoint.
-      if (input.position > before.length)
+      const position = input.position ?? current.displayOrder;
+      const credits = input.credits ?? current.credits;
+      // Imported mandatory-flag and CORE/ELECTIVE are distinct persisted
+      // values. Only an explicit legacy edit changes both together.
+      const type = input.isMandatory !== undefined
+        ? input.isMandatory ? "CORE" : "ELECTIVE"
+        : input.type ?? current.type;
+      const isMandatory = input.isMandatory !== undefined
+        ? input.isMandatory : current.legacyIsMandatory;
+      if (position > before.length)
         throw new CollegeTermMappingError("TERM_COURSE_POSITION_INVALID");
-      const order = reorderTermCourseIds(before.map(row => row.id), mappingId, input.position);
+      const order = reorderTermCourseIds(before.map(row => row.id), mappingId, position);
       for (const [index, id] of order.entries()) {
         const row = before.find(item => item.id === id)!;
-        if (row.displayOrder !== index + 1 || (id === mappingId && row.credits !== input.credits)) {
+        if (row.displayOrder !== index + 1 || (id === mappingId &&
+          (row.credits !== credits || row.type !== type ||
+            row.legacyIsMandatory !== isMandatory))) {
           await tx.update(programTermCourses)
             .set({
               displayOrder: index + 1,
-              ...(id === mappingId ? { credits: input.credits } : {}),
+              ...(id === mappingId ? { credits, type, legacyIsMandatory: isMandatory } : {}),
               updatedAt: new Date(),
             })
             .where(and(eq(programTermCourses.id, id),
@@ -271,15 +284,17 @@ export async function updateCollegeTermMapping(
         subjectType: "program_term_course", subjectId: mappingId,
         summary: "Semester course mapping updated",
         metadata: {
-          action: current.displayOrder !== input.position ? "SEMESTER_COURSE_REORDER" : "SEMESTER_COURSE_UPDATE",
+          action: current.displayOrder !== position ? "SEMESTER_COURSE_REORDER" : "SEMESTER_COURSE_UPDATE",
           termId: subject.termId,
           fromCredits: current.credits,
-          toCredits: input.credits,
+          toCredits: credits,
+          fromType: current.type, toType: type,
+          fromMandatory: current.legacyIsMandatory, toMandatory: isMandatory,
           fromOrder: current.displayOrder,
-          toOrder: input.position,
+          toOrder: position,
         },
       });
-      return { id: mappingId, credits: input.credits, displayOrder: input.position };
+      return { id: mappingId, credits, type, isMandatory, displayOrder: position };
     });
   } catch (error) { return mapConflict(error); }
 }
@@ -336,18 +351,15 @@ export async function removeCollegeTermMapping(
 
 /** Atomically add several courses to one semester, preserving display order.
  * A failed eligibility or duplicate check rolls back all selected courses.
- * This intentionally differs from old partial-success duplicate skipping:
- * return a clear conflict rather than silently omitting selected courses.
- * The UI/route must surface the all-or-nothing contract before confirmation.
+ * Validate all IDs before mutation, then skip duplicates idempotently.
+ * No preexisting mapping type or credit is changed by a repeated selection.
  */
 export async function addCollegeTermMappings(context: RequestContext, raw: unknown) {
   const inputs = z.array(collegeTermCourseAddSchema).min(1).max(100).parse(raw);
   const targetTerm = inputs[0]!.programTermId;
   if (inputs.some(input => input.programTermId !== targetTerm))
     throw new CollegeTermMappingError("TERM_BULK_MIXED_SEMESTERS");
-  const courseIds = inputs.map(input => input.courseId);
-  if (new Set(courseIds).size !== courseIds.length)
-    throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
+  const courseIds = [...new Set(inputs.map(input => input.courseId))];
   const member = await ownCollege(context);
   try {
     return await getDb().transaction(async tx => {
@@ -364,27 +376,27 @@ export async function addCollegeTermMappings(context: RequestContext, raw: unkno
       const existing = await tx.select({ courseId: programTermCourses.courseId,
         displayOrder: programTermCourses.displayOrder }).from(programTermCourses)
         .where(eq(programTermCourses.programTermId, term.id)).for("update");
-      // The old backend silently skipped duplicates; vNext deliberately
-      // keeps the batch all-or-nothing so callers can retry a clean selection
-      // without assuming that every requested course was inserted.
-      if (existing.some(row => courseIds.includes(row.courseId)))
-        throw new CollegeTermMappingError("TERM_COURSE_DUPLICATE");
+      // Keep the current mapping metadata and skip already mapped IDs.
+      // The term lock serializes competing bulk edits, so this is idempotent.
+      const mappedIds=new Set(existing.map(row=>row.courseId));
       let next = nextTermCourseOrder(existing.map(row => row.displayOrder));
       const inserted = [];
       for (const input of inputs) {
+        if(mappedIds.has(input.courseId))continue;
         const [row] = await tx.insert(programTermCourses).values({
           programTermId: term.id, courseId: input.courseId, type: input.type,
           credits: input.credits, displayOrder: next++,
         }).returning();
         if (!row) throw new CollegeTermMappingError("TERM_COURSE_INSERT_FAILED");
         inserted.push(row);
+        mappedIds.add(input.courseId);
       }
-      await recordActivityEventInTransaction(tx, context, {
+      if(inserted.length)await recordActivityEventInTransaction(tx, context, {
         eventType: ACTIVITY_EVENT_TYPES.ACADEMICS_SEMESTER_UPDATED,
         collegeId: member.collegeId, organizationId: member.organizationId,
         subjectType: "program_term", subjectId: term.id,
         summary: "Courses mapped to semester",
-        metadata: { action: "SEMESTER_COURSE_ADD", courseIds, count: inserted.length, atomic: true },
+        metadata: { action: "SEMESTER_COURSE_ADD", courseIds:inserted.map(row=>row.courseId), count:inserted.length, skipped:inputs.length-inserted.length, atomic:true },
       });
       return inserted;
     });

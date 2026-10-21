@@ -69,12 +69,24 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
     status: sections.status,
     updatedAt: sql<Date>`${sections.updatedAt}`.mapWith(sections.updatedAt).as("section_updated_at"),
     capacity: sections.capacity,
+    minSize: sections.minSize,
     description: sections.description,
+    canDelete: sql<boolean>`NOT EXISTS (
+      SELECT 1 FROM ${sectionEnrollments} WHERE ${sectionEnrollments.sectionId} = ${sections.id}
+    ) AND NOT EXISTS (
+      SELECT 1 FROM ${sectionFacultyAssignments} WHERE ${sectionFacultyAssignments.sectionId} = ${sections.id}
+    ) AND NOT EXISTS (
+      SELECT 1 FROM ${sectionScheduleEvents} WHERE ${sectionScheduleEvents.sectionId} = ${sections.id}
+    ) AND NOT EXISTS (
+      SELECT 1 FROM ${courseSectionDeliveries} WHERE ${courseSectionDeliveries.sectionId} = ${sections.id}
+    )`.as("class_can_delete"),
     programId: sql<string | null>`${programs.id}`.as("class_program_id"),
     linkedProgramId: sql<string | null>`${cohorts.programId}`.as("linked_class_program_id"),
     programName: sql<string | null>`${programs.name}`.as("class_program_name"),
     cohortName: sql<string | null>`${cohorts.name}`.as("class_cohort_name"),
     periodName: sql<string>`${academicPeriods.name}`.as("class_period_name"),
+    periodStart: academicPeriods.startDate,
+    periodEnd: academicPeriods.endDate,
   }).from(sections)
     // The college-owned academic period anchors damaged imported class links;
     // a broken cohort/program can still be shown, never a foreign college's class.
@@ -162,6 +174,9 @@ export async function listCollegeClasses(context: RequestContext, raw: unknown) 
   const countById = new Map(counts.map(item => [item.sectionId, item.enrolled]));
   const items = baseRows.map(item => ({
     ...item,
+    // Owned academic periods keep orphan imported sections visible.
+    programName: item.programName ?? "Name unavailable (ID "+(item.linkedProgramId??"unknown")+")",
+    cohortName: item.cohortName ?? "Name unavailable (ID "+(item.cohortId??"unknown")+")",
     activeLearners: enrollmentCountsAvailable ? countById.get(item.id) ?? 0 : null,
   }));
   const total = totals[0]?.total ?? 0;
@@ -182,6 +197,12 @@ export async function listCollegeElectives(context: RequestContext, raw: unknown
     name: electiveSlots.name,
     semesterNumber: electiveSlots.semesterNumber,
     academicYear: electiveSlots.academicYear,
+    academicPeriodId: electiveSlots.academicPeriodId,
+    hasEnrollmentHistory: sql<boolean>`exists (
+      select 1 from elective_offerings eo where eo.slot_id = ${electiveSlots.id}
+      and (exists (select 1 from lms_group_members gm where gm.group_id=eo.group_id)
+        or exists (select 1 from lms_group_member_events ev where ev.group_id=eo.group_id))
+    )`.as("elective_has_enrollment_history"),
     credits: electiveSlots.credits,
     description: electiveSlots.description,
     version: electiveSlots.version,

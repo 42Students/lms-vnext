@@ -17,9 +17,15 @@ export async function updateOwnRecruiterProfileDetails(context:RequestContext,ra
  requirePermission(context,"identity.self.manage");
  if(!hasActiveRecruiter(context)||context.recruiter?.userId!==context.user.id)
   throw new AuthorizationError("identity.self.manage");
+ // The older employer form edited first and last names independently. The
+ // canonical user row stores one displayName, so reject excess combined length
+ // instead of truncating either field (which would lose identity information).
  const name=joinHrRecruiterName(input.firstName,input.lastName);
  const title=normalizeRecruiterDesignation(input.title);
- const phone=input.phone.replace(/\D/g,"").slice(-10);
+ const phone=input.phone.trim().startsWith("+91")
+  ?input.phone.trim().slice(3):input.phone.trim();
+ if(phone&&!/^[0-9]{10}$/.test(phone))
+  throw new PlacementsServiceError("PLACEMENT_RECRUITER_PROFILE_STALE");
  const contactReady=await placementTableExists("placement_recruiter_public_contacts");
  // Empty phone is a valid clear operation only when the contact table exists;
  // never accidentally overwrite identity provider phone_e164 login credentials.

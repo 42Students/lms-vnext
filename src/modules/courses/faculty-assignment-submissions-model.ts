@@ -31,6 +31,35 @@ export function selectFacultyAssignmentSubmissions<T extends {
   ).slice().sort((a,b)=>b.submittedAt.getTime()-a.submittedAt.getTime() || (a.id??"").localeCompare(b.id??""));
 }
 
+/** Legacy AssignmentController expects both 0-based page and size or
+ * neither. A missing pair returns at most 50 rows; an explicit pair is
+ * bounded to 100. The vNext report uses 1-based 20-row UI pagination.
+ * The authenticated resolver must map lessonContentId to a scoped
+ * assignmentId and deliveryId before calling this helper.
+ */
+export const facultyLegacySubmissionPagingSchema=z.strictObject({
+ page:z.coerce.number().int().min(0).max(9999).optional(),
+ size:z.coerce.number().int().min(1).max(100).optional(),
+}).superRefine((value,ctx)=>{
+ if((value.page===undefined)!==(value.size===undefined))
+  ctx.addIssue({code:"custom",path:["page"],message:"Provide both page and size"});
+});
+export function facultyLegacySubmissionPageWindow(raw:unknown,total:number){
+ const parsed=facultyLegacySubmissionPagingSchema.parse(raw);
+ if(!Number.isSafeInteger(total)||total<0)throw new Error("Invalid submission count");
+ if(parsed.page===undefined||parsed.size===undefined)
+  return {page:0,size:Math.min(50,total),total,offset:0,unpaged:true as const};
+ const offset=parsed.page*parsed.size;
+ return {page:parsed.page,size:parsed.size,total,offset,unpaged:false as const};
+}
+export function facultySubmissionStudentPosition<T extends {id:string}>(
+ rows:readonly T[],selectedId:string|null,
+){
+ const index=Math.max(0,rows.findIndex(row=>row.id===selectedId));
+ return {index,display:rows.length?index+1:0,count:rows.length,
+  previous:rows.length&&index>0?rows[index-1]!.id:null,
+  next:rows.length&&index<rows.length-1?rows[index+1]!.id:null};
+}
 /** SQL pagination contract for large, scoped assignment-submission reports.
  * The service must filter under the faculty's delivery/assignment permission,
  * run a matching COUNT query, then apply LIMIT/OFFSET before materializing
@@ -48,9 +77,9 @@ export function facultySubmissionSqlPageWindow(requested:number,total:number){
 }
 
 export function facultySubmissionListPage<T>(rows:readonly T[],requested:number) {
-  const total=rows.length,pageSize=20;
+  const total=rows.length,pageSize=FACULTY_SUBMISSION_SQL_PAGE_SIZE;
   const totalPages=Math.max(1,Math.ceil(total/pageSize));
-  const page=Math.min(requested,totalPages);
+  const page=Math.max(1,Math.min(Number.isSafeInteger(requested)?requested:1,totalPages));
   return {total,pageSize,totalPages,page,items:rows.slice((page-1)*pageSize,page*pageSize)};
 }
 

@@ -4,6 +4,7 @@ import { COLLEGE_COURSES_COPY } from "@/modules/courses/college-courses-copy";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 import {
   type FormEvent,
+  useEffect,
   useMemo,
   useState,
 } from "react";
@@ -105,13 +106,43 @@ export function AdminCourseCreatePanel({
 
   const copy=collegeCourseDuplicatePrefill(courses,duplicateCourseId);
   const [courseDepartmentId, setCourseDepartmentId] = useState(copy?.departmentId??"");
+  const [departmentSearch,setDepartmentSearch]=useState("");
+  const [copyAnnouncement,setCopyAnnouncement]=useState(Boolean(copy));
+  useEffect(()=>{
+    if(!duplicateCourseId||!copy)return;
+    setCopyAnnouncement(true);
+    const courseField=document.getElementById("course-name");
+    courseField?.scrollIntoView({block:"center",behavior:"smooth"});
+    courseField?.focus({preventScroll:true});
+  },[duplicateCourseId,copy?.id]);
   const [courseName, setCourseName] = useState(copy?.name??"");
   const [courseCode, setCourseCode] = useState(copy?.code??"");
   const duplicated=courses.find(course=>course.id===duplicateCourseId);
-  const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,64));
+  const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,120));
   const [officialCode,setOfficialCode]=useState((duplicated?.officialCode??"").slice(0,40));
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
+  const takeawayItems=takeaways.split(/\r?\n/).filter(item=>item.trim().length>0);
+  function updateTakeaway(index:number,value:string){
+    setTakeaways(current=>{
+      const items=current.split(/\r?\n/).filter(item=>item.trim().length>0);
+      items[index]=value;
+      return items.join("\n");
+    });
+  }
+  function removeTakeaway(index:number){
+    setTakeaways(current=>current.split(/\r?\n/).filter(item=>item.trim().length>0)
+      .filter((_,itemIndex)=>index!==itemIndex).join("\n"));
+  }
+  function moveTakeaway(index:number,direction:-1|1){
+    setTakeaways(current=>{
+      const items=current.split(/\r?\n/).filter(item=>item.trim().length>0);
+      const next=index+direction;
+      if(next<0||next>=items.length)return current;
+      [items[index],items[next]]=[items[next]!,items[index]!];
+      return items.join("\n");
+    });
+  }
   const [introductionHeading,setIntroductionHeading]=useState(duplicated?.introductionHeading??"In this Course");
   const [visibleToStudents,setVisibleToStudents]=useState(duplicated?.enabled??true);
   const superAdmin=courseBasePath.startsWith("/admin/");
@@ -198,8 +229,8 @@ export function AdminCourseCreatePanel({
     if (!courseName.trim()) issues.name = "Enter a course name";
     else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
     if (superAdmin && !shortTitle.trim()) issues.shortTitle = "Enter short display name";
-    else if (superAdmin && shortTitle.trim().length > 64)
-      issues.shortTitle = "Maximum 64 characters";
+    else if (superAdmin && shortTitle.trim().length > 120)
+      issues.shortTitle = "Maximum 120 characters";
     if (superAdmin && officialCode.trim().length > 40)
       issues.code = "Maximum 40 characters";
     if (!superAdmin && !courseCode.trim()) issues.code = "Enter course code";
@@ -318,17 +349,24 @@ export function AdminCourseCreatePanel({
           No departments in this college yet. Create a department before adding a course.{" "}
           <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
         </p>:null}
-        {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
+        {copy?<div role="status" aria-live="polite" className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}” — review the copy before creating it.</strong>
-          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" onClick={()=>router.replace(courseBasePath)}>Cancel copy</Button>
-          <p className="w-full text-xs text-muted-foreground leading-[20px]">Catalog name, code, department, description and available display metadata are copied. Images, course content, offerings and assignments are not copied. Review the code before saving.</p>
+          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
+            onClick={()=>{setCopyAnnouncement(false);router.replace(courseBasePath);}}>Cancel copy</Button>
+          <p className="w-full text-xs text-muted-foreground leading-[20px]">Copy of {copy.name}. Review the unique course code and display metadata. The new course will not inherit learners, offerings, or permissions.</p>
+          {copyAnnouncement?<p className="sr-only">Course metadata copied. The course name is ready to edit.</p>:null}
         </div>:null}
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-department">{COLLEGE_COURSES_COPY.departmentLabel}</FieldLabel>
+            <Input type="search" aria-label="Search departments" className="mb-2"
+              placeholder="Search departments" value={departmentSearch}
+              onChange={event=>setDepartmentSearch(event.target.value)}/>
             <Select id="course-department" value={courseDepartmentId} onChange={(event) => {setCourseDepartmentId(event.target.value);setCreateErrors(previous=>({...previous,department:undefined}));}} required>
-              <option value="">Select Department</option>
-              {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
+              <option value="">Select department</option>
+              {departments.filter(department=>department.id===courseDepartmentId||
+                department.name.toLocaleLowerCase("en-IN").includes(departmentSearch.trim().toLocaleLowerCase("en-IN")))
+                .map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
             {createErrors.department ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.department}</p> : null}
           </div>
@@ -340,23 +378,44 @@ export function AdminCourseCreatePanel({
           {superAdmin?<div className="grid gap-3 md:col-span-2 md:grid-cols-2">
             <div>
               <FieldLabel htmlFor="course-short-title">Short display name</FieldLabel>
-              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={64} placeholder="e.g. DSA" required />
+              <Input id="course-short-title" value={shortTitle} onChange={event=>{setShortTitle(event.target.value);setCreateErrors(previous=>({...previous,shortTitle:undefined}));}} maxLength={120} placeholder="e.g. DSA" required />
               {createErrors.shortTitle ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.shortTitle}</p> : null}
             </div>
             <div>
-              <FieldLabel htmlFor="course-official-code">Official course code (optional)</FieldLabel>
-              <Input id="course-official-code" value={officialCode} onChange={event=>{setOfficialCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} maxLength={40}/>
+              <FieldLabel htmlFor="course-official-code">Official course code</FieldLabel>
+              <Input id="course-official-code" value={officialCode} onChange={event=>{setOfficialCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} placeholder="e.g. CS101" maxLength={40}/>
               {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
             </div>
-            <div className="md:col-span-2">
-              <FieldLabel htmlFor="course-takeaways">Course takeaways (optional)</FieldLabel>
-              <Textarea id="course-takeaways" value={takeaways}
-                onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
+            <div className="md:col-span-2 space-y-2" role="group" aria-label="In this Course – Takeaways">
+              <FieldLabel htmlFor="course-takeaways-add">In this Course – Takeaways</FieldLabel>
+              {takeawayItems.length? <ol className="space-y-2">
+                {takeawayItems.map((item,index)=><li key={index} className="flex min-w-0 flex-wrap items-center gap-2">
+                  <span className="text-xs text-muted-foreground">{index+1}.</span>
+                  <Input aria-label={"Takeaway "+(index+1)} value={item} className="min-w-0 flex-1"
+                    maxLength={240} onChange={event=>updateTakeaway(index,event.target.value)}/>
+                  <Button type="button" variant="ghost" disabled={index===0}
+                    aria-label={"Move takeaway "+(index+1)+" up"} onClick={()=>moveTakeaway(index,-1)}>↑</Button>
+                  <Button type="button" variant="ghost" disabled={index===takeawayItems.length-1}
+                    aria-label={"Move takeaway "+(index+1)+" down"} onClick={()=>moveTakeaway(index,1)}>↓</Button>
+                  <Button type="button" variant="ghost"
+                    aria-label={"Remove takeaway "+(index+1)} onClick={()=>removeTakeaway(index)}>Remove</Button>
+                </li>)}
+              </ol>:<p className="text-xs text-muted-foreground">Add the key points students will learn.</p>}
+              <Button id="course-takeaways-add" type="button" variant="secondary"
+                disabled={takeawayItems.length>=20 || takeaways.length>=1960}
+                onClick={()=>setTakeaways(current=>current.trim()?current.trimEnd()+"\nNew takeaway":"New takeaway")}>
+                Add takeaway
+              </Button>
             </div>
             <div>
               <FieldLabel htmlFor="course-card-color">Card colour</FieldLabel>
-              <Input id="course-card-color" value={cardColor} onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>({...previous,cardColor:undefined}));}}
-                maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="Optional #RRGGBB"/>
+              <div className="flex flex-wrap items-center gap-3">
+                <Input id="course-card-color" value={cardColor} onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>({...previous,cardColor:undefined}));}}
+                  maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="Optional #RRGGBB" className="min-w-0 flex-1"/>
+                <Input type="color" aria-label="Choose card colour" className="!h-11 !w-14 !p-1"
+                  value={/^#[0-9a-fA-F]{6}$/.test(cardColor)?cardColor:"#e4eef4"}
+                  onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>({...previous,cardColor:undefined}));}}/>
+              </div>
               {createErrors.cardColor ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.cardColor}</p> : null}
             </div>
           </div>:<div>
@@ -381,9 +440,17 @@ export function AdminCourseCreatePanel({
             <Checkbox checked={visibleToStudents} onChange={event=>setVisibleToStudents(event.target.checked)}/>
             Course visible to students
           </label>
+          {!visibleToStudents?<p role="status" className="md:col-span-2 text-sm text-warning">
+            Hidden from students. Only authorized staff can see this course until visibility is enabled.
+          </p>:null}
         </div>
         <div className="mt-4">
-          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending}>Create Course</Button>
+          <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending}
+            disabled={pending||departments.length===0||!courseDepartmentId||!courseName.trim()}>
+            <svg aria-hidden="true" viewBox="0 0 16 16" width="16" height="16" fill="none" className="mr-2 inline-block">
+              <path d="M8 2.5v11M2.5 8h11" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
+            </svg>Create Course
+          </Button>
         </div>
       </form>
 

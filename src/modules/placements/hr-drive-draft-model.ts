@@ -13,7 +13,7 @@ export const hrDriveDraftQuerySchema = z.strictObject({
 
 const round = z.strictObject({
   kind: z.enum(["TALK", "TEST", "VENDOR_TEST", "GD", "INTERVIEW"]),
-  name: z.string().trim().min(2).max(120)
+  name: z.string().trim().max(120)
    .refine(value=>!/[\x00-\x1f\x7f]/.test(value),{message:"Invalid round name"}),
 });
 export const hrDriveDraftSchema = z.strictObject({
@@ -42,7 +42,8 @@ export const hrDriveDraftSchema = z.strictObject({
   maximumActiveBacklogs: z.string().regex(/^\d{0,2}$/),
   branches: z.array(z.string().trim().min(1).max(120)).max(30).default([]),
   passingYear: z.string().regex(/^(?:|20\d{2})$/,"Enter a valid passing year").default(""),
-  rounds: z.array(round).max(12),
+  rounds: z.array(round).max(100,"At most 100 hiring rounds")
+   .transform(rows=>rows.filter(item=>item.name.trim().length>0)),
 }).superRefine((data, ctx) => {
   if(data.driveMode==="OFF_CAMPUS"&&!data.externalApplicationUrl){
     ctx.addIssue({code:"custom",path:["externalApplicationUrl"],
@@ -54,6 +55,10 @@ export const hrDriveDraftSchema = z.strictObject({
   }
   const uniqueRoundNames = new Set<string>();
   for (const [index, item] of data.rounds.entries()) {
+    if(item.name.length<2){
+      ctx.addIssue({code:"custom",path:["rounds",index,"name"],message:"Enter a round name"});
+      continue;
+    }
     const label = item.name.normalize("NFKC").trim().replace(/\s+/g," ").toLocaleLowerCase("en");
     if (uniqueRoundNames.has(label)) {
       ctx.addIssue({ code:"custom",path:["rounds",index,"name"],
@@ -71,11 +76,9 @@ export const hrDriveDraftSchema = z.strictObject({
   if (data.ctcLpa && Number(data.fixedLpa||0)+Number(data.variableLpa||0)>Number(data.ctcLpa)){
     ctx.addIssue({code:"custom",path:["fixedLpa"],message:"Fixed and variable add up to more than the CTC"});
   }
-  if (data.ctcLpa && (data.fixedLpa || data.variableLpa) &&
-      Number(data.fixedLpa||0)+Number(data.variableLpa||0)<Number(data.ctcLpa)-0.01) {
-    ctx.addIssue({code:"custom",path:["variableLpa"],
-      message:"Fixed and variable must add up to the total CTC"});
-  }
+  // Fixed and variable are optional detail components. Legacy allows them
+  // to total less than the advertised CTC (other components may be present);
+  // only prevent a claimed breakdown from exceeding the advertised package.
   const min = data.minimumAnnualCtcInr ? Number(data.minimumAnnualCtcInr) : null;
   const max = data.maximumAnnualCtcInr ? Number(data.maximumAnnualCtcInr) : null;
   if (data.bondMonths && Number(data.bondMonths) > 120) {

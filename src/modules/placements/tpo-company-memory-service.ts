@@ -321,7 +321,12 @@ export async function listTpoCompanies(
       activeContacts: group.leads.filter(
         (lead) => !["NOT_NOW"].includes(deriveOwnRecruiterLeadStage(lead, linkedJobs, driveRows)),
       ).length,
-      drivesRan: facts.plannedDriveCount,
+      driveCountsReady:countResult.ready,
+    driveCountsWarning:countResult.ready?null:
+      "Drive application counts are unavailable",
+    driveCountsError:countResult.ready?null:
+      "Could not load drive application counts.",
+    drivesRan: facts.plannedDriveCount,
       acceptedOfferDrives: facts.acceptedOfferDriveCount,
       confirmedJoinedDrives: facts.confirmedJoinedDriveCount,
       studentsPlaced:companyPlacedCount(driveRows,placedAt),
@@ -351,7 +356,10 @@ export async function getTpoCompanyMemory(
   const jobIds = group.jobs.map((row) => row.job.id);
   const driveRows = await loadDriveFacts(jobIds);
   const shareHistory=await listCompanyShareHistory(rows.collegeId,jobIds);
-  const driveCounts=await getCompanyDriveCounts(rows.collegeId,jobIds);
+  const countResult=await getCompanyDriveCounts(rows.collegeId,jobIds)
+    .then(value=>({ready:true as const,value}))
+    .catch(()=>({ready:false as const,value:null}));
+  const driveCounts=countResult.value;
   const facts = deriveCompanyDriveFacts(driveRows);
   const collegeRules=await getDb().select({placedAt:placementCollegeRules.countsAsPlacedAt})
    .from(placementCollegeRules).where(eq(placementCollegeRules.collegeId,rows.collegeId)).limit(1);
@@ -426,8 +434,9 @@ export async function getTpoCompanyMemory(
       jobTitle: job.title,
       companyName,
       status: job.status,
-      applied: driveCounts.get(job.id)?.applied??0,
-      offers: driveCounts.get(job.id)?.offers??0,
+      // Failed count queries are unknown, never inferred zero.
+      applied:driveCounts?.get(job.id)?.applied??null,
+      offers:driveCounts?.get(job.id)?.offers??null,
       createdAt: job.createdAt,
     })),
     drivesRan: facts.plannedDriveCount,

@@ -2,17 +2,20 @@ import {
   and,
   desc,
   eq,
+  inArray,
   sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {readLearnerPlaybackSettings} from "./learner-playback-settings";
 import {
   learnerContentProgress, collegeMemberships, membershipRoles, users,
+  lessonContents, courseLessons, courseLearningPaths,
 } from "@/db/schema";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { requireOwnCourseLearnerRead } from "./learner-access-guard";
+import { z } from "zod";
 import { manualContentCompletionGate } from "./learner-manual-completion-model";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -24,9 +27,11 @@ import {
 } from "./learning-access";
 import {
   loadLessonContentScope,
+  loadCourseSectionDeliveryScope,
 } from "./scope";
 import {
   lessonContentIdSchema,
+  courseSectionDeliveryIdSchema,
   saveLearnerContentProgressInputSchema,
   type SaveLearnerContentProgressInput,
 } from "./validation";
@@ -44,13 +49,16 @@ type ProgressContent = Awaited<
 >;
 
 type ProgressRow = {
+  attempt?: number;
   lastPositionSeconds: number;
   durationSeconds?: number;
   completedAt: Date | null;
+  firstCompletedAt?: Date | null;
 } | null;
 
 export type LearnerProgressView = {
   contentId: string;
+  attempt:number;
   status:
     | "NOT_STARTED"
     | "IN_PROGRESS"
@@ -59,6 +67,10 @@ export type LearnerProgressView = {
   durationSeconds: number;
   percentComplete: number;
   completedAt: Date | null;
+  firstCompletedAt: Date | null;
+  /** Legacy VIDEO/YOUTUBE copy, without altering vNext canonical status. */
+  legacyStatus: "WATCHED" | "IN_PROGRESS" | "NOT_STARTED";
+  percentWatched: number;
 };
 
 export function buildLearnerProgressView(
@@ -93,6 +105,7 @@ export function buildLearnerProgressView(
 
   return {
     contentId: content.id,
+    attempt:progress?.attempt??1,
     status: completedAt
       ? "COMPLETED"
       : lastPositionSeconds > 0 &&
@@ -103,6 +116,10 @@ export function buildLearnerProgressView(
     durationSeconds,
     percentComplete,
     completedAt,
+    firstCompletedAt: progress?.firstCompletedAt ?? completedAt,
+    legacyStatus: completedAt ? "WATCHED" : lastPositionSeconds > 0
+      ? "IN_PROGRESS" : "NOT_STARTED",
+    percentWatched: percentComplete,
   };
 }
 
@@ -185,6 +202,8 @@ async function loadProgressRow(
       durationSeconds: learnerContentProgress.durationSeconds,
       completedAt:
         learnerContentProgress.completedAt,
+      firstCompletedAt:
+        learnerContentProgress.firstCompletedAt,
     })
     .from(learnerContentProgress)
     .where(
@@ -233,6 +252,69 @@ export async function getLearnerContentProgress(
     settings.minInProgressPercent,
   );
 }
+
+/** A single authenticated batch read for a lesson/syllabus page (legacy cap: 500).
+ * The lesson, path, delivery, and visibility predicates are enforced in SQL;
+ * unpublished/disabled content is never returned.
+ */
+export async function listMyLearnerContentProgressBatch(
+ context:RequestContext,deliveryIdInput:string,rawIds:unknown,
+){
+ const deliveryId=courseSectionDeliveryIdSchema.parse(deliveryIdInput);
+ const contentIds=z.array(lessonContentIdSchema).max(500).parse(rawIds);
+ if(!contentIds.length)return [];
+ await requireOwnCourseLearnerRead(context);
+ const delivery=await loadCourseSectionDeliveryScope(deliveryId);
+ const access=await requireLearningReadAccess(context,delivery.offeringId,deliveryId);
+ if(access!=="LEARNER"||!context.membership)
+  throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
+ const uniqueIds=[...new Set(contentIds)];
+ const available=await getDb().select({
+  id:lessonContents.id,durationSeconds:lessonContents.durationSeconds,
+ }).from(lessonContents)
+  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(
+   inArray(lessonContents.id,uniqueIds),
+   eq(courseLearningPaths.offeringId,delivery.offeringId),
+   eq(courseLearningPaths.status,"PUBLISHED"),
+   eq(courseLessons.status,"ACTIVE"),eq(courseLessons.visibleToStudents,true),
+   sql`${courseLessons.deletedAt} is null`,
+   eq(lessonContents.status,"PUBLISHED"),eq(lessonContents.visibleToStudents,true),
+   eq(lessonContents.deletedWithLesson,false),
+   sql`${lessonContents.deletedAt} is null`,
+   sql`(${lessonContents.deliveryId} is null or ${lessonContents.deliveryId} = ${deliveryId})`,
+   sql`(${lessonContents.startsAt} is null or ${lessonContents.startsAt} <= now())`,
+  )).limit(500);
+ if(!available.length)return [];
+ const latest=await getDb().select({
+  contentId:learnerContentProgress.lessonContentId,
+  attempt:learnerContentProgress.attempt,
+  lastPositionSeconds:learnerContentProgress.lastPositionSeconds,
+  durationSeconds:learnerContentProgress.durationSeconds,
+  completedAt:learnerContentProgress.completedAt,
+  firstCompletedAt:learnerContentProgress.firstCompletedAt,
+ }).from(learnerContentProgress)
+  .where(and(eq(learnerContentProgress.membershipId,context.membership.id),
+   inArray(learnerContentProgress.lessonContentId,available.map(row=>row.id))))
+  .orderBy(desc(learnerContentProgress.attempt)).limit(5000);
+ const byContent=new Map<string,(typeof latest)[number]>();
+ for(const row of latest)if(!byContent.has(row.contentId))byContent.set(row.contentId,row);
+ const byId=new Map(available.map(content=>[content.id,content] as const));
+ const settings=await readLearnerPlaybackSettings(context.membership.collegeId);
+ return contentIds.flatMap(id=>{
+  const content=byId.get(id);
+  return content?[buildLearnerProgressView(content,byContent.get(id)??null,
+   settings.minInProgressPercent)]:[];
+ });
+}
+
+/** Existing staff retake has CAS/advisory lock, all content types,
+ * alreadyFresh read-only semantics and transactional audit logging. */
+export {
+ previewAdminCourseProgressRetake,
+ startAdminCourseProgressRetake,
+} from "./admin-progress-retake-service";
 
 async function atomicProgressUpdate(
   membershipId: string,
@@ -358,6 +440,48 @@ async function completeManualContentOnce(
   });
 }
 
+/** Explicit manual rewatch reset. The previous firstCompletedAt remains
+ * immutable audit evidence, while latest completedAt is cleared. Avoid
+ * changing timed playback progress or an old attempt after a retake. */
+async function resetManualContentForRewatch(
+ context:RequestContext,content:ProgressContent,membershipId:string,
+){
+ if(TIMED_TYPES.has(content.contentType))
+  throw new CoursesServiceError("TIMED_CONTENT_MANUAL_COMPLETION_NOT_ALLOWED");
+ return getDb().transaction(async tx=>{
+  const [actor]=await tx.select({
+   userId:collegeMemberships.userId,collegeId:collegeMemberships.collegeId,
+   status:collegeMemberships.status,
+  }).from(collegeMemberships).where(eq(collegeMemberships.id,membershipId)).for("share");
+  const [account]=await tx.select({status:users.platformStatus}).from(users)
+   .where(eq(users.id,context.user.id)).for("share");
+  const [role]=await tx.select({id:membershipRoles.id}).from(membershipRoles)
+   .where(and(eq(membershipRoles.membershipId,membershipId),
+    eq(membershipRoles.role,"LEARNER"))).for("share");
+  if(!actor||actor.userId!==context.user.id||
+   actor.collegeId!==context.membership?.collegeId||actor.status!=="ACTIVE"||
+   !account||account.status!=="ACTIVE"||!role)
+   throw new AuthorizationError("courses.read");
+  const lockKey=membershipId+":"+content.id;
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${lockKey}),72001)`);
+  const [latest]=await tx.select().from(learnerContentProgress)
+   .where(and(eq(learnerContentProgress.membershipId,membershipId),
+    eq(learnerContentProgress.lessonContentId,content.id)))
+   .orderBy(desc(learnerContentProgress.attempt)).limit(1);
+  if(!latest)return buildLearnerProgressView(content,null);
+  if(!latest.completedAt)return buildLearnerProgressView(content,latest);
+  const [updated]=await tx.update(learnerContentProgress).set({
+   completedAt:null,lastPositionSeconds:0,updatedAt:new Date(),
+  }).where(and(eq(learnerContentProgress.id,latest.id),
+   eq(learnerContentProgress.attempt,latest.attempt),
+   sql`${learnerContentProgress.attempt}=(select max(p.attempt)
+    from learner_content_progress p where p.membership_id=${membershipId}
+    and p.lesson_content_id=${content.id})`)).returning();
+  if(!updated)throw new CoursesServiceError("LEARNER_PROGRESS_STALE_ATTEMPT");
+  return buildLearnerProgressView(content,updated);
+ });
+}
+
 export async function saveLearnerContentProgress(
   context: RequestContext,
   contentIdInput: string,
@@ -379,6 +503,8 @@ export async function saveLearnerContentProgress(
       input.deliveryId,
     );
 
+  if(input.completed===false)
+   return resetManualContentForRewatch(context,content,membershipId);
   const settings=await readLearnerPlaybackSettings(context.membership?.collegeId);
   const isTimed = TIMED_TYPES.has(
     content.contentType,
@@ -407,8 +533,10 @@ export async function saveLearnerContentProgress(
     const duration = durationSeconds;
     // Media metadata can be unavailable for historical videos. Record the
     // learner's position, but do not trust client claims to award completion.
+    // Legacy player positions are bounded to one day and persisted as seconds.
+    const safePosition = Math.min(86400, Math.max(0, input.positionSeconds));
     positionSeconds = duration>0
-      ? Math.min(input.positionSeconds,duration):input.positionSeconds;
+      ? Math.min(safePosition,duration):safePosition;
     shouldComplete = duration>0 && positionSeconds*100 >=
       duration*settings.watchedThresholdPercent;
   } else {

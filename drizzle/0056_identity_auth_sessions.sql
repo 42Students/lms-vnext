@@ -1,3 +1,34 @@
+-- Legacy auth retirement crosswalk; historical tokens/sessions are NOT
+-- imported. The owner explicitly chose greenfield vNext, no data migration.
+-- auth_token: id -> no alias; created_at/updated_at -> audit-only provenance
+-- (not copied); is_deleted -> expired token state (retired); token -> NEVER
+-- copied, cached, or stored in plaintext.
+-- auth_handoff_token: raw access/refresh tokens -> retired; all integrations
+-- require a fresh authenticated handoff, not a token replay.
+-- email_verification_token (7 fields):
+-- token -> keyed one-way digest; application_id -> scoped UUID application;
+-- created_at -> timezone-reviewed instant; email -> keyed email fingerprint;
+-- expires_at -> independent 24h link expiry (NOT 5-minute sign-in OTP);
+-- verified -> durable ownership state; verified_at -> ownership timestamp.
+-- Identity ownership links and proofs are separately schema-managed, never
+-- silently aliased to an identity_auth_attempts login challenge.
+-- mobile_login_attempt: numeric id/user_id and role -> UUID user/membership
+-- + bounded target_role; nullable old organization/college -> persisted college
+-- relationship; raw phone/email OTP -> keyed MAC; contact -> HMAC fingerprint;
+-- used -> used_at; attempts -> verification_attempts; blocked_until and
+-- resend lock -> explicit challenge state; lastUpdated -> version + timestamps.
+-- user_session: jti -> credential_digest (never raw JTI); numeric user_id ->
+-- users UUID by explicit crosswalk; user_type -> resolved memberships/roles,
+-- device_name -> device_name, user_agent -> user_agent, ip_address -> masked
+-- transport metadata, created_at -> created_at, last_used_at -> last_seen_at,
+-- expires_at -> expires_at. Revoked sessions are not imported as active.
+-- login_user numeric IDs/password hashes are retired; users authenticate
+-- through fresh registration and current identity service. Source MySQL local
+-- timestamps must not be cast directly to PostgreSQL timestamptz.
+-- No old row is made active merely to satisfy a foreign key; any future import
+-- must validate target identity, consent, timezone, source consumers and
+-- owner-approved revocation before enabling a producer.
+--
 CREATE TABLE "identity_auth_attempts" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,

@@ -13,6 +13,10 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
+  // Old LMS drawer is 16rem wide below 768px. The title remains
+  // screen-reader-only beside the logo so the visible header matches.
+  // A real modal must close on desktop breakpoint: otherwise the hidden
+  // dialog could trap focus after the desktop sidebar appears.
   // Native Drawer owns the focus trap, Escape/Back and focus recovery.
   // The opener is disabled while the drawer is open to prevent duplicate
   // overlays; blocked route handling stays with shared navigation links.
@@ -40,7 +44,7 @@ export function MobileNavigation({ items }: { items: readonly ShellNavItem[] }) 
       </svg>
     </Button>
     <Drawer id="lms-mobile-navigation" open={open} onOpenChange={setOpen} side="left" title="Navigation menu"
-      headerLeading={<ShellLogoMark />} className="lms-mobile-sidebar md:hidden"
+      headerLeading={<ShellLogoMark />} className="lms-mobile-sidebar max-[767px]:!w-64 max-[767px]:!max-w-64 md:hidden"
       bodyClassName="!px-[var(--lms-space-3)] !pt-[var(--lms-space-2)] !pb-[calc(24px+env(safe-area-inset-bottom,0px))]">
       <SidebarNav items={items} onNavigate={() => setOpen(false)} />
     </Drawer>

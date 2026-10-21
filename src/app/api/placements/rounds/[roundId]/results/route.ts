@@ -12,6 +12,8 @@ import {
 // missing round -> 404 via PLACEMENT_ROUND_NOT_FOUND;
 // wrong tenant -> 403 via AuthorizationError; invalid Origin -> 403.
 // State conflicts remain 409 through the shared apiErrorResponse.
+// Migrated callers from /api/v1/tpo/rounds/{id}/results must unpack 201
+// {result} and supply the same-origin requirement. No old route is implied.
 export const runtime = "nodejs";
 
 type RouteContext = {
@@ -57,7 +59,7 @@ export async function POST(
       );
     return NextResponse.json(
       { result },
-      { status: 201 },
+      { status: 201, headers:{"Cache-Control":"no-store"} },
     );
   } catch (error) {
     return apiErrorResponse(error);

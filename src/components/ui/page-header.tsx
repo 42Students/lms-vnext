@@ -4,6 +4,8 @@ import { NeedsDoingChips, type NeedsDoingChip } from "@/components/ui/needs-doin
 export type PageHeaderProps = {
   eyebrow?: string;
   title: string;
+  /** Dedicated legacy error display; heading remains the only h1. */
+  errorCode?: 404 | 500;
   /** Optional stable heading id for aria-labelledby on existing pages. */
   id?: string;
   description?: string;
@@ -19,7 +21,7 @@ export type PageHeaderProps = {
  * Legacy eyebrow and description props remain supported, but both become
  * inline subtitle text instead of a separate eyebrow or paragraph block.
  */
-export function PageHeader({ eyebrow, title, id, description, actions, needsDoingItems, selectedNeedKey, needsDoingLabel }: PageHeaderProps) {
+export function PageHeader({ eyebrow, title, id, description, actions, needsDoingItems, selectedNeedKey, needsDoingLabel, errorCode }: PageHeaderProps) {
   const subtitle = [eyebrow?.trim(), description?.trim()].filter(Boolean).join(" · ");
 
   const heading = (
@@ -34,7 +36,7 @@ export function PageHeader({ eyebrow, title, id, description, actions, needsDoin
           style={{ fontSize: "var(--lms-page-header-title-size, 30px)", fontWeight: 600 }}
           title={title}
         >
-          {title}
+          {errorCode ? <><span className="mr-3 text-[24px] font-semibold text-[#1a1d21]" aria-hidden="true">{errorCode}</span>{errorCode===404?"Page Not Found":"Server Error"}</> : title}
         </h1>
         {subtitle ? (
           <span

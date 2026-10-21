@@ -17,7 +17,7 @@ const courseNameSchema = z
   .string()
   .trim()
   .min(1)
-  .max(255);
+  .max(255,"Maximum 255 characters");
 
 const courseCodeSchema = z
   .string()
@@ -29,19 +29,32 @@ const courseCodeSchema = z
     "Code may contain letters, numbers, dots, underscores and hyphens",
   );
 
-const courseShortTitleSchema=z.string().trim().min(1).max(120);
-const courseOfficialCodeSchema=z.string().trim().max(64).nullable();
+const courseShortTitleSchema=z.string().trim().min(1,"Enter short display name")
+ .max(120,"Maximum 120 characters");
+const courseOfficialCodeSchema=z.string().trim().max(40,"Maximum 40 characters").nullable();
+/** Immutable legacy/public course slug; the department-local code is separate. */
+export const courseSlugSchema=z.string().trim()
+ .regex(/^[a-z0-9][a-z0-9-]{0,63}$/,"Invalid slug format");
 const courseCardColorSchema=z.string().regex(/^#[0-9A-Fa-f]{6}$/).nullable();
 
+/** Legacy CourseDTO crosswalk (IDs remain tenant-scoped UUIDs): course_name
+ * -> name, short_title -> shortTitle (120 DB chars), dept_id -> departmentId,
+ * parent_course_id -> parentCourseId, enabled -> enabled, and intro/takeaways
+ * metadata -> course-display fields. Legacy active maps to lifecycle transitions,
+ * allowed_for_display to persisted legacyAllowedForDisplay; neither flag is
+ * accepted from an untrusted creation request. The Super Admin form generates
+ * the vNext internal code; created_by_org_id is intentionally excluded because
+ * the service derives organization from the verified department/actor scope. */
 export const createCourseInputSchema = z.object({
   departmentId: z.string().uuid(),
+  parentCourseId:z.string().uuid().nullable().optional(),
   name: courseNameSchema,
   code: courseCodeSchema,
   shortTitle:courseShortTitleSchema.optional(),
   officialCode:courseOfficialCodeSchema.optional(),
   cardColor:courseCardColorSchema.optional(),
   takeaways:z.string().trim().max(2000).nullable().optional(),
-  introductionHeading:z.string().trim().min(1).max(255).optional(),
+  introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
   enabled:z.boolean().optional(),
   description: z
     .string()
@@ -57,10 +70,13 @@ export const updateCourseInputSchema = z
     expectedUpdatedAt: z.string().datetime({ offset: true }),
     name: courseNameSchema.optional(),
     code: courseCodeSchema.optional(),
+    parentCourseId:z.string().uuid().nullable().optional(),
     shortTitle:courseShortTitleSchema.optional(),
     officialCode:courseOfficialCodeSchema.optional(),
     cardColor:courseCardColorSchema.optional(),
     takeaways:z.string().trim().max(2000).nullable().optional(),
+    introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
+    enabled:z.boolean().optional(),
     description: z
       .string()
       .trim()
@@ -249,49 +265,46 @@ export const learningPathTransitionSchema =
     action: z.enum(["PUBLISH", "UNPUBLISH", "ARCHIVE"]),
   }).strict();
 
+const legacyLessonNameSchema=z.string().trim()
+ .min(1,"Lesson name is required")
+ .max(255,"Lesson name must not exceed 255 characters");
 export const createCourseLessonInputSchema =
   z.object({
     learningPathId: learningPathIdSchema,
-    name: courseNameSchema,
-    description: z
-      .string()
-      .trim()
-      .max(5000)
-      .nullable()
-      .optional(),
-    sequence: z
-      .number()
-      .int()
-      .min(0)
-      .max(10000),
-    visibleToStudents: z.boolean().optional(),
-  }).strict();
+    name: legacyLessonNameSchema,
+    description: z.string().trim().max(5000).nullable().optional(),
+    // Legacy zero or omitted order appends after the last active lesson.
+    sequence:z.number().int().min(0).max(10000).optional(),
+    active:z.boolean().optional(),
+    enabled:z.boolean().optional(),
+    visibleToStudents:z.boolean().optional(),
+  }).strict().refine(value=>value.enabled===undefined||
+    value.visibleToStudents===undefined||value.enabled===value.visibleToStudents,{
+      path:["enabled"],message:"Enabled and visibility values conflict",
+    });
 
 export const updateCourseLessonInputSchema =
-  z
-    .object({
-      name: courseNameSchema.optional(),
-      description: z
-        .string()
-        .trim()
-        .max(5000)
-        .nullable()
-        .optional(),
-      sequence: z
-        .number()
-        .int()
-        .min(0)
-        .max(10000)
-        .optional(),
-      expectedUpdatedAt: z.iso.datetime({ offset: true }),
-    })
-    .refine(
-      (value) =>
-        value.name !== undefined || value.description !== undefined || value.sequence !== undefined,
-      "At least one lesson field is required",
-    ).strict();
+  z.object({
+    name:legacyLessonNameSchema.optional(),
+    description:z.string().trim().max(5000).nullable().optional(),
+    sequence:z.number().int().min(0).max(10000).optional(),
+    active:z.boolean().optional(),
+    enabled:z.boolean().optional(),
+    visibleToStudents:z.boolean().optional(),
+    expectedUpdatedAt:z.iso.datetime({offset:true}),
+    expectedVersion:z.number().int().nonnegative().optional(),
+  }).strict().refine(value=>
+    value.name!==undefined||value.description!==undefined||
+    value.sequence!==undefined||value.active!==undefined||
+    value.enabled!==undefined||value.visibleToStudents!==undefined,{
+      message:"At least one lesson field is required",
+    }).refine(value=>value.enabled===undefined||
+     value.visibleToStudents===undefined||value.enabled===value.visibleToStudents,{
+      path:["enabled"],message:"Enabled and visibility values conflict",
+    });
 
 const lessonContentBaseSchema = z.object({
+  visibleToStudents:z.boolean().optional(),
   lessonId: courseLessonIdSchema,
   deliveryId:
     courseSectionDeliveryIdSchema
@@ -408,6 +421,7 @@ export const createLessonContentInputSchema =
 export const updateLessonContentInputSchema =
   z
     .object({
+      visibleToStudents:z.boolean().optional(),
       title: courseNameSchema.optional(),
       points: z.number().int().min(0).max(1000).optional(),
       notes: learningTextSchema
@@ -500,7 +514,7 @@ export const saveLearnerContentProgressInputSchema =
     .refine(
       (value) =>
         value.positionSeconds !== undefined ||
-        value.completed === true,
+        value.completed !== undefined,
       "Provide a position update or mark the content complete",
     );
 

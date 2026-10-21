@@ -16,17 +16,19 @@ export async function GET(request: Request) {
     if(!/^[1-9][0-9]{0,3}$/.test(pageRaw)||Number(pageRaw)>1000)
       return NextResponse.json({error:"INVALID_PAGE"},{status:400});
     const page=Number(pageRaw);
+    const deliveryId=url.searchParams.get("deliveryId");
+    if(!deliveryId)return NextResponse.json({error:"SECTION_REQUIRED",message:"Select a Section to view quiz attempts."},{status:400});
     const attempts = await listQuizAttempts(
       context,
       url.searchParams.get("quizId") ?? "",
-      url.searchParams.get("deliveryId") ?? "",
+      deliveryId,
       page,
     );
 
     return NextResponse.json({attempts:attempts.slice(0,25),page,
       hasMore:attempts.length>25,
       nextPage:attempts.length>25?page+1:null,
-      deliveryId:url.searchParams.get("deliveryId")},
+      deliveryId},
       {headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return apiErrorResponse(error);

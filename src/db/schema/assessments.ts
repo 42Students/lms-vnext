@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import {
+  bigint,
   boolean,
   check,
   index,
@@ -9,6 +10,7 @@ import {
   text,
   timestamp,
   uniqueIndex,
+  varchar,
   uuid,
 } from "drizzle-orm/pg-core";
 import {
@@ -27,6 +29,8 @@ export const courseAssignments = pgTable(
   "course_assignments",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Original lesson content identity is import-only; do not cast to UUID. */
+    legacyLessonContentId: integer("legacy_lesson_content_id"),
     lessonId: uuid("lesson_id")
       .notNull()
       .references(() => courseLessons.id, {
@@ -107,6 +111,8 @@ export const courseAssignments = pgTable(
       .where(
         sql`${table.deliveryId} is not null and ${table.status} <> 'ARCHIVED'`,
       ),
+    uniqueIndex("course_assignments_legacy_content_uq").on(table.legacyLessonContentId)
+      .where(sql`${table.legacyLessonContentId} is not null`),
     index(
       "course_assignments_lesson_status_idx",
     ).on(table.lessonId, table.status),
@@ -132,6 +138,8 @@ export const assignmentSubmissions = pgTable(
   "assignment_submissions",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyStudentAssignmentId: bigint("legacy_student_assignment_id",{mode:"bigint"}),
+    legacyLearnerId: integer("legacy_learner_id"),
     assignmentId: uuid("assignment_id")
       .notNull()
       .references(() => courseAssignments.id, {
@@ -159,6 +167,11 @@ export const assignmentSubmissions = pgTable(
       .notNull()
       .defaultNow(),
     pointsAwarded: integer("points_awarded"),
+    /** Immutable grade ceiling from when the learner submitted, if known. */
+    maxPointsAtSubmission: integer("max_points_at_submission"),
+    /** Exact source BIGINT grade before safe normalization to integer. */
+    legacyPointsAwarded: bigint("legacy_points_awarded",{mode:"bigint"}),
+    deletedAt: timestamp("deleted_at",{withTimezone:true}),
     // Legacy fidelity (migration 0098): resubmission counter and prior grade.
     attemptNumber: integer("attempt_number").notNull().default(1),
     /** Legacy semester snapshot; use the existing row as the active attempt aggregate. */
@@ -201,6 +214,12 @@ export const assignmentSubmissions = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("assignment_submissions_legacy_source_uq").on(table.legacyStudentAssignmentId)
+      .where(sql`${table.legacyStudentAssignmentId} is not null`),
+    index("assignment_submissions_live_lookup_idx").on(table.assignmentId,table.deletedAt,table.submittedAt),
+    check("assignment_submissions_max_snapshot_ck",sql`
+      ${table.maxPointsAtSubmission} is null or
+      ${table.maxPointsAtSubmission} between 0 and 10000`),
     uniqueIndex(
       "assignment_submissions_assignment_membership_uq",
     ).on(
@@ -212,6 +231,9 @@ export const assignmentSubmissions = pgTable(
       table.id,
       table.assignmentId,
       table.membershipId,
+    ),
+    uniqueIndex("assignment_submissions_grade_audit_parent_uq").on(
+      table.id,table.assignmentId,table.deliveryId,table.membershipId,
     ),
     index(
       "assignment_submissions_assignment_delivery_idx",
@@ -281,3 +303,50 @@ export const assignmentSubmissions = pgTable(
     ),
   ],
 );
+
+
+/** Per-assignment resource builder: exactly one Instructions entry at most,
+ * with ordered repeatable PDF, File and Link entries. Private file objects
+ * must be CLEAN scanned and ownership-verified before insertion. */
+export const courseAssignmentResources=pgTable("course_assignment_resources",{
+ id:uuid("id").defaultRandom().primaryKey(),
+ assignmentId:uuid("assignment_id").notNull()
+   .references(()=>courseAssignments.id,{onDelete:"restrict"}),
+ kind:varchar("kind",{length:16}).notNull(),
+ title:varchar("title",{length:255}).notNull(),
+ body:text("body"),
+ externalUrl:text("external_url"),
+ privateObjectKey:varchar("private_object_key",{length:1024}),
+ contentType:varchar("content_type",{length:128}),
+ contentBytes:integer("content_bytes"),
+ sha256Hex:varchar("sha256_hex",{length:64}),
+ objectGeneration:varchar("object_generation",{length:64}),
+ position:integer("position").notNull(),
+ createdByUserId:uuid("created_by_user_id").notNull()
+   .references(()=>users.id,{onDelete:"restrict"}),
+ createdAt:timestamp("created_at",{withTimezone:true}).notNull().defaultNow(),
+ updatedAt:timestamp("updated_at",{withTimezone:true}).notNull().defaultNow(),
+},t=>[
+ uniqueIndex("course_assignment_resources_position_uq").on(t.assignmentId,t.position),
+ uniqueIndex("course_assignment_resources_one_instructions_uq")
+   .on(t.assignmentId).where(sql`${t.kind}='INSTRUCTIONS'`),
+ index("course_assignment_resources_assignment_kind_idx").on(t.assignmentId,t.kind),
+ check("course_assignment_resources_kind_ck",sql`
+  ${t.kind} in ('INSTRUCTIONS','PDF','FILE','LINK')`),
+ check("course_assignment_resources_position_ck",sql`${t.position} between 0 and 99`),
+ check("course_assignment_resources_title_ck",sql`length(btrim(${t.title})) between 1 and 255`),
+ check("course_assignment_resources_shape_ck",sql`
+  (${t.kind}='INSTRUCTIONS' and
+    ${t.body} is not null and length(btrim(${t.body})) between 1 and 10000
+    and ${t.externalUrl} is null and ${t.privateObjectKey} is null)
+  or (${t.kind}='LINK' and ${t.body} is null
+    and ${t.externalUrl} ~ '^https://[^[:space:]]+$'
+    and length(${t.externalUrl})<=2048 and ${t.privateObjectKey} is null)
+  or (${t.kind} in ('PDF','FILE') and ${t.body} is null
+    and ${t.externalUrl} is null and ${t.privateObjectKey} is not null
+    and ${t.contentBytes} between 1 and 52428800
+    and ${t.sha256Hex} ~ '^[a-f0-9]{64}$'
+    and ${t.objectGeneration} is not null
+    and ${t.contentType} is not null
+    and (${t.kind}<>'PDF' or ${t.contentType}='application/pdf'))`),
+]);

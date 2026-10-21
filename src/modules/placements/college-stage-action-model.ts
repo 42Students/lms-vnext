@@ -20,13 +20,30 @@ export const collegeStageCommandSchema=z.object({
 });
 export type CollegeStageCommand=z.infer<typeof collegeStageCommandSchema>;
 
-/** Legacy row-level moves; terminal placement facts must still be verified in service. */
+/** The old LMS offers corrective backward moves. A transition appearing here
+ * does NOT bypass offer/recruiter/learner constraints: the transactional writer
+ * verifies external offer and joining facts before accepting any rollback. */
 export const COLLEGE_APPLICATION_TRANSITIONS: Record<string,readonly string[]>={
- APPLIED:["SHORTLISTED","ASSESSMENT","REJECTED"],
+ APPLIED:["SHORTLISTED","REJECTED"],
  SHORTLISTED:["ASSESSMENT","INTERVIEW","WAITLISTED","REJECTED"],
- ASSESSMENT:["INTERVIEW","WAITLISTED","REJECTED"],
- INTERVIEW:["WAITLISTED","OFFERED","REJECTED"],
- WAITLISTED:["OFFERED","REJECTED"],
- OFFERED:["HIRED","REJECTED"],
- HIRED:[], REJECTED:[],
+ ASSESSMENT:["SHORTLISTED","INTERVIEW","WAITLISTED","REJECTED"],
+ INTERVIEW:["SHORTLISTED","ASSESSMENT","WAITLISTED","OFFERED","REJECTED"],
+ WAITLISTED:["SHORTLISTED","ASSESSMENT","INTERVIEW","OFFERED","REJECTED"],
+ OFFERED:["INTERVIEW","HIRED","REJECTED"],
+ HIRED:["OFFERED"], REJECTED:[],
 };
+/** The legacy JobApplication.status is one lifecycle column; vNext explicitly
+ * separates an application submission, manual screening, college pipeline
+ * history, real offer state, and verified joining outcome. These values must
+ * never be backfilled by guessing an offer from a college stage. */
+export const LEGACY_APPLICATION_STAGE_SOURCE={
+ APPLIED:"placement_applications.status + college_stage_history",
+ SHORTLISTED:"placement_application_screenings + college_stage_history",
+ ASSESSMENT:"placement_college_application_stages + stage_history",
+ INTERVIEW:"placement_college_application_stages + actual round slots",
+ WAITLISTED:"placement_college_application_stages + waitlist promotions",
+ OFFERED:"placement_offers + college_stage_history",
+ HIRED:"placement_joining_outcomes + college_stage_history",
+ REJECTED:"placement_application_screenings + college_stage_history",
+ WITHDRAWN:"placement_applications.status + withdrawal history",
+} as const;

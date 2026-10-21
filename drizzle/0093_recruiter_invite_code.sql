@@ -1,3 +1,8 @@
+-- Old recruiter invite IDs require verified same-college lead UUID mapping.
+-- Import only credential digests, never plaintext token or code. Map old
+-- wrongTries to bounded failed_attempts; usedAt to consumed_at. Convert
+-- source civil timestamps before setting expires_at. Historic expired/used
+-- invitations stay inactive, and unknown provider state is never SENT.
 CREATE TABLE "recruiter_invite_code" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"lead_id" uuid NOT NULL,

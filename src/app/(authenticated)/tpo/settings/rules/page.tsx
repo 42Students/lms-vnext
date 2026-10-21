@@ -2,6 +2,10 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { PageHeader } from "@/components/ui/page-header";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import {Alert} from "@/components/ui/alert";
+import {TpoCgpaRuleControl} from "@/components/placements/tpo-cgpa-rule-control";
+import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
+import {getCollegeCgpaConversionRule} from "@/modules/profile-verification/settings-service";
 
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
@@ -101,7 +105,30 @@ export default async function TpoPlacementRulesSettingsPage({
     );
   }
 
-  const result = await getTpoPlacementRulesSettings(context,{page:selectedPage});
+  let team:Awaited<ReturnType<typeof getTpoPlacementTeam>>;
+  try{
+    team=await getTpoPlacementTeam(context,context.membership.collegeId);
+  }catch{
+    return <div className="min-w-0 space-y-6">
+      <PageHeader title="Placement rules"/>
+      <TpoSettingsNav active="rules" compact/>
+      <ErrorState title="Could not verify your placement-settings access"
+        description="Could not verify your placement-settings access. Please try again."
+        action={<Link href="/tpo/settings/rules" className="underline font-semibold text-link">Retry</Link>}/>
+    </div>;
+  }
+  const actor=team.members.find(item=>item.membershipId===context.membership?.id);
+  const canEdit=Boolean(actor?.roles.includes("TPO_ADMIN")||actor?.roles.includes("COLLEGE_ADMIN"));
+  if(!canEdit)return <div className="min-w-0 space-y-6">
+    <PageHeader title="Placement rules"/>
+    <TpoSettingsNav active="rules" compact/>
+    <Alert tone="info">College settings are managed by the TPO admins. Ask a TPO admin if something here needs to change.</Alert>
+  </div>;
+
+  const [result,cgpaRule] = await Promise.all([
+    getTpoPlacementRulesSettings(context,{page:selectedPage}),
+    getCollegeCgpaConversionRule(context,context.membership.collegeId),
+  ]);
 
   const rules = result.collegeRules;
   const rulesVersion = (await getCollegePlacementRules(context, context.membership.collegeId)).version;
@@ -166,6 +193,8 @@ export default async function TpoPlacementRulesSettingsPage({
         </p>
       </section>
       </Disclosure>
+
+      <TpoCgpaRuleControl initialRule={cgpaRule}/>
 
       <TpoCollegeRulesControl rules={{
         countsAsPlacedAt: rules.countsAsPlacedAt,

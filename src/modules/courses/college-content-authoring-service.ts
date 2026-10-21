@@ -1,14 +1,31 @@
 import "server-only";
-import {and,asc,eq,ne,inArray,max,isNull} from "drizzle-orm";
+import {and,asc,eq,ne,inArray,max,isNull,or,ilike} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {academicPeriods,cohorts,courseLearningPaths,courseLessons,courseOfferings,courseSectionDeliveries,sections,courses,departments,lessonContents} from "@/db/schema";
 import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {resolveActingCollege} from "@/modules/permissions/acting-college";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
 
+export type CollegeExistingContentFilters={
+ courseId?:string;lessonId?:string;sectionId?:string;search?:string;page?:number;
+};
+export function collegeExistingContentFiltersFromSearch(
+ params:Record<string,string|string[]|undefined>,
+):CollegeExistingContentFilters{
+ const get=(key:string)=>typeof params[key]==="string"?params[key] as string:"";
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const courseId=get("existingCourse"),lessonId=get("existingLesson");
+ const sectionId=get("existingSection"),search=get("existingSearch").trim();
+ const page=Number(get("existingPage")||"1");
+ if([courseId,lessonId,sectionId].some(id=>id&&!uuid.test(id))||
+    search.length>100||!Number.isSafeInteger(page)||page<1||page>10000)
+  throw new Error("INVALID_EXISTING_CONTENT_FILTER");
+ return {courseId,lessonId,sectionId,search,page};
+}
+
 /** College-only metadata for adding/scheduling link-based lesson content.
  * Never return private storage keys to the catalog or the editor. */
-export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"|"RESOURCE"){
+export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:"YOUTUBE"|"LIVE_CLASS"|"RESOURCE",filters:CollegeExistingContentFilters={}){
  const membership=ctx.membership;
  const superAdmin=isSuperAdmin(ctx);
  if(!superAdmin&&(!membership||membership.status!=="ACTIVE"||
@@ -30,7 +47,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   eq(departments.collegeId,collegeId)))
  .where(and(eq(courseLessons.status,"ACTIVE"),eq(courses.status,"ACTIVE"),
    eq(courseOfferings.status,"ACTIVE"),ne(courseLearningPaths.status,"ARCHIVED")))
- .orderBy(asc(courses.name),asc(courseLessons.name)).limit(250);
+ .orderBy(asc(courses.name),asc(courseLessons.name));
  const deliveries=await db.select({deliveryId:courseSectionDeliveries.id,offeringId:courseOfferings.id,
   sectionName:sections.name,sectionCode:sections.code}).from(courseSectionDeliveries)
   .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
@@ -40,6 +57,30 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   .where(and(eq(sections.status,"ACTIVE"),eq(courseOfferings.status,"ACTIVE"),
    eq(courses.status,"ACTIVE"),isNull(courseSectionDeliveries.endedAt)))
   .orderBy(asc(sections.name)).limit(2000);
+ const page=filters.page??1;
+ if(!Number.isSafeInteger(page)||page<1||page>10000)throw new Error("INVALID_EXISTING_CONTENT_PAGE");
+ const search=(filters.search??"").trim();
+ if(search.length>100)throw new Error("INVALID_EXISTING_CONTENT_FILTER");
+ const section=filters.sectionId?deliveries.find(row=>row.deliveryId===filters.sectionId):null;
+ if(filters.sectionId&&!section)throw new Error("INVALID_EXISTING_CONTENT_SECTION");
+ const where=[
+  eq(lessonContents.contentType,kind),ne(lessonContents.status,"ARCHIVED"),
+  ne(courseLearningPaths.status,"ARCHIVED"),eq(courseOfferings.status,"ACTIVE"),
+  eq(courses.status,"ACTIVE"),
+ ];
+ if(filters.courseId)where.push(eq(courseOfferings.id,filters.courseId));
+ if(filters.lessonId)where.push(eq(lessonContents.lessonId,filters.lessonId));
+ if(section){
+  where.push(eq(courseOfferings.id,section.offeringId));
+  where.push(or(isNull(lessonContents.deliveryId),
+   eq(lessonContents.deliveryId,section.deliveryId))!);
+ }
+ if(search){
+  const pattern="%"+search.replace(/[\\%_]/g,(character)=>"\\"+character)+"%";
+  where.push(or(ilike(lessonContents.title,pattern),ilike(courseLessons.name,pattern),
+   ilike(courses.code,pattern))!);
+ }
+ const pageSize=50;
  const existing=await db.select({
   id:lessonContents.id,lessonId:lessonContents.lessonId,title:lessonContents.title,
   offeringId:courseOfferings.id,lessonName:courseLessons.name,courseCode:courses.code,
@@ -48,6 +89,7 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
   externalUrl:lessonContents.externalUrl,durationSeconds:lessonContents.durationSeconds,
   startsAt:lessonContents.startsAt,endsAt:lessonContents.endsAt,
   status:lessonContents.status,sequence:lessonContents.sequence,
+  visibleToStudents:lessonContents.visibleToStudents,
  }).from(lessonContents)
  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
@@ -55,16 +97,17 @@ export async function getCollegeContentAuthoringOptions(ctx:RequestContext,kind:
  .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
  .innerJoin(departments,and(eq(departments.id,courses.departmentId),
   eq(departments.collegeId,collegeId)))
- .where(and(eq(lessonContents.contentType,kind),
-  ne(lessonContents.status,"ARCHIVED"),
-  ne(courseLearningPaths.status,"ARCHIVED"),eq(courseOfferings.status,"ACTIVE"),
-  eq(courses.status,"ACTIVE")))
- .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title),asc(lessonContents.id)).limit(251);
+ .where(and(...where))
+ .orderBy(asc(courseLessons.name),asc(lessonContents.sequence),asc(lessonContents.title),asc(lessonContents.id))
+ .limit(pageSize+1).offset((page-1)*pageSize);
  const positions=lessons.length?await db.select({lessonId:lessonContents.lessonId,highest:max(lessonContents.sequence)})
   .from(lessonContents).where(inArray(lessonContents.lessonId,lessons.map(row=>row.id)))
   .groupBy(lessonContents.lessonId):[];
  const nextByLesson=new Map(positions.map(row=>[row.lessonId,(row.highest??-1)+1]));
- return {deliveries,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>250,existing:existing.slice(0,250).map(row=>({...row,
+ return {deliveries,lessons:lessons.map(row=>({...row,nextSequence:nextByLesson.get(row.id)??0})),existingTruncated:existing.length>pageSize,existingPage:page,
+ existingFilters:{courseId:filters.courseId??"",lessonId:filters.lessonId??"",
+  sectionId:filters.sectionId??"",search},
+ existing:existing.slice(0,pageSize).map(row=>({...row,
   // Published playback and meeting links remain private to their authorized flows.
   // The editor can update metadata without replacing a hidden URL.
   externalUrl:row.status==="DRAFT"?row.externalUrl:null,

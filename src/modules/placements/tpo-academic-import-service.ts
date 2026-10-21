@@ -1,17 +1,17 @@
 import "server-only";
-import { and, eq, inArray } from "drizzle-orm";
+import { and, eq, inArray, or } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   activityEvents, collegeMemberships, membershipRoles, inAppNotifications,
-  placementCandidateAcademicEvidence, placementApplications, placementJobs, users,
+  placementCandidateAcademicEvidence, placementApplications, placementJobs, users, learnerProfiles,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "./scope";
-import { tpoAcademicPreviewRowSchema } from "./tpo-academic-preview-import-model";
+import { tpoAcademicPreviewRowSchema, type TpoLegacyAcademicStagingRow } from "./tpo-academic-preview-import-model";
 import {evaluatePlacementEligibility} from "./eligibility-service";
 import {tpoAcademicImportNewlyIneligible} from "./tpo-academic-import-recheck-model";
 
@@ -234,18 +234,83 @@ export async function commitTpoAcademicImport(context: RequestContext, raw: unkn
   });
 }
 
-// Single-learner manual correction uses the same scoped preview and commit
-// policy as the bulk import. The calling UI must preview then confirm before
-// invoking commit; the second read revalidates membership and permissions.
-export async function previewTpoSingleAcademicCorrection(
- context:RequestContext,studentCode:string,
- changes:Omit<z.infer<typeof correctionRowSchema>,"studentCode">,
+
+/** Server-side roll resolution uses CURRENT active learner memberships only,
+ * scoped to the caller's college. Duplicated rolls, mismatched UUID+roll and
+ * spreadsheet row issues are individual Can't match outcomes, not arbitrary
+ * first-match imports. The preview has no mutation side effects. */
+export async function previewTpoLegacyAcademicImport(
+ context:RequestContext,raw:unknown,
 ){
- return previewTpoAcademicImport(context,{mode:"SINGLE",rows:[{studentCode,...changes}]});
-}
-export async function commitTpoSingleAcademicCorrection(
- context:RequestContext,studentCode:string,
- changes:Omit<z.infer<typeof correctionRowSchema>,"studentCode">,
-){
- return commitTpoAcademicImport(context,{mode:"SINGLE",rows:[{studentCode,...changes}]});
+ const rows=z.array(z.object({
+  rowNumber:z.number().int().min(2).max(10001),
+  rollNumber:z.string().max(120),
+  studentCode:z.string().nullable(),
+  cgpa:z.number().min(0).max(10).nullable(),
+  activeBacklogs:z.number().int().min(0).max(100).nullable(),
+  tenthPct:z.number().min(0).max(100).nullable(),
+  twelfthPct:z.number().min(0).max(100).nullable(),
+  diplomaPct:z.number().min(0).max(100).nullable(),
+  ugPct:z.number().min(0).max(100).nullable(),
+  gapYears:z.number().min(0).max(15).nullable(),
+  passingYear:z.number().int().min(1980).max(2100).nullable(),
+  batch:z.string().max(100).nullable(),
+  gender:z.string().max(100).nullable(),
+  issue:z.string().nullable(),
+ }).strict()).min(1).max(5000).parse(raw) satisfies TpoLegacyAcademicStagingRow[];
+ const college=await scope(context);
+ const db=getDb();
+ const ids=[...new Set(rows.map(row=>row.studentCode).filter(
+  (v):v is string=>v!==null&&z.uuid().safeParse(v).success))];
+ const rolls=[...new Set(rows.map(row=>row.rollNumber.trim()).filter(Boolean))];
+ const found: {id:string;roll:string|null;name:string|null;cgpa:number|null;backlogs:number|null}[]=[];
+ for(let i=0;i<Math.max(ids.length,rolls.length);i+=500){
+  const idSlice=ids.slice(i,i+500),rollSlice=rolls.slice(i,i+500);
+  if(!idSlice.length&&!rollSlice.length)continue;
+  const batch=await db.select({
+   id:collegeMemberships.id,roll:learnerProfiles.rollNumber,name:users.displayName,
+   cgpa:placementCandidateAcademicEvidence.cgpaHundredths,
+   backlogs:placementCandidateAcademicEvidence.activeBacklogs,
+  }).from(collegeMemberships)
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .innerJoin(membershipRoles,and(eq(membershipRoles.membershipId,collegeMemberships.id),
+     eq(membershipRoles.role,"LEARNER")))
+   .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
+   .leftJoin(placementCandidateAcademicEvidence,
+     eq(placementCandidateAcademicEvidence.membershipId,collegeMemberships.id))
+   .where(and(eq(collegeMemberships.collegeId,college.id),
+     eq(collegeMemberships.status,"ACTIVE"),
+     eq(users.platformStatus,"ACTIVE"),
+     or(idSlice.length?inArray(collegeMemberships.id,idSlice):undefined,
+       rollSlice.length?inArray(learnerProfiles.rollNumber,rollSlice):undefined)))
+   .limit(2001);
+  found.push(...batch);
+ }
+ const byId=new Map(found.map(row=>[row.id,row]));
+ const byRoll=new Map<string,typeof found>();
+ for(const row of found)if(row.roll){
+  const key=row.roll.trim().toLowerCase();
+  byRoll.set(key,[...(byRoll.get(key)??[]),row]);
+ }
+ return {rows:rows.map(row=>{
+  const idMatch=row.studentCode?byId.get(row.studentCode):null;
+  const rollMatches=row.rollNumber?byRoll.get(row.rollNumber.trim().toLowerCase())??[]:[];
+  const match=idMatch??(rollMatches.length===1?rollMatches[0]:null);
+  const problem=row.issue??
+   (row.studentCode&&!z.uuid().safeParse(row.studentCode).success?"Invalid learner ID":null)??
+   (rollMatches.length>1?"Duplicate roll number in this college":null)??
+   (row.studentCode&&row.rollNumber&&
+      (!idMatch||idMatch.roll?.trim().toLowerCase()!==row.rollNumber.trim().toLowerCase())
+    ?"Student ID and roll number do not match":null)??
+   (!match?"No active learner matches this roll / Student ID":null);
+  const canImport=problem===null&&match!==null&&row.cgpa!==null&&row.activeBacklogs!==null &&
+   row.tenthPct===null&&row.twelfthPct===null&&row.diplomaPct===null&&row.ugPct===null&&
+   row.gapYears===null&&row.passingYear===null&&row.batch===null&&row.gender===null;
+  return {...row,studentCode:match?.id??row.studentCode,
+    name:match?.name??null,
+    oldCgpa:match?.cgpa==null?null:match.cgpa/100,
+    oldBacklogs:match?.backlogs??null,
+    match:canImport?"WILL_UPDATE" as const:"CANT_MATCH" as const,
+    issue:problem??(!canImport?"Sparse or additional academic fields require the dedicated verified evidence import. Nothing was discarded.":null)};
+ })};
 }

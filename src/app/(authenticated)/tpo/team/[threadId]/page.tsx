@@ -2,6 +2,7 @@ import { StatusBadge } from "@/components/ui/status-badge";
 import Link from "next/link";
 import {listTpoTeamAsks} from "@/modules/placements/tpo-team-asks-service";
 import {listTpoTeamAway} from "@/modules/placements/tpo-team-away-service";
+import {getTpoPlacementTeam} from "@/modules/placements/tpo-settings-people-service";
 import {TpoTeamAskPanel} from "@/components/tpo/tpo-team-ask-panel";
 import {createHash} from "node:crypto";
 import {tpoTeamCanEdit} from "@/modules/placements/tpo-team-message-change-model";
@@ -53,6 +54,14 @@ export default async function InternalThread({params,searchParams}:{params:Promi
  const otherMembershipId=result.thread.startedByMembershipId===context.membership?.id?
   result.thread.invitedMembershipId:result.thread.startedByMembershipId;
  const away=await listTpoTeamAway(context).catch(()=>({ready:false as const,items:[]}));
+ const teammates=await getTpoPlacementTeam(context,context.membership!.collegeId);
+ const eligibleAssignees=teammates.members.filter(person=>
+  (person.roles.includes("TPO")||person.roles.includes("COLLEGE_ADMIN"))&&
+  person.membershipId!==context.membership?.id).map(person=>{
+   const awayUntil=away.items.find(item=>item.membershipId===person.membershipId)?.awayUntil??null;
+   return {membershipId:person.membershipId,displayName:person.displayName,
+    awayLabel:awayUntil?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short"}).format(awayUntil):null};
+  });
  const awayUntil=away.items.find(row=>row.membershipId===otherMembershipId)?.awayUntil??null;
  const awayLabel=awayUntil?new Intl.DateTimeFormat("en-IN",{
   timeZone:"Asia/Kolkata",weekday:"short",day:"numeric",month:"short",
@@ -141,6 +150,7 @@ export default async function InternalThread({params,searchParams}:{params:Promi
    recipientId={otherMembershipId}
    recipientAwayLabel={awayLabel}
    recipientName={result.thread.counterpartName}
+   eligibleAssignees={eligibleAssignees}
    items={asks.items.map(ask=>({...ask,dueAt:ask.dueAt?.toISOString()??null}))}
    highlightAskId={highlightAskId} serverNowMs={serverNow.getTime()}/>:asks.status==="FAILED"?
    <p role="alert" className="text-sm text-error">Could not load team asks. Other messages are still available.</p>:null}

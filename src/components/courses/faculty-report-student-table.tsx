@@ -30,7 +30,7 @@ export function FacultyReportStudentTable({
         <div>
           <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
           <p aria-live="polite" className="mt-1 text-xs text-muted-foreground">
-            {result.count} of {rows.length} learners · Highest scores first
+            Showing {result.rows.length===0?0:(result.page-1)*20+1}–{Math.min(result.count,result.page*20)} of {result.count} learners · Highest scores first · 20 per page
           </p>
         </div>
         {rows.length > 8 ? (
@@ -86,7 +86,7 @@ export function FacultyReportStudentTable({
           >
             Previous
           </Button>
-          <span role="status" className="sr-only">Page {result.page} of {result.pages}</span>
+          <span role="status" className="text-xs font-semibold text-muted-foreground">Page {result.page} of {result.pages}</span>
           <Button variant="secondary"
             type="button"
             disabled={result.page >= result.pages}

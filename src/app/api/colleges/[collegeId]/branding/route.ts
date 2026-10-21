@@ -14,6 +14,9 @@ import { z } from "zod";
 export const runtime = "nodejs";
 
 type RouteContext = { params: Promise<{ collegeId: string }> };
+/** The old GET/PUT /api/v1/superadmin/tenant/branding/{integer}
+ * now resolves a college UUID. PUT requires expectedVersion and returns
+ * {branding} rather than the former raw DTO. No numeric casting. */
 
 const collegeIdSchema = z.string().uuid();
 
@@ -30,7 +33,7 @@ export async function GET(_request: Request, { params }: RouteContext) {
     const collegeId = collegeIdSchema.parse((await params).collegeId);
     return NextResponse.json({
       branding: await getCollegeBranding(context, collegeId),
-    });
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     if (error instanceof CollegeBrandingNotFoundError) return notFound();
     return apiErrorResponse(error);

@@ -6,7 +6,7 @@ import {
   type NotificationListItem,
 } from "@/components/activity/notification-list";
 import { NotificationToolbar } from "@/components/activity/notification-toolbar";
-import { AnnouncementFeed } from "@/components/announcements/announcement-feed";
+
 import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -16,9 +16,9 @@ import {
   countOwnUnreadNotifications,
   listOwnNotificationPage,
 } from "@/modules/activity/notification-service";
-import { parseFacultyInboxQuery } from "@/modules/courses/faculty-inbox-query-model";
+import { parseFacultyInboxQuery,normalizeFacultyLegacyInboxTab } from "@/modules/courses/faculty-inbox-query-model";
 import { facultyNotificationActionHref } from "@/modules/courses/faculty-notification-link-model";
-import { requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
+import { facultyNotificationsFallbackPath,requireFacultyNotificationsAccess } from "@/modules/activity/faculty-notifications-access";
 
 const FACULTY_INBOX = "/teacher/notifications";
 
@@ -33,38 +33,40 @@ export default async function FacultyNotificationsPage({
   }>;
 }) {
   const context = await getCurrentRequestContext();
-  const membership = requireFacultyNotificationsAccess(context);
+  let membership:ReturnType<typeof requireFacultyNotificationsAccess>;
+  try{membership=requireFacultyNotificationsAccess(context);}
+  catch(error){
+    if(error instanceof AuthorizationError)redirect(facultyNotificationsFallbackPath(context));
+    throw error;
+  }
 
   const { tab, ...query } = await searchParams;
-  const scopeTabs = ["all", "personal", "college", "department", "faculty"] as const;
-  // Keep the old ?tab= deep links without treating an invalid tab as a
-  // query for a foreign or unfiltered recipient.
-  if (tab !== undefined &&
-      (typeof tab !== "string" || !scopeTabs.includes(tab as typeof scopeTabs[number]))) {
-    redirect(FACULTY_INBOX + "?view=all");
-  }
-  const scopeTab = typeof tab === "string" ? tab : "all";
+  const legacyTab=normalizeFacultyLegacyInboxTab(tab);
+  // Historic invalid tabs canonicalize, but invalid cursor tuples still fail
+  // closed in parseFacultyInboxQuery rather than expanding a private inbox.
+  if(legacyTab.needsCanonicalRedirect)redirect(FACULTY_INBOX+"?view=all");
+  const scopeTab=legacyTab.tab;
   const { view, cursor, invalid } = parseFacultyInboxQuery(query);
   const announcementsEnabled = announcementsRuntimeEnabled();
-  const [page, unreadCount, announcementRead] = await Promise.all([
-    invalid
+  const [notificationRead, unreadCount, announcementRead] = await Promise.all([
+    (invalid
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
           limit: 50,
           unreadOnly: view === "unread",
           collegeId: membership.collegeId,
           ...(cursor ?? {}),
-        }),
+        })).then(value=>({available:true as const,value}))
+          .catch(error=>{
+            if(error instanceof AuthorizationError)throw error;
+            return {available:false as const,value:{items:[],nextCursor:null}};
+          }),
     countOwnUnreadNotifications(context, { collegeId: membership.collegeId }),
     announcementsEnabled
       ? listVisibleAnnouncementsForMembership(context)
-          .then(items => ({ available: true as const, items }))
-          .catch(error => {
-            if (error instanceof AuthorizationError) throw error;
-            return { available: false as const, items: [] };
-          })
-      : Promise.resolve({ available: false as const, items: [] }),
+      : Promise.resolve([]),
   ]);
+  const page=notificationRead.value;
   const announcements = announcementRead.items.filter(item =>
     scopeTab === "all" ||
     (scopeTab !== "personal" && item.receiverType.toLowerCase() === scopeTab),
@@ -81,82 +83,71 @@ export default async function FacultyNotificationsPage({
 
   const items: NotificationListItem[] = page.items.map(({ notification, event }) => ({
     id: notification.id,
-    title: notification.title,
+    title: notification.title?.trim() || "Notification",
     body: notification.body,
     actionHref: facultyNotificationActionHref(notification.actionHref),
     readAt: notification.readAt?.toISOString() ?? null,
     createdAt: notification.createdAt.toISOString(),
     module: event.module,
+    contextLine: event.module?.replaceAll("_"," ")||"—",
     importance: event.importance,
   }));
 
+  const announcementItems:NotificationListItem[]=announcements.map(item=>({
+    id:"announcement-"+item.id,title:item.title?.trim()||"Notification",
+    body:item.message,actionHref:null,readAt:null,
+    createdAt:new Date(item.createdAt).toISOString(),
+    module:"ANNOUNCEMENT",importance:item.isPinned?"HIGH":"NORMAL",
+    source:"ANNOUNCEMENT",pinned:item.isPinned,
+    contextLine:(item.receiverType||"College").replaceAll("_"," ")+" announcement",
+  }));
+  const feed=(scopeTab==="personal"?items:scopeTab==="all"?[...items,...announcementItems]:announcementItems)
+    .sort((a,b)=>Date.parse(b.createdAt)-Date.parse(a.createdAt));
+  const allEmpty=feed.length===0 && view==="all" && scopeTab==="all";
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <PageHeader title="Notifications" />
-      <nav aria-label="Notification audience" className="flex min-w-0 gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
-        {scopeTabs.map(value => (
-          <Link key={value}
-            href={FACULTY_INBOX + "?" + new URLSearchParams({
-              ...(value === "all" ? {} : { tab: value }),
-              ...(view === "unread" ? { view } : {}),
-            }).toString()}
-            aria-current={scopeTab === value ? "page" : undefined}
-            className="inline-flex min-h-11 shrink-0 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] px-4 text-sm font-semibold capitalize text-primary-text aria-[current=page]:border-[var(--lms-primary)] aria-[current=page]:bg-[var(--lms-primary-subtle)]">
-            {value}
-          </Link>
-        ))}
-      </nav>
-      {scopeTab === "all" || scopeTab === "personal" ? (
-      <section aria-labelledby="faculty-personal-notifications" className="space-y-4">
-        <h2 id="faculty-personal-notifications" className="text-lg font-semibold leading-7 text-[var(--lms-heading)]">
-          Personal notifications
+      <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
+        markAllEndpoint="/api/notifications/faculty/read-all" categoryParam="tab" selectedCategory={scopeTab}
+        categories={[
+         {id:"all",label:"All",unread:page.items.length+announcementRead.items.length},
+         {id:"college",label:"College",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="college").length},
+         {id:"department",label:"Department",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="department").length},
+         {id:"faculty",label:"Faculty",unread:announcementRead.items.filter(item=>item.receiverType.toLowerCase()==="faculty").length},
+         {id:"personal",label:"Personal",unread:page.items.length},
+        ]}/>
+      {!notificationRead.available?<Alert tone="error">
+        <strong>Couldn't load notifications.</strong> Notifications could not be loaded. Retry without leaving this page.
+        <Link href={FACULTY_INBOX+"?view="+view} className="ml-2 font-semibold text-link underline">Retry</Link>
+      </Alert>:null}
+      {announcementsEnabled&&!announcementRead.available?<Alert tone="warning">
+        Couldn't load college announcements. Personal notifications remain available.
+        <Link href={FACULTY_INBOX} className="ml-2 font-semibold text-link underline">Retry</Link>
+      </Alert>:null}
+      {invalid?<Alert tone="error">
+        The notification filters or page link are invalid.
+        <Link href={FACULTY_INBOX+"?view="+view}
+          className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline">View all notifications</Link>
+      </Alert>:null}
+      <section aria-labelledby="faculty-feed-heading" className="min-w-0 space-y-4">
+        <h2 id="faculty-feed-heading" className="text-lg font-semibold text-[var(--lms-heading)]">
+          {scopeTab==="all"?"Notifications":scopeTab==="personal"?"Personal notifications":
+            scopeTab.charAt(0).toUpperCase()+scopeTab.slice(1)+" notifications"}
         </h2>
-        <NotificationToolbar view={view} unreadCount={unreadCount} baseHref={FACULTY_INBOX}
-          markAllEndpoint="/api/notifications/faculty/read-all" />
-        {invalid ? (
-          <Alert tone="error">
-            The notification filters or page link are invalid.{" "}
-            <Link href={FACULTY_INBOX + "?view=" + view}
-              className="font-semibold text-primary-text underline inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
-              Return to the newest notifications
-            </Link>
-          </Alert>
-        ) : (
-          <>
-            <NotificationList
-              readEndpoint="/api/notifications/faculty"
-              items={items}
-              emptyText={view === "unread" ? "No unread notifications." : "Nothing yet."}
-            />
-            {nextHref ? (
-              <div className="flex min-w-0 justify-start">
-                <Link href={nextHref}
-                  className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] sm:w-auto md:min-h-[var(--lms-control-height)] border border-border bg-surface px-4 text-sm font-semibold text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
-                  Older notifications
-                </Link>
-              </div>
-            ) : null}
-          </>
-        )}
+        {allEmpty?<p className="text-sm text-body">Announcements across college, department, and faculty will appear here.</p>:null}
+        <NotificationList readEndpoint="/api/notifications/faculty" items={feed}
+          emptyText={allEmpty?"No notifications yet":view==="unread"?"No unread notifications yet":
+            "No "+(scopeTab==="all"?"new":scopeTab)+" notifications yet"}
+          emptyAction={feed.length===0&&!allEmpty?<Link href={FACULTY_INBOX+"?view=all"}
+            className="inline-flex min-h-11 items-center font-semibold text-link underline">
+            View all
+          </Link>:null}/>
+        {nextHref&&(scopeTab==="personal"||scopeTab==="all")?<div className="flex justify-start">
+          <Link href={nextHref} className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle">
+            Older notifications
+          </Link>
+        </div>:null}
       </section>
-      ) : null}
-      {announcementsEnabled && !announcementRead.available ? (
-        <Alert tone="warning">
-          Couldn't refresh notifications. Your personal notifications remain available.
-          <Link href={FACULTY_INBOX} className="ml-2 font-semibold text-primary-text underline">Retry</Link>
-        </Alert>
-      ) : scopeTab !== "personal" ? <AnnouncementFeed
-        enabled={announcementsEnabled}
-        items={announcements.map((announcement) => ({
-          id: announcement.id,
-          title: announcement.title,
-          message: announcement.message,
-          senderType: announcement.senderType,
-          receiverType: announcement.receiverType,
-          isPinned: announcement.isPinned,
-          createdAt: announcement.createdAt,
-        }))}
-      /> : null}
     </div>
   );
 }

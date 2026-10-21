@@ -1,4 +1,4 @@
-import { and, asc, eq, gt, sql } from "drizzle-orm";
+import { and, asc, eq, gt, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   colleges,
@@ -47,6 +47,7 @@ export function resolveRecruiterCompanyScope(
 export async function getRecruiterCompanyTeam(
   context: RequestContext,
   requestedCollegeId?: string | null,
+  includeTeam = true,
 ) {
   const scope = resolveRecruiterCompanyScope(context, requestedCollegeId);
   if (scope.status !== "READY") return scope;
@@ -91,7 +92,9 @@ export async function getRecruiterCompanyTeam(
       eq(placementRecruiterCollegeGrants.companyRelationshipId,placementCompanyRelationships.id),
       eq(placementRecruiterCollegeGrants.status,"ACTIVE"),
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+      // Historic NULL valid_until means an indefinite grant, not expiry.
+      or(isNull(placementRecruiterCollegeGrants.validUntil),
+        gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
     ))
     .innerJoin(users,and(
       eq(users.id,context.user.id),
@@ -106,9 +109,13 @@ export async function getRecruiterCompanyTeam(
     ))
     .limit(1);
 
+  // Missing persisted active grant or relationship is revoked access, never
+  // a silently guessed company. Nullable expiry remains valid until revoked.
   if (!company) throw new AuthorizationError("placements.recruiter.read");
 
-  const team = await db
+  // Company overview remains available even if the Team roster is slow or
+  // unavailable; query colleagues only on the explicitly selected Team tab.
+  const team = includeTeam ? await db
     .select({
       userId: users.id,
       displayName: users.displayName,
@@ -127,12 +134,14 @@ export async function getRecruiterCompanyTeam(
       // HR-TEAM-RECIPIENT-45: expired/unverified colleagues are not active
       // placement-cell contacts even if their profile is still ACTIVE.
       eq(placementRecruiterCollegeGrants.verificationStatus,"VERIFIED"),
-      gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`),
+      // Historic NULL valid_until means an indefinite grant, not expiry.
+      or(isNull(placementRecruiterCollegeGrants.validUntil),
+        gt(placementRecruiterCollegeGrants.validUntil,sql`clock_timestamp()`)),
       eq(placementRecruiterProfiles.companyId, company.id),
       eq(placementRecruiterProfiles.status, "ACTIVE"),
       eq(users.platformStatus, "ACTIVE"),
     ))
-    .orderBy(asc(users.displayName), asc(users.email));
+    .orderBy(asc(users.displayName), asc(users.email)) : [];
 
   return {
     status: "READY" as const,

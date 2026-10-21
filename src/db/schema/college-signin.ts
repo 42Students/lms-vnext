@@ -31,3 +31,21 @@ export const collegeSigninPolicies = pgTable(
     check("college_signin_policies_version_ck", sql`${t.version} >= 0`),
   ],
 );
+
+/** DDL 0066 stores per-college overrides only. Old missing values inherited
+ * the email-first default, not a hidden global admin policy. */
+export function legacyCollegeSigninPolicy(
+ rawMethod:string|null,verifiedCollegeId:string,
+):{collegeId:string;method:"EMAIL_AND_PHONE"|"PHONE_AND_EMAIL"|"EMAIL_ONLY"|"PHONE_ONLY"}|null{
+ if(rawMethod===null)return null;
+ const map:Record<string,"EMAIL_AND_PHONE"|"PHONE_AND_EMAIL"|"EMAIL_ONLY"|"PHONE_ONLY">={
+  EMAIL_PHONE:"EMAIL_AND_PHONE",PHONE_EMAIL:"PHONE_AND_EMAIL",
+  EMAIL_ONLY:"EMAIL_ONLY",PHONE_ONLY:"PHONE_ONLY",
+  EMAIL_AND_PHONE:"EMAIL_AND_PHONE",PHONE_AND_EMAIL:"PHONE_AND_EMAIL",
+ };
+ const method=map[rawMethod.trim().toUpperCase()];
+ if(!method)throw new Error("Unsupported historical college sign-in mode");
+ if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(verifiedCollegeId))
+  throw new Error("Unresolved source college");
+ return {collegeId:verifiedCollegeId,method};
+}

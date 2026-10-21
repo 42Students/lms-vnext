@@ -1,7 +1,9 @@
 import {z} from "zod";
-import {and,eq,inArray} from "drizzle-orm";
+import {and,eq,inArray,gte,lt,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {db10LogAlertSignatures} from "@/db/schema/db10-log-alerts.draft";
+import {db10BugReports} from "@/db/schema/db10-bug-tracker";
+import {trackerAdminRuntimeEnabled} from "@/modules/bug-tracker/readiness";
 import {logAlertsRuntimeEnabled} from "@/modules/log-alerts/readiness";
 import {alertEnvironment,errorSignatureHash} from "@/modules/log-alerts/signature";
 import type {RequestContext} from "@/modules/identity/context";
@@ -35,7 +37,7 @@ export async function readTrackerLiveLogs(context:RequestContext,raw:unknown,now
     throw new TrackerAdminError("FORBIDDEN");
   const input=trackerCloudLogQuerySchema.parse(raw);
   const cfg=cloudPollSettings();
-  if(!cfg)return {configured:false,items:[],nextPageToken:null};
+  if(!cfg)return {configured:false,items:[],nextPageToken:null,issueCount:null};
   const anchor=input.anchorAt?new Date(input.anchorAt):now;
   // Historical lookups are bounded to one day and never query future windows.
   if(!Number.isFinite(anchor.getTime())||anchor.getTime()>now.getTime()+300_000)
@@ -59,6 +61,21 @@ export async function readTrackerLiveLogs(context:RequestContext,raw:unknown,now
   // known-error signature. Do not expose message samples, hashes or account IDs.
   // Match the reporter's same redacted error+path+environment canonical form.
   const environment=alertEnvironment();
+  // Read the indexed (environment,createdAt) range without exposing report
+  // content. Unmigrated tracker deployments remain log-readable.
+  let issueCount:number|null=null;
+  if(trackerAdminRuntimeEnabled()){
+    try {
+      const [count]=await getDb().select({
+        total:sql<number>`count(*)::integer`,
+      }).from(db10BugReports).where(and(
+        eq(db10BugReports.environment,environment),
+        gte(db10BugReports.createdAt,start),
+        lt(db10BugReports.createdAt,end),
+      ));
+      issueCount=count?.total??0;
+    }catch{issueCount=null;}
+  }
   const hashes=page.errors.map(row=>errorSignatureHash({
     environment,message:row.message,path:row.path,
   }));
@@ -85,5 +102,6 @@ export async function readTrackerLiveLogs(context:RequestContext,raw:unknown,now
       knownErrorId:matches.get(errorSignatureHash({environment,message:row.message,path:row.path}))?.id??null,
       muted:matches.get(errorSignatureHash({environment,message:row.message,path:row.path}))?.muted??null,
     }));
-  return {configured:true,items,nextPageToken:page.nextPageToken??null};
+  return {configured:true,items,nextPageToken:page.nextPageToken??null,issueCount,issueEnvironment:environment,
+    issueWindow:{start:start.toISOString(),end:end.toISOString()}};
 }

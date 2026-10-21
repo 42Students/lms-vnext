@@ -1,7 +1,7 @@
 import "server-only";
 import {and,asc,count,desc,eq,ilike,inArray,or,sql,type SQL} from "drizzle-orm";
 import {getDb} from "@/db/client";
-import {db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs} from "@/db/schema/db10-audit-findings.draft";
+import {db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs,db10AuditFindingFiles} from "@/db/schema/db10-audit-findings.draft";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {independentFindingActionSchema} from "./independent-finding-actions-model";
 import {canTransitionIndependentFinding,type IndependentFindingStatus} from "./independent-finding-transition-model";
@@ -59,10 +59,15 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
    .groupBy(db10AuditFindings.status,db10AuditFindings.severity),
  ]);
  const statusCounts:Record<string,number>={};
- for(const row of facets)statusCounts[row.status]=(statusCounts[row.status]??0)+row.n;
+ const severityOpenCounts:Record<string,number>={CRITICAL:0,HIGH:0,MEDIUM:0,LOW:0};
+ for(const row of facets){
+  statusCounts[row.status]=(statusCounts[row.status]??0)+row.n;
+  if((ACTIVE_FINDING_STATUSES as readonly string[]).includes(row.status))
+   severityOpenCounts[row.severity]=(severityOpenCounts[row.severity]??0)+row.n;
+ }
  const criticalOpen=facets.reduce((sum,row)=>
    row.severity==="CRITICAL"&&(ACTIVE_FINDING_STATUSES as readonly string[]).includes(row.status)?sum+row.n:sum,0);
- return {total:total[0]?.n??0,items,page:query.page,statusCounts,criticalOpen,
+ return {total:total[0]?.n??0,items,page:query.page,statusCounts,severityOpenCounts,criticalOpen,
   pages:Math.max(1,Math.ceil((total[0]?.n??0)/INDEPENDENT_AUDIT_PAGE_SIZE))};
 }
 export async function getIndependentAuditFinding(context:RequestContext,rawId:string){
@@ -151,16 +156,26 @@ export async function readIndependentFindingSyncState(context:RequestContext){
  const [row]=await getDb().select({
   source:db10AuditFindingSyncs.source,lastSyncedAt:db10AuditFindingSyncs.lastSyncedAt,
   lastResult:db10AuditFindingSyncs.lastResult,importedCount:db10AuditFindingSyncs.importedCount,
-  refusedFiles:db10AuditFindingSyncs.refusedFiles,
+  refusedFiles:db10AuditFindingSyncs.refusedFiles,lastError:db10AuditFindingSyncs.lastError,
  }).from(db10AuditFindingSyncs)
   .where(eq(db10AuditFindingSyncs.source,"42Students/lms-findings")).limit(1);
  if(!row)return null;
  // The importer's refusal details are already persisted. Expose a bounded
  // diagnostic view to the authorized Super Admin, never a fabricated sync.
- const refusedFiles=row.refusedFiles.slice(0,200).map(file=>({
-  path:String(file.path??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,240),
-  reason:String(file.reason??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,400),
- }));
- return {source:row.source,lastSyncedAt:row.lastSyncedAt,lastResult:row.lastResult,
+ const flagged=await getDb().select({
+  path:db10AuditFindingFiles.sourcePath,result:db10AuditFindingFiles.result,
+  checkedAt:db10AuditFindingFiles.checkedAt,
+ }).from(db10AuditFindingFiles)
+  .where(and(eq(db10AuditFindingFiles.source,row.source),
+    inArray(db10AuditFindingFiles.result,["REFUSED","TAMPERED"])))
+  .orderBy(desc(db10AuditFindingFiles.checkedAt)).limit(200);
+ const latestByPath=new Map(flagged.map(item=>[item.path,item]));
+ const refusedFiles=row.refusedFiles.slice(0,200).map(file=>{
+  const path=String(file.path??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,240);
+  const latest=latestByPath.get(path);
+  return {path,reason:String(file.reason??"").replace(/[\x00-\x1f\x7f]/g," ").slice(0,400),
+   result:latest?.result??"REFUSED",checkedAt:latest?.checkedAt??null};
+ });
+ return {source:row.source,lastSyncedAt:row.lastSyncedAt,lastResult:row.lastResult,lastError:row.lastError,
   importedCount:row.importedCount,refusedCount:row.refusedFiles.length,refusedFiles};
 }

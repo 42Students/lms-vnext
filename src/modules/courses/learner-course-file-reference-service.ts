@@ -3,6 +3,7 @@ import {and,eq,inArray,isNull,or,sql,lte} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {courseLearningPaths,courseLessons,lessonContents} from "@/db/schema";
+import {lessonContentMaterials} from "@/db/schema/lesson-content-materials";
 import type {RequestContext} from "@/modules/identity/context";
 import {CoursesServiceError} from "./errors";
 import {loadCourseSectionDeliveryScope} from "./scope";
@@ -21,15 +22,24 @@ export async function getLearnerCourseFileReference(
   includeHistorical:true,
  });
  if(access!=="LEARNER")throw new CoursesServiceError("LEARNER_PROGRESS_ACCESS_DENIED");
- const [file]=await getDb().select({
-  storageKey:lessonContents.storageKey,
- }).from(lessonContents)
+
+ const files=await getDb().select({
+  key:lessonContentMaterials.storageKey,
+  status:lessonContentMaterials.uploadStatus,
+  scan:lessonContentMaterials.scanStatus,
+  generation:lessonContentMaterials.objectGeneration,
+  scanAttestedAt:lessonContentMaterials.scanAttestedAt,
+  verifiedSize:lessonContentMaterials.verifiedSizeBytes,
+ }).from(lessonContentMaterials)
+ .innerJoin(lessonContents,eq(lessonContents.id,lessonContentMaterials.lessonContentId))
  .innerJoin(courseLessons,eq(courseLessons.id,lessonContents.lessonId))
  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
  .where(and(
   eq(lessonContents.id,contentId),
-  // A private VIDEO uses its own short-lived playback-grant policy.
-  // Never mint a general-purpose downloadable GET capability for it.
+  eq(lessonContentMaterials.lessonContentId,contentId),
+  eq(lessonContentMaterials.kind,"FILE"),
+  eq(lessonContentMaterials.uploadStatus,"READY"),
+  eq(lessonContentMaterials.scanStatus,"CLEAN"),
   eq(lessonContents.contentType,"RESOURCE"),
   eq(courseLearningPaths.offeringId,delivery.offeringId),
   inArray(courseLearningPaths.status,delivery.endedAt?["PUBLISHED","ARCHIVED"]:["PUBLISHED"]),
@@ -37,11 +47,26 @@ export async function getLearnerCourseFileReference(
   eq(courseLessons.visibleToStudents,true),
   eq(lessonContents.status,"PUBLISHED"),
   eq(lessonContents.visibleToStudents,true),
-  // A published item may have a future release time. Do not bypass the
-  // learner workspace's SCHEDULED state by requesting its signed file URL.
-  // PostgreSQL's own clock is the authority at the authorization boundary.
   or(isNull(lessonContents.startsAt),lte(lessonContents.startsAt,sql`now()`)),
   or(isNull(lessonContents.deliveryId),eq(lessonContents.deliveryId,deliveryId)),
- )).limit(1);
- return file?.storageKey??null;
+ )).limit(2);
+ // An old storageKey on the lesson content is not proof of a scanned file.
+ // Unqualified links without a material ID can only resolve ONE safe file.
+ if(files.length!==1)return null;
+ const file=files[0]!;
+ if(file.status!=="READY"||file.scan!=="CLEAN"||!file.generation||
+    !file.scanAttestedAt||!file.verifiedSize||file.verifiedSize<1)
+  return null;
+ return validCourseResourceStorageKey(file.key,delivery.collegeId)?file.key:null;
+}
+
+/** Private normalized key is tenant-bound. Never sign historical unverified
+ * `org-…/college-…` paths or arbitrary keys supplied by a browser. */
+export function validCourseResourceStorageKey(key:string|null,collegeId:string):key is string {
+ if(!key||key.length>512)return false;
+ const parts=key.split("/");
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ return parts.length===5&&parts[0]==="private"&&parts[1]===collegeId&&
+  uuid.test(parts[2]??"")&&parts[3]==="course-resource"&&
+  uuid.test(parts[4]??"");
 }

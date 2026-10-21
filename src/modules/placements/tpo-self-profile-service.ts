@@ -30,8 +30,8 @@ import { requirePlacementManageScope } from "./scope";
  * - persisted membership roles/status;
  * - their own optional faculty department.
  *
- * Contact details, profile documents, other memberships
- * and other users are never selected.
+ * Login phone and email are read-only and returned only for the authenticated
+ * membership owner. Profile documents and other memberships remain excluded.
  */
 export async function getOwnTpoProfile(
   context: RequestContext,
@@ -58,6 +58,9 @@ export async function getOwnTpoProfile(
   const rows = await getDb()
     .select({
       displayName: users.displayName,
+      phone: users.phoneE164,
+      email: users.email,
+      avatarObjectPath: facultyProfiles.avatarObjectPath,
       collegeName: colleges.name,
       collegeCode: colleges.code,
       membershipStatus:
@@ -154,10 +157,30 @@ export async function getOwnTpoProfile(
 
   return {
     displayName: own.displayName,
+    phone: own.phone,
+    email: own.email,
+    avatarObjectPath: own.avatarObjectPath,
     collegeName: own.collegeName,
     collegeCode: own.collegeCode,
     membershipStatus: own.membershipStatus,
     roles: [...new Set(rows.map((row) => row.role))],
     departmentName: own.departmentName,
+    contactMail: own.contactMail,
+    contactMobile: own.contactMobile,
+    // A private object key must be signed by a separately authorized media
+    // endpoint. Never hand this key or an unverified external URL to the UI.
+    profileImageAvailable: Boolean(own.avatarObjectPath),
+    profileImageUrl: null as string | null,
+    avatarInitials: (own.displayName ?? "").trim().split(/\s+/).slice(0,2)
+      .map(part=>part[0]?.toUpperCase()??"").join("") || "?",
+    website: (() => {
+      const raw=own.profileDocument?.website;
+      if(typeof raw!=="string")return null;
+      try{
+        const url=new URL(raw);
+        return url.protocol==="https:" && !url.username && !url.password && url.hostname
+          ? url.toString():null;
+      }catch{return null;}
+    })(),
   };
 }

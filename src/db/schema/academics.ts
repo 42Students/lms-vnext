@@ -31,6 +31,9 @@ export const programs = pgTable(
   "programs",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyProgramId: integer("legacy_program_id"),
+    legacyDurationYears: integer("legacy_duration_years"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     departmentId: uuid("department_id")
       .notNull()
       .references(() => departments.id, {
@@ -54,6 +57,9 @@ export const programs = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("programs_legacy_id_uq").on(table.legacyProgramId)
+      .where(sql`${table.legacyProgramId} is not null`),
+    check("programs_legacy_deleted_ck",sql`${table.legacyWasDeleted} is distinct from true or ${table.status} <> 'ACTIVE'`),
     uniqueIndex("programs_active_department_name_uq")
       .on(
         table.departmentId,
@@ -81,6 +87,7 @@ export const academicPeriods = pgTable(
   "academic_periods",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyAcademicYearName: varchar("legacy_academic_year_name",{length:32}),
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, {
@@ -128,6 +135,9 @@ export const cohorts = pgTable(
   "cohorts",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyBatchId: integer("legacy_batch_id"),
+    legacyAcademicYearRaw: varchar("legacy_academic_year_raw",{length:32}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     programId: uuid("program_id")
       .notNull()
       .references(() => programs.id, {
@@ -164,6 +174,9 @@ export const cohorts = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("cohorts_legacy_batch_id_uq").on(table.legacyBatchId)
+      .where(sql`${table.legacyBatchId} is not null`),
+    check("cohorts_legacy_deleted_ck",sql`${table.legacyWasDeleted} is distinct from true or ${table.status} = 'ARCHIVED'`),
     check(
       "cohorts_legacy_date_order_ck",
       sql`${table.startDate} is null or ${table.endDate} is null or ${table.endDate} >= ${table.startDate}`,
@@ -190,6 +203,10 @@ export const sections = pgTable(
   "sections",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyClassId: integer("legacy_class_id"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
+    legacyStartsAt: timestamp("legacy_starts_at",{withTimezone:true}),
+    legacyEndsAt: timestamp("legacy_ends_at",{withTimezone:true}),
     cohortId: uuid("cohort_id")
       .notNull()
       .references(() => cohorts.id, {
@@ -224,6 +241,10 @@ export const sections = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("sections_legacy_class_id_uq").on(table.legacyClassId)
+      .where(sql`${table.legacyClassId} is not null`),
+    check("sections_legacy_deleted_ck",sql`${table.legacyWasDeleted} is distinct from true or ${table.status} <> 'ACTIVE'`),
+    check("sections_legacy_time_order_ck",sql`${table.legacyStartsAt} is null or ${table.legacyEndsAt} is null or ${table.legacyEndsAt} >= ${table.legacyStartsAt}`),
     uniqueIndex(
       "sections_active_cohort_period_name_uq",
     )
@@ -348,6 +369,8 @@ export const groupBackedClassOfferings = pgTable(
   "group_backed_class_offerings",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyClassId: integer("legacy_class_id"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     academicPeriodId: uuid("academic_period_id").notNull().references(
       () => academicPeriods.id, { onDelete: "restrict" },
     ),
@@ -362,6 +385,9 @@ export const groupBackedClassOfferings = pgTable(
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [
+    uniqueIndex("group_backed_offerings_legacy_class_id_uq").on(t.legacyClassId)
+      .where(sql`${t.legacyClassId} is not null`),
+    check("group_backed_offerings_legacy_deleted_ck",sql`${t.legacyWasDeleted} is distinct from true or ${t.status} = 'ARCHIVED'`),
     uniqueIndex("group_backed_offerings_period_group_uq").on(
       t.academicPeriodId, t.rosterGroupId,
     ),
@@ -452,6 +478,10 @@ export const sectionFacultyAssignments = pgTable(
   "section_faculty_assignments",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyAssignmentId: integer("legacy_assignment_id"),
+    legacyCourseId: integer("legacy_course_id"),
+    legacyDeactivatedAt: timestamp("legacy_deactivated_at",{withTimezone:true}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     sectionId: uuid("section_id")
       .notNull()
       .references(() => sections.id, {
@@ -483,6 +513,9 @@ export const sectionFacultyAssignments = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("section_faculty_assignments_legacy_id_uq").on(table.legacyAssignmentId)
+      .where(sql`${table.legacyAssignmentId} is not null`),
+    check("section_faculty_legacy_ended_ck",sql`${table.legacyWasDeleted} is distinct from true or ${table.endedAt} is not null`),
     uniqueIndex(
       "section_faculty_assignments_active_uq",
     )
@@ -502,6 +535,10 @@ export const sectionScheduleEvents = pgTable(
   "section_schedule_events",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyScheduleId: integer("legacy_schedule_id"),
+    legacyCourseSlug: varchar("legacy_course_slug",{length:120}),
+    legacyRoomNumber: varchar("legacy_room_number",{length:160}),
+    legacyCancelledAt: timestamp("legacy_cancelled_at",{withTimezone:true}),
     sectionId: uuid("section_id")
       .notNull()
       .references(() => sections.id, {
@@ -537,6 +574,8 @@ export const sectionScheduleEvents = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("section_schedule_events_legacy_id_uq").on(table.legacyScheduleId)
+      .where(sql`${table.legacyScheduleId} is not null`),
     index("section_schedule_events_hall_time_idx").on(table.lectureHallId, table.startsAt, table.endsAt)
       .where(sql`${table.lectureHallId} is not null and ${table.status} = 'SCHEDULED'`),
     index("section_schedule_events_section_time_idx").on(

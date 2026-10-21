@@ -1,20 +1,24 @@
 import { Banner } from "@/components/ui/banner";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound,redirect } from "next/navigation";
 import { resolveOwnAssessmentDeepLink } from "@/modules/placements/learner-assessment-deeplink-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { LearnerCareerRoundsWorkspace } from "@/components/placements/learner-career-rounds-workspace";
 import { PageHeader } from "@/components/ui/page-header";
-import { getOwnLearnerAssessmentBrowse } from "@/modules/placements/learner-assessment-browse-service";
+import { getOwnLearnerAssessmentBrowse,legacyLearnerAssessmentsRedirect } from "@/modules/placements/learner-assessment-browse-service";
 import { learnerRoundSearchQuerySchema } from "@/modules/placements/learner-round-search-query-model";
 import {learnerAssessmentDueBucketSchema} from "@/modules/placements/learner-assessment-due-buckets";
 
 export default async function LearnerPlacementAssessmentsPage({searchParams}: {
   searchParams:Promise<{applicationId?:string|string[];roundId?:string|string[];q?:string|string[];due?:string|string[]}>;
 }) {
+  const query=await searchParams;
+  // The historical Assessments bookmark was a moved-page alias to Schedule.
+  // Redirect before database reads; retain modern record-specific deep links.
+  const legacyTarget=legacyLearnerAssessmentsRedirect(query);
+  if(legacyTarget)redirect(legacyTarget);
   const context = await getCurrentRequestContext();
   const workspace = await getOwnLearnerAssessmentBrowse(context);
-  const query=await searchParams;
   const search=learnerRoundSearchQuerySchema.safeParse({q:query.q});
   if(!search.success)notFound();
   const due=learnerAssessmentDueBucketSchema.safeParse(query.due??"all");

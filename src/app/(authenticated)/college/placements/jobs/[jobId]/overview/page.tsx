@@ -30,7 +30,7 @@ export default async function CollegeDriveOverviewPage({ params }: {
     getPlacementJob(context,jobId),
     getCollegeDriveOverview(context,jobId),
     getCollegeHiringFunnel(context,{jobId}),
-    getCollegeDriveAttention(context),
+    getCollegeDriveAttention(context,jobId),
   ]);
   for(const item of [jobResult,overviewResult,funnelResult,attentionResult]){
     if(item.status==="rejected"&&item.reason instanceof AuthorizationError)throw item.reason;

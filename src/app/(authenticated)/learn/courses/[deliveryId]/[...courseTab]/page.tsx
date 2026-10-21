@@ -1,8 +1,11 @@
 import { Banner } from "@/components/ui/banner";
+import { CoursesServiceError } from "@/modules/courses/errors";
+import { ZodError } from "zod";
 import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-model";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { learnerCourseTabPath } from "@/modules/courses/learner-course-tab-route-model";
+import {resolveLegacyLearnerCourseDelivery} from "@/modules/courses/learner-course-legacy-route-service";
 import {learnerCourseTabPersistentQuery} from "@/modules/courses/learner-course-tab-context-model";
 import {LearnerCourseDocumentTitle} from "@/components/courses/learner-course-document-title";
 import { notFound, redirect } from "next/navigation";
@@ -13,6 +16,7 @@ import { LearnerCourseOverview } from "@/components/courses/learner-course-overv
 import { LearnerCourseTabs, learnerCourseTabs } from "@/components/courses/learner-course-tabs";
 import { LearnerCourseWorkspace } from "@/components/courses/learner-course-workspace";
 import { PageHeader } from "@/components/ui/page-header";
+import { EmptyState } from "@/components/ui/empty-state";
 import { learnerCourseAttendanceIstMonth,learnerCourseAttendanceIstWindow } from "@/modules/attendance/learner-course-attendance-ist-model";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import { learnerDiscussionScopeKey } from "@/modules/courses/learner-discussion-scope-key-model";
@@ -43,6 +47,20 @@ export default async function LearnerCourseTabPage({
   const query = await searchParams;
   const context = await getCurrentRequestContext();
   const activeTab = learnerCourseTabPath(courseTab, learnerCourseTabs.map((tab) => tab.path));
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(deliveryId)){
+    const authorizedDeliveryId=await resolveLegacyLearnerCourseDelivery(context,deliveryId);
+    if(!authorizedDeliveryId)notFound();
+    const safeQuery=new URLSearchParams();
+    for(const [key,value] of Object.entries(query)){
+      if(!["filter","lesson","content","month","cls","ref",
+       "semesterId","academicPeriodId"].includes(key))continue;
+      const firstValue=Array.isArray(value)?value[0]:value;
+      if(firstValue&&firstValue.length<=100)safeQuery.set(key,firstValue);
+    }
+    const suffix=safeQuery.toString();
+    redirect("/learn/courses/"+encodeURIComponent(authorizedDeliveryId)+"/"+
+      (activeTab??"home")+(suffix?"?"+suffix:""));
+  }
   if (activeTab === null) {
     // A malformed/foreign delivery must not redirect before checking scope.
     await getLearnerCourseWorkspace(context, deliveryId);
@@ -58,21 +76,73 @@ export default async function LearnerCourseTabPage({
     redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+(suffix?"?"+suffix:""));
   }
 
-  const [workspace, deliveries, instructors] = await Promise.all([
+  if (courseTab.length > 1) {
+    // Legacy catch-all URLs accept a first valid tab and ignore descendants.
+    // Canonicalize only after verifying the learner owns this delivery.
+    await getLearnerCourseWorkspace(context, deliveryId);
+    const safeQuery = new URLSearchParams();
+    for (const [key, value] of Object.entries(query).slice(0, 20)) {
+      if (key.length > 100) continue;
+      const one = Array.isArray(value) ? value[0] : value;
+      if (typeof one === "string" && one.length <= 500) safeQuery.set(key, one);
+    }
+    const suffix = safeQuery.toString();
+    redirect("/learn/courses/" + encodeURIComponent(deliveryId) + "/" +
+      encodeURIComponent(activeTab) + (suffix ? "?" + suffix : ""));
+  }
+
+  const [workspaceResult, deliveriesResult, instructorsResult] = await Promise.allSettled([
     getLearnerCourseWorkspace(context, deliveryId),
-    listLearnerCourseDeliveries(
-      context,
-      { includeHistorical: true },
-    ),
-    listLearnerCourseInstructors(context, deliveryId),
+    listLearnerCourseDeliveries(context, { includeHistorical: true }),
+    activeTab === "home" ? listLearnerCourseInstructors(context, deliveryId) : Promise.resolve([]),
   ]);
+  if(workspaceResult.status==="rejected"){
+    const reason:unknown=workspaceResult.reason;
+    if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
+  }
+  if(deliveriesResult.status==="rejected"){
+    const reason:unknown=deliveriesResult.reason;
+    if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
+  }
+  if(instructorsResult.status==="rejected"){
+    const reason:unknown=instructorsResult.reason;
+    if(reason instanceof CoursesServiceError || reason instanceof ZodError)notFound();
+  }
+  if(workspaceResult.status!=="fulfilled" || deliveriesResult.status!=="fulfilled" ||
+      instructorsResult.status!=="fulfilled"){
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Could not load course" />
+      <Banner tone="warning" role="alert">
+        Could not load course. Content and completion counts may be incomplete.
+        <Link href={"/learn/courses/"+encodeURIComponent(deliveryId)+"/"+(activeTab??"home")}
+          className="ml-2 font-semibold text-primary-text underline">Retry</Link>
+      </Banner>
+      <Link href="/learn/courses" className="font-semibold text-primary-text underline">
+        Back to Courses
+      </Link>
+    </div>;
+  }
+  const workspace=workspaceResult.value;
+  const deliveries=deliveriesResult.value;
+  const instructors=instructorsResult.value;
 
   const courseMeta = deliveries.find(
     (delivery) => delivery.deliveryId === deliveryId,
   );
 
   if (!courseMeta) {
-    notFound();
+    // The authorized workspace exists, but no active/historical class-to-course
+    // mapping appears in the learner's semester directory. Do not guess a class.
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Not assigned to a class" />
+      <Banner tone="warning" role="alert">
+        Not assigned to a class. Please contact your administrator to check your
+        course and class assignment.
+      </Banner>
+      <Link href="/learn/courses" className="font-semibold text-primary-text underline">
+        Back to Courses
+      </Link>
+    </div>;
   }
 
   const readOnly =
@@ -81,6 +151,14 @@ export default async function LearnerCourseTabPage({
     courseMeta.programEnrollmentStatus !== "ACTIVE" ||
     courseMeta.periodStatus === "CLOSED";
 
+  // Legacy links use lowercase roadmap filter names. Preserve known categories
+  // without trusting the parameter as a path or database identifier.
+  const rawRoadmapFilter = first(query.filter)?.trim().toLowerCase() ?? "all";
+  const roadmapFilter = ({
+    lectures: "lectures", resources: "resources", assessments: "assessments",
+    "live-sessions": "live-sessions", all: "all",
+  } as Record<string, string>)[rawRoadmapFilter] ?? "all";
+  const courseTitle = workspace.course.name?.trim() || "Unnamed Course";
   let content: ReactNode;
 
   if (activeTab === "home") {
@@ -142,7 +220,7 @@ export default async function LearnerCourseTabPage({
       <LearnerCourseWorkspace
         deliveryId={deliveryId}
         workspace={workspace}
-        filter={first(query.filter) ?? "all"}
+        filter={roadmapFilter}
         focusLessonId={first(query.lesson) ?? null}
         focusContentId={first(query.content) ?? null}
         readOnly={readOnly}
@@ -175,7 +253,7 @@ export default async function LearnerCourseTabPage({
   }
 
   return (
-    <div className="min-w-0 max-w-full space-y-4">
+    <div role="region" aria-label="Course workspace" className={"learn-projects learn-course-layout learn-course-layout--" + activeTab + " min-w-0 max-w-full space-y-4"}>
       <nav aria-label="Course navigation" className="flex flex-wrap items-center gap-3">
         <Link
               href="/learn/courses"
@@ -184,11 +262,12 @@ export default async function LearnerCourseTabPage({
               {LEARNER_BACK_TO_COURSES}
             </Link>
       </nav>
-      <PageHeader title={workspace.course.name} description="Course workspace" />
+      <PageHeader title={activeTab === "roadmap" ? "Learning Path" : courseTitle}
+        description={activeTab === "roadmap" ? courseTitle : "Course workspace"} />
       {readOnly?<Banner tone="info">
         Past semester course · Read only. Submitted work remains accessible.
       </Banner>:null}
-      <LearnerCourseDocumentTitle courseName={workspace.course.name}
+      <LearnerCourseDocumentTitle courseName={courseTitle}
         tabName={learnerCourseTabs.find(tab=>tab.path===activeTab)?.label??"Overview"}/>
        <LearnerCourseTabs deliveryId={deliveryId} activeTab={activeTab}
         persistentQuery={learnerCourseTabPersistentQuery(query)}/>
@@ -209,7 +288,9 @@ export default async function LearnerCourseTabPage({
             </Link>
         </nav>
       </details>
-      {content}
+      <div key={deliveryId + ":" + activeTab} className="learn-course-tab-page min-w-0">
+        {content}
+      </div>
     </div>
   );
 }

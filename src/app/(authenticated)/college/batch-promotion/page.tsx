@@ -1,4 +1,5 @@
 import { FilterBar } from "@/components/ui/filter-bar";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import { CollegePromotionConfirmation } from "@/components/academics/college-promotion-confirmation";
 import {AuthorizationError} from "@/modules/permissions/policy";
@@ -38,7 +39,10 @@ export default async function CollegeBatchPromotionPage({
       action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
   </div>;
   const incoming = await searchParams;
+  const showCompleted = first(incoming.showCompleted) === "1";
   const batchPageRaw=first(incoming.batchPage)??"1";
+  const showInactive=first(incoming.showInactive)==="1";
+  const batchSearch=(first(incoming.search)??"").trim().slice(0,120);
   const batchSizeRaw=first(incoming.batchPageSize)??"10";
   const batchPage=/^[1-9][0-9]{0,3}$/.test(batchPageRaw)?Number(batchPageRaw):null;
   const batchSize=["10","20","50"].includes(batchSizeRaw)?Number(batchSizeRaw):null;
@@ -52,14 +56,16 @@ export default async function CollegeBatchPromotionPage({
       value !== undefined && value !== "",
     )),
   );
-  if (!parsed.success||batchPage===null||batchSize===null) return <div className="min-w-0 space-y-4 md:space-y-6">
+  if (!parsed.success||batchPage===null||batchSize===null||
+      (first(incoming.showCompleted) !== undefined && !["1",""].includes(first(incoming.showCompleted)!))) return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion" actions={<PageBackLink href="/college/batches" label="Batches" />} />
     <ErrorState title="Invalid promotion preview filters"
       description="Select a valid program, batch and optional academic-year start. No learner records were loaded."
       action={<Link href="/college/batch-promotion" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
   </div>;
   const [optionsResult,previewResult]=await Promise.allSettled([
-    listCollegePromotionOptions(context,parsed.data),
+    listCollegePromotionOptions(context,parsed.data,
+      {page:batchPage!,pageSize:batchSize!,includeInactive:showCompleted}),
     parsed.data.cohortId?previewCollegeBatchPromotion(context,parsed.data):Promise.resolve(null),
   ]);
   if(optionsResult.status==="rejected"){
@@ -79,14 +85,25 @@ export default async function CollegeBatchPromotionPage({
   const facultySetup=preview?.plan.targetTermNumber&&parsed.data.cohortId
     ?await getPromotionFacultyReadiness(context,preview.batch.programId,
       parsed.data.cohortId,preview.plan.targetTermNumber).catch(()=>null):null;
-  const totalBatches=options.cohorts.length;
+  const inactiveCount=options.cohorts.filter(row=>row.status!=="ACTIVE").length;
+  const visibleCohorts=options.cohorts.filter(row=>{
+    if(!showInactive && row.status!=="ACTIVE")return false;
+    if(!batchSearch)return true;
+    const searchable=[row.name,row.programName,row.status,
+      row.currentTermNumber===null?"":String(row.currentTermNumber),
+      row.currentAcademicYearStart===null?"":formatPromotionAcademicYear(row.currentAcademicYearStart)].join(" ").toLowerCase();
+    return searchable.includes(batchSearch.toLowerCase());
+  });
+  const totalBatches=visibleCohorts.length;
   const totalBatchPages=Math.max(1,Math.ceil(totalBatches/batchSize!));
   const currentBatchPage=Math.min(batchPage!,totalBatchPages);
-  const directoryRows=options.cohorts.slice(
+  const directoryRows=visibleCohorts.slice(
     (currentBatchPage-1)*batchSize!,currentBatchPage*batchSize!);
   const currentUrl=(page:number,size=batchSize!)=>{
     const params=new URLSearchParams();
     if(parsed.data.programId)params.set("programId",parsed.data.programId);
+    if(showInactive)params.set("showInactive","1");
+    if(batchSearch)params.set("search",batchSearch);
     if(parsed.data.cohortId)params.set("cohortId",parsed.data.cohortId);
     if(parsed.data.yearStart!==undefined)params.set("yearStart",formatPromotionAcademicYear(parsed.data.yearStart));
     params.set("batchPage",String(page));params.set("batchPageSize",String(size));
@@ -94,41 +111,62 @@ export default async function CollegeBatchPromotionPage({
   };
   const batchPreviewHref=(row:(typeof options.cohorts)[number])=>{
     const params=new URLSearchParams({programId:row.programId,cohortId:row.id});
+    if(showInactive)params.set("showInactive","1");
+    if(batchSearch)params.set("search",batchSearch);
     return "/college/batch-promotion?"+params.toString();
   };
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batch Promotion"
-      description="Server-verified eligibility preview. Promotion rechecks blockers and closes prior-term-only teaching assignments."
+      description="Move a cohort to the next semester only after curriculum and staffing checks are ready."
       actions={<PageBackLink href="/college/batches" label="Batches" />} />
+    <Alert tone="info">Promotion moves the entire batch to the next semester. Check mapped courses and faculty assignments before promoting.</Alert>
     {previewError?<Alert tone="warning">
       Could not verify this promotion. Please retry. Existing batch records remain available below.
       <Link href="/college/batch-promotion" className="ml-2 font-semibold text-link underline">Retry</Link>
     </Alert>:null}
     <section aria-label="College batch directory" className="min-w-0 space-y-3">
-      <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Batch directory</h2>
+      <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">Batch Promotion</h2>
+      <form action="/college/batch-promotion" method="get" aria-label="Filter batches" className="flex min-w-0 flex-wrap items-end gap-3 border-b border-border pb-4">
+        <label className="grid min-w-[180px] flex-1 gap-2 text-sm font-semibold text-body">Program
+          <Select name="programId" defaultValue={parsed.data.programId??""}>
+            <option value="">Filter by program</option>
+            {options.programs.map(row=><option key={row.id} value={row.id}>{row.name}</option>)}
+          </Select>
+        </label>
+        <label className="grid min-w-[180px] flex-1 gap-2 text-sm font-semibold text-body">Search batches
+          <Input name="search" maxLength={120} defaultValue={batchSearch} placeholder="Search name, year, status or semester"/>
+        </label>
+        <label className="inline-flex min-h-11 items-center gap-2 text-sm text-body">
+          <input name="showInactive" type="checkbox" value="1" defaultChecked={showInactive} aria-label="Show completed and inactive batches" className="h-4 w-4 accent-[var(--lms-primary)]"/>
+          {BATCH_PROMOTION_COPY.showCompleted} ({inactiveCount})
+        </label>
+        <Button type="submit" className="min-h-11 md:min-h-9">Refresh</Button>
+      </form>
       <p className="text-xs text-muted-foreground">Graduation is recorded only after a guarded
         final-term action is available; no completion is inferred from semester number alone.</p>
       <DataTable caption="All college batches" rows={directoryRows} getRowKey={row=>row.id}
         columns={[
           {key:"batch",header:"Batch Name",mobilePriority:"primary",cell:row=>row.name},
-          {key:"program",header:"Program",cell:row=>row.programName},
-          {key:"semester",header:"Semester",cell:row=>row.currentTermNumber??"Not set"},
+          {key:"program",header:"Program",cell:row=>row.programName||"-"},
+          {key:"semester",header:"Semester",cell:row=><StatusBadge tone="neutral">Semester {row.currentTermNumber??"—"} of {preview?.batch.id===row.id?preview.batch.durationTerms:"—"}</StatusBadge>},
           {key:"year",header:"Academic Year",cell:row=>
-            row.currentAcademicYearStart===null?"Not set":formatPromotionAcademicYear(row.currentAcademicYearStart)},
+            row.currentAcademicYearStart===null?"-":formatPromotionAcademicYear(row.currentAcademicYearStart)},
           {key:"students",header:"Students",cell:row=>row.activeLearners},
           {key:"status",header:"Status",cell:row=>
-            <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>},
+            <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="COMPLETED"?"neutral":"warning"}>{row.status==="COMPLETED"?"Completed":row.status==="ACTIVE"?"Active":String(row.status)==="INACTIVE"?"Inactive":row.status||"Status unavailable"}</StatusBadge>},
           {key:"action",header:"Action",mobilePriority:"action",cell:row=>row.status==="ACTIVE"?
             <Link href={batchPreviewHref(row)} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Preview promotion</Link>:
             <span className="text-xs text-muted-foreground">No action available</span>},
         ]}
-        empty={<EmptyState title="No batches" description="No batches match the selected program."/>}/>
+        empty={<EmptyState title={showInactive?"No batches found":"No active batches."} description={showInactive?"No batches match the current filters.":"Turn on Show completed / inactive to view the rest."}/> }/>
       <div className="flex flex-wrap items-center justify-between gap-3 text-sm">
         <span>Showing {totalBatches?((currentBatchPage-1)*batchSize!+1):0}–
           {Math.min(totalBatches,currentBatchPage*batchSize!)} of {totalBatches} · Page {currentBatchPage} of {totalBatchPages}</span>
         <div className="flex flex-wrap items-center gap-3">
           <form method="get">
             {parsed.data.programId?<input type="hidden" name="programId" value={parsed.data.programId}/>:null}
+            {showInactive?<input type="hidden" name="showInactive" value="1"/>:null}
+            {batchSearch?<input type="hidden" name="search" value={batchSearch}/>:null}
             {parsed.data.cohortId?<input type="hidden" name="cohortId" value={parsed.data.cohortId}/>:null}
             <label className="flex items-center gap-2">Rows per page
               <Select name="batchPageSize" defaultValue={batchSize!} className="min-w-20">
@@ -162,14 +200,20 @@ export default async function CollegeBatchPromotionPage({
             {options.cohorts.map(cohort => <option key={cohort.id} value={cohort.id}>
               {cohort.programName} · {cohort.name} ({cohort.status})
             </option>)}
+            {preview && !options.cohorts.some(cohort => cohort.id === preview.batch.id) ?
+              <option value={preview.batch.id}>{preview.batch.programName} · {preview.batch.name} ({preview.batch.status})</option> : null}
           </Select>
         </label>
         <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Academic year override (optional)
           <Input name="yearStart" type="text" inputMode="numeric" pattern="[0-9]{4}-[0-9]{2}"
             defaultValue={parsed.data.yearStart === undefined ? "" : formatPromotionAcademicYear(parsed.data.yearStart)}
-            placeholder="e.g., 2099-00"
+            placeholder={preview?.plan.academicYearStart?formatPromotionAcademicYear(preview.plan.academicYearStart):"YYYY-YY"}
             />
+        </label>
+        <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-muted-foreground">
+          <Checkbox name="showCompleted" value="1" defaultChecked={showCompleted} />
+          Show completed / inactive batches
         </label>
         <div className="flex min-w-0 items-end">
           <Button type="submit" className="min-h-11 w-full md:min-h-9">Preview</Button>
@@ -178,7 +222,7 @@ export default async function CollegeBatchPromotionPage({
     </section>
     {!preview ? (
       <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
-        <EmptyState title="No promotion preview" description="Select a batch to calculate a preview from saved progression, semester and enrollment records."/>
+        <EmptyState title="Select a batch" description="Preview a batch from the list above to verify curriculum, staffing and enrollment blockers before promoting."/>
       </section>
     ) : (
       <>
@@ -186,12 +230,12 @@ export default async function CollegeBatchPromotionPage({
           <h2 className="m-0 min-w-0 break-words text-[var(--lms-font-xl)] font-semibold leading-7 text-[var(--lms-heading)]">{preview.batch.name}</h2>
           <p className="min-w-0 break-words text-sm leading-5 text-body">Program: {preview.batch.programName} · Batch status: {preview.batch.status}</p>
           <p className="text-sm text-body">
-            Recorded term: {preview.batch.currentTermNumber ?? "Not recorded"} of {preview.batch.durationTerms}.
+            Semester {preview.batch.currentTermNumber ?? "—"} of {preview.batch.durationTerms}.
             Target term: {preview.plan.targetTermNumber ?? "No next term (graduation or unavailable)"}.
           </p>
           <p className="text-sm text-body">
-            Recorded academic year: {preview.batch.currentAcademicYearStart ?? "Not recorded"}.
-            Preview year: {preview.plan.academicYearStart ?? "Not configured"}
+            Recorded academic year: {preview.batch.currentAcademicYearStart===null?"-":formatPromotionAcademicYear(preview.batch.currentAcademicYearStart)}.
+            Preview year: {preview.plan.academicYearStart===null?"Not configured":formatPromotionAcademicYear(preview.plan.academicYearStart)}
             {parsed.data.yearStart !== undefined ? " (override entered; not saved)" : ""}.
           </p>
           <p className="text-sm text-body">

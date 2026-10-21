@@ -31,7 +31,7 @@ export async function POST(request:Request){
   headers:{"content-type":request.headers.get("content-type")??""}});
  const form=await input.formData().catch(()=>null);
  const rawToken=form?.get("token");
- if(typeof rawToken!=="string"||rawToken.length>2048)
+ if(typeof rawToken!=="string"||!rawToken.trim()||rawToken.length>2048)
   return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
  const tpoClaim=verifyTpoCampaignRecipientToken(rawToken,resolveTpoCampaignRecipientSecret(process.env),Date.now());
  if(tpoClaim){
@@ -47,8 +47,16 @@ export async function POST(request:Request){
  // Legacy SHA256 links may have no current HMAC payload. Resolve only
  // against the purpose-specific migrated digest, never from an email query.
  if(!rawToken.includes(".")&&rawToken.length<=200){
-  await unsubscribeTpoCampaignRecipient(rawToken);
-  return successResponse(request,"placement-cell");
+  // Legacy opaque tokens (max 200 chars) are recognized by their migrated
+  // digest only. Reusing one does not reveal whether an address existed.
+  try {
+   await unsubscribeTpoCampaignRecipient(rawToken);
+   return successResponse(request,"placement-cell");
+  }catch(e){
+   if(e instanceof CampaignUnsubscribeInvalid)
+    return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
+   throw e;
+  }
  }
  const claim=verifyUnsubscribeToken(rawToken,process.env.DB10_GLOBAL_EMAIL_HMAC_KEY_BASE64??"",Date.now());
  if(!claim)return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});

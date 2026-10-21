@@ -6,8 +6,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import {AdminScopedCsvControl} from "@/components/admin/admin-scoped-csv-control";
 import {AdminScopedLiveSearch} from "@/components/admin/admin-scoped-live-search";
+import {AdminScopedRowsPerPage} from "@/components/admin/admin-scoped-rows-per-page";
 import {superAdminScopedCsvHref} from "@/modules/admin-ui/super-admin-scoped-csv-model";
 import { EmptyState } from "@/components/ui/empty-state";
+import { Alert } from "@/components/ui/alert";
 import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
@@ -54,24 +56,60 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
  </div>;
  if(!context.adminScope?.collegeId)return <div className="min-w-0 space-y-5">
   {heading("Super Admin")}
-  <EmptyState title="Select a college to continue" description={"Choose a college in the header above to see its "+(title==="Faculty"?"faculty":title==="Students"?"students":title==="Faculty Assignment"?"faculty assignments":"people directory")+"."}/>
+  <Alert tone="warning">
+   <div className="flex items-start gap-3">
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="18" height="18" className="mt-0.5 shrink-0" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"><circle cx="12" cy="12" r="10"/><path d="M12 7v6M12 17h.01"/></svg>
+    <div className="min-w-0 space-y-1">
+     <strong className="block font-semibold">{title==="Registered Students"?"Select a College to manage Learners":title==="Registered Faculty"?"Select a College to manage Faculty":"Select a college to continue"}</strong>
+     <p>{title==="Registered Students"?"Learners are treated as college-scoped in Superadmin to prevent cross-tenant edits.":title==="Registered Faculty"?"Faculty is treated as college-scoped in Superadmin to prevent cross-tenant edits.":title==="Faculty Assignments"?"Choose an Organization + College in the header above to view faculty assignments.":title.includes("Analytics")?"Hiring metrics are college-scoped. Pick an Organization + College in the header above.":"Choose a college in the header above to continue."}</p>
+    </div>
+   </div>
+  </Alert>
  </div>;
  const directory=await loader(parsed.data)
   .then(value=>({ok:true as const,value}))
   .catch(()=>({ok:false as const}));
  if(!directory.ok)return <div className="min-w-0 space-y-5">
   {heading("Super Admin")}
-  <ErrorState title="Directory unavailable"
-   description="The selected college's directory could not be loaded. Your filters have not changed."
-   action={<Link href={superAdminReadHref(path,parsed.data)}
-    className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry loading directory</Link>}/>
+  <Alert tone="error" title={title==="Registered Students"?"Could not load student roster":title==="Registered Faculty"?"Could not load faculty":title==="Faculty Assignments"?"Could not load faculty assignments":"Could not load directory"}>
+   <div className="flex flex-wrap items-center justify-between gap-3">
+    <p>The selected college&apos;s records could not be loaded. Your filters have not changed.</p>
+    <Link href={superAdminReadHref(path,parsed.data)} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)]">Retry</Link>
+   </div>
+  </Alert>
  </div>;
  const data=directory.value;
+ const directoryKind=peopleFilters?.kind??(title==="Registered Students"?"LEARNER":title==="Registered Faculty"?"FACULTY":null);
+ const humanStatus=(status:string)=>status.toLowerCase().replace(/_/g," ").replace(/\b\w/g,letter=>letter.toUpperCase());
+ const facultyTypes=[
+  ["ADMIN","College admin"],["TPO","Placement officer"],["PROFESSOR","Professor"],
+  ["ASSOCIATE_PROFESSOR","Associate professor"],["ASSISTANT_PROFESSOR","Assistant professor"],
+  ["LECTURER","Lecturer"],["HEAD","Head of department"],["COORDINATOR","Coordinator"],
+  ["MENTOR","Mentor"],["PERMANENT","Permanent"],["VISITING","Visiting"],
+  ["GUEST","Guest"],["CONTRACT","Contract"],["ADJUNCT","Adjunct"],
+ ] as const;
+ const facultyTypeLabel=(raw:string)=>{
+  const match=facultyTypes.find(([code])=>code===raw.toUpperCase().replace(/ /g,"_"));
+  return match?.[1]??humanStatus(raw);
+ };
+ const structuredFiltersActive=Boolean(data.query.status!=="ALL"||data.query.departmentId||
+  data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType);
+ const filtersActive=structuredFiltersActive||Boolean(data.query.q);
+ const clearFilterHref=superAdminReadHref(path,{...data.query,status:"ALL",page:1,
+  departmentId:undefined,programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined});
+ const clearSearchHref=superAdminReadHref(path,{...data.query,q:"",page:1});
+ const emptyRosterTitle=directoryKind==="LEARNER"?
+  (data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.sectionId||data.query.cohortId||data.query.programId?"No students match these filters.":"No students found. Register students to get started."):
+  directoryKind==="FACULTY"?
+  (data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.employmentType?"No faculty match these filters.":"No faculty found. Register faculty members to get started."):
+  title==="Faculty Assignments"?(data.query.q||data.query.sectionId||data.query.status!=="ALL"?"No assignments match these filters.":"No faculty assignments found."):"No matching records";
  // Explicit legacy headings restore navigable columns while the authorized
  // server directory continues to own filtering, identity and pagination.
+ const teachingRoleLabel=(value:string)=>value==="PRIMARY"?"Primary Instructor":
+  value==="CO_TEACHER"?"Co-Teacher":value==="TA"?"Teaching Assistant":humanStatus(value);
  const detailValue=(row:SuperAdminReadRow,label:string)=>
   row.details.find(detail=>detail.startsWith(label+": "))?.slice(label.length+2)??"—";
- const actionCell=(row:SuperAdminReadRow)=><div className="flex min-w-0 flex-col items-start gap-2">
+ const actionCell=(row:SuperAdminReadRow)=><div aria-label={row.title+" actions"} className="flex min-w-0 flex-col items-start gap-2">
   {renderRowActions?.(row)}
   {row.href?<Link href={row.href} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open details →</Link>:null}
   {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">{row.secondaryLabel??"Manage →"}</Link>:null}
@@ -83,8 +121,18 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>detailValue(row,"Email")},
   {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
   {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
-  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>},
-  {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
+ ];
+ const facultyColumns:DataTableColumn<SuperAdminReadRow>[]=[
+  {key:"name",header:"Name",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
+  {key:"department",header:"Department",mobilePriority:"secondary",cell:row=>detailValue(row,"Department")},
+  {key:"mobile",header:"Mobile",mobilePriority:"secondary",cell:row=>detailValue(row,"Mobile")},
+  {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>detailValue(row,"Email")},
+  {key:"type",header:"Type",mobilePriority:"secondary",cell:row=>facultyTypeLabel(detailValue(row,"Faculty type")!=="—"?detailValue(row,"Faculty type"):detailValue(row,"Employment type"))},
+  {key:"gender",header:"Gender",mobilePriority:"secondary",cell:row=>detailValue(row,"Gender")},
+  {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
  ];
  const assignmentColumns:DataTableColumn<SuperAdminReadRow>[]=[
   {key:"faculty",header:"Faculty",mobilePriority:"primary",cell:row=><strong className="break-words">{row.title}</strong>},
@@ -92,16 +140,20 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>detailValue(row,"Class")},
   {key:"semester",header:"Semester",mobilePriority:"secondary",cell:row=>detailValue(row,"Semester")},
   {key:"year",header:"Year",mobilePriority:"secondary",cell:row=>detailValue(row,"Year")},
-  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>detailValue(row,"Teaching role")},
+  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=><StatusBadge tone={detailValue(row,"Teaching role")==="PRIMARY"?"success":"neutral"}>{teachingRoleLabel(detailValue(row,"Teaching role"))}</StatusBadge>},
   {key:"active",header:"Active",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status==="ACTIVE"?"Yes":"No"}</StatusBadge>},
-  {key:"actions",header:"Actions",mobilePriority:"action",cell:actionCell},
+  {key:"actions",header:"Actions",mobilePriority:"action",className:"md:sticky md:right-0 md:z-10 md:bg-surface",cell:actionCell},
  ];
- const scopedColumns=peopleFilters?.kind==="LEARNER"?studentColumns:
+ const scopedColumns=directoryKind==="LEARNER"?studentColumns:
+  directoryKind==="FACULTY"?facultyColumns:
   title==="Faculty Assignments"?assignmentColumns:null;
- const summaries=peopleFilters?await Promise.allSettled([
-  loader({...parsed.data,status:"ALL",page:1}),
-  loader({...parsed.data,status:"ACTIVE",page:1}),
-  loader({...parsed.data,status:"SUSPENDED",page:1}),
+ const summaries=directoryKind?await Promise.allSettled([
+  loader({...parsed.data,q:"",status:"ALL",page:1,departmentId:undefined,
+   programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined}),
+  loader({...parsed.data,q:"",status:"ACTIVE",page:1,departmentId:undefined,
+   programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined}),
+  loader({...parsed.data,q:"",status:"SUSPENDED",page:1,departmentId:undefined,
+   programId:undefined,cohortId:undefined,sectionId:undefined,employmentType:undefined}),
  ]):null;
  const peopleSummary=summaries&&summaries[0].status==="fulfilled"&&
   summaries[1].status==="fulfilled"&&summaries[2].status==="fulfilled"
@@ -121,15 +173,14 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </form>
  );
  return <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
-  {heading(peopleFilters?"People":"Super Admin · Read-only",description,
+  {heading(directoryKind?"People":"Super Admin · Read-only",description,
     <>{exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}{refreshAction}</>)}
-  {intro}
-  {peopleFilters&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
+  {directoryKind&&!peopleSummary?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
    Directory totals are temporarily unavailable. The filtered records below remain visible.
   </p>:null}
   {peopleSummary?<section aria-label={title+" overview"} className="grid divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 xl:grid-cols-4">
    {[
-    {label:peopleFilters?.kind==="FACULTY"?"Faculty":"Students",value:peopleSummary[0].total},
+    {label:directoryKind==="FACULTY"?"Faculty":"Students",value:peopleSummary[0].total},
     {label:"Active",value:peopleSummary[1].total},
     {label:"Suspended",value:peopleSummary[2].total},
     {label:"Visible now",value:data.total},
@@ -138,6 +189,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     <p className="mt-2 text-2xl font-semibold tabular-nums text-foreground">{stat.value}</p>
    </article>)}
   </section>:null}
+  {intro}
   {applicationFilters?<p role="status" className="text-sm text-muted-foreground leading-[22px]">Filters apply within your selected college. {data.total.toLocaleString("en-IN")} matching applications; showing page {data.query.page}.</p>:null}
   {renderBulkActions?renderBulkActions(data.items):null}
   {headingMode==="section"&&exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
@@ -145,12 +197,14 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   <form method="get" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-y border-[var(--lms-canvas-border)] py-[var(--lms-space-4)] sm:grid-cols-2 lg:grid-cols-3 print:hidden">
    {!applicationFilters&&data.query.jobId ? <Input type="hidden" name="jobId" value={data.query.jobId} /> : null}
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
-    <AdminScopedLiveSearch initial={data.query.q} path={path}/>
+    <AdminScopedLiveSearch initial={data.query.q} path={path}
+     placeholder={directoryKind==="LEARNER"?"Search students by name, email, roll number, or mobile...":directoryKind==="FACULTY"?"Search faculty by name, email, department, or type...":"Search by name or identifier"}
+     popularSuggestions={data.items.slice(0,15).map(row=>row.title)}/>
    </label>
    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
     <Select name="status" defaultValue={data.query.status}
      className="min-h-11 w-full md:min-h-9">
-     {statuses.map(status=><option key={status} value={status}>{status}</option>)}
+     {statuses.map(status=><option key={status} value={status}>{status==="ALL"?"Any status":humanStatus(status)}</option>)}
     </Select>
    </label>
    <Button type="submit" variant="primary" className="min-h-11 w-full self-end sm:col-span-2 lg:col-span-1 lg:min-h-9 lg:w-auto">Filter</Button>
@@ -183,7 +237,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     </label>
     </div>
    </details>:null}
-   {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
+   {peopleFilters ? <details className="min-w-0 sm:col-span-2 lg:col-span-3" open={Boolean(directoryKind||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.sectionId||data.query.employmentType)}>
     <summary className="inline-flex min-h-11 cursor-pointer items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] lg:min-h-9">Filters</summary>
     <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Department
@@ -192,8 +246,12 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      </Select>
     </label>
     {peopleFilters.kind==="FACULTY"?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty type
-      <Input name="employmentType" defaultValue={data.query.employmentType??""} placeholder="Professor, Mentor…" maxLength={128}
-       className="min-h-11 w-full md:min-h-9"/>
+      <Select name="employmentType" aria-label="Filter by faculty type" defaultValue={data.query.employmentType??""} className="min-h-11 w-full md:min-h-9">
+       <option value="">All types</option>
+       {facultyTypes.map(([value,label])=><option key={value} value={value}>{label}</option>)}
+       {data.query.employmentType&&!facultyTypes.some(([code])=>code===data.query.employmentType)?
+        <option value={data.query.employmentType}>{facultyTypeLabel(data.query.employmentType)}</option>:null}
+      </Select>
      </label>:<>
       {(["programId","cohortId","sectionId"] as const).map((key)=>{
         const values=key==="programId"?peopleFilters.programs:key==="cohortId"?peopleFilters.batches:peopleFilters.classes;
@@ -207,28 +265,30 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
      </>}
     </div>
    </details>:null}
-   {classOptions?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+   {classOptions?<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Filter by class
      <Select name="sectionId" defaultValue={data.query.sectionId??""}
       className="min-h-11 w-full md:min-h-9">
       <option value="">All classes</option>
       {classOptions.map(cls=><option key={cls.id} value={cls.id}>{cls.name}</option>)}
      </Select></label>:null}
    {compactReadLayout?null:<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
-    <Select name="pageSize" defaultValue={data.query.pageSize}
-     className="min-h-11 w-full md:min-h-9">
-     {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
-    </Select>
+    <AdminScopedRowsPerPage initial={data.query.pageSize} path={path} scopeKey={context.adminScope.collegeId}
+    className="min-h-11 w-full md:min-h-9"/>
    </label>}
 
    {compactReadLayout?<details className="order-4 min-w-0 sm:col-span-2 lg:col-span-3">
      <summary className="inline-flex min-h-11 cursor-pointer items-center text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Rows per page</summary>
      <div className="max-w-[200px] pb-1">
-       <Select name="pageSize" aria-label="Rows per page" defaultValue={data.query.pageSize} className="min-h-11 w-full md:min-h-9">
-         {[10,25,50,100].map(size=><option value={size} key={size}>{size}</option>)}
-       </Select>
+       <AdminScopedRowsPerPage initial={data.query.pageSize} path={path} scopeKey={context.adminScope.collegeId}
+    className="min-h-11 w-full md:min-h-9"/>
      </div>
    </details>:null}
   </form>
+  {directoryKind&&filtersActive?<div className="flex flex-wrap items-center gap-3 print:hidden">
+    <span className="text-xs text-muted-foreground">Filters applied within your selected college</span>
+    {structuredFiltersActive?<Link href={clearFilterHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">Clear filters</Link>:null}
+    {data.query.q?<Link href={clearSearchHref} className="inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">Clear Search</Link>:null}
+   </div>:null}
 
   {applicationFilters?<p role="status" className="text-sm text-body leading-[22px]">
     {data.query.jobId||data.query.departmentId||data.query.programId||data.query.cohortId||data.query.channel!=="ALL"||data.query.pipelineStage!=="ALL"
@@ -242,7 +302,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   </p>:null}
   {compactReadLayout?
     <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>
+      <p role="status" aria-live="polite" className="min-w-0 self-center text-xs text-muted-foreground md:self-start md:pt-2 leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>
       <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-start md:justify-end">
         {data.items.length>0&&(data.query.q||data.query.status!=="ALL"||data.query.page!==1||data.query.pageSize!==25)?
          <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>:null}
@@ -250,7 +310,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
         {exportPath&&exportFilename?<AdminScopedCsvControl href={superAdminScopedCsvHref(exportPath,data.query)} filename={exportFilename}/>:null}
       </div>
     </div>
-   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{data.total.toLocaleString("en-IN")} matching records · page {data.query.page} of {data.totalPages} · {data.query.pageSize} per page</p>}
+   :<p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{directoryKind==="LEARNER"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" students":directoryKind==="FACULTY"&&peopleSummary?data.total.toLocaleString("en-IN")+" of "+peopleSummary[0].total.toLocaleString("en-IN")+" faculty":data.total.toLocaleString("en-IN")+" matching records"} · showing {data.total===0?0:(data.query.page-1)*data.query.pageSize+1}–{Math.min(data.total,data.query.page*data.query.pageSize)} · page {data.query.page} of {data.totalPages}</p>}
   {compactReadLayout?<>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 py-4">
@@ -258,7 +318,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-2">
           <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
-          <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
+          <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>
         </div>
         <p className="mt-1 break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
         <div className="mt-2 flex min-w-0 flex-wrap gap-x-4 gap-y-1">
@@ -276,16 +336,21 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
     action={<Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
       className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear search</Link>}/>}
   </> : scopedColumns?<>
+   {title==="Faculty Assignments"?<h2 className="text-lg font-semibold">Current teaching assignments</h2>:null}
     <DataTable columns={scopedColumns} rows={data.items} getRowKey={row=>row.id}
-      caption={title} empty={<EmptyState title="No matching records" description="No persisted records match the selected college and filters."/>}/>
-    <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
-      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear search</Link>
+      caption={title} mobileMode="scroll" className="min-w-0 text-[13px]"
+      empty={<EmptyState title={emptyRosterTitle}
+       description={directoryKind==="LEARNER"&&!filtersActive?"Register students to get started.":"Try changing the search or filters to see other records."}
+       action={filtersActive?<Link href={path} className="font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>}/>
+    {data.query.q||data.query.status!=="ALL"||data.query.departmentId||data.query.employmentType||data.query.sectionId?
+     <Link href={path+(data.query.jobId?"?jobId="+encodeURIComponent(data.query.jobId):"")}
+      className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Clear Search</Link>:null}
   </> : <>
   {data.items.length?<div className="min-w-0 divide-y divide-border border-y border-border">
    {data.items.map(row=><article key={row.id} className="min-w-0 space-y-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0">
     <div className="flex min-w-0 flex-wrap items-start justify-between gap-2">
      <h2 className="m-0 min-w-0 break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{row.title}</h2>
-     <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{row.status}</StatusBadge>
+     <StatusBadge tone={row.status==="ACTIVE"?"success":"neutral"}>{humanStatus(row.status)}</StatusBadge>
     </div>
     <p className="break-words text-sm text-body leading-[22px]">{row.subtitle}</p>
     {row.details.map((value,index)=><p key={index} className="break-words text-xs text-muted-foreground leading-[20px]">{value}</p>)}

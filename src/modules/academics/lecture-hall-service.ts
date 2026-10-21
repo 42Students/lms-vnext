@@ -31,6 +31,14 @@ import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
  * because their historical foreign keys remain intact, unlike physical DELETE.
  */
 
+/** Tenant-scoped hall ID lookup, never a guessed client college override. */
+export async function getLectureHallDetail(ctx:RequestContext,rawId:unknown){
+ const hallId=z.string().uuid().parse(rawId);
+ const [hall]=await getDb().select().from(lectureHalls).where(eq(lectureHalls.id,hallId)).limit(1);
+ if(!hall)throw new LectureHallError("HALL_NOT_FOUND");
+ requirePermission(ctx,"academics.read",{collegeId:hall.collegeId});
+ return hall;
+}
 export const ROOM_TYPES = [
   "CLASSROOM",
   "LECTURE_HALL",
@@ -118,6 +126,7 @@ export const updateLectureHallSchema = z
 // read-only endpoint and explicit role gate outside this mutation service.
 export const listLectureHallsSchema = z.object({
   collegeId: z.string().uuid("Select a college to continue"),
+  id:z.string().uuid().optional(),
   q: z.string().trim().max(100).optional(),
   status: z.enum(["ACTIVE", "ARCHIVED"]).optional(),
   roomType: z.enum(ROOM_TYPES).optional(),
@@ -210,9 +219,11 @@ export async function listLectureHalls(
   const prefixSearch = escapedSearch ? escapedSearch + "%" : null;
   const filters = [
     eq(lectureHalls.collegeId, college.id),
+    ...(query.id?[eq(lectureHalls.id,query.id)]:[]),
     ...(containsSearch ? [or(
       ilike(lectureHalls.name, containsSearch),
       ilike(lectureHalls.description, containsSearch),
+      ilike(lectureHalls.roomType, containsSearch),
     )!] : []),
     ...(query.status ? [eq(lectureHalls.status, query.status)] : []),
     ...(query.roomType ? [eq(lectureHalls.roomType, query.roomType)] : []),
@@ -245,7 +256,6 @@ export async function listLectureHalls(
       .leftJoin(departments, eq(departments.id, lectureHalls.departmentId))
       .where(and(...filters))
       .orderBy(
-        asc(sql`case ${lectureHalls.status} when 'ACTIVE' then 0 else 1 end`),
         ...(query.q && prefixSearch && containsSearch ? [
           asc(sql`case
             when lower(${lectureHalls.name}) = lower(${query.q}) then 0
@@ -253,6 +263,7 @@ export async function listLectureHalls(
             when ${lectureHalls.name} ilike ${containsSearch} then 2
             else 3 end`),
         ] : []),
+        asc(sql`case ${lectureHalls.status} when 'ACTIVE' then 0 else 1 end`),
         asc(sql`lower(${lectureHalls.name})`),
         asc(lectureHalls.id),
       )

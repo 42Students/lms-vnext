@@ -16,8 +16,30 @@ type Preview = {
   details: string;
 };
 
-export function CollegeContentPreview({ data }: { data: Preview }) {
+export function CollegeContentPreview({ data, playback=null }: {
+  data: Preview;
+  playback?:{videoId:string;deliveryId:string}|null;
+}) {
   const [open, setOpen] = useState(false);
+  const [videoUrl,setVideoUrl]=useState<string|null>(null);
+  const [loading,setLoading]=useState(false);
+  const [videoError,setVideoError]=useState<string|null>(null);
+  async function viewVideo(){
+    if(!playback||loading)return;
+    setLoading(true);setVideoError(null);setVideoUrl(null);
+    try{
+      const response=await fetch("/api/courses/videos/"+encodeURIComponent(playback.videoId)+"/playback-grant",{
+        method:"POST",headers:{"Content-Type":"application/json"},
+        cache:"no-store",body:JSON.stringify({deliveryId:playback.deliveryId}),
+      });
+      const result=await response.json().catch(()=>null);
+      if(!response.ok||typeof result?.grant?.url!=="string")
+        throw Error("Unable to prepare secure playback. Try again.");
+      setVideoUrl(result.grant.url);
+    }catch(error){
+      setVideoError(error instanceof Error?error.message:"Unable to open video.");
+    }finally{setLoading(false);}
+  }
   const fields = [
     ["Course", data.course],
     ["Lesson", data.lesson],
@@ -40,7 +62,7 @@ export function CollegeContentPreview({ data }: { data: Preview }) {
       </Button>
       <Dialog
         open={open}
-        onOpenChange={setOpen}
+        onOpenChange={next=>{setOpen(next);if(!next){setVideoUrl(null);setVideoError(null);}}}
         title={data.title}
         description="Content preview"
         footer={
@@ -83,8 +105,20 @@ export function CollegeContentPreview({ data }: { data: Preview }) {
             </div>
           ))}
         </dl>
+        {playback?<div className="mt-4 space-y-3">
+          <Button type="button" variant="secondary" onClick={viewVideo} disabled={loading}>
+            {loading?"Preparing video…":"View stored video"}
+          </Button>
+          {videoError?<p role="alert" className="text-sm text-[var(--lms-error)]">{videoError}</p>:null}
+          {videoUrl?<video controls playsInline preload="metadata" src={videoUrl}
+            className="aspect-video w-full rounded-[var(--lms-control-radius)] bg-black"
+            aria-label={"Playback "+data.title}/>:null}
+        </div>:null}
+        {data.type==="VIDEO"&&!playback?<p className="mt-3 text-xs text-muted-foreground">
+          An old video key requires verified private-storage migration before playback can be granted.
+        </p>:null}
         <p className="mt-[var(--lms-space-4)] text-xs text-muted-foreground">
-          Scoped metadata preview only. Private files, meeting links and signed playback addresses are not exposed here.
+          Scoped metadata only until a secure playback grant is requested. Private keys and meeting links are not exposed.
         </p>
       </Dialog>
     </>

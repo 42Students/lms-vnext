@@ -3,13 +3,40 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {getOwnLearnerAcademicSummary} from "@/modules/people/learner-academic-summary-service";
 import {getOwnLearnerProfileDataActions} from "@/modules/people/learner-profile-data-access-service";
+import {requireOwnLearnerProfileAccess} from "@/modules/people/learner-profile-access-service";
+import {getDb} from "@/db/client";
+import {and,desc,eq,sql} from "drizzle-orm";
+import {placementApplications,placementJobs,placementCompanyRelationships,placementCompanies} from "@/db/schema";
+import {placementCompanyShareSelections} from "@/db/schema/placement-company-share-selection";
+import {placementCompanyApplicantShares} from "@/db/schema/placement-company-shares";
 
 /** LEARNER-profile-misc-18: self-only, read-only data-access explanation. */
 export default async function LearnerProfileDataAccessPage(){
  const context=await getCurrentRequestContext();
- const [history,academic]=await Promise.all([
+ const member=await requireOwnLearnerProfileAccess(context);
+ const [history,academic,shares]=await Promise.all([
   getOwnLearnerProfileDataActions(context),
   getOwnLearnerAcademicSummary(context),
+  getDb().select({
+   shareId:placementCompanyApplicantShares.id,
+   company:placementCompanies.name,
+   job:placementJobs.title,
+   sharedAt:placementCompanyApplicantShares.createdAt,
+   firstDownloadedAt:sql<Date|null>`(select min(view.occurred_at) from placement_company_applicant_share_views view
+      where view.share_id=${placementCompanyApplicantShares.id} and view.event_kind='CSV')`,
+  }).from(placementCompanyShareSelections)
+   .innerJoin(placementApplications,eq(placementApplications.id,placementCompanyShareSelections.applicationId))
+   .innerJoin(placementCompanyApplicantShares,
+     eq(placementCompanyApplicantShares.id,placementCompanyShareSelections.shareId))
+   .innerJoin(placementJobs,and(eq(placementJobs.id,placementCompanyApplicantShares.jobId),
+     eq(placementJobs.collegeId,placementCompanyApplicantShares.collegeId)))
+   .innerJoin(placementCompanyRelationships,
+     eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
+   .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+   .where(and(eq(placementApplications.membershipId,member.id),
+     eq(placementCompanyApplicantShares.collegeId,member.collegeId)))
+   .orderBy(desc(placementCompanyApplicantShares.createdAt),desc(placementCompanyApplicantShares.id))
+   .limit(50),
  ]);
  return <div className="min-w-0 space-y-5">
   <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Profile</Link>
@@ -28,6 +55,17 @@ export default async function LearnerProfileDataAccessPage(){
    <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Your current college may manage your program enrollment and class records. This is not a published transcript or proof of degree completion.</p>
    <p className="mt-2 max-w-3xl break-words text-sm leading-[22px] text-body">Current program: {academic.enrollment?.program??"Not recorded"}</p>
    <Link href="/learn/profile/academic-record" className="mt-3 inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">View academic record →</Link>
+  </section>
+  <section aria-labelledby="data-access-company-shares" className="min-w-0 border-t border-border pt-4">
+   <h2 id="data-access-company-shares" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Shared with companies</h2>
+   <p className="mt-1 text-xs leading-5 text-muted-foreground">Recent employer shortlist shares containing one of your placement applications, newest first (up to 50). Recipient email is not captured by this capability, so the company is shown instead of inventing a contact. A recorded CSV export is not proof that your row was viewed.</p>
+   {shares.length?<ul className="mt-3 divide-y divide-border">{shares.map(share=>
+    <li key={share.shareId} className="min-w-0 space-y-1 py-3 text-sm text-body">
+     <p className="font-semibold text-[var(--lms-heading)]">{share.company} · {share.job}</p>
+     <p>External recipient: {share.company} (individual recipient not recorded)</p>
+     <p>Shared: <time dateTime={share.sharedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.sharedAt)} IST</time></p>
+     <p>First recorded download: {share.firstDownloadedAt?<time dateTime={new Date(String(share.firstDownloadedAt)).toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(String(share.firstDownloadedAt)))} IST</time>:"Never downloaded"}</p>
+    </li>)}</ul>:<p role="status" className="mt-3 text-sm text-body">No company shortlist shares containing your application are recorded.</p>}
   </section>
   <section aria-labelledby="data-access-changes" className="min-w-0 border-t border-border pt-4">
    <h2 id="data-access-changes" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recent recorded profile-related changes</h2>

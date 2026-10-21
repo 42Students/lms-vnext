@@ -25,6 +25,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
  const [description,setDescription]=useState(""),[maxAttempts,setMaxAttempts]=useState(1);
  const [shuffleQuestions,setShuffleQuestions]=useState(false),[shuffleOptions,setShuffleOptions]=useState(false);
  const [expectedUpdatedAt,setExpectedUpdatedAt]=useState("");
+ const [metadataOnly,setMetadataOnly]=useState(false);
  async function beginEdit(){
   if(busy||loading||inFlight.current)return;
   if(editing){setEditing(false);return;}
@@ -39,7 +40,10 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    setTitle(current.title);setDescription(current.description??"");
    setDue(istInput(current.dueAt));setMaxAttempts(current.maxAttempts);
    setShuffleQuestions(Boolean(current.shuffleQuestions));setShuffleOptions(Boolean(current.shuffleOptions));
-   setExpectedUpdatedAt(current.updatedAt);setEditing(true);
+   setExpectedUpdatedAt(current.updatedAt);
+   setMetadataOnly(payload.editPolicy?.metadataOnly!==false);
+   if(payload.editPolicy?.warning)setNotice(payload.editPolicy.warning);
+   setEditing(true);
   }catch(cause){setError(cause instanceof Error?cause.message:"Unable to load Quiz metadata.");}
   finally{inFlight.current=false;setLoading(false);}
  }
@@ -50,7 +54,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
   if(action==="EDIT"){
    if(!expectedUpdatedAt){setError("Reload the Quiz before editing.");return;}
    if(!title.trim()||title.trim().length>255){setError("Enter a quiz title.");return;}
-   if(quiz.status==="DRAFT"&&(!Number.isInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)){
+   if(quiz.status==="DRAFT"&&!metadataOnly&&(!Number.isInteger(maxAttempts)||maxAttempts<1||maxAttempts>20)){
     setError("Maximum attempts must be between 1 and 20.");return;
    }
    if(due&&!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(due)){
@@ -59,10 +63,10 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
    const deadline=due?new Date(due+":00+05:30"):null;
    if(deadline&&Number.isNaN(deadline.getTime())){setError("Enter a valid deadline.");return;}
    body={title:title.trim(),
-    ...(quiz.status==="DRAFT"?{dueAt:deadline?.toISOString()??null}:{}),
+    ...(quiz.status==="DRAFT"&&!metadataOnly?{dueAt:deadline?.toISOString()??null}:{}),
     description:description.trim()||null,
     expectedUpdatedAt,
-    ...(quiz.status==="DRAFT"?{maxAttempts,shuffleQuestions,shuffleOptions}:{})};
+    ...(quiz.status==="DRAFT"&&!metadataOnly?{maxAttempts,shuffleQuestions,shuffleOptions}:{})};
   }else{
    if(!window.confirm("Archive this quiz? This retains its questions and history. Quizzes with learner attempts cannot be archived."))return;
    url+="/transition";method="POST";body={action:"ARCHIVE"};
@@ -106,14 +110,14 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
     <Textarea maxLength={10000} rows={3} value={description} disabled={busy}
      onChange={e=>setDescription(e.target.value)} className="min-h-11 md:min-h-9"/>
    </label>
-   {quiz.status==="DRAFT"?<label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
+   {quiz.status==="DRAFT"&&!metadataOnly?<label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Maximum attempts
     <Input type="number" min={1} max={20} value={maxAttempts} disabled={busy}
      onChange={e=>setMaxAttempts(Number(e.target.value))} className="min-h-11 md:min-h-9"/>
    </label>:null}
    <label className="grid gap-1 text-xs font-semibold text-body">Deadline (IST)
-    <DateInput mode="datetime-local" value={due} disabled={busy||quiz.status!=="DRAFT"} onChange={e=>setDue(e.target.value)}
+    <DateInput mode="datetime-local" value={due} disabled={busy||quiz.status!=="DRAFT"||metadataOnly} onChange={e=>setDue(e.target.value)}
      className="min-h-11 md:min-h-9"/></label>
-   {quiz.status==="DRAFT"?<div className="grid gap-2 text-xs font-semibold">
+   {quiz.status==="DRAFT"&&!metadataOnly?<div className="grid gap-2 text-xs font-semibold">
     <label className="flex min-h-11 items-center gap-2"><Checkbox checked={shuffleQuestions}
      disabled={busy} onChange={e=>setShuffleQuestions(e.target.checked)}/>
      Shuffle question order per learner</label>
@@ -121,7 +125,7 @@ export function CollegeQuizActions({quiz}:{quiz:Quiz}){
      disabled={busy} onChange={e=>setShuffleOptions(e.target.checked)}/>
      Shuffle answer options per learner</label>
    </div>:null}
-   {quiz.status!=="DRAFT"?<p className="text-xs text-muted-foreground leading-5">
+   {(quiz.status!=="DRAFT"||metadataOnly)?<p className="text-xs text-muted-foreground leading-5">
     This quiz may already have learner submissions. Only the title and description can be changed after attempts;
     deadlines, questions, attempt limit and shuffle settings stay locked.
    </p>:null}

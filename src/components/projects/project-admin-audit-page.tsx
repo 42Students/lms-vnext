@@ -1,15 +1,13 @@
 import { getCurrentRequestContext } from "@/auth/request-context";
-import {
-  ActivityCenter,
-  type ActivityCenterGroup,
-} from "@/components/activity/activity-center";
+import {Fragment,type ReactNode} from "react";
+import {ProjectAuditActionSelect,ProjectAuditRefreshButton} from "@/components/projects/project-audit-filters";
+import {StatusBadge} from "@/components/ui/status-badge";
 import { ProjectAdminNav } from "@/components/projects/project-admin-nav";
 import {ProjectAuditPageExport} from "@/components/projects/project-audit-page-export";
 import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { ErrorState } from "@/components/ui/error-state";
 import Link from "next/link";
-import { Tabs } from "@/components/ui/tabs";
 import { Banner } from "@/components/ui/banner";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -63,6 +61,64 @@ function istDate(date:Date){
  return part("year")+"-"+part("month")+"-"+part("day");
 }
 const inputClass = "w-full";
+
+/** Project-only event labels never imply a destructive action was reversible. */
+function projectActionLabel(raw:string){
+ const key=raw.replace(/^projects[._]/i,"").replaceAll("_"," ").replaceAll("."," ");
+ const phrase=key.trim().toLowerCase();
+ return phrase?phrase[0].toUpperCase()+phrase.slice(1):"Updated";
+}
+function destructiveProjectAction(raw:string){
+ return /(^|[._])(archive|delete|deleted|revoke|revoked|remove|removed|unassign|rollback|restore)([._]|$)/i.test(raw);
+}
+function auditEntityType(raw:string){
+ const type=raw.toLowerCase();
+ if(type.includes("task"))return "Task";
+ if(type.includes("template"))return "Template";
+ if(type.includes("project")||type.includes("workspace"))return "Workspace";
+ return type.replaceAll("_"," ").replaceAll("."," ")||"Entity";
+}
+function projectEventTime(value:Date){
+ return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(value)+" IST";
+}
+function projectEventDay(value:Date){
+ return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long",day:"2-digit",
+  month:"short",year:"numeric"}).format(value);
+}
+function projectEventDayKey(value:Date){
+ return new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(value);
+}
+/** Legacy payloads include arrays, nested maps and occasionally JSON serialized as text. */
+function auditDetailValue(value:unknown,depth=0):ReactNode{
+ if(depth>=12)return <span className="text-muted-foreground">Nested data continues beyond this display.</span>;
+ if(value===null||value===undefined||value==="")return "—";
+ if(typeof value==="string"){
+  const text=value.trim();
+  if(text.length>2&&(text.startsWith("{")||text.startsWith("["))){
+   try{return auditDetailValue(JSON.parse(text) as unknown,depth+1);}
+   catch{return <span className="whitespace-pre-wrap break-all">{value}</span>;}
+  }
+  return <span className="whitespace-pre-wrap break-all">{value}</span>;
+ }
+ if(typeof value==="boolean"||typeof value==="number")return String(value);
+ if(Array.isArray(value))return <div className="flex flex-wrap items-start gap-2">
+  {value.slice(0,50).map((item,index)=><span key={index}
+   className="max-w-full rounded-[var(--lms-control-radius)] border border-border px-2 py-1 text-xs">
+   {auditDetailValue(item,depth+1)}
+  </span>)}
+  {value.length>50?<span className="text-muted-foreground">+{value.length-50} more values</span>:null}
+ </div>;
+ if(typeof value==="object")return <dl className="min-w-0 space-y-2">
+  {Object.entries(value as Record<string,unknown>).slice(0,50).map(([key,item])=><div
+   key={key} className="min-w-0 border-b border-border pb-2">
+   <dt className="break-all text-xs font-semibold text-muted-foreground">{key.replaceAll("_"," ")}</dt>
+   <dd className="mt-1 min-w-0 break-words text-sm text-body">{auditDetailValue(item,depth+1)}</dd>
+  </div>)}
+  {Object.keys(value).length>50?<div className="text-xs text-muted-foreground">Further metadata fields are not shown.</div>:null}
+ </dl>;
+ return String(value);
+}
+
 
 export async function ProjectAdminAuditPage({
   basePath,
@@ -121,41 +177,6 @@ export async function ProjectAdminAuditPage({
     item.event.eventType)).length;
   const partialCoverage=Boolean(result.nextCursor);
   const legacyOptions=Object.entries(legacyProjectAuditActions).sort(([a],[b])=>a.localeCompare(b));
-
-  const groups: ActivityCenterGroup[] =
-    result.groups.map((group) => ({
-      key: group.key,
-      count: group.count,
-      latest: {
-        event: {
-          id: group.latest.event.id,
-          module:
-            group.latest.event.module,
-          eventType:
-            group.latest.event.eventType,
-          importance:
-            group.latest.event.importance,
-          subjectType:
-            group.latest.event.subjectType,
-          subjectId:
-            group.latest.event.subjectId,
-          subjectLabel:
-            group.latest.event.subjectLabel,
-          summary:
-            group.latest.event.summary,
-          metadata:(group.latest.event as {metadata?:Record<string,unknown>}).metadata??{},
-          occurredAt:
-            group.latest.event.occurredAt.toISOString(),
-        },
-        actor: group.latest.actor,
-      },
-      earliest: {
-        event: {
-          occurredAt:
-            group.earliest.event.occurredAt.toISOString(),
-        },
-      },
-    }));
 
   const nextParams =
     new URLSearchParams();
@@ -223,7 +244,12 @@ export async function ProjectAdminAuditPage({
       <div className="min-w-0">
         <PageBackLink href={basePath} label="Project workspaces" />
         <PageHeader title="Project audit"
-          description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."} />
+          description={globalTemplateAudit?"Platform-wide Projects activity includes global template changes.":"Who changed what, and when — check daily for anything unexpected."}
+          actions={<div className="flex flex-wrap gap-2">
+            <ProjectAuditRefreshButton/>
+            <Link href={basePath==="/admin/projects"?"/admin/audit":"/college/activity"}
+              className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-primary-subtle md:min-h-9">View activity log</Link>
+          </div>}/>
       </div>
       <ProjectAdminNav basePath={basePath} active="audit" />
 
@@ -241,7 +267,18 @@ export async function ProjectAdminAuditPage({
         </Banner>
       ) : null}
 
-      <Tabs ariaLabel="Audit time range" renderPanel={false} value={selectedAuditRange} items={auditRangeTabs} />
+      <nav aria-label="Audit time range" className="flex flex-wrap items-center gap-2">
+        {auditRangeTabs.map(item=><Link key={item.value} href={item.href} aria-current={item.value===selectedAuditRange?"page":undefined}
+          className={"inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border px-3 text-sm font-semibold md:min-h-9 "+
+           (item.value===selectedAuditRange?"border-[var(--lms-primary)] bg-[var(--lms-primary)] text-white":"border-border bg-surface text-link hover:bg-primary-subtle")}>{item.label}</Link>)}
+        {subjectId?<Link href={basePath+"/audit"+(()=>{
+          const params=new URLSearchParams(preservedRefreshQuery);
+          params.delete("subjectId");
+          return params.size?"?"+params.toString():"";
+        })()}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-link hover:bg-primary-subtle md:min-h-9"
+          aria-label={"Clear entity filter for "+subjectId}>Filtered to: {subjectId} <span aria-hidden="true">×</span></Link>:null}
+      </nav>
       <details className="group min-w-0 border-b border-border pb-4" open={Boolean(eventType || importance || subjectType || subjectId || to)}>
         <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">
           <span>Filters</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
@@ -347,7 +384,7 @@ export async function ProjectAdminAuditPage({
       </form>
       </details>
 
-      <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 divide-y divide-border border-y border-border md:grid-cols-2 md:divide-x md:divide-y-0 min-[992px]:grid-cols-3">
+      <section aria-label="Audit page summary" className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-3">
         {([
           {label:"Actions shown"+(partialCoverage?" (partial)":""),value:coveredEvents},
           {label:"People who made changes"+(partialCoverage?" (partial)":""),value:peopleCount},

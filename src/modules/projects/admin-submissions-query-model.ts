@@ -38,7 +38,7 @@ function normalizeSubmissionStatus(value: string | undefined) {
 }
 
 
-export function parseProjectAdminSubmissionsQuery(params: Record<string,string|string[]|undefined>) {
+export function parseProjectAdminSubmissionsQuery(params: Record<string,string|string[]|undefined>, options: {superAdmin?:boolean} = {}) {
   if (Object.values(params).some(Array.isArray) ||
       Object.keys(params).some(key=>!["view","q","status","submissionStatus","sort","page","pageSize","tab","projectId"].includes(key)))
     return schema.safeParse(null);
@@ -50,7 +50,7 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
     view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
     q:first(params.q),focusedProjectId:first(params.projectId),status:workspaceStatus,
     submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
-    sort:first(params.sort),page:first(params.page),pageSize:first(params.pageSize),
+    page:first(params.page),pageSize:first(params.pageSize) ?? (options.superAdmin ? "10" : undefined),
   };
   return schema.safeParse(Object.fromEntries(
     Object.entries(entries).filter(([key,value])=>value!==undefined&&(value!=="" || key==="page" || key==="pageSize")),
@@ -104,4 +104,14 @@ export function focusedProjectIdFromSubmissionUrl(raw: Record<string, string | s
   const value = first(raw.projectId);
   if (!value || value.length > 120 || /[^a-zA-Z0-9_-]/.test(value)) return null;
   return value;
+}
+
+/** Legacy superadmin register showed 10 rows per page and a submitted-first list.
+ * Runtime pages still sort using persisted submission timestamps and scoped IDs.
+ */
+export const LEGACY_SUPER_ADMIN_SUBMISSION_PAGE_SIZE = 10;
+export function projectAdminSubmissionStatusLabel(status: string): string {
+ const value = normalizeSubmissionStatus(status);
+ return ({DRAFT:"Draft",SUBMITTED:"Under Review",CHANGES_REQUESTED:"Changes Requested",APPROVED:"Accepted",
+  UNDER_REVIEW:"Under Review",LOCKED:"Locked",DRAFT_REVISING:"Draft (revising)"} as Record<string,string>)[value??""]??"Unknown status";
 }

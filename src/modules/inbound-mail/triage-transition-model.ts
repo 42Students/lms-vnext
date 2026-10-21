@@ -1,4 +1,34 @@
+import {
+  inboundMailRoutingStatuses,
+  inboundMailRoutingStatusLabels,
+  type InboundMailRoutingStatus,
+} from "./message-model";
+
 export type InboundMailStatus = "NEW" | "TRIAGED" | "RESOLVED";
+
+/** Routing outcomes are historical transport facts; triage is a separate
+ * staff workflow. Never overwrite or reinterpret routing when marking resolved.
+ */
+export type InboundMailTriageRecord = {
+  triageStatus: InboundMailStatus;
+  routingStatus: InboundMailRoutingStatus;
+};
+
+export function inboundMailRoutingStatusDetails(value: string): {
+  status: InboundMailRoutingStatus;
+  label: string;
+} | null {
+  if (!(inboundMailRoutingStatuses as readonly string[]).includes(value)) return null;
+  const status = value as InboundMailRoutingStatus;
+  return { status, label: inboundMailRoutingStatusLabels[status] };
+}
+
+export function transitionInboundMailTriage(
+  record: InboundMailTriageRecord, to: InboundMailStatus,
+): InboundMailTriageRecord | null {
+  if (!inboundMailStatusTransitionAllowed(record.triageStatus, to)) return null;
+  return { ...record, triageStatus: to };
+}
 
 /** The NEW -> RESOLVED shortcut remains valid for items requiring no follow-up.
  * Completed items must be reopened before active handling can resume.

@@ -3,6 +3,7 @@ import {
   check,
   foreignKey,
   index,
+  integer,
   numeric,
   pgTable,
   timestamp,
@@ -101,6 +102,11 @@ export const placementSavedJobs = pgTable(
   "placement_saved_jobs",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    /** Only import mappings, never inferred from current membership or routes. */
+    legacySavedJobId: integer("legacy_saved_job_id"),
+    legacyLearnerId: integer("legacy_learner_id"),
+    legacyJobId: integer("legacy_job_id"),
+    legacySavedAtLocal: varchar("legacy_saved_at_local",{length:36}),
     collegeId: uuid("college_id").notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
     membershipId: uuid("membership_id").notNull()
@@ -122,6 +128,10 @@ export const placementSavedJobs = pgTable(
     }).onDelete("restrict"),
     uniqueIndex("placement_saved_jobs_member_job_uq").on(t.membershipId, t.jobId),
     index("placement_saved_jobs_college_idx").on(t.collegeId, t.membershipId),
+    index("placement_saved_jobs_job_idx").on(t.jobId),
+    index("placement_saved_jobs_membership_time_idx").on(t.membershipId,t.savedAt,t.id),
+    uniqueIndex("placement_saved_jobs_legacy_id_uq").on(t.legacySavedJobId)
+      .where(sql`${t.legacySavedJobId} is not null`),
   ],
 );
 

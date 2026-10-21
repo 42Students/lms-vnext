@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+import Link from "next/link";
+import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import type { NotificationListItem } from "@/components/activity/notification-list";
 import { PageHeader } from "@/components/ui/page-header";
@@ -10,17 +13,37 @@ import { learnerNotificationInboxHref, learnerNotificationInboxQuerySchema } fro
 import { notFound, redirect } from "next/navigation";
 import { AuthorizationError } from "@/modules/permissions/policy";
 
-export default async function NotificationsPage({searchParams}:{
-  searchParams:Promise<{category?:string|string[];tab?:string|string[];unread?:string|string[];q?:string|string[]}>;
+function NotificationsLoading() {
+  return <div className="min-w-0 space-y-4" aria-busy="true" aria-label="Loading notifications">
+    <PageHeader title="Notifications"/>
+    <div className="flex gap-2" aria-hidden="true"><span className="h-8 w-24 animate-pulse rounded-lg bg-muted"/><span className="h-8 w-24 animate-pulse rounded-lg bg-muted"/></div>
+    <ul className="space-y-2" aria-hidden="true">{[1,2,3,4,5].map(id=><li key={id}
+      className="flex items-start gap-3 rounded-lg border border-border px-4 py-3">
+      <span className="h-9 w-9 shrink-0 animate-pulse rounded-lg bg-muted"/>
+      <div className="w-full space-y-2"><span className="block h-4 w-2/5 animate-pulse rounded bg-muted"/><span className="block h-3 w-4/5 animate-pulse rounded bg-muted"/></div>
+    </li>)}</ul>
+  </div>;
+}
+
+type LearnerNotificationParams={category?:string|string[];tab?:string|string[];unread?:string|string[];q?:string|string[]};
+
+export default function NotificationsPage({searchParams}:{
+  searchParams:Promise<LearnerNotificationParams>;
 }) {
+  return <Suspense fallback={<NotificationsLoading/>}>
+    <LearnerNotificationsContent searchParams={searchParams}/>
+  </Suspense>;
+}
+
+async function LearnerNotificationsContent({searchParams}:{searchParams:Promise<LearnerNotificationParams>}) {
   const { tab, ...filters } = await searchParams;
-  // Old LMS links persist the selected tab as ?tab=. Keep that deep link
-  // working, but accept only known inbox categories and canonicalize the URL.
-  if (tab !== undefined && filters.category !== undefined && filters.category !== tab) {
-    notFound();
-  }
+  const oldTab=Array.isArray(tab)?tab[0]:tab;
+  // Legacy bad ?tab values returned to All rather than aborting the inbox.
+  const allowed=new Set(["all","course","project","general","job"]);
+  const legacyCategory=oldTab&&allowed.has(oldTab)?oldTab:"all";
+  const normalizedTab=tab===undefined?undefined:legacyCategory;
   const query = learnerNotificationInboxQuerySchema.safeParse(
-    tab === undefined ? filters : { ...filters, category: tab },
+    normalizedTab === undefined ? filters : {...filters,category:normalizedTab},
   );
   if (!query.success) notFound();
   const context =
@@ -32,8 +55,13 @@ export default async function NotificationsPage({searchParams}:{
     announcementsRuntimeEnabled();
   // Personal notifications are required. A failed announcement source must
   // not turn a healthy personal inbox into an empty state or hard error.
+  let personalLoadFailed=false;
   const rows = await listOwnNotifications(context,{
     limit:60,collegeId:membership.collegeId,
+  }).catch((error:unknown)=>{
+    if(error instanceof AuthorizationError)throw error;
+    personalLoadFailed=true;
+    return [] as Awaited<ReturnType<typeof listOwnNotifications>>;
   });
   let announcements:Awaited<ReturnType<typeof listVisibleAnnouncementsForMembership>>=[];
   let announcementsLoadFailed=false;
@@ -70,7 +98,11 @@ export default async function NotificationsPage({searchParams}:{
 
   return (
     <div className="min-w-0 space-y-5">
-      <PageHeader title="Notifications" description="Your personal updates and college announcements."/>
+      <PageHeader title="Notifications"/>
+      {personalLoadFailed?<Alert tone="warning" role="alert" title="Personal notifications could not be loaded">
+        This is a loading problem, not an empty inbox. Your college announcements below are still available.
+        <Link href={learnerNotificationInboxHref(query.data)} className="ml-2 font-semibold text-primary-text underline">Retry personal notifications</Link>
+      </Alert>:null}
       <LearnerNotificationsInbox
         key={query.data.category+":"+query.data.unread+":"+query.data.q}
         personal={items}

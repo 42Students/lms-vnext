@@ -9,6 +9,18 @@ export const ACADEMIC_SETUP_GENERIC_ERROR = "The form could not be saved. Please
 const KNOWN_ERROR_COPY: Readonly<Record<string, string>> = {
   PROGRAM_NAME_CONFLICT: "Program name already exists in this department",
   BATCH_HAS_DEPENDENCIES: "Cannot delete batch: it has classes. Delete/move the classes first.",
+  CLASS_NAME_CONFLICT: "Class name already exists in this batch.",
+  CLASS_CODE_CONFLICT: "Class code already exists in this batch and academic period.",
+  CLASS_COHORT_NOT_FOUND: "Batch not found.",
+  CLASS_COHORT_NOT_MUTABLE: "This batch cannot be updated.",
+  CLASS_PERIOD_INVALID: "The academic period must belong to the selected batch.",
+  CLASS_HAS_DEPENDENCIES: "Move students out and remove linked teaching, schedule and course records before reassigning this class.",
+  CLASS_CAPACITY_BELOW_ENROLLMENT: "The maximum student limit cannot be lower than active enrolment. Move students out first.",
+  CLASS_MIN_SIZE_ABOVE_CAPACITY: "The maximum student limit cannot be lower than the minimum student limit.",
+  CLASS_HAS_LEARNERS: "Cannot archive class: students are enrolled. Move students out first.",
+  CLASS_HAS_SCHEDULE: "Cannot archive class: scheduled sessions exist. Remove the class schedules first.",
+  CLASS_HAS_TEACHING: "Cannot archive class: faculty assignments are linked. Reassign the faculty first.",
+  CLASS_HAS_DELIVERIES: "Cannot archive class: course deliveries are linked. End or move the deliveries first.",
 };
 
 const MACHINE_CODE = /^[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)+$/;

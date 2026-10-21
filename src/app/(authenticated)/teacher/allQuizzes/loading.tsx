@@ -1,5 +1,5 @@
 import { GracefulPageLoading } from "@/components/ui/graceful-page-loading";
 
 export default function Loading() {
-  return <GracefulPageLoading label={"Loading quizzes"} shape="directory" />;
+  return <GracefulPageLoading label={"Loading quizzes"} shape="card" />;
 }

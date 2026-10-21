@@ -9,7 +9,7 @@ import {can} from "@/modules/permissions/policy";
 import type {TpoJobTx} from "./tpo-job-write-base";
 import {hrInterviewSlots} from "@/db/schema/placement-hr-interview-slots";
 import {placementRoundCandidateSlots} from "@/db/schema/placement-round-candidate-slots";
-import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotsOverlap,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
+import {hrInterviewSlotCreateSchema,hrInterviewSlotActionSchema,slotTransitionAllowed,canRecruiterMutateOwnSlot} from "./hr-interview-slot-model";
 import {PlacementsServiceError} from "./errors";
 import {recruiterOwnJobPredicate} from "./recruiter-job-ownership";
 import {notifyTpoOfRecruiterAction} from "./hr-tpo-notification-service";
@@ -105,16 +105,25 @@ export async function writeHrInterviewSlot(
      inArray(placementJobRounds.status,["PENDING","SCHEDULED"])))
     .limit(1);
    if(!round)throw new PlacementsServiceError("PLACEMENT_ROUND_NOT_FOUND");
-   // Serialize time-block creation across all drives owned by this recruiter,
-   // not just per-round rows. Do not infer candidate bookings from HR capacity:
-   // assigned learners live in the separate TPO candidate-slot ledger.
+   // Lock the college before examining any room in this college. Locking only
+   // the drive or recruiter account permits two different recruiters to book
+   // the same room concurrently on different drives.
+   await tx.select({id:colleges.id}).from(colleges)
+    .where(eq(colleges.id,job.collegeId)).for("update").limit(1);
+   // Also serialize this recruiter's proposals across colleges. Aggregate
+   // slots contain no learner identity; TPO's candidate booking service owns
+   // the cross-drive learner conflict check.
    await tx.select({id:users.id}).from(users)
     .where(eq(users.id,context.user.id)).for("update").limit(1);
-   const existing=await tx.select({startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt})
-    .from(hrInterviewSlots).where(and(eq(hrInterviewSlots.roundId,round.id),
-      eq(hrInterviewSlots.collegeId,job.collegeId),ne(hrInterviewSlots.status,"CANCELLED"))).limit(101);
-   if(existing.length>100||existing.some(row=>slotsOverlap(input,row)))
-    throw new Error("SLOT_OVERLAP");
+   const [roundConflict]=await tx.select({id:hrInterviewSlots.id})
+    .from(hrInterviewSlots).where(and(
+      eq(hrInterviewSlots.roundId,round.id),
+      eq(hrInterviewSlots.collegeId,job.collegeId),
+      ne(hrInterviewSlots.status,"CANCELLED"),
+      lt(hrInterviewSlots.startAt,input.endAt),
+      gt(hrInterviewSlots.endAt,input.startAt),
+    )).limit(1);
+   if(roundConflict)throw new Error("SLOT_OVERLAP");
    const [recruiterConflict]=await tx.select({id:hrInterviewSlots.id})
     .from(hrInterviewSlots)
     .where(and(eq(hrInterviewSlots.createdByUserId,context.user.id),
@@ -159,20 +168,22 @@ export async function writeHrInterviewSlot(
     collegeId:job.collegeId,jobId:job.id,roundId:round.id,startAt:input.startAt,endAt:input.endAt,
     timezone:input.timezone,mode:input.mode,meetingLocation:input.meetingLocation??null,
     panelLabel:input.panelLabel??null,capacity:input.capacity,createdByUserId:context.user.id,
-   }).returning({id:hrInterviewSlots.id,version:hrInterviewSlots.version});
+   }).returning({id:hrInterviewSlots.id,version:hrInterviewSlots.version,
+    startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt});
    if(!newSlot)throw new Error("SLOT_CREATE_FAILED");
    await notifyTpoOfRecruiterAction(tx,context,{
     collegeId:job.collegeId,jobId:job.id,roundId:round.id,
     subjectId:newSlot.id,action:"SLOT_PROPOSED",
    });
-   return {id:newSlot.id,status:"PROPOSED" as const,version:newSlot.version};
+   return {id:newSlot.id,status:"PROPOSED" as const,version:newSlot.version,
+    startAt:newSlot.startAt.toISOString(),endAt:newSlot.endAt.toISOString()};
   }
   const input=hrInterviewSlotActionSchema.parse(data);
   const [slot]=await tx.select({
    id:hrInterviewSlots.id,roundId:hrInterviewSlots.roundId,status:hrInterviewSlots.status,
    version:hrInterviewSlots.version,bookedCount:hrInterviewSlots.bookedCount,
    capacity:hrInterviewSlots.capacity,createdByUserId:hrInterviewSlots.createdByUserId,
-   startAt:hrInterviewSlots.startAt,
+   startAt:hrInterviewSlots.startAt,endAt:hrInterviewSlots.endAt,
   }).from(hrInterviewSlots).innerJoin(placementJobRounds,and(
    eq(placementJobRounds.id,hrInterviewSlots.roundId),eq(placementJobRounds.jobId,job.id)))
    .where(and(eq(hrInterviewSlots.id,input.slotId),eq(hrInterviewSlots.collegeId,job.collegeId)))
@@ -205,6 +216,7 @@ export async function writeHrInterviewSlot(
     summary:"Recruiter updated internal interview slot",metadata:{jobId:job.id,action:input.action},
    });
   }
-  return {id:updated.id,status:next,version:updated.version};
+  return {id:updated.id,status:next,version:updated.version,
+   startAt:slot.startAt.toISOString(),endAt:slot.endAt.toISOString()};
  });
 }

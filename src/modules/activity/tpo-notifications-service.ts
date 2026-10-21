@@ -21,7 +21,7 @@ import { recordActivityEventInTransaction } from "./service";
 import { ACTIVITY_EVENT_TYPES } from "./taxonomy";
 import { ActivityServiceError } from "./errors";
 import { listOwnNotificationPage } from "./notification-service";
-import { resolveTpoInboxQuery } from "./tpo-notifications-model";
+import { resolveTpoInboxQuery,tpoInboxPageHref } from "./tpo-notifications-model";
 
 /**
  * Personal TPO inbox: centrally authorized and verified against the live
@@ -91,7 +91,14 @@ export async function getTpoPersonalInbox(context: RequestContext, rawQuery: unk
         ),
       ),
   ]);
-  return { query, cursor, page, unreadCount: Number(unread[0]?.total ?? 0),recentCutoff: new Date(0) };
+  // The bell counter measures all persisted unread receipts for this college;
+  // it is intentionally not the number of items in the current 50-row page.
+  const nextCursor=page.nextCursor;
+  return {query,cursor,page,unreadCount:Number(unread[0]?.total??0),
+    unreadCountSource:"PERSISTED_COLLEGE_UNREAD" as const,
+    pageSize:50,hasOlder:Boolean(nextCursor),
+    olderHref:nextCursor?tpoInboxPageHref(query.view,nextCursor):null,
+    recentCutoff:new Date(0),partialRead:false};
 }
 
 /** Recipient and persisted current college are both required. Repeats are idempotent. */

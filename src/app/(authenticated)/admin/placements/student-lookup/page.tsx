@@ -1,97 +1,172 @@
 import Link from "next/link";
-import {getCurrentRequestContext} from "@/auth/request-context";
-import {PageHeader} from "@/components/ui/page-header";
+import { getCurrentRequestContext } from "@/auth/request-context";
+import { PageHeader } from "@/components/ui/page-header";
 import { PageBackLink } from "@/components/ui/page-back-link";
-import {DataTable} from "@/components/ui/data-table";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
-import {StatusBadge} from "@/components/ui/status-badge";
-import {EmptyState} from "@/components/ui/empty-state";
-import {lookupCollegeStudentPlacement} from "@/modules/placements/college-placement-student-lookup-service";
-import {parseSuperAdminPlacementStudentSearch} from "@/modules/admin-ui/super-admin-placement-student-search-model";
-import {ErrorState} from "@/components/ui/error-state";
-export default async function SuperAdminPlacementStudentLookup({searchParams}:{
- searchParams:Promise<Record<string,string|string[]|undefined>>;
-}){
- const ctx=await getCurrentRequestContext();
- const params=await searchParams;
- const {query,invalid}=parseSuperAdminPlacementStudentSearch(params);
- // Invalid lengths/duplicate query keys are recoverable and NEVER passed to
- // strict service validation, which would otherwise throw from a hostile URL.
- const q=query??"";
- const lookup=query&&ctx.adminScope?.collegeId?
-  await lookupCollegeStudentPlacement(ctx,query)
-    .then(value=>({ok:true as const,value}))
-    .catch(()=>({ok:false as const})):null;
- const data=lookup&&lookup.ok?lookup.value:null;
- // Selection stays inside the authorized college search result. A forged ID
- // never becomes a free-form membership lookup or reveals another tenant.
- const choices=data?.students.slice(0,10)??[];
- const requestedStudent=typeof params.student==="string"&&
-   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.student)
-   ?params.student:null;
- const selectedStudent=choices.find(person=>person.membershipId===requestedStudent)??null;
- return <div className="min-w-0 space-y-6">
-  <div className="min-w-0">
-   <PageBackLink href="/admin/placements" label="Placement overview" />
-   <PageHeader title="Student placement lookup" />
-  </div>
-  <form action="/admin/placements/student-lookup" role="search" className="grid min-w-0 gap-[8px] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] md:grid-cols-[minmax(0,1fr)_auto] md:items-end">
-   <label className="grid w-full min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
-    <Input type="search" name="q" minLength={3} maxLength={150} required disabled={!ctx.adminScope?.collegeId} aria-describedby={!ctx.adminScope?.collegeId?"placement-student-scope-hint":undefined} defaultValue={q}
-      placeholder="Find one student in this college"
-      className="min-h-11 w-full min-w-0 md:min-h-9"/>
-   </label>
-   <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={!ctx.adminScope?.collegeId}>Search students</Button>
-  </form>
-  <div className="flex min-w-0 flex-wrap items-center justify-end gap-3">
-   <Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-button-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Analytics</Link>
-  </div>
-  {invalid?<ErrorState title="Invalid student search"
-   description="Enter 3 to 150 characters in a single search to find students in the selected college."
-   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto">Clear search</Link>}/>:null}
-  {lookup&&!lookup.ok?<ErrorState title="Student placement lookup unavailable"
-   description="Search failed — try again. Your selected college and search have been kept."
-   action={<Link href={"/admin/placements/student-lookup?q="+encodeURIComponent(q)}
-     className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto">Retry student search</Link>}/>:null}
-  {!ctx.adminScope?.collegeId?<div id="placement-student-scope-hint" role="status">
-   <EmptyState title="Select a college to continue" description="Choose a college in the header above to look up student placements."/>
-  </div>:null}
-  {data&&!data.students.length?<EmptyState title="No matching students" description="No students in the selected college match this name, roll number or email."
-   action={<Link href="/admin/placements/student-lookup" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto">Clear search</Link>} />:null}
-  {data&&data.students.length>0?<div className="min-w-0 space-y-3 border-b border-border pb-4">
-    <p className="text-sm text-muted-foreground">Select one student to view placement history. Showing the first {choices.length} matches; narrow your search for more specific results.</p>
-    <div role="list" aria-label="Matching students" className="divide-y divide-border border-y border-border">
-      {choices.map(person=><div role="listitem" key={person.membershipId}>
-        <Link href={"/admin/placements/student-lookup?"+new URLSearchParams({q,student:person.membershipId}).toString()}
-          aria-current={selectedStudent?.membershipId===person.membershipId?"page":undefined}
-          className="flex min-h-11 min-w-0 flex-wrap items-center justify-between gap-2 px-3 py-2 text-sm text-primary-text hover:bg-[var(--lms-primary-subtle)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)]">
-          <span className="min-w-0 break-words font-semibold">{person.name??person.roll??"Student"}</span>
-          <span className="text-xs text-muted-foreground">{person.roll??"No roll number"}</span>
-        </Link>
-      </div>)}
+import { StatusBadge } from "@/components/ui/status-badge";
+import { EmptyState } from "@/components/ui/empty-state";
+import { ErrorState } from "@/components/ui/error-state";
+import { AdminPlacementStudentSearch } from "@/components/placements/admin-placement-student-search";
+import { lookupCollegeStudentPlacement } from "@/modules/placements/college-placement-student-lookup-service";
+import { parseSuperAdminPlacementStudentSearch } from "@/modules/admin-ui/super-admin-placement-student-search-model";
+
+function humanStage(raw: string | null, offer: string | null, joining: string | null) {
+  const status = joining === "JOINED" ? "HIRED" :
+    offer === "ACCEPTED" ? "OFFERED" : raw === "SUBMITTED" ? "APPLIED" : (raw ?? "");
+  const labels: Record<string, string> = {
+    APPLIED: "Applied", SHORTLISTED: "Shortlisted", ASSESSMENT: "Test",
+    INTERVIEW: "Interview", WAITLISTED: "Waitlisted", OFFERED: "Offered",
+    HIRED: "Placed", REJECTED: "Not selected", WITHDRAWN: "Withdrawn",
+  };
+  return { status, label: labels[status] ?? (status ? status.replaceAll("_", " ").toLowerCase().replace(/^./, char => char.toUpperCase()) : "-") };
+}
+
+function stageTone(status: string): "neutral" | "info" | "success" | "warning" | "error" {
+  if (status === "HIRED") return "success";
+  if (status === "REJECTED") return "error";
+  if (status === "APPLIED" || status === "WITHDRAWN") return "neutral";
+  if (status === "SHORTLISTED" || status === "OFFERED") return "info";
+  return "warning";
+}
+function stageColor(status: string) {
+  switch (status) {
+    case "ASSESSMENT": return "bg-amber-50 text-amber-700";
+    case "INTERVIEW": return "bg-purple-50 text-purple-700";
+    case "WAITLISTED": return "bg-orange-50 text-orange-700";
+    case "OFFERED": return "bg-cyan-50 text-cyan-700";
+    case "SHORTLISTED": return "bg-blue-50 text-blue-700";
+    default: return "";
+  }
+}
+function appliedDate(value: Date | string | null) {
+  if (!value) return "-";
+  const date = value instanceof Date ? value : new Date(value);
+  if (!Number.isFinite(date.getTime())) return "-";
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata", day: "2-digit", month: "short", year: "numeric",
+  }).format(date);
+}
+
+export default async function SuperAdminPlacementStudentLookup({ searchParams }: {
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+  const ctx = await getCurrentRequestContext();
+  const params = await searchParams;
+  const { query, invalid } = parseSuperAdminPlacementStudentSearch(params);
+  const q = query ?? "";
+  const scope = ctx.adminScope?.collegeId ?? null;
+  // Memberships and application history are fetched only for the selected,
+  // authorized college. A forged learner ID never bypasses this result set.
+  const lookup = query && scope
+    ? await lookupCollegeStudentPlacement(ctx, query)
+        .then(value => ({ ok: true as const, value }))
+        .catch(() => ({ ok: false as const }))
+    : null;
+  const data = lookup?.ok ? lookup.value : null;
+  const choices = data?.students.slice(0, 10) ?? [];
+  const requestedStudent = typeof params.student === "string" &&
+    /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(params.student)
+    ? params.student : null;
+  const selectedStudent = choices.find(person => person.membershipId === requestedStudent) ?? null;
+  const studentLabel = selectedStudent
+    ? selectedStudent.name?.trim() || selectedStudent.email || `Student #${selectedStudent.membershipId}`
+    : "";
+
+  return <div className="min-w-0 space-y-4">
+    <div>
+      <PageBackLink href="/admin/placements" label="Placement overview" />
+      <PageHeader title="Student placement lookup" />
     </div>
-    {requestedStudent&&!selectedStudent?<p role="alert" className="text-sm text-error">The selected student is not in these college search results. Choose a student from this list.</p>:null}
-  </div>:null}
-  {selectedStudent?<section className="min-w-0 space-y-[var(--lms-space-3)] border-b border-border py-[var(--lms-space-4)] last:border-0">
-   <div className="grid min-w-0 gap-[var(--lms-space-2)] sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-[var(--lms-space-4)]">
-    <div className="min-w-0"><h2 className="m-0 break-words font-semibold text-[var(--lms-heading)]">{selectedStudent.name??selectedStudent.roll??"Student"}</h2>
-     <p className="mt-1 break-words text-xs text-muted-foreground">{selectedStudent.roll??"No roll number"} · {selectedStudent.email??"No email"}</p></div>
-    <div className="flex min-w-0 items-center sm:justify-end"><StatusBadge tone={selectedStudent.placed?"success":"neutral"}>{selectedStudent.placed?"Joined (confirmed)":"No confirmed joining recorded"}</StatusBadge></div>
-   </div>
-   <DataTable
-    caption="Student applications"
-    rows={selectedStudent.applications.map((row,index)=>({...row,uxKey:row.jobId+":"+index}))}
-    getRowKey={row=>row.uxKey}
-    columns={[
-      {key:"job",header:"Company / drive",mobilePriority:"primary",cell:row=>row.company+" · "+row.job},
-      {key:"application",header:"Application",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.applicationStatus==="SUBMITTED"?"info":row.applicationStatus==="WITHDRAWN"?"neutral":row.applicationStatus==="REJECTED"?"error":"warning"}>{row.applicationStatus}</StatusBadge>},
-      {key:"offer",header:"Offer",mobilePriority:"secondary",cell:row=>row.offerStatus?<StatusBadge tone={row.offerStatus==="ACCEPTED"?"success":row.offerStatus==="DECLINED"?"error":"info"}>{row.offerStatus}</StatusBadge>:"None"},
-      {key:"joining",header:"Joining",mobilePriority:"secondary",cell:row=>row.joining??"Not recorded"},
-    ]}
-    empty={<EmptyState title="No applications found" description="No placement applications are recorded for this student."/>}
-   />
-   {selectedStudent.truncated?<p className="text-xs text-muted-foreground">Showing newest 100 application/offer records.</p>:null}
-  </section>:null}
- </div>;
+    <section aria-label="Student placement status search" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
+      <p className="mb-[6px] text-xs text-muted-foreground">Look up a student’s placement status</p>
+      <AdminPlacementStudentSearch
+        key={scope ?? "no-college"} collegeId={scope}
+        initialQuery={q} selectedId={selectedStudent?.membershipId ?? null}
+        choices={choices.map(person => ({
+          membershipId: person.membershipId,
+          label: person.name?.trim() || person.email || `Student #${person.membershipId}`,
+          roll: person.roll ?? null,
+          email: person.email ?? null,
+        }))} unavailable={Boolean(lookup && !lookup.ok)}
+      />
+      {invalid ? <p role="alert" className="mt-2 text-xs text-error">
+        Enter 2 to 150 characters in a single search. Search results are scoped to the selected college.
+      </p> : null}
+      {!scope ? <p role="status" className="mt-2 text-xs text-muted-foreground" id="placement-student-scope-hint">
+        Choose a college in the header above to look up student placements.
+      </p> : null}
+      {lookup && !lookup.ok ? <ErrorState title="Student search failed"
+        description="Search failed — try again."
+        action={<Link href={`/admin/placements/student-lookup?q=${encodeURIComponent(q)}`}
+          className="text-link underline">Retry student search</Link>} /> : null}
+      {requestedStudent && !selectedStudent ? <p role="alert" className="mt-2 text-sm text-error">
+        Student not found in this college’s current search results. Choose a matching student.
+      </p> : null}
+    </section>
+    {selectedStudent ? <section className="min-w-0 space-y-3 rounded-[8px] border border-[#f0f0f0] bg-[#fafafa] p-4"
+      aria-label={`Placement history for ${studentLabel}`}>
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <strong className="break-words text-sm text-[var(--lms-heading)]">{studentLabel}</strong>
+        <StatusBadge tone={selectedStudent.placed ? "success" : "neutral"}>
+          {selectedStudent.placed ? "Joined (confirmed)" : "No confirmed joining recorded"}
+        </StatusBadge>
+      </div>
+      <p className="text-xs text-muted-foreground">{selectedStudent.roll ?? "No roll number"}
+        {selectedStudent.email ? ` · ${selectedStudent.email}` : ""}
+      </p>
+      <div className="space-y-1" aria-label="Learner profile sections">
+        <details className="border-b border-border py-2">
+          <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Resume</summary>
+          <p className="pt-2 text-xs text-muted-foreground">Resume details are managed in the learner’s profile. Only authorized, signed document links should be displayed here.</p>
+          <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
+        </details>
+        <details className="border-b border-border py-2">
+          <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Skills</summary>
+          <p className="pt-2 text-xs text-muted-foreground">Review or change skill entries from the authorized learner profile.</p>
+          <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
+        </details>
+        <details className="border-b border-border py-2">
+          <summary className="min-h-9 cursor-pointer text-sm font-semibold text-[var(--lms-heading)]">Job Preferences</summary>
+          <p className="pt-2 text-xs text-muted-foreground">Placement preferences are managed with the learner’s profile.</p>
+          <Link href="/admin/students" className="inline-flex min-h-9 items-center text-sm font-semibold text-link underline">Open student directory</Link>
+        </details>
+      </div>
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+        <h2 className="m-0 text-sm font-semibold text-[var(--lms-heading)]">Placement history</h2>
+        <Link href={`/admin/placements/student-lookup?${new URLSearchParams({q, student: selectedStudent.membershipId, refresh: "1"})}`}
+          className="inline-flex min-h-9 items-center font-semibold text-sm text-link underline">
+          Refresh placement history
+        </Link>
+      </div>
+      {selectedStudent.applications.length === 0
+        ? <EmptyState title="No applications yet" description="No applications yet — this student hasn't applied to any job posting." />
+        : <ul className="min-w-0 divide-y divide-border border-y border-border">
+          {selectedStudent.applications.map((row, index) => {
+            const { status, label } = humanStage(row.applicationStatus, row.offerStatus, row.joining);
+            return <li key={row.jobId + ":" + index} className="min-w-0 space-y-1.5 py-3">
+              <div className="flex min-w-0 flex-wrap items-center gap-2 text-sm">
+                <strong className="break-words text-[var(--lms-heading)]">{row.job?.trim() || "Job"}</strong>
+                {row.company ? <span className="break-words text-muted-foreground">{row.company}</span> : null}
+                <StatusBadge tone={stageTone(status)} className={stageColor(status)}>{label}</StatusBadge>
+              </div>
+              <p className="text-xs text-muted-foreground">Applied {appliedDate(row.submittedAt)}
+                {status === "SHORTLISTED" ? " · Shortlisted" :
+                  status === "ASSESSMENT" ? " · Test stage" :
+                  status === "INTERVIEW" ? " · Interview stage" :
+                  status === "WAITLISTED" ? " · Waitlisted" :
+                  status === "REJECTED" ? " · Not selected" :
+                  status === "WITHDRAWN" ? " · Withdrawn" :
+                  row.joining === "JOINED" ? " · Joined" :
+                  row.offerStatus === "ACCEPTED" ? " · Offer accepted" : ""}
+              </p>
+            </li>;
+          })}
+        </ul>}
+      {selectedStudent.truncated ? <p className="text-xs text-muted-foreground">
+        Showing the newest 100 application/offer records. Use the learner’s full placement history to review older records.
+      </p> : null}
+    </section> : null}
+    <div className="flex justify-end">
+      <Link href="/admin/placements/analytics" className="text-sm font-semibold text-link underline">Analytics</Link>
+    </div>
+  </div>;
 }

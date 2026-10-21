@@ -18,8 +18,20 @@ import { useToast } from "@/components/ui/toast";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
-import {COLLEGE_COURSES_COPY} from "@/modules/courses/college-courses-copy";
 
+/** Inline legacy action glyphs: no icon libraries are installed. */
+function CourseActionIcon({kind}:{kind:"edit"|"duplicate"|"archive"}){
+  return <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+    strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+    {kind==="edit"?<><path d="m16 4 4 4-11 11-5 1 1-5 11-11Z"/>
+      <path d="m14 6 4 4"/></>:kind==="duplicate"?<>
+      <rect x="8" y="8" width="12" height="12" rx="2"/>
+      <path d="M4 16V6a2 2 0 0 1 2-2h10"/></>:<>
+      <rect x="5" y="6" width="14" height="14" rx="2"/>
+      <path d="M3 6h18M9 6V4h6v2M10 10v6m4-6v6"/>
+    </>}
+  </svg>;
+}
 async function mutate(
   path: string,
   method: "PATCH" | "DELETE",
@@ -71,10 +83,11 @@ function useCourseMutation() {
 }
 
 export function CourseActions({
-  course,duplicateHref,activeOfferingCount=0,allowMetadata=false,
+  course,duplicateHref,activeOfferingCount=0,linkedLessonCount=0,allowMetadata=false,
 }: {
   duplicateHref?:string;
   activeOfferingCount?:number;
+  linkedLessonCount?:number;
   allowMetadata?:boolean;
   course: {
     id: string;
@@ -160,27 +173,31 @@ export function CourseActions({
     <>
       <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         
-        <Button
-          size="sm"
-          className="min-h-11 md:min-h-9"
-          variant="secondary"
-          onClick={openEdit}
-        >
-          Edit
+        <Button size="sm" className="min-h-11 gap-1.5 md:min-h-9" variant="secondary"
+          aria-label={"Edit course "+course.name} title={"Edit "+course.name}
+          onClick={openEdit}>
+          <CourseActionIcon kind="edit"/> Edit
         </Button>
-        <Dropdown trigger="More" label="Course actions" mobileSheet align="end" triggerClassName="md:!min-h-9"><Menu>
-          {duplicateHref ? <Link href={duplicateHref} role="menuitem"
-            className="flex min-h-11 min-w-0 w-full items-center rounded-[var(--lms-control-radius)] px-[var(--lms-space-3)] py-[var(--lms-space-2)] text-left text-[14px] leading-5 text-body hover:bg-[var(--lms-neutral-50)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Duplicate</Link> : null}
-          <MenuItem disabled={pending} onClick={()=>{setArchiveFailure("");setArchiveOpen(true);}}>Archive</MenuItem>
-        </Menu></Dropdown>
+        {duplicateHref?<Link href={duplicateHref} aria-label={"Duplicate course "+course.name}
+          title={"Duplicate "+course.name}
+          className="inline-flex min-h-11 items-center gap-1.5 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          <CourseActionIcon kind="duplicate"/> Duplicate
+        </Link>:null}
+        <Button size="sm" className="min-h-11 gap-1.5 md:min-h-9"
+          variant="danger" disabled={pending} aria-label={"Archive course "+course.name}
+          title={"Archive "+course.name+" (historical records retained)"}
+          onClick={()=>{setArchiveFailure("");setArchiveOpen(true);}}>
+          <CourseActionIcon kind="archive"/> Archive
+        </Button>
       </div>
 
       <Dialog
         open={editOpen}
         onOpenChange={closeEdit}
         dismissible={!pending}
-        title="Edit Course"
-        description="Department ownership is immutable after Course creation."
+        title={"Edit “"+course.name+"”"}
+        className="max-w-[660px] max-h-[min(85vh,900px)] overflow-y-auto"
+        description="Department ownership is immutable after Course creation. Existing files and linked lessons remain attached."
         footer={
           <>
             <Button
@@ -194,7 +211,8 @@ export function CourseActions({
               disabled={
                 pending ||
                 !name.trim() ||
-                (allowMetadata?!shortTitle.trim():!code.trim())
+                (allowMetadata?(!shortTitle.trim()||
+                  Boolean(cardColor&&!/^#[0-9A-Fa-f]{6}$/.test(cardColor))):!code.trim())
               }
               onClick={() =>
                 run(
@@ -223,7 +241,7 @@ export function CourseActions({
             >
               {pending
                 ? "Saving…"
-                : "Save"}
+                : "Save Changes"}
             </Button>
           </>
         }
@@ -231,7 +249,7 @@ export function CourseActions({
         <div className="grid gap-4">
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              {COLLEGE_COURSES_COPY.nameLabel}
+              Course Name
             </span>
             <Input
               value={name}
@@ -239,6 +257,7 @@ export function CourseActions({
                 setName(event.target.value)
               }
               maxLength={255}
+              placeholder="Course title"
               aria-invalid={Boolean(nameFieldError)}
               onBlur={() => {
                 if(!name.trim())setNameFieldError("Enter a course name");
@@ -252,14 +271,25 @@ export function CourseActions({
               <Input value={shortTitle} onChange={event=>setShortTitle(event.target.value)} maxLength={120}/>
             </label>
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Official course code (optional)
-              <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={64}/>
+              <Input value={officialCode} onChange={event=>setOfficialCode(event.target.value)} maxLength={40}
+                placeholder="Official course code (optional)"/>
             </label>
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Course takeaways (optional)
               <Textarea value={takeaways} onChange={event=>setTakeaways(event.target.value)} maxLength={2000}/>
             </label>
             <label className="grid gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Card colour
-              <Input value={cardColor} onChange={event=>setCardColor(event.target.value)}
-                maxLength={7} pattern="#[0-9A-Fa-f]{6}"/>
+              <div className="flex flex-wrap items-center gap-2">
+                <Input type="color" aria-label="Choose card colour"
+                  className="h-11 !w-20 cursor-pointer md:h-9"
+                  value={/^#[0-9A-Fa-f]{6}$/.test(cardColor)?cardColor:"#0a7c88"}
+                  onChange={event=>setCardColor(event.target.value)}/>
+                <Input aria-label="Card colour HEX value" value={cardColor}
+                  onChange={event=>setCardColor(event.target.value)}
+                  maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="#0a7c88"
+                  className="min-w-[116px] max-w-[156px]"/>
+              </div>
+              {cardColor&&!/^#[0-9A-Fa-f]{6}$/.test(cardColor)?
+                <span role="alert" className="text-xs text-error">Use a colour like #0a7c88</span>:null}
             </label>
           </div>:null}
           {!allowMetadata?<label>
@@ -276,7 +306,7 @@ export function CourseActions({
           </label>:null}
           <label>
             <span className="mb-1.5 block text-xs font-semibold text-body">
-              Description
+              Course info
             </span>
             <Textarea
               value={description}
@@ -286,6 +316,8 @@ export function CourseActions({
                 )
               }
               maxLength={5000}
+              placeholder="Enter Course Info"
+              rows={3}
             />
           </label>
         </div>
@@ -293,23 +325,27 @@ export function CourseActions({
       </Dialog>
 
       <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
-        title="Discard unsaved course changes?" confirmLabel="Discard changes"
+        title="Discard unsaved course changes?"
+        description={"Discard unsaved changes to “"+course.name+"”? You will lose the edits in this form."}
+        confirmLabel="Discard changes" confirmVariant="danger"
         onConfirm={()=>{setDiscardOpen(false);setEditOpen(false);}} />
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
-        title={"Archive " + course.name + "?"}
+        title={"Delete “" + course.name + "”? (Archive only)"}
         description={activeOfferingCount>0
           ?"A Course with active Offerings cannot be archived. "+activeOfferingCount+" active Course Offering(s) must be archived first. Historical records remain preserved."
-          :"Archiving retains course history. Existing linked lessons, including in closed Offerings, block archiving until their dependencies are resolved."}
+          :linkedLessonCount>0
+           ?"This Course still has "+linkedLessonCount+" linked lesson(s). Remove or move these lesson dependencies before archiving. Uploaded files remain preserved."
+           :"The old Delete action is implemented as Archive to preserve course history, enrolled students, materials and audit records. Use the authorized archive/restore workflow for recovery."}
         confirmLabel="Archive Course"
         pending={pending}
-        confirmDisabled={activeOfferingCount>0}
+        confirmDisabled={activeOfferingCount>0||linkedLessonCount>0}
         onConfirm={archive}
       />
       {archiveFailure?<div className="mt-2 space-y-2" role="alert">
         <Alert tone="error">Course was not deleted. {archiveFailure}</Alert>
-        <Button type="button" variant="secondary" size="sm" disabled={pending||activeOfferingCount>0}
+        <Button type="button" variant="secondary" size="sm" disabled={pending||activeOfferingCount>0||linkedLessonCount>0}
           onClick={archive}>Retry archive</Button>
       </div>:null}
     </>

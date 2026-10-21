@@ -12,6 +12,7 @@ import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-s
 import { PlacementDriveWorkspace } from "@/components/placements/placement-drive-workspace";
 import { getSuperAdminDrivePipeline } from "@/modules/placements/super-admin-drive-pipeline-service";
 import { SuperAdminDrivePipeline } from "@/components/placements/super-admin-drive-pipeline";
+import {getSuperAdminDriveAttention} from "@/modules/placements/super-admin-drive-attention-service";
 
 export default async function AdminPlacementDrivePage({
   params,
@@ -34,9 +35,12 @@ export default async function AdminPlacementDrivePage({
       description="The drive ID is invalid. Return to the placement list and select a drive."
       action={<Link href={backHref} className="font-semibold text-primary-text underline">Back to Drives</Link>}/>
   </div>;
-  const [jobRead,pipelineRead]=await Promise.allSettled([
+  // Attention is informational: its failure never hides the drive, actions
+  // or pipeline, and no counts are invented when that read is unavailable.
+  const [jobRead,pipelineRead,attentionRead]=await Promise.allSettled([
     getPlacementJob(context,jobId),
     getSuperAdminDrivePipeline(context,jobId),
+    getSuperAdminDriveAttention(context,jobId),
   ]);
   if(jobRead.status==="rejected"){
     if(jobRead.reason instanceof AuthorizationError)throw jobRead.reason;
@@ -51,9 +55,28 @@ export default async function AdminPlacementDrivePage({
   }
   if(pipelineRead.status==="rejected"&&pipelineRead.reason instanceof AuthorizationError)
     throw pipelineRead.reason;
+  if(attentionRead.status==="rejected"&&attentionRead.reason instanceof AuthorizationError)
+    throw attentionRead.reason;
   const pipeline=pipelineRead.status==="fulfilled"?pipelineRead.value:null;
+  const attention=attentionRead.status==="fulfilled"?attentionRead.value:[];
   return (
    <div className="min-w-0 space-y-[var(--lms-space-4)] md:space-y-[var(--lms-space-6)]">
+    {attention.length>0?<Banner tone="warning" role="status">
+      <section aria-label="Needs attention" className="space-y-2">
+        <h2 className="text-sm font-semibold">Needs attention ({attention.reduce((sum,item)=>sum+item.count,0)})</h2>
+        <ul className="space-y-2">
+          {attention.map(item=><li key={item.label} className="flex min-w-0 flex-wrap items-baseline gap-2 text-sm">
+            <strong>{item.label} ({item.count})</strong>
+            <span>{item.details}</span>
+            <Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+
+              "/applications"+(item.stage?"?stage="+encodeURIComponent(item.stage):"")}
+              className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+              Review applications →
+            </Link>
+          </li>)}
+        </ul>
+      </section>
+    </Banner>:null}
     <PlacementDriveWorkspace
       context={context}
       jobId={jobId}

@@ -9,8 +9,6 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Dialog } from "@/components/ui/dialog";
-import { Dropdown } from "@/components/ui/dropdown";
-import { Menu, MenuItem } from "@/components/ui/menu";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/toast";
 
@@ -90,8 +88,8 @@ export function OrganizationActions({
       if (!response.ok) {
         showToast({
           tone: "error",
-          title: "Failed to delete organization: "+(payload?.error === "ORGANIZATION_HAS_COLLEGES"
-            ? "Cannot delete organization: colleges exist under this organization"
+          title: "Failed to archive organization: "+(payload?.error === "ORGANIZATION_HAS_COLLEGES"
+            ? "Cannot archive organization: colleges exist under this organization"
             : "The organization could not be archived."),
         });
         return;
@@ -103,26 +101,32 @@ export function OrganizationActions({
         title: "Archived organization “"+name+"”.",
       });
       router.refresh();
-      }catch{showToast({tone:"error",title:"Failed to delete organization: The organization could not be archived."});}
+      }catch{showToast({tone:"error",title:"Failed to archive organization: The organization could not be archived."});}
       finally{inFlightRef.current=false;}
     });
   }
 
   return (
     <>
-      <Dropdown trigger="Actions" label="Organization actions" mobileSheet align="end" className="print:hidden" triggerClassName="md:!min-h-9">
-        <Menu className="w-full min-w-0">
-          <MenuItem disabled={pending} onClick={() => { setNextName(name); setRenameOpen(true); }}>Rename</MenuItem>
-          <MenuItem disabled={pending} onClick={() => setArchiveOpen(true)}>Archive</MenuItem>
-        </Menu>
-      </Dropdown>
+      <div className="flex min-w-0 flex-wrap items-center justify-end gap-2 print:hidden">
+        <Button type="button" variant="secondary" size="sm" disabled={pending}
+          title="Edit organization" aria-label={"Edit organization "+name}
+          onClick={()=>{setNextName(name);setRenameOpen(true);}}>
+          <span aria-hidden="true">✎</span> Edit
+        </Button>
+        <Button type="button" variant="secondary" size="sm" disabled={pending}
+          title="Delete (archive) organization"
+          aria-label={"Archive organization "+name} onClick={()=>setArchiveOpen(true)}>
+          <span aria-hidden="true">⌫</span> Delete (archive)
+        </Button>
+      </div>
 
       <Dialog
         open={renameOpen}
         onOpenChange={next=>{if(next)setRenameOpen(true);else requestRenameClose();}}
         dismissible={!pending}
-        title="Rename organization"
-        description="The active-name uniqueness rule is enforced by the server."
+        title={"Edit “"+name+"”"}
+        description="Update the organization name. Unsaved changes require confirmation before closing."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
@@ -142,7 +146,7 @@ export function OrganizationActions({
               }
               onClick={rename}
             >
-              {pending ? "Saving…" : "Save name"}
+              {pending ? "Saving…" : "Save Changes"}
             </Button>
           </div>
         }
@@ -176,8 +180,8 @@ export function OrganizationActions({
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
-        title={`Archive ${name}?`}
-        description="This archives rather than permanently deletes the organization. It is allowed only when no active colleges exist."
+        title={"Delete “"+name+"”? (Archive)"}
+        description="This action archives rather than permanently deletes the organization. Colleges must be removed or archived first."
         confirmLabel="Archive organization" confirmVariant="danger"
         pending={pending}
         onConfirm={archive}

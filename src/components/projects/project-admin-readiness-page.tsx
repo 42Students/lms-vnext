@@ -1,13 +1,14 @@
 import { EmptyState } from "@/components/ui/empty-state";
+import { Badge } from "@/components/ui/badge";
+import {getProjectReadiness} from "@/modules/projects/readiness-service";
+import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import {AdminReadinessWorkspacePicker} from "./admin-readiness-workspace-picker";
 import Link from "next/link";
 import { listCollegeActiveReadinessOverrides } from "@/modules/projects/admin-readiness-overrides-service";
 import {listCollegeReadinessWorkspaceChoicePage,listCollegeReadinessReleases,
  resolveCollegeReadinessWorkspaceId} from "@/modules/projects/college-readiness-releases-service";
 import {requireProjectManageAccess} from "@/modules/projects/access";
-import {getProjectReadiness} from "@/modules/projects/readiness-service";
 import {effectiveProjectSubmissionReady} from "@/modules/projects/readiness-override-model";
-import {ProjectReadinessOverrideForm} from "./project-readiness-override-form";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   ProjectAdminFilters,
@@ -93,7 +94,7 @@ export async function ProjectAdminReadinessPage({
       one(searchParams.pageSize) ?? 25,
     ),
   };
-  const read = await Promise.all([
+  const read = await Promise.allSettled([
     listProjectAdminSnapshots(context, collegeId, query),
     listCollegeActiveReadinessOverrides(context, collegeId),
     listCollegeReadinessWorkspaceChoicePage(context,collegeId,{page:1,search:""}),
@@ -139,23 +140,23 @@ export async function ProjectAdminReadinessPage({
   const visibleOverrides=matchingOverrides.slice((currentOverridePage-1)*25,currentOverridePage*25);
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className="min-w-0 max-w-[1040px] space-y-4">
       <div className="min-w-0">
         <PageBackLink href={basePath} label="Project workspaces" />
         <PageHeader title="Submission readiness"
-          description="Execution completion and final-delivery readiness across project workspaces. See whether each team is ready to submit, and override the gate when you need to." />
+          description="See whether each team is ready to submit, and override the gate when you need to." />
       </div>
       <ProjectAdminNav basePath={basePath} active="readiness" />
-      <Disclosure title={"Active overrides ("+activeOverrides.length+")"} defaultOpen={activeOverrides.length>0} className="border-b border-border pb-4" contentClassName="min-w-0 pt-3">
+      <Disclosure title={<span className="flex items-center gap-2">Active overrides <Badge tone={activeOverrides.length?"warning":"neutral"}>{activeOverrides.length}</Badge></span>} defaultOpen={activeOverrides.length>0} className="border-b border-border pb-4" contentClassName="min-w-0 pt-3">
         {!activeOverrides.length ? <p className="mt-3 text-sm text-muted-foreground">
-          No workspace currently has a manual override — every gate is running on its own completion state.
+          ✓ No workspace currently has a manual override
         </p> : <DataTable<(typeof activeOverrides)[number]>
           caption="Active overrides"
-          rows={visibleOverrides}
+          rows={overrideRows}
           getRowKey={row=>row.projectId}
           columns={[
             {key:"workspace",header:"Workspace",mobilePriority:"primary",cell:row=>row.workspace},
-            {key:"direction",header:"Override",mobilePriority:"secondary",cell:row=>row.direction},
+            {key:"direction",header:"Override",mobilePriority:"secondary",cell:row=><StatusBadge tone={row.overrideValue?"success":"warning"}>{row.overrideValue?"✓ Force unlocked":"! Force blocked"}</StatusBadge>},
             {key:"note",header:"Note",mobilePriority:"secondary",cell:row=>row.note},
             {key:"by",header:"By",mobilePriority:"secondary",cell:row=>row.by},
             {key:"at",header:"At",mobilePriority:"secondary",cell:row=>new Intl.DateTimeFormat("en-IN",{
@@ -167,15 +168,16 @@ export async function ProjectAdminReadinessPage({
           ]}
           empty={<EmptyState title="No matching overrides" description="No workspace overrides match these filters." />}
         />}
-        {matchingOverrides.length>25?<nav className="mt-3 flex flex-wrap items-center gap-3 text-sm"
-          aria-label="Override pages">
-          <span>Page {currentOverridePage} of {overrideTotalPages} · {matchingOverrides.length} matching overrides</span>
-          <Link href={readinessPath+"?overridePage="+Math.max(1,currentOverridePage-1)}
-            className="text-link underline">Previous</Link>
-          <Link href={readinessPath+"?overridePage="+Math.min(overrideTotalPages,currentOverridePage+1)}
-            className="text-link underline">Next</Link>
+        {matchingOverrides.length>25?<nav aria-label="Active override pages" className="mt-3 flex items-center justify-between gap-2 text-sm">
+          <span>Page {displayedOverridePage} of {overridePageCount}</span>
+          <div className="flex gap-3">{displayedOverridePage>1?<Link href={overridePageHref(displayedOverridePage-1)} className="text-primary-text underline">Previous</Link>:null}
+            {displayedOverridePage<overridePageCount?<Link href={overridePageHref(displayedOverridePage+1)} className="text-primary-text underline">Next</Link>:null}</div>
         </nav>:null}
       </Disclosure>
+      <div className="flex min-w-0 flex-wrap items-center justify-end">
+      <a aria-disabled={!matchingOverrides.length} href={matchingOverrides.length?"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId):undefined}
+        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a>
+      </div>
       <Disclosure title="Select workspace" className="border-b border-border pb-4" defaultOpen contentClassName="space-y-3 pt-3">
         {outsideScope ? <Banner tone="warning" role="alert">
           This workspace could not be found in the selected college. Check its
@@ -222,17 +224,10 @@ export async function ProjectAdminReadinessPage({
               action={<Link href={readinessPath+"?projectId="+encodeURIComponent(selected)}
                 className="text-link underline">Retry readiness</Link>}/>}
           </section>
-          <section className="space-y-2">
-            <h3 className="text-base font-semibold">Releases</h3>
-            <p className="text-xs text-body">
-              Releases are context only; shipping them does not block submission readiness.
-            </p>
-            {releaseUnavailable?<ErrorState title="Couldn't load releases"
-              description="Release details are unavailable. Current readiness remains accessible."
-              action={<Link href={readinessPath+"?projectId="+encodeURIComponent(selected)}
-                className="text-link underline">Retry releases</Link>}/>:null}
-          </section>
-          {!releaseUnavailable&&!releaseContext.length ? <EmptyState title="No releases recorded" description="There are no releases for this workspace yet."/> :!releaseUnavailable?
+          <a href="#manual-override" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Manage override</a>
+          <h3 className="text-sm font-semibold">Releases</h3>
+          {releaseRead.error?<Banner tone="warning" role="alert">Couldn't load releases. Retry this page to review release readiness.</Banner>:
+           !releaseContext.length ? <EmptyState title="No releases recorded" description="There are no releases for this workspace yet."/> :
             <DataTable<(typeof releaseContext)[number]>
               caption="Readiness releases"
               rows={releaseContext}
@@ -241,27 +236,21 @@ export async function ProjectAdminReadinessPage({
                 {key:"release",header:"Release",mobilePriority:"primary",cell:release=>release.title},
                 {key:"status",header:"Status",mobilePriority:"secondary",cell:release=><StatusBadge tone={release.status==="SHIPPED"?"success":release.status==="IN_PROGRESS"?"info":"neutral"}>{release.status==="SHIPPED"?"Shipped":release.status==="IN_PROGRESS"?"In progress":"Planned"}</StatusBadge>},
                 {key:"sprints",header:"Sprints",mobilePriority:"secondary",cell:release=>release.completedSprints+"/"+release.sprintCount},
-                {key:"points",header:"Points",mobilePriority:"secondary",cell:release=>release.completedPoints+"/"+release.committedPoints},
+                {key:"points",header:"Points",mobilePriority:"secondary",cell:release=>release.points},
                 {key:"target",header:"Target date",mobilePriority:"secondary",cell:release=>release.targetDate??"—"},
               ]}
               empty={<EmptyState title="No releases recorded" description="This workspace has no recorded releases." />}
-            />:null}
-          {selectedReadiness?<section className="space-y-3 border-t border-border pt-4">
-            <h3 className="text-base font-semibold">Manual override</h3>
-            <ProjectReadinessOverrideForm
-              key={selected+":"+selectedScope?.project.updatedAt.toISOString()}
-              projectId={selected}
-              initialState={selectedReadiness.readinessOverride.state}
-              initialNote={selectedReadiness.readinessOverride.note}
-              hasSubmission={Boolean(selectedReadiness.finalSubmission.latest)}
-              compactLayout/>
-          </section>:null}
+            />}
         </> : null}
       </Disclosure>
-      <div className="flex min-w-0 flex-wrap items-center justify-end">
-      <a href={"/api/projects/readiness-overrides/export?collegeId=" + encodeURIComponent(collegeId)}
-        className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3.5 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Export overrides CSV</a>
-      </div>
+      {selected && currentReadiness?.data?<section id="manual-override" aria-label="Manual override" className="scroll-mt-24 space-y-3 border-t border-border pt-4">
+        <h2 className="text-lg font-semibold text-foreground">Manual override</h2>
+        <p className="text-sm text-muted-foreground">The override changes submission gating and is recorded in the project audit trail.</p>
+        <ProjectReadinessOverrideForm projectId={selected}
+          initialState={currentReadiness.data.readinessOverride.state}
+          initialNote={currentReadiness.data.readinessOverride.note}
+          hasSubmission={currentReadiness.data.finalSubmission.latest!==null} compactLayout/>
+      </section>:null}
       <FilterBar title="Filters"><ProjectAdminFilters query={query} /></FilterBar>
       <ListToolbar label="Readiness workspaces" viewCount={result.total} />
 

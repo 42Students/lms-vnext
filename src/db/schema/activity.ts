@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   bigint,
+  boolean,
   check,
   index,
   integer,
@@ -41,6 +42,12 @@ export const activityEvents = pgTable(
     ),
     // Historic audit provenance: no raw IP, phone or user-agent.
     legacyAuditId: bigint("legacy_audit_id", { mode: "number" }),
+    legacyActionLabel: varchar("legacy_action_label", {length:160}),
+    legacyTargetName: varchar("legacy_target_name", {length:160}),
+    legacySourceTimeZone: varchar("legacy_source_time_zone", {length:80}),
+    legacyOccurredLocal: timestamp("legacy_occurred_local", {withTimezone:false}),
+    legacyEventOriginalCode: varchar("legacy_event_original_code", {length:120}),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     legacyActionKey: varchar("legacy_action_key", { length: 120 }),
     legacyEntityType: varchar("legacy_entity_type", { length: 80 }),
     legacyEntityId: text("legacy_entity_id"),
@@ -87,6 +94,12 @@ export const activityEvents = pgTable(
     index("activity_events_project_event_idx")
       .on(table.legacyProjectId, table.occurredAt)
       .where(sql`${table.legacyProjectId} is not null`),
+    index("activity_events_college_event_time_idx")
+      .on(table.collegeId,table.eventType,table.occurredAt,table.id),
+    index("activity_events_event_time_idx")
+      .on(table.eventType,table.occurredAt,table.id),
+    index("activity_events_group_stable_time_idx")
+      .on(table.groupKey,table.occurredAt,table.id),
     index("activity_events_legacy_audit_id_idx")
       .on(table.legacyAuditId)
       .where(sql`${table.legacyAuditId} is not null`),
@@ -169,6 +182,12 @@ export const inAppNotifications = pgTable(
     actionHref: text("action_href"),
     legacyNotificationId: bigint("legacy_notification_id", { mode: "number" }),
     legacyNotificationType: varchar("legacy_notification_type", { length: 80 }),
+    legacyOriginalTitle: text("legacy_original_title"),
+    legacyContextType: varchar("legacy_context_type", {length:80}),
+    legacyContextId: text("legacy_context_id"),
+    legacyWasRead: boolean("legacy_was_read"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
+    legacySourceTimeZone: varchar("legacy_source_time_zone", {length:80}),
     legacyContextLabel: text("legacy_context_label"),
     legacyCreatorFacultyId: integer("legacy_creator_faculty_id"),
     legacyRecipientType: varchar("legacy_recipient_type", { length: 24 }),
@@ -204,6 +223,12 @@ export const inAppNotifications = pgTable(
     uniqueIndex("in_app_notifications_user_legacy_uq")
       .on(table.userId, table.legacyNotificationId)
       .where(sql`${table.legacyNotificationId} is not null`),
+    index("in_app_notifications_user_history_idx")
+      .on(table.userId,table.createdAt,table.id)
+      .where(sql`${table.deletedAt} is null`),
+    index("in_app_notifications_user_unread_idx")
+      .on(table.userId,table.createdAt,table.id)
+      .where(sql`${table.readAt} is null and ${table.deletedAt} is null`),
     index("in_app_notifications_schedule_status_idx")
       .on(table.deliveryStatus, table.scheduledAt)
       .where(sql`${table.scheduledAt} is not null`),
@@ -275,3 +300,47 @@ export const notificationDeliveryOutbox = pgTable(
       sql`${table.deliveryStatus} <> 'SENT' or ${table.deliveredAt} is not null`),
   ],
 );
+
+/**
+ * Prepared, single-winner claim for the delayed notification outbox.
+ * A producer or worker may execute this only after scope-checked recipient
+ * resolution is installed. Claiming never inserts inbox rows, so future
+ * notices cannot become visible simply because a schedule was saved.
+ * A failed send must set FAILED with a bounded next_retry_at; processing
+ * leases and terminal FAILED handling belong to the dispatcher.
+ */
+export function claimDueNotificationOutboxStatement(
+  now: Date,
+  maxAttempts = 5,
+) {
+  if (!Number.isFinite(now.getTime())) {
+    throw new Error("Invalid notification delivery time");
+  }
+  if (!Number.isSafeInteger(maxAttempts) || maxAttempts < 1 || maxAttempts > 20) {
+    throw new Error("Invalid notification delivery retry budget");
+  }
+  return sql`
+    WITH due AS (
+      SELECT id FROM notification_delivery_outbox
+       WHERE deleted_at IS NULL
+         AND delivery_status IN ('SCHEDULED', 'FAILED')
+         AND scheduled_at <= ${now}
+         AND (next_retry_at IS NULL OR next_retry_at <= ${now})
+         AND delivery_attempts < ${maxAttempts}
+       ORDER BY scheduled_at, id
+       FOR UPDATE SKIP LOCKED
+       LIMIT 1
+    )
+    UPDATE notification_delivery_outbox AS outbox
+       SET delivery_status = 'PROCESSING',
+           delivery_attempts = outbox.delivery_attempts + 1,
+           delivery_error = NULL,
+           updated_at = ${now}
+      FROM due
+     WHERE outbox.id = due.id
+       AND outbox.deleted_at IS NULL
+    RETURNING outbox.id, outbox.event_id, outbox.college_id,
+              outbox.organization_id, outbox.recipient_selection,
+              outbox.delivery_attempts
+  `;
+}

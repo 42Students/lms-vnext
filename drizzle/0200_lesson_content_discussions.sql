@@ -194,3 +194,9 @@ BEFORE UPDATE OF lesson_id, delivery_id ON lesson_contents
 FOR EACH ROW WHEN (OLD.lesson_id IS DISTINCT FROM NEW.lesson_id
                     OR OLD.delivery_id IS DISTINCT FROM NEW.delivery_id)
 EXECUTE FUNCTION db05_block_discussed_content_reparent();
+
+--> statement-breakpoint
+-- Per-content stable historical sequence, independent from delivery chat order.
+CREATE INDEX IF NOT EXISTS lesson_content_discussions_content_sequence_idx
+  ON lesson_content_discussions(lesson_content_id,sequence,id)
+  WHERE deleted_at IS NULL;

@@ -9,9 +9,7 @@ import { ErrorState } from "@/components/ui/error-state";
 import { PageHeader } from "@/components/ui/page-header";
 import { Pagination } from "@/components/ui/pagination";
 import {
-  COLLEGE_LECTURE_HALL_PAGE_SIZE,
   collegeLectureHallHref,
-  collegeLectureHallTotalPages,
   hasCollegeLectureHallFilters,
   parseCollegeLectureHallSearchParams,
 } from "@/modules/academics/college-lecture-hall-directory-model";
@@ -71,6 +69,7 @@ export default async function CollegeLectureHallsPage({
     );
   }
 
+  const pageSize = 10; // Legacy table uses ten rows per page.
   const [hallsResult, departmentsResult] = await Promise.allSettled([
     listLectureHalls(context, {
       collegeId: membership.collegeId,
@@ -81,8 +80,8 @@ export default async function CollegeLectureHallsPage({
       minimumCapacity: query.minimumCapacity,
       maximumCapacity: query.maximumCapacity,
       upcoming:query.upcoming==="ALL"?undefined:query.upcoming,
-      limit: COLLEGE_LECTURE_HALL_PAGE_SIZE,
-      offset: (query.page - 1) * COLLEGE_LECTURE_HALL_PAGE_SIZE,
+      limit: pageSize,
+      offset: (query.page - 1) * pageSize,
     }),
     listDepartments(context, membership.collegeId),
   ]);
@@ -110,9 +109,9 @@ export default async function CollegeLectureHallsPage({
     }
   }
   const total = result.pagination.total;
-  const totalPages = collegeLectureHallTotalPages(total);
+  const totalPages = Math.max(1, Math.ceil(total / pageSize));
   const filtered = hasCollegeLectureHallFilters(query);
-  const offset = (query.page - 1) * COLLEGE_LECTURE_HALL_PAGE_SIZE;
+  const offset = (query.page - 1) * pageSize;
   const shownStart = result.items.length ? offset + 1 : 0;
   const shownEnd = offset + result.items.length;
 
@@ -122,8 +121,6 @@ export default async function CollegeLectureHallsPage({
         title="Lecture Halls"
         description={"Manage registered teaching rooms at " + result.collegeName +
           ". Find rooms by name, room type, department or archive status."}
-        actions={<Link prefetch={false} download href={lectureHallsCsvHref(query)}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-button-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</Link>}
       />
 
       {departmentsResult.status==="rejected" ? <Alert tone="warning" title="Departments could not be loaded">
@@ -131,7 +128,32 @@ export default async function CollegeLectureHallsPage({
         {" "}<Link href={collegeLectureHallHref(query)} className="font-semibold text-link underline underline-offset-4">Retry departments</Link>.
         An existing hall's recorded department remains intact when edited.
       </Alert> : null}
-      <section aria-label="Lecture hall filters" className="min-w-0 border-t border-border pt-3">
+      <section aria-label="Lecture hall results" className="min-w-0 space-y-3">
+        <p className="text-sm text-muted-foreground">
+          {result.items.length ? "Showing "+shownStart+"–"+shownEnd+" of "+total :
+            "0 of "+total} {total===1?"hall":"halls"} · Stats retrieved
+        </p>
+        <LectureHallManager
+          collegeId={membership.collegeId}
+          halls={result.items.map(hall=>({...hall,name:hall.name?.trim()||"Unnamed lecture hall"}))}
+          departments={managerDepartments}
+          emptyState={total > 0
+            ? {
+                title: "No halls on this page",
+                description: "Choose an earlier page or reset the filters to see the matching rooms.",
+              }
+            : filtered
+              ? {
+                  title: "No matching lecture halls",
+                  description: "No registered rooms match these filters. Clear them or add a new hall.",
+                }
+              : undefined}
+        />
+      </section>
+
+      <details open={filtered || undefined} className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-3">
+        <summary className="min-h-11 cursor-pointer py-2 text-sm font-semibold text-primary-text md:min-h-9">Advanced lecture hall filters</summary>
+      <section aria-label="Lecture hall filters" className="min-w-0 pt-3">
         <form action="/college/lecture-halls" method="get" className="grid min-w-0 grid-cols-1 items-end gap-3 border-b border-[var(--lms-canvas-border)] pb-4 md:grid-cols-2 min-[992px]:grid-cols-4">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Room name
@@ -204,35 +226,17 @@ export default async function CollegeLectureHallsPage({
               Clear
             </Link>
           </div>
+          <Link href={lectureHallsCsvHref(query)} download prefetch={false}
+            className="mt-2 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+            Export all matching halls (CSV)
+          </Link>
         </form>
       </section>
-
-      <section aria-label="Lecture hall results" className="min-w-0 space-y-3">
-        <p className="text-sm text-muted-foreground">
-          {total} matching {total === 1 ? "hall" : "halls"}
-          {result.items.length ? " · Showing " + shownStart + "–" + shownEnd : ""}
-        </p>
-        <LectureHallManager
-          collegeId={membership.collegeId}
-          halls={result.items}
-          departments={managerDepartments}
-          emptyState={total > 0
-            ? {
-                title: "No halls on this page",
-                description: "Choose an earlier page or reset the filters to see the matching rooms.",
-              }
-            : filtered
-              ? {
-                  title: "No matching lecture halls",
-                  description: "No registered rooms match these filters. Clear them or add a new hall.",
-                }
-              : undefined}
-        />
-      </section>
+      </details>
 
       <nav aria-label="Lecture hall pages" className="flex min-w-0 flex-col items-stretch gap-3 text-sm md:flex-row md:items-center md:justify-between">
         <span className="text-muted-foreground">
-          Page {query.page} of {totalPages} · {COLLEGE_LECTURE_HALL_PAGE_SIZE} per page
+          Page {query.page} of {totalPages} · {pageSize} per page
         </span>
 <Pagination label="Lecture hall pages" page={query.page} pageCount={totalPages}
           hrefForPage={page=>collegeLectureHallHref({...query,page})}/>

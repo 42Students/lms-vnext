@@ -2,7 +2,7 @@
 
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
-import {learnerAttendanceDateLabel as dateLabel, learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/learner-attendance-display-date-model";
+import {learnerAttendanceTimeLabel as timeLabel} from "@/modules/attendance/learner-attendance-display-date-model";
 import {learnerAttendanceUrlRecoveryNotice} from "@/modules/attendance/learner-attendance-url-recovery-model";
 import {monthKey,parseMonth,shiftMonth} from "@/modules/attendance/learner-attendance-month-navigation-model";
 
@@ -155,7 +155,7 @@ function Metric({
       <p className="mt-1 text-xs text-body leading-[20px]">
         {detail}
       </p>
-      {history?.length?<Disclosure title={`Recent dates (${history.length})`} className="mt-2">
+      {history?.length?<Disclosure title={label === "Absent" ? "Absent Dates" : `Recent dates (${history.length})`} className="mt-2">
         <ol className="mt-2 max-h-40 space-y-1 overflow-y-auto text-xs text-body">
           {history.map(item=><li key={item.at+":"+item.label}><time dateTime={item.at}>{item.label}</time></li>)}
         </ol>
@@ -220,6 +220,13 @@ export function LearnerAttendanceWorkspace({
     }));
 
   const recovery = learnerAttendanceRecoveryProjection(summary.markedSessions,summary.present,threshold);
+  const reached = learnerAttendanceThresholdReached(summary.present,summary.markedSessions,threshold);
+  const headroom = reached && threshold > 0
+    ? Math.max(0,Math.floor((summary.present * 100 / threshold) - summary.markedSessions))
+    : 0;
+  const monthLabel = new Intl.DateTimeFormat("en-IN", {
+    month:"long",year:"numeric",timeZone:"Asia/Kolkata",
+  }).format(month);
 
   function updateUrl(
     nextDeliveryId: string,
@@ -306,7 +313,7 @@ export function LearnerAttendanceWorkspace({
                   key={item.deliveryId}
                   value={item.deliveryId}
                 >
-                  {item.courseName}
+                  {item.courseName} · {item.sectionName} ({item.courseCode})
                 </option>
               ))}
             </Select>
@@ -323,13 +330,14 @@ export function LearnerAttendanceWorkspace({
                 )
               }
             >
-              ←
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
             </Button>
             <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-              Jump to month
+              <span className="sr-only">Jump to month</span>
               <Input
+                aria-label="Jump to month"
                 type="month"
-                className="mt-[6px]"
+                className="mt-[6px] w-40"
                 value={monthKey(month)}
                 onChange={(event) =>
                   changeMonth(
@@ -356,7 +364,7 @@ export function LearnerAttendanceWorkspace({
                 )
               }
             >
-              →
+              <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
             </Button>
           </div>
         </div>
@@ -376,10 +384,27 @@ export function LearnerAttendanceWorkspace({
         ) : null}
       </section>
 
+      <section aria-label="Student attendance summary" className="learn-attendance-summary rounded-[var(--lms-radius-card)] border border-border bg-surface px-4 py-4 md:px-6">
+        <span className="text-sm font-semibold text-body">Attendance this month</span>
+        <strong className="mt-2 block text-3xl font-semibold tabular-nums text-foreground">{summary.markedSessions ? summary.percentage + "%" : "—"}</strong>
+        <p className="mt-2 max-w-2xl text-sm text-body">
+          {!summary.markedSessions ? "No classes held yet in this period."
+            : reached ? `You need ${threshold}%. You can miss ${headroom} more ${headroom === 1 ? "class" : "classes"} this month.`
+            : recovery !== null && Number.isFinite(recovery)
+              ? `Below the ${threshold}% requirement. Attend the next ${recovery} ${recovery === 1 ? "class" : "classes"} to recover.`
+              : `Below the ${threshold}% requirement. Talk to your faculty about it.`}
+        </p>
+        <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-3 text-center" aria-label="Attendance counts">
+          <span className="text-xs text-muted-foreground"><strong className="block text-xl font-semibold tabular-nums text-foreground">{summary.present}</strong>Present</span>
+          <span className="text-xs text-muted-foreground"><strong className="block text-xl font-semibold tabular-nums text-foreground">{summary.absent}</strong>Absent</span>
+          <span className="text-xs text-muted-foreground"><strong className="block text-xl font-semibold tabular-nums text-foreground">{summary.heldSessions}</strong>Held</span>
+        </div>
+      </section>
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 md:flex-row md:items-end md:justify-between">
         <div>
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Session history</h2>
-          <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Status filters affect only the session list, not attendance totals.</p>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Attendance History</h2>
+          <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Review each scheduled class and your status for it.</p>
+          <p className="mt-1 text-xs text-muted-foreground leading-[20px]">{monthLabel} · Status filters affect only the session list, not attendance totals.</p>
         </div>
         <div className="grid min-w-0 w-full gap-3 sm:grid-cols-2 md:w-auto">
         <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Order
@@ -415,32 +440,34 @@ export function LearnerAttendanceWorkspace({
       ) : null}
       {historyRows.length === 0 ? (
         <EmptyState
-          title={monthRows.length ? "No sessions match this status" : deliveryId ? "No attendance records" : "Select a course"}
-          description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : deliveryId ? "No classes scheduled for this month. Try selecting a different period." : "Choose a course from the dropdown above to view your attendance records."}
+          title={monthRows.length ? "No sessions match this status" : deliveryId ? "No classes in this period" : "Select a course"}
+          description={monthRows.length ? "Select All statuses to see the recorded sessions for this month." : deliveryId ? "No classes in this period. Try selecting a different month." : "Choose a course from the dropdown above to view your attendance records."}
         />
       ) : (
         <DataTable
           caption="Attendance history"
+          mobileMode="cards"
           rows={historyRows}
           getRowKey={row=>row.id}
-          empty={<EmptyState title="No attendance records" description="No classes scheduled for this month. Try selecting a different period."/>}
+          empty={<EmptyState title="No classes in this period" description="Select another month to see scheduled sessions."/>}
           columns={[
             {key:"date",header:"Date",mobilePriority:"primary" as const,
-              cell:(row)=><span className="block min-w-0">
-                <strong className="block text-foreground">{dateLabel(row.startsAt)}</strong>
-                <span className="block text-xs text-muted-foreground">{timeLabel(row.startsAt)}</span>
-              </span>},
+              cell:(row)=><strong className="block text-foreground">{new Intl.DateTimeFormat("en-IN",{
+                timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",
+              }).format(new Date(row.startsAt))}</strong>},
+            {key:"day",header:"Day",mobilePriority:"secondary" as const,
+              cell:(row)=><span className="text-foreground">{new Intl.DateTimeFormat("en-IN",{
+                timeZone:"Asia/Kolkata",weekday:"long",
+              }).format(new Date(row.startsAt))}</span>},
             {key:"class",header:"Class Start Time",mobilePriority:"secondary" as const,
               cell:(row)=><span className="block min-w-0">
                 <strong className="block text-foreground">{timeLabel(row.startsAt)}</strong>
                 <span className="block break-words text-xs text-muted-foreground">{row.title} · {row.courseCode}</span>
               </span>},
-            {key:"status",header:"Status",mobilePriority:"secondary" as const,
+            {key:"status",header:"Present/Absent",mobilePriority:"secondary" as const,
               cell:(row)=><StatusBadge tone={learnerAttendanceStatusTone(row.status)}>{statusLabel(row.status)}</StatusBadge>},
             {key:"details",header:"Faculty / location",mobilePriority:"secondary" as const,
               cell:(row)=>[row.courseName,row.facultyName,row.location].filter(Boolean).join(" · ")||"Not specified"},
-            {key:"day",header:"Day",mobilePriority:"secondary" as const,
-              cell:(row)=>new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"long"}).format(new Date(row.startsAt))},
           ]}
         />
       )}

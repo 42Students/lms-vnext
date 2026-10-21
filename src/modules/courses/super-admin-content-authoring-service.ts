@@ -38,3 +38,17 @@ export async function listSuperAdminContentAuthoringLessons(
     .orderBy(asc(courses.name), asc(courseLessons.name), asc(courseLessons.id))
     .limit(pageSize).offset((page - 1) * pageSize);
 }
+
+/** Old lesson authoring starts at sequence zero and permits an explicit
+ * zero-point item. The new DB sequence is also zero-based; points default to
+ * one only when omitted, never when a valid zero is submitted. */
+export function legacyLessonContentDefaults(
+ input:{sequence?:number|null;points?:number|null},
+){
+ const sequence=input.sequence??0,points=input.points??1;
+ if(!Number.isSafeInteger(sequence)||sequence<0)
+  throw new Error("Sequence must be zero or greater");
+ if(!Number.isSafeInteger(points)||points<0||points>1000)
+  throw new Error("Points must be between 0 and 1000");
+ return {sequence,points};
+}

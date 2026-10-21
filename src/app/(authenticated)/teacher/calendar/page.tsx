@@ -76,14 +76,17 @@ export default async function FacultyCalendarPage({
       <h2 className="text-base font-semibold text-foreground">Next classes</h2>
       <p className="text-xs text-muted-foreground">{nextClasses.length} coming up · {schedule.courses.length} teaching sections</p>
      </div>
-     {!upcomingRead.available?<Alert tone="warning">
-       Couldn't load your next classes. Refresh this page to try again.
-       <Link href={facultyMonthHref(grid.query)} className="ml-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry</Link>
-     </Alert>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
+     {!upcomingRead.available?<details open className="min-w-0">
+       <summary className="cursor-pointer text-sm font-semibold text-[var(--lms-warning-text)]">Failed to load course data</summary>
+       <Alert tone="warning" className="mt-2">
+         Calendar events may be incomplete. Your loaded class schedule remains available below.
+         <Link href={facultyMonthHref(grid.query)} className="mt-2 inline-flex min-h-9 items-center font-semibold text-primary-text underline">Retry class schedule</Link>
+       </Alert>
+     </details>:nextClasses.length===0?<p className="text-sm text-muted-foreground">No upcoming classes scheduled in the next 180 days.</p>:
        <ol className="divide-y divide-border border-y border-border">{nextClasses.map(item=><li key={item.id}
          className="flex min-w-0 flex-col gap-2 py-3 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-w-0">
-           <p className="break-words text-sm font-semibold text-foreground">{item.title}</p>
+           <p className="break-words text-sm font-semibold text-foreground">{item.title?.trim()||"Scheduled Class"}</p>
            <p className="text-xs text-body">{new Intl.DateTimeFormat("en-IN",{
              timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
            }).format(item.startsAt)} IST · {item.sectionName}</p>
@@ -93,6 +96,12 @@ export default async function FacultyCalendarPage({
            <span className="text-xs text-muted-foreground">Section-wide class</span>}
          </li>)}</ol>}
     </section>
+    <section aria-label="Class schedule" className="min-w-0 border-t border-border pt-4">
+      <LearnerClassSchedule sections={schedule.sections} courses={schedule.courses}
+        events={events} courseBasePath="/teacher/courses" initialView="week"
+        calendarMode="IST"/>
+    </section>
+    <Disclosure title="Month view" className="min-w-0 border-t border-border pt-4" contentClassName="pt-4">
     <section className="min-w-0">
       <div className="flex min-w-0 flex-col gap-3 border-b border-border pb-4 sm:flex-row sm:items-center sm:justify-between">
         <h2 className={monthStyles.period}>
@@ -101,28 +110,27 @@ export default async function FacultyCalendarPage({
         </h2>
         <div className={monthStyles.nav}>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,-1)})}
-            className={monthStyles.navLink}>Previous month</Link>
+            className={monthStyles.navLink} aria-label="Previous month">←</Link>
           <Link href={facultyMonthHref({...grid.query,month:currentIstMonth(new Date())})}
-            className={monthStyles.navLink}>Current month</Link>
+            className={monthStyles.navLink} aria-label="Today">Today</Link>
           <Link href={facultyMonthHref({...grid.query,month:shiftMonth(grid.query.month,1)})}
-            className={monthStyles.navLink}>Next month</Link>
+            className={monthStyles.navLink} aria-label="Next month">→</Link>
         </div>
       </div>
       <form method="get" action="/teacher/calendar" className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.5fr)_auto] lg:items-end">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Month (IST)
-          <span aria-hidden="true" className="ml-1 text-[var(--lms-error)]">*</span>
-    <DateInput mode="month" name="month" required defaultValue={grid.query.month}
+    <DateInput mode="month" name="month" defaultValue={grid.query.month}
             min="1900-01" max="2099-12"
              />
         </label>
-        <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Teaching Section
+        {schedule.courses.length>1?<label aria-label="Filter calendar by course" className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Course
           <Select name="deliveryId" defaultValue={selected??""} >
             <option value="">All my Sections</option>
             {schedule.courses.map(course=><option key={course.deliveryId} value={course.deliveryId}>
               {course.courseCode} · {course.courseName}
             </option>)}
           </Select>
-        </label>
+        </label>:null}
         <Button type="submit" variant="primary" className="w-full sm:col-span-2 lg:col-span-1 lg:w-auto">
           Apply
         </Button>
@@ -142,8 +150,8 @@ export default async function FacultyCalendarPage({
             </time>
             <div className="mt-2 space-y-2">
               {day.events.map(event=><article key={event.id}
-                className={monthStyles.dayEvent}>
-                <p className="text-xs font-semibold text-foreground leading-5">{event.title}</p>
+                className={monthStyles.dayEvent+" border-l-4 border-l-primary"}>
+                <p className="text-xs font-semibold text-foreground leading-5">{event.title?.trim()||"Scheduled Class"}{event.courseName&&event.courseName!==event.title?" · "+event.courseName:""} ({event.sectionName||"Class"})</p>
                 <p className="text-xs text-body leading-5">
                   {new Intl.DateTimeFormat("en-IN",{
                     timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",
@@ -163,10 +171,6 @@ export default async function FacultyCalendarPage({
         A Section-wide session is shown without guessing a course link.
       </p>
     </section>
-    <Disclosure title="Detailed day/week schedule" className="min-w-0 border-t border-border pt-4" contentClassName="pt-4">
-      <LearnerClassSchedule sections={schedule.sections} courses={schedule.courses}
-        events={events} courseBasePath="/teacher/courses"
-        initialView="week" />
     </Disclosure>
   </div>;
 }

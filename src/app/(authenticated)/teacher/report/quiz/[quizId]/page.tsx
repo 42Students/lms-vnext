@@ -1,8 +1,11 @@
 import { MetricBar } from "@/components/ui/metric-bar";
 import styles from "@/components/courses/faculty-report-legacy-charts.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
+import {FacultyReportBackButton} from "@/components/courses/faculty-report-back-button";
 import Link from "next/link";
 import {notFound} from "next/navigation";
+import { ErrorState } from "@/components/ui/error-state";
+import { Banner } from "@/components/ui/banner";
 import {parseFacultyAssessmentReportRoute,facultyQuizReportHidden} from "@/modules/courses/faculty-assessment-route-boundary";
 import { FacultyReportStudentTable } from "@/components/courses/faculty-report-student-table";
 import { facultyReportLearnerName } from "@/modules/courses/faculty-report-students";
@@ -28,13 +31,23 @@ export default async function FacultyQuizReportPage({
   const context = await getCurrentRequestContext();
   const { quizId } = await params;
   const parsed=parseFacultyAssessmentReportRoute(quizId,await searchParams);
-  if(!parsed) notFound();
+  if(!parsed) return <section className="min-w-0 space-y-4">
+    <PageHeader title="Quiz report" />
+    <ErrorState title="Report not found." description="This quiz report link is no longer valid."
+      action={<Link href="/teacher/allQuizzes" className="font-semibold text-primary-text underline">Back to quizzes</Link>} />
+  </section>;
   let report:Awaited<ReturnType<typeof getFacultyQuizReport>>;
   try {
     report=await getFacultyQuizReport(context,parsed.assessmentId,parsed.deliveryId);
   } catch(error) {
     if(facultyQuizReportHidden(error)) notFound();
-    throw error;
+    return <section className="min-w-0 space-y-4">
+      <PageHeader title="Quiz report" />
+      <ErrorState title="Couldn't load this quiz's report. Please try again."
+        description="Your report is temporarily unavailable. No results have been changed."
+        action={<a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
+          className="font-semibold text-primary-text underline">Retry report</a>} />
+    </section>;
   }
   const {
     quiz,
@@ -47,43 +60,16 @@ export default async function FacultyQuizReportPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-6">
+      {report.rosterUnavailable ? <Banner tone="warning" role="status">
+        Couldn't load the student roster. Scores from authorized attempts remain visible, but the not-attempted list is unavailable.
+        <a href={"/teacher/report/quiz/"+encodeURIComponent(quizId)+(parsed.deliveryId?"?deliveryId="+encodeURIComponent(parsed.deliveryId):"")}
+          className="ml-2 font-semibold text-primary-text underline">Retry roster</a>
+      </Banner> : null}
       <PageHeader title={quiz.title}
-        description={[quiz.courseName, quiz.sectionName, quiz.lessonName].join(" · ")}
-        actions={<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center">
-          <Link href="/teacher/allQuizzes" className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-primary-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">Back</Link>
-          <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
-            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
-            Individual attempts &amp; question accuracy →
-          </Link>
-        </div>} />
-      <Disclosure title="Export options" className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-4 px-2 py-3">
-      <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
-        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
-          deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-          Export attempted only
-        </Link>
-        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
-          deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-          Export not attempted only
-        </Link>
-      </nav>
-      <div className="flex flex-wrap items-center gap-3">
-        <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
-          "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
-          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
-          Download question accuracy CSV
-        </Link>
-        <p className="text-xs text-muted-foreground leading-5">Question export includes aggregate accuracy only, capped at 500 questions.</p>
-      </div>
-      <FacultyReportCsvDownload
-        notice="CSV contains at most 500 learner result rows; larger exports include an explicit omitted-row notice."
-        href={facultyReportCsvHref({
-          kind:"quiz",assessmentId:quiz.id,deliveryId:quiz.deliveryId,
-        })}
-      />
-      <FacultyReportDownload
+        description={[quiz.courseName, quiz.lessonName].join(" · ")}
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2">
+          <FacultyReportBackButton fallbackHref="/teacher/allQuizzes"/>
+                <FacultyReportDownload
         kind="quiz"
         incomplete={facultyReportIsIncomplete({kind:"quiz",eligibleLearners:metrics.eligibleLearners,
           submittedLearners:metrics.submittedLearners,questionCount:metrics.questionCount})}
@@ -111,20 +97,53 @@ export default async function FacultyQuizReportPage({
           { title: "Not attempted", rows: notAttemptedLearners.map((learner) => facultyReportLearnerName(learner.displayName)) },
         ]}
       />
-      </Disclosure>
+          <Link href={facultyQuizAttemptsHref(quiz.id,quiz.deliveryId)}
+            className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+            Individual attempts &amp; question accuracy →
+          </Link>
+        </div>} />
       <dl aria-label="Quiz report summary" className="grid min-w-0 grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] sm:grid-cols-4">
         {[
           ["Submitted", `${metrics.submittedLearners}/${metrics.eligibleLearners}`],
           ["Average score", metrics.averagePercent === null ? "—" : `${metrics.averagePercent}%`],
           ["Questions", metrics.questionCount],
-          ["Due date", quiz.dueAt ? facultyReportIstTimestamp(quiz.dueAt) : "—"],
+          ["Due date", quiz.dueAt ? new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",month:"short",day:"numeric",year:"numeric"}).format(quiz.dueAt) : "—"],
         ].map(([label, value]) => (
           <div key={label} className="min-w-0 py-4">
             <dt className="text-xs font-semibold leading-5 text-muted-foreground">{label}</dt>
-            <dd className="mt-1 break-words text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">{value}</dd>
+            <dd className={"mt-1 break-words text-xl font-semibold leading-7 tabular-nums "+(label==="Average score"&&metrics.averagePercent!==null&&metrics.averagePercent<60?"text-warning":"text-[var(--lms-heading)]")}>{value}</dd>
           </div>
         ))}
       </dl>
+            <Disclosure title="Export options" className="min-w-0 border-b border-[var(--lms-canvas-border)]" contentClassName="min-w-0 space-y-4 px-2 py-3">
+      <nav aria-label="Quiz CSV response filters" className="flex flex-wrap gap-3 text-sm">
+        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
+          deliveryId:quiz.deliveryId,filter:"ATTEMPTED"})}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          Export attempted only
+        </Link>
+        <Link href={facultyReportCsvHref({kind:"quiz",assessmentId:quiz.id,
+          deliveryId:quiz.deliveryId,filter:"NOT_ATTEMPTED"})}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          Export not attempted only
+        </Link>
+      </nav>
+      <div className="flex flex-wrap items-center gap-3">
+        <Link href={"/api/courses/faculty/reports/quiz/"+encodeURIComponent(quiz.id)+
+          "/question-csv?deliveryId="+encodeURIComponent(quiz.deliveryId)}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-link hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          Download question accuracy CSV
+        </Link>
+        <p className="text-xs text-muted-foreground leading-5">Question export includes aggregate accuracy only, capped at 500 questions.</p>
+      </div>
+      <FacultyReportCsvDownload
+        notice="CSV contains at most 500 learner result rows; larger exports include an explicit omitted-row notice."
+        href={facultyReportCsvHref({
+          kind:"quiz",assessmentId:quiz.id,deliveryId:quiz.deliveryId,
+        })}
+      />
+
+      </Disclosure>
       <div className="flex flex-wrap items-center gap-2">
         <StatusBadge tone={quiz.status === "PUBLISHED" ? "success" : "neutral"}>
           {quiz.status}
@@ -142,7 +161,7 @@ export default async function FacultyQuizReportPage({
           Score distribution
         </h2>
         {metrics.submittedLearners===0?<p role="status" className="mt-3 text-sm text-muted-foreground leading-[22px]">
-          No quiz attempts yet. Scores will appear after students submit.
+          No graded scores to chart yet.
         </p>:null}
         <div
           className="mt-4 space-y-3"
@@ -181,7 +200,7 @@ export default async function FacultyQuizReportPage({
           Question accuracy
         </h2>
         <p className="mt-1 text-sm text-muted-foreground leading-[22px]">
-          Worst-answered first. Accuracy uses each learner&apos;s latest attempt only.
+          Worst-answered first.
         </p>
         {questions.length === 0 ? (
           <p className="mt-4 text-sm text-body leading-[22px]">
@@ -214,7 +233,7 @@ export default async function FacultyQuizReportPage({
                 <p className="mt-2 text-xs text-muted-foreground leading-5">
                   {question.answeredCount > 0
                     ? `${question.correctCount}/${question.answeredCount} correct`
-                    : "No answers submitted"}
+                    : "Not answered yet"}
                 </p>
               </li>
             ))}

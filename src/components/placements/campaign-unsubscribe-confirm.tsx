@@ -6,12 +6,12 @@ import {useRouter} from "next/navigation";
 /** Public unsubscribes are user-confirmed POSTs. Failed saves never claim success. */
 export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boolean}){
  const router=useRouter(),pendingRef=useRef(false);
- const [pending,setPending]=useState(false),[error,setError]=useState("");
+ const [pending,setPending]=useState(false),[confirmed,setConfirmed]=useState(false),[error,setError]=useState("");
  const errorRef=useRef<HTMLDivElement>(null);
  useEffect(()=>{if(error)errorRef.current?.focus();},[error]);
  async function confirm(event:React.FormEvent<HTMLFormElement>){
   event.preventDefault();
-  if(pendingRef.current)return;
+  if(pendingRef.current||confirmed||!token.trim())return;
   pendingRef.current=true;setPending(true);setError("");
   const controller=new AbortController();
   const timeout=window.setTimeout(()=>controller.abort(),12000);
@@ -24,14 +24,18 @@ export function CampaignUnsubscribeConfirm({token,cell}:{token:string;cell:boole
    if(!response.ok||!response.redirected||url.origin!==window.location.origin||
     url.pathname!=="/campaign-unsubscribe/confirmed")
     throw new Error("UNCONFIRMED");
-   router.push(url.pathname+url.search);
+   // Success is only acknowledged after the server confirms its redirect.
+   // Remain disabled while the router transitions to the completed state.
+   setConfirmed(true);
+   router.replace(url.pathname+url.search);
   }catch{setError("That didn’t work. Please try again.");}
   finally{window.clearTimeout(timeout);pendingRef.current=false;setPending(false);}
  }
- return <form onSubmit={event=>void confirm(event)} className="mt-4 space-y-3">
+ return <form onSubmit={event=>void confirm(event)} aria-busy={pending} className="mt-4 space-y-3">
   {error?<div ref={errorRef} tabIndex={-1} role="alert" className="outline-none"><InlineNotice tone="error" message={error}/></div>:null}
-  <Button type="submit" loading={pending} className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
-   {pending?"Saving…":cell?"Unsubscribe":"Confirm unsubscribe"}
+  <Button type="submit" loading={pending} disabled={pending||confirmed||!token.trim()}
+   aria-busy={pending} className="min-h-11 w-auto min-[768px]:min-h-9">
+   {cell?"Unsubscribe":"Confirm unsubscribe"}
   </Button>
  </form>;
 }

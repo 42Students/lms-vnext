@@ -19,7 +19,8 @@ import {
 export class CollegeDepartmentMutationError extends Error {
   constructor(public readonly code:
     "DEPARTMENT_NOT_FOUND" | "DEPARTMENT_NAME_CONFLICT" |
-    "DEPARTMENT_HAS_DEPENDENCIES") {
+    "DEPARTMENT_HAS_DEPENDENCIES",
+    public readonly dependencies?: {programs:number;courses:number;faculty:number}) {
     super(code);
     this.name = "CollegeDepartmentMutationError";
   }
@@ -135,7 +136,7 @@ export async function archiveCollegeDepartment(
       programs: p[0]?.total ?? 0, courses: c[0]?.total ?? 0, faculty: f[0]?.total ?? 0,
     };
     if (!canArchiveCollegeDepartment(usage))
-      throw new CollegeDepartmentMutationError("DEPARTMENT_HAS_DEPENDENCIES");
+      throw new CollegeDepartmentMutationError("DEPARTMENT_HAS_DEPENDENCIES", usage);
     const now = new Date();
     const [archived] = await tx.update(departments).set({
       archivedAt: now, updatedAt: now,
@@ -147,8 +148,10 @@ export async function archiveCollegeDepartment(
       collegeId: member.collegeId, organizationId: member.organizationId,
       subjectType: "department", subjectId: archived.id,
       subjectLabel: archived.name, summary: "College department archived",
-      metadata: { action: "DEPARTMENT_ARCHIVE", previousName: current.name, usage },
+      metadata: { action: "DEPARTMENT_ARCHIVE", previousName: current.name, usage,
+        retentionPolicy: "SOFT_ARCHIVE", hiddenFromActiveDirectories: true },
     });
-    return archived;
+    return {...archived,retentionPolicy:"SOFT_ARCHIVE" as const,
+      hiddenFromActiveDirectories:true as const};
   });
 }

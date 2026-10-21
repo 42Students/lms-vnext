@@ -218,6 +218,8 @@ export const placementTpoFollowups = pgTable(
       t.doneAt,
       t.dueAt,
     ),
+    index("placement_tpo_followups_pending_due_idx").on(t.collegeId,t.dueAt,t.id)
+      .where(sql`${t.doneAt} is null`),
     index("placement_tpo_followups_lead_idx").on(
       t.collegeId,
       t.leadId,
@@ -405,3 +407,35 @@ export const placementTpoEmailCampaignRecipients = pgTable(
     ),
   ],
 );
+
+/** Source lead IDs are meaningful only alongside a verified legacy college.
+ * Never cast a numeric ID into a UUID or match a CRM lead by email alone. */
+export function legacyCrmLeadCrosswalk(input:{collegeId:number;leadId:number},
+  candidates:readonly {legacyCollegeId:number;legacyLeadId:number;nativeLeadId:string}[]):string|null{
+  const rows=candidates.filter(x=>x.legacyCollegeId===input.collegeId&&x.legacyLeadId===input.leadId);
+  return rows.length===1?rows[0].nativeLeadId:null;
+}
+
+/** Interpret naive source CRM timestamp strings as Asia/Kolkata wall time. */
+export function legacyCrmIstInstant(raw:string):Date|null{
+  const pieces=/^([0-9]{4})-([0-9]{2})-([0-9]{2})[T ]([0-9]{2}):([0-9]{2})(?::([0-9]{2}))?$/.exec(raw.trim());
+  if(!pieces)return null;
+  const [year,month,day,hour,minute,second]=pieces.slice(1).map(Number);
+  const instant=new Date(Date.UTC(year,month-1,day,hour,minute,second||0)-330*60_000);
+  const check=new Date(instant.getTime()+330*60_000);
+  return check.getUTCFullYear()===year && check.getUTCMonth()+1===month &&
+    check.getUTCDate()===day && check.getUTCHours()===hour &&
+    check.getUTCMinutes()===minute && check.getUTCSeconds()===(second||0) ? instant : null;
+}
+
+/** Old invite hashes are *not* usable in vNext: new credentials require
+ * fresh issuance and verified contact/college scope. Only click history remains.
+ */
+export function legacyRecruiterInviteImport(raw:{
+  sentAt:string|null;clickedAt:string|null;
+}){
+  return {inviteTokenHash:null as null,
+    inviteSentAt:raw.sentAt?legacyCrmIstInstant(raw.sentAt):null,
+    inviteClickedAt:raw.clickedAt?legacyCrmIstInstant(raw.clickedAt):null,
+    credentialDisposition:"EXPIRED_REISSUE_REQUIRED" as const};
+}

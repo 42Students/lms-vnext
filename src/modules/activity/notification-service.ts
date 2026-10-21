@@ -634,10 +634,18 @@ function appendNotificationCategoryFilters(
   }
 }
 
-function sanitizeNotificationRow<T extends { actionHref: string | null }>(row: T) {
+function sanitizeNotificationRow<T extends {
+  actionHref: string | null;
+  legacyAssessmentUrl?: string | null;
+}>(row: T) {
   return {
     ...row,
     actionHref: safeNotificationActionHref(row.actionHref),
+    // Imported links are untrusted too; external assessment URLs must be
+    // validated on read rather than only when first published.
+    ...("legacyAssessmentUrl" in row
+      ? { legacyAssessmentUrl: safeExternalAssessmentUrl(row.legacyAssessmentUrl) }
+      : {}),
   };
 }
 
@@ -820,9 +828,17 @@ export async function listScopedAdminNotificationPage(
     pageSize: z.number().int().transform((size) => Math.min(200, Math.max(1, size))).default(50),
   }).strict().parse(rawOptions);
 
-  const collegeId = options.collegeId ?? context.adminScope?.collegeId ?? null;
-  let organizationId = options.organizationId ??
-    context.adminScope?.organizationId ?? null;
+  // A selected administrative scope is a hard upper bound. A request can
+  // narrow an organization to a college, but it must never switch tenants.
+  const pinnedCollegeId = context.adminScope?.collegeId ?? null;
+  const pinnedOrganizationId = context.adminScope?.organizationId ?? null;
+  if ((pinnedCollegeId && options.collegeId && options.collegeId !== pinnedCollegeId) ||
+      (pinnedOrganizationId && options.organizationId &&
+       options.organizationId !== pinnedOrganizationId)) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  const collegeId = pinnedCollegeId ?? options.collegeId ?? null;
+  let organizationId = pinnedOrganizationId ?? options.organizationId ?? null;
   if (collegeId) {
     const [college] = await getDb().select({
       id: colleges.id,
@@ -908,6 +924,7 @@ export async function listOwnNotifications(
     eventType?: string;
     importance?: string;
     notificationType?: string;
+    category?: OwnNotificationCategory;
   } = {},
 ) {
   const limit = z
@@ -1131,6 +1148,50 @@ export async function markAllOwnNotificationsRead(
  * authenticated recipient; an optional cursor never changes ownership.
  * Existing listOwnNotifications() remains unchanged for its other consumers.
  */
+/** Legacy category tabs remain a further filter on this user's own receipts.
+ * Faculty category requires an explicit stored audienceKind; without one,
+ * the notice remains visible in All, not misclassified. */
+export type OwnNotificationCategory="COURSE"|"PROJECT"|"ANNOUNCEMENTS"|"JOB"|
+ "COLLEGE"|"DEPARTMENT"|"FACULTY"|"PERSONAL";
+export function ownNotificationCategoryChoices(context:RequestContext){
+ if(context.membership?.roles.includes("LEARNER"))return [
+  {id:"COURSE",label:"Course"},{id:"PROJECT",label:"Project"},
+  {id:"ANNOUNCEMENTS",label:"Announcements"},{id:"JOB",label:"Job"},
+ ] as const;
+ if(context.membership?.roles.includes("FACULTY"))return [
+  {id:"COLLEGE",label:"College"},{id:"DEPARTMENT",label:"Department"},
+  {id:"FACULTY",label:"Faculty"},{id:"PERSONAL",label:"Personal"},
+ ] as const;
+ return [] as const;
+}
+function ownCategoryCondition(category:OwnNotificationCategory){
+ switch(category){
+  case "COURSE":return eq(activityEvents.module,"COURSES");
+  case "PROJECT":return eq(activityEvents.module,"PROJECTS");
+  case "ANNOUNCEMENTS":return or(eq(activityEvents.subjectType,"announcement"),
+   sql`${activityEvents.eventType} ilike '%announcement%'`)!;
+  case "JOB":return and(eq(activityEvents.module,"PLACEMENTS"),
+   sql`${activityEvents.subjectType} <> 'announcement'`)!;
+  default:return eq(sql<string>`${activityEvents.metadata} ->> 'audienceKind'`,category);
+ }
+}
+function requireOwnCategory(context:RequestContext,category:OwnNotificationCategory){
+ if(!ownNotificationCategoryChoices(context).some(row=>row.id===category))
+  throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+}
+export async function countOwnUnreadNotificationCategory(
+ context:RequestContext,category:OwnNotificationCategory,
+){
+ requireOwnCategory(context,category);
+ const [row]=await getDb().select({total:count()}).from(inAppNotifications)
+ .innerJoin(activityEvents,eq(activityEvents.id,inAppNotifications.eventId))
+ .where(and(eq(inAppNotifications.userId,context.user.id),
+  isNull(inAppNotifications.readAt),
+  releasedNotificationEvent,releasedNotificationReceipt,
+  ownCategoryCondition(category)));
+ return Number(row?.total??0);
+}
+
 export async function listOwnNotificationPage(
   context: RequestContext,
   options: {
@@ -1146,6 +1207,7 @@ export async function listOwnNotificationPage(
     eventType?: string;
     importance?: string;
     notificationType?: string;
+    query?: string;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -1165,8 +1227,18 @@ export async function listOwnNotificationPage(
       conditions.push(gte(inAppNotifications.createdAt, z.date().parse(options.unreadSince)));
     }
   }
+  if(options.query){
+    const query=z.string().trim().max(100).parse(options.query);
+    const pattern="%"+query.replace(/[\\%_]/g,"\\  appendNotificationContextFilters(conditions, options);")+"%";
+    conditions.push(or(ilike(inAppNotifications.title,pattern),
+      ilike(inAppNotifications.body,pattern))!);
+  }
   appendNotificationContextFilters(conditions, options);
   appendNotificationCategoryFilters(conditions, options);
+  if(options.category){
+    requireOwnCategory(context,options.category);
+    conditions.push(ownCategoryCondition(options.category));
+  }
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);
     const id = z.string().uuid().parse(options.beforeId);

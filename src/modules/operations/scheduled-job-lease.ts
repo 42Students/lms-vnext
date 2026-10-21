@@ -8,7 +8,21 @@
  * in Drizzle migration 0133. Deployment still must verify migration replay,
  * wire the scheduler and enforce an outbox/recipient idempotency key before
  * enabling customer-facing reminder jobs. Fail closed on lease-store failures.
+ * HELD is an ordinary skipped tick; store unavailable and lost fencing MUST
+ * emit operational alerts and never cause unleased or duplicate delivery.
  */
+import {TPO_SCHEDULED_JOBS,TPO_JOB_TIME_ZONE} from "./tpo-scheduled-job-registry";
+
+/** Canonical name/cadence metadata is shared with the actual worker registry.
+ * Fixed-delay source jobs execute after the prior completion, not at an
+ * arbitrary cron boundary. Worker metrics must distinguish HELD from failed.
+ * All expirations/checks use PostgreSQL time in the lease-store adapter,
+ * never trust a replica's local clock for fencing. */
+export const CANONICAL_TPO_JOB_NAMES=Object.keys(TPO_SCHEDULED_JOBS) as
+  (keyof typeof TPO_SCHEDULED_JOBS)[];
+export function scheduledJobMetadata(name:keyof typeof TPO_SCHEDULED_JOBS){
+  return {jobName:name,timeZone:TPO_JOB_TIME_ZONE,...TPO_SCHEDULED_JOBS[name]};
+}
 export type JobLease = {
   jobName: string;
   holderId: string;

@@ -14,6 +14,12 @@ import {
 import { ProjectsServiceError } from "./errors";
 import { listMyProjectInstances } from "./member-service";
 
+export const LEGACY_LEARNER_WORKSPACE_FIELD_MAP={
+ id:"projectId",status:"status",progress:"progressPercent",
+ mentor:"mentor",mentorAssignedAt:"mentorSince",
+ submittedAt:"deliveredAt",reviewedAt:"reviewedAt",
+ dueDate:"dueDate",reviewStatus:"reviewStatus",
+} as const;
 /** Relational replacement for old ProjectWorkspaceDTO display fragments.
  * This never fabricates review or mentor dates: only persisted submission
  * reviewedAt and active project-member periods may populate those fields.
@@ -26,7 +32,7 @@ export function learnerLegacyProjectProgressProjection(input:{
  dueDate:string|null;reviewStatus:string|null;
 }){
  return {projectId:input.projectId,status:input.status,
-  progressPercent:Math.max(0,Math.min(100,input.progressPercent)),
+  progressPercent:Number.isFinite(input.progressPercent)?Math.max(0,Math.min(100,input.progressPercent)):0,
   mentor:input.mentorName,mentorSince:input.mentorStartedAt,
   deliveredAt:input.submittedAt,reviewedAt:input.reviewedAt,
   dueDate:input.dueDate,reviewStatus:input.reviewStatus};
@@ -129,3 +135,12 @@ export async function listMyLearnerProjectAttention(
 
   return result;
 }
+
+
+/** Read-only sample crosswalk for historical learner workspace state. */
+export const LEGACY_LEARNER_PROJECT_DTO_EXAMPLE={
+ projectId:"00000000-0000-4000-8000-000000000001",
+ status:"ACTIVE",progressPercent:50,mentorName:"Mentor",
+ mentorStartedAt:null,submittedAt:null,reviewedAt:null,
+ dueDate:null,reviewStatus:"PENDING",
+} as const;

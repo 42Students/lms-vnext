@@ -1,5 +1,7 @@
 import {z} from "zod";
 
+export const FACULTY_CONTACTS_SEARCH_PLACEHOLDER="Search contacts...";
+
 const schema=z.object({
  q:z.string().trim().max(200).default(""),
  page:z.string().regex(/^[1-9]\d{0,4}$/).transform(Number).prefault("1"),

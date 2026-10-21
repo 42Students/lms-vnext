@@ -98,31 +98,45 @@ export async function acceptAuthenticatedRecruiterEmailReply(
    bodyPlain:fullText,receivedAt:new Date(),status:"NEW",
   }).onConflictDoNothing().returning({id:inboundMailMessages.id});
   if(!received)return {accepted:true,replayed:true,outcome:"DUPLICATE" as const};
-  if(!isReply)return {accepted:true,replayed:false,outcome:"STORED" as const};
-  if(!replyBody)return {accepted:true,replayed:false,outcome:"EMPTY" as const};
+  const auditResult=async(outcome:Exclude<RecruiterInboundOutcome,"DUPLICATE">)=>{
+   const routed=outcome==="POSTED"?"POSTED":outcome==="STORED"?"STORED":outcome;
+   await tx.update(inboundMailMessages).set({
+    kind:isReply?"REPLY":"OTHER",
+    routingStatus:routed,
+    routeAttemptCount:routed==="STORED"?0:1,
+    lastRouteAttemptAt:routed==="STORED"?null:new Date(),
+    lastRouteErrorCode:routed==="POSTED"||routed==="STORED"?null:routed,
+    status:routed==="POSTED"?"RESOLVED":"NEW",
+    version:1,
+   }).where(eq(inboundMailMessages.id,received.id));
+   return {accepted:true,replayed:false,outcome};
+  };
+
+  if(!isReply)return auditResult("STORED");
+  if(!replyBody)return auditResult("EMPTY");
   const declaredFrom=(/^.*<([^<>]+)>\s*$/.exec(input.headerFrom??"")?.[1]||
    input.headerFrom||input.from).trim().toLowerCase();
   if(declaredFrom!==input.from)
-   return {accepted:true,replayed:false,outcome:"WRONG_SENDER" as const};
+   return auditResult("WRONG_SENDER");
   if(!senderVerified(input.auth))
-   return {accepted:true,replayed:false,outcome:"NOT_VERIFIED" as const};
+   return auditResult("NOT_VERIFIED");
   // Legacy +r-20hex and +rdev-20hex addresses are retained in Inbox for
   // triage; they cannot authenticate against vNext's 32hex persisted tokens.
-  if(!tokenHash)return {accepted:true,replayed:false,outcome:"NO_THREAD" as const};
+  if(!tokenHash)return auditResult("NO_THREAD");
   const [replyReady]=await tx.execute<{ok:boolean}>(sql`
    select to_regclass('public.placement_recruiter_message_mail_state') is not null
      and to_regclass('public.placement_recruiter_inbound_email_events') is not null
      and exists(select 1 from information_schema.columns
        where table_name='placement_tpo_messages' and column_name='delivery_channel') as ok
   `).then(result=>result.rows);
-  if(!replyReady?.ok)return {accepted:true,replayed:false,outcome:"ACCESS_ENDED" as const};
+  if(!replyReady?.ok)return auditResult("ACCESS_ENDED");
   // The indexed reply-token row lock serializes writes for this thread.
   // Never use a provider-global message id as a cross-tenant advisory lock.
   const [state]=await tx.select().from(placementRecruiterMessageMailState)
    .where(eq(placementRecruiterMessageMailState.replyTokenHash,tokenHash))
    .for("update").limit(1);
   if(!state||!state.replyTokenExpiresAt||state.replyTokenExpiresAt<=new Date())
-   return {accepted:true,replayed:false,outcome:"NO_THREAD" as const};
+   return auditResult("NO_THREAD");
   // DB-backed principal, thread owner, own company, active college/grant,
   // verified grant and unexpired DRIVES capability are all mandatory.
   const auth=await tx.execute<{college_id:string}>(sql`
@@ -143,7 +157,7 @@ export async function acceptAuthenticatedRecruiterEmailReply(
         and j.college_id=t.college_id and j.company_relationship_id=rel.id))
    limit 1
   `);
-  if(!auth.rows[0])return {accepted:true,replayed:false,outcome:"ACCESS_ENDED" as const};
+  if(!auth.rows[0])return auditResult("ACCESS_ENDED");
   const msgHash=createHash("sha256").update(state.threadId+"\u0000"+sourceMessageId).digest("hex");
   const [duplicate]=await tx.select({id:placementRecruiterInboundEmailEvents.id,
     threadId:placementRecruiterInboundEmailEvents.threadId})
@@ -168,8 +182,6 @@ export async function acceptAuthenticatedRecruiterEmailReply(
   });
   // Successfully routed mail needs no manual triage; failed/unknown mail
   // remains NEW in the Super Admin Inbox for operator follow-up.
-  await tx.update(inboundMailMessages).set({status:"RESOLVED",version:1})
-   .where(eq(inboundMailMessages.id,received.id));
-  return {accepted:true,replayed:false,outcome:"POSTED" as const};
+  return auditResult("POSTED");
  });
 }

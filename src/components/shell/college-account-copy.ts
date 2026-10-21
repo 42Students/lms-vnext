@@ -46,3 +46,15 @@ export function accountMenuVariant(input: {
   if (input.roles.includes("LEARNER")) return "learner";
   return "other";
 }
+
+/** The active profile entry follows the selected role workspace. It never
+ * uses URL matching to elevate permission or cross a college boundary. */
+export const LEGACY_PROFILE_MENU_HREFS={
+ superAdmin:null,collegeAdmin:"/college/profile",tpo:"/tpo/profile",
+ faculty:"/teacher/profile",learner:"/learn/profile",
+ recruiter:"/hr/profile",other:"/account/security",
+} as const;
+export function accountMenuRouteActive(role:AccountMenuVariant,pathname:string){
+ const href=LEGACY_PROFILE_MENU_HREFS[role];
+ return href!==null&&(pathname===href||pathname.startsWith(href+"/"));
+}

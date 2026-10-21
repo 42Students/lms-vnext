@@ -7,6 +7,12 @@ import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 
+export class CollegeProfileVersionConflict extends Error {
+  constructor(){super("PROFILE_VERSION_CHANGED");this.name="CollegeProfileVersionConflict";}
+}
+export class CollegeProfileVersionRequired extends Error {
+  constructor(){super("PROFILE_VERSION_REQUIRED");this.name="CollegeProfileVersionRequired";}
+}
 const short = z.string().trim().max(150);
 const httpsLink = z.string().trim().max(500).refine(
   value => !value || /^https:\/\//i.test(value),
@@ -21,14 +27,27 @@ export const collegeOwnProfileSchema = z.object({
     linkedIn: httpsLink, github: httpsLink,
     website: httpsLink, instagram: httpsLink,
   }),
+  personalDetails: z.object({
+    gender: short, dateOfBirth: z.union([z.literal(""),z.iso.date()]),
+    bloodGroup: z.string().trim().max(16),
+  }).optional(),
   address: z.object({
     line1: short, line2: short, city: short,
     state: short, postalCode: z.string().trim().max(20), country: short,
+    currentAddress:z.string().trim().max(2000).optional(),
+    permanentAddress:z.string().trim().max(2000).optional(),
+    currentCity:short.optional(),currentState:short.optional(),
+    currentPincode:z.string().trim().max(20).optional(),
+    permanentCity:short.optional(),permanentState:short.optional(),
+    permanentPincode:z.string().trim().max(20).optional(),
   }),
   contacts: z.object({
     alternateEmail: z.union([z.literal(""), z.string().email()]),
     alternatePhone: z.string().trim().max(40),
     contactPerson: short,
+    contactMobile:z.string().trim().max(20).optional(),
+    contactPhone:z.string().trim().max(20).optional(),
+    contactMail:z.union([z.literal(""),z.email()]).optional(),
   }),
 });
 export type CollegeOwnProfileInput = z.infer<typeof collegeOwnProfileSchema>;
@@ -55,18 +74,37 @@ export async function loadCollegeOwnProfile(context: RequestContext) {
   const [person, record] = await Promise.all([
     getDb().select({ displayName: users.displayName }).from(users)
       .where(eq(users.id, context.user.id)).limit(1),
-    getDb().select({ document: facultyProfiles.profileDocument })
+    getDb().select({
+      document: facultyProfiles.profileDocument,
+      version: facultyProfiles.profileDocumentVersion,
+    })
       .from(facultyProfiles).where(eq(facultyProfiles.membershipId, member.id)).limit(1),
   ]);
   if (!person[0]) throw new Error("PROFILE_NOT_FOUND");
   const saved = record[0]?.document?.collegeAdmin;
-  const parsed = collegeOwnProfileSchema.omit({ displayName: true }).safeParse(saved);
-  return { displayName: person[0].displayName ?? "", ...(parsed.success ? parsed.data : emptyProfile) };
+  const parsed = collegeOwnProfileSchema.omit({ displayName: true }).safeParse(
+    saved && typeof saved==="object" && !Array.isArray(saved)
+    ? {...emptyProfile,...saved} : emptyProfile);
+  if (!parsed.success) {
+    // Preserve the record for section-by-section remediation instead of
+    // silently replacing malformed legacy data with empty fields.
+    const sections=[...new Set(parsed.error.issues.map(item=>
+      String(item.path[0]??"profile")))];
+    throw new Error("COLLEGE_PROFILE_SECTIONS_INVALID:"+sections.join(","));
+  }
+  return {
+    displayName: person[0].displayName ?? "", ...parsed.data,
+    profileDocumentVersion: record[0]?.version ?? 0,
+  };
 }
 
 export async function updateCollegeOwnProfile(context: RequestContext, raw: unknown) {
   const member = ownMembership(context);
   const input = collegeOwnProfileSchema.parse(raw);
+  const versionRaw=raw&&typeof raw==="object"&&!Array.isArray(raw)
+    ?(raw as Record<string,unknown>).profileDocumentVersion:undefined;
+  const version=z.number().int().nonnegative().safeParse(versionRaw);
+  if(!version.success)throw new CollegeProfileVersionRequired();
   const { displayName, ...details } = input;
   return getDb().transaction(async tx => {
     const [account] = await tx.select({ id: users.id }).from(users)
@@ -74,9 +112,29 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
     if (!account) throw new Error("PROFILE_NOT_FOUND");
     const [existing] = await tx.select().from(facultyProfiles)
       .where(eq(facultyProfiles.membershipId, member.id)).for("update").limit(1);
+    if((existing?.profileDocumentVersion??0)!==version.data)
+      throw new CollegeProfileVersionConflict();
     await tx.update(users).set({ displayName, updatedAt: new Date() })
       .where(eq(users.id, account.id));
-    const document = { ...(existing?.profileDocument ?? {}), collegeAdmin: details };
+    const previous=existing?.profileDocument?.collegeAdmin;
+    const prior=previous && typeof previous==="object" && !Array.isArray(previous)
+      ? previous as Record<string,unknown>:{};
+    const priorAddress=prior.address && typeof prior.address==="object" &&
+      !Array.isArray(prior.address) ? prior.address as Record<string,unknown>:{};
+    // Old editors omit later-added legacy fields. Preserve rather than erase
+    // them when saving unrelated profile sections.
+    const mergedDetails={
+      ...details,
+      ...(details.personalDetails===undefined && prior.personalDetails
+        ? {personalDetails:prior.personalDetails}:{}),
+      address:{...priorAddress,...details.address},
+      contacts:{
+        ...(prior.contacts && typeof prior.contacts==="object" &&
+           !Array.isArray(prior.contacts) ? prior.contacts as Record<string,unknown>:{}),
+        ...details.contacts,
+      },
+    };
+    const document = { ...(existing?.profileDocument ?? {}), collegeAdmin: mergedDetails };
     if (existing) {
       await tx.update(facultyProfiles).set({
         profileDocument: document,
@@ -88,6 +146,6 @@ export async function updateCollegeOwnProfile(context: RequestContext, raw: unkn
         membershipId: member.id, profileDocument: document, profileDocumentVersion: 1,
       });
     }
-    return input;
+    return {...input,profileDocumentVersion:version.data+1};
   });
 }

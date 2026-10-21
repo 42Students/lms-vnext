@@ -53,11 +53,13 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
    await apiFetch("/api/placements/requests",{
     method:"POST",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({requestType:"ROUND_RESCHEDULE",applicationId,roundId,
-     reason:requestReason,scheduledAt:when.toISOString(),timezone:"Asia/Kolkata",mode:nextMode,
+     reason:requestReason,preferredTimes:preferredTimes.trim()||null,
+     scheduledAt:when.toISOString(),timezone:"Asia/Kolkata",mode:nextMode,
      venue:nextMode==="ON_CAMPUS"?nextVenue.trim()||null:null,
      meetingUrl:nextMode==="VIRTUAL"?nextUrl.trim()||null:null}),
    });
-   setOpen(false);setSuccess("Reschedule request sent. Your booking is unchanged until approved.");
+   setOpen(false);setReason("");setPreferredTimes("");setDate("");
+   setSuccess("Reschedule request sent. Your booking is unchanged until approved.");
    showToast({tone:"success",title:"Sent. The placement cell will reply.",
     description:"Your current booking remains unchanged until approved."});router.refresh();
   }catch(e){
@@ -78,10 +80,10 @@ export function LearnerScheduleReschedule({applicationId,roundId,mode,venue,meet
     <Textarea value={reason} onChange={e=>setReason(e.target.value)} minLength={3} maxLength={900} rows={3}
       className="mt-1 min-h-24 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Times that work for you (optional)
-    <Textarea rows={2} maxLength={350} value={preferredTimes} onChange={e=>setPreferredTimes(e.target.value)}
+    <Textarea rows={2} maxLength={200} value={preferredTimes} onChange={e=>setPreferredTimes(e.target.value)}
      className="mt-1 min-h-20 w-full" placeholder="e.g. weekday mornings, or after 3 PM"/>
    </label>
-   <label className="text-sm">Preferred date and time
+   <label className="text-sm">Preferred date and time (required for an approved new booking)
     <DateInput required mode="datetime-local" value={date} onChange={e=>setDate(e.target.value)}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-[rgba(38,186,199,0.15)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"/></label>
    <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mode

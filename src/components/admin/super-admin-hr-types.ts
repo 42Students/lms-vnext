@@ -26,6 +26,9 @@ export type HrAccount = {
   title: string | null;
   status: HrAccountStatus;
   accountManageable:boolean;
+  /** Optional source-state provenance only when an owned legacy import
+   * supplies it; DISABLED never means the historical record was deleted. */
+  legacyStatus?:"ACTIVE"|"SUSPENDED"|"DELETED"|null;
   grants: HrGrant[];
   grantHistory?: HrGrant[];
 };
@@ -80,6 +83,25 @@ export function hrStatusTone(
   return "neutral";
 }
 
+/** Account state is canonical; legacy DELETED is displayed only when backed
+ * by a historical status. An archived recruiter can be reactivated, a
+ * disabled platform identity is not automatically a deleted recruiter. */
+export function hrAccountStatusLabel(account:HrAccount):string{
+ if(account.legacyStatus==="DELETED")return "Deleted";
+ return account.status==="ACTIVE"?"Active":
+   account.status==="ARCHIVED"?"Suspended":"Disabled";
+}
+export function hrAccountStatusTone(account:HrAccount):
+ "success"|"warning"|"neutral"|"error"{
+ return account.legacyStatus==="DELETED"?"error":hrStatusTone(account.status);
+}
+export function hrActiveCollegeCount(account:HrAccount,now:Date=new Date()):number{
+ const current=new Set(account.grants.filter(grant=>
+  grant.status==="ACTIVE"&&grant.verificationStatus==="VERIFIED"&&
+  (grant.validUntil===null||Date.parse(grant.validUntil)>now.getTime())
+ ).map(grant=>grant.collegeId));
+ return current.size;
+}
 export function hrDisplayName(
   account: Pick<HrAccount, "displayName" | "phoneE164">,
 ) {

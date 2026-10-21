@@ -4,6 +4,7 @@ import {notFound} from "next/navigation";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {PageHeader} from "@/components/ui/page-header";
 import {Tabs} from "@/components/ui/tabs";
+import {Badge} from "@/components/ui/badge";
 import {ErrorState} from "@/components/ui/error-state";
 import {Banner} from "@/components/ui/banner";
 import {EmptyState} from "@/components/ui/empty-state";
@@ -52,7 +53,7 @@ export default async function SuperAdminTenantSetup({
  </div>;
  const id=context.adminScope?.collegeId??null;
  const tab=selectedSuperAdminTenantSetupTab(parsed.data,id!==null);
- const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+next;
+ const tabLink=(next:Tab)=>"/admin/tenants/setup?tab="+(next==="STRUCTURE"?"structure":"identity");
  // A selected organization or college is not a global structure workspace.
  // Never fetch global lists or offer platform-wide tenant mutations in this state.
  const globallyScoped=!context.adminScope?.organizationId&&!context.adminScope?.collegeId;
@@ -101,22 +102,31 @@ export default async function SuperAdminTenantSetup({
  const retry=<Link href={tabLink(tab)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>;
  return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageBackLink href="/admin/tenants" label="Tenant directory" />
-  <PageHeader title="Tenant Setup"
-   description="Create the customer and its colleges, then configure one selected college for launch. Scope always controls writes." />
-  <section aria-label="Tenant setup overview" className="grid min-w-0 gap-3 md:grid-cols-3">
+  <PageHeader eyebrow="Tenant lifecycle" title="Create the customer, then make one college launch-ready"
+   description="Tenant Setup · Create a customer, set up its colleges, and get the selected college ready for launch." />
+  <section aria-label="Tenant setup overview" className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+   <div className="mb-3 flex flex-wrap items-center gap-2">
+    <strong className="text-sm">Tenant lifecycle</strong>
+    <Badge tone="neutral">{id?(college?"College: "+college.name:"College-scoped"):context.adminScope?.organizationId?"Organization-scoped":"Platform view"}</Badge>
+   </div>
+   <div className="grid min-w-0 gap-3 md:grid-cols-3">
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Current step</p>
     <p className="mt-2 break-words font-semibold">{tab==="STRUCTURE"?"1. Tenant structure":"2. Launch setup"}</p>
    </article>
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">Creation</p>
-    <p className="mt-2 text-sm font-semibold">{organizations.length?organizations.length+" authorized active organization(s)":tab==="LAUNCH"?"Completed separately":"Create or select an organization"}</p>
+    <p className="mt-2 text-sm font-semibold">{orgCreate?"Available":"Locked"}</p>
+    <p className="mt-1 text-xs text-muted-foreground">{orgCreate?"Create an organization or college":"Clear scoped selection to manage tenants"}</p>
    </article>
    <article className="border-b border-border pb-4">
     <p className="text-xs font-semibold text-muted-foreground">College setup</p>
-    <p className="mt-2 break-words text-sm font-semibold">{college?.name??(id?"Selected college":"No college selected")}</p>
+    <p className="mt-2 break-words text-sm font-semibold">{id?"Available":"Select"}</p>
+    <p className="mt-1 text-xs text-muted-foreground">{college?.name??(id?"Selected college":"Pick a college first")}</p>
    </article>
+   </div>
   </section>
+  <div className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
   <Tabs ariaLabel="Tenant Setup steps" renderPanel={false} value={tab}
     items={[
       {value:"STRUCTURE",label:"1. Tenant structure",href:tabLink("STRUCTURE")},
@@ -124,7 +134,7 @@ export default async function SuperAdminTenantSetup({
     ]}/>
   {tab==="STRUCTURE"&&!globallyScoped?
    <Banner tone="warning" role="alert">
-    Tenant structure is a platform-wide workspace. Clear your selected organization and college scope to manage global organizations and colleges. Global tenant lists and creation are hidden in the current scope.
+    {id?"You're working inside one college, so creating is turned off. Switch to Platform view to add organizations and colleges.":"You're working inside one organization, so creating is turned off. Switch to Platform view to manage the tenant structure."}
    </Banner>:
    tab==="STRUCTURE"?<>
     <section aria-label="Organization setup" className="min-w-0 space-y-4 border-b border-border pb-6">
@@ -174,15 +184,24 @@ export default async function SuperAdminTenantSetup({
     </section>
     <Link href={tabLink("LAUNCH")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Continue to launch setup →</Link>
   </>:college?<>
-   <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">{college.name} · Launch setup</h2>
+   <div className="space-y-2">
+     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Get this college ready to go live</h2>
+     <Badge tone="info">Working on: {college.name}</Badge>
+     <p className="max-w-3xl text-sm text-body">Set this college's web address, sign-in method and branding. Platform domains, OTP and SMS delivery are managed under <Link href="/admin/settings" className="font-semibold text-link underline">Tenant Settings</Link>.</p>
+   </div>
    {readinessFailed?<Banner tone="error" action={retry}>
     College readiness could not be loaded. Launch is not verified; retry this readiness check before proceeding.
    </Banner>:
    <Banner tone={summary.label==="Persisted checks pass"?"success":summary.label==="Not ready"?"error":"warning"}>
     Persisted readiness: {summary.label}. {summary.detail}
    </Banner>}
-   <section aria-label="College identity editors" className="min-w-0 space-y-4">
-    <div className="grid min-w-0 items-start gap-6 lg:grid-cols-2">
+   <nav aria-label="Jump to launch sections" className="flex flex-wrap gap-3 text-sm">
+    <a href="#college-identity" className="font-semibold text-link underline">Identity settings</a>
+    <a href="#college-branding" className="font-semibold text-link underline">Branding</a>
+    <a href="#college-readiness" className="font-semibold text-link underline">Launch checklist</a>
+   </nav>
+   <section id="college-identity" aria-label="College identity editors" className="min-w-0 space-y-4">
+    <div className="grid min-w-0 items-start gap-6 2xl:grid-cols-2">
      <div className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-4">
       {managed?<ManagedCollegeSubdomain collegeId={college.id} initial={managed}/>:
        <Banner tone={managedFailed?"error":"warning"} action={<Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/subdomain"} className="font-semibold underline">Open web address settings</Link>}>
@@ -199,7 +218,7 @@ export default async function SuperAdminTenantSetup({
        </Banner>}
      </div>
     </div>
-    <section aria-label="Look and feel" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border p-4">
+    <section id="college-branding" aria-label="Look and feel" className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border p-4">
      <h3 className="text-lg font-semibold text-[var(--lms-heading)]">Look and feel</h3>
      {branding?<>
       <CollegeLogoUploader collegeId={college.id} currentUrl={branding.uploadedLogoUrl} canEdit/>
@@ -219,12 +238,12 @@ export default async function SuperAdminTenantSetup({
      </Banner>}
     </section>
    </section>
-   <section aria-label="Launch checklist" className="space-y-3">
+   <section id="college-readiness" aria-label="Launch checklist" className="space-y-3">
     <div className="flex flex-wrap items-center justify-between gap-3">
      <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">Launch checklist</h2>
      <Link href={"/admin/colleges/"+encodeURIComponent(college.id)+"/readiness"} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Inspect persisted readiness →</Link>
     </div>
-    <ol className="grid min-w-0 gap-x-6 gap-y-2 md:grid-cols-2">
+    <ol className="grid min-w-0 gap-x-6 gap-y-2 2xl:grid-cols-2">
      {superAdminTenantSetupSteps(college.id).map((step,index)=><li key={step.id} className="min-w-0 border-b border-border py-4">
       <p className="text-xs font-semibold text-muted-foreground">Step {index+1}</p>
       <h3 className="mt-1 break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{step.title}</h3>
@@ -234,8 +253,9 @@ export default async function SuperAdminTenantSetup({
     </ol>
    </section>
    <p className="text-xs text-muted-foreground">Passing persisted checks does not certify live DNS, OTP delivery, teaching, attendance, placements or production launch.</p>
-  </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<EmptyState title="No college selected"
-   description="No college selected. Setup cannot default to an unrelated tenant. Select a college using the Super Admin safety scope switcher; launch setup never guesses a tenant."
-   action={<Link href={tabLink("STRUCTURE")} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Create or select a college →</Link>}/>}
+  </>:detailFailed?<ErrorState title="Tenant setup unavailable" description="The selected college could not be verified. No launch edits have been made." action={retry}/>:<Banner tone="info" action={<Link href={tabLink("STRUCTURE")} className="font-semibold text-link underline">Create or select a college →</Link>}>
+   Pick a college first. Select a college in the Super Admin scope switcher to configure its web address, sign-in method and branding. No tenant is guessed.
+  </Banner>}
+  </div>
  </div>;
 }

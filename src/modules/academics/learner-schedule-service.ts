@@ -33,6 +33,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { AcademicsServiceError } from "./errors";
 import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { listLearnerCourseDeliveries } from "@/modules/courses/learner-course-service";
+import { CoursesServiceError } from "@/modules/courses/errors";
 
 function requireLearnerMembership(
   context: RequestContext,
@@ -123,16 +124,23 @@ export async function getLearnerClassSchedule(
           learnerProgramEnrollments.membershipId,
           membership.id,
         ),
-        eq(
-          learnerProgramEnrollments.status,
-          "ACTIVE",
+        // Current sections plus previously attended, ended sections when
+        // reading an explicit historical date window. A learner may see their
+        // own past term after graduation, but never another learner's roster.
+        or(
+          and(
+            eq(learnerProgramEnrollments.status, "ACTIVE"),
+            eq(sectionEnrollments.status, "ACTIVE"),
+            eq(sections.status, "ACTIVE"),
+            inArray(academicPeriods.status, ["PLANNED", "ACTIVE"]),
+          ),
+          ...(visibleWindow ? [and(
+            inArray(sectionEnrollments.status, ["COMPLETED", "WITHDRAWN"]),
+            inArray(academicPeriods.status, ["ACTIVE", "CLOSED"]),
+            sql`${academicPeriods.endDate} >= ${visibleWindow.from.toISOString().slice(0,10)}::date`,
+            sql`${academicPeriods.startDate} <= ${visibleWindow.to.toISOString().slice(0,10)}::date`,
+          )] : []),
         ),
-        eq(sectionEnrollments.status, "ACTIVE"),
-        eq(sections.status, "ACTIVE"),
-        inArray(academicPeriods.status, [
-          "PLANNED",
-          "ACTIVE",
-        ]),
       ),
     )
     .orderBy(
@@ -143,7 +151,24 @@ export async function getLearnerClassSchedule(
   // The course roster is the canonical union of primary-section learners and
   // ACTIVE group-backed elective memberships. Never infer elective access from
   // the host section alone.
-  const accessible = await listLearnerCourseDeliveries(context);
+  // Delivery-scoped course options are intentionally narrower than the
+  // full program catalog: primary classes and elective group rosters confer
+  // access, but mere curriculum membership never exposes other classes.
+  let accessible: Awaited<ReturnType<typeof listLearnerCourseDeliveries>> = [];
+  let courseLookupWarning: string | null = null;
+  try {
+    accessible = await listLearnerCourseDeliveries(context, {
+      includeHistorical: Boolean(visibleWindow),
+    });
+  } catch (error) {
+    // A course roster outage is not a reason to hide already-authorized,
+    // delivery-free section events. Never downgrade any access denial.
+    if (error instanceof AuthorizationError ||
+        error instanceof CoursesServiceError ||
+        error instanceof AcademicsServiceError) throw error;
+    courseLookupWarning =
+      "Failed to load course data. Calendar events may be incomplete. Please try refreshing the page.";
+  }
   const deliveryIds = [...new Set(accessible.map(course => course.deliveryId))];
   const coursesList = [...new Map(accessible.map(course => [
     course.deliveryId,
@@ -152,13 +177,16 @@ export async function getLearnerClassSchedule(
       courseCode: course.courseCode },
   ])).values()].sort((a, b) => a.courseName.localeCompare(b.courseName));
   if (placements.length === 0 && deliveryIds.length === 0)
-    return { sections: [], courses: [], events: [] };
+    return { sections: [], courses: [], events: [], courseLookupWarning };
 
-  const primarySectionIds = placements.map(row => row.sectionId);
+  const primarySectionIds = [...new Set(placements.map(row => row.sectionId))];
   const authorizedLink = deliveryIds.length
     ? inArray(sectionScheduleEventCourses.deliveryId, deliveryIds)
     : sql<boolean>`false`;
 
+  // Window end is exclusive UTC (next-day midnight for inclusive date
+  // filters); >= start includes an event ending exactly at the requested
+  // lower boundary. Legacy local date strings must be migrated to IST first.
   const events = await db
     .select({
       id: sectionScheduleEvents.id,
@@ -204,5 +232,5 @@ export async function getLearnerClassSchedule(
     ))
     .orderBy(asc(sectionScheduleEvents.startsAt));
 
-  return { sections: placements, courses: coursesList, events };
+  return { sections: placements, courses: coursesList, events, courseLookupWarning };
 }

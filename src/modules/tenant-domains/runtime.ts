@@ -7,8 +7,10 @@ import {
   createTenantDomain,
   deleteTenantDomain,
   editTenantDomainHost,
+  ensureTenantDomainVerificationToken,
   listTenantDomains,
   resolveTenantFromHost,
+  previewTenantHostResolution,
   setPrimaryTenantDomain,
   verifyTenantDomain,
 } from "./service";
@@ -81,4 +83,18 @@ export function deleteTenantDomainWithRuntime(
 
 export function resolveTenantFromHostWithRuntime(host: string) {
   return resolveTenantFromHost(host, drizzleTenantDomainRepository);
+}
+
+/** Global-only diagnostic: never resolves an unverified host or fetches DNS. */
+export function previewTenantHostResolutionWithRuntime(
+ context:RequestContext,host:string,
+){
+ return previewTenantHostResolution(context,host,drizzleTenantDomainRepository);
+}
+
+/** Post-creation recovery if a legacy domain has no pending challenge. */
+export function ensureTenantDomainVerificationTokenWithRuntime(
+ context:RequestContext,domainId:string,
+){
+ return ensureTenantDomainVerificationToken(context,domainId,drizzleTenantDomainRepository);
 }

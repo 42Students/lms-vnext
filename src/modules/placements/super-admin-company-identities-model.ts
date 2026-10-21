@@ -14,9 +14,18 @@ export const PERSONAL_EMAIL_HOSTS=new Set([
  "proton.me","protonmail.com","aol.com","rediffmail.com",
 ]);
 export function normalizeCompanyDomain(raw:string){
- const emailDomain=raw.includes("@")?raw.split("@").at(-1)??"":raw;
- const normalized=emailDomain.trim().toLowerCase().replace(/^www\./,"");
- if(!companyDomainSchema.safeParse(normalized).success)throw new Error("Enter a valid company domain.");
+ // Use the transformed, registrable value for persistence and uniqueness.
+ // Validating then returning raw input previously stored mail.company.co.in
+ // separately from company.co.in and bypassed the public-mail blocklist.
+ const parsed=companyDomainSchema.safeParse(raw);
+ if(!parsed.success){
+  const message=parsed.error.issues[0]?.message;
+  if(message==="Use the company's domain name, not an IP address")throw new Error(message);
+  if(message?.includes("personal, temporary or academic"))
+   throw new Error("Use a company domain, not a personal, temporary or academic domain");
+  throw new Error("Enter a valid company domain.");
+ }
+ const normalized=parsed.data;
  if(PERSONAL_EMAIL_HOSTS.has(normalized))throw new Error("Personal email domains cannot be claimed.");
  if(normalized.endsWith(".edu")||normalized.endsWith(".ac.in"))
   throw new Error("A college domain cannot be claimed by a company.");
