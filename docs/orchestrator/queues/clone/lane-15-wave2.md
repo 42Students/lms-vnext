@@ -109,7 +109,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_drizzle_0034_course_discussions.sql.md` (edit drizzle/0034_course_discussions.sql; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_super-admin-content-authoring-service.ts.md` (edit src/modules/courses/super-admin-content-authoring-service.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_projects_reassign-mentor_route.ts.md` (edit src/app/api/projects/reassign-mentor/route.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_recruiter-message-email.ts.md` (edit src/db/schema/recruiter-message-email.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_recruiter-message-email.ts.md` (edit src/db/schema/recruiter-message-email.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_membership-switcher.tsx.md` (edit src/components/shell/membership-switcher.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_faculty-course-associations.ts.md` (edit src/db/schema/faculty-course-associations.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_legacy-mobile-footer.css.md` (edit src/components/shell/legacy-mobile-footer.css; 1 findings; best P2)

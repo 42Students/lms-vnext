@@ -38,3 +38,24 @@ export const placementRecruiterInboundEmailEvents=pgTable("placement_recruiter_i
  index("recruiter_inbound_email_thread_idx").on(t.threadId,t.receivedAt),
  check("recruiter_inbound_email_hash_ck",sql`${t.messageIdHash} ~ '^[a-f0-9]{64}$'`),
 ]);
+
+/** The operator's shared mailbox audit uses inbound_mail_messages rather than
+ * duplicating raw From, To, body or message preview in recruiter tables.
+ * Only the row ID, fixed routing category and time are surfaced outside the
+ * privileged mailbox reader. Rejected verified-gateway mail is not discarded. */
+export const RECRUITER_EMAIL_AUDIT_OUTCOMES=[
+ "STORED","POSTED","NO_THREAD","WRONG_SENDER",
+ "NOT_VERIFIED","EMPTY","ACCESS_ENDED","FAILED",
+] as const;
+export function safeRecruiterEmailAudit(input:{
+ id:string;receivedAt:Date;handledAt:Date|null;routingStatus:string;
+ routeAttemptCount:number;kind:string;
+}){
+ return {
+  id:input.id,receivedAt:input.receivedAt.toISOString(),
+  handledAt:input.handledAt?.toISOString()??null,
+  routingStatus:RECRUITER_EMAIL_AUDIT_OUTCOMES.find(s=>s===input.routingStatus)??"FAILED",
+  attempts:Math.max(0,Math.trunc(input.routeAttemptCount)),
+  kind:input.kind==="REPLY"?"REPLY":"OTHER",
+ };
+}
