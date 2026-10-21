@@ -8,3 +8,6 @@ Changes are on `chatgpt/chat-7-b`; each commit is prefixed `[chat-7]`. Static re
 ## Static re-read
 
 Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attendance-service.ts`, `college-dashboard-grading-service.ts`, `college-dashboard-staffing-service.ts`, `college/page.tsx` from the working branch. Checked imports/exports referenced by the page and balanced delimiter counts for all five; no packages added or shared exports renamed. Exact query semantics still require runtime validation with an implicit-present case (9 present, 1 absent = 90%), foreign-college/locked users, and a backlog larger than eight.
+
+- `NEW_docs_audit_gap2_lane-7_u017-college-admin-workspace-team.md.part1of2.md` | 0 project code edits: 20/20 G2-7-017 findings routed to exact existing `src/components/projects`/`src/modules/projects` files in the handoff document. This is a shared Projects ownership boundary, not a missing vNext entry route. P1 data/append semantics require one coordinated owner edit; **handoff, not fixed**.
+- `NEW_docs_audit_gap2_lane-7_u017-college-admin-workspace-team.md.part2of2.md` | 0 project code edits: 12/12 findings routed individually; append/replace, 500 total learner cap, task joins, role history and Check roster all depend on the shared Projects module. Existing membership identity retained. **Handoff, not fixed**.
