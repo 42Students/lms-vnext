@@ -237,7 +237,7 @@ export function scheduledRecipientIdempotencyKey(input: {
   if (![input.organizationId, input.collegeId, input.sourceEventId,
          input.recipientUserId].every(id => uuid.test(id)) ||
       !/^[A-Z][A-Z0-9_]{1,63}$/.test(input.kind) ||
-      !/^\\d{4}-\\d{2}-\\d{2}(?:T\\d{2})?$/.test(input.windowKey) ||
+      !/^\d{4}-\d{2}-\d{2}(?:T\d{2})?$/.test(input.windowKey) ||
       !/^[A-Za-z0-9+/]{42,}={0,2}$/.test(secretBase64)) {
     throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
   }
