@@ -39,3 +39,8 @@ export async function POST(
     return apiErrorResponse(error);
   }
 }
+
+/** Legacy PATCH results maps to the same authorized results transition as POST. */
+export async function PATCH(request: Request, route: RouteContext) {
+  return POST(request, route);
+}
