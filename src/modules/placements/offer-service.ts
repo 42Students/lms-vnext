@@ -1542,6 +1542,7 @@ export async function listOwnPlacementOffers(
       company: {
         id: placementCompanies.id,
         name: placementCompanies.name,
+        logoPublicUrl: placementCompanies.logoPublicUrl,
       },
     })
     .from(placementOffers)
