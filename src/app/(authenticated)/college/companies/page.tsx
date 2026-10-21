@@ -29,7 +29,7 @@ export default async function CollegeCompaniesPage({
   const parsed=parseCollegeCompaniesQuery(await searchParams);
   if(!parsed.success) return <div className="min-w-0 space-y-4"><PageHeader title="Companies"/>
     <ErrorState title="Invalid company search" description="Check search text or page."
-      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Clear company filters</Link>}/>
+      action={<Link href="/college/companies" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear company filters</Link>}/>
   </div>;
   const query=parsed.data;
   const collegeId=context.membership.collegeId;
@@ -44,7 +44,7 @@ export default async function CollegeCompaniesPage({
   const exportParams=new URLSearchParams({q:query.q,status:query.status,pageSize:String(query.pageSize),sort:query.sort,showDeleted:query.showDeleted});
   return <div className="min-w-0 max-w-full space-y-[var(--lms-space-4)]">
     <PageHeader title="Companies" description="Maintain each recruiting company once and reuse it across drives."
-      actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Export CSV</a>} />
+      actions={<a href={"/api/college/companies/export?"+exportParams.toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Export CSV</a>} />
     <CollegeCompanyCreate collegeId={collegeId}/>
     <FilterBar title="Filters" activeCount={Number(Boolean(query.q)) + Number(query.status !== "ACTIVE") + Number(query.sort !== "LAST_ACTIVE") + Number(query.pageSize !== 20) + Number(query.showDeleted === "1")}
       search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">

@@ -72,23 +72,23 @@ export default async function CollegeOverviewPage() {
         actions={<CollegeEditDialog college={college} triggerLabel="Edit college" />}
       />
       <details className="min-w-0 border-b border-border pb-3">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Other college actions</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Other college actions</summary>
         <nav aria-label="College overview tools" className="flex min-w-0 flex-wrap items-center gap-2 pt-3">
             <Link href="/college/contacts"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Contacts
             </Link>
             <Link href="/college/announcements"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Announcements
             </Link>
             <Link href="/college/verification"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Verification
             </Link>
             <Link
               href="/college/branding"
-              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+              className="inline-flex min-h-11 md:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:border-[var(--lms-primary)] hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-subtle)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
             >
               Branding
             </Link>
@@ -159,7 +159,7 @@ export default async function CollegeOverviewPage() {
             </p>
           </div>
           <Link href="/college/attendance"
-            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="inline-flex min-h-11 md:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-primary-text hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Open attendance
           </Link>
         </div>
@@ -173,7 +173,7 @@ export default async function CollegeOverviewPage() {
                 <p className="text-muted-foreground">{event.faculty} · {new Date(event.when).toLocaleString("en-IN", {timeZone:"Asia/Kolkata"})}</p>
               </div>
               <Link href="/college/attendance"
-                className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Open attendance</Link>
+                className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Open attendance</Link>
             </li>)}
           </ul>}
         {attendance.unattendedCount > attendance.unattended.length &&
@@ -181,7 +181,7 @@ export default async function CollegeOverviewPage() {
       </section>
       </>:<CollegeDashboardSectionFailure title="Attendance not taken"/>}
       <details className="min-w-0 border-t border-border pt-2">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Low attendance</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Low attendance</summary>
       {lowAttendance?<>
       <section aria-label="Low attendance" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
@@ -189,7 +189,7 @@ export default async function CollegeOverviewPage() {
             Under {lowAttendance.threshold}% attendance
           </h2>
           <Link href="/college/attendance"
-            className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review attendance</Link>
+            className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review attendance</Link>
         </div>
         <p className="text-sm text-muted-foreground">
           Last 30 days · marked sessions only · {lowAttendance.rows.length} learner(s) shown
@@ -210,12 +210,12 @@ export default async function CollegeOverviewPage() {
       </>:<CollegeDashboardSectionFailure title="Low attendance"/>}
       </details>
       <details className="min-w-0 border-t border-border pt-2">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Courses with no teacher</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Courses with no teacher</summary>
       {unstaffed?<>
       <section aria-label="Courses with no teacher" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Courses with no teacher</h2>
-          <Link href="/college/faculty-assignment" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          <Link href="/college/faculty-assignment" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Manage faculty
           </Link>
         </div>
@@ -232,19 +232,19 @@ export default async function CollegeOverviewPage() {
               <p className="text-muted-foreground">{course.sections.length} unstaffed class(es): {course.sections.join(", ")}</p>
             </div>
             <Link href="/college/faculty-assignment"
-              className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Assign faculty</Link>
+              className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Assign faculty</Link>
           </li>)}
         </ul>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Courses with no teacher"/>}
       </details>
       <details className="min-w-0 border-t border-border pt-2">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Waiting to be graded</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Waiting to be graded</summary>
       {pendingGrades?<>
       <section aria-label="Waiting to be graded" className="space-y-3 border-t border-border pt-[16px]">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Waiting to be graded</h2>
-          <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+          <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             Review assignments
           </Link>
         </div>
@@ -258,21 +258,21 @@ export default async function CollegeOverviewPage() {
                   {item.pending} submission(s) · Oldest: {item.oldest?.toLocaleDateString("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" }) ?? "—"}
                 </p>
               </div>
-              <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Review</Link>
+              <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review</Link>
             </li>)}
           </ul>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Waiting to be graded"/>}
       </details>
       <details className="min-w-0 border-t border-border pt-2">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Setup gaps</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Setup gaps</summary>
       {setupGaps?<>
       <section aria-label="Setup gaps" className="space-y-3 border-t border-border pt-[16px]">
         <h2 className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Setup gaps</h2>
         <p className="text-sm text-muted-foreground">Records still missing a critical academic relationship.</p>
         <div className="grid gap-[8px] md:grid-cols-2 lg:grid-cols-4">
           {setupGaps.map(item => <Link key={item.label} href={item.href}
-            className="rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            className="rounded-[var(--lms-control-radius)] border border-border p-4 hover:border-primary hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
             <p className="text-sm text-muted-foreground">{item.label}</p>
             <p className="mt-2 text-xl font-semibold tabular-nums">{item.count}</p>
             <span className="text-xs font-semibold text-primary-text">Review →</span>
@@ -285,7 +285,7 @@ export default async function CollegeOverviewPage() {
       </>:<CollegeDashboardSectionFailure title="Setup gaps"/>}
       </details>
       <details className="min-w-0 border-t border-border pt-2">
-        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Quick Actions</summary>
+        <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Quick Actions</summary>
         <CollegeAdminQuickActions />
       </details>
       {dashboard?<CollegeSetupChecklist phases={dashboard.setup.phases}/>:<CollegeDashboardSectionFailure title="College setup checklist"/>}
