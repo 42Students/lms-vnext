@@ -28,7 +28,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u014-college-admin-workspace-sprints.md.md` (new; 20 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u004-college-admin-projects-readiness.md.md` (new; 19 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_u010-college-admin-workspace-meetings.md.md` (new; 17 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-admin-workspace-list.tsx.md` (edit src/components/projects/project-admin-workspace-list.tsx; 16 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-admin-workspace-list.tsx.md` (edit src/components/projects/project-admin-workspace-list.tsx; 16 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/NEW_docs_audit_gap2_lane-7_l17-u031-projects-end-to-end.md.md` (new; 16 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-admin-audit-page.tsx.md` (edit src/components/projects/project-admin-audit-page.tsx; 16 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-archive-control.tsx.md` (edit src/components/projects/project-archive-control.tsx; 15 findings; best P1)
