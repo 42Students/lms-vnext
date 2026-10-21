@@ -14,16 +14,19 @@ import {AuthorizationError} from "@/modules/permissions/policy";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {requirePlacementManageScope} from "@/modules/placements/scope";
 import {placementTableExists} from "@/modules/placements/staged-tables";
-import {parseTpoNoticeSchedule} from "./tpo-notice-schedule-model";
+import {parseTpoNoticeSchedule,parseTpoIstMinute} from "./tpo-notice-schedule-model";
 
 export const editTpoNoticeSchema=z.object({
  noticeId:z.string().uuid(),expectedVersion:z.number().int().nonnegative(),
- title:z.string().trim().min(1).max(200),
- message:z.string().trim().min(1).max(8000),
+ title:z.string().trim().min(1,{error:"Give it a title"}).max(200,{error:"Title must be 200 characters or fewer"}),
+ message:z.string().trim().min(1,{error:"Write the announcement"}).max(8000,{error:"Announcement must be 8000 characters or fewer"}),
  pinned:z.boolean(),
  buttonLabel:z.string().trim().min(1).max(60).optional(),
  buttonUrl:z.string().trim().max(500).regex(/^https:\/\/[^\s]+$/,"The link has to start with https://").optional(),
  notifyChanged:z.boolean().default(false),
+ // Legacy PUT tellAgain is an alias of vNext notifyChanged. Email fan-out
+ // is a separate explicitly configured producer, never implied by a boolean.
+ tellAgain:z.boolean().optional(),
  audienceChange:tpoNoticeAudienceChangeSchema.optional(),
  sendAt:z.string().max(16).optional(),showUntil:z.string().max(16).optional(),
 }).strict().refine(data=>Boolean(data.buttonLabel)===Boolean(data.buttonUrl),{path:["buttonUrl"],message:"The link has to start with https://"});
@@ -57,9 +60,21 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
   )).for("update").limit(1);
   if(!current)throw new Error("ANNOUNCEMENT_NOT_FOUND");
   if(current.version!==input.expectedVersion)throw new Error("ANNOUNCEMENT_STALE");
+  const now=new Date();
   const schedule=input.sendAt!==undefined||input.showUntil!==undefined?
-   parseTpoNoticeSchedule(input,new Date()):
-   {scheduledAt:current.scheduledAt,expiresAt:current.expiresAt};
+   {
+    scheduledAt:input.sendAt!==undefined?parseTpoIstMinute(input.sendAt):current.scheduledAt,
+    expiresAt:input.showUntil!==undefined?parseTpoIstMinute(input.showUntil):current.expiresAt,
+   }:{scheduledAt:current.scheduledAt,expiresAt:current.expiresAt};
+  // VNext datetime-local is IST civil time; source legacy sendAt was an
+  // instant. Keep untouched schedule fields on partial edits and revalidate
+  // the resulting entire send/end window against current UTC instant.
+  if((input.sendAt!==undefined&&schedule.scheduledAt&&schedule.scheduledAt<new Date(now.getTime()-60_000))||
+    (input.showUntil!==undefined&&schedule.expiresAt&&
+      schedule.expiresAt<=new Date(Math.max(now.getTime(),schedule.scheduledAt?.getTime()??0))))
+    throw new Error("TPO_NOTICE_INVALID_TIME");
+  if(input.sendAt!==undefined&&input.showUntil!==undefined)
+    parseTpoNoticeSchedule(input,now);
   if(input.audienceChange){
    // Never retarget a visible/delivered notice. The lock covers the frozen
    // recipient set and the version-checked content update together.
@@ -116,9 +131,11 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
    subjectType:"announcement",subjectId:updated.id,
    summary:"TPO notice content or schedule edited",
    metadata:{noticeId:updated.id,version:updated.version,pinned:input.pinned,
-    notifyChanged:input.notifyChanged,audienceChangedTo:input.audienceChange?.audience??null},
+    notifyChanged:input.notifyChanged||input.tellAgain===true,
+    legacyTellAgain:input.tellAgain??null,
+    audienceChangedTo:input.audienceChange?.audience??null},
   }).returning({id:activityEvents.id});
-  if(input.notifyChanged && editEvent){
+  if((input.notifyChanged||input.tellAgain===true) && editEvent){
    // Tell ONLY recipients with a persisted original notification. A notice
    // published without a delivery producer cannot magically notify students.
    const original=await tx.select({id:activityEvents.id}).from(activityEvents)
@@ -128,12 +145,17 @@ export async function editTpoNotice(context:RequestContext,raw:unknown){
      eq(activityEvents.eventType,"placements.tpo_notice.created"))).limit(1);
    if(original[0]){
     const recipients=await tx.select({userId:inAppNotifications.userId})
-     .from(inAppNotifications).where(eq(inAppNotifications.eventId,original[0].id));
-    if(recipients.length)await tx.insert(inAppNotifications).values(recipients.map(({userId})=>({
-     userId,eventId:editEvent.id,title:"Announcement updated: "+input.title.slice(0,100),
-     body:"The placement cell changed an announcement. Open it for the latest details.",
-     actionHref:"/learn/announcements",
-    }))).onConflictDoNothing();
+     .from(inAppNotifications).where(and(eq(inAppNotifications.eventId,original[0].id),
+       isNull(inAppNotifications.deletedAt)));
+    // Frozen original recipients only; never retarget from a new cohort or
+    // section after the first delivery, and batch large fan-outs safely.
+    const unique=[...new Set(recipients.map(row=>row.userId))];
+    for(let offset=0;offset<unique.length;offset+=500)
+     await tx.insert(inAppNotifications).values(unique.slice(offset,offset+500).map(userId=>({
+      userId,eventId:editEvent.id,title:"Announcement updated: "+input.title.slice(0,100),
+      body:"The placement cell changed an announcement. Open it for the latest details.",
+      actionHref:"/learn/announcements",
+     }))).onConflictDoNothing();
    }
   }
   return updated;
