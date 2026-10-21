@@ -60,10 +60,22 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
    setLeaveHref(href);
    setConfirmLeave(true);
   };
+  const currentUrl=window.location.pathname+window.location.search+window.location.hash;
+  const interceptBrowserHistory=()=>{
+   const destination=window.location.pathname+window.location.search+window.location.hash;
+   if(destination===currentUrl)return;
+   // A SPA history traversal has already changed the URL at popstate time.
+   // Put the editor URL back until the user explicitly confirms.
+   window.history.pushState(window.history.state,"",currentUrl);
+   setLeaveHref(destination);
+   setConfirmLeave(true);
+  };
   window.addEventListener("beforeunload",beforeUnload);
+  window.addEventListener("popstate",interceptBrowserHistory);
   document.addEventListener("click",interceptInternalLink,true);
   return ()=>{
    window.removeEventListener("beforeunload",beforeUnload);
+   window.removeEventListener("popstate",interceptBrowserHistory);
    document.removeEventListener("click",interceptInternalLink,true);
   };
  },[open,dirty]);
@@ -81,7 +93,11 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
   }
   const assessmentAt=String(data.get("assessmentDeadline")??"");
   const deadlineAt=String(data.get("deadline")??"");
-  if(assessmentAt&&(!deadlineAt||assessmentAt<=deadlineAt)){
+  // Preserve valid historical deadlines when editing unrelated fields. Only
+  // revalidate the ordering if either stored instant is actually edited.
+  const changedAssessment=assessmentAt!==istLocal(job.assessmentDeadline);
+  const changedDeadline=deadlineAt!==istLocal(job.applicationDeadline);
+  if((changedAssessment||changedDeadline)&&assessmentAt&&(!deadlineAt||assessmentAt<=deadlineAt)){
    setError("Assessment deadline must follow application deadline.");return;
   }
   const min=nullableNumber(data.get("minimumAnnualCtcInr"));
@@ -116,8 +132,10 @@ export function SuperAdminPublishedDriveEdit({job,jobTypes,companies,sourceReady
       description,
       companyRelationshipId:String(data.get("companyRelationshipId")??""),
       assessmentUrl:String(data.get("assessmentUrl")??"").trim(),
-      assessmentDeadline:String(data.get("assessmentDeadline")??"")
-       ?driveDeadlineIstToIso(String(data.get("assessmentDeadline"))):null,
+      assessmentDeadline:String(data.get("assessmentDeadline")??"")===istLocal(job.assessmentDeadline)
+       ?job.assessmentDeadline
+       :String(data.get("assessmentDeadline")??"")
+         ?driveDeadlineIstToIso(String(data.get("assessmentDeadline"))):null,
       candidatePreferences:{
        preferredDegree:String(data.get("preferredDegree")??"").trim(),
        specialization:String(data.get("specialization")??"").trim(),
