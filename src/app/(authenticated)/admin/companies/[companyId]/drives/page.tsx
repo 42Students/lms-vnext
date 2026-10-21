@@ -6,6 +6,7 @@ import { PageBackLink } from "@/components/ui/page-back-link";
 import { EmptyState } from "@/components/ui/empty-state";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { DataTable } from "@/components/ui/data-table";
+import { ErrorState } from "@/components/ui/error-state";
 import { listSuperAdminCompanyDriveHistory } from "@/modules/placements/admin-company-drive-history-service";
 
 export default async function SuperAdminCompanyDrivesPage({params}:{
@@ -14,7 +15,17 @@ export default async function SuperAdminCompanyDrivesPage({params}:{
   const context=await getCurrentRequestContext();
   if(!context.adminScope?.collegeId)redirect("/admin/companies");
   const {companyId}=await params;
-  const data=await listSuperAdminCompanyDriveHistory(context,companyId);
+  const history=await listSuperAdminCompanyDriveHistory(context,companyId)
+    .then(value=>({ok:true as const,value}))
+    .catch(()=>({ok:false as const}));
+  if(!history.ok)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Company drive history" actions={<PageBackLink href="/admin/companies" label="Companies"/>}/>
+    <ErrorState title="Could not load company drive history"
+      description="The selected college's drive history is temporarily unavailable. Your company selection has not changed."
+      action={<Link className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9"
+        href={"/admin/companies/"+encodeURIComponent(companyId)+"/drives"}>Retry</Link>}/>
+  </div>;
+  const data=history.value;
   if(!data)notFound();
   return <div className="min-w-0 space-y-[var(--lms-space-6)]">
     <PageHeader title={data.company.name}

@@ -26,7 +26,7 @@ export const SUPER_ADMIN_LEGACY_GROUPS: readonly SuperAdminLegacyGroup[] = [
     {label:"Drives",href:"/admin/placements"},
     {label:"Companies",href:"/admin/companies"},
     {label:"Interviews",href:"/admin/placements/calendar"},
-    {label:"Analytics",href:"/admin/placements/hiring"},
+    {label:"Analytics",href:"/admin/placements/analytics"},
     {label:"Recruiter accounts",href:"/admin/recruiters"},
     {label:"Announcements",href:"/admin/announcements"},
   ]},
@@ -48,6 +48,8 @@ export function superAdminLegacyNavigationPath(pathname:string):string {
     return "/admin/tenants";
   if(pathname==="/admin/academics"||pathname.startsWith("/admin/academics/"))
     return "/admin/departments";
+  if(pathname==="/admin/placements/hiring"||pathname.startsWith("/admin/placements/hiring/"))
+    return "/admin/placements/analytics";
   if(pathname==="/admin/placements/interviews"||
      pathname.startsWith("/admin/placements/interviews/"))
     return "/admin/placements/calendar";

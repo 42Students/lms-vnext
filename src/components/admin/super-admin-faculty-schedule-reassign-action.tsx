@@ -7,6 +7,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {Button} from "@/components/ui/button";
 import { Alert } from "@/components/ui/alert";
 import {Select} from "@/components/ui/select";
+import {Input} from "@/components/ui/input";
 import {Dialog} from "@/components/ui/dialog";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 
@@ -25,6 +26,7 @@ export function SuperAdminFacultyScheduleReassignAction({
   const [open,setOpen]=useState(false);
   const [confirmOpen,setConfirmOpen]=useState(false);
   const [replacementMembershipId,setReplacementMembershipId]=useState("");
+  const [facultySearch,setFacultySearch]=useState("");
   const [error,setError]=useState("");
   const [retirementBusy,setRetirementBusy]=useState(false);
   const [retirementOpen,setRetirementOpen]=useState(false);
@@ -64,6 +66,7 @@ export function SuperAdminFacultyScheduleReassignAction({
   const [report,setReport]=useState<{total:number;reassigned:number;skippedConflicts:number}|null>(null);
   const choices=candidates.filter(person=>person.membershipId!==sourceMembershipId);
   const target=choices.find(item=>item.membershipId===replacementMembershipId);
+  const visibleChoices=choices.filter(item=>item.displayName.toLocaleLowerCase("en-IN").includes(facultySearch.trim().toLocaleLowerCase("en-IN")));
   function submit(){
     if(!target||pending)return;
     void run(async()=>{
@@ -77,15 +80,18 @@ export function SuperAdminFacultyScheduleReassignAction({
         setReport(result.report);
         setConfirmOpen(false);setOpen(false);
         router.refresh();
-      }catch{
+      }catch(cause){
         setConfirmOpen(false);
-        setError("The timetable transfer could not be completed. Verify both faculty accounts and reload before retrying.");
+        const detail=cause instanceof Error?cause.message:"";
+        setError("The timetable transfer could not be completed for "+sourceName+" → "+target.displayName+". "+
+          (detail.includes("CONFLICT")?"A timetable conflict was reported. Review the faculty schedules before retrying.":
+           "Verify both faculty accounts and reload before retrying."));
       }
     });
   }
   return <div className="min-w-0 space-y-[var(--lms-space-3)] print:hidden">
     <Button variant="secondary" size="md" className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||choices.length===0}
-      onClick={()=>{setOpen(true);setError("");setReport(null);}}>
+      onClick={()=>{setOpen(true);setError("");setReport(null);setFacultySearch("");}}>
       Reassign class schedules
     </Button>
     {report?<Alert tone={report.skippedConflicts>0?"warning":"success"} className="max-w-prose">
@@ -117,17 +123,27 @@ export function SuperAdminFacultyScheduleReassignAction({
     {error?<Alert tone="error">{error}</Alert>:null}
     <Dialog open={open} onOpenChange={next=>{if(!pending)setOpen(next);}} dismissible={!pending}
       title="Reassign class schedules"
-      description={"Move future scheduled sessions from "+sourceName+" to another active faculty member. Conflicts are skipped, never double-booked. The original faculty remains assigned to any skipped session; schedule transfer does not delete or end a membership."}
+      description={"Moves every not-yet-started session from "+sourceName+" to another faculty member when no timetable conflict exists. Conflicting sessions remain with the original faculty and must be resolved separately; membership is never deleted."}
       footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
-        <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Cancel</Button>
-        <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Review transfer</Button>
+        <Button variant="secondary" className="min-h-11 md:min-h-9" disabled={pending} onClick={()=>setOpen(false)}>Close</Button>
+        <Button className="min-h-11 md:min-h-9" disabled={pending||!target} onClick={()=>{setOpen(false);setConfirmOpen(true);}}>Reassign</Button>
       </div>}>
+      <label className="mb-3 grid gap-[6px] text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)]">
+        Search replacement faculty
+        <Input type="search" value={facultySearch} disabled={pending} placeholder="Search active faculty"
+          onChange={event=>setFacultySearch(event.target.value)} className="min-h-11 md:min-h-9"/>
+      </label>
       <label htmlFor={id} className="mb-[6px] block text-[var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Replacement faculty</label>
       <Select id={id} className="min-h-11 w-full md:min-h-9"
         value={replacementMembershipId} onChange={event=>setReplacementMembershipId(event.target.value)}>
         <option value="">Select faculty</option>
-        {choices.map(item=><option key={item.membershipId} value={item.membershipId}>{item.displayName}</option>)}
+        {target&&!visibleChoices.some(item=>item.membershipId===target.membershipId)?
+          <option value={target.membershipId}>{target.displayName} (selected)</option>:null}
+        {visibleChoices.map(item=><option key={item.membershipId} value={item.membershipId}>{item.displayName}</option>)}
       </Select>
+      {visibleChoices.length===0?<p role="status" className="mt-2 text-sm text-muted-foreground">
+        No matching faculty in the loaded roster. Try another name or change the roster filters.
+      </p>:null}
       {truncated?<p role="status" className="mt-2 text-xs text-muted-foreground">
         Only the first 500 active faculty choices are shown. Use the faculty roster filters to find other colleagues.
       </p>:null}

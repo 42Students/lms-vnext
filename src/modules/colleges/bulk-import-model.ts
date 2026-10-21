@@ -48,7 +48,7 @@ export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string)
  const data=withHeader?records.slice(1):records;
  if(data.length===0)throw Error("Paste at least one college.");
  if(data.length>MAX_COLLEGE_IMPORT_ROWS)throw Error("Bulk Import accepts at most 200 colleges.");
- const codes=new Set<string>();
+ const codes=new Map<string,number>();
  return data.map((row,index)=>{
   const v=(i:number)=>positions[i]<0?"":(row[positions[i]]??"").trim();
   if(legacyPositional&&/^\d+$/.test(row[0]??""))throw Error("Legacy numeric organization IDs cannot establish a vNext tenant. Convert orgId to its verified organization UUID and import each organization separately using organizationId,name,uniqueId,city,state.");
@@ -63,8 +63,17 @@ export function parseCollegeImportCsv(raw:string,selectedOrganizationId?:string)
   if(!name||name.length>255||!code||code.length>64)
    throw Error("Row "+(index+1)+": name and code are required within length limits.");
   if(row.length>(withHeader?header.length:5))throw Error("Row "+(index+1)+": too many columns.");
-  if(codes.has(code.toLowerCase()))throw Error("Duplicate college code in CSV: "+code);
-  codes.add(code.toLowerCase());
-  return {line:index+(withHeader?2:1),name,code,city:v(2)||null,state:v(3)||null,country:v(4)||null};
+  const line=index+(withHeader?2:1);
+  const previous=codes.get(code.toLowerCase());
+  if(previous!==undefined)throw Error("Row "+line+": duplicate college code "+code+" (first used on line "+previous+").");
+  codes.set(code.toLowerCase(),line);
+  // Each failed CSV field identifies the import row before any create is run.
+  // The caller's bulk service reports CREATED/SKIPPED/FAILED per valid row.
+  for(const [field,text] of [["city",v(2)],["state",v(3)],["country",v(4)]] as const){
+    if(text.length>128)throw Error("Row "+line+": "+field+" must be 128 characters or fewer.");
+  }
+  if(!/^[A-Za-z0-9][A-Za-z0-9_-]*$/.test(code))
+    throw Error("Row "+line+": college code must use letters, numbers, underscores or hyphens.");
+  return {line,name,code,city:v(2)||null,state:v(3)||null,country:v(4)||null};
  });
 }
