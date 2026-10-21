@@ -2,7 +2,12 @@ import {
   and,
   asc,
   eq,
+  gt,
   isNull,
+  lt,
+  ne,
+  or,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -10,6 +15,8 @@ import {
   courseOfferings,
   courseSectionDeliveries,
   courses,
+  lectureHalls,
+  sections,
   sectionScheduleEventCourses,
   sectionScheduleEvents,
   users,
@@ -51,11 +58,11 @@ function eventWindowInsidePeriod(
   }
 
   const periodStart = new Date(
-    `${period.startDate}T00:00:00.000Z`,
+    `${period.startDate}T00:00:00+05:30`,
   ).getTime();
   const periodEndExclusive =
     new Date(
-      `${period.endDate}T00:00:00.000Z`,
+      `${period.endDate}T00:00:00+05:30`,
     ).getTime() +
     24 * 60 * 60 * 1000;
 
@@ -67,6 +74,68 @@ function eventWindowInsidePeriod(
       "SCHEDULE_EVENT_OUTSIDE_PERIOD",
     );
   }
+}
+
+type ScheduleTx = Parameters<Parameters<ReturnType<typeof getDb>["transaction"]>[0]>[0];
+
+async function assertScheduleResources(tx: ScheduleTx, input: {
+  collegeId: string;
+  sectionId: string;
+  facultyMembershipId: string | null;
+  lectureHallId: string | null;
+  startsAt: Date;
+  endsAt: Date;
+  exceptEventId?: string;
+}) {
+  // Transaction-scoped college lock serializes schedule edits across sections
+  // and faculty. A hash collision may add waiting, never grant data access.
+  await tx.execute(sql`select pg_advisory_xact_lock(hashtext(${input.collegeId}))`);
+
+  if (input.lectureHallId) {
+    // Parent lock prevents a concurrent archive from racing this booking.
+    const [hall] = await tx.select({ capacity: lectureHalls.capacity })
+      .from(lectureHalls)
+      .where(and(eq(lectureHalls.id, input.lectureHallId),
+        eq(lectureHalls.collegeId, input.collegeId),
+        eq(lectureHalls.status, "ACTIVE")))
+      .for("update").limit(1);
+    if (!hall) throw new AcademicsServiceError("SCHEDULE_HALL_NOT_FOUND");
+    const [section] = await tx.select({ capacity: sections.capacity })
+      .from(sections).where(eq(sections.id, input.sectionId)).limit(1);
+    if (section?.capacity !== null && section?.capacity !== undefined &&
+        section.capacity > hall.capacity) {
+      throw new AcademicsServiceError("SCHEDULE_HALL_CAPACITY_CONFLICT");
+    }
+  }
+
+  const resources = [eq(sectionScheduleEvents.sectionId, input.sectionId)];
+  if (input.facultyMembershipId) {
+    resources.push(eq(sectionScheduleEvents.facultyMembershipId, input.facultyMembershipId));
+  }
+  if (input.lectureHallId) {
+    resources.push(eq(sectionScheduleEvents.lectureHallId, input.lectureHallId));
+  }
+  const [overlap] = await tx.select({
+    sectionId: sectionScheduleEvents.sectionId,
+    facultyMembershipId: sectionScheduleEvents.facultyMembershipId,
+    lectureHallId: sectionScheduleEvents.lectureHallId,
+  }).from(sectionScheduleEvents)
+    .where(and(
+      eq(sectionScheduleEvents.status, "SCHEDULED"),
+      lt(sectionScheduleEvents.startsAt, input.endsAt),
+      gt(sectionScheduleEvents.endsAt, input.startsAt),
+      or(...resources),
+      ...(input.exceptEventId
+        ? [ne(sectionScheduleEvents.id, input.exceptEventId)] : []),
+    )).limit(1);
+  if (!overlap) return;
+  if (overlap.sectionId === input.sectionId) {
+    throw new AcademicsServiceError("SCHEDULE_SECTION_CONFLICT");
+  }
+  if (input.facultyMembershipId && overlap.facultyMembershipId === input.facultyMembershipId) {
+    throw new AcademicsServiceError("SCHEDULE_FACULTY_CONFLICT");
+  }
+  throw new AcademicsServiceError("SCHEDULE_HALL_CONFLICT");
 }
 
 async function validateFacultyForSection(
@@ -188,6 +257,7 @@ export async function listSectionScheduleEvents(
       startsAt: sectionScheduleEvents.startsAt,
       endsAt: sectionScheduleEvents.endsAt,
       location: sectionScheduleEvents.location,
+      lectureHallId: sectionScheduleEvents.lectureHallId,
       status: sectionScheduleEvents.status,
       createdAt: sectionScheduleEvents.createdAt,
       updatedAt: sectionScheduleEvents.updatedAt,
@@ -248,6 +318,7 @@ export async function createSectionScheduleEvent(
     createSectionScheduleEventInputSchema.parse(
       rawInput,
     );
+  const lectureHallId = input.lectureHallId;
   const section = await loadSectionScope(
     input.sectionId,
   );
@@ -289,6 +360,13 @@ export async function createSectionScheduleEvent(
 
   const db = getDb();
   return db.transaction(async (tx) => {
+    await assertScheduleResources(tx, {
+      collegeId: section.collegeId,
+      sectionId: input.sectionId,
+      facultyMembershipId: input.facultyMembershipId ?? null,
+      lectureHallId: lectureHallId ?? null,
+      startsAt, endsAt,
+    });
     const [created] = await tx
       .insert(sectionScheduleEvents)
       .values({
@@ -300,6 +378,7 @@ export async function createSectionScheduleEvent(
         startsAt,
         endsAt,
         location: input.location ?? null,
+        lectureHallId: lectureHallId ?? null,
       })
       .returning();
 
@@ -327,6 +406,7 @@ export async function updateSectionScheduleEvent(
     updateSectionScheduleEventInputSchema.parse(
       rawInput,
     );
+  const requestedRoom = input.lectureHallId;
   const scope =
     await loadScheduleEventScope(eventId);
 
@@ -367,22 +447,35 @@ export async function updateSectionScheduleEvent(
       : Promise.resolve(),
   ]);
 
-  const startsAt = input.startsAt
-    ? new Date(input.startsAt)
-    : scope.startsAt;
-  const endsAt = input.endsAt
-    ? new Date(input.endsAt)
-    : scope.endsAt;
-
-  eventWindowInsidePeriod(
-    startsAt,
-    endsAt,
-    period,
-  );
-
   const db = getDb();
 
   return db.transaction(async (tx) => {
+    // Lock the event before deriving unchanged resource fields, preventing a
+    // concurrent edit from silently reverting faculty/time/room changes.
+    const [current] = await tx.select({
+      startsAt: sectionScheduleEvents.startsAt,
+      endsAt: sectionScheduleEvents.endsAt,
+      facultyMembershipId: sectionScheduleEvents.facultyMembershipId,
+      lectureHallId: sectionScheduleEvents.lectureHallId,
+      status: sectionScheduleEvents.status,
+    }).from(sectionScheduleEvents)
+      .where(eq(sectionScheduleEvents.id, eventId))
+      .for("update").limit(1);
+    if (!current || current.status !== "SCHEDULED") {
+      throw new AcademicsServiceError("SCHEDULE_EVENT_NOT_FOUND");
+    }
+    const startsAt = input.startsAt ? new Date(input.startsAt) : current.startsAt;
+    const endsAt = input.endsAt ? new Date(input.endsAt) : current.endsAt;
+    eventWindowInsidePeriod(startsAt, endsAt, period);
+    await assertScheduleResources(tx, {
+      collegeId: scope.collegeId,
+      sectionId: scope.sectionId,
+      facultyMembershipId: input.facultyMembershipId === undefined
+        ? current.facultyMembershipId : input.facultyMembershipId,
+      lectureHallId: requestedRoom === undefined
+        ? current.lectureHallId : requestedRoom,
+      startsAt, endsAt, exceptEventId: eventId,
+    });
     const [updated] = await tx
       .update(sectionScheduleEvents)
       .set({
@@ -407,6 +500,9 @@ export async function updateSectionScheduleEvent(
           : {}),
         ...(input.location !== undefined
           ? { location: input.location }
+          : {}),
+        ...(requestedRoom !== undefined
+          ? { lectureHallId: requestedRoom }
           : {}),
         updatedAt: new Date(),
       })
