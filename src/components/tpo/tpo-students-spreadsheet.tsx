@@ -185,14 +185,20 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
    {value:"SENT_BACK",label:"Sent back"},{value:"NOT_VERIFIED",label:"Not verified"},
   ]},
  ];
- return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" aria-keyshortcuts="Control+A Control+C Meta+A Meta+C" tabIndex={0}
+ return <div className="space-y-3" role="region" aria-label="Students spreadsheet keyboard actions" aria-keyshortcuts="Control+A Control+C Meta+A Meta+C Enter" tabIndex={0}
   onKeyDown={event=>{
    const target=event.target;
-   if(target instanceof HTMLElement&&target.closest("input,textarea,select,[contenteditable=true]"))return;
+   // Enter opens a single selected student's panel only when the sheet
+   // itself is focused; buttons and input controls retain native actions.
+   if(event.key==="Enter"&&target===event.currentTarget&&selectedScoped.length===1){
+    event.preventDefault();open(selectedScoped[0]??null);return;
+   }
+   if(target instanceof HTMLElement&&target.closest("input,textarea,select,button,a,[contenteditable=true]"))return;
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="a"){
     event.preventDefault();setNoteSelection([...(shared?.allIds??rows.map(row=>row.membershipId))]);
    }
    if((event.ctrlKey||event.metaKey)&&event.key.toLowerCase()==="c"){
+    if(window.getSelection()?.toString())return;
     event.preventDefault();const chosen=sortedRows.filter(row=>!noteSelection.length||noteSelection.includes(row.membershipId));
     setDownloadError("");
     setClipboardNotice("");
