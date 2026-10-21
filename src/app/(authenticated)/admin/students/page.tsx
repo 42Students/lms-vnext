@@ -67,6 +67,12 @@ export default async function SuperAdminStudentsPage({searchParams}:{
       Manage memberships, profiles and account status →
     </Link>
    </div>:undefined}/>
+  <section aria-label="Student support and retention policy" className="min-w-0 border-b border-border pb-3 text-sm text-body">
+   <h2 className="font-semibold text-foreground">Account access and support</h2>
+   <p className="mt-1">The legacy Impersonate action is retired. This membership-based workspace does not exchange Super Admin tokens for a learner session or replace active session credentials. Use the student row's audited profile, history and membership controls for support.</p>
+   <p className="mt-1">The legacy permanent Delete action is retired for learners with attendance, submissions, placement or audit records. Suspend or end college access instead; historical records remain available under their original identity.</p>
+   <Link href="/admin/people" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Open audited membership controls</Link>
+  </section>
   {filtersUnavailable?<Alert tone="warning">Academic filter choices could not be loaded. Student directory rows remain available; edit and class-move actions are temporarily disabled. <Link href="/admin/students" className="font-semibold underline">Retry academic filters</Link></Alert>:null}
   {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
   {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
