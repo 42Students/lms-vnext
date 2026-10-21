@@ -58,7 +58,7 @@ export default async function CollegeLectureHallsPage({
           title="Invalid lecture hall filters"
           description="The room search, status, type, department or page is invalid. No records were loaded."
           action={
-            <Link href="/college/lecture-halls" className="font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+            <Link href="/college/lecture-halls" className="font-semibold text-link lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Clear filters
             </Link>
           }
@@ -97,7 +97,7 @@ export default async function CollegeLectureHallsPage({
         description={"Manage registered teaching rooms at " + result.collegeName +
           ". Find rooms by name, room type, department or archive status."}
         actions={<Link prefetch={false} download href={lectureHallsCsvHref(query)}
-          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Export CSV</Link>}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</Link>}
       />
 
       <section aria-label="Lecture hall filters" className="min-w-0 border-t border-border pt-3">
@@ -136,7 +136,7 @@ export default async function CollegeLectureHallsPage({
             </Select>
           </label>
           <details className="min-w-0 border-t border-border pt-2 md:col-span-2 min-[992px]:col-span-4" open={Boolean(query.minimumCapacity||query.maximumCapacity||query.upcoming!=="ALL")||undefined}>
-            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Filters</summary>
+            <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
             <div className="grid min-w-0 grid-cols-1 gap-3 pt-3 md:grid-cols-2 min-[992px]:grid-cols-3">
           <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
             Minimum seats
@@ -167,7 +167,7 @@ export default async function CollegeLectureHallsPage({
               Filter
             </Button>
             <Link href="/college/lecture-halls"
-              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link md:min-h-9 md:w-auto hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
               Clear
             </Link>
           </div>

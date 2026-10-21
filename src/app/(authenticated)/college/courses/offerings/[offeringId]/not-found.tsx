@@ -6,6 +6,6 @@ export default function CollegeOfferingNotFound(){
   <ErrorState title="Course not found"
    description="This course doesn't exist, was removed, or isn't available to your college."
    action={<Link href="/college/courses"
-    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto">Back to Courses</Link>}/>
+    className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to Courses</Link>}/>
  </div>;
 }

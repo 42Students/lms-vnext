@@ -62,7 +62,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       <PageHeader title={COLLEGE_LEGACY_PAGE_TITLES.peopleDirectory} />
       <ErrorState title="Invalid directory filters"
         description="Check the search, role, status or page. No people were loaded."
-        action={<Link href="/college/people/manage" className="font-semibold text-link min-h-11 inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>} />
+        action={<Link href="/college/people/manage" className="font-semibold text-link min-h-11 inline-flex items-center lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
     </div>;
   }
   const people = await listCollegePeopleWithRuntime(context, {
@@ -79,10 +79,10 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
       description="Manage college memberships, roles and lifecycle. For the read-only legacy contact tabs, open Contacts."
       actions={<PersonOnboardDialog collegeId={membership.collegeId} />} />
     <details className="min-w-0 border-b border-border pb-3">
-      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">Other people actions</summary>
+      <summary className="min-h-11 cursor-pointer py-2 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Other people actions</summary>
       <nav aria-label="People directory tools" className="flex min-w-0 flex-wrap items-center gap-3 pt-2">
         <Link href="/college/groups"
-        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Export filtered CSV</Link>
+        className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Student groups</Link><Link href="/college/contacts" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Browse contacts</Link><Link href={collegePeopleExportHref(filter)} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Export filtered CSV</Link>
       </nav>
     </details>
     <section className="min-w-0" aria-label="People filters">
@@ -112,7 +112,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
           </Select>
         </label>
         <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply</Button>
-        <Link href="/college/people/manage" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>
+        <Link href="/college/people/manage" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </form>
     </section>
     <section className="space-y-2" aria-label="Filtered people">
@@ -124,7 +124,7 @@ export default async function CollegePeoplePage({ searchParams }: { searchParams
             ? "No memberships match the selected People filters."
             : "No memberships are recorded in this college yet."}
           action={collegePeopleHasFilters(filter)?<Link href="/college/people/manage"
-            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear People filters</Link>:undefined}/>} />
+            className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear People filters</Link>:undefined}/>} />
     </section>
     <nav aria-label="People directory pages" className="flex min-w-0 flex-col items-stretch gap-3 text-sm md:flex-row md:items-center md:justify-between">
       <span className="text-muted-foreground">
