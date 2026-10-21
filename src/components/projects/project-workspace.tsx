@@ -23,6 +23,7 @@ import {groupLearnerBoardLanes} from "@/modules/projects/learner-board-lanes-mod
 import {learnerSprintRollup,learnerSprintProgress} from "@/modules/projects/learner-sprint-progress-model";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { MetricBar } from "@/components/ui/metric-bar";
+import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { effectiveProjectSubmissionReady } from "@/modules/projects/readiness-override-model";
 import { projectResourceAuditAction } from "@/modules/projects/project-resource-audit-model";
 import { MentorSprintDetailsEdit } from "./mentor-sprint-details-edit";
@@ -1797,6 +1798,17 @@ export function ProjectWorkspace({
               action: projectResourceAuditAction(event.eventType),
             })).filter(row => row.action !== null);
             const countAction = (value: string) => resourceEvents.filter(row => row.action === value).length;
+            type ResourceRow = (typeof resourceEvents)[number];
+            const columns: DataTableColumn<ResourceRow>[] = [
+              { key: "resource", header: "Resource", mobilePriority: "primary",
+                cell: row => row.event.summary },
+              { key: "action", header: "Action", mobilePriority: "secondary",
+                cell: row => <StatusBadge tone="neutral">{row.action}</StatusBadge> },
+              { key: "actor", header: "Actor", mobilePriority: "secondary",
+                cell: row => row.event.actorDisplayName || "System" },
+              { key: "when", header: "When", mobilePriority: "secondary",
+                cell: row => formatDateTime(new Date(row.event.occurredAt)) },
+            ];
             return <section aria-label="Resource activity" className="space-y-3 border-b border-[var(--lms-canvas-border)] pb-5">
               <div>
                 <h3 className="text-base font-semibold text-foreground">Resource activity</h3>
@@ -1813,25 +1825,10 @@ export function ProjectWorkspace({
                     <dd className="mt-1 text-lg font-semibold tabular-nums">{count}</dd>
                   </div>)}
               </dl>
-              {resourceEvents.length === 0 ? <EmptyState title="No resource activity yet"
-                description="Resource changes will appear here." /> :
-                <div className="min-w-0 overflow-x-auto border border-[var(--lms-canvas-border)]">
-                  <table className="w-full min-w-[540px] text-left text-sm">
-                    <thead className="border-b border-[var(--lms-canvas-border)] bg-surface-subtle">
-                      <tr><th scope="col" className="px-3 py-2">Resource</th>
-                        <th scope="col" className="px-3 py-2">Action</th>
-                        <th scope="col" className="px-3 py-2">Actor</th>
-                        <th scope="col" className="px-3 py-2">When</th></tr>
-                    </thead>
-                    <tbody>{resourceEvents.map(({event,action}) => <tr key={event.id}
-                      className="border-b border-[var(--lms-canvas-border)] last:border-b-0">
-                      <td className="px-3 py-2">{event.summary}</td>
-                      <td className="px-3 py-2"><StatusBadge tone="neutral">{action}</StatusBadge></td>
-                      <td className="px-3 py-2">{event.actorDisplayName || "System"}</td>
-                      <td className="px-3 py-2">{formatDateTime(new Date(event.occurredAt))}</td>
-                    </tr>)}</tbody>
-                  </table>
-                </div>}
+              <DataTable columns={columns} rows={resourceEvents}
+                getRowKey={row => row.event.id} caption="Resource activity"
+                empty={<EmptyState title="No resource activity yet"
+                  description="Resource changes will appear here." />} />
             </section>;
           })() : null}
           <ProjectActivityFilteredList projectId={workspace.project.id} events={workspace.activity} now={new Date().toISOString()} />
