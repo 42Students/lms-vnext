@@ -120,7 +120,7 @@ export function FacultyCourseRoster({
   }
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <div className="grid grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] md:grid-cols-3">
         {[
           ["Students", learners.length],
