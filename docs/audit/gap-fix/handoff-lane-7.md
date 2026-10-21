@@ -901,3 +901,14 @@ Do not expose private eligibility/targeting in anonymous DTOs or assume legacy n
 - G2-2-004-011 | `src/modules/storage/file-errors.ts + operator readiness diagnostics` | Map typed error to safe setup message and ops diagnostic.
 
 R2 must fail closed for missing credentials and unsafe bucket reuse. Unrelated routes should stay functional; localized 503 and safe setup messaging need Storage owner. **3/3 handed off, not fixed.**
+
+## Lesson content delivery/class sequence (2026-10-21)
+
+- G2-17-018-006 | `src/db/schema/lesson-content-class-sequence.ts + drizzle/ + src/modules/courses/faculty-content-order-service.ts` | Register DB05 delivery order migration and remove disabled state after acceptance.
+- G2-17-018-014 | `src/db/schema/lesson-content-class-sequence.ts + drizzle/ + src/modules/courses/faculty-content-order-service.ts` | Ship registered migration or show clear disabled copy with ops recovery.
+
+Do not unconditionally enable reorder or fabricate successful migration before real DB service readiness. **2/2 handed off, not fixed.**
+
+## Outbound mail delivery reconciliation (2026-10-21)
+
+- G2-13-011-021 / G2-14-012-050 | `src/modules/messaging/service.ts + src/modules/messaging/providers.ts + src/modules/notifications/zeptomail-email.ts` | Register provider-supported idempotency/reconciliation key and durable uncertainty status in outbound queue before any retry of an unsafe POST; use new safe `outbound.retry_deferred` diagnostic for operations, never resend blindly.
