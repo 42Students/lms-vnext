@@ -1,7 +1,7 @@
 import "server-only";
 
 import { createHash, createHmac } from "node:crypto";
-import {resolveMx} from "node:dns/promises";
+import {companyDomainAcceptsMail} from "../company-mail-domain-resolver";
 import { and, count, eq, gte, gt, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -72,23 +72,22 @@ export async function requestPublicJoinCode(
   if(!availableLink || (scope==="COMPANY" &&
       !companyJoinEmailCandidate(email,availableLink.domain??"")))
     throw new PublicJoinCodeError("INVALID_LINK");
-  // Delivery must be possible at the domain before recording a challenge.
-  const host=email.split("@")[1];
-  let records:{exchange:string;priority:number}[];
-  try{
-   records=await Promise.race([
-    resolveMx(host),
-    new Promise<never>((_,reject)=>setTimeout(()=>reject(new Error("DNS_TIMEOUT")),3500)),
-   ]);
-  }catch(error){
-   if(error instanceof Error&&("code" in error)&&error.code==="ENODATA")
+  // The token is checked before DNS to avoid an anonymous domain oracle.
+  // Legacy company-domain checks query the registrable company domain and
+  // accept MX or A/AAAA fallback. A confirmed absence is NO_MAIL, whereas a
+  // transient DNS failure is UNKNOWN and is not proof the address is invalid.
+  // UNKNOWN may proceed ONLY to a bounded OTP send; ownership still requires
+  // a delivered code, and the durable IP/link/email rate limits remain active.
+  const emailHost = email.split("@")[1]!;
+  const domain = scope === "COMPANY"
+    ? (registrableWorkDomain(email) ?? emailHost)
+    : emailHost;
+  const dns = await companyDomainAcceptsMail(domain, true);
+  if (dns.rejected) {
+    // No challenge is written and no delivery is attempted for definite
+    // NO_MAIL; the route maps this typed error to actionable user copy.
     throw new PublicJoinCodeError("EMAIL_NO_MX");
-   if(error instanceof Error&&("code" in error)&&error.code==="ENOTFOUND")
-    throw new PublicJoinCodeError("EMAIL_NO_MX");
-   throw new PublicJoinCodeError("EMAIL_MX_UNAVAILABLE");
   }
-  if(records.length===0||!records.some(x=>x.exchange.trim()))
-   throw new PublicJoinCodeError("EMAIL_NO_MX");
   const code = newPublicJoinCode();
   const issued = await getDb().transaction(async tx => {
     const now = new Date();
