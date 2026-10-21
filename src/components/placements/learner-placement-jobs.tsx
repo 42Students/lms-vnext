@@ -542,7 +542,7 @@ export function LearnerPlacementJobs({
                 <h2 className="mt-1 break-words text-xl font-semibold text-foreground">
                   <Link
                     href={learnerJobDetailFromDrivesHref(item.job.id,returnQuery) ?? "/learn/my-placements/jobs"}
-                    className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)]"
+                    className="underline-offset-2 hover:text-primary-text hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[var(--lms-focus-ring)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"
                     aria-label={`View ${item.roleOption.title} drive details at ${item.company.name}`}
                   >
                     {item.roleOption.title}
