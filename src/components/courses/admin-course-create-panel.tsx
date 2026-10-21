@@ -267,10 +267,10 @@ export function AdminCourseCreatePanel({
   return (
     <section aria-label="Course setup workflow" className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-4)]">
       <nav aria-label="Course setup steps" className="flex min-w-0 flex-nowrap gap-[var(--lms-space-3)] overflow-x-auto whitespace-nowrap border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)] text-sm">
-       <a href="#setup-course" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">1. Create Course</a>
-       <a href="#setup-offering" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">2. Course Offering</a>
-       <a href="#setup-delivery" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">3. Section Delivery</a>
-       <a href="#setup-faculty" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">4. Assign Course Faculty</a>
+       <a href="#setup-course" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">1. Create Course</a>
+       <a href="#setup-offering" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">2. Course Offering</a>
+       <a href="#setup-delivery" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">3. Section Delivery</a>
+       <a href="#setup-faculty" className="inline-flex shrink-0 min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">4. Assign Course Faculty</a>
       </nav>
       <p role="status" className="border-l-2 border-primary bg-primary-subtle px-4 py-3 text-sm text-body">
        {nextSetupStep==="COURSE"?"Start by creating or choosing a Course.":
@@ -283,11 +283,11 @@ export function AdminCourseCreatePanel({
         <h2 className="m-0 text-base font-semibold text-foreground">{COLLEGE_COURSES_COPY.createTitle}</h2>
         {departments.length===0?<p role="status" className="mt-3 text-sm text-body">
           No departments in this college yet. Create a department before adding a course.{" "}
-          <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
+          <Link className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={courseBasePath.startsWith("/admin/")?"/admin/departments":"/college/departments"}>Go to Departments</Link>
         </p>:null}
         {copy?<div className="mt-3 flex flex-wrap items-center gap-3 rounded-[var(--lms-control-radius)] border border-border bg-surface-subtle p-3">
           <strong>Duplicating “{copy.name}”</strong>
-          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" onClick={()=>router.replace(courseBasePath)}>Cancel copy</Button>
+          <Button variant="ghost" type="button" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" onClick={()=>router.replace(courseBasePath)}>Cancel copy</Button>
           <p className="w-full text-xs text-muted-foreground">Only catalog name, code, description and department are copied. Existing course content, offerings and assignments are not copied.</p>
         </div>:null}
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
