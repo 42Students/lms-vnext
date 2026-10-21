@@ -186,6 +186,7 @@ export async function listPrograms(
   const rows = await db
     .select({
       id: programs.id,
+      legacyProgramId: programs.legacyProgramId,
       departmentId: programs.departmentId,
       departmentName: departments.name,
       name: programs.name,
