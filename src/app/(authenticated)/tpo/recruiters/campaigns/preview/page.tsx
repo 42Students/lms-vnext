@@ -33,6 +33,6 @@ export default async function PreviewCampaign({searchParams}:PageProps){
       ["Outside selected segment",preview.outsideSegment]] as const).map(([label,value])=>
      <StatTile key={label} label={label} value={value} className={tpoTileStyles.tile} />)}
   </section>
-  <p className="text-sm text-body">Potential does not mean deliverable: provider availability, daily caps, global email suppression and non-production allowlists require checks again at dispatch. Sending is not enabled here.</p>
+  <p className="text-sm text-body leading-[22px]">Potential does not mean deliverable: provider availability, daily caps, global email suppression and non-production allowlists require checks again at dispatch. Sending is not enabled here.</p>
  </div>;
 }

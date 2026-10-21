@@ -67,18 +67,18 @@ export function ApplicantNotesPanel({
 
   return (
     <section aria-labelledby="applicant-notes-title" className="space-y-3 border-b border-border pb-6">
-      <h2 id="applicant-notes-title" className="font-semibold text-foreground">
+      <h2 id="applicant-notes-title" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
         Private notes
       </h2>
-      <p className="text-xs text-body">Visible only to {audience}. Notes cannot be edited or deleted; add a new note to correct one.</p>
+      <p className="text-xs text-body leading-[20px]">Visible only to {audience}. Notes cannot be edited or deleted; add a new note to correct one.</p>
       {snapshot.notes.length === 0 ? (
-        <p className="text-sm text-body">No notes yet.</p>
+        <p className="text-sm text-body leading-[22px]">No notes yet.</p>
       ) : (
         <ul className="divide-y divide-border border-y border-border">
           {snapshot.notes.map((note) => (
             <li key={note.id} className="min-w-0 py-4">
-              <p className="whitespace-pre-wrap break-words text-sm text-foreground">{note.body}</p>
-              <p className="mt-2 text-xs text-body">
+              <p className="whitespace-pre-wrap break-words text-sm text-foreground leading-[22px]">{note.body}</p>
+              <p className="mt-2 text-xs text-body leading-[20px]">
                 {note.mine ? "You" : note.authorName} · {formatIst(note.createdAt)} IST
               </p>
             </li>
@@ -86,7 +86,7 @@ export function ApplicantNotesPanel({
         </ul>
       )}
       {snapshot.truncated ? (
-        <p role="status" className="text-xs text-body">
+        <p role="status" className="text-xs text-body leading-[20px]">
           Showing the newest {snapshot.notes.length} of {snapshot.total} notes.
         </p>
       ) : null}
