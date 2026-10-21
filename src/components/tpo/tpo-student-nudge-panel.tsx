@@ -9,6 +9,7 @@ import {Dialog} from "@/components/ui/dialog";
 import {Button} from "@/components/ui/button";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import { useState } from "react";
+import {useTpoStudentsSelection} from "@/components/tpo/tpo-students-selection";
 import {
  tpoStudentNudgeTemplates,tpoStudentNudgeLabels,
  tpoStudentNudgeInputSchema,type TpoStudentNudgeTemplate,
@@ -16,7 +17,10 @@ import {
 
 type Row={id:string;label:string;registered:boolean|null};
 export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
- const [selected,setSelected]=useState<string[]>([]);
+ const [localSelected,setLocalSelected]=useState<string[]>([]);
+ const shared=useTpoStudentsSelection();
+ const selected=shared?.selected??localSelected;
+ const setSelected=shared?.setSelected??setLocalSelected;
  const [template,setTemplate]=useState<TpoStudentNudgeTemplate>("REGISTRATION");
  const [message,setMessage]=useState<string>(tpoStudentNudgeTemplates.REGISTRATION);
  const [pending,setPending]=useState(false);
@@ -74,7 +78,7 @@ export function TpoStudentNudgePanel({rows}:{rows:readonly Row[]}){
    </Select>
   </label>
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Message
-   <Textarea className="w-full min-w-0" rows={3} minLength={5} maxLength={1000} required
+   <Textarea className="w-full min-w-0" rows={4} minLength={5} maxLength={1000} required
     
     disabled={pending||guardedPending} value={message} onChange={e=>{setMessage(e.target.value);setNotice("");}}/>
   </label>

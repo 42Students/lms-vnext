@@ -3,7 +3,7 @@ import {TPO_STUDENT_LEGACY_FILTER_ALIASES} from "./tpo-students-filter-aliases";
 /** Never choose the first of repeated query values on an authorized student roster. */
 export function tpoStudentUrlError(raw:Record<string,string|string[]|undefined>):string|null {
   if(Object.values(raw).some(value=>Array.isArray(value))) return "Repeated Students filters are not allowed. No student data was loaded.";
-  const supported = new Set(["journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","q","page","pageSize","columns","student",
+  const supported = new Set(["everyone","journeyState","branchId","programId","classId","afterCollege","profileStatus","minApplications","maxApplications","minOffers","maxOffers","offerWaiting","minCgpa","maxCgpa","maxActiveBacklogs","maxPastBacklogs","cgpaRecorded","batchId","search","q","page","pageSize","columns","student",
     "legacyStage","minRoundReached","needsAttention","interviewedWith","debarred","gender","birthYear","minSkills","minProjects","minCertifications","minExperiences","hasProfileLinks",
     "minTenthPct","minTwelfthPct","minDiplomaPct","minUgPct","passingYear","maxGapYears","marksVerified","isLateralEntry","hasResume","hasCodingProfiles","skillName"]);
   const aliasesForTargets=new Set<string>();
