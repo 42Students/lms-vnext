@@ -37,7 +37,7 @@ export default async function SuperAdminDriveSchedulePage({params,searchParams}:
     <ErrorState title="Invalid interview filters"
       description="Round kind, status or page is invalid. No records were loaded."
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/schedule"}
-        className="font-semibold text-primary-text underline">Clear filters</Link>}/>
+        className="font-semibold text-primary-text underline w-full md:w-auto min-h-11 md:min-h-9">Clear filters</Link>}/>
   </div>;
   const [data,appointments]=await Promise.all([
     listCollegeDriveInterviews(context,jobId,query),

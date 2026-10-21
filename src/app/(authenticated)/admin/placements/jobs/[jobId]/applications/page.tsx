@@ -37,7 +37,7 @@ export default async function SuperAdminDriveApplicationsPage({ params, searchPa
     <ErrorState title="Invalid applicant filters"
       description="The requested search, status, screening or page is invalid."
       action={<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/applications"}
-        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+        className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 hover:text-primary-hover md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
   const [data,filters] = await Promise.all([
     getCollegeApplicationPipeline(context,jobId,query),

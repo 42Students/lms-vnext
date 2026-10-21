@@ -39,7 +39,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
     <PageHeader title="College availability" />
     <ErrorState title="Invalid college filters" description="Review the search, status and page."
       action={<Link href={templateCollegeAvailabilityHref(id.data,{})}
-        className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">Clear filters</Link>} />
+        className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4 w-full md:w-auto min-h-11 md:min-h-9">Clear filters</Link>} />
   </div>;
   let data;
   try { data = await listSuperAdminTemplateCollegeAvailability(context, id.data, parsed.data); }
@@ -51,7 +51,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
       <PageHeader title="College availability" />
       <ErrorState title="College availability unavailable"
         description="Template assignments could not be loaded. No availability is shown until the read succeeds."
-        action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading colleges</Link>} />
+        action={<Link href={templateCollegeAvailabilityHref(id.data,parsed.data)} className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading colleges</Link>} />
     </div>;
   }
   const statuses = ["ALL", "ASSIGNED", "UNASSIGNED"] as const;
@@ -97,7 +97,7 @@ export default async function TemplateCollegeAvailabilityPage({ params, searchPa
               assignedToSelectedCollege={Boolean(row.assignment)} allowGlobalActions={false}/>:null},
       ]}
       empty={<EmptyState title="No matching colleges" description="No active colleges match the filters in the current safety scope."
-        action={<Link href={templateCollegeAvailabilityHref(id.data,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear filters</Link>}/>}
+        action={<Link href={templateCollegeAvailabilityHref(id.data,{})} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>}
     />
     <Pagination page={data.query.page} pageCount={data.totalPages} hrefForPage={page=>templateCollegeAvailabilityHref(id.data,{...data.query,page})} label="College availability pages" />
   </div>;
