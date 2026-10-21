@@ -1,4 +1,6 @@
 import { outboundFetch } from "@/lib/outbound";
+import { sql } from "drizzle-orm";
+import { getDb } from "@/db/client";
 import { writeStructuredLog } from "@/observability/logger";
 import type { SmsProvider } from "./types";
 import { isExotelAcceptedResponse } from "@/modules/messaging/provider-acceptance-model";
@@ -38,6 +40,44 @@ export function readExotelConfig(
   };
 }
 
+/** Normalize old Indian 10-digit / 91-prefixed numbers, preserving E.164. */
+export function normalizeSmsPhoneForIndia(input: string): string | null {
+  const compact = input.replace(/[\s()-]/g, "");
+  if (/^[6-9][0-9]{9}$/.test(compact)) return "+91" + compact;
+  if (/^91[6-9][0-9]{9}$/.test(compact)) return "+" + compact;
+  return /^\+[1-9][0-9]{7,14}$/.test(compact) ? compact : null;
+}
+
+/** DB-031 append-only attempt (ready only after database lane registers migration).
+ * No full phone, SMS body, OTP or secret is persisted. Ledger failures cannot
+ * change provider acceptance or trigger an ambiguous retry. */
+async function bestEffortOtpAttempt(
+  phone: string, outcome: "PROVIDER_ACCEPTED" | "FAILED",
+  providerSid: string | null, failureCode: string | null,
+): Promise<void> {
+  const suffix = phone.replace(/[^0-9]/g, "").slice(-4) || null;
+  try {
+    const db = getDb();
+    const readyResult = await db.execute(sql`select to_regclass('public.sms_delivery_attempts') is not null as ready`);
+    const rows = Array.isArray(readyResult)
+      ? readyResult : ((readyResult as { rows?: unknown[] }).rows ?? []);
+    if ((rows[0] as { ready?: boolean } | undefined)?.ready !== true) {
+      writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_unavailable",
+        { purpose: "otp", reason: "DB31_NOT_REGISTERED" });
+      return;
+    }
+    await db.execute(sql`
+      insert into sms_delivery_attempts
+        (purpose, provider, recipient_suffix, outcome, provider_message_id,
+         safe_failure_code, provider_accepted_at)
+      values ('otp', 'EXOTEL', ${suffix}, ${outcome}, ${providerSid},
+        ${failureCode}, ${outcome === "PROVIDER_ACCEPTED" ? new Date() : null})
+    `);
+  } catch {
+    writeStructuredLog("WARNING", "sms.delivery_attempt_ledger_write_failed",
+      { purpose: "otp", reason: "ATTEMPT_AUDIT_UNAVAILABLE" });
+  }
+}
 function configured(config: ExotelConfig) {
   return Boolean(
     config.apiKey.trim() &&
@@ -55,27 +95,31 @@ export function createExotelSmsProvider(
 ): SmsProvider {
   return {
     async sendOtp(phoneE164, code) {
+      const canonicalPhone = normalizeSmsPhoneForIndia(phoneE164);
       if (!/^[0-9]{4,8}$/.test(code)) {
         writeStructuredLog("WARNING", "sms.otp_rejected", {
           reason: "invalid_code_format",
         });
+        await bestEffortOtpAttempt(canonicalPhone ?? "", "FAILED", null, "INVALID_OTP_FORMAT");
         return false;
       }
 
       if (
         !configured(config) ||
         !/^[A-Za-z0-9_-]+$/.test(config.accountSid) ||
-        !/^\+[1-9][0-9]{7,14}$/.test(phoneE164)
+        !canonicalPhone
       ) {
         writeStructuredLog("WARNING", "sms.otp_not_sent", {
           reason: "configuration_or_recipient_invalid",
         });
+        await bestEffortOtpAttempt(canonicalPhone ?? "", "FAILED", null,
+          canonicalPhone ? "OTP_PROVIDER_NOT_CONFIGURED" : "RECIPIENT_INVALID");
         return false;
       }
 
       const form = new URLSearchParams({
         From: config.otpSenderId,
-        To: phoneE164,
+        To: canonicalPhone!,
         Body: `${code}${OTP_SUFFIX}`,
         DltEntityId: config.dltEntityId,
         DltTemplateId: config.otpDltTemplateId,
@@ -107,6 +151,7 @@ export function createExotelSmsProvider(
           writeStructuredLog("WARNING", "sms.otp_not_accepted", {
             httpStatus: response.status,
           });
+          await bestEffortOtpAttempt(canonicalPhone!, "FAILED", null, "PROVIDER_HTTP_REJECTED");
           return false;
         }
 
@@ -119,14 +164,17 @@ export function createExotelSmsProvider(
           writeStructuredLog("WARNING", "sms.otp_not_accepted", {
             providerStatus: status.slice(0, 32),
           });
+          await bestEffortOtpAttempt(canonicalPhone!, "FAILED", null, "PROVIDER_NOT_ACCEPTED");
           return false;
         }
 
         // Provider acceptance is not proof of handset delivery.
         writeStructuredLog("INFO", "sms.otp_accepted", {
           providerStatus: status,
-          recipientSuffix: phoneE164.slice(-4),
+          recipientSuffix: canonicalPhone!.slice(-4),
         });
+        await bestEffortOtpAttempt(canonicalPhone!, "PROVIDER_ACCEPTED",
+          body.SMSMessage?.Sid ?? null, null);
         return true;
       } catch (error) {
         // Never log the URL, credentials, phone, code or response body.
@@ -134,6 +182,7 @@ export function createExotelSmsProvider(
           errorType:
             error instanceof Error ? error.name : "UnknownError",
         });
+        await bestEffortOtpAttempt(canonicalPhone ?? "", "FAILED", null, "PROVIDER_UNAVAILABLE");
         return false;
       }
     },

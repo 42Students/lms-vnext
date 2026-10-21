@@ -1,4 +1,5 @@
 import { outboundFetch } from "@/lib/outbound";
+import { writeStructuredLog } from "@/observability/logger";
 import { readExotelConfig, type ExotelConfig } from "@/modules/notifications/exotel-sms";
 import {
   readZeptoMailConfig, sendZeptoMailTemplate,
@@ -68,7 +69,7 @@ export function createOutboundProvider(
   fetchImpl: typeof fetch = fetch,
   env: Record<string, string | undefined> = process.env,
 ): OutboundProviderWithOutcomes {
-  async function sendDetailed(rawRequest: OutboundSendRequest): Promise<OutboundProviderOutcome> {
+  async function sendDetailedOnce(rawRequest: OutboundSendRequest): Promise<OutboundProviderOutcome> {
     const parsed = outboundSendSchema.safeParse(rawRequest);
     if (!parsed.success) return { status: "SUPPRESSED", reason: "INVALID_OUTBOUND_REQUEST" };
     const request = {
@@ -127,7 +128,8 @@ export function createOutboundProvider(
       !config.sms.dltEntityId.trim() || !template.exotelSenderId?.trim() ||
       !template.exotelDltTemplateId?.trim() || !template.renderSms ||
       template.exotelDltTemplateId === config.sms.otpDltTemplateId) {
-      return { status: "NOT_CONFIGURED", reason: "SMS_TEMPLATE_NOT_PROVISIONED" };
+      return { status: "NOT_CONFIGURED", reason: request.templateKey === "job.update"
+        ? "JOB_DLT_TEMPLATE_ID_NOT_CONFIGURED" : "SMS_TEMPLATE_NOT_PROVISIONED" };
     }
     try {
       const body = template.renderSms(request.variables);
@@ -159,6 +161,19 @@ export function createOutboundProvider(
     } catch {
       return { status: "FAILED", reason: "SMS_PROVIDER_UNAVAILABLE" };
     }
+  }
+  async function sendDetailed(rawRequest: OutboundSendRequest): Promise<OutboundProviderOutcome> {
+    const outcome = await sendDetailedOnce(rawRequest);
+    if (outcome.status !== "ACCEPTED") {
+      writeStructuredLog("WARNING", "messaging.provider_not_accepted", {
+        channel: rawRequest.channel === "EMAIL" ? "EMAIL" : "SMS",
+        outcome: outcome.status,
+        reason: outcome.reason,
+        ...(outcome.status === "FAILED" && outcome.httpStatus
+          ? { httpStatus: outcome.httpStatus } : {}),
+      });
+    }
+    return outcome;
   }
   return {
     sendDetailed,
