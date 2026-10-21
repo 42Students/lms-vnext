@@ -20,18 +20,26 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
   if([...searchParams.keys()].some(key=>searchParams.getAll(key).length!==1))
     return Response.json({error:"INVALID_FILTERS"},{status:400});
   const query=Object.fromEntries(searchParams);
+  const pageOnly=kind==="ASSIGNMENT"&&query.exportMode==="PAGE";
+  if(query.exportMode!==undefined&&!pageOnly)
+    return Response.json({error:"INVALID_FILTERS"},{status:400});
+  if(pageOnly)delete query.exportMode;
   const assessment=kind==="ASSIGNMENT"||kind==="QUIZ";
   const params=(assessment?adminAssessmentQuerySchema:adminLearningQuerySchema).safeParse(query);
   if(!params.success ||
      (kind==="ASSIGNMENT"&&(query.status==="CLOSED"||
        (query.results!==undefined&&query.results!=="ALL"))))
     return Response.json({error:"INVALID_FILTERS"},{status:400});
-  const headers:string[]=kind==="LESSONS"?["id","lessonName","sequence","status","courseName","courseCode","cohort","semester","contentCount","publishedContentCount"]:
+  const headers:string[]=pageOnly?
+    ["Title","Course","Scope","Points","Deadline","Submitted","Total students","Graded"]:
+    kind==="LESSONS"?["id","lessonName","sequence","status","courseName","courseCode","cohort","semester","contentCount","publishedContentCount"]:
    kind==="PROGRESS"?["offeringId","courseName","courseCode","cohort","semester","status","recordedRows","completedRows","learnersWithRecords"]:
    ["id","title","courseName","courseCode","lessonName","status","dueAt","points","activityCount","eligibleLearners","submittedLearners","gradedLearners","resultsPublished"];
   const rows:(string|number|null)[][]=[];
   let total=0;
-  for(let page=1;page<=20;page++){
+  let collegeId:string|null=null;
+  const pages=pageOnly?[params.data.page]:Array.from({length:20},(_,index)=>index+1);
+  for(const page of pages){
    if(kind==="LESSONS"){
     const data=await listCollegeLessons(context,{...params.data,page,pageSize:100});
     total=data.total;
@@ -45,16 +53,36 @@ export async function exportSuperAdminLearningDirectory(request:Request,kind:Kin
    }else{
     const data=await listCollegeAssessmentAggregate(context,kind,{...params.data,page});
     total=data.total;
-    rows.push(...data.items.map(item=>[item.id,item.title,item.courseName,item.courseCode,item.lessonName,item.status,item.dueAt?.toISOString()??null,item.points,item.activityCount,item.eligibleLearners,item.submittedLearners,item.gradedLearners,String(item.resultsPublished??"")]));
+    collegeId=data.collegeId;
+    if(pageOnly){
+      const localDate=(date:Date|null)=>date?new Intl.DateTimeFormat("sv-SE",{
+        timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",
+        hour:"2-digit",minute:"2-digit",hourCycle:"h23",
+      }).format(date):"";
+      rows.push(...data.items.map(item=>[
+        item.title||"Untitled",item.courseName||item.courseCode,
+        item.deliverySpecific?"Section-specific":"All eligible sections",
+        item.points,localDate(item.dueAt),item.submittedLearners,
+        item.eligibleLearners,item.gradedLearners,
+      ]));
+    }else rows.push(...data.items.map(item=>[
+      item.id,item.title,item.courseName,item.courseCode,item.lessonName,item.status,
+      item.dueAt?.toISOString()??null,item.points,item.activityCount,
+      item.eligibleLearners,item.submittedLearners,item.gradedLearners,
+      String(item.resultsPublished??""),
+    ]));
     if(page>=data.totalPages)break;
    }
   }
-  const max=kind==="LESSONS"||kind==="PROGRESS"?2000:500;
+  const max=pageOnly?25:kind==="LESSONS"||kind==="PROGRESS"?2000:500;
   const items=rows.slice(0,max);
   if(total>max)items.push(["TRUNCATED: first "+max+" records","Narrow filters to export remaining records."]);
+  const filename=pageOnly?
+    "assignments-college-"+collegeId+"-page-"+params.data.page+".csv":
+    kind.toLowerCase().replace("progress","course-progress")+".csv";
   return new Response("\uFEFF"+placementReportCsv(headers,items),{headers:{
    "Content-Type":"text/csv; charset=utf-8",
-   "Content-Disposition":'attachment; filename="'+kind.toLowerCase().replace("progress","course-progress")+'.csv"',
+   "Content-Disposition":'attachment; filename="'+filename+'"',
    "Cache-Control":"private, no-store",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":String(total>max),
