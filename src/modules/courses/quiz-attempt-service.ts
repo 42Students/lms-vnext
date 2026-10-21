@@ -4,10 +4,12 @@ import {
   eq,
   inArray,
   sql,
+  desc,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   courseQuizzes,
+  courseLessons,courseLearningPaths,
   quizAttemptAnswers,
   quizAttempts,
   quizOptions,
@@ -28,6 +30,7 @@ import {
   postgresConstraintName,
 } from "./errors";
 import { loadCourseQuizScope } from "./quiz-scope";
+import { listLearnerCourseDeliveries } from "./learner-course-service";
 import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import {
   courseQuizIdSchema,
@@ -696,4 +699,63 @@ export async function listQuizAttempts(
     answers:
       byAttempt.get(attempt.id) ?? [],
   }));
+}
+
+
+/** Legacy quiz bookmarks did not carry a delivery ID. Resolve from the
+ * learner's current, authorized enrollment; never trust a supplied college
+ * or interpret the old numeric quizId as a vNext UUID. */
+export async function resolveOwnQuizDeliveryId(
+ context:RequestContext,quizIdInput:string,
+){
+ await requireOwnCourseLearnerRead(context);
+ const quizId=courseQuizIdSchema.parse(quizIdInput);
+ const quiz=await loadCourseQuizScope(quizId,true);
+ const deliveries=await listLearnerCourseDeliveries(context,{includeHistorical:true});
+ const candidates=[...new Set(deliveries.filter(item=>
+  item.offeringId===quiz.offeringId&&quizAudienceMatches(quiz,item.deliveryId))
+  .map(item=>item.deliveryId))];
+ if(candidates.length===1)return candidates[0]!;
+ if(candidates.length>1&&context.membership){
+  const owned=await getDb().selectDistinct({deliveryId:quizAttempts.deliveryId})
+   .from(quizAttempts).where(and(eq(quizAttempts.quizId,quizId),
+    eq(quizAttempts.membershipId,context.membership.id),
+    inArray(quizAttempts.deliveryId,candidates))).limit(3);
+  if(owned.length===1)return owned[0]!.deliveryId;
+ }
+ throw new CoursesServiceError("QUIZ_DELIVERY_MISMATCH");
+}
+
+/** Global learner own-attempt index, bounded and personally scoped. Scores
+ * and answer keys are deliberately absent until quiz result release is
+ * checked by getMyQuizAttempts on the detail endpoint. */
+export async function listOwnQuizAttemptHistoryIndex(context:RequestContext){
+ await requireOwnCourseLearnerRead(context);
+ if(!context.membership)throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+ const deliveries=await listLearnerCourseDeliveries(context,{includeHistorical:true});
+ const allowed=new Map(deliveries.map(item=>[item.deliveryId,item.offeringId]));
+ if(!allowed.size)return {items:[],hasMore:false};
+ const rows=await getDb().select({
+  id:quizAttempts.id,quizId:quizAttempts.quizId,
+  deliveryId:quizAttempts.deliveryId,
+  attemptNumber:quizAttempts.attemptNumber,
+  createdAt:quizAttempts.createdAt,submittedAt:quizAttempts.submittedAt,
+  title:courseQuizzes.title,offeringId:courseLearningPaths.offeringId,
+  quizDeliveryId:courseQuizzes.deliveryId,
+ }).from(quizAttempts)
+  .innerJoin(courseQuizzes,eq(courseQuizzes.id,quizAttempts.quizId))
+  .innerJoin(courseLessons,eq(courseLessons.id,courseQuizzes.lessonId))
+  .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
+  .where(and(eq(quizAttempts.membershipId,context.membership.id),
+    inArray(quizAttempts.deliveryId,[...allowed.keys()])))
+  .orderBy(desc(quizAttempts.createdAt),desc(quizAttempts.id)).limit(201);
+ const matched=rows.filter(row=>
+  allowed.get(row.deliveryId)===row.offeringId&&
+  (!row.quizDeliveryId||row.quizDeliveryId===row.deliveryId));
+ return {items:matched.slice(0,200).map(row=>({
+  id:row.id,quizId:row.quizId,deliveryId:row.deliveryId,
+  title:row.title,attemptNumber:row.attemptNumber,
+  submittedAt:row.submittedAt?.toISOString()??null,
+  createdAt:row.createdAt.toISOString(),
+ })),hasMore:rows.length>200};
 }
