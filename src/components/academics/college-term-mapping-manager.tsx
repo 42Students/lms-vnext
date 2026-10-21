@@ -3,7 +3,9 @@
 import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { useRef, useState, useTransition, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
+import Link from "next/link";
+import { Alert } from "@/components/ui/alert";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -24,6 +26,8 @@ type MappingRead = {
 
 export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const router = useRouter();
+  const pathname=usePathname();
+  const programsHref=pathname.startsWith("/admin")?"/admin/programs":"/college/programs";
   const { showToast } = useToast();
   const [pending, start] = useTransition();
   const inFlight=useRef(false);
@@ -193,11 +197,14 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   }
 
   return <section className="min-w-0 space-y-4 border-t border-border pt-4">
-    <h2 className="text-lg font-semibold text-foreground">Program semester curriculum mappings</h2>
+    <div className="grid min-w-0 gap-6 lg:grid-cols-[minmax(0,10fr)_minmax(0,14fr)]">
+    <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+    <h2 className="text-lg font-semibold text-foreground">Assign Courses to Semester</h2>
+    {!data.terms.length?<Alert tone="info">No programs found. <Link href={programsHref}
+      className="font-semibold text-primary-text underline">Go to Programs</Link></Alert>:null}
     <div className="flex flex-wrap items-center justify-between gap-2">
       <p className="text-sm text-body">Manage the courses assigned to each numbered semester.</p>
-      <Button type="button" variant="secondary" disabled={pending}
-        onClick={() => { setError(null); setFieldErrors({}); router.refresh(); }}>Refresh</Button>
+
     </div>
     <p className="text-xs text-muted-foreground">Drag a course to reorder, or use the Move up and Move down buttons for keyboard access.</p>
     <div className="grid min-w-0 gap-3 sm:grid-cols-2">
@@ -205,18 +212,18 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         <Select required disabled={pending} value={programId} onChange={event => {
           requestScopeChange("program", event.target.value);
         }} className="min-h-11 w-full md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
-          <option value="">Choose program</option>
+          <option value="">Select program</option>
           {Array.from(new Map(data.terms.map(t => [t.programId, t.programName])).entries()).map(
             ([id, name]) => <option key={id} value={id}>{name}</option>)}
         </Select>
         {fieldErrors.program ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.program}</span> : null}
       </label>
       <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Semester
-        <Select required disabled={pending} value={termId} onChange={event => {
+        <Select required disabled={pending||!programId} value={termId} onChange={event => {
           requestScopeChange("term", event.target.value);
         }} className="min-h-11 md:min-h-[var(--lms-control-height)] rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-foreground">
-          <option value="">Choose semester</option>
-          {termChoices.map(t => <option key={t.id} value={t.id}>{t.name} ({t.termNumber}){t.isActive ? "" : " — Archived"}</option>)}
+          <option value="">Select semester</option>
+          {termChoices.map(t => <option key={t.id} value={t.id}>{t.name||"Semester "+t.termNumber}{t.isActive ? "" : " — Archived"}</option>)}
         </Select>
         {fieldErrors.term ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.term}</span> : null}
       </label>
@@ -249,17 +256,30 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       {availableCourses.length===0?<p className="text-sm text-muted-foreground">No unmapped courses available for this semester.</p>:null}
       <div className="flex items-end sm:justify-end">
         <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="submit" disabled={pending || !!error || !editableTerm || !termId || !selectedIds.length}>
-          {TERM_MAPPING_COPY.addButton}
+          <span aria-hidden="true">＋</span> {TERM_MAPPING_COPY.addButton}
         </Button>
       </div>
       </form>
     </Disclosure> : null}
-    {!termId ? <p className="text-sm text-body">Select a program and semester to view mapped courses.</p> :
+    </section>
+    <section className="min-w-0 space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+        <h2 className="text-lg font-semibold text-foreground">{selectedTerm
+          ? "Courses in "+(selectedTerm.name||"Semester "+selectedTerm.termNumber)
+          : "Select a Semester to View Courses"}</h2>
+        <Button type="button" variant="secondary" disabled={pending||!termId}
+          aria-label="Refresh semester courses"
+          onClick={()=>{setError(null);setFieldErrors({});setNotice("Refreshing semester courses…");router.refresh();}}>
+          <span aria-hidden="true">↻</span> Refresh
+        </Button>
+      </div>
+    {!termId ? <p className="text-sm text-body">Select a program and semester to view/manage courses</p> :
     !editableTerm && currentMappings.length === 0 ? <p className="text-sm text-body">Archived semester — read-only. No courses mapped.</p> :
-    currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester.</p> :
+    currentMappings.length === 0 ? <p className="text-sm text-body">No courses mapped to this semester. Select courses to add.</p> :
       <DataTable
         caption="Semester course mappings"
         rows={currentMappings}
+         mobileMode="scroll"
         getRowKey={row=>row.id}
         empty={<p>No courses mapped to this semester.</p>}
         columns={[
@@ -282,12 +302,12 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                 title={row.staffingTooltip??undefined}
                 className="mt-1 text-xs font-semibold text-warning">{row.staffingWarning}</p>}
             </div>},
-          {key:"code",header:TERM_MAPPING_COPY.columns.courseCode,mobilePriority:"secondary",cell:row=>row.courseCode},
-          {key:"credits",header:TERM_MAPPING_COPY.columns.credits,mobilePriority:"secondary",cell:row=>row.credits??"—"},
+          {key:"code",header:TERM_MAPPING_COPY.columns.courseCode,mobilePriority:"secondary",cell:row=>row.courseCode||"—"},
+          {key:"credits",header:TERM_MAPPING_COPY.columns.credits,mobilePriority:"secondary",cell:row=>row.credits??3},
           {key:"type",header:TERM_MAPPING_COPY.columns.type,mobilePriority:"secondary",
             cell:row=>row.type==="CORE"?TERM_MAPPING_COPY.core:row.type==="ELECTIVE"?TERM_MAPPING_COPY.elective:row.type},
           {key:"order",header:"Order",mobilePriority:"secondary",cell:row=>
-            orderedPeers(row).findIndex(peer=>peer.id===row.id)+1},
+            row.displayOrder>0?row.displayOrder:"—"},
           {key:"actions",header:TERM_MAPPING_COPY.columns.actions,mobilePriority:"action",cell:row=>
             (<div className="flex min-w-0 flex-wrap gap-2">
                 <Button className="min-h-11 md:min-h-9" variant="secondary" type="button" disabled={pending || !editableTerm}
@@ -319,8 +339,10 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     {termId && !editableTerm ? <p role="status" className="text-sm text-muted-foreground">This is an archived semester. Existing curriculum mappings are read-only.</p> : null}
     {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
     {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
+    </section>
+    </div>
     <Dialog open={editing !== null} onOpenChange={open => { if (!open && !pending) cancelEditing(); }}
-      title="Edit Course Mapping" description={editingRow ? editingRow.courseName : undefined}
+      title={"Edit Course Mapping: "+(editingRow?.courseName||"Course")} description={editingRow ? editingRow.courseCode : undefined}
       dismissible={false}>
       {editing && editingRow ? <form aria-label={"Edit mapping for " + editingRow.courseName}
         className="grid min-w-0 gap-4" onSubmit={event => {
@@ -369,7 +391,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         : "Add course to semester?"}
       description={confirm?.type === "REMOVE"
         ? "This removes a curriculum mapping. It will be blocked if an active current-term cohort offering uses it."
-        : "Confirm the new curriculum association. Duplicate mappings are rejected."}
+        : "Confirm the new curriculum association. Already mapped courses will be skipped."}
       confirmVariant={confirm?.type === "REMOVE" ? "danger" : "primary"}
       confirmLabel={confirm?.type === "REMOVE" ? TERM_MAPPING_COPY.removeButton : TERM_MAPPING_COPY.addButton}
       pending={pending} onConfirm={send}>
