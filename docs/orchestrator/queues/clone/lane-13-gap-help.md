@@ -4,6 +4,6 @@ AUDIT ONLY: do not change code. Units moved here from slower lanes. Rules, facet
 
 - [x] (from lane 2) L18-U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/NewProgramController.java`
 - [x] (from lane 4) L17-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/readiness.js`
-- [ ] (from lane 5) L18-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyVerification.java`
-- [ ] (from lane 6) L18-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js`
+- [x] (from lane 5) L18-U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/FacultyVerification.java`
+- [x] (from lane 6) L18-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Departments.js`
 - [ ] (from lane 9) L19-U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ReadinessGate.js`
