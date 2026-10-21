@@ -84,7 +84,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
    setConfirmOpen(false);
   }
  }
- const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 py-2 text-foreground md:min-h-9";
+ const cls="mt-2 min-h-11 w-full min-w-0 rounded-[var(--lms-field-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-form-bg)] px-[var(--lms-space-3)] py-[7px] text-[var(--lms-form-ink)] md:min-h-9";
  return <><form onSubmit={submit} className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Title<Input required name="title" defaultValue={job.title} minLength={2} maxLength={200} className={cls}/></label>
   <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Description<Textarea required name="description" defaultValue={job.description} maxLength={20000} rows={4} className={cls}/></label>
@@ -111,7 +111,7 @@ export function TpoDriveEditForm({job}:{job:Draft}){
     Dream drive — held-offer limit exception
   </label>
   <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Application deadline (IST)
+   <label className="block text-[length:var(--lms-font-sm)] font-semibold text-[var(--lms-neutral-400)] leading-4">Application deadline (IST)
     <DateInput name="applicationDeadline" mode="datetime-local"
       defaultValue={job.applicationDeadline?new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(new Date(job.applicationDeadline)).replace(" ","T"):""}
       className={cls}/>
