@@ -6,6 +6,8 @@ export default async function TeacherLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const context = await getCurrentRequestContext();
+  // Session absence/expiry is handled by the authenticated parent layout:
+  // only signed-in members without a faculty grant reach this branch.
   if (!canAccessFacultyRoute(context)) {
     redirect("/dashboard");
   }
