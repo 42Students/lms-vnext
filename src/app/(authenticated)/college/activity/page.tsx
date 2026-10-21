@@ -34,7 +34,7 @@ export default async function CollegeActivityPage({
     <PageHeader title="Activity Log" />
     <ErrorState title="Invalid activity filters"
       description="The actor, entity, date range or pagination cursor is invalid. No audit events were loaded."
-      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>} />
+      action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>} />
   </div>;
   const data = await listCollegeActivity(context, parsed.data);
   const exportParams = new URLSearchParams();
@@ -183,7 +183,7 @@ export default async function CollegeActivityPage({
             <Link href={"/college/activity/" + encodeURIComponent(item.event.id)}
               className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">View event</Link>},
         ]}
-        empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred." action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>} />}/>
+        empty={<EmptyState title="No matching activity" description="No persisted activity events match these filters. This is not a statement that no changes have ever occurred." action={<Link href="/college/activity" className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9 w-full md:w-auto">Clear filters</Link>} />}/>
     </section>
     <nav aria-label="Activity history pagination" className="flex flex-wrap items-center justify-between gap-3 text-sm">
       <p className="text-muted-foreground">Up to {data.query.pageSize ?? "25"} events per page</p>
