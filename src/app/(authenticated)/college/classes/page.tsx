@@ -1,6 +1,5 @@
 import { collegeDirectoryValidationMessage } from "@/modules/academics/college-directory-validation";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { CollegeStructureDirectory } from "@/components/academics/college-structure-directory";
 import { CollegeClassCreate } from "@/components/academics/college-section-management";
@@ -21,7 +20,11 @@ export default async function CollegeClassesPage({
   searchParams,
 }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership) redirect("/dashboard");
+  if (!context.membership) return <div role="status" className="space-y-3">
+    <PageHeader title="Classes" />
+    <p>Select a College to view classes</p>
+    <Link href="/dashboard" className="font-semibold text-primary-text underline">Choose a college</Link>
+  </div>;
   const raw = readCollegeStructureParams(await searchParams);
   const parsed = collegeClassQuerySchema.safeParse(raw);
   if (!parsed.success) return <div className="space-y-4">
@@ -40,7 +43,7 @@ export default async function CollegeClassesPage({
   return <CollegeStructureDirectory data={classes} classOptions={optionResult.error ? undefined : options} prepend={
     <div className="min-w-0 space-y-[var(--lms-space-3)]">
       {optionResult.error ? <div role="alert" className="flex flex-wrap items-center gap-2 border border-amber-300 bg-amber-50 p-3 text-sm">Could not load class options. <Link href="/college/classes" className="font-semibold underline">Retry options</Link></div> :
-        <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} />}
+        <CollegeClassCreate cohorts={options.cohorts} periods={options.periods} alwaysOpen />}
       <Disclosure title="More class tools" contentClassName="pt-[var(--lms-space-3)]">
         <div className="flex min-w-0 flex-col items-start gap-[var(--lms-space-3)] sm:flex-row sm:flex-wrap">
           <a href={classesExportHref(classes.query)}
