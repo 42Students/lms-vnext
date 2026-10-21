@@ -80,4 +80,4 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_NEW_docs_audit_gap2_lane-20_job-application-status-history-service-impl.md.md` (new; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_placements_learner-round-search-query-model.ts.md` (edit src/modules/placements/learner-round-search-query-model.ts; 2 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_learner-live-link-availability-model.ts.md` (edit src/modules/courses/learner-live-link-availability-model.ts; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_faculty-quiz-authoring-service.ts.md` (edit src/modules/courses/faculty-quiz-authoring-service.ts; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-3/W2_src_modules_courses_faculty-quiz-authoring-service.ts.md` (edit src/modules/courses/faculty-quiz-authoring-service.ts; 1 findings; best P2)
