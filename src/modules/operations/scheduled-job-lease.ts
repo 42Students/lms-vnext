@@ -2,11 +2,12 @@
  * DB10 scheduled job lease/fencing contract.
  * Legacy oracle: V135__scheduled_job_lock.sql and SchedulerLockService.
  *
- * Pure logic, NOT a distributed lock implementation. The persistence adapter
- * must use a single atomic UPSERT or conditional UPDATE and database clock,
- * returning the incremented fencing token. Downstream side effects must
- * validate the fence or use durable idempotency keys. Do not fail open for
- * non-idempotent customer messages when lock storage is unavailable.
+ * Pure policy helpers; NOT a distributed lock implementation by themselves.
+ * postgres-scheduled-job-lease-store.ts implements DB-clock atomic UPSERT and
+ * incrementing fencing tokens against the scheduled_job_leases table included
+ * in Drizzle migration 0133. Deployment still must verify migration replay,
+ * wire the scheduler and enforce an outbox/recipient idempotency key before
+ * enabling customer-facing reminder jobs. Fail closed on lease-store failures.
  */
 export type JobLease = {
   jobName: string;
@@ -133,3 +134,16 @@ export function isCurrentJobLease(
     snapshot.lockedUntil.getTime() > now.getTime(),
   );
 }
+
+/**
+ * Legacy TPO deadline-today cadence. A deployment-owned worker must register
+ * this schedule in Asia/Kolkata and call executeScheduledJobWithLease with the
+ * durable PostgreSQL adapter. This policy declaration does NOT start a cron.
+ * The outbox dispatcher has a separate cadence and must never share this lock.
+ */
+export const TPO_DEADLINE_TODAY_SCHEDULE = {
+  jobName: "tpo.deadlineToday",
+  cron: "0 0 8 * * *",
+  timeZone: "Asia/Kolkata",
+  ttlMs: 30 * 60 * 1000,
+} as const;
