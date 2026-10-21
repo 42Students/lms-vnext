@@ -279,6 +279,8 @@ export function HrDriveDraftForm({
           Hire again · copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
         </p>
       ) : null}
+      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
+      <div className="min-w-0 space-y-5">
       <section className="border-b border-border pb-5">
         <h2 className="font-semibold text-foreground">Role and work</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
@@ -466,7 +468,9 @@ export function HrDriveDraftForm({
           ))}
         </div>
       </section>
-      <section className="border-b border-border pb-5">
+      </div>
+      <aside aria-label="Drive preview and submit" className="min-w-0 self-start rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 lg:sticky lg:top-6">
+      <section className="min-w-0">
         <h2 className="font-semibold text-foreground">What students will see · local preview</h2>
         <p className="mt-1 text-sm text-body">
           Your draft is local until you send it to the placement cell. A sent request waits for their decision and is not automatically published.
@@ -553,6 +557,8 @@ export function HrDriveDraftForm({
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
         </p>
       </section>
+      </aside>
+      </div>
     </div>
   );
 }
