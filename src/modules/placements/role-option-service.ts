@@ -140,6 +140,12 @@ export async function createPlacementRoleOption(
         input.minimumAnnualCtcInr ?? null,
       maximumAnnualCtcInr:
         input.maximumAnnualCtcInr ?? null,
+      ctcLpa: input.ctcLpa == null ? null : input.ctcLpa.toFixed(4),
+      fixedLpa: input.fixedLpa == null ? null : input.fixedLpa.toFixed(2),
+      variableLpa: input.variableLpa == null ? null : input.variableLpa.toFixed(2),
+      joiningBonusLpa: input.joiningBonusLpa == null ? null : input.joiningBonusLpa.toFixed(2),
+      stipendPerMonthInr: input.stipendPerMonthInr == null ? null : input.stipendPerMonthInr.toFixed(2),
+      stipendMonths: input.stipendMonths ?? null,
       isPrimary: false,
     })
     .onConflictDoNothing()
@@ -239,6 +245,11 @@ export async function updatePlacementRoleOption(
       .update(placementJobRoleOptions)
       .set({
         ...input,
+        ctcLpa: input.ctcLpa === undefined ? undefined : input.ctcLpa === null ? null : input.ctcLpa.toFixed(4),
+        fixedLpa: input.fixedLpa === undefined ? undefined : input.fixedLpa === null ? null : input.fixedLpa.toFixed(2),
+        variableLpa: input.variableLpa === undefined ? undefined : input.variableLpa === null ? null : input.variableLpa.toFixed(2),
+        joiningBonusLpa: input.joiningBonusLpa === undefined ? undefined : input.joiningBonusLpa === null ? null : input.joiningBonusLpa.toFixed(2),
+        stipendPerMonthInr: input.stipendPerMonthInr === undefined ? undefined : input.stipendPerMonthInr === null ? null : input.stipendPerMonthInr.toFixed(2),
         updatedAt: new Date(),
       })
       .where(
