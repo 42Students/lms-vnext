@@ -2,9 +2,9 @@
 import { PageHeader } from "@/components/ui/page-header";
 import { Button } from "@/components/ui/button";
 export default function Error({reset}:{error:Error&{digest?:string};reset:()=>void}){
-  return <section role="alert" className="min-w-0 max-w-full space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
+  return <section className="min-w-0 max-w-full space-y-3 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
     <PageHeader title={"Project evidence could not load"} />
-    <p className="text-sm text-body">Readiness is unavailable because the request failed, not because there are no gaps.</p>
+    <p role="alert" className="text-sm text-body">Readiness is unavailable because the request failed, not because there are no gaps.</p>
     <Button type="button" variant="secondary" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={reset}>Retry</Button>
   </section>;
 }

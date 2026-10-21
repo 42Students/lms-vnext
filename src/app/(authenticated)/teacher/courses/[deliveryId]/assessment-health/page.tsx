@@ -28,7 +28,7 @@ export default async function FacultyCourseAssessmentHealthPage({
     deliveryId,kind:first(raw.kind) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
-  if (!parsed.success) return <section role="alert" className="space-y-3">
+  if (!parsed.success) return <section className="space-y-3">
     <PageHeader title={"Invalid Section report filters"} />
     <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">Back to courses</Link>
   </section>;
@@ -45,7 +45,7 @@ export default async function FacultyCourseAssessmentHealthPage({
       </Link>} />
     <section className="border-b border-border pb-4">
       <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Scope</h2>
-      <p className="mt-1 text-sm text-body leading-[22px]">
+      <p role="alert" className="mt-1 text-sm text-body leading-[22px]">
         {data.rosterSize} currently enrolled learners in this authorized Section.
         Only published Assignment and Quiz responses are summarized.
       </p>
