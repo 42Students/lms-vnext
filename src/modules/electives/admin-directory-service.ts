@@ -1,5 +1,5 @@
 import "server-only";
-import { and, asc, count, countDistinct, eq, ilike, inArray, isNull, or } from "drizzle-orm";
+import { and, asc, count, countDistinct, eq, ilike, inArray, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { departments, electiveSlots, electiveOfferings, lmsGroupMembers, collegeMemberships, programs } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
@@ -28,6 +28,12 @@ export async function listSuperAdminElectives(context: RequestContext, raw: unkn
     programName: programs.name,
     semesterNumber: electiveSlots.semesterNumber,
     academicYear: electiveSlots.academicYear,
+    academicPeriodId: electiveSlots.academicPeriodId,
+    hasEnrollmentHistory: sql<boolean>`exists (
+      select 1 from elective_offerings eo where eo.slot_id = ${electiveSlots.id}
+      and (exists (select 1 from lms_group_members gm where gm.group_id=eo.group_id)
+        or exists (select 1 from lms_group_member_events ev where ev.group_id=eo.group_id))
+    )`.as("elective_has_enrollment_history"),
     credits: electiveSlots.credits,
     minPick: electiveSlots.minPick,
     maxPick: electiveSlots.maxPick,
