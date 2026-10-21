@@ -22,7 +22,7 @@ export default async function SuperAdminFacultyPage({searchParams}:{
     headerActions={context.adminScope?.collegeId?<PersonOnboardDialog collegeId={context.adminScope.collegeId} forcedRole="FACULTY"/>:null}
     intro={context.adminScope?.collegeId?<section aria-label="Faculty registration tools"
       className="min-w-0 space-y-3 border-b border-border pb-4">
-      <Disclosure title="Bulk register faculty" className="min-w-0"
+      <Disclosure title="Bulk Register Faculty" className="min-w-0"
         contentClassName="min-w-0 pb-3 pt-3">
         <SuperAdminFacultyBulkImport collegeId={context.adminScope.collegeId}/>
       </Disclosure>
