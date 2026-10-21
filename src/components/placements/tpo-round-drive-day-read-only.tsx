@@ -310,7 +310,7 @@ export function TpoRoundDriveDayReadOnly({
 
 
       {staleSnapshot?<div role="status" className="flex flex-wrap items-center justify-between gap-3">
-        <InlineNotice tone="warning" message="The last successful roster snapshot is over a minute old. Check that attendance is current before editing."/>
+        <InlineNotice tone="info" message="The last successful roster snapshot is over a minute old. Check that attendance is current before editing."/>
         <Button type="button" variant="secondary" disabled={gateBusy||pasteBusy}
           onClick={()=>router.refresh()}>Retry roster refresh</Button>
       </div>:null}
