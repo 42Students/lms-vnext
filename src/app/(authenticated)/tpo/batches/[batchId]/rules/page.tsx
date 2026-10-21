@@ -18,16 +18,16 @@ export default async function BatchRules({params}:{params:Promise<{batchId:strin
  return <div className="min-w-0 space-y-4"><PageHeader title={batch.name+" — Rules"} description="Participation rules and effective decisions."/>
  <TpoBatchWorkspaceTabs batchId={batchId} active="rules" />
  {ready&&!lifecycle?.finishedAt?<TpoBatchDecisionControl batchId={batchId} current={decision}/>:
-  <p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">
+  <p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm leading-[22px]">
    {lifecycle?.finishedAt?"This batch is finished. Eligibility decisions are read-only.":"Batch eligibility decisions are temporarily unavailable. Retry when the rules are available."}
   </p>}
 
- {!ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">Batch rules are temporarily unavailable. You can review other batch details and try again.</p>:
+ {!ready?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-[22px]">Batch rules are temporarily unavailable. You can review other batch details and try again.</p>:
  <section aria-labelledby="section-participation-policy" className="border-b border-[var(--lms-canvas-border)] py-4"><h2 id="section-participation-policy" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Participation policy</h2>
  <dl className="mt-3 grid min-w-0 gap-3 text-sm sm:grid-cols-3"><div><dt className="font-semibold">Registration deadline</dt><dd>{batchRuleDate(lifecycle?.registrationDeadline)}</dd></div>
  <div><dt className="font-semibold">Invited</dt><dd>{batchRuleDate(lifecycle?.invitedAt)}</dd></div>
  <div><dt className="font-semibold">Finished</dt><dd>{lifecycle?.finishedAt?batchRuleDate(lifecycle.finishedAt):"Still accepting placements"}</dd></div></dl>
- <p className="mt-3 text-sm text-muted-foreground">The college placement rules apply unless this batch has approved changes.</p></section>}
+ <p className="mt-3 text-sm text-muted-foreground leading-[22px]">The college placement rules apply unless this batch has approved changes.</p></section>}
  {stored.success?<TpoBatchRuleEditor batchId={batchId} batchName={batch.name}
   college={{countsAsPlacedAt:college.countsAsPlacedAt as "OFFER_RELEASED"|"OFFER_ACCEPTED",maxHeldOffers:college.maxHeldOffers,
     upliftPct:college.upliftPct,minResponseHours:college.minResponseHours}}

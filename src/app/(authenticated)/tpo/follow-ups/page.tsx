@@ -70,12 +70,12 @@ export default async function TpoFollowupQueuePage({searchParams}:{searchParams:
         </label><Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Search</Button>
         {q?<Link href={tpoFollowupQueueHref({scope,window})} className="inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] md:min-h-9">Clear</Link>:null}
       </form>
-      <p className="text-sm text-body">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
+      <p className="text-sm text-body leading-[22px]">{scope==="MINE"?"Only open due follow-ups assigned to your persisted TPO membership.":"Open due follow-ups for the placement team; this includes all owners."}</p>
       {data ? <><TpoDueFollowupWorkspace data={data} />
         <div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:flex-wrap sm:items-center sm:justify-between"><span className="text-body">Showing {(data.total===0?0:(data.page-1)*data.pageSize+1).toLocaleString("en-IN")}–{Math.min(data.total,data.page*data.pageSize).toLocaleString("en-IN")} of {data.total.toLocaleString("en-IN")} matching tasks · page {data.page} of {data.totalPages}</span>{data.totalPages > 1 ? <Pagination label="Follow-up pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>tpoFollowupQueueHref({scope,window,q,page})}/> : null}</div></> : (
         <Alert tone="warning" className="border-t border-border">
           <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Recruiter follow-ups unavailable</h2>
-          <p className="mt-2 text-sm text-body">
+          <p className="mt-2 text-sm text-body leading-[22px]">
             DB09 must be verified before recruiter follow-ups can be loaded or changed.
             Unavailable records are not counted as zero.
           </p>

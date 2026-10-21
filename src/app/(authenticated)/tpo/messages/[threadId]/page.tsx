@@ -34,16 +34,16 @@ export default async function TpoRecruiterConversationPage({params}:{
      {index===0||new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"})
        .format(data.messages[index-1].createdAt)!==
       new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)?
-      <p className="py-2 text-center text-xs font-semibold text-muted-foreground">
+      <p className="py-2 text-center text-xs font-semibold text-muted-foreground leading-5">
        {new Intl.DateTimeFormat("en-IN",{dateStyle:"full",timeZone:"Asia/Kolkata"}).format(item.createdAt)}
       </p>:null}
     <article className={bubbleStyles.bubble+" "+(item.senderType==="TPO"?bubbleStyles.mine:"")}>
-     <p className="text-xs font-semibold text-muted-foreground">
+     <p className="text-xs font-semibold text-muted-foreground leading-5">
       {item.senderType==="RECRUITER"?"Recruiter":"You"} ·
       {" "}{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(item.createdAt)} IST
      </p>
-     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground">{item.body}</p>
-     {item.senderType==="TPO"&&item.readAt?<p className="mt-2 text-right text-xs text-muted-foreground">Seen</p>:null}
+     <p className="mt-2 whitespace-pre-wrap break-words text-sm text-foreground leading-[22px]">{item.body}</p>
+     {item.senderType==="TPO"&&item.readAt?<p className="mt-2 text-right text-xs text-muted-foreground leading-5">Seen</p>:null}
     </article></div>)}
   </section>
   <TpoRecruiterMessageReply threadId={threadId} actorUserId={context.user.id} unread={data.messages.some(item=>item.senderType==="RECRUITER"&&!item.readAt)} />

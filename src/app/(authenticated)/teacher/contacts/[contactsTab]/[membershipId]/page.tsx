@@ -36,7 +36,7 @@ export default async function FacultyContactDetailPage({
     <div className="grid min-w-0 gap-5 md:grid-cols-2">
     <section className="min-w-0 border-b border-border pb-5">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Public department</h2>
-      <p className="mt-3 text-sm text-body">
+      <p className="mt-3 text-sm text-body leading-[22px]">
         {contact.departmentName ?? "No department recorded"}
       </p>
     </section>
