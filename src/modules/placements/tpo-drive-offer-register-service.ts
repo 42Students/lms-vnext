@@ -1,11 +1,12 @@
 import "server-only";
-import {and,eq} from "drizzle-orm";
+import {and,desc,eq} from "drizzle-orm";
+import {z} from "zod";
 import {getDb} from "@/db/client";
-import {placementJobs} from "@/db/schema";
+import {collegeMemberships,placementApplications,placementJobs,placementOffers} from "@/db/schema";
 import {hasMembershipRole,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,can,requirePermission} from "@/modules/permissions/policy";
 import {PlacementsServiceError} from "./errors";
-import {listPlacementJobOffers} from "./offer-service";
+import {getLatestPlacementOfferForApplication,listPlacementJobOffers} from "./offer-service";
 import {enrichTpoOfferFacts} from "./tpo-offer-academic-enrichment";
 import {requirePlacementManageScope} from "./scope";
 import {offerRegisterQuery,projectOfferRegister,tpoDriveOfferRegisterCsv} from "./tpo-drive-offer-register-model";
@@ -32,4 +33,60 @@ export async function getTpoDriveOfferRegisterCsv(context:RequestContext,raw:unk
  const facts=await listPlacementJobOffers(context,scoped.job.id);
  const enriched=await enrichTpoOfferFacts(facts,context.membership!.collegeId);
  return tpoDriveOfferRegisterCsv(enriched,input);
+}
+
+/** Job and learner read projections use the same active TPO membership
+ * boundary, never an unscoped UUID. Preserve each historical offer row. */
+export async function listTpoLearnerOffers(
+ context:RequestContext,rawMembershipId:unknown,
+){
+ const membershipId=z.uuid().parse(rawMembershipId);
+ const member=context.membership;
+ if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
+    !hasMembershipRole(context,"TPO"))
+  throw new AuthorizationError("placements.manage");
+ requirePermission(context,"placements.manage",{collegeId:member.collegeId});
+ await requirePlacementManageScope(context,member.collegeId);
+ const [learner]=await getDb().select({id:collegeMemberships.id})
+  .from(collegeMemberships).where(and(
+   eq(collegeMemberships.id,membershipId),
+   eq(collegeMemberships.collegeId,member.collegeId),
+   eq(collegeMemberships.status,"ACTIVE"))).limit(1);
+ if(!learner)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+ const found=await getDb().select({
+  offer:placementOffers,applicationId:placementApplications.id,
+  jobId:placementJobs.id,jobTitle:placementJobs.title,
+ }).from(placementOffers)
+  .innerJoin(placementApplications,eq(placementApplications.id,placementOffers.applicationId))
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .where(and(eq(placementApplications.membershipId,membershipId),
+    eq(placementJobs.collegeId,member.collegeId)))
+  .orderBy(desc(placementOffers.issuedAt),desc(placementOffers.id));
+ return found.map(row=>({...row,
+  // An accepted offer alone is not evidence of the campus held-offer rules.
+  holdingRuleStatus:"REQUIRES_COLLEGE_POLICY_RECONCILIATION" as const,
+ }));
+}
+
+/** Repository latest-by-application semantics, behind the same scoped role
+ * gate. The offer service re-verifies the application/job college. */
+export async function getTpoLatestOfferForApplication(
+ context:RequestContext,rawApplicationId:unknown,
+){
+ const applicationId=z.uuid().parse(rawApplicationId);
+ if(!context.membership||!hasMembershipRole(context,"TPO")||
+    context.membership.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE")
+  throw new AuthorizationError("placements.manage");
+ requirePermission(context,"placements.manage",{collegeId:context.membership.collegeId});
+ await requirePlacementManageScope(context,context.membership.collegeId);
+ return getLatestPlacementOfferForApplication(context,applicationId);
+}
+
+/** Compound repository scope for the old by-job-and-learner lookup. */
+export async function listTpoJobLearnerOffers(
+ context:RequestContext,rawJobId:unknown,rawMembershipId:unknown,
+){
+ const jobId=z.uuid().parse(rawJobId);
+ const rows=await listTpoLearnerOffers(context,rawMembershipId);
+ return rows.filter(row=>row.jobId===jobId);
 }
