@@ -1,5 +1,6 @@
 import { and, eq, isNull, asc, inArray, ne } from "drizzle-orm";
 import { getDb } from "@/db/client";
+import {templateResourceMaterializationFields} from "./template-resource-materialization";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import {
   collegeMemberships, cohorts, departments, learnerProfiles, learnerProgramEnrollments,
@@ -159,7 +160,8 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         }));
         if(blueprint.resources.length)await tx.insert(projectResources).values(blueprint.resources.map(r=>({
           projectId:project.id,templateKey:r.key,title:r.title,description:r.description??null,
-          url:r.url??null,required:r.required,sequence:r.sequence,
+          url:r.url??null,required:r.required,
+          ...templateResourceMaterializationFields(r),sequence:r.sequence,
         })));
         await recordActivityEventInTransaction(tx,context,{
           eventType:ACTIVITY_EVENT_TYPES.PROJECTS_PROJECT_CREATED,
