@@ -128,7 +128,7 @@ export default async function LearnerOffersPage({
           </Link>
         </p>
       ) : null}
-      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer search" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:gap-3">
+      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer search" className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end sm:gap-[8px]">
         {view !== "all" ? <Input type="hidden" name="status" value={view} /> : null}
         {dueOnly ? <Input type="hidden" name="due" value="1" /> : null}
         {order !== "priority" ? <Input type="hidden" name="sort" value={order} /> : null}
@@ -154,7 +154,7 @@ export default async function LearnerOffersPage({
       <details className="border-t border-border pt-2" open={order!=="priority" || kind!=="all" || joiningFilter!=="all" || dueOnly || expiry!=="all" || undefined}>
         <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">More offer filters {hasActiveFacets ? "(active)" : ""}</summary>
         <div className="space-y-3 pt-3">
-      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer sorting" className="flex flex-wrap items-end gap-3">
+      <form method="GET" action="/learn/my-placements/offers" role="search" aria-label="Offer sorting" className="flex flex-wrap items-end gap-[8px]">
         {view!=="all"?<Input type="hidden" name="status" value={view}/>:null}
         {searchTerm?<Input type="hidden" name="q" value={searchTerm}/>:null}
         {dueOnly?<Input type="hidden" name="due" value="1"/>:null}

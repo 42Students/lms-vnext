@@ -213,56 +213,56 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/learn/allQuizzes/page.tsx`
 - [x] `src/app/(authenticated)/learn/attendance/calendar/error.tsx`
 - [x] `src/app/(authenticated)/learn/attendance/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/error.tsx`
-- [ ] `src/app/(authenticated)/learn/attendance/page.tsx`
-- [ ] `src/app/(authenticated)/learn/calendar/error.tsx`
-- [ ] `src/app/(authenticated)/learn/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/error.tsx`
-- [ ] `src/app/(authenticated)/learn/courses/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/applications/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/interviews/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/loading.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/error.tsx`
-- [ ] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
-- [ ] `src/app/(authenticated)/learn/not-found.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/learn/notifications/history/loading.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/error.tsx`
+- [x] `src/app/(authenticated)/learn/attendance/page.tsx`
+- [x] `src/app/(authenticated)/learn/calendar/error.tsx`
+- [x] `src/app/(authenticated)/learn/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/not-found.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/[...courseTab]/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/loading.tsx`
+- [x] `src/app/(authenticated)/learn/courses/[deliveryId]/progress/page.tsx`
+- [x] `src/app/(authenticated)/learn/courses/error.tsx`
+- [x] `src/app/(authenticated)/learn/courses/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/company/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/history/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/applications/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/assessments/results/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/calendar/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/interviews/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/interviews/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/jobs/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/notification-preferences/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/offers/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/placement/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/preparation/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/loading.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/rules/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/schedule/page.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/error.tsx`
+- [x] `src/app/(authenticated)/learn/my-placements/support/page.tsx`
+- [x] `src/app/(authenticated)/learn/not-found.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/error.tsx`
+- [x] `src/app/(authenticated)/learn/notifications/history/loading.tsx`
 - [ ] `src/app/(authenticated)/learn/notifications/history/page.tsx`
 - [ ] `src/app/(authenticated)/learn/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/learn/profile/academic-record/page.tsx`
