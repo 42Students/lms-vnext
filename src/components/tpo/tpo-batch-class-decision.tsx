@@ -38,7 +38,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
  }
  return <div className="min-w-0 space-y-2">
   <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-   <label className="grid min-w-0 gap-1 text-sm font-semibold">Who is in
+   <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold">Who is in
     <Select value={choice} onChange={e=>{setChoice(e.target.value as Decision);setError("");}} disabled={busy||finished}
      className="min-h-11 w-full min-w-0 md:min-h-9">
      <option value="NOT_DECIDED">Follows the batch</option>
@@ -46,7 +46,7 @@ export function TpoBatchClassDecision({batchId,classId,initial,expectedVersion,f
      <option value="INELIGIBLE">Ineligible</option>
     </Select>
    </label>
-  {choice==="INELIGIBLE"?<label className="grid min-w-0 gap-1 text-sm">Reason
+  {choice==="INELIGIBLE"?<label className="grid min-w-0 gap-[6px] text-[13px]">Reason
    <Textarea className="min-h-20 w-full min-w-0" value={reason} onChange={e=>setReason(e.target.value)} maxLength={200} rows={2}
     disabled={busy||finished} placeholder="Reason for ineligible decision"/>
   </label>:null}
