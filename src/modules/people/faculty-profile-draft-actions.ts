@@ -1,5 +1,5 @@
 import {facultyMetadataEditableKey,facultyMetadataFromDraft,type FacultyMetadataDraftEntry} from "./faculty-profile-metadata-model";
-import {facultyProfileDocumentSchema,type FacultyProfileDocument} from "./faculty-profile-document";
+import {facultyContactEditSchema,facultyProfileDocumentSchema,type FacultyProfileDocument} from "./faculty-profile-document";
 import type {FacultySelfSection} from "./faculty-self-section-model";
 /** Restore exactly the persisted text draft after an explicit discard. */
 export function restoreFacultyTextDraft(snapshot:Readonly<Record<string,string>>):Record<string,string>{
@@ -45,12 +45,13 @@ export function facultyProfileTextDraftIssue(
  section:FacultySelfSection,draft:Readonly<Record<string,string>>,
  previous:Readonly<Record<string,string>>={},
 ):string|null{
- if(!["about","personalDetails","address","socialProfiles"].includes(section))
+ if(!["about","personalDetails","contact","address","socialProfiles"].includes(section))
   return "This profile section cannot be edited as text.";
- const parsed=facultyProfileDocumentSchema.safeParse({[section]:draft});
+ const parsed=section==="contact" ? facultyContactEditSchema.safeParse(draft)
+  : facultyProfileDocumentSchema.safeParse({[section]:draft});
  if(!parsed.success){
   const issue=parsed.error.issues[0];
-  const field=issue?.path.slice(1).join(".");
+  const field=section==="contact" ? issue?.path.join(".") : issue?.path.slice(1).join(".");
   return (field?field+": ":"")+(issue?.message??"Review this section.");
  }
  if(section==="socialProfiles")return facultyProfilePublicLinkIssue(previous,draft);

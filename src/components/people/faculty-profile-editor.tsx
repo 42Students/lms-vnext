@@ -23,6 +23,7 @@ import { newFacultyEducation } from "@/modules/people/faculty-profile-row-factor
 import { newFacultyLanguage } from "@/modules/people/faculty-profile-row-factories";
 const ABOUT_FIELDS = [{name:"description",label:"About me",multiline:true,maxLength:5000}] as const;
 const PERSONAL_DETAILS_FIELDS = [{name:"gender",label:"Gender",maxLength:64},{name:"dateOfBirth",label:"Date of birth",type:"date",maxLength:10},{name:"bloodGroup",label:"Blood group",maxLength:16}] as const;
+const CONTACT_FIELDS = [{name:"contactMobile",label:"Primary mobile",maxLength:10},{name:"contactPhone",label:"Alternate phone",maxLength:15},{name:"contactMail",label:"Contact email",maxLength:320}] as const;
 const ADDRESS_FIELDS = [{name:"currentAddress",label:"Current address",maxLength:2000,multiline:true},{name:"currentCity",label:"Current city",maxLength:160},{name:"currentState",label:"Current state",maxLength:160},{name:"currentPincode",label:"Current postal code",maxLength:16},{name:"permanentAddress",label:"Permanent address",maxLength:2000,multiline:true},{name:"permanentCity",label:"Permanent city",maxLength:160},{name:"permanentState",label:"Permanent state",maxLength:160},{name:"permanentPincode",label:"Permanent postal code",maxLength:16}] as const;
 const SOCIAL_PROFILES_FIELDS = [{name:"linkedIn",label:"LinkedIn",maxLength:500,type:"url"},{name:"github",label:"GitHub",maxLength:500,type:"url"},{name:"portfolio",label:"Portfolio",maxLength:500,type:"url"},{name:"twitter",label:"X / Twitter",maxLength:500,type:"url"},{name:"googleScholar",label:"Google Scholar",maxLength:500,type:"url"},{name:"researchGate",label:"ResearchGate",maxLength:500,type:"url"}] as const;
 const LANGUAGE_FIELDS = [{name:"language",label:"Language",maxLength:120,required:true},{name:"proficiency",label:"Proficiency",maxLength:64}] as const;
@@ -99,7 +100,7 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
     <p className="mb-[var(--lms-space-2)] text-sm font-semibold text-foreground">Jump to a profile section</p>
     <div className="flex min-w-0 snap-x snap-proximity gap-[var(--lms-space-2)] overflow-x-auto overscroll-x-contain pb-[var(--lms-space-2)]">
      <a href="#faculty-identity-readonly" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Identity documents</a>
-     <a href="#faculty-contact-readonly" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Contact</a>
+     <a href="#faculty-contact" className="inline-flex min-h-11 shrink-0 items-center px-3 text-[13px] font-semibold text-[var(--lms-primary-text)] underline-offset-2 hover:underline">Contact</a>
      {FACULTY_PROFILE_NAV.map(item=><a key={item.section}
       className="inline-flex min-h-11 shrink-0 snap-start items-center rounded-[var(--lms-control-radius)] border-b-[3px] border-transparent bg-transparent px-[var(--lms-space-3)] py-2 text-[13px] font-semibold text-[var(--lms-primary-text)] transition-[border-color,color] duration-[200ms] ease-in-out hover:border-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] motion-reduce:transition-none"
       href={"#"+facultyProfileAnchor(item.section)}>{item.label}</a>)}</div>
@@ -115,15 +116,11 @@ export function FacultyProfileEditor({initialDocument,initialVersion}:{
      <div><dt className="font-semibold">Profile photo</dt><dd className="text-body">{document.profileImageDocumentId?"On file":"Not uploaded"}</dd></div>
     </dl>
    </section>
-   <section id="faculty-contact-readonly" aria-label="Contact" className="min-w-0 space-y-3 rounded-[var(--lms-control-radius)] border border-border p-4">
-    <h2 className="text-base font-semibold text-foreground">Contact</h2>
-    <p className="text-sm text-muted-foreground">These self-profile contact details are read-only here. Sign-in and official contact records are managed by your college.</p>
-    <dl className="grid min-w-0 gap-2 text-sm">
-     <div><dt className="font-semibold">Mobile</dt><dd className="break-words text-body">{document.contact.contactMobile||"Not provided"}</dd></div>
-     <div><dt className="font-semibold">Phone</dt><dd className="break-words text-body">{document.contact.contactPhone||"Not provided"}</dd></div>
-     <div><dt className="font-semibold">Email</dt><dd className="break-words text-body">{document.contact.contactMail||"Not provided"}</dd></div>
-    </dl>
-   </section>
+   <FacultyProfileTextSection key={"contact-"+(sectionRevisions.contact??0)} section="contact" title="Contact"
+    description="Change your self-reported contacts. Your college-managed sign-in phone and email stay unchanged."
+    fields={CONTACT_FIELDS}
+    initial={{contactMobile:document.contact.contactMobile,contactPhone:document.contact.contactPhone,contactMail:document.contact.contactMail}}
+    pending={pending} onSave={save}/>
   <FacultyProfileTextSection key={"about-"+(sectionRevisions.about??0)} section="about" title="About"
    description="Introduce your teaching and research interests."
    fields={ABOUT_FIELDS} initial={{description:document.about.description}} pending={pending} onSave={save}/>

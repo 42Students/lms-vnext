@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { facultyProfileDocumentSchema, type FacultyProfileDocument } from "./faculty-profile-document";
+import { facultyContactEditSchema, facultyProfileDocumentSchema, type FacultyProfileDocument } from "./faculty-profile-document";
 import { facultyMetadataEditableKey } from "./faculty-profile-metadata-model";
 
 /** All document receipts remain administrator-controlled until uploads are approved.
@@ -24,7 +24,7 @@ export function facultyReceiptIdsUnchanged<T extends {id:string}>(
 
 /** Writable, non-identity sections. Private contact and document receipts stay blocked. */
 export const facultySelfEditableSection = z.enum([
-  "about", "personalDetails", "address", "socialProfiles",
+  "about", "personalDetails", "contact", "address", "socialProfiles",
   "languages", "education", "certifications", "experiences",
   "skills", "publications", "awards", "metadata",
 ]);
@@ -50,6 +50,8 @@ export function updateFacultyProfileSection(
       }
     }
   }
+  // Contact is self-reported, not the verified sign-in identity.
+  if (patch.section === "contact") facultyContactEditSchema.parse(patch.value);
   // New public links must be secure. Unchanged historical HTTP links are
   // retained to avoid destroying unrelated legacy data during section updates.
   if(patch.section==="socialProfiles") {
@@ -79,4 +81,20 @@ export function updateFacultyProfileSection(
     current.experiences,next.experiences,["experienceCertificateDocumentId","offerLetterDocumentId"],
   ))throw new Error("Private experience document receipts cannot be changed");
   return next;
+}
+
+/** Self-profile writes may not replace or orphan private receipts. Only
+ * a separately authorized, membership-bound upload grants new receipts.
+ */
+export function facultyPrivateReceiptsUnchanged(
+  current: FacultyProfileDocument, next: FacultyProfileDocument,
+): boolean {
+  if (current.profileImageDocumentId !== next.profileImageDocumentId) return false;
+  if (current.identitySummary.aadhaarDocumentId !== next.identitySummary.aadhaarDocumentId ||
+      current.identitySummary.panDocumentId !== next.identitySummary.panDocumentId ||
+      current.identitySummary.aadhaarLast4 !== next.identitySummary.aadhaarLast4 ||
+      current.identitySummary.panMasked !== next.identitySummary.panMasked) return false;
+  return facultyReceiptIdsUnchanged(current.education, next.education, ["certificateDocumentId"]) &&
+    facultyReceiptIdsUnchanged(current.certifications, next.certifications, ["certificateDocumentId"]) &&
+    facultyReceiptIdsUnchanged(current.experiences, next.experiences, ["experienceCertificateDocumentId", "offerLetterDocumentId"]);
 }

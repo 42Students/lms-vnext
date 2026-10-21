@@ -6,6 +6,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { PeopleServiceError } from "./errors";
 import { facultyProfileDocumentStorageReady } from "./faculty-profile-readiness";
+import { facultyPrivateReceiptsUnchanged } from "./faculty-self-section-model";
 import {
   emptyFacultyProfileDocument,
   facultyProfileDocumentSchema,
@@ -144,6 +145,13 @@ export async function saveOwnFacultyProfileDocumentStaged(
       `);
 
     const current = locked.rows[0];
+    const persistedDocument = current
+      ? facultyProfileDocumentSchema.parse(current.profile_document ?? {})
+      : emptyFacultyProfileDocument;
+    // The generic section writer must not accept forged file/identity receipts.
+    if (!facultyPrivateReceiptsUnchanged(persistedDocument, document)) {
+      throw new PeopleServiceError("PRIVATE_IDENTITY_UPDATE_DENIED");
+    }
 
     if (!current) {
       if (expectedVersion !== 0) {
