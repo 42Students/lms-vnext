@@ -189,7 +189,7 @@ function KnownErrorCard({ item }: { item: KnownError }) {
       </div>
 
       </Disclosure>
-      <Dialog open={confirmMute&&!item.muted}
+      <Dialog role="alertdialog" open={confirmMute&&!item.muted}
         onOpenChange={next=>{if(!pending)setConfirmMute(next);}}
         title="Mute this error"
         description="Why is it safe to ignore? It comes back on its own if it suddenly spikes."

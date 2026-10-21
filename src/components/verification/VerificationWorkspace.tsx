@@ -104,7 +104,7 @@ export function VerificationWorkspace({rows,counts:authoritativeCounts,initialTa
    </label>
   </div>
 
-  {!loading&&!error&&visible.length>0?<div className="flex flex-wrap items-end gap-2 print:hidden" aria-label="Verification table actions">
+  {!loading&&!error&&visible.length>0?<div className="flex flex-wrap items-end gap-2 print:hidden" role="group" aria-label="Verification table actions">
    <label className="grid gap-1 text-xs font-semibold">Sort
     <Select value={tableSort} onChange={event=>setTableSort(event.target.value as typeof tableSort)}>
      <option value="OLDEST">Oldest first</option>
