@@ -18,7 +18,8 @@ const NUMERIC_LEGACY_ID = /^[1-9][0-9]{0,9}$/;
  */
 async function resolveTemplateBookmark(context: RequestContext, token: string) {
   requirePermission(context, "project-template.read");
-  if (token.length > 96 || !token || token === "." || token === "..") return null;
+  if (token.length > 96 || !token || token === "." || token === ".." ||
+      NUMERIC_LEGACY_ID.test(token)) return null;
   const match = UUID.test(token)
     ? eq(projectTemplates.id, token)
     : eq(projectTemplates.slug, token);
@@ -37,11 +38,11 @@ async function resolveTemplateBookmark(context: RequestContext, token: string) {
 async function resolveWorkspaceBookmark(context: RequestContext, token: string) {
   const collegeId = getProjectAdminCollegeId(context);
   if (!collegeId || !token || token.length > 96) return null;
-  let lookup;
+  let lookup: ReturnType<typeof eq>;
   if (UUID.test(token)) lookup = eq(projectInstances.id, token);
   else if (NUMERIC_LEGACY_ID.test(token)) {
     const legacyId = Number(token);
-    if (!Number.isSafeInteger(legacyId)) return null;
+    if (!Number.isSafeInteger(legacyId) || legacyId > 2_147_483_647) return null;
     lookup = eq(projectInstances.legacyProjectId, legacyId);
   } else if (/^[a-z0-9-]+$/i.test(token)) {
     lookup = eq(projectInstances.slug, token);
