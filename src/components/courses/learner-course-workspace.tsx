@@ -1,4 +1,5 @@
 import { MetricBar } from "@/components/ui/metric-bar";
+import type {ComponentProps} from "react";
 import progressStyles from "./learner-course-progress.module.css";
 import { Disclosure } from "@/components/ui/disclosure";
 import { StatTile } from "@/components/ui/stat-tile";
@@ -53,6 +54,42 @@ type Workspace = Awaited<
     typeof getLearnerCourseWorkspace
   >
 >;
+
+/** Legacy selected-lesson detail is a continuous, full-width reading
+ * surface. Keep modal drill-down for the additive full-course roadmap only.
+ * This wrapper keeps a single content/assessment renderer and identical guards.
+ */
+function LearnerSyllabusItem({
+ inline,...props
+}:ComponentProps<typeof LearnerRoadmapItemDialog> & {inline:boolean}){
+ if(!inline)return <LearnerRoadmapItemDialog {...props}/>;
+ const title=props.title?.trim()||"Untitled content";
+ const completed=props.progress==="COMPLETED";
+ return <section aria-label={title}
+   className={"min-w-0 scroll-mt-28 rounded-[var(--lms-control-radius)] border border-border bg-surface p-4 "+
+    (props.highlighted?"ring-2 ring-[var(--lms-focus-ring)]":"")}>
+  <div className="flex min-w-0 items-start gap-3">
+   <span title={completed?"Completed":props.locked?"Content locked":"Not completed"}
+    aria-label={completed?"Completed":props.locked?"Content locked":"Not completed"}
+    className={"mt-1 inline-flex size-6 shrink-0 items-center justify-center rounded-full border "+
+     (completed?"border-success bg-success text-white":"border-border text-muted-foreground")}>
+    {completed?<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="m4 12 5 5L20 6"/></svg>:
+    props.locked?<svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>:null}
+   </span>
+   <div className="min-w-0 flex-1">
+    <div className="flex min-w-0 flex-wrap items-center gap-2">
+     <h3 className="break-words text-base font-semibold text-foreground">{title}</h3>
+     <StatusBadge tone={completed?"success":props.locked?"warning":"neutral"}>
+      {props.locked?"Content locked":completed?"Completed":props.kind}
+     </StatusBadge>
+    </div>
+    <p className="mt-1 text-xs text-muted-foreground">{props.caption??props.kind}{props.dueText?" · Due "+props.dueText:""}</p>
+    {props.locked?<p role="status" className="mt-3 text-sm text-warning">Content locked. This item is not available yet.</p>:
+     <div className="mt-4 min-w-0 border-t border-border pt-4">{props.children}</div>}
+   </div>
+  </div>
+ </section>;
+}
 
 function ProgressBar({
   value,
@@ -224,7 +261,7 @@ function ContentCard({
   if(legacySyllabusKind(content.type)!=="CONTENT"||
      !["RESOURCE","VIDEO","YOUTUBE","LIVE_CLASS"].includes(content.type))
    return <div role="status" className="space-y-2 border-b border-border py-3">
-    <h3 className="font-semibold">{content.title}</h3>
+    <h3 className="font-semibold">{content.title?.trim()||"Untitled content"}</h3>
     <Alert tone="warning">This content type isn&apos;t supported yet. Contact your instructor if this looks wrong.</Alert>
    </div>;
 
@@ -269,7 +306,7 @@ function ContentCard({
             ) : null}
           </div>
           <h3 className="mt-2 text-base font-semibold text-foreground">
-            {content.title}
+            {content.title?.trim()||"Untitled content"}
           </h3>
         </div>
         {legacyAddedDate(content.createdAt)?<span className="text-[11px] leading-5 text-muted-foreground">
@@ -1027,13 +1064,14 @@ export function LearnerCourseWorkspace({
                           (candidate) => candidate.id === item.id,
                         );
                         return content ? (
-                          <LearnerRoadmapItemDialog
+                          <LearnerSyllabusItem
                             key={learnerRoadmapDialogKey(
                               lesson.id,item.id,
                               learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId),
                             )}
-                            title={content.title}
+                            title={content.title?.trim()||"Untitled content"}
                             kind="Content"
+                            inline={focusLessonId===lesson.id}
                             focusKey={deliveryId+":"+lesson.id+":"+item.id}
                             locked={content.availability==="SCHEDULED"&&content.type!=="LIVE_CLASS"}
                             availability={content.availability}
@@ -1048,7 +1086,7 @@ export function LearnerCourseWorkspace({
                             <ContentCard content={content} lessonId={lesson.id} deliveryId={deliveryId} readOnly={readOnly}
                             materialsEnabled={resourceMaterialsRuntimeEnabled()}
                             saveIntervalMs={workspace.playbackSettings.saveIntervalMs}/>
-                          </LearnerRoadmapItemDialog>
+                          </LearnerSyllabusItem>
                         ) : null;
                       }
 
@@ -1057,13 +1095,14 @@ export function LearnerCourseWorkspace({
                           (candidate) => candidate.id === item.id,
                         );
                         return assignment ? (
-                          <LearnerRoadmapItemDialog
+                          <LearnerSyllabusItem
                             key={learnerRoadmapDialogKey(
                               lesson.id,item.id,
                               learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId),
                             )}
-                            title={assignment.title}
+                            title={assignment.title?.trim()||"Untitled assignment"}
                             kind="Assignment"
+                            inline={focusLessonId===lesson.id}
                             focusKey={deliveryId+":"+lesson.id+":"+item.id}
                             caption={"Assignment"+(!assignment.submissionId&&
                               assignment.dueAt&&assignment.dueAt.getTime()<workspace.snapshotNowMs
@@ -1074,7 +1113,7 @@ export function LearnerCourseWorkspace({
                             highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                           >
                             <AssignmentCard assignment={assignment} deliveryId={deliveryId} readOnly={readOnly} />
-                          </LearnerRoadmapItemDialog>
+                          </LearnerSyllabusItem>
                         ) : null;
                       }
 
@@ -1082,13 +1121,14 @@ export function LearnerCourseWorkspace({
                         (candidate) => candidate.id === item.id,
                       );
                       return quiz ? (
-                        <LearnerRoadmapItemDialog
+                        <LearnerSyllabusItem
                           key={learnerRoadmapDialogKey(
                             lesson.id,item.id,
                             learnerRoadmapShouldOpenItem(lesson.id,item.id,focusLessonId,focusContentId),
                           )}
-                          title={quiz.title}
+                          title={quiz.title?.trim()||"Untitled quiz"}
                           kind="Quiz"
+                          inline={focusLessonId===lesson.id}
                           focusKey={deliveryId+":"+lesson.id+":"+item.id}
                           caption={!quiz.dueAt&&quiz.attemptsUsed===0
                             ?"Quiz · Unavailable · deadline missing":quiz.progress.status==="MISSED"
@@ -1100,7 +1140,7 @@ export function LearnerCourseWorkspace({
                           highlighted={focusContentId===item.id && focusLessonId===lesson.id}
                         >
                           <QuizCard quiz={quiz} deliveryId={deliveryId} readOnly={readOnly} />
-                        </LearnerRoadmapItemDialog>
+                        </LearnerSyllabusItem>
                       ) : null;
                     })}
                   </div>
