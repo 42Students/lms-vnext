@@ -51,3 +51,27 @@ export function decodeAdminScopeCookie(
 
   return null;
 }
+/** Error visibility for a malformed/outdated selected scope cookie.
+ * This is a UI hint only: effective authorization is server/DB verified.
+ */
+export function inspectAdminScopeCookie(value: string | null | undefined): {
+  scope: AdminScope | null;
+  malformed: boolean;
+} {
+  if (!value) return { scope: null, malformed: false };
+  const scope = decodeAdminScopeCookie(value);
+  return { scope, malformed: scope === null };
+}
+
+/** Compare an on-screen scope selection to the server's effective scope.
+ * A stale cookie must never silently authorize the wrong tenant.
+ */
+export function adminScopeOutOfSync(
+  displayedScope: AdminScope | null,
+  effectiveScope: AdminScope | null,
+): boolean {
+  if (!displayedScope && !effectiveScope) return false;
+  if (!displayedScope || !effectiveScope) return true;
+  return displayedScope.organizationId !== effectiveScope.organizationId ||
+    displayedScope.collegeId !== effectiveScope.collegeId;
+}
