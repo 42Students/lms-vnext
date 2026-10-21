@@ -156,7 +156,7 @@ export const updateCollegeCompanyPrivateDetailsSchema = z.object({
   contactEmail: z.string().trim().max(150)
     .email("Must be a valid email").nullable(),
   contactPhone: z.string().trim().max(30)
-    .regex(/^[+()\\d][\\d\\s().-]{6,29}$/, "Enter a valid phone number").nullable(),
+    .regex(/^[+()\d][\d\s().-]{6,29}$/, "Enter a valid phone number").nullable(),
   internalNotes: z.string().max(2000).nullable(),
 }).strict();
 
