@@ -1,5 +1,5 @@
 import "server-only";
-import {and,desc,eq,inArray,sql} from "drizzle-orm";
+import {desc,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {
  db10AuditFindings,db10AuditFindingEvents,db10AuditFindingSyncs,
@@ -34,6 +34,23 @@ function safeReason(_error:unknown){return "Import refused: source data failed v
 function ledgerAction(item:IndependentAuditInboxPayload):LedgerAction{
  return item.type==="finding"?"IMPORT":"UPDATE";
 }
+async function persistAuditSyncFailure(){
+ // Store an actual failed attempt, never invent a successful repository read.
+ // Do not copy credentials, provider body or arbitrary exception messages.
+ try{
+  const at=new Date();
+  await getDb().insert(db10AuditFindingSyncs).values({
+   source:SOURCE,repo:SOURCE,lastSyncedAt:at,lastResult:"FAILED",
+   lastError:"Source fetch or importer transaction failed",
+  }).onConflictDoUpdate({target:db10AuditFindingSyncs.source,set:{
+   lastSyncedAt:at,lastResult:"FAILED",
+   lastError:"Source fetch or importer transaction failed",
+  }});
+ }catch{
+  // The storage feature itself may be unavailable; keep the caller failure.
+ }
+}
+
 /** Importer updates only *authorized, validated* immutable files. A change to
  * an already accepted file is never replayed, even when SHA has changed.
  * A new valid agent update can append history and merge commits. */
@@ -41,7 +58,12 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
  if(!independentAuditImporterReady())
   return {ran:false,busy:false,commit:null,imported:0,updates:0,
    refused:0,tampered:0,deleted:0,message:"Sync is not set up on this server"};
- const inbox=await readAuditGithubInbox();
+ let inbox:Awaited<ReturnType<typeof readAuditGithubInbox>>;
+ try{inbox=await readAuditGithubInbox();}
+ catch{
+  await persistAuditSyncFailure();
+  throw new Error("Audit findings source could not be read");
+ }
  const started=Date.now();
  const ordered=[...inbox.items].sort((a,b)=>
   Number(a.path.includes(".u"))-Number(b.path.includes(".u"))||
@@ -51,7 +73,7 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
  const now=new Date();
  const stats={imported:0,updates:0,refused:0,tampered:0,deleted:0};
  const db=getDb();
- return db.transaction(async tx=>{
+ try{return await db.transaction(async tx=>{
   // Distributed, transaction-scoped, non-blocking lease. A competing manual
   // or scheduled runner must never modify the same ledger concurrently.
   const lock=await tx.execute<{acquired:boolean}>(sql`
@@ -247,5 +269,9 @@ export async function syncIndependentAuditInbox():Promise<AuditImportResult>{
   }});
   return {ran:true,busy:false,commit:inbox.commit,...stats,
    message:result+(incomplete?": additional inbox files remain":""),};
- },{isolationLevel:"serializable"});
+ },{isolationLevel:"serializable"});}
+ catch{
+  await persistAuditSyncFailure();
+  throw new Error("Audit findings import transaction failed");
+ }
 }
