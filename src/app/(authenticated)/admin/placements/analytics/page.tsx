@@ -104,39 +104,57 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"
    description="Track the hiring funnel, conversion and company performance for the selected college. Filters apply consistently to the headline metrics, funnel and company report below."
-   actions={<a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
-    className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
-    Export report</a>}/>
+   actions={<span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Placements</span>}/>
   {filters===null?<Banner tone="warning" action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
    Jobs, departments, programs and batches could not be loaded for filtering. The verified hiring results remain visible.
   </Banner>:filters.filtersError?<Banner tone="warning" role="status"
     action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
     {filters.filtersError}
   </Banner>:null}
-  <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
-   <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
-    <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drive or company
-     <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="min-w-0 w-full"/></label>
-    {select("jobId","Job",filters?.jobs??[])}
-    <Button type="submit" className="min-h-11 w-full sm:col-span-2 md:col-span-1 md:min-h-9 md:w-auto">Refresh</Button>
-   </div>
-   <details className="min-w-0" open={Boolean(q.departmentId||q.programId||q.cohortId||q.appliedFrom||q.appliedTo)}>
-    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Filters</summary>
-    <div className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-3)] pt-[var(--lms-space-2)] sm:grid-cols-2 xl:grid-cols-3">
-     <SuperAdminHiringAcademicFilters
-      key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
-      departments={filters?.departments??[]} programs={filters?.programs??[]}
-      batches={filters?.batches??[]}
-      selected={{departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId}}/>
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied from
-      <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="w-full"/></label>
-     <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Applied through
-      <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="w-full"/></label>
+  <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4 print:hidden">
+   <fieldset className="min-w-0">
+    <legend className="sr-only">Hiring report date range and filters</legend>
+    <div className="flex min-w-0 flex-wrap items-end gap-3">
+     <div className="grid w-full min-w-0 gap-2 sm:w-auto sm:grid-cols-2" role="group" aria-label="Filter by date range">
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Applied from
+       <DateInput mode="date" name="appliedFrom" defaultValue={q.appliedFrom??""} className="min-w-0" /></label>
+      <label className="grid min-w-0 gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Applied to
+       <DateInput mode="date" name="appliedTo" defaultValue={q.appliedTo??""} className="min-w-0" /></label>
+     </div>
+     <div className="w-full min-w-0 sm:w-[205px]">{select("jobId","Job",filters?.jobs??[])}</div>
+     <div className="w-full min-w-0 sm:w-[180px]">
+      <label className="grid gap-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Drive or company
+       <Input type="search" name="q" defaultValue={q.q} maxLength={100} className="w-full" placeholder="Search jobs or companies" /></label>
+     </div>
+     <Button type="submit" variant="secondary" className="min-h-11 w-full gap-2 md:min-h-9 sm:w-auto">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M20 11a8 8 0 1 0-2 6M20 5v6h-6"/></svg>Refresh
+     </Button>
+     <a href={"/api/admin/placements/hiring-report/export?"+params.toString()}
+      className="inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] sm:w-auto md:min-h-9">
+      <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>Export report
+     </a>
     </div>
-   </details>
-   {params.size?<Link href="/admin/placements/analytics" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:text-[var(--lms-primary-text)]">Clear all</Link>:null}
+    <details className="mt-3 min-w-0" open={Boolean(q.departmentId||q.programId||q.cohortId)}>
+     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Academic filters</summary>
+     <div className="grid min-w-0 gap-3 pt-2 sm:grid-cols-2 xl:grid-cols-3">
+      <SuperAdminHiringAcademicFilters key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
+       departments={filters?.departments??[]} programs={filters?.programs??[]}
+       batches={filters?.batches??[]}
+       selected={{departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId}}/>
+     </div>
+    </details>
+   </fieldset>
   </form>
-  {params.size?<p role="status" className="max-w-full break-words text-xs text-muted-foreground">Active filters: {[...params.entries()].map(([key,value])=>key+" = "+value).join(" · ")}</p>:null}
+  {params.size?<div role="status" className="flex min-w-0 flex-wrap items-center gap-2 text-xs print:hidden" aria-label="Active hiring filters">
+   {[...params.entries()].map(([key,value])=>{
+    const next=new URLSearchParams(params);
+    next.delete(key);
+    return <Link key={key} href={"/admin/placements/analytics"+(next.size?"?"+next.toString():"")}
+     className="inline-flex min-h-8 items-center gap-2 rounded border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-2 font-medium text-primary-text hover:underline"
+     aria-label={"Remove "+key+" filter"}>{key==="appliedFrom"?"Applied from":key==="appliedTo"?"Applied to":key==="jobId"?"Job":key==="cohortId"?"Batch":key==="departmentId"?"Department":key==="programId"?"Program":"Search"}: {value}<span aria-hidden="true">×</span></Link>;
+   })}
+   <Link href="/admin/placements/analytics" className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Clear all</Link>
+  </div>:null}
   <p role="status" className="text-sm text-body">{data.rows.length} matching drives across {groups.length} companies{data.truncated?" · Capped at 5,000 drives":""}</p>
   {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
