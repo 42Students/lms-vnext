@@ -8,6 +8,7 @@ import {
   check,
   date,
   foreignKey,
+  integer,
   jsonb,
   pgTable,
   text,
@@ -27,6 +28,7 @@ export const placementTpoJobTypes = pgTable(
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
     label: varchar("label", { length: 100 }).notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
     active: boolean("active").notNull().default(true),
     countsAsPlaced: boolean("counts_as_placed"),
     isBuiltin: boolean("is_builtin").notNull().default(false),
