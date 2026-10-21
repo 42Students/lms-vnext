@@ -164,7 +164,7 @@ export function TpoBatchInvitationControl(props: Props) {
       onChange={event => setDate(event.target.value)}
        />
     <Button variant="primary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={() => void invite()}
-      disabled={busy || !ready} >
+      disabled={busy || !ready || !date || date < props.minDate} >
       {busy ? "Inviting…" : TPO_INVITATION_COPY.invitation + " " + props.invitable}
     </Button>
     {props.eligible === 0 ? <p className="text-sm leading-[22px]">Nobody in this batch is eligible yet. Decide who is in placements first.</p> : null}
