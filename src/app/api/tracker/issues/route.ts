@@ -167,7 +167,11 @@ export async function POST(request: Request) {
         { status: 400, headers: { "cache-control": "private, no-store" } },
       );
     }
-    const issue = await createBugTrackerIssueForAdmin(context, parsed.data);
+    const retryKey = request.headers.get("idempotency-key");
+    if (retryKey !== null && !/^[a-zA-Z0-9_-]{16,128}$/.test(retryKey)) {
+      return invalid("idempotencyKey", "Invalid request retry key");
+    }
+    const issue = await createBugTrackerIssueForAdmin(context, parsed.data, retryKey);
     // Keep the existing vNext {issue} contract while exposing legacy issue fields.
     return NextResponse.json({ issue, ...issue }, {
       status: 201, headers: { "cache-control": "private, no-store" },
