@@ -87,6 +87,8 @@ export default async function LearnerCourseProgressPage({
                         <p className="break-words text-sm font-medium text-foreground leading-[22px]">{item.title}</p>
                         <p className="mt-1 text-xs text-muted-foreground leading-5">
                           {item.kind.toLowerCase()}
+                          {item.kind==="CONTENT"?
+                            " · Current attempt "+(progress.attemptByContent[item.id]??1):""}
                         </p>
                       </div>
                       <StatusBadge tone={tone(item.status)}>
@@ -107,8 +109,10 @@ export default async function LearnerCourseProgressPage({
         </section>
       )}
       <p className="text-xs text-muted-foreground leading-5">
-        Completion is computed from persisted learner progress and submitted assessments.
-        Unpublished grades and untracked attendance are not inferred.
+        Completion reflects the latest recorded content attempt. An authorized
+        administrator may start a retake without deleting earlier attempts;
+        previous completions remain in history. Unpublished grades and
+        untracked attendance are not inferred.
       </p>
     </div>
   );

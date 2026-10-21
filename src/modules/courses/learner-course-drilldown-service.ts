@@ -1,8 +1,8 @@
 import "server-only";
 
-import { and, eq } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { collegeMemberships, membershipRoles, users } from "@/db/schema";
+import { collegeMemberships, membershipRoles, users, learnerContentProgress } from "@/db/schema";
 import { getLearnerAttendanceWorkspace } from "@/modules/attendance/learner-service";
 import type { RequestContext } from "@/modules/identity/context";
 import { hasMembershipRole } from "@/modules/identity/context";
@@ -67,11 +67,25 @@ export async function getOwnLearnerCourseProgressBreakdown(
   if (!course) return null;
 
   const workspace = await getLearnerCourseWorkspace(context, deliveryId);
+  const lessons=buildLearnerLessonProgress(workspace.lessons);
+  // Read attempts only for CONTENT IDs already visible in this authorized
+  // delivery. The latest row is authoritative after an admin retake.
+  const ids=[...new Set(lessons.flatMap(lesson=>lesson.items
+    .filter(item=>item.kind==="CONTENT").map(item=>item.id)))];
+  const attempts=ids.length?await getDb().select({
+    contentId:learnerContentProgress.lessonContentId,
+    attempt:learnerContentProgress.attempt,
+  }).from(learnerContentProgress).where(and(
+    eq(learnerContentProgress.membershipId,context.membership!.id),
+    inArray(learnerContentProgress.lessonContentId,ids),
+  )):[];
+  const attemptByContent:Record<string,number>={};
+  for(const row of attempts)
+    attemptByContent[row.contentId]=Math.max(row.attempt,attemptByContent[row.contentId]??1);
   return {
     course: { name: course.courseName, code: course.courseCode, deliveryId },
     learningPathPublished: workspace.learningPath !== null,
-    summary: workspace.summary,
-    lessons: buildLearnerLessonProgress(workspace.lessons),
+    summary: workspace.summary,lessons,attemptByContent,
   };
 }
 

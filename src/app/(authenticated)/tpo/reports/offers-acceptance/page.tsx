@@ -46,9 +46,13 @@ export default async function TpoOffersAcceptanceReportPage({
   });
 
   const { totals, byDrive, byCompany } = workspace.details.offers;
-  const acceptanceRate=(accepted:number,declined:number)=>{
-   const answered=accepted+declined;
-   return answered>0?Math.round(accepted/answered*100)+"%":"—";
+  const acceptancePercent=(accepted:number,declined:number,expired:number)=>{
+   const resolved=accepted+declined+expired;
+   return resolved>0?Math.round(accepted/resolved*1000)/10:null;
+  };
+  const acceptanceRate=(accepted:number,declined:number,expired:number)=>{
+   const rate=acceptancePercent(accepted,declined,expired);
+   return rate===null?"—":rate.toFixed(1)+"%";
   };
 
   return (
@@ -97,9 +101,9 @@ export default async function TpoOffersAcceptanceReportPage({
 
       <ReportScopeNote note={workspace.detailScopeNote} />
       <ReportBarChart title="Acceptance rate by company" units="percent"
-       rows={byCompany.filter(row=>row.accepted+row.declined>0)
-         .map(row=>({label:row.label,value:Math.round(row.accepted/(row.accepted+row.declined)*100),
-          detail:row.accepted+" accepted of "+(row.accepted+row.declined)+" answered offers"}))}/>
+       rows={byCompany.filter(row=>row.accepted+row.declined+row.expiredOutstanding>0)
+         .map(row=>({label:row.label,value:acceptancePercent(row.accepted,row.declined,row.expiredOutstanding)??0,
+          detail:row.accepted+" accepted of "+(row.accepted+row.declined+row.expiredOutstanding)+" resolved offers"}))}/>
       <p className="text-sm leading-6 text-body">
         Outstanding and expired-outstanding are mutually exclusive subsets
         of currently ISSUED offers. Expired is derived from the recorded
@@ -159,11 +163,11 @@ export default async function TpoOffersAcceptanceReportPage({
           row.outstanding,
           row.expiredOutstanding,
           row.outstanding,
-          acceptanceRate(row.accepted,row.declined),
+          acceptanceRate(row.accepted,row.declined,row.expiredOutstanding),
         ])}
         emptyDescription="No companies have recorded offers for these filters."
       />
-      <p className="text-xs text-muted-foreground">Acceptance rate = accepted / (accepted + declined) among answered offers. Waiting for the student is the currently outstanding status; expired outstanding is presented separately and is not counted twice.</p>
+      <p className="text-xs text-muted-foreground">Acceptance rate = accepted / (accepted + declined + expired outstanding), shown to one decimal place. Waiting for the student is the currently outstanding status; expired outstanding is presented separately and is not counted twice.</p>
           <TpoReportRecordLinks kind="OFFERS" drives={byDrive} companies={byCompany} />
         </div>
       </Disclosure>

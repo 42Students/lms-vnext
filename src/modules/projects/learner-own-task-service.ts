@@ -59,7 +59,9 @@ export async function createLearnerOwnTask(context:RequestContext,rawParams:unkn
     organizationId:scope.organizationId,subjectType:"project_task",subjectId:task.id,subjectLabel:task.title,
     summary:"Learner added own project task",
     metadata:{projectId,taskId:task.id,sprintId:sprint?.id??null,
-      initialStatus:task.status,createdByMembershipId:membership.id},
+      initialStatus:task.status,createdByMembershipId:membership.id,
+      createdByUserId:context.user.id,createdByType:"LEARNER",
+      assigneeMembershipId:membership.id,assigneeRoleKind:"LEARNER"},
     groupKey:"project:"+projectId,
   });
   await notifyActiveProjectMembers(tx,event.id,{projectId,collegeId:scope.collegeId,
@@ -106,7 +108,9 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
     organizationId:scope.organizationId,subjectType:"project_task",subjectId:task.id,
     subjectLabel:task.title,summary:"Learner deleted own project task",
     metadata:{projectId,taskId:task.id,deleted:true,sprintId:task.sprintId,
-      createdByMembershipId:membership.id},
+      createdByMembershipId:membership.id,createdByUserId:context.user.id,
+      createdByType:"LEARNER",assigneeMembershipId:membership.id,
+      assigneeRoleKind:"LEARNER"},
     groupKey:"project:"+projectId,
   });
   await tx.delete(projectTasks).where(and(eq(projectTasks.projectId,projectId),
@@ -116,4 +120,15 @@ export async function deleteLearnerOwnTask(context:RequestContext,rawParams:unkn
    body:task.title,actionHref:"/mentor/projects/"+projectId+"?tab=board"});
   return {deleted:true};
  });
+}
+
+/** Imported legacy IDs were from distinct learner/faculty namespaces.
+ * The learner-owned task writer MUST NOT coerce unknown or faculty actor IDs
+ * into learner memberships merely because their legacy integer happens to
+ * match. Only an explicitly mapped LEARNER identity belongs here. */
+export function isLegacyLearnerTaskAssignee(
+  legacyType:string|null|undefined,
+  assignedMembershipRoles:readonly string[],
+):boolean{
+ return legacyType==="LEARNER"&&assignedMembershipRoles.includes("LEARNER");
 }

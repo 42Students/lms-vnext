@@ -607,6 +607,11 @@ export async function getLearnerCourseWorkspace(
           learnerContentProgress.membershipId,
           membership.id,
         ),
+        sql`${learnerContentProgress.attempt} = (
+          select max(latest.attempt) from learner_content_progress latest
+          where latest.membership_id = ${membership.id}
+          and latest.lesson_content_id = ${lessonContents.id}
+        )`,
       ),
     )
     .where(

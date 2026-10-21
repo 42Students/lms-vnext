@@ -8,6 +8,7 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { useToast } from "@/components/ui/toast";
 import { studentSectionMoveMessage } from "@/modules/academics/college-student-section-move-model";
 
 type Options = {
@@ -19,6 +20,7 @@ export function StudentClassMoveAction({ membershipId, name }: {
   membershipId: string; name: string;
 }) {
   const router = useRouter();
+  const { showToast } = useToast();
   const requestVersion = useRef(0);
   const moving = useRef(false);
   function close() { if (busy || moving.current) return; requestVersion.current++; setOpen(false); }
@@ -68,6 +70,8 @@ export function StudentClassMoveAction({ membershipId, name }: {
         requestVersion.current++;
         setOpen(false);
         setLoaded(null);
+        setTargetId("");
+        showToast({tone:"success",title:"Learner moved successfully"});
         router.refresh();
       } catch (reason) {
         setError(reason instanceof Error ? reason.message : "Move failed");
