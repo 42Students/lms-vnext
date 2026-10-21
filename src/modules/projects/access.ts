@@ -217,3 +217,18 @@ export async function requireProjectLifecycleMutationAccess(context: RequestCont
   }
   return requireProjectLifecycleAccess(context, projectIdInput);
 }
+
+/**
+ * Presentation hint for Super Admin project pages. A selected acting college
+ * is needed for a workspace-specific view; this never grants access and must
+ * not replace requireProjectReadAccess / requireProjectManageAccess.
+ */
+export function projectWorkspaceCollegeSwitcherGuidance(
+ context: RequestContext,
+): { title: string; instruction: string } | null {
+ if (!isSuperAdmin(context) || context.adminScope?.collegeId) return null;
+ return {
+  title: "No college selected",
+  instruction: "Choose a college from the header switcher.",
+ };
+}

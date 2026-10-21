@@ -49,8 +49,11 @@ const fileTypes = {
 } as const;
 
 export class BugTrackerAttachmentError extends Error {
-  constructor(readonly code: "INVALID_FILE" | "TOO_MANY_ATTACHMENTS" | "INVALID_STORAGE_KEY") {
-    super(code);
+  constructor(
+    readonly code: "INVALID_FILE" | "TOO_MANY_ATTACHMENTS" | "INVALID_STORAGE_KEY",
+    message?: string,
+  ) {
+    super(message ?? code);
     this.name = "BugTrackerAttachmentError";
   }
 }
@@ -87,7 +90,10 @@ function attachmentCount(count: number) {
     throw new BugTrackerAttachmentError("INVALID_FILE");
   }
   if (count >= BUG_SCREENSHOT_MAX_PER_ISSUE) {
-    throw new BugTrackerAttachmentError("TOO_MANY_ATTACHMENTS");
+    throw new BugTrackerAttachmentError(
+      "TOO_MANY_ATTACHMENTS",
+      "This issue already has the maximum number of screenshots",
+    );
   }
 }
 
@@ -97,7 +103,10 @@ function assertFileSize(bytes: number) {
     bytes < 1 ||
     bytes > BUG_SCREENSHOT_MAX_BYTES
   ) {
-    throw new BugTrackerAttachmentError("INVALID_FILE");
+    throw new BugTrackerAttachmentError(
+      "INVALID_FILE",
+      "Screenshot must be between 1 byte and 8 MB",
+    );
   }
 }
 

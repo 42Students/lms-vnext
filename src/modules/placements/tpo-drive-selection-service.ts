@@ -69,6 +69,25 @@ export async function getTpoSelectionWorkspace(context: RequestContext, rawJobId
   }).from(placementDriveSelections)
     .where(eq(placementDriveSelections.jobId,job.id))
     .orderBy(placementDriveSelections.recordedAt) : [];
+  // A selection is a staff decision, not an issued offer. Keep each issued
+  // offer revision (including declined, withdrawn and expired) independently.
+  const offerHistory = rows.length ? await getDb().select({
+    id: placementOffers.id,
+    applicationId: placementOffers.applicationId,
+    version: placementOffers.version,
+    kind: placementOffers.kind,
+    status: placementOffers.status,
+    roleTitle: placementOffers.roleTitle,
+    annualCtcInr: placementOffers.annualCtcInr,
+    issuedAt: placementOffers.issuedAt,
+    respondedAt: placementOffers.respondedAt,
+    withdrawnAt: placementOffers.withdrawnAt,
+  }).from(placementOffers)
+    .where(inArray(placementOffers.applicationId, rows.map(row => row.applicationId)))
+    .orderBy(asc(placementOffers.applicationId), asc(placementOffers.version))
+    .limit(2001) : [];
+  const offerHistoryTruncated = offerHistory.length > 2000;
+  const visibleOfferHistory = offerHistory.slice(0, 2000);
   const candidateMap = new Map(candidates.map(row => [row.applicationId, row]));
   return { job, storageReady, pendingMessage: storageReady ? null : pendingCode,
     roleOptions: roleOptions.filter(r => r.status === "ACTIVE").map(r => ({
@@ -82,11 +101,19 @@ export async function getTpoSelectionWorkspace(context: RequestContext, rawJobId
       offerReady: row.offerReady,
       alreadyOffered: Boolean(row.offer && ["ISSUED","ACCEPTED"].includes(row.offer.status)),
     })),
+    offerHistoryTruncated,
     selections: rows.map(row => ({
       ...row,
       recordedAt: row.recordedAt.toISOString(),
       name: candidateMap.get(row.applicationId)?.displayName ?? "Learner",
       offerReady: candidateMap.get(row.applicationId)?.offerReady ?? false,
+      // Old JobOffer SELECTED and PENDING_VERIFICATION were pre-release stages.
+      // Never project those into the vNext ISSUED offer status.
+      legacySelectionStatus: row.status === "VERIFIED" ? "PENDING_VERIFICATION" : row.status,
+      offerHistory: visibleOfferHistory.filter(offer => offer.applicationId === row.applicationId)
+        .map(offer => ({...offer, issuedAt: offer.issuedAt.toISOString(),
+          respondedAt: offer.respondedAt?.toISOString() ?? null,
+          withdrawnAt: offer.withdrawnAt?.toISOString() ?? null})),
     })),
   };
 }
