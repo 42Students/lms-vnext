@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import {CalendarCompanySelect} from "./calendar-company-select";
+import {collegeInterviewIcs} from "@/modules/placements/college-interview-calendar-model";
 import {TpoCalendarMoveFollowup} from "@/components/placements/tpo-calendar-followup-actions";
 import {TpoNewFollowupModal} from "@/components/tpo/tpo-new-followup-modal";
 import { StatusBadge } from "@/components/ui/status-badge";
@@ -427,6 +428,13 @@ function CalendarEventCard({
   allowFollowupEditing: boolean;
 }) {
   const href = eventHref(event, audience);
+  const minutes=event.endsAt?Math.round((event.endsAt.getTime()-event.startsAt.getTime())/60_000):null;
+  const downloadable=audience!=="TPO"&&event.kind==="INTERVIEW_SLOT"&&
+    minutes!==null&&minutes>=1&&minutes<=1440;
+  const ics=downloadable?collegeInterviewIcs({
+    id:event.id,title:[event.title,event.jobTitle,event.companyName].filter(Boolean).join(" · "),
+    date:event.startsAt.toISOString(),durationMinutes:minutes!,location:event.venue,
+  }):null;
 
   return (
     <article className="min-w-0 py-[var(--lms-space-4)]">
@@ -488,6 +496,12 @@ function CalendarEventCard({
           →
         </Link>
       ) : null}
+      {ics?<a download={"interview-"+event.id+".ics"}
+        href={"data:text/calendar;charset=utf-8,"+encodeURIComponent(ics)}
+        aria-label={"Download interview calendar event for "+event.title}
+        className="mt-2 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">
+        Download .ics
+      </a>:null}
       {audience === "TPO" && allowFollowupEditing &&
        event.kind === "FOLLOW_UP" && event.status === "OPEN" &&
        event.followupId ? (
