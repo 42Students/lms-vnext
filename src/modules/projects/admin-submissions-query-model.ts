@@ -15,6 +15,7 @@ const schema = z.strictObject({
     "DRAFT", "SUBMITTED", "CHANGES_REQUESTED", "APPROVED",
     "UNDER_REVIEW", "LOCKED", "DRAFT_REVISING",
   ]).optional(),
+  sort:z.enum(["SUBMITTED_DESC","PENDING_DESC","REVISIONS_DESC"]).default("SUBMITTED_DESC"),
   page: decimalPage(1,100000,1),
   pageSize: decimalPage(10,100,25),
 }).refine(value=>value.view!=="NOT_SUBMITTED"||value.submissionStatus===undefined,{
@@ -38,7 +39,7 @@ function normalizeSubmissionStatus(value: string | undefined) {
 
 export function parseProjectAdminSubmissionsQuery(params: Record<string,string|string[]|undefined>) {
   if (Object.values(params).some(Array.isArray) ||
-      Object.keys(params).some(key=>!["view","q","status","submissionStatus","page","pageSize","tab","projectId"].includes(key)))
+      Object.keys(params).some(key=>!["view","q","status","submissionStatus","sort","page","pageSize","tab","projectId"].includes(key)))
     return schema.safeParse(null);
   const rawStatus=first(params.status)?.trim();
   const workspaceStatus=rawStatus && ["PLANNED","ACTIVE","COMPLETED","ARCHIVED"].includes(rawStatus.toUpperCase())
@@ -48,7 +49,7 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
     view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
     q:first(params.q)??first(params.projectId),status:workspaceStatus,
     submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
-    page:first(params.page),pageSize:first(params.pageSize),
+    sort:first(params.sort),page:first(params.page),pageSize:first(params.pageSize),
   };
   return schema.safeParse(Object.fromEntries(
     Object.entries(entries).filter(([key,value])=>value!==undefined&&(value!=="" || key==="page" || key==="pageSize")),
@@ -60,7 +61,8 @@ export function parseProjectAdminSubmissionsQuery(params: Record<string,string|s
  * filter; never carry one across as though it were applied. */
 export function projectAdminUnsubmittedHref(
   basePath:string,
-  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number},
+  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number;
+    sort?:"SUBMITTED_DESC"|"PENDING_DESC"|"REVISIONS_DESC"},
   page=1,
 ):string {
   const params=new URLSearchParams();
@@ -68,6 +70,7 @@ export function projectAdminUnsubmittedHref(
   if(query.q)params.set("q",query.q);
   if(query.status)params.set("status",query.status);
   if(query.pageSize)params.set("pageSize",String(query.pageSize));
+  if(query.sort&&query.sort!=="SUBMITTED_DESC")params.set("sort",query.sort);
   if(page>1)params.set("page",String(page));
   return basePath+"?"+params.toString();
 }
@@ -78,13 +81,15 @@ export function projectAdminUnsubmittedHref(
  */
 export function projectAdminSubmissionHref(
   basePath:string,
-  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number},
+  query:{q?:string;status?:"PLANNED"|"ACTIVE"|"COMPLETED"|"ARCHIVED";pageSize?:number;
+    sort?:"SUBMITTED_DESC"|"PENDING_DESC"|"REVISIONS_DESC"},
   submissionStatus?:"SUBMITTED"|"UNDER_REVIEW"|"LOCKED"|"DRAFT_REVISING",
 ):string {
   const params=new URLSearchParams();
   if(query.q)params.set("q",query.q);
   if(query.status)params.set("status",query.status);
   if(query.pageSize)params.set("pageSize",String(query.pageSize));
+  if(query.sort&&query.sort!=="SUBMITTED_DESC")params.set("sort",query.sort);
   if(submissionStatus)params.set("submissionStatus",submissionStatus);
   const suffix=params.toString();
   return basePath+(suffix?"?"+suffix:"");
