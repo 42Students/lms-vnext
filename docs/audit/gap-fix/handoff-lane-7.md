@@ -835,3 +835,61 @@ Telegram provider acknowledgments must be authentic and persisted before editing
 - G2-18-021-062 | `src/app/(authenticated)/learn/my-placements/calendar/page.tsx + scoped calendar data provider` | Choose role-specific data providers and preserve tenant boundaries, not a single global job date query.
 
 Importing numeric legacy job date records and learner visible/applied event union belongs to Placements + schema, with strict college/role authorization. No migration performed. **6/6 handed off, not fixed**.
+
+## Project workspace index redirect — lane-7 handoff (2026-10-21)
+
+- G2-7-009-001 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Forward validated query string, especially openTemplate/from/reason, into summary redirect; test deep links.
+- G2-7-009-006 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Keep openTemplate and reason parsed and encoded in redirect URL.
+- G2-7-009-015 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Ensure downstream summary action/At-risk context restored from query.
+- G2-7-009-024 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Accept searchParams promise, whitelist and encode all supported parameters; preserve page context.
+- G2-7-009-028 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Critical: preserve context query to prevent broken attach-template and review-return paths.
+- G2-7-009-010 | `src/app/(authenticated)/college/projects/[projectId]/page.tsx` | Validate required UUID and show scoped 404/error instead of nonsensical route; preserve compatibility slugs.
+
+This redirect currently drops original searchParams. Restoring selected, validated context and privacy-safe 404 belongs to Projects. **6/6 handed off, not fixed.**
+
+## File, uploads and media storage — lane-7 handoff (2026-10-21)
+
+- G2-6-032-021 | `src/modules/storage/file-policy.ts` | Pre-check actual 4900MiB limit and explain need for multipart for larger videos.
+- G2-6-032-038 | `src/modules/projects/project-resource-file-service.ts + authoring role permissions` | Resolve role-authoring parity for project resource files, separate from learner final-delivery submissions.
+- G2-6-032-024 | `src/modules/storage/file-errors.ts + contextual Resource upload UI` | Map precise contextual legacy strings and show field-level recovery.
+- G2-6-032-029 | `src/modules/storage/file-lifecycle.ts + Resource upload UI` | Use context-specific toast for grant failure with retry.
+- G2-6-032-030 | `src/modules/storage/file-lifecycle.ts + client playback refresh` | Make URL refresh seamless near expiry and document 60-vs-120-minute default.
+
+4900 MiB single-PUT size cap and private scanned-file model are intentional vNext safeguards; do not promise 5120 MiB uploads or public URLs. **5/5 handed off, not fixed.**
+
+## TPO batch detail — lane-7 handoff (2026-10-21)
+
+- G2-14-029-011 | `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx` | Make all filters operate over full cohort before paging.
+- G2-14-029-012 | `src/components/tpo/tpo-bulk-action-panel.tsx` | Expose full selection semantics and explicit per-page limits.
+- G2-14-029-022 | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` | Partial readiness for optional sources rather than full failure.
+- G2-14-029-027 | `src/app/(authenticated)/tpo/batches/[batchId]/page.tsx` | Render partial/stale banners with retry controls.
+- G2-14-029-019 | `src/components/tpo/tpo-batch-reminder-prep.tsx` | Match literal success notices.
+
+Cohort-wide filtering and selection must not act on only current page under an all-visible label. **5/5 handed off, not fixed.**
+
+## R2 storage activation condition — lane-7 handoff (2026-10-21)
+
+- G2-2-002-007 | `src/modules/storage/r2-config.ts` | Align deployment readiness semantics; ensure missing secret/bucket fails closed with explicit setup instructions.
+- G2-2-002-010 | `src/modules/storage/file-lifecycle.ts` | Handle missing config at per-feature boundary with typed 503/configure message; ensure other unrelated routes remain functional.
+- G2-2-002-017 | `docs/architecture/file-and-video-apis.md + src/modules/storage/r2-config.ts` | Document new all-or-nothing readiness invariant and ensure all provisioning guides reflect it.
+- G2-2-002-019 | `src/modules/storage/file-lifecycle.ts` | Ensure consumers show unavailable capability rather than 500, and avoid loading dependent route before guard.
+
+Do not relax strict account/key/bucket guard to match legacy one-flag readiness; unavailable R2 should return a localized typed 503 instead of breaking unrelated pages. **4/4 handed off, not fixed.**
+
+## TPO standalone request decisions — lane-7 handoff (2026-10-21)
+
+- G2-13-022-005 | `src/modules/placements/tpo-request-decision-service.ts` | Support independent registration/PAP request kinds without application or explicit behavior change.
+- G2-13-022-021 | `src/modules/placements/request-service.ts` | Allow standalone registration requests and persist choice changes.
+- G2-13-022-037 | `src/modules/placements/tpo-request-decision-service.ts` | Use college+learner request scope independent of nullable application.
+- G2-13-022-010 | `src/modules/placements/tpo-request-decision-service.ts + decision route error map` | Preserve 404 for missing IDs, differentiate malformed input via 400.
+
+Current TPO decision service inner-joins application+job and does not support nullable job/application kinds; owning service must authorize via membership/college without an ID oracle. **4/4 handed off, not fixed.**
+
+## Public job response contract — lane-7 handoff (2026-10-21)
+
+- G2-17-021-044 | `src/db/schema/placements.ts + public job redirect route` | Import old slug mapping and HTTP 301/308 redirects to stable public link.
+- G2-17-021-047 | `src/modules/placements/placement-legacy-posting-model.ts + schema migration` | Design row-level migration preserving public responsibilities, dates, salary, original slug and published timestamp.
+- G2-17-021-048 | `src/modules/placements/public-job-projection.ts` | Ensure DTO select explicitly whitelists needed nested JSON only; validate no accidental serialization.
+- G2-17-021-050 | `src/modules/placements/learner-job-service.ts + public job DTO route` | Keep public projection narrowly safe and never reuse learner eligibility view on public URLs.
+
+Do not expose private eligibility/targeting in anonymous DTOs or assume legacy numeric job IDs equal current UUIDs. **4/4 handed off, not fixed.**
