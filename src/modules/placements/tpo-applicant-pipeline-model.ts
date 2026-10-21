@@ -18,8 +18,29 @@ export function tpoApplicantPipelinePage(total:number,requestedPage:number){
 export type ApplicantPipelineFact = {
   id: string; student: string | null; role: string;
   applicationStatus: string; screeningStatus: string | null;
+  /** Optional persisted progression, never inferred from an unread stage. */
+  currentRoundKind?: string | null;
+  latestOfferStatus?: string | null;
+  latestRoundOutcome?: string | null;
   submittedAt: string;
 };
+/** Legacy-compatible progression label for explicitly joined offer/round data.
+ * SUBMITTED is only the application lifecycle, not the candidate\u0027s stage.
+ * No offer or interview status is inferred when the joins are absent. */
+export function legacyApplicantProgress(fact:ApplicantPipelineFact):string{
+ if(fact.applicationStatus==="WITHDRAWN")return "WITHDRAWN";
+ if(fact.latestOfferStatus==="ACCEPTED")return "HIRED";
+ if(fact.latestOfferStatus==="ISSUED")return "OFFERED";
+ if(fact.currentRoundKind==="INTERVIEW")return "INTERVIEW";
+ if(fact.currentRoundKind==="GD"||fact.currentRoundKind==="VENDOR_TEST"||
+   fact.currentRoundKind==="TEST")return "ASSESSMENT";
+ if(fact.latestRoundOutcome==="FAIL")return "REJECTED";
+ if(fact.screeningStatus==="SHORTLISTED")return "SHORTLISTED";
+ if(fact.screeningStatus==="HOLD")return "HOLD";
+ if(fact.screeningStatus==="REJECTED")return "REJECTED";
+ return "APPLIED";
+}
+
 export function applicantStage(fact: ApplicantPipelineFact) {
   return fact.applicationStatus === "WITHDRAWN" ? "WITHDRAWN" :
     fact.screeningStatus === "SHORTLISTED" ? "SHORTLISTED" :
