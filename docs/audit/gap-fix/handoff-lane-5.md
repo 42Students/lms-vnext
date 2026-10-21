@@ -139,3 +139,5 @@
 
 - Global template creation G2-5-029-041: historical `module.projects.enabled` gate was per legacy principal. vNext platform-wide blueprint authoring cannot choose a college module state; module access belongs at assignment and workspace entrypoints. Document product decision centrally before adding platform-wide module lock.
 - College web-address edit G2-5-030-018: shared college setup section registry still needed for unsaved/BUSY SPA/scope switch. Subdomain page now has safe read-specific recoveries but an advisory warning cannot block navigation.
+
+- G2-17-030-022: Super Admin Drives landing still needs client-controlled 800px dialog with same secured placement create form. Duplicate prefill requires selected-college past-drive authorized lookup and safe whitelist of fields, excluding dates, learners, results, offers, and links. Existing TPO `TpoDriveCloneAction` does not automatically authorize Super Admin clone. Keep current focused page until this is available.

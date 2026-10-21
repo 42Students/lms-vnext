@@ -5,6 +5,8 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import {can} from "@/modules/permissions/policy";
 import {isSuperAdmin} from "@/modules/identity/context";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
+import { Banner } from "@/components/ui/banner";
 import { PageBackLink } from "@/components/ui/page-back-link";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -63,6 +65,18 @@ export default async function TenantDirectory({searchParams}:{
       Create an organization and its colleges
     </Link>
    </div>} />
+  <Tabs ariaLabel="Tenant Setup stages" renderPanel={false} value="directory"
+    items={[
+      {value:"create",label:"Create organization and college",href:"/admin/tenants/create"},
+      {value:"setup",label:"Launch setup",href:"/admin/tenants/setup"},
+      {value:"directory",label:"Tenant directory",href:"/admin/tenants"},
+    ]}/>
+  <Banner tone="info" role="status">
+    Tenant Setup has one connected workflow: create an organization, add a college,
+    then configure its launch readiness. The directory below is for returning to
+    existing or archived tenants. Creating a college automatically selects its
+    permitted safety scope before opening Launch setup.
+  </Banner>
   <form className="grid gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 xl:grid-cols-4">
    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}

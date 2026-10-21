@@ -292,3 +292,9 @@
 
 ## Packet 63 — College web address
 - Managed subdomain and verified custom domains now load independently; either can show exact "Couldn't load the web address." with retry without hiding the successfully loaded subsection. Authorization denial is not swallowed. Added explicit unsaved/scope-transition warning. G2-9-031-028 addressed, G2-5-030-018 shared dirty/busy registry handoff. No code/tests/CI run.
+
+## Packet 64 — Tenant setup hub
+- Unified visible step tabs for Create organization and college / Launch setup / Tenant directory, and explained the safe connected creation and scope-selection workflow. Legacy single-sheet contents stay separate routes intentionally to preserve vNext scope and current persisted form contracts. Findings G2-10-023-001/105 reviewed. No code execution, tests or CI.
+
+## Packet 65 — Create drive
+- Restored 800px-wide focused form composition using the existing validated placement create workspace and clear return path. Exact floating modal/drop-in duplicateFrom state cannot be generated safely from the current server page without a tenant-validated cloning API and client modal controller; documented instead of inventing draft values. G2-17-030-022 partially fulfilled. No code execution, tests or CI.
