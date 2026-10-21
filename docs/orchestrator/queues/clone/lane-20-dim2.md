@@ -103,11 +103,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-20.md: file, number of
 - [x] `src/app/(authenticated)/mentor/reports/page.tsx`
 - [x] `src/app/(authenticated)/mentor/review-history/page.tsx`
 - [x] `src/app/(authenticated)/mentor/reviews/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/audit/page.tsx`
+- [x] `src/app/(authenticated)/mentor/sprint-progress/page.tsx`
+- [x] `src/app/(authenticated)/mentor/team-coverage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/gradebook/page.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/page.tsx`
+- [x] `src/app/(authenticated)/tpo/audit/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/companies/[companyId]/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/drive-day/page.tsx`
