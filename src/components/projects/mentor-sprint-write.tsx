@@ -18,8 +18,8 @@ import {useProjectEditorDiscardGuard} from "./project-editor-discard-guard";
 export const MENTOR_SPRINT_PLAN_SAVE_POLICY="PER_SPRINT_VERSIONED" as const;
 
 export function MentorSprintCreate({
-  projectId, releaseId,releases=[],
-}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[]}) {
+  projectId, releaseId,releases=[],inline=false,
+}: {projectId:string;releaseId:string;releases?:readonly {id:string;title:string;status:string}[];inline?:boolean}) {
   const router=useRouter();
   const {showToast}=useToast();
   const [open,setOpen]=useState(false);
@@ -65,13 +65,7 @@ export function MentorSprintCreate({
     } finally {setBusy(false);}
   }
 
-  return <>
-    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)} className="min-h-11 md:min-h-9">
-      Add sprint
-    </Button>
-    <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}} title="Create sprint"
-      description="Add a sprint to your plan. Its title is kept when its generated key is assigned. Individual sprints save separately so other planned work is not overwritten."
-      footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
+  const sprintActions=<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row sm:justify-end">
         <Button className="w-full sm:w-auto" variant="secondary" disabled={busy} onClick={guard.requestClose}>Cancel</Button>
         <Button className="w-full sm:w-auto" loading={busy} disabled={busy||!title.trim()||title.trim().length>200||
           key.length>120||dueLabel.length>160||description.length>4000||
@@ -79,8 +73,8 @@ export function MentorSprintCreate({
           chosenRelease?.status==="SHIPPED"} onClick={()=>void create()}>
           {busy?"Creating…":"Confirm create"}
         </Button>
-      </div>}>
-      <div className="grid min-w-0 gap-[var(--lms-space-4)]">
+      </div>;
+  const sprintForm=(<div className="grid min-w-0 gap-[var(--lms-space-4)]">
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Release
           <Select value={chosenReleaseId} disabled={busy} required aria-invalid={!chosenReleaseId}
             onChange={event=>setChosenReleaseId(event.target.value)}
@@ -131,8 +125,27 @@ export function MentorSprintCreate({
         {!datesValid?<p role="alert" className="text-sm font-semibold text-error">
           Sprint end and due dates must not come before the start date.
         </p>:null}
-      </div>
-    </Dialog>
+      </div>);
+  return <>
+    <Button size="sm" variant="secondary" onClick={()=>setOpen(true)} className="min-h-11 md:min-h-9">
+      Add sprint
+    </Button>
+    {inline ? (open ? <section aria-label="Create sprint"
+      className="mt-3 min-w-0 space-y-4 border-y border-[var(--lms-canvas-border)] py-4">
+      <h4 className="text-base font-semibold text-foreground">Create sprint</h4>
+      <p className="text-sm text-body">
+        Choose a release and enter an outcome-focused sprint plan.
+      </p>
+      {sprintForm}
+      {sprintActions}
+      <p className="text-xs text-body">Only this workspace’s sprint plan is updated.</p>
+    </section> : null) :
+      <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
+        title="Create sprint"
+        description="Add a sprint to your plan. Its title is kept when its generated key is assigned. Individual sprints save separately so other planned work is not overwritten."
+        footer={sprintActions}>
+        {sprintForm}
+      </Dialog>}
     <ConfirmDialog open={guard.discardOpen} onOpenChange={guard.setDiscardOpen}
       title="Discard sprint changes?"
       description="You have unsaved changes. Leave without saving them?"

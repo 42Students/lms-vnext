@@ -1347,7 +1347,7 @@ export function ProjectWorkspace({
                     linkedSprints={(sprintsByRelease.get(release.id)??[]).length}/>:null}
                   {mode !== "LEARNER" && !readOnly && release.status !== "SHIPPED" ? (
                     <MentorSprintCreate projectId={workspace.project.id}
-                      releaseId={release.id}
+                      inline={mode==="ADMIN"} releaseId={release.id}
                       releases={workspace.releases.map(item=>({
                         id:item.id,title:item.title,status:item.status,
                       }))} />
