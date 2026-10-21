@@ -57,15 +57,15 @@ export async function listCollegeReadinessWorkspaceChoicePage(
     isNull(projectInstances.deletedAt),ne(projectInstances.status,"ARCHIVED"),
     search?or(ilike(projectInstances.title,pattern),ilike(projectInstances.slug,pattern),
       sql`${projectInstances.id}::text ilike ${pattern}`):undefined);
-  const [totals,items]=await Promise.all([
-   tx.select({n:count()}).from(projectInstances).where(filter),
-   tx.select({id:projectInstances.id,title:projectInstances.title,status:projectInstances.status})
-    .from(projectInstances).where(filter)
+  const [totals]=await tx.select({n:count()}).from(projectInstances).where(filter);
+  const total=Number(totals?.n??0);
+  const totalPages=Math.max(1,Math.ceil(total/25));
+  const currentPage=Math.min(page,totalPages);
+  const items=await tx.select({id:projectInstances.id,title:projectInstances.title,
+    status:projectInstances.status}).from(projectInstances).where(filter)
     .orderBy(asc(projectInstances.title),asc(projectInstances.id))
-    .limit(25).offset((page-1)*25),
-  ]);
-  const total=Number(totals[0]?.n??0);
-  return {items,total,page,pageSize:25,totalPages:Math.max(1,Math.ceil(total/25))};
+    .limit(25).offset((currentPage-1)*25);
+  return {items,total,page:currentPage,pageSize:25,totalPages};
  });
 }
 
