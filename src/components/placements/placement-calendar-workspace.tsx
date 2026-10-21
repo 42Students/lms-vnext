@@ -255,7 +255,7 @@ function eventHref(
 
     return event.roundId
       ? audience === "TPO"
-        ? `${jobHref}/rounds#round-${encodeURIComponent(event.roundId)}`
+        ? `${jobHref}/rounds/${encodeURIComponent(event.roundId)}/results`
         : `${jobHref}#round-${encodeURIComponent(event.roundId)}`
       : jobHref;
   }
@@ -714,6 +714,14 @@ export async function PlacementCalendarWorkspace({
         ))}
       </section>
 
+      {/* Preserve the legacy interviews-first entry point. The graphical
+          calendar remains an optional companion below the appointment list. */}
+      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
+        {bookings?.failed ? <Banner tone="error" action={<Link href={calendarHref(basePath,audience,state,{})}
+           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry interviews</Link>}>
+          Could not load candidate interviews right now. The calendar is still available.
+        </Banner> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
+       </PlacementPanelErrorBoundary> : null}
       <section className={isTpo?"border-b border-border pb-5 "+calendarStyles.tpoCommandBar:"border-b border-border pb-5"}>
         <div className="flex min-w-0 flex-col gap-[var(--lms-space-3)] sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -928,7 +936,7 @@ export async function PlacementCalendarWorkspace({
           ) : null}
         </form>
         {!isTpo && state.jobId?<p role="status" className="mt-2 text-sm text-body">
-          Job filter: <span className="font-semibold">{state.jobId}</span>{" "}
+          Job filter: <span className="font-semibold">{response.events.find(event => event.jobId === state.jobId)?.jobTitle || state.jobId}</span>{" "}
           <Link href={calendarHref(basePath,audience,state,{jobId:""})}
             className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Remove job filter</Link>
         </p>:null}
@@ -1131,12 +1139,6 @@ export async function PlacementCalendarWorkspace({
         </section>
       ) : null}
 
-      {audience==="SUPER_ADMIN" ? <PlacementPanelErrorBoundary>
-        {bookings?.failed ? <Banner tone="error" action={<Link href={calendarHref(basePath,audience,state,{})}
-           className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Retry interviews</Link>}>
-          Could not load candidate interviews right now. The calendar is still available.
-        </Banner> : <SuperAdminInterviewOperations today={today} events={bookings?.events??[]} truncated={bookings?.truncated??false} />}
-       </PlacementPanelErrorBoundary> : null}
       <section
         aria-label="Calendar agenda"
         className="min-w-0 space-y-4"
