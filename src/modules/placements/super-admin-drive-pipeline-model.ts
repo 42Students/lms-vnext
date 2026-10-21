@@ -23,6 +23,8 @@ export function projectSuperAdminDrivePipeline(rows: readonly {stage: string; to
   return {
     counts, rejected, waitlisted,
     total: Object.values(counts).reduce((sum, n) => sum + n, 0) + rejected + waitlisted,
-    funnel: hiringFunnel(counts),
+    // Six independent CURRENT-status buckets, not cumulative conversions.
+    // Do not imply a prior-stage drop-off when an applicant has already moved.
+    funnel: hiringFunnel(counts).map(stage => ({...stage, percentPrevious: null})),
   };
 }
