@@ -22,7 +22,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>;
 }){
  const context=await getCurrentRequestContext();
- if(!isSuperAdmin(context))return <div className="min-w-0 space-y-4 md:space-y-5">
+ if(!isSuperAdmin(context))return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Students"/>
   <ErrorState title="Student access denied"
    description="Your account cannot access Super Admin student records."
@@ -42,7 +42,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
     listSuperAdminStudentCsvImportHistory(context),
    ]);
   }catch{
-   return <div className="min-w-0 space-y-4 md:space-y-5">
+   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Students"/>
     <ErrorState title="Student register unavailable"
      description="The selected college's student registration and import details could not be verified. No registration actions are available until the read succeeds."
@@ -58,7 +58,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
      students:count(meta.count),created:count(meta.created),failed:count(meta.failed),
    };
  });
- return <div className="min-w-0 max-w-full space-y-4 md:space-y-5">
+ return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
