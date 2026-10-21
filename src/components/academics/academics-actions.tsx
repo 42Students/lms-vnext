@@ -84,7 +84,7 @@ function useAcademicMutation() {
         router.refresh();
       } catch (error) {
         onError?.(error);
-        if (!(error instanceof AcademicMutationResponseError) ||
+        if (!onError || !(error instanceof AcademicMutationResponseError) ||
             Object.keys(error.fieldErrors).length === 0) {
           showToast({
             tone: "error",
@@ -287,6 +287,7 @@ export function ProgramActions({
               onChange={event=>{setDepartmentId(event.target.value);setEditFieldErrors(current=>({...current,departmentId:""}));}}>
               {departments.map(department=><option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
+            {editFieldErrors.departmentId ? <span role="alert" className="text-xs text-error">{editFieldErrors.departmentId}</span> : null}
           </label> : null}
         </div>
       </Dialog>
