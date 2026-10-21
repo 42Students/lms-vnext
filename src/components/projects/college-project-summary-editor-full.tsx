@@ -116,17 +116,25 @@ export function CollegeProjectSummaryEditorFull({
   if(!(await askConfirm("Save workspace summary changes?")))return;
   setBusy(true);setError("");
   try {
-   const res=await fetch("/api/projects/"+encodeURIComponent(p.id),{
-    method:"PATCH",headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
+   // Only send user-touched fields: an unrelated editor must not be
+   // overwritten by this page's older full-workspace snapshot.
+   const desired={
      title:form.title.trim(),summary:form.summary.trim()||null,status:form.status,
      progressPercent:hasTaskData?p.progressPercent:form.progressPercent,phase:form.phase.trim()||null,
      dueLabel:form.dueLabel.trim()||null,courseLabel:form.courseLabel.trim()||null,
      sectionId:form.sectionId||null,blocker:form.blocker.trim()||null,
      nextAction:form.nextAction.trim()||null,startDate:form.startDate||null,endDate:form.endDate||null,
      sprintLengthWeeks:form.sprintLengthWeeks?Number(form.sprintLengthWeeks):null,
-     estimationUnit:form.estimationUnit||null,expectedTitle:p.title,expectedSummary:p.summary,
-     expectedStatus:p.status,expectedUpdatedAt:new Date(p.updatedAt).toISOString(),
+     estimationUnit:form.estimationUnit||null,
+   };
+   const touched=(Object.keys(desired) as Array<keyof typeof desired>)
+     .filter(key=>form[key]!==baselineRef.current.form[key]);
+   const patch=Object.fromEntries(touched.map(key=>[key,desired[key]]));
+   const res=await fetch("/api/projects/"+encodeURIComponent(p.id),{
+    method:"PATCH",headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({...patch,
+      expectedTitle:p.title,expectedSummary:p.summary,expectedStatus:p.status,
+      expectedUpdatedAt:new Date(p.updatedAt).toISOString(),
     }),
    });
    if(!res.ok){const detail=await res.json().catch(()=>({error:"Save failed"}));
@@ -161,19 +169,26 @@ export function CollegeProjectSummaryEditorFull({
     {field("Workspace title","title",160)}
     <p className="col-span-full text-xs text-muted-foreground" aria-live="polite">{form.title.length}/160 characters</p>
     <h3 className="col-span-full border-t border-border pt-3 font-semibold text-foreground">Status</h3>
-    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style}
+    <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Status<Select className={style} aria-describedby="summary-status-help"
      value={form.status} onChange={e=>change("status",e.target.value)}>
       {[p.status,...(p.status==="PLANNED"?["ACTIVE"]:p.status==="ACTIVE"?["COMPLETED"]:[])].map(v=>
        <option key={v} value={v}>{v}</option>)}
       <option value="ARCHIVED" disabled>Archived (use Archive action)</option>
-    </Select></label>
+    </Select><span id="summary-status-help" className="mt-1 block text-xs font-normal text-body">
+      Use the Archive action to archive a workspace. Activation requires a mentor;
+      completing requires an approved final submission.
+    </span></label>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Progress %<Input className={style} type="number" min={0} max={100}
+     aria-describedby={hasTaskData?"project-summary-progress-help":undefined}
      disabled={hasTaskData} value={derivedProgress??form.progressPercent}
      onChange={e=>change("progressPercent",Number(e.target.value))}/>
-     {hasTaskData?<span className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
+     {hasTaskData?<span id="project-summary-progress-help" className="mt-1 block text-xs font-normal text-body">Progress is calculated from completed tasks and sprints while this workspace has execution work.</span>:null}
     </label>
     <h3 className="col-span-full border-t border-border pt-3 font-semibold text-foreground">Schedule &amp; setup</h3>
-    {field("Phase","phase",80)}{field("Due label","dueLabel",80)}{field("Course label","courseLabel",160)}
+    <div className="col-span-full grid min-w-0 gap-3 md:grid-cols-3">
+      {field("Phase","phase",80)}{field("Due label","dueLabel",80)}
+      {field("Course label","courseLabel",160)}
+    </div>
     <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Class
      <Input className={style} type="search" value={classQuery}
        aria-label="Search classes" placeholder="Search by class name or code"
