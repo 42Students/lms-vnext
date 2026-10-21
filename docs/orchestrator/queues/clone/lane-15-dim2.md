@@ -280,7 +280,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/components/tpo/tpo-find-shortcut.tsx`
 - [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
 - [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
 - [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
 - [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
 - [ ] `src/components/tpo/tpo-student-saved-views.tsx`
