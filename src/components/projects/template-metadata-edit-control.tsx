@@ -68,7 +68,7 @@ export function TemplateMetadataEditControl({templateId,title,summary,currentVer
   setPending(true);setError(null);
   try{
    const receipt=await projectMutation("/api/projects/templates/"+encodeURIComponent(templateId)+"/metadata","PATCH",{
-    title:editedTitle.trim(),summary:editedSummary.trim(),changeNote,
+    title:editedTitle.trim(),summary:editedSummary.trim()||goal.trim().slice(0,2000),changeNote,
     slug:editedSlug.trim(),courseLabel:editedCourse.trim(),phase:editedPhase.trim(),
     overview:{goal:goal.trim(),description:description.trim(),deliverables:lines(deliverables),
      definitionOfDone:lines(done),personas:lines(personas),submissionInstructions:instructions.trim()},
@@ -83,9 +83,9 @@ export function TemplateMetadataEditControl({templateId,title,summary,currentVer
   }finally{setPending(false);}
  }
  return <>
-  <Button size="sm" variant="secondary" onClick={()=>{reset();setOpen(true);}}>Edit draft overview</Button>
+  <Button size="sm" variant="secondary" onClick={()=>{reset();setOpen(true);}} className="min-h-11 md:min-h-9">Edit Overview</Button>
   <Dialog open={open} onOpenChange={next=>{if(next)setOpen(true);else guard.requestClose();}}
-   title="Edit template overview" description="Saving creates a new immutable template version. Existing workspace copies remain unchanged.">
+   title="Edit Overview" description="Save overview creates a new immutable template version. Existing workspace copies remain unchanged. If summary is blank, it is derived from the goal.">
    <form onSubmit={submit} className="grid min-w-0 gap-3">
     <label className="grid gap-1 text-sm font-semibold">Template slug
      <Input required maxLength={80} value={editedSlug} disabled={pending} onChange={e=>setSlug(e.target.value)}/>
@@ -93,7 +93,7 @@ export function TemplateMetadataEditControl({templateId,title,summary,currentVer
     <label className="grid gap-1 text-sm font-semibold">Title
      <Input required maxLength={200} value={editedTitle} disabled={pending} onChange={e=>setTitle(e.target.value)}/>
     </label>
-    <label className="grid gap-1 text-sm font-semibold">Summary
+    <label className="grid gap-1 text-sm font-semibold">Summary (optional; otherwise uses Goal)
      <Textarea maxLength={2000} value={editedSummary} disabled={pending} onChange={e=>setSummary(e.target.value)}/>
     </label>
     <div className="grid gap-3 sm:grid-cols-2">
@@ -132,7 +132,7 @@ export function TemplateMetadataEditControl({templateId,title,summary,currentVer
     {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
     <div className="flex flex-wrap justify-end gap-2">
      <Button type="button" variant="secondary" disabled={pending} onClick={guard.requestClose}>Cancel</Button>
-     <Button type="submit" loading={pending} disabled={pending||!confirmed||!changeNote.trim()||!dirty}>Save overview</Button>
+     <Button type="submit" loading={pending} disabled={pending||!confirmed||!changeNote.trim()||!dirty}>Save Overview</Button>
     </div>
    </form>
   </Dialog>

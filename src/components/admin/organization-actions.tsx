@@ -115,9 +115,9 @@ export function OrganizationActions({
           <span aria-hidden="true">✎</span> Edit
         </Button>
         <Button type="button" variant="secondary" size="sm" disabled={pending}
-          title="Archive rather than permanently delete this organization"
+          title="Delete (archive) organization"
           aria-label={"Archive organization "+name} onClick={()=>setArchiveOpen(true)}>
-          <span aria-hidden="true">⌫</span> Archive
+          <span aria-hidden="true">⌫</span> Delete (archive)
         </Button>
       </div>
 
@@ -125,8 +125,8 @@ export function OrganizationActions({
         open={renameOpen}
         onOpenChange={next=>{if(next)setRenameOpen(true);else requestRenameClose();}}
         dismissible={!pending}
-        title="Edit Organization"
-        description="The active-name uniqueness rule is enforced by the server."
+        title={"Edit “"+name+"”"}
+        description="Update the organization name. Unsaved changes require confirmation before closing."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
@@ -180,8 +180,8 @@ export function OrganizationActions({
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={next=>{if(!pending)setArchiveOpen(next);}}
-        title={`Archive ${name}?`}
-        description="This archives rather than permanently deletes the organization. It is allowed only when no active colleges exist."
+        title={"Delete “"+name+"”? (Archive)"}
+        description="This action archives rather than permanently deletes the organization. Colleges must be removed or archived first."
         confirmLabel="Archive organization" confirmVariant="danger"
         pending={pending}
         onConfirm={archive}

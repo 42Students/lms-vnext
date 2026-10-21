@@ -20,3 +20,12 @@ export async function getOwnLearnerAssessmentBrowse(context: RequestContext) {
   });
   return getLearnerPlacementRequestWorkspace(context);
 }
+
+/** Historical index aliases redirect without opening a scoped data feed.
+ * Record-specific links remain in the authenticated assessment workspace. */
+export function legacyLearnerAssessmentsRedirect(query:{
+ applicationId?:string|string[];roundId?:string|string[];
+}):string|null{
+ if(query.applicationId!==undefined||query.roundId!==undefined)return null;
+ return LEARNER_ASSESSMENTS_CANONICAL_PATH;
+}
