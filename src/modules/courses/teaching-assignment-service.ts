@@ -3,6 +3,7 @@ import {
   asc,
   eq,
   isNull,
+  or,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -19,6 +20,7 @@ import {
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePermission } from "@/modules/permissions/policy";
+import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import { ACTIVITY_EVENT_TYPES } from "@/modules/activity/taxonomy";
 import { recordActivityEventInTransaction } from "@/modules/activity/service";
 import { teachingAssignmentConflict } from "./teaching-assignment-guard";
@@ -29,6 +31,7 @@ import {
 } from "./errors";
 import {
   loadCourseMembership,
+  loadCourseScope,
   loadCourseSectionDeliveryScope,
   loadCourseTeachingAssignmentScope,
 } from "./scope";
@@ -52,6 +55,77 @@ function mapTeachingConstraint(error: unknown) {
     default:
       return error;
   }
+}
+
+/** Compatibility read for legacy faculty/course associations.
+ * Course identity resolves from UUID or stored immutable public slug, never
+ * from loose course title, and all descendants remain college-authorized.
+ * Delivery IDs are included because class/term is a teaching authorization
+ * dimension in vNext; consumers must not elevate the aggregate to a grant.
+ */
+export async function listCourseFacultyAcrossDeliveries(
+  context: RequestContext,
+  courseIdOrSlug: string,
+  includeEnded = false,
+) {
+  const key=courseIdOrSlug.trim();
+  const validUuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(key);
+  const courseId=validUuid?key:null;
+  const slug=/^[a-z0-9][a-z0-9-]{0,127}$/.test(key)?key:null;
+  if(!courseId&&!slug)throw new CoursesServiceError("COURSE_NOT_FOUND");
+  const [match]=await getDb().select({id:courses.id})
+   .from(courses)
+   .where(or(
+     ...(courseId?[eq(courses.id,courseId)]:[]),
+     ...(slug?[eq(courses.slug,slug)]:[]),
+   )).limit(1);
+  if(!match)throw new CoursesServiceError("COURSE_NOT_FOUND");
+  const scoped=await loadCourseScope(match.id,includeEnded);
+  requirePermission(context,"courses.read",{
+   collegeId:scoped.collegeId,organizationId:scoped.organizationId,
+  });
+  const conditions=[eq(courseOfferings.courseId,scoped.id),
+    eq(departments.collegeId,scoped.collegeId),
+    eq(colleges.organizationId,scoped.organizationId)];
+  if(!includeEnded){
+   conditions.push(isNull(courseTeachingAssignments.endedAt));
+   conditions.push(isNull(courseSectionDeliveries.endedAt));
+   conditions.push(eq(collegeMemberships.status,"ACTIVE"));
+   conditions.push(eq(users.platformStatus,"ACTIVE"));
+  }
+  return getDb().select({
+    membershipId:courseTeachingAssignments.membershipId,
+    displayName:users.displayName,
+    deliveryId:courseTeachingAssignments.deliveryId,
+    role:courseTeachingAssignments.role,
+    startedAt:courseTeachingAssignments.startedAt,
+    endedAt:courseTeachingAssignments.endedAt,
+  }).from(courseTeachingAssignments)
+   .innerJoin(courseSectionDeliveries,
+     eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+   .innerJoin(courseOfferings,
+     eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+   .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+   .innerJoin(departments,eq(departments.id,courses.departmentId))
+   .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+   .innerJoin(collegeMemberships,
+     eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
+   .innerJoin(users,eq(users.id,collegeMemberships.userId))
+   .where(and(...conditions))
+   .orderBy(asc(users.displayName),asc(courseTeachingAssignments.startedAt));
+}
+
+/** Exact legacy copy for the adapter presenting an authorized course mapping. */
+export function teachingAssignmentLegacyMessage(code:string):string{
+ switch(code){
+  case "FACULTY_ROLE_REQUIRED": return "Faculty ID is required";
+  case "SECTION_DELIVERY_NOT_FOUND": return "Select a class, course and semester for this teaching assignment.";
+  case "TEACHING_ASSIGNMENT_NOT_FOUND": return "Teaching assignment not found";
+  case "TEACHING_ASSIGNMENT_CONFLICT": return "This faculty assignment is already active in the selected class.";
+  case "PRIMARY_TEACHER_CONFLICT": return "This class already has a primary faculty assignment.";
+  case "FORBIDDEN": return "Only an admin can create, update, or remove faculty course associations";
+  default: return "Could not update faculty course associations.";
+ }
 }
 
 export async function listCourseTeachingAssignments(
@@ -194,6 +268,25 @@ export async function createCourseTeachingAssignment(
       if (!liveDelivery) {
         throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
       }
+      // A prior request-snapshot role is not sufficient to issue a grant.
+      // Role revocation or suspension while this transaction waits on its
+      // delivery lock must invalidate the assignment before any INSERT.
+      await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+        collegeId:delivery.collegeId,organizationId:delivery.organizationId,
+      });
+      const [liveScope]=await tx.select({
+        collegeId:departments.collegeId,
+        organizationId:colleges.organizationId,
+      }).from(courseSectionDeliveries)
+       .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+       .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+       .innerJoin(departments,eq(departments.id,courses.departmentId))
+       .innerJoin(colleges,eq(colleges.id,departments.collegeId))
+       .where(eq(courseSectionDeliveries.id,input.deliveryId))
+       .for("share").limit(1);
+      if(!liveScope||liveScope.collegeId!==delivery.collegeId||
+         liveScope.organizationId!==delivery.organizationId)
+        throw new CoursesServiceError("SECTION_DELIVERY_NOT_FOUND");
 
       // A faculty member's college, active status or FACULTY role may
       // change after the earlier permission check. Lock the membership
@@ -312,6 +405,9 @@ export async function endCourseTeachingAssignment(
       throw new CoursesServiceError("TEACHING_ASSIGNMENT_NOT_FOUND");
     }
 
+    await assertPersistedPlatformPermission(tx,context,"courses.manage",{
+      collegeId:current.collegeId,organizationId:current.organizationId,
+    });
     // The authorization above used the delivery's previous college. Hold
     // SHARE locks on its course/department/college chain and recheck that
     // neither tenant nor organization has moved before ending this role.
