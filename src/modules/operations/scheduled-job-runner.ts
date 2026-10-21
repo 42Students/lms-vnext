@@ -138,3 +138,108 @@ export async function executeScheduledJobWithLease<T>(
   const result = await work(fence);
   return { ran: true, result };
 }
+
+/**
+ * Source-accurate cadence descriptors for the deployment scheduler. These
+ * declarations do not create timers or send notifications. A separate, IAM-
+ * authenticated worker must bind each handler and the durable idempotent
+ * outbox; never start these loops inside a request-serving Next.js process.
+ * Fixed delays are measured after completion, not interchangeable with cron.
+ */
+export const LEGACY_NOTIFICATION_JOB_SCHEDULES = {
+  release: { jobName: "notification.release", fixedDelayMs: 60_000, ttlMs: 5 * 60_000, batchSize: 200 },
+  cleanup: { jobName: "notification.cleanup", fixedDelayMs: 60 * 60_000, ttlMs: 60 * 60_000 },
+  interviewReminder: { jobName: "notification.interviewReminders", cron: "0 0 19 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
+  assignmentReminder: { jobName: "notification.assignmentReminders", cron: "0 0 9 * * *", timeZone: "Asia/Kolkata", ttlMs: 60 * 60_000 },
+  deadlineToday: { jobName: "tpo.deadlineToday", cron: "0 0 8 * * *", timeZone: "Asia/Kolkata", ttlMs: 30 * 60_000 },
+  offersExpiringSoon: { jobName: "tpo.offersExpiringSoon", fixedDelayMs: 60 * 60_000, ttlMs: 50 * 60_000 },
+} as const;
+
+/** India has a fixed UTC+05:30 offset; return next local day as a half-open
+ * UTC range, independent of the runtime JVM/Node host timezone. */
+export function tomorrowInIndiaUtcWindow(now: Date): { from: Date; to: Date } {
+  if (!(now instanceof Date) || !Number.isFinite(now.getTime())) {
+    throw new ScheduledJobRunnerError("INVALID_JOB_INPUT");
+  }
+  const offsetMs = (5 * 60 + 30) * 60_000;
+  const local = new Date(now.getTime() + offsetMs);
+  const nextLocalMidnightUtc = Date.UTC(
+    local.getUTCFullYear(), local.getUTCMonth(), local.getUTCDate() + 1,
+  ) - offsetMs;
+  return {
+    from: new Date(nextLocalMidnightUtc),
+    to: new Date(nextLocalMidnightUtc + 24 * 60 * 60_000),
+  };
+}
+
+/** Legacy daily assignment and quiz reminders use [12h,36h) before dueAt.
+ * Callers must skip missing/invalid due dates without aborting other rows.
+ * Persisted canonical dueAt has precedence over a legacy JSON date fallback. */
+export function isAssignmentReminderDue(now: Date, dueAt: Date | null): boolean {
+  if (!(now instanceof Date) || !Number.isFinite(now.getTime()) ||
+      !(dueAt instanceof Date) || !Number.isFinite(dueAt.getTime())) return false;
+  const remaining = dueAt.getTime() - now.getTime();
+  return remaining >= 12 * 60 * 60_000 && remaining < 36 * 60 * 60_000;
+}
+
+/**
+ * Process at most 200 due notifications per tick, isolating ordinary
+ * per-row failures. The provided handlers must persist SENT before best-effort
+ * SSE, and persist FAILED with a bounded safe reason. Lease loss is fatal and
+ * must not be turned into an ordinary row-level failure.
+ */
+export async function processFencedNotificationBatch<T>(
+  fence: ScheduledJobFence,
+  due: readonly T[],
+  sendAndPersist: (entry: T, fence: ScheduledJobFence) => Promise<void>,
+  persistFailed: (entry: T, safeReason: string) => Promise<void>,
+): Promise<{ processed: number; failed: number; remaining: number }> {
+  let processed = 0;
+  let failed = 0;
+  const rows = due.slice(0, 200);
+  for (const entry of rows) {
+    await fence.assertCurrent();
+    try {
+      await sendAndPersist(entry, fence);
+    } catch (error) {
+      if (error instanceof ScheduledJobRunnerError) throw error;
+      await fence.assertCurrent();
+      // Never write raw provider/SQL exception messages into a user-facing row.
+      await persistFailed(entry, "Scheduled delivery could not be completed.");
+      failed += 1;
+    }
+    processed += 1;
+  }
+  return { processed, failed, remaining: Math.max(0, due.length - processed) };
+}
+
+export type ScheduledJobObservation = {
+  jobName: string;
+  outcome: "SKIPPED" | "COMPLETED" | "FAILED";
+  reason?: "HELD_BY_OTHER_WORKER" | "LEASE_STORE_UNAVAILABLE" | "LEASE_LOST" | "JOB_ERROR";
+};
+
+/** Optional operational logger/metrics hook with no secret-bearing exception
+ * text. A telemetry outage cannot turn a successful delivery into a failure. */
+export async function executeObservedScheduledJobWithLease<T>(
+  store: ScheduledJobLeaseStore,
+  input: { jobName: string; holderId: string; ttlMs: number },
+  work: (guard: ScheduledJobFence) => Promise<T>,
+  observe: (event: ScheduledJobObservation) => void,
+): Promise<ScheduledJobRunResult<T>> {
+  const report = (event: ScheduledJobObservation) => {
+    try { observe(event); } catch { /* metrics must be best effort */ }
+  };
+  try {
+    const outcome = await executeScheduledJobWithLease(store, input, work);
+    report({ jobName: input.jobName, outcome: outcome.ran ? "COMPLETED" : "SKIPPED",
+      ...(outcome.ran ? {} : { reason: "HELD_BY_OTHER_WORKER" as const }) });
+    return outcome;
+  } catch (error) {
+    const reason = error instanceof ScheduledJobRunnerError &&
+      (error.code === "LEASE_STORE_UNAVAILABLE" || error.code === "LEASE_LOST")
+      ? error.code : "JOB_ERROR";
+    report({ jobName: input.jobName, outcome: "FAILED", reason });
+    throw error;
+  }
+}
