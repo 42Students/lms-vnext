@@ -115,7 +115,7 @@ export default async function SuperAdminProjectTemplateDetailPage({
              detail.assignments.some(a=>a.collegeId===context.adminScope?.collegeId)?
              <Link href={"/admin/projects/workspaces/new?templateId="+encodeURIComponent(detail.template.id)}
               className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-3 text-sm font-semibold text-on-primary md:min-h-9 hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-primary">
-              Create workspace</Link>:
+              Use this template</Link>:
              <span role="status" className="text-xs text-muted-foreground">
               {context.adminScope?.collegeId?"Assign a published template to this college to create workspaces.":"Choose a college to use this template."}
              </span>}
