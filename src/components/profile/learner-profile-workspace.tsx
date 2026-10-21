@@ -989,6 +989,7 @@ export function LearnerProfileWorkspace(props: {
               <option value="NIGHT">Night</option>
               <option value="ROTATIONAL">Rotational</option>
               <option value="FLEXIBLE">Flexible</option>
+              <option value="REMOTE">Remote</option>
             </Select>
           </label>
           <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Preferred Employment City
