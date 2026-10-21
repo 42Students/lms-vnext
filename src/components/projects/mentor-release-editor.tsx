@@ -7,7 +7,7 @@ import {useToast} from "@/components/ui/toast";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {useRouter} from "next/navigation";
 import {projectMutation} from "./project-api";
-type Release={id:string;title:string;description:string|null;status:string;updatedAt:Date};
+type Release={id:string;title:string;description:string|null;targetDate?:string|null;status:string;updatedAt:Date};
 type Readiness={readyToShip:boolean;completedSprintCount:number;
  committedPoints:number;completedPoints:number};
 export function MentorReleaseEditor({
@@ -23,11 +23,12 @@ export function MentorReleaseEditor({
  const {showToast}=useToast();
  const [title,setTitle]=useState(release?.title??"");
  const [description,setDescription]=useState(release?.description??"");
+ const [targetDate,setTargetDate]=useState(release?.targetDate??"");
  const [error,setError]=useState(""),[message,setMessage]=useState("");
  const [confirmDiscard,setConfirmDiscard]=useState(false);
  const [confirmDelete,setConfirmDelete]=useState(false);
  const [confirmShip,setConfirmShip]=useState(false);
- const dirty=title!==(release?.title??"")||description!==(release?.description??"");
+ const dirty=title!==(release?.title??"")||description!==(release?.description??"")||targetDate!==(release?.targetDate??"");
  useEffect(()=>{
    if(!open||!dirty)return;
    const warn=(event:BeforeUnloadEvent)=>{
@@ -38,8 +39,8 @@ export function MentorReleaseEditor({
    return ()=>window.removeEventListener("beforeunload",warn);
  },[open,dirty]);
  useEffect(()=>{
-   if(!open){setTitle(release?.title??"");setDescription(release?.description??"");}
- },[open,release?.title,release?.description]);
+   if(!open){setTitle(release?.title??"");setDescription(release?.description??"");setTargetDate(release?.targetDate??"");}
+ },[open,release?.title,release?.description,release?.targetDate]);
  function requestClose(){
    if(pending)return;
    if(dirty)setConfirmDiscard(true);else setOpen(false);
@@ -55,7 +56,7 @@ export function MentorReleaseEditor({
   setPending(true);setError("");setMessage("");
   try{
    await projectMutation(url,release?"PATCH":"POST",{
-    title:title.trim(),description:description.trim()||null,
+    title:title.trim(),description:description.trim()||null,targetDate:targetDate||null,
     ...(release?{expectedUpdatedAt:new Date(release.updatedAt).toISOString()}:{}),
    });
    setOpen(false);setMessage(release?"Release updated.":"Release added.");
@@ -122,6 +123,10 @@ export function MentorReleaseEditor({
    <label className="block text-[13px] font-semibold">What ships in this release?
     <Textarea className="mt-1 min-h-20 w-full"
      value={description} onChange={e=>setDescription(e.target.value)}/></label>
+   <label className="block text-[13px] font-semibold">Target date (optional)
+    <Input type="date" className="mt-1 min-h-11 w-full md:min-h-9"
+     value={targetDate} onChange={e=>setTargetDate(e.target.value)}/>
+   </label>
    <div className="sticky bottom-0 z-10 flex flex-wrap gap-2 border-t border-[var(--lms-canvas-border)] bg-white py-3">
     <Button variant="primary" type="submit" disabled={pending||!title.trim()}
      className="min-h-11 w-auto px-3 py-2 md:min-h-9">
@@ -142,7 +147,7 @@ export function MentorReleaseEditor({
     description="You have unsaved project changes. Leave this page and discard them?"
     confirmLabel="Discard changes" pending={pending}
     onConfirm={()=>{setConfirmDiscard(false);setOpen(false);
-      setTitle(release?.title??"");setDescription(release?.description??"");}}/>
+      setTitle(release?.title??"");setDescription(release?.description??"");setTargetDate(release?.targetDate??"");}}/>
   <ConfirmDialog open={confirmShip} onOpenChange={next=>{if(!pending)setConfirmShip(next);}}
     title="Ship this release?" description="All linked sprints must be complete. This operation updates the release status."
     confirmLabel="Ship release" pending={pending} onConfirm={()=>void ship()}>
