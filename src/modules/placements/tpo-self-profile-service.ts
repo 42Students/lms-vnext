@@ -154,6 +154,14 @@ export async function getOwnTpoProfile(
   }
 
   const own = rows[0]!;
+  // Legacy GET getFacultyDetails({facultyId:loginUser.id}) returned data.data.
+  // That numeric facultyId is NOT a selector in vNext: the signed-in user,
+  // active college membership UUID and persisted TPO role are the only scope.
+  // Collapse role-join duplicates and preserve stable display order. Where
+  // the current membership carries several authorized department mappings,
+  // expose their names without following another college's department ID.
+  const departmentNames=[...new Set(rows.map(row=>row.departmentName)
+    .filter((name):name is string=>Boolean(name)))].sort((a,b)=>a.localeCompare(b));
 
   return {
     displayName: own.displayName,
@@ -164,7 +172,8 @@ export async function getOwnTpoProfile(
     collegeCode: own.collegeCode,
     membershipStatus: own.membershipStatus,
     roles: [...new Set(rows.map((row) => row.role))],
-    departmentName: own.departmentName,
+    departmentName: departmentNames.join(", ") || null,
+    departmentNames,
     // A private object key must be signed by a separately authorized media
     // endpoint. Never hand this key or an unverified external URL to the UI.
     profileImageAvailable: Boolean(own.avatarObjectPath),
