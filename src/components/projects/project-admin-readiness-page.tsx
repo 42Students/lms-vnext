@@ -224,7 +224,7 @@ export async function ProjectAdminReadinessPage({
                 </div>
               </div>
 
-              <div className="mt-4 grid min-w-0 grid-cols-2 gap-x-4 gap-y-2 border-y border-border py-2 md:grid-cols-4">
+              <div className="mt-4 grid min-w-0 grid-cols-1 gap-x-4 gap-y-2 border-y border-border py-2 md:grid-cols-4">
                 <Metric
                   label="Progress"
                   value={

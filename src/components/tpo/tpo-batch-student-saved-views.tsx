@@ -79,7 +79,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
      className="mt-1 min-h-11 w-full md:min-h-9"/></label>
    <label className="flex min-h-11 items-center gap-2 text-sm">
     <Checkbox  checked={pinned} onChange={e=>setPinned(e.target.checked)}/>Pin view</label>
-   <div className="grid min-w-0 grid-cols-2 gap-2">
+   <div className="grid min-w-0 grid-cols-1 md:grid-cols-2 gap-2">
     <Button variant="primary" type="button" disabled={busy||guarded||!name.trim()} onClick={()=>void action({
      action:"CREATE",name:name.trim(),pinned,filters:current(),
     })} className="min-h-11 w-full md:min-h-9">Save current filters</Button>
@@ -88,7 +88,7 @@ export function TpoBatchStudentSavedViews({batchId}:{batchId:string}){
     })} className="min-h-11 w-full md:min-h-9">Update selected</Button>
    </div>
    <ul className="grid min-w-0 grid-cols-1 gap-2">{views.map(view=><li key={view.id}
-    className="grid min-w-0 grid-cols-2 gap-2 border-b border-border py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] sm:items-center">
+    className="grid min-w-0 grid-cols-1 gap-2 border-b border-border py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto_auto_auto] sm:items-center">
     <label className="col-span-2 flex min-h-11 min-w-0 items-center gap-2 break-words sm:col-span-1">
      <Radio  name="selected-batch-view" checked={selected===view.id}
       onChange={()=>{setSelected(view.id);setName(view.name);setPinned(view.pinned);}}/>
