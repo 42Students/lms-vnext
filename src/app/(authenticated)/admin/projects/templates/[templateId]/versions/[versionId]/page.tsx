@@ -57,7 +57,7 @@ export default async function TemplateVersionComparisonPage({ params,searchParam
       description={`Version ${detail.selected.version} compared with current version ${detail.current.version}. Existing workspaces retain their pinned snapshots.`}
     />
     <Banner tone="info">This snapshot is read-only. Publication, deletion/archive state and college assignments are managed separately. Rolling back creates a new blueprint version; it does not restore legacy lifecycle fields.</Banner>
-    {detail.changes.length ? <section aria-label="Changed fields" className="max-w-[860px] space-y-4">
+    {detail.changes.length ? <section id="compare" aria-label="Changed fields" className="max-w-[860px] space-y-4">
       {detail.changes.map(change => <article key={change.label} className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4">
         <h2 className="m-0 break-words text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">{change.label}</h2>
         <div className="grid min-w-0 gap-4 lg:grid-cols-2">
