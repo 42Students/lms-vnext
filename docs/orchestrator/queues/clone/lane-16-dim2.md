@@ -118,27 +118,27 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/quizzes/manage/page.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/error.tsx`
 - [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/reports/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/courses/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/layout.tsx`
-- [ ] `src/app/(authenticated)/teacher/live-classes/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/notifications/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/contacts/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/details/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/profile/teaching/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/response-followups/page.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/results/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/announcements/loading.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/session-coverage/page.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/[membershipId]/error.tsx`
+- [x] `src/app/(authenticated)/teacher/courses/error.tsx`
+- [x] `src/app/(authenticated)/teacher/layout.tsx`
+- [x] `src/app/(authenticated)/teacher/live-classes/error.tsx`
+- [x] `src/app/(authenticated)/teacher/notifications/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/contacts/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/contacts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/details/page.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/error.tsx`
+- [x] `src/app/(authenticated)/teacher/profile/teaching/error.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/error.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/error.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/error.tsx`
+- [x] `src/app/(authenticated)/teacher/response-followups/page.tsx`
+- [x] `src/app/(authenticated)/teacher/results/error.tsx`
+- [x] `src/app/(authenticated)/teacher/results/page.tsx`
+- [x] `src/app/(authenticated)/tpo/announcements/loading.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/registrations/[membershipId]/history/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/calendar/interviews/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/calendar/rounds/page.tsx`
