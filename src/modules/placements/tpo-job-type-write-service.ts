@@ -24,7 +24,8 @@ const jobTypeColumnReady = sql`select exists (
 const legacyLabelSchema=z.string().transform((raw,ctx)=>{
  const label=raw.trim().replace(/\s+/g," ");
  if(!tpoJobTypeNameSchema.safeParse(label).success){
-  ctx.addIssue({code:"custom",message:'"'+label+'": a job type name is 2-40 letters, digits or simple punctuation'});
+  const preview=label.replace(/[\u0000-\u001f\u007f]/g," ").slice(0,80);
+  ctx.addIssue({code:"custom",message:'"'+preview+'": a job type name is 2-40 letters, digits or simple punctuation'});
   return z.NEVER;
  }
  return label;
@@ -287,7 +288,9 @@ export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
    .where(and(eq(placementJobs.collegeId,collegeId),
     sql`lower(job_type_label) = lower(${current.label})`));
   // Even archived drives remain historical references and block deletion.
-  if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE");
+  if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE",
+   '"'+current.label+'" is used by '+usage.n+' drive'+(usage.n===1?'':'s')+
+   ': switch it off instead of deleting it');
   await tx.delete(placementTpoJobTypes).where(and(eq(placementTpoJobTypes.id,current.id),
    eq(placementTpoJobTypes.collegeId,collegeId)));
   await tx.insert(activityEvents).values({
@@ -375,7 +378,7 @@ export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
      throw new TpoConfigError("TPO_SETTINGS_STALE");
     if(old){
      if(!old.isBuiltin)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
-     if(old.active!==item.active)await tx.update(placementTpoJobTypes).set({
+     if(old.active!==item.active||old.sortOrder!==index)await tx.update(placementTpoJobTypes).set({
       active:item.active,sortOrder:index,
       updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
      }).where(and(eq(placementTpoJobTypes.id,old.id),eq(placementTpoJobTypes.collegeId,collegeId)));
