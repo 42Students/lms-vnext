@@ -19,7 +19,7 @@ type MappingRead = {
   courses: readonly { id: string; name: string; code: string; departmentId: string }[];
   mapped: readonly {
     id: string; termId: string; courseId: string; termName: string; termNumber: number; programName: string;
-    courseName: string; courseCode: string; type: string; credits: number | null; displayOrder: number; staffingWarning: string | null; staffingTooltip?: string | null;
+    courseName: string; courseCode: string; type: string; isMandatory?: boolean | null; credits: number | null; displayOrder: number; staffingWarning: string | null; staffingTooltip?: string | null;
   }[];
 };
 
@@ -36,7 +36,7 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
   const [confirm, setConfirm] = useState<{ type: "ADD"; body: unknown } | { type: "REMOVE"; id: string } | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [notice, setNotice] = useState<string | null>(null);
-  const [editing, setEditing] = useState<{ id: string; credits: string; position: string } | null>(null);
+  const [editing, setEditing] = useState<{ id: string; credits: string; position: string; type: "CORE" | "ELECTIVE"; isMandatory: boolean } | null>(null);
   const [draggedId, setDraggedId] = useState<string | null>(null);
   const [courseType, setCourseType] = useState<"CORE" | "ELECTIVE">("CORE");
   const [switchDraft, setSwitchDraft] = useState<{ kind: "program" | "term"; value: string } | null>(null);
@@ -70,7 +70,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     const originalPosition = original
       ? orderedPeers(original).findIndex(item => item.id === original.id) + 1 : 0;
     if (original && (editing.credits !== String(original.credits ?? 3) ||
-      editing.position !== String(originalPosition))) {
+      editing.position !== String(originalPosition) ||
+      editing.type !== original.type || editing.isMandatory !== (original.isMandatory ?? original.type === "CORE"))) {
       setDiscardEdit(true);
       return;
     }
@@ -95,7 +96,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         const addedCount = confirm.type === "ADD"
           ? ((confirm.body as { mappings?: unknown[] }).mappings?.length ?? 1) : 0;
         const message = removedCourse === null
-          ? TERM_MAPPING_COPY.addedMessage(addedCount) : TERM_MAPPING_COPY.removedMessage(removedCourse);
+          ? addedCount === 1 ? "Course added to semester" : `${addedCount} courses added to semester`
+          : TERM_MAPPING_COPY.removedMessage(removedCourse);
         showToast({ tone: "success", title: message });
         setNotice(null);
         setConfirm(null);
@@ -174,7 +176,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     setConfirm({ type: "ADD", body: { mappings: inputs.flatMap(item => item.success ? [item.data] : []) } });
   }
 
-  function updateMapping(id: string, creditsValue: string, position: number) {
+  function updateMapping(id: string, creditsValue: string, position: number,
+    editFields?: { type: "CORE" | "ELECTIVE"; isMandatory: boolean }) {
     if (inFlight.current) return;
     const previous = data.mapped.find(row => row.id === id);
     if (!previous || !editableTerm || previous.termId !== termId) return;
@@ -184,6 +187,9 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
     const parsed = collegeTermCourseUpdateSchema.safeParse({
       position,
       ...(changedCredits ? { credits: Number(creditsValue) } : {}),
+      ...(editFields && editFields.type !== previous.type ? { type: editFields.type } : {}),
+      ...(editFields && editFields.isMandatory !== (previous.isMandatory ?? previous.type === "CORE")
+        ? { isMandatory: editFields.isMandatory } : {}),
     });
     if (!parsed.success) {
       setFieldErrors({ credits: "Enter credits" });
@@ -412,6 +418,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
                     setEditing({
                       id:row.id,credits:row.credits===null?"3":String(row.credits),
                       position:String(orderedPeers(row).findIndex(item=>item.id===row.id)+1),
+                      type:row.type==="ELECTIVE"?"ELECTIVE":"CORE",
+                      isMandatory:row.isMandatory ?? row.type==="CORE",
                     });
                   }}><span aria-hidden="true">✎</span> Edit</Button>
                 <Button className="min-h-11 min-w-11 md:min-h-9 md:min-w-9" variant="secondary" type="button" disabled={pending || !editableTerm || orderedPeers(row)[0]?.id===row.id}
@@ -433,7 +441,14 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
         ]}
       />}
     {termId && !editableTerm ? <p role="status" className="text-sm text-muted-foreground">This is an archived semester. Existing curriculum mappings are read-only.</p> : null}
-    {notice ? <p role="status" className="text-sm text-body">{notice}</p> : null}
+    {notice ? <p role="status" aria-live="polite" className="text-sm text-body">{notice}</p> : null}
+    {refreshing && !currentMappings.length ? <div role="status" aria-label="Loading semester mappings"
+      className="overflow-x-auto rounded border border-border p-3">
+      {Array.from({ length: 6 }, (_, row) => <div key={row} className="flex min-w-[500px] gap-3 border-b border-border py-3 last:border-0">
+        {Array.from({ length: 6 }, (_, col) => <span key={col} aria-hidden="true"
+          className="h-4 flex-1 animate-pulse rounded bg-muted" />)}
+      </div>)}
+    </div> : null}
     {error && !confirm ? <p role="alert" className="text-sm text-[var(--lms-error)]">{error}</p> : null}
     </section>
     </div>
@@ -443,7 +458,8 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
       {editing && editingRow ? <form aria-label={"Edit mapping for " + editingRow.courseName}
         className="grid min-w-0 gap-4" onSubmit={event => {
           event.preventDefault();
-          updateMapping(editingRow.id, editing.credits, Number(editing.position));
+          updateMapping(editingRow.id, editing.credits, Number(editing.position),
+            { type: editing.type, isMandatory: editing.isMandatory });
         }}>
         <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Credits
           <Input type="number" min={1} max={10} step={1} required
@@ -454,6 +470,22 @@ export function CollegeTermMappingManager({ data }: { data: MappingRead }) {
             }}
             className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 md:min-h-[var(--lms-control-height)]" />
           {fieldErrors.credits ? <span role="alert" className="text-xs text-[var(--lms-error)]">{fieldErrors.credits}</span> : null}
+        </label>
+        <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Course Type
+          <Select value={editing.type} disabled={pending}
+            onChange={event => {
+              const type = event.target.value as "CORE" | "ELECTIVE";
+              setEditing({ ...editing, type, isMandatory: type === "CORE" ? editing.isMandatory : false });
+            }}>
+            <option value="CORE">{TERM_MAPPING_COPY.core}</option>
+            <option value="ELECTIVE">{TERM_MAPPING_COPY.elective}</option>
+          </Select>
+        </label>
+        <label className="flex items-center gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+          <input type="checkbox" checked={editing.isMandatory} disabled={pending || editing.type !== "CORE"}
+            onChange={event => setEditing({ ...editing, isMandatory: event.target.checked })}
+            className="h-4 w-4 accent-[var(--lms-primary)]" />
+          Mandatory course
         </label>
         <label className="grid gap-2 text-[13px] font-semibold text-[var(--lms-neutral-400)]">Display Order
           <Input type="number" min={1} max={orderedPeers(editingRow).length} step={1} required
