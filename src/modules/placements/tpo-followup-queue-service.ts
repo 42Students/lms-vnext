@@ -1,6 +1,6 @@
 import "server-only";
 
-import { and, asc, count, desc, eq, gte, isNull, lte, sql } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   placementTpoFollowups,
@@ -27,7 +27,7 @@ import { TpoCrmError } from "./tpo-crm-service";
 
 async function requireTpo(context: RequestContext) {
   const membership = context.membership;
-  if (!membership || !hasMembershipRole(context, "TPO")) {
+  if (!membership || (!hasMembershipRole(context, "TPO") && !hasMembershipRole(context, "COLLEGE_ADMIN"))) {
     throw new AuthorizationError("placements.manage");
   }
   const collegeId = membership.collegeId;
@@ -38,7 +38,7 @@ async function requireTpo(context: RequestContext) {
   const [stored]=await getDb().select({id:collegeMemberships.id})
     .from(collegeMemberships)
     .innerJoin(membershipRoles,and(
-      eq(membershipRoles.membershipId,collegeMemberships.id),eq(membershipRoles.role,"TPO"),
+      eq(membershipRoles.membershipId,collegeMemberships.id),inArray(membershipRoles.role,["TPO","COLLEGE_ADMIN"]),
     ))
     .innerJoin(users,eq(users.id,collegeMemberships.userId))
     .where(and(
@@ -198,7 +198,7 @@ export async function completeConfirmedTpoFollowup(
       )).for("update", { of: placementTpoFollowups }).limit(1);
 
     if (!current) throw new TpoCrmError("TPO_CRM_FOLLOWUP_NOT_FOUND");
-    if (current.doneAt !== null) throw new TpoCrmError("TPO_CRM_FOLLOWUP_ALREADY_DONE");
+    if (current.doneAt !== null) return {id:current.id,done:true as const,unchanged:true as const};
     if (current.dueAt.toISOString() !== new Date(input.expectedDueAt).toISOString()) {
       throw new TpoCrmError("TPO_CRM_FOLLOWUP_ALREADY_DONE");
     }
@@ -248,4 +248,14 @@ export async function getTpoFollowupQueueCsv(
   ...(input.q?[sql<boolean>`position(lower(${input.q}::text) in lower(coalesce(${placementTpoLeads.name}, '') || ' ' || coalesce(${placementTpoLeads.companyName}, ''))) > 0`]:[]),
  )).orderBy(asc(placementTpoFollowups.dueAt),asc(placementTpoFollowups.id)).limit(501);
  return tpoFollowupCsv(facts,input);
+}
+
+/** Compatibility adapter for the old flat follow-up list. Always bound to
+ * the authenticated TPO/College Admin college; this does not expose global
+ * tenant search, and only the requested paged window is returned. */
+export async function listLegacyTpoFollowups(
+ context:RequestContext,rawQuery:unknown={},
+){
+ const queue=await getTpoDueFollowupQueue(context,new Date(),rawQuery);
+ return queue.items;
 }
