@@ -141,8 +141,8 @@ export function LearnerModuleAccessDrawer({collegeId}:{collegeId:string}){
     </Button>
    </li>)}
   </ul>:null}
-  {message?<div role="alert" className="mt-2 flex flex-wrap items-center gap-3">
-    <p className="max-w-prose break-words text-sm text-error leading-[22px]">{message}</p>
+  {message?<div className="mt-2 flex flex-wrap items-center gap-3">
+    <p role="alert" className="max-w-prose break-words text-sm text-error leading-[22px]">{message}</p>
     <Button type="button" variant="secondary" disabled={loading}
       onClick={()=>void lookup(search,failedMemberId??undefined)}>Retry</Button>
    </div>:null}

@@ -56,7 +56,7 @@ const columns = (departments: readonly {id:string;name:string}[]): DataTableColu
     key: "contents",
     header: "Contents", className:"min-w-[250px]",
     cell: (item) => item.contents
-      ? <div className="flex min-w-[220px] flex-wrap gap-1.5" aria-label={"Linked records for "+item.name}>
+      ? <div role="group" className="flex min-w-[220px] flex-wrap gap-1.5" aria-label={"Linked records for "+item.name}>
           {([
             ["Semesters",item.contents.semesters],
             ["Batches",item.contents.batches],

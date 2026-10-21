@@ -394,7 +394,7 @@ export function LearnerAttendanceWorkspace({
               ? `Below the ${threshold}% requirement. Attend the next ${recovery} ${recovery === 1 ? "class" : "classes"} to recover.`
               : `Below the ${threshold}% requirement. Talk to your faculty about it.`}
         </p>
-        <div className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-3 text-center" aria-label="Attendance counts">
+        <div role="group" className="mt-4 grid grid-cols-3 gap-3 border-t border-border pt-3 text-center" aria-label="Attendance counts">
           <span className="text-xs text-muted-foreground"><strong className="block text-xl font-semibold tabular-nums text-foreground">{summary.present}</strong>Present</span>
           <span className="text-xs text-muted-foreground"><strong className="block text-xl font-semibold tabular-nums text-foreground">{summary.absent}</strong>Absent</span>
           <span className="text-xs text-muted-foreground"><strong className="block text-xl font-semibold tabular-nums text-foreground">{summary.heldSessions}</strong>Held</span>

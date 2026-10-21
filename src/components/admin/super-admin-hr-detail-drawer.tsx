@@ -348,7 +348,7 @@ export function SuperAdminHrDetailDrawer({
                 ) : null}
 
                 {optionsError ? (
-                  <div className="mt-2 space-y-2" role="alert">
+                  <div className="mt-2 space-y-2">
                     <p
                       role="alert"
                       className="text-sm text-error"

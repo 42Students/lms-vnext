@@ -373,7 +373,7 @@ export function LoginForm({
   }
 
   return (
-    <div className="login-form w-full max-w-md" data-legacy-superadmin={legacySuperAdmin||undefined} data-step={attempt ? "code" : "contact"} aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
+    <div className="login-form w-full max-w-md" data-legacy-superadmin={legacySuperAdmin||undefined} data-step={attempt ? "code" : "contact"} role="region" aria-label={collegeName?"Sign in to "+collegeName:"Sign in to 42LMS"}>
       <h1 className="m-0 text-[30px] font-semibold leading-10 tracking-tight text-[var(--lms-heading)]">
         {legacySuperAdmin?(attempt?"OTP sent to your Mobile Number":"Mobile Number"):(attempt?"Enter your code":"Sign in")}
       </h1>

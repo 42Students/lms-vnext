@@ -803,7 +803,7 @@ export function SuperAdminHrAccounts({
             />
           ) : (
             <>
-              <div className="min-w-0 divide-y divide-border border-y border-border lg:hidden print:hidden" aria-label="Recruiter account cards">
+              <div role="region" className="min-w-0 divide-y divide-border border-y border-border lg:hidden print:hidden" aria-label="Recruiter account cards">
                 {list.items.map((account) => (
                   <article key={account.userId} className="min-w-0 py-4">
                     <div className="flex flex-wrap items-start justify-between gap-2">

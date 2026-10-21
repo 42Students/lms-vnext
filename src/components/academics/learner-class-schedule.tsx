@@ -185,7 +185,7 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
 }){
   const columns=days.map(day=>({day,rows:eventsForDay(day)}));
   const hours=learnerHourlySlots(columns.flatMap(col=>col.rows));
-  return <div className={styles.hourFrame} aria-label="Hourly class schedule">
+  return <div role="region" className={styles.hourFrame} aria-label="Hourly class schedule">
     <div className={styles.hourGrid+" "+(days.length===1?"grid-cols-[55px_minmax(17.5rem,1fr)] sm:grid-cols-[70px_minmax(17.5rem,1fr)] lg:grid-cols-[90px_minmax(17.5rem,1fr)]":"grid-cols-[55px_repeat(7,minmax(9.375rem,1fr))] sm:grid-cols-[70px_repeat(7,minmax(9.375rem,1fr))] lg:grid-cols-[90px_repeat(7,minmax(9.375rem,1fr))]")}>
       <div className={styles.hourHeader}>ALL DAY</div>
       {columns.map(col=><div key={localDayKey(col.day)}
@@ -547,7 +547,7 @@ export function LearnerClassSchedule({
         </Alert>
       ) : null}
       {filteredMetrics.length > 0 ? (
-        <div className={styles.summary + " flex flex-wrap items-center gap-2"} aria-label="Class schedule overview">
+        <div role="group" className={styles.summary + " flex flex-wrap items-center gap-2"} aria-label="Class schedule overview">
           <Metric label="Today" value={todayEvents.length + " today"}
             expanded={metricDialog === "TODAY"}
             onClick={() => { setSelectedEvent(null); setMetricDialog("TODAY"); }} />
@@ -753,7 +753,7 @@ export function LearnerClassSchedule({
         ) : (
           <>
             {view === "month" ? (
-              <div className={styles.month} aria-label="Monthly class schedule">
+              <div role="region" className={styles.month} aria-label="Monthly class schedule">
                 <CalendarGrid variant="hairline" className={styles.monthGrid}
                   role="group" aria-label="42 day month grid">
                   {["Sun","Mon","Tue","Wed","Thu","Fri","Sat"].map((day,index)=>(

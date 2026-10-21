@@ -109,7 +109,7 @@ export async function AdminScopedReadPage({title,path,description,statuses,searc
   value==="CO_TEACHER"?"Co-Teacher":value==="TA"?"Teaching Assistant":humanStatus(value);
  const detailValue=(row:SuperAdminReadRow,label:string)=>
   row.details.find(detail=>detail.startsWith(label+": "))?.slice(label.length+2)??"—";
- const actionCell=(row:SuperAdminReadRow)=><div aria-label={row.title+" actions"} className="flex min-w-0 flex-col items-start gap-2">
+ const actionCell=(row:SuperAdminReadRow)=><div role="group" aria-label={row.title+" actions"} className="flex min-w-0 flex-col items-start gap-2">
   {renderRowActions?.(row)}
   {row.href?<Link href={row.href} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">Open details →</Link>:null}
   {row.secondaryHref?<Link href={row.secondaryHref} className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">{row.secondaryLabel??"Manage →"}</Link>:null}
