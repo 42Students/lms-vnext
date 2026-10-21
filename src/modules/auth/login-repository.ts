@@ -7,6 +7,7 @@ import {
   colleges,
   identityAuthAttempts,
   organizations,
+  placementCompanies,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
@@ -30,6 +31,43 @@ const userColumns = {
 
 function rowsOf(result: unknown): Record<string, unknown>[] {
   return (result as { rows: Record<string, unknown>[] }).rows ?? [];
+}
+
+/** Match the same active recruiter scope used by request-context resolution.
+ * Never turn a suspended/revoked recruiter grant into an active login persona.
+ * Shared users with other active college roles may still sign in normally.
+ */
+async function hasUsableRecruiterGrant(userId: string, collegeId?: string) {
+  const db = getDb();
+  const [row] = await db
+    .select({ id: placementRecruiterCollegeGrants.id })
+    .from(placementRecruiterCollegeGrants)
+    .innerJoin(placementRecruiterProfiles,
+      eq(placementRecruiterProfiles.userId, placementRecruiterCollegeGrants.recruiterUserId))
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id, placementRecruiterProfiles.companyId))
+    .innerJoin(placementCompanyRelationships,
+      eq(placementCompanyRelationships.id, placementRecruiterCollegeGrants.companyRelationshipId))
+    .innerJoin(colleges, eq(colleges.id, placementCompanyRelationships.collegeId))
+    .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+    .innerJoin(users, eq(users.id, placementRecruiterCollegeGrants.recruiterUserId))
+    .where(and(
+      eq(placementRecruiterCollegeGrants.recruiterUserId, userId),
+      eq(users.platformStatus, "ACTIVE"),
+      eq(placementRecruiterProfiles.status, "ACTIVE"),
+      eq(placementCompanies.status, "ACTIVE"),
+      eq(placementCompanyRelationships.status, "ACTIVE"),
+      eq(placementCompanyRelationships.companyId, placementRecruiterProfiles.companyId),
+      eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+      eq(placementRecruiterCollegeGrants.verificationStatus, "VERIFIED"),
+      sql`${placementRecruiterCollegeGrants.validUntil} > clock_timestamp()`,
+      sql`${placementRecruiterCollegeGrants.capabilities} @> ARRAY['DRIVES']::text[]`,
+      eq(colleges.status, "ACTIVE"),
+      eq(organizations.status, "ACTIVE"),
+      collegeId ? eq(colleges.id, collegeId) : undefined,
+    ))
+    .limit(1);
+  return Boolean(row);
 }
 
 export const drizzleLoginRepository: LoginRepository = {
@@ -90,28 +128,9 @@ export const drizzleLoginRepository: LoginRepository = {
     })) as LoginMembership[];
   },
 
-  async hasAnyRecruiterGrant(userId) {
-    const [row] = await getDb()
-      .select({ id: placementRecruiterCollegeGrants.id })
-      .from(placementRecruiterCollegeGrants)
-      .innerJoin(
-        placementRecruiterProfiles,
-        eq(
-          placementRecruiterProfiles.userId,
-          placementRecruiterCollegeGrants.recruiterUserId,
-        ),
-      )
-      .where(
-        and(
-          eq(placementRecruiterCollegeGrants.recruiterUserId, userId),
-          eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
-          eq(placementRecruiterProfiles.status, "ACTIVE"),
-        ),
-      )
-      .limit(1);
-    return Boolean(row);
+  hasAnyRecruiterGrant(userId) {
+    return hasUsableRecruiterGrant(userId);
   },
-
   async isSuperAdmin(userId) {
     const result = await getDb().execute(sql`
       SELECT 1 FROM system_roles
@@ -120,36 +139,9 @@ export const drizzleLoginRepository: LoginRepository = {
     return rowsOf(result).length === 1;
   },
 
-  async hasRecruiterGrantAtCollege(userId, collegeId) {
-    const [row] = await getDb()
-      .select({ id: placementRecruiterCollegeGrants.id })
-      .from(placementRecruiterCollegeGrants)
-      .innerJoin(
-        placementRecruiterProfiles,
-        eq(
-          placementRecruiterProfiles.userId,
-          placementRecruiterCollegeGrants.recruiterUserId,
-        ),
-      )
-      .innerJoin(
-        placementCompanyRelationships,
-        eq(
-          placementCompanyRelationships.id,
-          placementRecruiterCollegeGrants.companyRelationshipId,
-        ),
-      )
-      .where(
-        and(
-          eq(placementRecruiterCollegeGrants.recruiterUserId, userId),
-          eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
-          eq(placementRecruiterProfiles.status, "ACTIVE"),
-          eq(placementCompanyRelationships.collegeId, collegeId),
-        ),
-      )
-      .limit(1);
-    return Boolean(row);
+  hasRecruiterGrantAtCollege(userId, collegeId) {
+    return hasUsableRecruiterGrant(userId, collegeId);
   },
-
   async createAttempt(input) {
     // Serialize concurrent starts for one contact so the send cap cannot be
     // exceeded by a burst of parallel requests.
