@@ -95,7 +95,7 @@ export default async function MentorResourceDirectoryPage({params,searchParams}:
      Export omits {data.exportOmitted} matching resource records.
     </p>:null}
    </div>
-   <p className="text-sm text-body leading-[22px]">{data.total} matching recorded resource{data.total===1?"":"s"}</p>
+   <p className="text-sm text-body leading-[22px]">{data.total.toLocaleString("en-IN")} matching recorded resource{data.total===1?"":"s"}</p>
    {data.items.length===0?<EmptyState title="No matching resources"
     description={data.registered===0?
      "No active resources were persisted for this authorized project.":

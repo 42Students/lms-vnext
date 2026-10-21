@@ -43,8 +43,8 @@ export default async function LearnerSupportHistory({searchParams}:{
         {type==="ALL"?"All types":placementRequestTypeLabel(type)}
       </Link>)}
     </nav>
-    <p role="status" className="text-xs text-muted-foreground leading-5">
-      {data.total} matching requests · Page {data.page} of {data.totalPages}
+    <p role="status" className="text-xs text-muted-foreground">
+      {data.total.toLocaleString("en-IN")} matching requests · Page {data.page} of {data.totalPages}
     </p>
     {data.items.length===0?<EmptyState title="No requests in this view"
       description={data.status==="ALL"?"You have not submitted a placement request yet.":"No requests match this status filter."}/>:<ol className="divide-y divide-border border-y border-border">
@@ -53,18 +53,18 @@ export default async function LearnerSupportHistory({searchParams}:{
           <h2 className="font-semibold text-base leading-6 text-[var(--lms-heading)]">{placementRequestTypeLabel(row.request.requestType)}</h2>
           <StatusBadge tone={row.request.status==="PENDING"?"warning":row.request.status==="APPROVED"?"success":"neutral"}>{row.request.status}</StatusBadge>
         </div>
-        <p className="mt-2 text-sm text-body leading-[22px]">{row.company.name} · {row.roleOption.title}</p>
-        <p className="mt-1 text-xs text-muted-foreground leading-5">
+        <p className="mt-2 text-sm text-body">{row.company.name} · {row.roleOption.title}</p>
+        <p className="mt-1 text-xs text-muted-foreground">
           {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(row.request.requestedAt)}
         </p>
-        <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">{row.request.reason}</p>
+        <p className="mt-3 whitespace-pre-wrap break-words text-sm text-body">{row.request.reason}</p>
         {row.request.status==="PENDING" ? (
           <div className="mt-3">
             <LearnerSupportCancel requestId={row.request.id}
               expectedUpdatedAt={row.request.updatedAt.toISOString()}/>
           </div>
         ) : null}
-        {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words border-t border-border pt-3 text-sm text-body leading-[22px]">
+        {row.request.decisionNote?<p className="mt-3 whitespace-pre-wrap break-words border-t border-border pt-3 text-sm text-body">
           Placement-team note: {row.request.decisionNote}
         </p>:null}
       </li>)}

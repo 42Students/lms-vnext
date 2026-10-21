@@ -106,7 +106,7 @@ export default async function MentorProjectActivityHistoryPage({
           className="inline-flex min-h-11 items-center px-3 py-2 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary hover:text-[var(--lms-primary-text)]">Clear</Link>:null}
       </form></FilterBar>
       <p className="text-sm text-body leading-[22px]">
-        {data.total} matching persisted event{data.total===1?"":"s"}
+        {data.total.toLocaleString("en-IN")} matching persisted event{data.total===1?"":"s"}
       </p>
       <div className="flex flex-wrap items-center gap-3 text-sm">
         <Link data-unskin="" href={"/api/projects/"+encodeURIComponent(projectId)+

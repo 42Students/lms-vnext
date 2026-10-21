@@ -75,7 +75,7 @@ export default async function LearnerAssessmentResultsPage({
           className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 md:min-h-[var(--lms-control-height)] items-center text-sm font-semibold text-primary-text">Clear search</Link>:null}
       </form>
       <p role="status" className="text-sm text-body">
-        Showing {paged.items.length} of {paged.total} matching published assessment outcomes.
+        Showing {paged.items.length} of {paged.total.toLocaleString("en-IN")} matching published assessment outcomes.
       </p>
       {paged.items.length === 0 ? (
         <section role="status" className="flex min-h-44 flex-col items-start justify-center border-y border-border px-2 py-6">
@@ -97,7 +97,7 @@ export default async function LearnerAssessmentResultsPage({
       ) : (
         <section aria-label="Official assessment outcomes" className="min-w-0 divide-y divide-border">
           {paged.items.map((item) => (
-            <article key={item.resultId} className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-4">
+            <article key={item.resultId} className="min-w-0 py-4 first:pt-0 last:pb-0 md:py-5">
               <div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:justify-between sm:gap-3">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">
