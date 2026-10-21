@@ -29,13 +29,32 @@ export async function POST(
     } catch {
       return NextResponse.json({ error: "INVALID_REQUEST" }, { status: 400 });
     }
-    const issue = await retestBugTrackerIssueForAdmin(context, publicId, body);
+    // Legacy status-only clients must still submit a current version.
+    // Translate PASS/FAIL to the typed workflow result without relaxing CAS.
+    const legacyBody=typeof body==="object"&&body!==null&&!Array.isArray(body)
+      ? body as Record<string,unknown> : null;
+    const legacyStatus=legacyBody?.status;
+    const alias=legacyBody&&!Object.prototype.hasOwnProperty.call(legacyBody,"result")&&
+      (legacyStatus==="PASS"||legacyStatus==="FAIL");
+    const normalized=alias?{
+      expectedVersion:legacyBody.expectedVersion,
+      result:legacyStatus,
+      note:legacyBody.note,
+    }:body;
+    const issue = await retestBugTrackerIssueForAdmin(context, publicId, normalized);
     // The persisted issue is the post-transition result, including its new
     // status and version. Keep the envelope for vNext clients, but expose an
     // explicit refresh token rather than a stale pre-action snapshot.
-    return NextResponse.json({ issue, status:issue.status, version:issue.version },
-      {headers:{"Cache-Control":"private, no-store"}});
+    return NextResponse.json({ issue, status:issue.status, version:issue.version,
+      retestStatus:issue.retestStatus },
+      {headers:{"Cache-Control":"private, no-store",
+        ...(alias?{"Deprecation":"true"}:{})}});
   } catch (error) {
     return bugTrackerApiError(error);
   }
 }
+
+
+/** New clients may use workflow PATCH. The same scoped handler enforces
+ * current-version checking and does not allow an unversioned status update. */
+export const PATCH=POST;
