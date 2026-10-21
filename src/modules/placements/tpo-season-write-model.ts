@@ -13,6 +13,15 @@ export const tpoSeasonChangeSchema = z.discriminatedUnion("action", [
 ]).refine((value) => value.endDate >= value.startDate, {
   path: ["endDate"], message: "End date must be on or after start date",
 });
+/** The legacy create form also exposed registration. Activation alone does not
+ * open registration in vNext: academic-cohort consent and eligibility checks
+ * belong to a different lifecycle. Always show this before confirmation. */
+export const TPO_SEASON_CREATE_REVIEW_COPY={
+ fields:["Season name","Season code","Start date","End date"] as const,
+ notice:"Creating a placement season does not open learner registration. Registration must be opened for eligible academic cohorts separately.",
+ confirm:"I understand that students cannot register merely because a season is active.",
+ unavailable:"Registration opening and deadline are managed separately from season dates.",
+} as const;
 export const tpoRulesChangeSchema = z.object({
   confirmed: z.literal(true),
   expectedVersion: z.number().int().min(0),
