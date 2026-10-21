@@ -96,6 +96,9 @@ export async function PlacementDriveWorkspace({
 
   const jobTypes=job.status==="DRAFT"?await listPlacementJobTypeChoices(context,job.collegeId):[];
   const isTpo = hasMembershipRole(context,"TPO");
+  const isSuperAdminDrive=applicationsHref?.startsWith("/admin/placements/jobs/")??false;
+  const expiredPublished=job.status==="PUBLISHED"&&job.applicationDeadline!==null&&
+    job.applicationDeadline.getTime()<Date.now();
   // Read optional panels concurrently. Their failure must not misrepresent
   // a safe-to-publish state or hide the primary drive page.
   const [lifecycleReadiness,collisionAssessment,shortlist,roundOrder,deadlineState,bulkCandidates]=
@@ -273,16 +276,22 @@ export async function PlacementDriveWorkspace({
         title={driveDay.job.company.name + " · " + driveDay.job.title}
         description={
           driveDay.job.company.name +
-          " · " + headerFacts.status
+          " · " + (job.status==="PUBLISHED"?(expiredPublished?"Expired":"Open"):headerFacts.status)
         }
         actions={
           <div className="flex min-w-0 w-full flex-col gap-[var(--lms-space-2)] sm:w-auto sm:flex-row sm:items-center">
-          {!isTpo ? <Link href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">Applications</Link> : null}
+          {!isTpo ? <Link href={applicationsHref ?? "/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications"} className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-white hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] sm:w-auto md:min-h-9">{isSuperAdminDrive?"View applications":"Applications"}</Link> : null}
+          {isSuperAdminDrive?<Link href={"/admin/placements/jobs/"+encodeURIComponent(jobId)+"/settings"}
+             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Edit drive</Link>:null}
+          {isTpo&&nextStep?<Link href={nextStep.primary.href}
+             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">{nextStep.primary.label}</Link>:null}
+          {isTpo?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(jobId)+"/discussion"}
+             className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text sm:w-auto md:min-h-9">Discussion</Link>:null}
           <Dropdown mobileSheet align="end" label="Drive actions" trigger="Actions" className="w-full sm:w-auto">
             <p className="hidden text-xs text-muted-foreground group-open:block md:!hidden leading-[20px]">Scroll for more drive actions ↓</p>
             <div role="group" aria-label="Drive action choices" tabIndex={0}
               className="flex max-h-[65dvh] min-w-0 flex-col gap-2 overflow-y-auto overscroll-contain pb-4 md:max-h-72 md:flex-col md:overflow-y-auto md:pb-0">
-            {nextStep ? (
+            {nextStep&&!isTpo ? (
               <Link href={nextStep.primary.href}
                 className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-4 text-sm font-[650] text-white hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-[3px] focus-visible:outline-offset-2 focus-visible:outline-[rgba(38,186,199,0.35)] min-[768px]:min-h-[var(--lms-control-height)]">
                 {nextStep.primary.label}
@@ -386,6 +395,27 @@ export async function PlacementDriveWorkspace({
           </div>
         }
       />
+      {nextStep ? (
+        <section aria-label="Next step" className="border-b border-border pb-4">
+          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Next step</h2>
+          <p className="mt-2 text-sm text-body leading-[22px]">{nextStep.primary.description}</p>
+          <Link href={nextStep.primary.href}
+            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">
+            {nextStep.primary.label}
+          </Link>
+          {nextStep.more.length > 0 ? (
+            <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
+              {nextStep.more.map(step => (
+                <Link key={step.href} href={step.href}
+                  className="group inline-flex min-h-11 min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
+                  <span className="block font-semibold">{step.label}</span>
+                  <span className="mt-1 block break-words text-xs text-body group-hover:text-white">{step.description}</span>
+                </Link>
+              ))}
+            </div>
+          ) : null}
+        </section>
+      ) : null}
       {isTpo?<TpoDriveRefreshControl/>:null}
       {isTpo&&job.status==="DRAFT"?
        <TpoDeleteDraftAction jobId={jobId} updatedAt={job.updatedAt.toISOString()}/>:null}
@@ -396,7 +426,9 @@ export async function PlacementDriveWorkspace({
        </Alert>:null}
       <section aria-label="Drive status and details" className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
         <div className="flex min-w-0 flex-wrap items-center gap-[var(--lms-space-2)] text-sm">
-          <StatusBadge tone={job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>{headerFacts.status}</StatusBadge>
+          <StatusBadge tone={expiredPublished?"warning":job.status==="PUBLISHED"?"success":job.status==="DRAFT"?"warning":"neutral"}>
+            {job.status==="PUBLISHED"?(expiredPublished?"Expired":"Open"):headerFacts.status}
+           </StatusBadge>
           <span>{headerFacts.applicationMode}</span>
           <span>· {headerFacts.workMode}</span>
           <span>· {headerFacts.employmentType}</span>
@@ -449,27 +481,6 @@ export async function PlacementDriveWorkspace({
           </Disclosure>
         </section>
       ):null}
-      {nextStep ? (
-        <section aria-label="Next step" className="border-b border-border pb-4">
-          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Next step</h2>
-          <p className="mt-2 text-sm text-body leading-[22px]">{nextStep.primary.description}</p>
-          <Link href={nextStep.primary.href}
-            className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">
-            {nextStep.primary.label}
-          </Link>
-          {nextStep.more.length > 0 ? (
-            <div className="mt-3 grid min-w-0 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-              {nextStep.more.map(step => (
-                <Link key={step.href} href={step.href}
-                  className="group inline-flex min-h-11 min-w-0 flex-col items-start justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 py-2 text-sm text-[var(--lms-link-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">
-                  <span className="block font-semibold">{step.label}</span>
-                  <span className="mt-1 block break-words text-xs text-body group-hover:text-white">{step.description}</span>
-                </Link>
-              ))}
-            </div>
-          ) : null}
-        </section>
-      ) : null}
       {journey?<section aria-label="Drive applicant journey" className="min-w-0 border-b border-border pb-4">
         <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Journey</h2>
         <p className="mt-1 text-xs text-body leading-[20px]">{journey.definition}</p>
