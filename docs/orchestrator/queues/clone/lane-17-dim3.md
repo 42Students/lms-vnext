@@ -61,31 +61,31 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
 - [x] `src/components/placements/tpo-report-record-links.tsx`
 - [x] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/project-admin-at-risk-page.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/tpo/tpo-team-forms.tsx`
-- [ ] `src/components/tracker/independent-finding-copy-action.tsx`
-- [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/confirmed/page.tsx`
-- [ ] `src/components/admin/college-logo-uploader.tsx`
-- [ ] `src/components/courses/admin-learning-structure-actions.tsx`
-- [ ] `src/components/courses/faculty-assessment-overview.tsx`
-- [ ] `src/components/courses/learner-course-tabs.tsx`
-- [ ] `src/components/placements/college-drive-attention-cards.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/public-recruiter-join-form.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/project-resource-files-section.tsx`
-- [ ] `src/components/shell/topbar/topbar.module.css`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/projects/project-admin-at-risk-page.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
+- [x] `src/components/tpo/tpo-prep-readiness-editor.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/tpo/tpo-team-forms.tsx`
+- [x] `src/components/tracker/independent-finding-copy-action.tsx`
+- [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/attempts/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
+- [x] `src/components/admin/college-logo-uploader.tsx`
+- [x] `src/components/courses/admin-learning-structure-actions.tsx`
+- [x] `src/components/courses/faculty-assessment-overview.tsx`
+- [x] `src/components/courses/learner-course-tabs.tsx`
+- [x] `src/components/placements/college-drive-attention-cards.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/public-recruiter-join-form.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/project-resource-files-section.tsx`
+- [x] `src/components/shell/topbar/topbar.module.css`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
 - [ ] `src/components/tracker/tracker-admin-nav.tsx`
 - [ ] `src/components/verification/CollegeVerificationPanel.tsx`
 - [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
