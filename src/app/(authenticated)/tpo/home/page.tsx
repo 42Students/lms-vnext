@@ -17,6 +17,7 @@ import {getPendingTpoRequestsCount} from "@/modules/placements/tpo-pending-reque
 import {pendingTpoRequestsAction} from "@/modules/placements/tpo-home-request-action-model";
 import { PageHeader } from "@/components/ui/page-header";
 import { InlineNotice } from "@/components/ui/inline-notice";
+import { ErrorState } from "@/components/ui/error-state";
 import { hasTpoTooling } from "@/modules/placements/tpo-workspace-access-model";
 import {resolveOptionalModuleAccess} from "@/modules/module-access/service";
 import {getTpoStudentsIntelligence} from "@/modules/placements/tpo-students-service";
@@ -61,12 +62,20 @@ export default async function TpoHome(){
    getDb().select({displayName:users.displayName}).from(users)
     .where(eq(users.id,ctx.user.id)).limit(1).catch(()=>[]),
  ]);
- // TPO-home-R08: a single heavyweight analytics or batch rejection cannot
- // replace every lightweight, independently loaded Home signal with error.tsx.
- const batches=batchResult??{ready:false,batches:[]};
- const operations=operationsResult??{
-  summary:{publishedJobs:0,jobsNeedingAttention:0},workQueue:[],jobs:[],
- };
+ // Core batches/operations determine the meaning of the Home dashboard.
+ // A failed essential read is NOT evidence of zero drives, zero requests or
+ // an empty work queue. Keep optional signals independent only after both load.
+ if(!batchResult?.ready||!operationsResult){
+  return <div data-testid="tpo.home" className="min-w-0 space-y-4 md:space-y-6">
+   <PageHeader title="Home"/>
+   <ErrorState title="Could not load Home"
+    description="Placement batches or operations could not be loaded. Counts and actions have been withheld rather than shown as zero."
+    action={<Link href="/tpo/home?retry=1"
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link md:min-h-9">Retry</Link>}/>
+  </div>;
+ }
+ const batches=batchResult;
+ const operations=operationsResult;
  const greeting=tpoHomeGreeting(calendarNow,profileRows[0]?.displayName);
  const pendingRequests=pendingRequestCount!==null?pendingTpoRequestsAction(pendingRequestCount):null;
  const optionalDataUnavailable=[batchResult,operationsResult,pendingRequestCount,studentStats,unreadMessages,collegeRules,placementTeam,teamThreads,weekEvents].some(value=>value===null)||!crmReady;
@@ -137,7 +146,7 @@ export default async function TpoHome(){
   registered:studentStats?.definitions.registrationsAvailable?studentStats.summary.placementPool:null,
   placedUnique:studentStats?.summary.placed??null,recruiterLeads:crmCounts?.leads??null,
   followUps:crmCounts?.dueFollowups??null,recruiterAccess:crmCounts?.pendingRecruiterAccess??null,
-  pendingRequests:pendingRequestCount??0,
+  pendingRequests:pendingRequestCount,
   messages:unreadMessages,teamAsks,teamMentions:null,
   teamUnread,
   upcoming:weekNext,calendarAvailable:weekEvents!==null,

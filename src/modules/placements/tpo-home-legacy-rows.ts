@@ -6,7 +6,7 @@ export type TpoHomeSummary={
  driveDetail?:string|null;driveHref?:string;
  registered:number|null;placedUnique:number|null;
  recruiterLeads:number|null;followUps:number|null;recruiterAccess:number|null;
- pendingRequests:number;messages:number|null;
+ pendingRequests:number|null;messages:number|null;
  teamAsks:number|null;teamMentions:number|null;teamUnread:number|null;
  upcoming:readonly {startsAt:Date;title:string}[];
  calendarAvailable?:boolean;
@@ -33,9 +33,11 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
  const drives=(d.liveDrives?d.liveDrives+" live":"No live drives")+
   (d.driveDetail?" · "+d.driveDetail:"");
  const requests=d.pendingRequests,messages=d.messages;
- const inboxStatus=requests||messages
-  ?[requests?plural(requests,"request"):null,messages?plural(messages,"message")+" to answer":null].filter(Boolean).join(" · ")
-  :messages===0?"No requests or messages waiting":"";
+ const inboxParts=[
+  requests===null?"Requests unavailable":requests?plural(requests,"request"):null,
+  messages===null?"Messages unavailable":messages?plural(messages,"message")+" to answer":null,
+ ].filter(Boolean);
+ const inboxStatus=inboxParts.length?inboxParts.join(" · "):"No requests or messages waiting";
  const next=d.upcoming[0];
  const showWhen=(date:Date)=>{
   const day=new Intl.DateTimeFormat("en-GB",{weekday:"short",timeZone:"Asia/Kolkata"}).format(date);
@@ -62,7 +64,7 @@ export function buildTpoLegacyHomeRows(d:TpoHomeSummary,now:Date=new Date()):Tpo
    href:d.followUps?"/tpo/recruiters?due=1":"/tpo/recruiters",
    needsAttention:(d.followUps??0)>0||(d.recruiterAccess??0)>0},
   {key:"inbox",title:"Inbox",status:inboxStatus,href:requests?"/tpo/requests":"/tpo/messages",
-   needsAttention:requests+(messages??0)>0},
+   needsAttention:(requests??0)+(messages??0)>0},
   {key:"team",title:"Team",status:(d.teamAsks??0)>0?plural(d.teamAsks!,"ask")+" for you":
    (d.teamMentions??0)>0?plural(d.teamMentions!,"mention"):
    (d.teamUnread??0)>0?plural(d.teamUnread!,"new message"):

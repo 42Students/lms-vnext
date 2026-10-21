@@ -14,7 +14,11 @@ export async function GET(request: Request) {
     await requirePlacementManageScope(context,url.searchParams.get("collegeId")??"");
     if(!(await placementTableExists("placement_tpo_leads"))||
        !(await placementTableExists("placement_tpo_lead_activities")))
-      return NextResponse.json({error:"TPO_CRM_SCHEMA_NOT_REGISTERED"},{status:503});
+      return NextResponse.json({
+        error:"TPO_CRM_SCHEMA_NOT_REGISTERED",
+        message:"Company details are temporarily unavailable while placement data storage is being prepared.",
+        retryable:true,
+      },{status:503,headers:{"Cache-Control":"private, no-store","Retry-After":"60"}});
     return NextResponse.json({
       company: await getTpoCompanyMemory(
         context,

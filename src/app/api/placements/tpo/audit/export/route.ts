@@ -14,7 +14,9 @@ export async function GET(request:Request){
   const context=await getCurrentRequestContext();
   const items:TpoAuditRow[]=[];
   let total=0;
-  for(let page=1;page<=20;page++){
+  // Legacy bounded export supports up to 5,000 events for a chosen range.
+  // Keep the college-scoped union and explicit bounded paging.
+  for(let page=1;page<=50;page++){
    const result=await getTpoAuditLog(context,{...filters,page,pageSize:100});
    total=result.summary.total;
    items.push(...result.items);
@@ -26,6 +28,8 @@ export async function GET(request:Request){
    "Cache-Control":"private, no-store, max-age=0",
    "X-Content-Type-Options":"nosniff",
    "X-Export-Truncated":items.length<total?"true":"false",
+   "X-Export-Total":String(total),
+   "X-Export-Row-Limit":"5000",
    Vary:"Cookie",
   }});
  }catch(error){
