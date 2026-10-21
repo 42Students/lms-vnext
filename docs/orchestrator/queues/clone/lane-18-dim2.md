@@ -279,9 +279,9 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/components/tracker/independent-finding-actions.tsx`
 - [x] `src/components/tracker/known-errors-workspace.tsx`
 - [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/tracker/tracker-workflow-panel.tsx`
-- [ ] `src/components/verification/VerificationFilterPanel.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/tracker/tracker-workflow-panel.tsx`
+- [x] `src/components/verification/VerificationFilterPanel.tsx`
 
 
 ## Dimension sweep: lane chat-18 owns "Cards and panels" across the whole codebase
@@ -290,15 +290,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 - [x] `src/app/(authenticated)/admin/batches/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
-- [ ] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
-- [ ] `src/app/(authenticated)/admin/companies/page.tsx`
-- [ ] `src/app/(authenticated)/admin/courses/page.tsx`
-- [ ] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
-- [ ] `src/app/(authenticated)/admin/people/directory/page.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx`
-- [ ] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
-- [ ] `src/app/(authenticated)/admin/projects/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/page.tsx`
+- [x] `src/app/(authenticated)/admin/colleges/[collegeId]/verification/page.tsx`
+- [x] `src/app/(authenticated)/admin/companies/page.tsx`
+- [x] `src/app/(authenticated)/admin/courses/page.tsx`
+- [x] `src/app/(authenticated)/admin/inbound-mail/page.tsx`
+- [x] `src/app/(authenticated)/admin/people/directory/page.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/admin-placement-job-tabs.tsx`
+- [x] `src/app/(authenticated)/admin/placements/jobs/[jobId]/applications/page.tsx`
+- [x] `src/app/(authenticated)/admin/projects/page.tsx`
 - [ ] `src/app/(authenticated)/admin/tenants/setup/page.tsx`
 - [ ] `src/app/(authenticated)/college/activity/page.tsx`
 - [ ] `src/app/(authenticated)/college/attendance/page.tsx`
