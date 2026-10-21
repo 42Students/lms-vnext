@@ -103,3 +103,132 @@ export async function cleanupScheduledInAppNotifications(
     return { processed: Number(row?.processed ?? 0), hasMore: row?.has_more === true };
   });
 }
+
+
+type DueOutboxRow = {
+  id: string;
+  event_id: string;
+  organization_id: string | null;
+  college_id: string | null;
+  recipient_selection: unknown;
+};
+
+/**
+ * Dispatch only the explicitly scoped, producer-authored in-app outbox shape.
+ * The UNIQUE dedupe_key prevents repeated enqueue; UNIQUE(user_id,event_id)
+ * makes release idempotent even when a retry observes an earlier commit.
+ * Unrecognized delivery shapes fail closed, never become free-text SMS/email.
+ */
+export async function releaseScheduledNotificationOutbox(
+  fence: ScheduledJobFence,
+): Promise<BatchResult> {
+  if (fence.lease.jobName !== "notification.release")
+    throw new Error("INVALID_NOTIFICATION_JOB_LEASE");
+  if (process.env.DB10_NOTIFICATION_OUTBOX_READY !== "DB10_VERIFIED")
+    return { processed: 0, hasMore: false };
+  let processed = 0;
+  for (let n = 0; n < 200; n++) {
+    const result = await guardedBatch(fence, async (tx) => {
+      const due = await tx.execute<DueOutboxRow>(sql`
+        select id, event_id, organization_id, college_id, recipient_selection
+        from notification_delivery_outbox
+        where deleted_at is null
+          and delivery_status in ('SCHEDULED', 'FAILED')
+          and scheduled_at <= clock_timestamp()
+          and (next_retry_at is null or next_retry_at <= clock_timestamp())
+          and delivery_attempts < 5
+        order by scheduled_at, id
+        limit 1 for update skip locked
+      `);
+      const entry = due.rows[0];
+      if (!entry) return { processed: 0, hasMore: false };
+      const selection = entry.recipient_selection;
+      const record = selection && typeof selection === "object" &&
+        !Array.isArray(selection) ? selection as Record<string, unknown> : null;
+      const userId = record?.userId;
+      const title = record?.title;
+      const body = record?.body;
+      const href = record?.actionHref;
+      const validId = /^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$/i;
+      const valid = record?.type === "EXPLICIT_USER" &&
+        typeof userId === "string" && validId.test(userId) &&
+        typeof title === "string" && title.trim().length > 0 && title.length <= 240 &&
+        typeof body === "string" && body.trim().length > 0 && body.length <= 2000 &&
+        (href === null || href === undefined ||
+         (typeof href === "string" && href.startsWith("/") &&
+          !href.startsWith("//") && href.length <= 1000)) &&
+        typeof entry.college_id === "string" && validId.test(entry.college_id) &&
+        typeof entry.organization_id === "string" && validId.test(entry.organization_id);
+      let eligible = false;
+      if (valid) {
+        const attempt = await tx.execute<{ id: string }>(sql`
+          insert into in_app_notifications (
+            user_id, event_id, title, body, action_href,
+            delivery_status, delivered_at
+          )
+          select ${userId}::uuid, e.id, ${title}, ${body}, ${href ?? null},
+                 'SENT', clock_timestamp()
+          from activity_events e
+          join colleges c on c.id = e.college_id
+          join college_memberships m on m.college_id = c.id
+          join users u on u.id = m.user_id
+          where e.id = ${entry.event_id}::uuid
+            and e.organization_id = ${entry.organization_id}::uuid
+            and c.id = ${entry.college_id}::uuid
+            and c.organization_id = ${entry.organization_id}::uuid
+            and c.status = 'ACTIVE'
+            and m.user_id = ${userId}::uuid
+            and m.status = 'ACTIVE'
+            and u.platform_status = 'ACTIVE'
+          on conflict (user_id, event_id) do nothing
+          returning id
+        `);
+        eligible = Boolean(attempt.rows[0]);
+        if (!eligible) {
+          const existing = await tx.execute<{ present: boolean }>(sql`
+            select exists (
+              select 1 from in_app_notifications n
+              join activity_events e on e.id = n.event_id
+              where n.user_id = ${userId}::uuid
+                and n.event_id = ${entry.event_id}::uuid
+                and e.college_id = ${entry.college_id}::uuid
+                and e.organization_id = ${entry.organization_id}::uuid
+            ) as present
+          `);
+          eligible = existing.rows[0]?.present === true;
+        }
+      }
+      if (eligible) {
+        await tx.execute(sql`
+          update activity_events
+          set metadata = coalesce(metadata, '{}'::jsonb)
+            || '{"deliveryStatus":"SENT"}'::jsonb
+          where id = ${entry.event_id}::uuid
+        `);
+        await tx.execute(sql`
+          update notification_delivery_outbox
+          set delivery_status = 'SENT', delivered_at = clock_timestamp(),
+              delivery_error = null, next_retry_at = null,
+              delivery_attempts = delivery_attempts + 1,
+              updated_at = clock_timestamp()
+          where id = ${entry.id}::uuid
+        `);
+      } else {
+        // A revoked recipient, stale event or malformed producer payload
+        // is retried with a safe code. Never dispatch to an unknown audience.
+        await tx.execute(sql`
+          update notification_delivery_outbox
+          set delivery_status = 'FAILED', delivery_error = 'RECIPIENT_UNAVAILABLE',
+              delivery_attempts = delivery_attempts + 1,
+              next_retry_at = clock_timestamp() + interval '1 hour',
+              updated_at = clock_timestamp()
+          where id = ${entry.id}::uuid
+        `);
+      }
+      return { processed: 1, hasMore: false };
+    });
+    if (!result.processed) break;
+    processed += 1;
+  }
+  return { processed, hasMore: processed === 200 };
+}

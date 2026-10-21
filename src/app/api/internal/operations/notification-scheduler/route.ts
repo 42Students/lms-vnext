@@ -10,6 +10,7 @@ import {
 import {
   cleanupScheduledInAppNotifications,
   releaseScheduledInAppNotifications,
+  releaseScheduledNotificationOutbox,
 } from "@/modules/operations/notification-scheduled-job-service";
 
 export const runtime = "nodejs";
@@ -67,9 +68,17 @@ export async function POST(request: Request) {
     const result = await executeScheduledJobWithLease(
       postgresScheduledJobLeaseStore,
       { jobName, holderId: scheduledJobWorkerIdentity().holderId, ttlMs },
-      jobName === "notification.release"
-        ? releaseScheduledInAppNotifications
-        : cleanupScheduledInAppNotifications,
+      async (fence) => {
+        if (jobName === "notification.cleanup") {
+          return cleanupScheduledInAppNotifications(fence);
+        }
+        const receipts = await releaseScheduledInAppNotifications(fence);
+        const outbox = await releaseScheduledNotificationOutbox(fence);
+        return {
+          processed: receipts.processed + outbox.processed,
+          hasMore: receipts.hasMore || outbox.hasMore,
+        };
+      },
     );
     return NextResponse.json(result.ran
       ? { ran: true, ...result.result }
