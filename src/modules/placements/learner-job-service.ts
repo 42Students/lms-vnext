@@ -31,7 +31,7 @@ import { requireLearnerPlacementAccess } from "./learner-participation-guard";
 import { getOwnPlacementParticipationAccess } from "./batch-participation-service";
 import { isPlacementLearnerDebarred } from "./debarment-service";
 import { canAddPlacementHeldOffer, canShowLearnerSelfApply } from "./held-offer-policy";
-import { learnerJobApplyBlockers } from "./learner-job-apply-blockers-model";
+import { learnerJobApplyBlockers, learnerJobApplyGate } from "./learner-job-apply-blockers-model";
 import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
@@ -323,6 +323,7 @@ export async function listLearnerPlacementJobs(
         deadlinePassed,
         canApply: canShowLearnerSelfApply(applyContext),
         applicationBlockers: learnerJobApplyBlockers(applyContext),
+        applicationGate: learnerJobApplyGate({...applyContext,published:row.job.status==="PUBLISHED"}),
       };
     }),
   );
