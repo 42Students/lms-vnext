@@ -37,11 +37,11 @@ function formatTokens(body:string,members:TeamPayload["members"]){
       const name=members.find(m=>m.membershipId.toLowerCase()===chunk.slice(8).toLowerCase())?.name;
       return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">@{name??"team member"}</span>;
     }
-    if(chunk.startsWith("#drive:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+    if(chunk.startsWith("#drive:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
       href={"/tpo/placements/jobs/"+encodeURIComponent(chunk.slice(7))}>{chunk}</Link>;
-    if(chunk.startsWith("#company:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+    if(chunk.startsWith("#company:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
       href={"/tpo/companies/"+encodeURIComponent(chunk.slice(9))}>{chunk}</Link>;
-    if(chunk.startsWith("#student:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+    if(chunk.startsWith("#student:"))return <Link key={i} className="lms-inline-link inline-flex min-h-11 items-center break-words text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
       href={"/tpo/students/"+encodeURIComponent(chunk.slice(9))+"/participation"}>{chunk}</Link>;
     if(chunk.startsWith("@")||chunk.startsWith("#"))
       return <span key={i} className="rounded bg-primary-subtle px-1 font-[650]">{chunk}</span>;
@@ -162,7 +162,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
      className="border-y border-[var(--lms-canvas-border)] py-3 text-sm">
      <h3 className="font-semibold">Decided:</h3>
      {data.messages.filter(m=>m.decision&&!m.deletedAt).slice(-5).map(m=>
-       <a key={m.id} href={"#company-team-"+m.id} className="lms-inline-link flex min-h-11 min-w-0 items-center break-words py-1 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">{m.body}</a>)}
+       <a key={m.id} href={"#company-team-"+m.id} className="lms-inline-link flex min-h-11 min-w-0 items-center break-words py-1 text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">{m.body}</a>)}
    </aside>:null}
    {data.messages.length===0?<EmptyState title="Nothing here yet." description="Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date."/>:null}
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">

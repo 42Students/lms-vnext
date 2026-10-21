@@ -317,7 +317,7 @@ export function TpoBulkActionPanel({target,jobId,rows,allRows,viewCount=rows.len
      {safeSelected.length>1?<Disclosure title={`Review selected applicants individually (${safeSelected.length})`} className="text-sm">
        <ScrollCue axis="y" label="Selected applicant review links" viewportClassName="max-h-40"><ol className="mt-2 space-y-2">
          {safeSelected.map((id,index)=><li key={id}>
-           <Link href={tpoReviewOneByOneHref(jobId,id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+           <Link href={tpoReviewOneByOneHref(jobId,id)} className="lms-inline-link inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 focus-visible:underline">
              Applicant {index+1}
            </Link>
          </li>)}

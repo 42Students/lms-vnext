@@ -235,7 +235,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         {similarSearched?<div role="status" className="mt-2 text-sm">
           {similarResults.length?<ul className="divide-y divide-border">
             {similarResults.map(issue=><li key={issue.publicId} className="py-3">
-              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">{issue.publicId}</Link>
+              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] focus-visible:underline">{issue.publicId}</Link>
               <span className="ml-2 inline-flex align-middle"><StatusBadge tone="neutral">{issue.status}</StatusBadge></span>
               <p className="mt-1 break-words text-xs text-body leading-[20px]">{issue.description.slice(0,160)}</p>
             </li>)}

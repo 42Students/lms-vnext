@@ -205,102 +205,102 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/projects/mentor-lane-board.tsx`
 - [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
 - [x] `src/components/projects/mentor-meeting-reschedule.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/mentor-project-about-editor.tsx`
-- [ ] `src/components/projects/mentor-release-editor.tsx`
-- [ ] `src/components/projects/mentor-sprint-details-edit.tsx`
-- [ ] `src/components/projects/mentor-sprint-write.tsx`
-- [ ] `src/components/projects/mentor-task-allocation.tsx`
-- [ ] `src/components/projects/mentor-task-create.tsx`
-- [ ] `src/components/projects/mentor-task-details-edit.tsx`
-- [ ] `src/components/projects/project-admin-submission-review.tsx`
-- [ ] `src/components/projects/project-archive-control.tsx`
-- [ ] `src/components/projects/project-create-control.tsx`
-- [ ] `src/components/projects/project-delivery-reopen-control.tsx`
-- [ ] `src/components/projects/project-final-delivery-controls.tsx`
-- [ ] `src/components/projects/project-lifecycle-actions.tsx`
-- [ ] `src/components/projects/project-meeting-controls.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-resource-controls.tsx`
-- [ ] `src/components/projects/project-resource-files-panel.tsx`
-- [ ] `src/components/projects/project-resource-list.tsx`
-- [ ] `src/components/projects/project-task-assignee-control.tsx`
-- [ ] `src/components/projects/project-task-submission-control.tsx`
-- [ ] `src/components/projects/project-team-controls.tsx`
-- [ ] `src/components/projects/project-template-controls.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/projects/super-admin-template-plan-editor.tsx`
-- [ ] `src/components/projects/super-admin-template-resource-editor.tsx`
-- [ ] `src/components/projects/template-metadata-edit-control.tsx`
-- [ ] `src/components/projects/workspace-brief-editor.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
-- [ ] `src/components/tpo/recruiter-inline-owner.tsx`
-- [ ] `src/components/tpo/recruiter-inline-stage.tsx`
-- [ ] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
-- [ ] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-saved-view-controls.tsx`
-- [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`
-- [ ] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
-- [ ] `src/components/tpo/tpo-after-college-editor.tsx`
-- [ ] `src/components/tpo/tpo-audit-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-batch-eligibility-import.tsx`
-- [ ] `src/components/tpo/tpo-batch-facet-filters.tsx`
-- [ ] `src/components/tpo/tpo-batch-inline-decision.tsx`
-- [ ] `src/components/tpo/tpo-batch-invitation-control.tsx`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-communication-settings-editors.tsx`
-- [ ] `src/components/tpo/tpo-company-create-form.tsx`
-- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
-- [ ] `src/components/tpo/tpo-drive-request-actions.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/tpo/tpo-grid-column-chooser.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
-- [ ] `src/components/tpo/tpo-outcome-labels-editor.tsx`
-- [ ] `src/components/tpo/tpo-participation-decision-form.tsx`
-- [ ] `src/components/tpo/tpo-public-join-link-card.tsx`
-- [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-roster-verification-bulk.tsx`
-- [ ] `src/components/tpo/tpo-selected-review-queue.tsx`
-- [ ] `src/components/tpo/tpo-spreadsheet-grid.tsx`
-- [ ] `src/components/tpo/tpo-student-clipboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/tpo/tpo-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-students-assign-prep.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
-- [ ] `src/components/tpo/tpo-students-drive-visibility.tsx`
-- [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
-- [ ] `src/components/tpo/tpo-team-ask-panel.tsx`
-- [ ] `src/components/tpo/tpo-team-message-actions.tsx`
-- [ ] `src/components/tpo/tpo-team-rename.tsx`
-- [ ] `src/components/tpo/tpo-timed-debar-control.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
-- [ ] `src/components/tracker/tracker-live-logs-explorer.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/tracker/tracker-workflow-panel.tsx`
-- [ ] `src/components/ui/action-pagination.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/list-toolbar.tsx`
-- [ ] `src/components/ui/split-button.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/mentor-project-about-editor.tsx`
+- [x] `src/components/projects/mentor-release-editor.tsx`
+- [x] `src/components/projects/mentor-sprint-details-edit.tsx`
+- [x] `src/components/projects/mentor-sprint-write.tsx`
+- [x] `src/components/projects/mentor-task-allocation.tsx`
+- [x] `src/components/projects/mentor-task-create.tsx`
+- [x] `src/components/projects/mentor-task-details-edit.tsx`
+- [x] `src/components/projects/project-admin-submission-review.tsx`
+- [x] `src/components/projects/project-archive-control.tsx`
+- [x] `src/components/projects/project-create-control.tsx`
+- [x] `src/components/projects/project-delivery-reopen-control.tsx`
+- [x] `src/components/projects/project-final-delivery-controls.tsx`
+- [x] `src/components/projects/project-lifecycle-actions.tsx`
+- [x] `src/components/projects/project-meeting-controls.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-resource-controls.tsx`
+- [x] `src/components/projects/project-resource-files-panel.tsx`
+- [x] `src/components/projects/project-resource-list.tsx`
+- [x] `src/components/projects/project-task-assignee-control.tsx`
+- [x] `src/components/projects/project-task-submission-control.tsx`
+- [x] `src/components/projects/project-team-controls.tsx`
+- [x] `src/components/projects/project-template-controls.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/projects/super-admin-template-plan-editor.tsx`
+- [x] `src/components/projects/super-admin-template-resource-editor.tsx`
+- [x] `src/components/projects/template-metadata-edit-control.tsx`
+- [x] `src/components/projects/workspace-brief-editor.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+- [x] `src/components/tpo/recruiter-inline-owner.tsx`
+- [x] `src/components/tpo/recruiter-inline-stage.tsx`
+- [x] `src/components/tpo/recruiter-invite-landing.tsx`
+- [x] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [x] `src/components/tpo/recruiter-lead-detail-workspace.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/recruiter-saved-view-controls.tsx`
+- [x] `src/components/tpo/tpo-academic-import-workspace.tsx`
+- [x] `src/components/tpo/tpo-after-college-bulk-editor.tsx`
+- [x] `src/components/tpo/tpo-after-college-editor.tsx`
+- [x] `src/components/tpo/tpo-audit-saved-views.tsx`
+- [x] `src/components/tpo/tpo-batch-eligibility-import.tsx`
+- [x] `src/components/tpo/tpo-batch-facet-filters.tsx`
+- [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
+- [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
+- [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
+- [x] `src/components/tpo/tpo-company-create-form.tsx`
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [x] `src/components/tpo/tpo-drive-request-actions.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/tpo/tpo-grid-column-chooser.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/tpo/tpo-notice-delete-confirm.tsx`
+- [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
+- [x] `src/components/tpo/tpo-participation-decision-form.tsx`
+- [x] `src/components/tpo/tpo-public-join-link-card.tsx`
+- [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
+- [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
+- [x] `src/components/tpo/tpo-selected-review-queue.tsx`
+- [x] `src/components/tpo/tpo-spreadsheet-grid.tsx`
+- [x] `src/components/tpo/tpo-student-clipboard-actions.tsx`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/tpo/tpo-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-students-assign-prep.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-debar.tsx`
+- [x] `src/components/tpo/tpo-students-drive-visibility.tsx`
+- [x] `src/components/tpo/tpo-students-spreadsheet.tsx`
+- [x] `src/components/tpo/tpo-team-ask-panel.tsx`
+- [x] `src/components/tpo/tpo-team-message-actions.tsx`
+- [x] `src/components/tpo/tpo-team-rename.tsx`
+- [x] `src/components/tpo/tpo-timed-debar-control.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/tracker/tracker-issue-saved-views.tsx`
+- [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
+- [x] `src/components/tracker/tracker-workflow-panel.tsx`
+- [x] `src/components/ui/action-pagination.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/list-toolbar.tsx`
+- [x] `src/components/ui/split-button.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
 - [ ] `src/components/verification/TpoVerificationPanel.tsx`
 - [ ] `src/components/verification/VerificationReviewDrawer.tsx`
 

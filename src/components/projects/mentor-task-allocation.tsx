@@ -82,7 +82,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
   {dialog}
   <div className="flex flex-wrap items-center justify-between gap-3">
    <div><Link href={"/mentor/projects/"+encodeURIComponent(projectId)}
-    className="text-sm font-semibold text-link underline">Back to project</Link>
+    className="text-sm font-semibold text-link underline focus-visible:underline">Back to project</Link>
     <PageHeader title="Task Allocation" />
     <p className="mt-1 text-sm text-body">{unassigned} needs assigning · {filtered.length} matching tasks</p>
     <p className="mt-1 text-xs text-muted-foreground">Auto-assign acts on eligible tasks across the project, not only filtered cards.</p>
