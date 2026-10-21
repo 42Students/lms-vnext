@@ -36,9 +36,14 @@ export async function PATCH(request: Request, { params }: RouteContext) {
       dueAt: input.dueAt,
     });
     return NextResponse.json({
-      followup: { id: followup.id, dueAt: followup.dueAt.toISOString() },
-    });
+      followup: {id:followup.id,dueAt:followup.dueAt.toISOString()},
+      status:"UPDATED",
+    },{headers:{"Cache-Control":"private, no-store"}});
   } catch (error) {
     return tpoCrmApiErrorResponse(error);
   }
 }
+
+/** Legacy drag/drop calendars POST the move; both verbs go through the
+ * same scoped, transactional writer with the current followup UUID. */
+export const POST=PATCH;

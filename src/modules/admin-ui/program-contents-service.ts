@@ -62,3 +62,19 @@ export async function listProgramContents(
     classes: classes.get(id) ?? 0,
   }]));
 }
+
+/** Historic programs endpoint aliases, for migration/redirect handling.
+ * None of these strings bypass the campus scope or persisted permission in
+ * listProgramContents; the old numeric department/program IDs need an explicit
+ * same-college UUID crosswalk before a redirect is constructed. */
+export const LEGACY_PROGRAM_CONTENT_ROUTES={
+ list:"/api/college/programs",
+ create:"/api/college/programs",
+ semesters:"/api/college/programs/:programId/terms",
+ batches:"/api/college/programs/:programId/cohorts",
+ classes:"/api/college/programs/:programId/sections",
+} as const;
+export const PROGRAM_CONTENTS_RETRY_COPY={
+ stale:"Program data changed while you were working. Refresh the college academic directory and retry.",
+ unavailable:"The program contents could not be read; no dependent records have been deleted.",
+} as const;

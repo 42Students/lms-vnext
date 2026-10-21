@@ -88,50 +88,22 @@ export default async function TpoJoiningStatusReportPage({
        rows={byCompany.map(row=>({label:row.label,value:row.joined}))}/>
 
       <ReportTable
-        title="Joining outcomes by drive"
-        headings={[
-          "Drive",
-          "Company",
-          "Accepted offers",
-          "Joined",
-          "Deferred",
-          "Did not join",
-          "Pending / unrecorded",
-        ]}
-        rows={byDrive.map((row) => [
-          row.label,
-          row.companyName,
-          row.accepted,
-          row.joined,
-          row.deferred,
-          row.didNotJoin,
-          row.pending,
-        ])}
-        emptyDescription="No currently accepted offers have joining outcomes in this reporting scope."
-      />
-
-      <Disclosure title="Company detail and source records" className="border-b border-border pb-3">
-        <div className="min-w-0 space-y-4 pt-3">
-      <ReportTable
         title="Joining outcomes by company"
-        headings={[
-          "Company",
-          "Accepted offers",
-          "Joined",
-          "Deferred",
-          "Did not join",
-          "Pending / unrecorded",
-        ]}
-        rows={byCompany.map((row) => [
-          row.label,
-          row.accepted,
-          row.joined,
-          row.deferred,
-          row.didNotJoin,
-          row.pending,
+        headings={["Company","Accepted offers","Joined","Deferred","Did not join","Pending / unrecorded"]}
+        rows={byCompany.map(row=>[
+          row.label,row.accepted,row.joined,row.deferred,row.didNotJoin,row.pending
         ])}
         emptyDescription="No company joining outcomes match these filters."
       />
+      <Disclosure title="Drive detail and source records" className="border-b border-border pb-3">
+        <div className="min-w-0 space-y-4 pt-3">
+          <ReportTable title="Joining outcomes by drive"
+            headings={["Drive","Company","Accepted offers","Joined","Deferred","Did not join","Pending / unrecorded"]}
+            rows={byDrive.map(row=>[
+              row.label,row.companyName,row.accepted,row.joined,row.deferred,row.didNotJoin,row.pending
+            ])}
+            emptyDescription="No currently accepted offers have joining outcomes in this reporting scope."
+          />
           <TpoReportRecordLinks kind="JOINING" drives={byDrive} companies={byCompany} />
         </div>
       </Disclosure>
