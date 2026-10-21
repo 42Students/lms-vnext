@@ -961,6 +961,7 @@ export async function listOwnNotifications(
     unreadOnly?: boolean;
     unreadSince?: Date;
     limit?: number;
+    query?: string;
     collegeId?: string;
     classId?: string;
     courseId?: string;
@@ -999,6 +1000,16 @@ export async function listOwnNotifications(
 
   appendNotificationContextFilters(conditions, options);
   appendNotificationCategoryFilters(conditions, options);
+  if(options.query){
+    const query=z.string().trim().max(100).parse(options.query);
+    const pattern="%"+query.replace(/[\\%_]/g,"\\  appendNotificationContextFilters(conditions, options);
+  appendNotificationCategoryFilters(conditions, options);")+"%";
+    // Only already-delivered, personally-addressed rows can match.
+    // No body search outside the recipient inbox or cross-user discovery.
+    conditions.push(sql`(${inAppNotifications.title} ilike ${pattern}
+      or ${inAppNotifications.body} ilike ${pattern}
+      or ${activityEvents.summary} ilike ${pattern})`);
+  }
 
   const rows = await getDb()
     .select({
