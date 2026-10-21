@@ -109,23 +109,30 @@ export default async function ActivityPage({
   const today=istDay(new Date());
   const ago=(days:number)=>istDay(new Date(currentTimeMs()-days*86400000));
   const range=one(params.range);
-  const defaultFrom=!one(params.from)&&!one(params.to)&&range!=="ALL"?ago(29):one(params.from);
-  const quick=(from?:string,to?:string,view:PresetName=selectedPreset)=>{
+  // Legacy subtracts exactly 30/7 calendar dates then starts at IST midnight.
+  const defaultFrom=!one(params.from)&&!one(params.to)&&range!=="ALL"?ago(30):one(params.from);
+  const selectedRange=range==="ALL"?"all":range==="today"||range==="7d"||range==="30d"?range:
+   defaultFrom===today?"today":defaultFrom===ago(7)?"7d":defaultFrom===ago(30)?"30d":"custom";
+  const rawMode=isSuperAdmin(context)&&one(params.mode)==="raw";
+  const sizeOption=Number(one(params.size));
+  const pageSize=[25,50,100].includes(sizeOption)?sizeOption:50;
+  const quick=(from?:string,to?:string,view:PresetName=selectedPreset,rangeKey?:string)=>{
    const q=new URLSearchParams({
     ...(from?{from}:{}),...(to?{to}:{}),
-    ...(!from&&!to?{range:"ALL"}:{}),
+    ...(!from&&!to?{range:"ALL"}:rangeKey?{range:rangeKey}:{}),
     view,
+    ...(rawMode?{mode:"raw"}:{}),
     ...(selectedCollegeId?{}:one(params.collegeId)?{collegeId:one(params.collegeId)!}:{})
    });
    return "/activity?"+q.toString();
   };
   const presetLinks=[
-   {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params.to),"important")},
-   {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params.to),"setup")},
-   {id:"people" as const,name:"People & access",href:quick(defaultFrom,one(params.to),"people")},
-   {id:"teaching" as const,name:"Teaching",href:quick(defaultFrom,one(params.to),"teaching")},
-   {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params.to),"projects")},
-   {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params.to),"all")},
+   {id:"important" as const,name:"Important",href:quick(defaultFrom,one(params.to),"important",range)},
+   {id:"setup" as const,name:"Academic setup",href:quick(defaultFrom,one(params.to),"setup",range)},
+   {id:"people" as const,name:"People & access",href:quick(defaultFrom,one(params.to),"people",range)},
+   {id:"teaching" as const,name:"Teaching",href:quick(defaultFrom,one(params.to),"teaching",range)},
+   {id:"projects" as const,name:"Projects",href:quick(defaultFrom,one(params.to),"projects",range)},
+   {id:"all" as const,name:"Everything",href:quick(defaultFrom,one(params.to),"all",range)},
   ];
   const retryQuery=new URLSearchParams();
   for(const [key,value] of Object.entries(params)){
@@ -156,7 +163,7 @@ export default async function ActivityPage({
         to: one(params.to),
         beforeOccurredAt: one(params.beforeOccurredAt),
         beforeId: one(params.beforeId),
-        limit: 50,
+        limit: pageSize,
       },
     );
   } catch {
@@ -224,6 +231,8 @@ export default async function ActivityPage({
     "subjectId",
     "actorName",
     "q",
+    "mode",
+    "size",
     "collegeId",
     "from",
     "to",
@@ -241,6 +250,8 @@ export default async function ActivityPage({
   // The current CSV export API has no HIGH-or-CRITICAL category contract.
   // Never mislabel a broader "everything" export as an Important-only export.
   exportParams.delete("view");
+  exportParams.delete("mode");
+  exportParams.delete("size");
   if(effectiveModule && !moduleValue)exportParams.set("module",effectiveModule);
   // An explicit all-time list must stay all-time when the user loads older events.
   // Keep this UI-only flag out of the strict CSV export query contract.
@@ -263,12 +274,14 @@ export default async function ActivityPage({
         description="Meaningful college changes, grouped to reduce noise. Low-value request logs stay out of this workspace."
         actions={isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN") ? (
           <div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
-          {importantOnly ? <span className="flex min-h-11 items-center text-xs text-muted-foreground md:min-h-9">
+          {result.items.length===0?<span aria-disabled="true" className="inline-flex min-h-11 items-center text-sm text-muted-foreground md:min-h-9">
+            Export unavailable (no matching activity)
+          </span>:importantOnly ? <span className="flex min-h-11 items-center text-xs text-muted-foreground md:min-h-9">
             Important-only CSV export requires the category-aware export API.
           </span> : <a href={(isSuperAdmin(context) ? "/api/activity/admin-export" : "/api/activity/college-export") +
             (exportParams.size ? "?" + exportParams.toString() : "")}
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 hover:bg-[rgba(38,186,199,0.07)] md:w-auto hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 hover:border-[var(--lms-primary)]">
-            Export
+            Export CSV
           </a>}
           <a href={retryHref}
             className="inline-flex min-h-11 w-full items-center justify-center px-2 text-sm font-semibold text-primary-text underline underline-offset-4 md:min-h-9 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
@@ -282,37 +295,68 @@ export default async function ActivityPage({
         ) : undefined}
       />
 
-      {isSuperAdmin(context)?<p role="status" aria-label="Activity scope"
-        className="border-b border-border py-3 text-sm text-body">
-        {selectedCollegeId?"Activity restricted to the selected college."
-         :one(params.collegeId)? "College: "+(collegeOptions.find(college=>college.id===one(params.collegeId))?.name??"Selected college")
-         :context.adminScope?.collegeId?"Activity restricted to the selected college."
-         :context.adminScope?.organizationId?"Organization-wide activity."
-         :"Platform-wide activity."}
-      </p>:null}
+      {isSuperAdmin(context)?<section role="status" aria-label="Activity scope"
+        className="flex min-w-0 gap-3 rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] p-3 text-sm text-body">
+        <span aria-hidden="true" className="shrink-0 font-bold text-primary-text">ⓘ</span>
+        <div className="space-y-1">
+          <p className="font-semibold">{selectedCollegeId||one(params.collegeId)?"Showing this college":
+            selectedOrganizationId?"Showing this organization":"Platform-wide activity"}</p>
+          <p>{selectedCollegeId||one(params.collegeId)?
+            "Activity is pinned to the selected college. Change the header scope to inspect another college, or clear it for platform-wide activity.":
+            selectedOrganizationId?
+            "Activity is pinned to the selected organization. Choose a college for a narrower operational view, or clear scope for platform-wide activity.":
+            "Important changes across all organizations and colleges are shown first. Use the header scope when you need to investigate one tenant."}</p>
+        </div>
+      </section>:null}
       {collegeOptionsFailed ? (
         <div role="status" className="flex min-w-0 flex-wrap items-center justify-between gap-2 border-b border-border py-3 text-sm text-body">
           <span>College filter options could not load. Your activity results are still scoped to the current administrator access.</span>
           <a href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Retry</a>
         </div>
       ) : null}
-      {isSuperAdmin(context)?<nav aria-label="Activity Log category presets" className="min-w-0 space-y-3">
-       <details className="min-w-0 border-b border-border pb-3" open>
-       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Activity Log category presets</summary>
-       <div className="mt-2 flex min-w-0 flex-wrap gap-2">{presetLinks.map(link=><Link key={link.name} href={link.href} aria-current={link.id===selectedPreset?"page":undefined}
-        className={"inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] md:min-h-9 "+(link.id===selectedPreset?"bg-[var(--lms-primary-subtle)]":"bg-surface")}>{link.name}</Link>)}</div>
-       <p className="mt-2 text-xs text-muted-foreground">Choose a preset, then narrow by college, actor or dates. Important includes high and critical events. The feed defaults to Important for the last 30 days.</p>
-       </details>
-       <div className="flex min-w-0 flex-wrap gap-2">{[
-        {label:"Today",href:quick(today,today)},
-        {label:"7 days",href:quick(ago(6),today)},
-        {label:"30 days",href:quick(ago(29),today)},
-        {label:"All time",href:quick()},
-       ].map(link=><Link key={link.label} href={link.href}
-        className="inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm text-primary-text underline hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] font-[650] hover:border-[var(--lms-primary)] md:min-h-9">{link.label}</Link>)}</div>
+      {isSuperAdmin(context)?<nav aria-label="Activity Log filters" className="space-y-2">
+        <div className="flex min-w-0 flex-wrap items-center gap-3 border-b border-[var(--lms-canvas-border)] pb-3">
+          <div role="group" aria-label="Activity category" className="inline-flex max-w-full flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1">
+            {presetLinks.map(link=><Link key={link.id} href={link.href}
+              aria-current={selectedPreset===link.id?"page":undefined}
+              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
+                (selectedPreset===link.id?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>
+              {link.name}</Link>)}
+          </div>
+          <div role="group" aria-label="Activity date range" className="inline-flex flex-wrap gap-1 rounded-[var(--lms-control-radius)] bg-muted p-1">
+            {([
+              {key:"today",label:"Today",href:quick(today,today,selectedPreset,"today")},
+              {key:"7d",label:"7 days",href:quick(ago(7),today,selectedPreset,"7d")},
+              {key:"30d",label:"30 days",href:quick(ago(30),today,selectedPreset,"30d")},
+              {key:"all",label:"All time",href:quick(undefined,undefined,selectedPreset,"ALL")},
+            ] as const).map(item=><Link key={item.key} href={item.href}
+              aria-current={selectedRange===item.key?"page":undefined}
+              className={"inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] px-3 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 md:min-h-9 "+
+                (selectedRange===item.key?"bg-surface text-primary-text shadow-sm":"text-body hover:bg-surface")}>{item.label}</Link>)}
+          </div>
+          <Link href={retryHref} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Refresh</Link>
+          <span role="status" className="text-xs tabular-nums text-muted-foreground">{result.items.length} raw events loaded</span>
+        </div>
+        {selectedPreset==="important"?<p className="text-xs text-muted-foreground">Deletions and restores, promotions, suspensions, impersonation, module access and feature changes, and identity views.</p>:null}
+        <div role="group" aria-label="Activity display" className="flex flex-wrap gap-3 text-sm">
+          <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"grouped"}).toString()}
+            aria-current={!rawMode?"page":undefined} className="min-h-9 font-semibold text-link underline">Activity feed</Link>
+          <Link href={"/activity?"+new URLSearchParams({...Object.fromEntries(retryQuery),mode:"raw"}).toString()}
+            aria-current={rawMode?"page":undefined} className="min-h-9 font-semibold text-link underline">Audit Logs (raw)</Link>
+        </div>
       </nav>:null}
+      <details className="min-w-0 border-b border-border pb-3" open={explicitFilter||Boolean(one(params.collegeId))||rawMode}>
+        <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link underline md:min-h-9">
+          {rawMode?"Audit Logs — advanced search":"More filters"}
+        </summary>
       <form aria-label="Filter activity log" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-y border-border py-4 md:grid-cols-2 xl:grid-cols-4">
         <input type="hidden" name="view" value={selectedPreset} />
+        {rawMode?<input type="hidden" name="mode" value="raw"/>:null}
+        {rawMode?<label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Rows per page
+          <Select name="size" defaultValue={String(pageSize)}>
+            <option value="25">25</option><option value="50">50</option><option value="100">100</option>
+          </Select>
+        </label>:null}
         {collegeOptionsFailed && one(params.collegeId) ? (
           <input type="hidden" name="collegeId" value={one(params.collegeId)} />
         ) : null}
@@ -458,7 +502,7 @@ export default async function ActivityPage({
           </div>
         </details>
         <div className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-2)] md:col-span-2 xl:col-span-4">
-          <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Apply filters</Button>
+          <Button type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
           <Link
             href="/activity?view=important"
             className="inline-flex min-h-11 w-full items-center justify-center px-3 text-sm font-semibold text-primary-text underline underline-offset-4 md:w-auto focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] md:min-h-9"
@@ -467,7 +511,37 @@ export default async function ActivityPage({
           </Link>
         </div>
       </form>
+      </details>
 
+      {rawMode?<section aria-label="Audit Logs" className="min-w-0 space-y-3">
+        <h2 className="text-base font-semibold text-foreground">Audit Logs</h2>
+        <p className="text-sm text-muted-foreground">
+          {result.items.length} raw events on this page. IP addresses are not retained: the audit store contains only a non-reversible hash.
+        </p>
+        <div className="overflow-x-auto rounded-[var(--lms-control-radius)] border border-border">
+          <table className="w-full min-w-[700px] border-collapse text-left text-xs">
+            <thead className="bg-muted"><tr><th scope="col" className="p-3">When (IST)</th>
+              <th scope="col" className="p-3">Actor</th><th scope="col" className="p-3">Action key</th>
+              <th scope="col" className="p-3">Entity</th><th scope="col" className="p-3">IP</th></tr></thead>
+            <tbody>{result.items.map(item=><tr key={item.event.id} className="border-t border-border">
+              <td className="p-3 whitespace-nowrap">{new Intl.DateTimeFormat("en-IN",{
+                timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short",
+              }).format(item.event.occurredAt)}</td>
+              <td className="p-3">{item.actor?.displayName??item.event.actorNameSnapshot??"System"}</td>
+              <td className="p-3 break-all">{item.event.legacyActionKey??item.event.eventType}</td>
+              <td className="p-3 break-all">{item.event.subjectLabel??item.event.legacyEntityId??item.event.subjectId}</td>
+              <td className="p-3">Redacted</td>
+            </tr>)}</tbody>
+          </table>
+        </div>
+        <p className="text-xs text-muted-foreground">Page size: {pageSize}. Use newer/older navigation to inspect more records.</p>
+        <nav aria-label="Audit record pagination" className="flex flex-wrap gap-3">
+          {one(params.beforeId)?<Link href={retryHref.split("&beforeOccurredAt=")[0]}
+            className="min-h-9 text-link underline">Back to newest</Link>:null}
+          {result.nextCursor?<Link href={"/activity?"+nextParams.toString()}
+            className="min-h-9 text-link underline">Older records ({result.remainingCount})</Link>:null}
+        </nav>
+      </section>:
       <ActivityCenter
         nextRemaining={result.remainingCount}
         groups={groups}
@@ -479,7 +553,7 @@ export default async function ActivityPage({
               nextParams.toString()
             : null
         }
-      />
+      />}
     </div>
   );
 }
