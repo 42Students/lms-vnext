@@ -37,7 +37,7 @@ export default async function MentorProjectReviewCompletenessPage({
       Projects access is disabled. Delivery history was not loaded.
     </section>:<>
       <p className="text-sm text-body leading-[22px]">
-        {data.total} persisted final-delivery version{data.total===1?"":"s"}
+        {data.total.toLocaleString("en-IN")} persisted final-delivery version{data.total===1?"":"s"}
         {" · "}Project state: {data.projectStatus}
       </p>
       {data.items.length===0?<EmptyState title="No registered delivery versions"
