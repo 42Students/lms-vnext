@@ -252,11 +252,11 @@ export function CollegeBrandingPreview({
           maths. This is not a live tenant-host login or a pixel-perfect legacy preview.
         </p>
         <div className="grid gap-4 lg:grid-cols-2">
-          <Card as="article" className="p-4 sm:p-4">
+          <Card as="article" className="p-4 md:p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Desktop</h3>
             <SignInStylePreview branding={branding} mobile={false} />
           </Card>
-          <Card as="article" className="p-4 sm:p-4">
+          <Card as="article" className="p-4 md:p-4">
             <h3 className="mb-3 text-sm font-semibold text-foreground">Mobile</h3>
             <SignInStylePreview branding={branding} mobile />
           </Card>

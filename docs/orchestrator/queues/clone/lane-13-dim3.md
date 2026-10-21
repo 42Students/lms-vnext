@@ -64,16 +64,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-13.md: file, number of
 - [x] `src/components/tracker/independent-finding-actions.tsx`
 - [x] `src/components/tracker/tracker-report-form.tsx`
 - [x] `src/components/ui/tooltip.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/requests/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/page.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/courses/admin-course-overview.tsx`
-- [ ] `src/components/courses/course-detail-anchor-tabs.tsx`
-- [ ] `src/components/courses/learner-course-overview.tsx`
-- [ ] `src/components/placements/college-drive-archive-action.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/app/(authenticated)/teacher/report/assignment/[contentId]/submissions/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/requests/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/page.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/courses/admin-course-overview.tsx`
+- [x] `src/components/courses/course-detail-anchor-tabs.tsx`
+- [x] `src/components/courses/learner-course-overview.tsx`
+- [x] `src/components/placements/college-drive-archive-action.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
 - [ ] `src/components/placements/public-join-preview-retry.tsx`
 - [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
 - [ ] `src/components/projects/project-resource-files-panel.tsx`
