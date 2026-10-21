@@ -42,6 +42,7 @@ export async function listOfferingSectionPreview(
  const options=rows.slice(0,MAX_SECTION_OPTIONS);
  const truncated=rows.length>MAX_SECTION_OPTIONS;
  let selected=options.find(row=>row.deliveryId===requestedDeliveryId)??null;
+ if(!requestedDeliveryId&&options.length===1&&!truncated) selected=options[0]!;
  if(requestedDeliveryId&&!selected){
   // A selected Section beyond the 200-option display cap is still addressable;
   // re-authorize the exact delivery instead of treating a valid UUID as foreign.
@@ -60,15 +61,13 @@ export async function listOfferingSectionPreview(
   if(matched){selected=matched;options.push(matched);}
  }
  const invalid=Boolean(requestedDeliveryId&&!selected);
- if(!selected)return {options,truncated,selected:null,invalid,lessons:[]};
-
  const lessonIds=[...new Set(lessons.map(item=>item.id))];
  if(!lessonIds.length)return {options,truncated,selected,invalid,lessons:[]};
 
  // The source of every item is joined back to the authorized offering, even
  // though the lesson IDs came from the already-authorized page workspace.
  const audience=(deliveryId:typeof lessonContents.deliveryId)=>
-  or(isNull(deliveryId),eq(deliveryId,selected.deliveryId));
+  selected ? or(isNull(deliveryId),eq(deliveryId,selected.deliveryId)) : undefined;
  const [contentRows,assignmentRows,quizRows]=await Promise.all([
   db.select({
    id:lessonContents.id,lessonId:lessonContents.lessonId,
@@ -94,7 +93,7 @@ export async function listOfferingSectionPreview(
     eq(courseLearningPaths.offeringId,offering.id)))
    .where(and(inArray(courseAssignments.lessonId,lessonIds),
     ne(courseAssignments.status,"ARCHIVED"),
-    or(isNull(courseAssignments.deliveryId),eq(courseAssignments.deliveryId,selected.deliveryId))))
+    selected?or(isNull(courseAssignments.deliveryId),eq(courseAssignments.deliveryId,selected.deliveryId)):undefined))
    .orderBy(asc(courseAssignments.lessonId),asc(courseAssignments.sequence),asc(courseAssignments.id)),
   db.select({
    id:courseQuizzes.id,lessonId:courseQuizzes.lessonId,
@@ -107,7 +106,7 @@ export async function listOfferingSectionPreview(
     eq(courseLearningPaths.offeringId,offering.id)))
    .where(and(inArray(courseQuizzes.lessonId,lessonIds),
     ne(courseQuizzes.status,"ARCHIVED"),
-    or(isNull(courseQuizzes.deliveryId),eq(courseQuizzes.deliveryId,selected.deliveryId))))
+    selected?or(isNull(courseQuizzes.deliveryId),eq(courseQuizzes.deliveryId,selected.deliveryId)):undefined))
    .orderBy(asc(courseQuizzes.lessonId),asc(courseQuizzes.sequence),asc(courseQuizzes.id)),
  ]);
 
