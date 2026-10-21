@@ -54,6 +54,11 @@ const DOCUMENT_TYPES: readonly TypeSpec[] = [
   { mime: "application/zip", extensions: ["zip"] },
 ];
 
+/** Resource FILEs mirror the narrower old lesson-content uploader; broad
+ * project uploads and 50 MiB assignment ZIP/RTF uploads stay separate.
+ */
+const LEGACY_LESSON_RESOURCE_TYPES:readonly TypeSpec[]=DOCUMENT_TYPES.filter(spec=>
+  !["application/rtf","application/zip"].includes(spec.mime));
 const PROJECT_EXTRA_TYPES: readonly TypeSpec[] = [
   { mime: "text/markdown", extensions: ["md", "markdown"] },
 ];
@@ -126,7 +131,7 @@ const imageMimes=["image/jpeg","image/png","image/webp"] as const;
 const identityMimes=["application/pdf","image/jpeg","image/png"] as const;
 export const LEGACY_FOLDER_POLICY={
  "lesson-content":{validatorKind:"project-resource",maxBytes:50*legacyMiB,
-  allowedMimes:DOCUMENT_TYPES.map(spec=>spec.mime),namespace:null},
+  allowedMimes:LEGACY_LESSON_RESOURCE_TYPES.map(spec=>spec.mime),namespace:null},
  "profile-images":{validatorKind:"lesson-video-thumbnail",maxBytes:5*legacyMiB,
   allowedMimes:imageMimes,namespace:null},
  "video-intros":{validatorKind:"lesson-video",maxBytes:MAX_VIDEO_BYTES,
@@ -234,7 +239,7 @@ export function validateStorageDeclaration(
   if (
     originalName.length < 1 ||
     originalName.length > 255 ||
-    /[\\/\0\r\n]/.test(originalName) ||
+    /[\\/\x00-\x1f\x7f\u2028\u2029]/.test(originalName) ||
     originalName === "." ||
     originalName === ".."
   ) {
@@ -323,3 +328,93 @@ export function magicBytesMatch(contentType: string, head: Uint8Array): boolean 
 
 /** Number of leading bytes the attestation reads for magic-byte checks. */
 export const MAGIC_BYTES_WINDOW = 4096;
+
+/** The old form's `type` (NOT a vNext object namespace) is only a display/
+ * validation hint. Folder and numeric parent IDs MUST be looked up against a
+ * verified user/college/delivery before creating a signed grant.
+ */
+export const LEGACY_UPLOAD_TYPE_MATRIX={
+ document:{kind:"assignment-submission",maxBytes:MAX_DOCUMENT_BYTES},
+ resource:{kind:"project-resource",maxBytes:MAX_DOCUMENT_BYTES},
+ lecture:{kind:"project-resource",maxBytes:MAX_DOCUMENT_BYTES},
+ presentation:{kind:"project-resource",maxBytes:MAX_DOCUMENT_BYTES},
+ video:{kind:"lesson-video",maxBytes:MAX_VIDEO_BYTES},
+ image:{kind:"lesson-video-thumbnail",maxBytes:MAX_THUMBNAIL_BYTES},
+ resume:{kind:"project-resource",maxBytes:MAX_DOCUMENT_BYTES},
+ generic:{kind:"assignment-submission",maxBytes:MAX_DOCUMENT_BYTES},
+} as const satisfies Record<string,{kind:StorageFileKind;maxBytes:number}>;
+
+export type LegacyUploadRequestFieldNames={
+ fileName?:string;filename?:string;contentType?:string;contentLength?:number;
+ folder?:string;type?:string;courseId?:number;classId?:number;
+};
+export function translateLegacyUploadDeclaration(input:LegacyUploadRequestFieldNames){
+ const originalName=input.fileName??input.filename??"";
+ const contentType=input.contentType??"";
+ const sizeBytes=input.contentLength??NaN;
+ return {originalName,contentType,sizeBytes} satisfies StorageDeclaration;
+}
+
+/** Namespaces in this list are not equivalent to authorizations. A null target
+ * means the old operation is not ported and callers must use an explicit
+ * alternate feature route instead of pretending that an upload worked.
+ */
+export function legacyUploadTypeHelp(rawType:string,rawFolder:string):{
+ kind:StorageFileKind|null;accept:string;limitBytes:number;help:string;serverImportEnabled:false;
+}{
+ const type=LEGACY_UPLOAD_TYPE_MATRIX[rawType.toLowerCase() as keyof typeof LEGACY_UPLOAD_TYPE_MATRIX];
+ const folder=LEGACY_FOLDER_POLICY[rawFolder as LegacyUploadFolder];
+ const kind=folder?.namespace?folder.validatorKind:null;
+ const limitBytes=kind?Math.min(type?.maxBytes??maxBytesFor(kind),folder.maxBytes):0;
+ const accept=kind?acceptAttributeFor(kind):"";
+ const help=rawFolder==="lesson-content"?
+   "Resource files up to 50 MiB. PDF, Word, PowerPoint, Excel, CSV, text and JPEG/PNG/WebP.":
+   rawType==="video"?"Videos up to 4,900 MiB. Single upload; pause and resume are unavailable.":
+   kind?"Choose a file up to "+(limitBytes/(1024*1024))+" MiB.":"Use a current authenticated feature file picker.";
+ return {kind,accept,limitBytes,help,serverImportEnabled:false};
+}
+
+/** URL imports previously fetched arbitrary remote URLs. A URL remains a
+ * first-class LINK Resource (no server-side fetching), never a video FILE.
+ */
+export function legacyResourceUrlAlternative(rawUrl:unknown):{
+ ok:true;kind:"LINK";url:string
+}|{ok:false;message:string}{
+ if(typeof rawUrl!=="string"||rawUrl.length>2048)
+  return {ok:false,message:"Enter a valid HTTPS link."};
+ try{
+  const url=new URL(rawUrl);
+  const host=url.hostname.toLowerCase();
+  if(url.protocol!=="https:"||!host||url.username||url.password||url.hash||
+    host==="localhost"||host.endsWith(".localhost")||host==="0.0.0.0"||
+    /^127\./.test(host)||/^10\./.test(host)||/^192\.168\./.test(host)||
+    /^169\.254\./.test(host)||/^172\.(?:1[6-9]|2[0-9]|3[01])\./.test(host))
+   return {ok:false,message:"Use a public HTTPS link without credentials."};
+  return {ok:true,kind:"LINK",url:url.toString()};
+ }catch{return {ok:false,message:"Enter a valid HTTPS link."};}
+}
+
+/** Legacy UI's omitted or 0 duration meant "unknown"; vNext accepts null
+ * until metadata is provided, never sends zero to the 1..86400 validator.
+ */
+export function legacyVideoDurationSeconds(raw:unknown):number|null{
+ if(raw===null||raw===undefined||raw==="")return null;
+ if(typeof raw!=="number"||!Number.isSafeInteger(raw)||raw<0||raw>MAX_VIDEO_DURATION_SECONDS)
+  return null;
+ return raw===0?null:raw;
+}
+
+/** Old R2 storage key contains numeric source IDs. These are migration
+ * lineage only: UI and grant must use persisted UUID content+delivery+college.
+ * No account may sign an arbitrary legacy key or return its publicUrl.
+ */
+export function legacyUploadScopeMetadata(input:{
+ collegeId:string;ownerMembershipId:string;courseOfferingId:string;
+ lessonContentId?:string;deliveryId?:string|null;
+}){
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ const keys=[input.collegeId,input.ownerMembershipId,input.courseOfferingId,
+   input.lessonContentId,input.deliveryId].filter((id):id is string=>typeof id==="string");
+ if(keys.some(id=>!uuid.test(id)))return null;
+ return {...input};
+}
