@@ -36,6 +36,13 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
     : [];
   const periods = periodRows.filter(row => row.status !== "CLOSED")
     .map(row => ({ id: row.id, name: row.name, code: row.code, startDate:row.startDate, endDate:row.endDate }));
+  const exportQuery=new URLSearchParams();
+  // Server export ignores arbitrary page/college overrides and rechecks
+  // selected scope; keep the page's verified filters.
+  if(data?.query.q)exportQuery.set("q",data.query.q);
+  if(data?.query.programId)exportQuery.set("programId",data.query.programId);
+  if(data?.query.status&&data.query.status!=="ALL")exportQuery.set("status",data.query.status);
+  const exportHref="/api/admin/batches/export"+(exportQuery.size?"?"+exportQuery.toString():"");
   return <div className="min-w-0 space-y-4 md:space-y-6">
     <PageHeader title="Batches"/>
       {data ? <AcademicSetupSteps step={5} /> : null}
@@ -82,7 +89,17 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
       </section>
 
       <section aria-label="Manage batches" className="min-w-0 space-y-[var(--lms-space-3)] pt-[var(--lms-space-2)]">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Manage batches</h2>
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Manage batches</h2>
+          <Link href={exportHref}
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle md:min-h-9">
+            Export batches.csv
+          </Link>
+        </div>
+        <p className="text-xs text-muted-foreground">
+          Exports matching selected-college batches across pages, up to 1,000 rows.
+          The CSV includes an explicit truncated notice when additional records remain.
+        </p>
         <p className="text-sm text-muted-foreground">Only planned batches without dependents can be edited or removed.</p>
         <DataTable<(typeof data.items)[number]> caption="Manage batches" rows={data.items} getRowKey={row=>row.id}
           empty={<EmptyState title="No matching batches on this page." />}
@@ -96,7 +113,8 @@ export default async function SuperAdminBatchesPage({ searchParams }: {
             {key:"end",header:"End Date",mobilePriority:"secondary",cell:row=>row.endDate??"—"},
             {key:"academicYear",header:"Academic Year",mobilePriority:"secondary",cell:row=>row.academicYear??(row.currentAcademicYearStart?`${row.currentAcademicYearStart}–${row.currentAcademicYearStart+1}`:"Not recorded")},
             {key:"semester",header:"Semester",mobilePriority:"secondary",cell:row=>row.currentTermNumber??"—"},
-            {key:"students",header:"Students",mobilePriority:"secondary",cell:row=>row.activeEnrolledLearners},
+            {key:"classes",header:"Classes",mobilePriority:"secondary",cell:row=>row.activeSections},
+            {key:"students",header:"Active students",mobilePriority:"secondary",cell:row=>row.activeEnrolledLearners},
             {key:"status",header:"Status",mobilePriority:"secondary",cell:row=><>
               <StatusBadge tone={row.status==="ACTIVE"?"success":row.status==="PLANNED"?"info":"neutral"}>{legacyAcademicStatus(row.status,true)}</StatusBadge>
               {row.inactiveAt?<span className="block text-xs text-muted-foreground">Inactive since {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.inactiveAt))}</span>:null}
