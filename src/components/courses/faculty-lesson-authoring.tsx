@@ -86,6 +86,7 @@ export function FacultyLessonAuthoring({
   availableModes,
   onSaved,
   onBusyChange,
+  formId,
   enableAssignmentResources = false,
 }: {
   lessonId: string;
@@ -99,6 +100,8 @@ export function FacultyLessonAuthoring({
   onSaved?: () => void;
   /** Lets enclosing legacy dialogs prevent discard/close during uploads. */
   onBusyChange?: (busy:boolean) => void;
+  /** HTML association lets the surrounding drawer footer submit this form. */
+  formId?:string;
   enableAssignmentResources?: boolean;
 }) {
   const router = useRouter();
@@ -749,7 +752,7 @@ export function FacultyLessonAuthoring({
           ) : null}
         </div>
       ) : (
-        <form
+        <form id={formId}
           className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4"
           onSubmit={submit}
         >
