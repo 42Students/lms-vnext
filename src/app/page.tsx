@@ -11,9 +11,19 @@ import { brandStyleVariables, deriveBrandTokens } from "@/modules/colleges/brand
 import { getPublicCollegeBranding } from "@/modules/colleges/branding-service";
 import {effectiveCollegeSignInCapabilities} from "@/modules/colleges/public-signin-policy-service";
 
+/** Branding is optional presentation data. A transient media/config failure
+ * must not disable otherwise verified and policy-authorized college sign-in. */
+async function optionalPublicBranding(collegeId: string) {
+  try {
+    return await getPublicCollegeBranding(collegeId);
+  } catch {
+    return null;
+  }
+}
+
 export async function generateMetadata():Promise<Metadata> {
  const tenant=await resolveRequestTenant((await headers()).get("host"));
- const brand=tenant.kind==="college"?await getPublicCollegeBranding(tenant.collegeId):null;
+ const brand=tenant.kind==="college"?await optionalPublicBranding(tenant.collegeId):null;
  return {title:"Sign in · "+(brand?.collegeName??"42LMS")};
 }
 
@@ -102,7 +112,7 @@ export default async function HomePage({
       !authValue && !recruiterValue && !requested) redirect("/home");
   const branding =
     tenant.kind === "college"
-      ? await getPublicCollegeBranding(tenant.collegeId)
+      ? await optionalPublicBranding(tenant.collegeId)
       : null;
   const signin = await effectiveCollegeSignInCapabilities(tenant.kind==="college"?tenant.collegeId:null);
   const themeStyle = brandStyleVariables(
@@ -151,6 +161,14 @@ export default async function HomePage({
             <div role="alert" className={`${styles.status} ${message.tone === "error" ? styles.statusError : styles.statusWarning}`}>
               <p className={styles.statusTitle}>{message.title}</p>
               <p className={styles.statusMessage}>{message.description}</p>
+            </div>
+          ) : null}
+          {tenant.kind === "college" && recruiterValue === "email" && !signin.email ? (
+            <div role="status" className={`${styles.status} ${styles.statusWarning}`}>
+              <p className={styles.statusTitle}>Email sign-in is unavailable for this college</p>
+              <p className={styles.statusMessage}>
+                Use the sign-in method your college has enabled, or ask the placement cell for a new invitation link.
+              </p>
             </div>
           ) : null}
           {tenant.kind === "unavailable" ? (
