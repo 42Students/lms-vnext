@@ -9,6 +9,7 @@ export const PLACEMENT_CALENDAR_KINDS = [
   "BLOCKED",
   "INTERVIEW_SLOT",
   "APPLICATION_DEADLINE",
+  "JOB_IMPORTANT_DATE",
   "FOLLOW_UP",
 ] as const;
 
@@ -23,6 +24,7 @@ export type PlacementCalendarView =
 export type PlacementCalendarEvent = {
   id: string;
   kind: PlacementCalendarKind;
+  eventType?: "JOB_IMPORTANT_DATE" | null;
   startsAt: Date;
   /** End time for scheduled rounds with a persisted duration. */
   endsAt?: Date | null;

@@ -229,6 +229,9 @@ export default async function TpoRecruiterAccessPage({
             </a>
           </Disclosure>
 
+          {total>500?<p role="status" className="text-xs text-warning-text">
+            Export includes up to the first 500 matching grants. Narrow the filters to export the rest.
+          </p>:null}
           <p className="text-sm text-muted-foreground">
             {total === 0
               ? "No matching grants"
@@ -263,6 +266,7 @@ export default async function TpoRecruiterAccessPage({
                   {item.displayName}
                   <p className="mt-1 text-xs font-normal text-muted-foreground">
                     {item.designation??"Designation not recorded"}
+                    {" · "}{item.joinedVia}
                   </p>
                 </div>},
               {key:"company",header:"Company",mobilePriority:"secondary",cell:item=>item.companyName},
