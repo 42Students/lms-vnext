@@ -21,7 +21,7 @@ export default async function TemplateVersionComparisonPage({ params,searchParam
   const ids = templateVersionComparisonParamsSchema.safeParse(await params);
   if (!ids.success) notFound();
   const navigation=await searchParams;
-  const historicPage=typeof navigation.page==="string"&&/^[1-9]\\d{0,5}$/.test(navigation.page)
+  const historicPage=typeof navigation.page==="string"&&/^[1-9]\d{0,5}$/.test(navigation.page)
     ?Number(navigation.page):null;
   const versionHistoryHref="/admin/projects/templates/"+encodeURIComponent(ids.data.templateId)+
     "/versions"+(historicPage?"?page="+historicPage:"")+
