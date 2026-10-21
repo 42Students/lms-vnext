@@ -50,6 +50,13 @@ export default async function LearnerCalendarPage({searchParams}:{
   const filters = resolveOwnLearnerCalendarFilters(rawQuery, schedule.courses, new Date());
   if (!filters) notFound();
 
+  /** ClassIdAndDateRangeResponse -> vNext crosswalk:
+   * classScheduleId -> event.id (UUID), classId -> sectionId (UUID),
+   * courseId -> courseId (UUID), facultyId -> facultyName (scoped display),
+   * hallId -> location, courseSlug -> courseCode / deliveryId,
+   * start/end -> startsAt/endsAt ISO. No legacy integer IDs are fabricated.
+   * vNext also retains description, section and authorized course delivery.
+   */
   function toScheduleEvent(event: (typeof schedule.events)[number]): LearnerScheduleEvent {
     return {
       id: event.id,
