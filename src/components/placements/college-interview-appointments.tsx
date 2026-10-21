@@ -413,7 +413,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
   <Dialog open={show} onOpenChange={next=>{if(!next)closeSetup();}} title={editing?"Edit interview":"Schedule interview"} dismissible={!busy}
    footer={<>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy||!start||!validFiveMinuteSlot||!roundId||!applicationId||!INTERVIEW_DURATIONS.includes(duration as typeof INTERVIEW_DURATIONS[number])||roundDescription.trim().length<10||(Boolean(editing)&&reason.trim().length<3)} onClick={()=>void save()}>
-     {busy?"Saving…":editing?.status==="RESCHEDULE_REQUESTED"?"Apply new slot":editing?"Save changes":"Schedule and notify"}</Button>
+     {busy?"Saving…":editing?.status==="RESCHEDULE_REQUESTED"?"Apply new slot":editing?"Save changes":"Schedule Interview"}</Button>
     <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={busy} variant="secondary" onClick={closeSetup}>Cancel</Button>
    </>}>
     <h3 className="sr-only">{editing?"Edit interview":"Schedule interview"}</h3>
@@ -442,7 +442,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
      onChange={e=>{setApplicationId(e.target.value);setDirty(true);}} className="w-full">
      {candidates.map(c=><option key={c.applicationId} value={c.applicationId}>{c.name??"Learner"} · {c.screening}</option>)}
     </Select></label>
-    <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+    <div className="grid min-w-0 gap-3">
      <label className="grid gap-[6px] text-[13px] font-semibold">Interview Type
       <Select value={interviewType} disabled={busy} onChange={event=>{
        setInterviewType(event.target.value as typeof interviewType);setDirty(true);
@@ -452,7 +452,7 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
        <option value="FINAL">Final</option>
       </Select>
      </label>
-     <label className="grid gap-[6px] text-[13px] font-semibold sm:col-span-2">
+     <label className="grid gap-[6px] text-[13px] font-semibold">
       What this round is about <span className="text-xs text-muted-foreground">({roundDescription.length}/500)</span>
       <Textarea rows={3} minLength={10} maxLength={500} disabled={busy} value={roundDescription}
        placeholder="Explain this interview round and how candidates should prepare"
@@ -461,6 +461,17 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       {fieldErrors.roundDescription?<span role="alert" className="text-error">{fieldErrors.roundDescription}</span>:null}
      </label>
     </div>
+    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+      Interviewer(s) <span className="text-xs font-normal text-muted-foreground">Use the same spelling as existing interviews to avoid double-booking.</span>
+     <Input value={interviewer} list={"interviewer-suggestions-"+jobId} maxLength={255} disabled={busy}
+      placeholder="e.g. Jane Doe, Ravi Kumar" autoComplete="off"
+      onChange={e=>{setInterviewer(e.target.value);setDirty(true);}} className="w-full"/>
+     <datalist id={"interviewer-suggestions-"+jobId}>
+      {interviewerNames.filter(name=>name.toLowerCase().includes(interviewer.toLowerCase())).slice(0,30).map(name=>
+        <option key={name} value={name}/>)}
+     </datalist>
+     {nearInterviewer?<span role="status" className="text-xs text-warning">Existing name uses “{nearInterviewer}”. Select the existing spelling.</span>:null}
+     </label>
     <div className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-1">
      <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
       Date (IST)
@@ -488,17 +499,6 @@ export function CollegeInterviewAppointments({jobId,rounds,candidates,appointmen
       onChange={e=>{mode==="VIRTUAL"?setMeetingUrl(e.target.value):setVenue(e.target.value);setDirty(true);}}
       className="w-full"/>
      {fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]?<span role="alert" className="text-xs text-error">{fieldErrors[mode==="VIRTUAL"?"meetingUrl":"venue"]}</span>:null}
-     </label>
-    <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
-      Interviewer(s) <span className="text-xs font-normal text-muted-foreground">Use the same spelling as existing interviews to avoid double-booking.</span>
-     <Input value={interviewer} list={"interviewer-suggestions-"+jobId} maxLength={255} disabled={busy}
-      placeholder="Start typing an interviewer’s name" autoComplete="off"
-      onChange={e=>{setInterviewer(e.target.value);setDirty(true);}} className="w-full"/>
-     <datalist id={"interviewer-suggestions-"+jobId}>
-      {interviewerNames.filter(name=>name.toLowerCase().includes(interviewer.toLowerCase())).slice(0,30).map(name=>
-        <option key={name} value={name}/>)}
-     </datalist>
-     {nearInterviewer?<span role="status" className="text-xs text-warning">Existing name uses “{nearInterviewer}”. Select the existing spelling.</span>:null}
      </label>
     <p className="text-xs text-muted-foreground">Times shown in Asia/Kolkata (IST). The server checks other drives and interviewer conflicts before accepting a slot.</p>
     {previewConflicts.length>0?<Banner tone="warning" role="alert">
