@@ -31,17 +31,40 @@ export function ProjectReadinessOverrideForm({
   const pendingRef = useRef(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [liveHasSubmission,setLiveHasSubmission]=useState(hasSubmission);
+  const [checking,setChecking]=useState(false);
+  const gateSnapshot=useRef<boolean|null>(null);
 
-  function requestSave(event: FormEvent<HTMLFormElement>) {
+  async function readSubmissionGate(){
+    const response=await fetch("/api/projects/"+encodeURIComponent(projectId)+"/readiness",
+      {credentials:"same-origin",cache:"no-store"});
+    if(!response.ok)throw new Error("Readiness could not be loaded. Refresh before applying an override.");
+    const body=await response.json() as {readiness?:{
+      finalSubmission?:{latest?:{id:string}|null}
+    }};
+    if(!body.readiness)throw new Error("Readiness could not be loaded.");
+    return Boolean(body.readiness.finalSubmission?.latest);
+  }
+  async function requestSave(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (pendingRef.current) return;
+    if (pendingRef.current||checking) return;
     if (!state) { setFeedback("Choose an override state"); return; }
     if (state !== "CLEAR" && !note.trim()) {
-      setFeedback(copy.noteRequired);
-      return;
+      setFeedback(copy.noteRequired);return;
     }
-    setFeedback(null);
-    setConfirmOpen(true);
+    setFeedback(null);setChecking(true);
+    try{
+      const current=await readSubmissionGate();
+      setLiveHasSubmission(current);
+      gateSnapshot.current=current;
+      if(current!==hasSubmission){
+        setFeedback("Submission status changed. Refresh readiness before applying an override.");
+        return;
+      }
+      setConfirmOpen(true);
+    }catch(error){
+      setFeedback(error instanceof Error?error.message:"Readiness could not be loaded.");
+    }finally{setChecking(false);}
   }
 
   async function save() {
@@ -50,6 +73,13 @@ export function ProjectReadinessOverrideForm({
     setPending(true);
     setFeedback(null);
     try {
+      // Recheck immediately before mutating, not only when opening the dialog.
+      const current=await readSubmissionGate();
+      setLiveHasSubmission(current);
+      if(gateSnapshot.current===null||current!==gateSnapshot.current){
+        setConfirmOpen(false);
+        throw new Error("Submission status changed. Refresh readiness before retrying.");
+      }
       await apiFetch("/api/projects/" + encodeURIComponent(projectId) + "/readiness/override", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -72,9 +102,10 @@ export function ProjectReadinessOverrideForm({
       <form onSubmit={requestSave} className={compactLayout?"min-w-0 space-y-[var(--lms-space-4)] pb-[var(--lms-space-4)]":"min-w-0 space-y-[var(--lms-space-4)] border-b border-border pb-[var(--lms-space-5)]"}>
         {compactLayout?null:<h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{copy.overrideTitle}</h2>}
         {feedback&&!confirmOpen ? <Alert tone={feedback === copy.updated ? "success" : "error"} role={feedback === copy.updated ? "status" : "alert"}>{feedback}</Alert> : null}
-        {hasSubmission && state !== "CLEAR" ? (
+        {liveHasSubmission && state !== "CLEAR" ? (
           <Alert tone="warning">
             Force Unlock/Block will have no effect here while a submission already exists.
+            Review or reopen the delivery first, then return to readiness before allowing a new submission.
           </Alert>
         ) : null}
         <div className="grid min-w-0 gap-[6px]">
@@ -115,8 +146,8 @@ export function ProjectReadinessOverrideForm({
           </div>
         ) : null}
         <div className="flex min-w-0 justify-stretch md:justify-end">
-        <Button type="submit" variant="primary" loading={pending} disabled={pending || !state} className="min-h-11 w-full md:min-h-9 md:w-auto">
-          {copy.submit}
+        <Button type="submit" variant="primary" loading={pending||checking} disabled={pending||checking||!state} className="min-h-11 w-full md:min-h-9 md:w-auto">
+          {checking?"Checking readiness…":copy.submit}
         </Button>
         </div>
       </form>

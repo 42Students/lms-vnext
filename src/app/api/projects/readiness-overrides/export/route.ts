@@ -12,8 +12,8 @@ export async function GET(request: Request) {
     if (!collegeId) return Response.json({ error: "INVALID_REQUEST" }, { status: 400 });
     const rows = await listCollegeActiveReadinessOverrides(await getCurrentRequestContext(), collegeId);
     const lines = [
-      ["Workspace", "Override", "Note", "By", "At"].map(projectReadinessOverrideCsvCell).join(","),
-      ...rows.map(row => [row.workspace, row.direction, row.note, row.by,
+      ["Workspace", "Workspace ID", "Override direction", "Override note", "Overridden by", "Overridden at"].map(projectReadinessOverrideCsvCell).join(","),
+      ...rows.map(row => [row.workspace,row.projectId,row.direction,row.note,row.by,
         row.at.toISOString()].map(projectReadinessOverrideCsvCell).join(",")),
     ];
     return new Response("\uFEFF" + lines.join("\r\n") + "\r\n", {
