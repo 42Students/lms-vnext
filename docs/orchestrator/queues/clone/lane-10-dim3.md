@@ -97,14 +97,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/components/courses/faculty-quiz-question-editor.tsx`
 - [x] `src/components/placements/college-application-pipeline-controls.tsx`
 - [x] `src/components/placements/report-interactive-table.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/project-delivery-reopen-control.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
-- [ ] `src/components/projects/mentor-product-backlog.tsx`
-- [ ] `src/components/projects/project-task-submission-control.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/tpo-company-create-form.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/ui/action-pagination.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/project-delivery-reopen-control.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [x] `src/components/projects/mentor-product-backlog.tsx`
+- [x] `src/components/projects/project-task-submission-control.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/tpo-company-create-form.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/ui/action-pagination.tsx`
