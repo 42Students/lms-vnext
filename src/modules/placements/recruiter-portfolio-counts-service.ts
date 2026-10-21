@@ -22,8 +22,19 @@ export async function recruiterVisiblePortfolioCounts(context:RequestContext,
  const activeGrant=recruiter?.grants.find(g=>g.collegeId===collegeId);
  if(!hasActiveRecruiter(context)||!recruiter||recruiter.userId!==context.user.id||!activeGrant)
   throw new AuthorizationError("placements.recruiter.read");
- const ids=[...new Set(authorizedJobIds)].slice(0,20);
- if(ids.length===0)return {} as Record<string,{sharedApplicants:number;offers:number}>;
+ const allIds=[...new Set(authorizedJobIds)];
+ if(allIds.length===0)return {} as Record<string,{sharedApplicants:number;offers:number}>;
+ // The former first-20 truncation silently returned zero/undefined for later
+ // authorized drives. Query bounded batches without reducing the job set.
+ if(allIds.length>20){
+   const result:Record<string,{sharedApplicants:number;offers:number}>={};
+   for(let index=0;index<allIds.length;index+=20){
+     Object.assign(result,await recruiterVisiblePortfolioCounts(
+       context,collegeId,allIds.slice(index,index+20)));
+   }
+   return result;
+ }
+ const ids=allIds;
  // A provided job ID cannot enlarge the employer's granted college/relationship.
  // Preserve all active relationships for a multi-grant recruiter within the college.
  const relationshipIds=[...new Set(recruiter.grants
