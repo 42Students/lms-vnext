@@ -1,11 +1,14 @@
 import {
   and,
   asc,
+  count,
   desc,
   eq,
   gt,
   inArray,
+  ilike,
   isNull,
+  or,
   sql,
 } from "drizzle-orm";
 import { equalsIgnoreCase } from "@/lib/sql-match";
@@ -22,6 +25,7 @@ import {
 } from "@/db/schema";
 import {
   hasActiveRecruiter,
+  isSuperAdmin,
   type RequestContext,
 } from "@/modules/identity/context";
 import {
@@ -154,6 +158,79 @@ export async function listPlacementRecruiterGrants(
       asc(placementCompanies.name),
       asc(users.displayName),
     );
+}
+
+/** Legacy SearchActive with vNext college/grant identity rules.
+ * No global recruiter enumeration: every matched user must hold an active
+ * grant in the requested college, and the actor must manage that college.
+ * Page is zero-based, matching the legacy Pageable caller contract.
+ */
+export async function searchPlacementRecruiterGrants(
+  context: RequestContext,
+  collegeIdInput: string,
+  options: { q?: string; page?: number; size?: number } = {},
+) {
+  const collegeId = createPlacementCompanyInputSchema.shape.collegeId.parse(collegeIdInput);
+  await requirePlacementManageScope(context, collegeId);
+  const search = (options.q ?? "").trim();
+  const page = options.page ?? 0;
+  const size = options.size ?? 20;
+  if (search.length > 120 || !Number.isSafeInteger(page) || page < 0 || page > 10000 ||
+      !Number.isSafeInteger(size) || size < 1 || size > 100) {
+    throw new PlacementsServiceError("PLACEMENT_RECRUITER_INVALID_INPUT");
+  }
+  const term = "%" + search.replace(/[\\%_]/g, match => "\\" + match) + "%";
+  const scope = and(
+    eq(placementCompanyRelationships.collegeId, collegeId),
+    eq(placementCompanyRelationships.companyId, placementRecruiterProfiles.companyId),
+    eq(placementRecruiterCollegeGrants.status, "ACTIVE"),
+    eq(placementRecruiterProfiles.status, "ACTIVE"),
+    eq(placementCompanyRelationships.status, "ACTIVE"),
+    eq(placementCompanies.status, "ACTIVE"),
+    eq(users.platformStatus, "ACTIVE"),
+    search ? or(
+      ilike(users.displayName, term),
+      ilike(users.email, term),
+      ilike(users.phoneE164, term),
+    ) : undefined,
+  );
+  const from = () => getDb().select({
+    grantId: placementRecruiterCollegeGrants.id,
+    recruiterUserId: users.id,
+    companyRelationshipId: placementCompanyRelationships.id,
+    companyId: placementCompanies.id,
+    companyName: placementCompanies.name,
+    displayName: users.displayName,
+    email: users.email,
+    title: placementRecruiterProfiles.title,
+    createdAt: placementRecruiterCollegeGrants.createdAt,
+    grantedByType: placementRecruiterCollegeGrants.grantedByType,
+    createdByUserId: placementRecruiterProfiles.createdByUserId,
+  }).from(placementRecruiterCollegeGrants)
+    .innerJoin(placementRecruiterProfiles,
+      eq(placementRecruiterProfiles.userId, placementRecruiterCollegeGrants.recruiterUserId))
+    .innerJoin(users, eq(users.id, placementRecruiterCollegeGrants.recruiterUserId))
+    .innerJoin(placementCompanyRelationships,
+      eq(placementCompanyRelationships.id, placementRecruiterCollegeGrants.companyRelationshipId))
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id, placementRecruiterProfiles.companyId))
+    .where(scope);
+  const countQuery = getDb().select({ total: count() }).from(placementRecruiterCollegeGrants)
+    .innerJoin(placementRecruiterProfiles,
+      eq(placementRecruiterProfiles.userId, placementRecruiterCollegeGrants.recruiterUserId))
+    .innerJoin(users, eq(users.id, placementRecruiterCollegeGrants.recruiterUserId))
+    .innerJoin(placementCompanyRelationships,
+      eq(placementCompanyRelationships.id, placementRecruiterCollegeGrants.companyRelationshipId))
+    .innerJoin(placementCompanies,
+      eq(placementCompanies.id, placementRecruiterProfiles.companyId))
+    .where(scope);
+  const [totalRows,items] = await Promise.all([
+    countQuery,
+    from().orderBy(asc(users.displayName),asc(users.id),asc(placementRecruiterCollegeGrants.id))
+      .limit(size).offset(page*size),
+  ]);
+  const total = totalRows[0]?.total ?? 0;
+  return {items,total,page,size,totalPages:Math.ceil(total/size),hasMore:(page+1)*size<total};
 }
 
 export async function grantPlacementRecruiter(
@@ -300,6 +377,8 @@ export async function grantPlacementRecruiter(
         companyRelationshipId:
           current.relationship.id,
         grantedByUserId: context.user.id,
+        grantedByType: isSuperAdmin(context) ? "SUPER_ADMIN" :
+          context.membership?.roles.includes("TPO") ? "TPO" : "COLLEGE_ADMIN",
       })
       .returning();
 
