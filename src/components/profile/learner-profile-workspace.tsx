@@ -703,6 +703,18 @@ export function LearnerProfileWorkspace(props: {
             <Value label="Exam Slot Preference" value={document.jobPreferences.examSlotPreference || "No preference"}/>
             <Value label="Job Notifications Enabled" value={document.jobPreferences.jobNotificationsEnabled ? "On" : "Off"}/>
           </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Turning this off stops matching-job notifications without changing placement eligibility.
+            Application-update alerts have a separate setting in <Link href="/learn/my-placements/notification-preferences" className="font-semibold text-primary-text underline">Placement notification choices</Link>.
+          </p>
+        </Card>
+        <Card id="video-intro" title="Video introduction">
+          <p className="text-sm text-muted-foreground">
+            Video introduction upload and playback are not supported in this release.
+            The previous public video upload is retired until a membership-owned,
+            privately signed and security-scanned video flow is available. No existing
+            video URL is published as an approved profile attachment.
+          </p>
         </Card>
         <Card id="social-profiles" title="Social profiles"
           action={<Button className="min-h-11 md:min-h-9" variant="secondary" onClick={openDetails}>Connect or edit accounts</Button>}>
@@ -1010,10 +1022,13 @@ export function LearnerProfileWorkspace(props: {
               onChange={event=>setJobPrefsDraft(current=>({...current,jobNotificationsEnabled:event.target.checked}))}/>
             Job Notifications Enabled
           </label>
-          <p className="text-xs text-muted-foreground">These are your profile preferences. Placement alert delivery has separate choices in{" "}
+          <p className="text-xs text-muted-foreground">
+            Disabling job notifications also disables matching-job placement alerts.
+            Application-update alerts can be managed separately in{" "}
             <Link href="/learn/my-placements/notification-preferences" className="font-semibold text-primary-text underline">
               Placement notification choices
-            </Link>. Essential academic and security messages are unaffected.</p>
+            </Link>. Academic and security messages are unaffected.
+          </p>
         </div>
       </Dialog>
 
