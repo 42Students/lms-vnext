@@ -122,6 +122,9 @@ export function PersonOnboardDialog({
           phoneE164:forcedRole?indianMobileToE164(phoneE164):phoneE164,
           ...(email.trim() ? { email } : {}),
           roles:forcedRole==="FACULTY"&&registerAsMentor?["FACULTY","MENTOR"]:onboardingRoleSelection(forcedRole,roles),
+          ...(forcedRole==="FACULTY"?{facultyProfile:{kind:"FACULTY",primaryDepartmentId:departmentId,
+            employmentType:facultyType,academicTitle:"",gender,dateOfBirth,address,bio,
+            contactPhone:"",contactEmail:""}}:{}),
         }),
       });
       const payload = await response.json().catch(() => null);
@@ -140,30 +143,12 @@ export function PersonOnboardDialog({
         return;
       }
 
-      // Onboarding creates a canonical identity; the faculty profile is written
-      // separately because the identity endpoint deliberately accepts no
-      // department, employment-type or personal-profile attributes.
-      if (forcedRole==="FACULTY") {
-        const membershipId=payload?.person?.membership?.id;
-        if (typeof membershipId!=="string"||!membershipId) {
-          setProfileIncomplete(true);
-          showToast({tone:"error",title:"Faculty created, profile needs completion",
-            description:"Open Edit Faculty in the roster to supply the required department and faculty type. Do not register a duplicate."});
-          return;
-        }
-        const profileResponse=await fetch("/api/college/people/"+encodeURIComponent(membershipId)+"/edit",{
-          method:"PATCH",headers:{"content-type":"application/json"},
-          body:JSON.stringify({kind:"FACULTY",primaryDepartmentId:departmentId,
-            employmentType:facultyType,academicTitle:"",gender,dateOfBirth,address,bio,
-            contactPhone:"",contactEmail:""}),
-        }).catch(()=>null);
-        if(!profileResponse?.ok) {
-          setProfileIncomplete(true);
-          showToast({tone:"error",title:"Faculty created, profile needs completion",
-            description:"Department or faculty profile could not be saved. Open Edit Faculty in the roster; do not register again."});
-          router.refresh();
-          return;
-        }
+      if (forcedRole==="FACULTY" && payload?.profileIncomplete) {
+        setProfileIncomplete(true);
+        showToast({tone:"error",title:"Faculty created, profile needs completion",
+          description:"Open Edit Faculty in the roster to finish the department and faculty type. Do not register a duplicate."});
+        router.refresh();
+        return;
       }
       setOpen(false);
       reset();
