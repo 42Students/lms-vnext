@@ -16,10 +16,13 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
   homeLabel?: string;
 }) {
   const reference = friendlyReference(requestId);
+  // /dashboard is the central, permission-aware home. Explicit homepage
+  // links supplied by public 404 callers must not discard signed-in role scope.
+  const destination = homeHref === "/" ? "/dashboard" : homeHref;
   return (
     <main className={styles.page}>
       <header className={styles.header}>
-        <Link href={homeHref} className={styles.brand} aria-label="42LMS home">
+        <Link href={destination} className={styles.brand} aria-label="42LMS home">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/assets/images/legacy-42lms-logo.svg" alt="42LMS" className={styles.legacyLogo} />
         </Link>
@@ -40,7 +43,7 @@ export function GracefulScreen({ title, message, homeHref = "/dashboard", retry,
           ) : null}
           <div className={styles.actions}>
             {retry ? <Button type="button" onClick={retry} className={styles.primary}>Try again</Button> : null}
-            <Link href={homeHref} className={retry ? styles.secondary : styles.primary}>{homeLabel}</Link>
+            <Link href={destination} className={retry ? styles.secondary : styles.primary}>{homeLabel}</Link>
           </div>
         </section>
       </div>
