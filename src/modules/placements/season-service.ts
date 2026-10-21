@@ -1,6 +1,6 @@
 import {
   and,
-  asc,
+  desc,
   eq,
   inArray,
 } from "drizzle-orm";
@@ -29,8 +29,13 @@ import {
  * with its separate authorization/preview and cannot be inferred by status.
  */
 export async function currentPlacementSeason(context:RequestContext,collegeId:string){
- const seasons=await listPlacementSeasons(context,collegeId);
- return seasons.find(season=>season.status==="ACTIVE")??null;
+ const scopedId=createPlacementJobInputSchema.shape.collegeId.parse(collegeId);
+ await requirePlacementManageScope(context,scopedId);
+ const [current]=await getDb().select().from(placementSeasons)
+  .where(and(eq(placementSeasons.collegeId,scopedId),eq(placementSeasons.status,"ACTIVE")))
+  .orderBy(desc(placementSeasons.startDate),desc(placementSeasons.createdAt),desc(placementSeasons.id))
+  .limit(1);
+ return current??null;
 }
 export async function listPlacementSeasons(
   context: RequestContext,
@@ -55,8 +60,9 @@ export async function listPlacementSeasons(
       ),
     )
     .orderBy(
-      asc(placementSeasons.startDate),
-      asc(placementSeasons.createdAt),
+      desc(placementSeasons.startDate),
+      desc(placementSeasons.createdAt),
+      desc(placementSeasons.id),
     );
 }
 
