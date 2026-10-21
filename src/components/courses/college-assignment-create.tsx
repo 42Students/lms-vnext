@@ -60,7 +60,9 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
   discardDraft();
  }
  async function create(){
-  if(lock.current||!chosen)return;
+  if(lock.current)return;
+  if(!offeringId){setError("Select a course");return;}
+  if(!chosen){setError("Select a lesson");return;}
   const maxPoints=Number(points);
   if(!title.trim()||title.trim().length>255||!pointsValid||!Number.isInteger(maxPoints)){
    setError("Enter an assignment title (1–255 characters) and points from 0 to 10000.");return;
@@ -71,7 +73,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    setError("This lesson has reached the assignment ordering limit.");return;
   }
   const delivery=audience==="SECTION"?sections.find(x=>x.deliveryId===deliveryId):undefined;
-  if(audience==="SECTION"&&!delivery){setError("Choose a Section belonging to this course offering.");return;}
+  if(audience==="SECTION"&&!delivery){setError("Select a section");return;}
   const dueIso=dueAt?parseCollegeIstLocal(dueAt):null;
   if(dueAt&&!dueIso){
    setError("Enter a valid deadline.");return;
@@ -92,7 +94,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
    if(!keepOpen)setOpened(false);
    setTitle("");setDescription("");setDueAt("");setPoints("0");
    setAllowedMethods(DEFAULT_ASSIGNMENT_METHODS);
-   setMessage("Assignment draft created. Publish it to let learners submit.");
+   setMessage("Assignment created");
    router.refresh();
   }catch(cause){setError(cause instanceof Error?cause.message:"Could not create assignment.");}
   finally{lock.current=false;setPending(false);}
