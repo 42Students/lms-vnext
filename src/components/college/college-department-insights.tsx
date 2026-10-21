@@ -62,7 +62,7 @@ export function CollegeDepartmentInsights({
       </>}
     />
     <section aria-label="Department filters" className="border-b border-border pb-4">
-      <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-[minmax(0,2fr)_auto_auto]">
+      <form method="get" action={path} className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,2fr)_auto_auto]">
         <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           Department name
           <Input name="q" type="search" maxLength={100} defaultValue={data.query.q}
@@ -84,7 +84,7 @@ export function CollegeDepartmentInsights({
           action={<Link href={data.total===0?path:departmentInsightsHref(data.kind,{...data.query,page:Math.max(1,data.query.page-1)})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{data.total===0?"Clear":"Previous page"}</Link>} />}
       />
     </section>
-    <nav aria-label="Department pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center">
+    <nav aria-label="Department pagination" className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm md:flex-row md:items-center">
       <span className="text-muted-foreground">Page {data.query.page} of {data.totalPages} · 25 per page</span>
       <div className="flex min-w-0 gap-[var(--lms-space-3)] max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
         {data.query.page > 1 ? <Link

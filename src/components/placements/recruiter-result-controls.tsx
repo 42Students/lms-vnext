@@ -406,7 +406,7 @@ export function RecruiterResultControls({
                     )}
                   </StatusBadge>
                 </div>
-                {canStage?<div className="mt-3 min-w-0 space-y-2 text-xs text-body"><div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:items-center">                  <span aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>                  <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
+                {canStage?<div className="mt-3 min-w-0 space-y-2 text-xs text-body"><div className="flex min-w-0 flex-col items-start gap-2 md:flex-row md:items-center">                  <span aria-live="polite" aria-atomic="true">{(selected[round.id]??[]).length} selected for results</span>                  <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" loading={bulkPending===round.id} disabled={bulkPending!==null||pendingKey!==null||(selected[round.id]??[]).length===0}
                     
                     onClick={()=>void stageSelected(round)}>
                     {bulkPending===round.id?"Sending results…":
@@ -427,7 +427,7 @@ export function RecruiterResultControls({
                     Undo draft
                   </Button>
 
-                  <Button type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={bulkPending!==null||pendingKey!==null}
+                  <Button type="button" className="min-h-11 w-full md:w-auto md:min-h-9" disabled={bulkPending!==null||pendingKey!==null}
                     variant="secondary"
                     onClick={()=>{setActiveRoundId(round.id);setSelected(old=>({...old,[round.id]:
                       old[round.id]?.length===round.participants.filter(p=>p.result?.status!=="APPLIED").length?
@@ -458,7 +458,7 @@ export function RecruiterResultControls({
                 ) : null}
               </div>
 
-              {evaluative&&round.participants.length>0?<details className="hidden min-w-0 border-b border-border py-3 md:block"><summary className="min-h-9 cursor-pointer py-2 text-sm font-semibold">Round results overview</summary>
+              {evaluative&&round.participants.length>0?<details className="hidden min-w-0 border-b border-border py-3 md:block"><summary className="min-h-9 cursor-pointer py-2 text-sm font-semibold max-[767px]:min-h-11">Round results overview</summary>
                 <RecruiterResultReviewGrid scopeKey={round.id}
                   rows={round.participants.map(person=>{
                     const draft=drafts[round.id+":"+person.applicationId];
@@ -772,7 +772,7 @@ export function RecruiterResultControls({
 
                               <div className="flex flex-wrap items-center gap-3 md:col-span-2">
                                 <Button
-                                  size="sm" className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pendingKey===key}
+                                  size="sm" className="min-h-11 w-full md:w-auto md:min-h-9" loading={pendingKey===key}
                                   disabled={
                                     pendingKey !==
                                     null || bulkPending !== null
