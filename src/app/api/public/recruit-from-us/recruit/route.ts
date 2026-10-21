@@ -6,15 +6,15 @@ import { PublicEnquiryError } from "@/modules/placements/public-enquiry/send-ser
 import {readPublicRecruitEnquiryBody} from "@/modules/placements/public-enquiry/body-model";
 export const runtime="nodejs";
 export async function POST(request:Request){
- if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
+ if(!isSameOriginRequest(request))return NextResponse.json({error:"INVALID_ORIGIN",message:"This request could not be verified."},{status:403});
  let tenant:Awaited<ReturnType<typeof resolveRequestTenant>>;
  try {tenant=await resolveRequestTenant(request.headers.get("host"));}
- catch {return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
+ catch {return NextResponse.json({error:"SERVICE_UNAVAILABLE",message:"Recruitment enquiries are temporarily unavailable."},
   {status:503,headers:{"Cache-Control":"no-store"}});}
- if(tenant.kind!=="college")return NextResponse.json({error:"PAGE_UNAVAILABLE"},{status:404});
+ if(tenant.kind!=="college")return NextResponse.json({error:"PAGE_NOT_FOUND",message:"This recruitment page is not available."},{status:404});
  const body=await readPublicRecruitEnquiryBody(request);
  if(body.kind!=="OK")return NextResponse.json(
-  body.kind==="TOO_LARGE"?{error:"REQUEST_TOO_LARGE"}:
+  body.kind==="TOO_LARGE"?{error:"REQUEST_TOO_LARGE",message:"The enquiry is too large."}:
    request.headers.get("content-length")==="0"||!request.headers.get("content-type")
     ?{error:"BODY_REQUIRED",message:"Details are required"}
     :{error:"INVALID_BODY",message:"Enter valid enquiry details"},
@@ -35,10 +35,13 @@ export async function POST(request:Request){
   if(error instanceof PublicEnquiryError)return NextResponse.json({
    error:error.code==="NOT_READY"?"RECRUITER_ENQUIRIES_UNAVAILABLE":
     error.code==="LIMIT"?"TOO_MANY_TRIES":error.code==="INVALID"?"INVALID_CODE_OR_EXPIRED":"COULD_NOT_SEND_ENQUIRY",
-   ...(error.code==="INVALID"?{message:"The code is incorrect, expired or locked. Request a new code if needed."}:{}) ,
+   message:error.code==="INVALID"?"The code is incorrect, expired or locked. Request a new code if needed.":
+    error.code==="LIMIT"?"Too many attempts. Try again later.":
+    error.code==="NOT_READY"?"Recruitment enquiries are temporarily unavailable.":
+    "Could not send your enquiry. Review the details and try again.",
   },{status:error.code==="NOT_READY"?503:error.code==="LIMIT"?429:400,
    headers:{"Cache-Control":"no-store"}});
-  return NextResponse.json({error:"SERVICE_UNAVAILABLE"},
+  return NextResponse.json({error:"SERVICE_UNAVAILABLE",message:"Recruitment enquiries are temporarily unavailable."},
    {status:503,headers:{"Cache-Control":"no-store"}});
  }
 }
