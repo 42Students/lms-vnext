@@ -40,6 +40,7 @@ import { ProjectRosterTable } from "./project-roster-table";
 import {CollegeAdminWorkspaceTeamOverview} from "./college-admin-workspace-team-overview";
 import { ProjectTeamRosterReconcile } from "./project-team-roster-reconcile";
 import { ProjectSprintPlanEditor } from "./project-sprint-plan-editor";
+import { ProjectSprintRowList } from "./project-sprint-row-list";
 import { ProjectTaskPlanEditor } from "./project-task-plan-editor";
 import { projectTaskPlanToken } from "@/modules/projects/project-task-plan-token";
 import type { ProjectTaskPlanRow } from "@/modules/projects/project-task-plan-model";
@@ -1380,7 +1381,10 @@ export function ProjectWorkspace({
                 </div>
               ) : null}
 
-              <div className="mt-4 space-y-3">
+              <ProjectSprintRowList rows={(sprintsByRelease.get(release.id)??[]).map(sprint=>({
+                id:sprint.id,title:sprint.title,status:sprint.status,
+                description:sprint.description,goal:sprint.goal,dueLabel:sprint.dueLabel,
+              }))}>
                 {(sprintsByRelease.get(release.id) ??
                   []).map((sprint) => (
                   <section
@@ -1690,7 +1694,7 @@ export function ProjectWorkspace({
                     </div>
                   </section>
                 ))}
-              </div>
+              </ProjectSprintRowList>
             </article>
           ))}
         </div>
