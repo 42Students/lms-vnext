@@ -14,13 +14,22 @@ import {useToast} from "@/components/ui/toast";
 import {COLLEGE_APPLICATION_STAGES,COLLEGE_APPLICATION_TRANSITIONS} from "@/modules/placements/college-stage-action-model";
 import type {DriveApplicationsQuery} from "@/modules/placements/college-drive-applications-model";
 import {CollegeApplicationDetailDrawer,type CollegeApplicationDetail} from "./college-application-detail-drawer";
-import { Disclosure } from "@/components/ui/disclosure";
 import { EmptyState } from "@/components/ui/empty-state";
+import { StatusBadge, applicationStatusTone } from "@/components/ui/status-badge";
 type Row={id:string;name:string|null;email:string|null;collegeName:string;ageDays:number;
  source:string;submittedAt:Date|string;rollNumber:string|null;roleTitle:string;
  status:string;screening:string|null;stage:string;previousStage:string|null;stageVersion:number|null;
  allowedNextStages?:readonly string[];stageMovedByName?:string|null;stageMovedAt?:string|null;};
 const transitions=COLLEGE_APPLICATION_TRANSITIONS;
+const istDateTime=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"});
+const istDay=new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"});
+function stageAge(row:Row){
+ const start=new Date(row.stageMovedAt??row.submittedAt).getTime();
+ if(!Number.isFinite(start))return null;
+ return Math.max(0,Math.floor((Date.now()-start)/86400000));
+}
+const stageLabel=(stage:string)=>stage.replaceAll("_"," ").toLowerCase()
+ .replace(/(^|\s)\S/g,match=>match.toUpperCase());
 export function CollegeApplicationPipelineControls({jobId,rows,total,query,basePath="/college/placements",initialDetailId=null}:{jobId:string;rows:Row[];total:number;query:DriveApplicationsQuery;basePath?: "/college/placements"|"/admin/placements";initialDetailId?:string|null}){
  const router=useRouter();
  const {showToast}=useToast();
@@ -48,14 +57,15 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   setDialog(false);setBusy(false);setError("");setOutcome(null);setFailedDetailId(null);
  },[activeScope]);
  useEffect(()=>{
-  // The server validates the application UUID before passing it here;
-  // the detail API independently rechecks the selected college and job.
-  if(initialDetailId)void openDetail(initialDetailId);
- },[activeScope,initialDetailId]);
- useEffect(()=>{
-  // A "select all matching" command is never carried over to a changed filter.
-  setAllMatching(false);
+  // Reject late drawer responses and hidden selection after filter changes.
+  scopeEpoch.current+=1;
+  setAllMatching(false);setSelected([]);setDetailId(null);setDetailPayload(null);
+  setFailedDetailId(null);setDialog(false);setError("");setOutcome(null);
  },[filterScope]);
+ useEffect(()=>{
+  // The detail API separately rechecks selected-college access.
+  if(initialDetailId)void openDetail(initialDetailId);
+ },[activeScope,initialDetailId,filterScope]);
  const eligible=rows.filter(r=>r.status==="SUBMITTED");
  const allPage=eligible.length>0&&eligible.every(r=>selected.includes(r.id));
  const selectedCount=allMatching?total:selected.length;
@@ -113,51 +123,61 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   }
  }
  const columns:DataTableColumn<Row>[]=[
+  {key:"name",header:"Learner Name",mobilePriority:"primary",
+   cell:row=><span className="font-semibold text-foreground">{row.name?.trim()||"—"}</span>},
   {key:"selected",header:"Select",mobilePriority:"action",cell:row=>
    <label className="inline-flex min-h-11 items-center gap-2 text-sm">
     <Checkbox aria-label={"Select "+(row.name??row.id)}
      disabled={row.status!=="SUBMITTED"||busy||allMatching}
      checked={selected.includes(row.id)} onChange={()=>toggle(row.id)}/> Select</label>},
-  {key:"name",header:"Learner Name",mobilePriority:"primary",
-   cell:row=>row.name??"Unnamed learner"},
-  {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>row.email??"—"},
-  {key:"college",header:"College",mobilePriority:"secondary",cell:row=>row.collegeName},
-  {key:"roll",header:"Roll",mobilePriority:"secondary",cell:row=>row.rollNumber??"Not recorded"},
-  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle},
-  {key:"source",header:"Source",mobilePriority:"secondary",cell:row=>row.source},
-  {key:"date",header:"Applied Date",mobilePriority:"secondary",
-   cell:row=>new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(new Date(row.submittedAt))},
-  {key:"age",header:"Age",mobilePriority:"secondary",cell:row=>row.ageDays+" days"},
 
-  {key:"status",header:"Current Status",mobilePriority:"secondary",cell:row=>row.stage},
-  {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening??"Not recorded"},
+  {key:"email",header:"Email",mobilePriority:"secondary",cell:row=>row.email?.trim()||"—"},
+  {key:"college",header:"College",mobilePriority:"secondary",cell:row=>row.collegeName?.trim()||"—"},
+  {key:"roll",header:"Roll",mobilePriority:"secondary",cell:row=>row.rollNumber?.trim()||"—"},
+  {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle?.trim()||"—"},
+  {key:"source",header:"Source",mobilePriority:"secondary",cell:row=><StatusBadge tone="info">{row.source==="EXTERNAL"?"External":"Internal"}</StatusBadge>},
+  {key:"date",header:"Applied Date",mobilePriority:"secondary",
+   cell:row=>Number.isFinite(new Date(row.submittedAt).getTime())?istDay.format(new Date(row.submittedAt)):"—"},
+  {key:"age",header:"Age",mobilePriority:"secondary",cell:row=>{
+   const days=stageAge(row);
+   return <span title={row.stageMovedAt?"Time since most recent stage change":"Time since application"}
+     className="inline-flex items-center gap-1.5"><span aria-hidden="true" className="size-1.5 rounded-full bg-[var(--lms-info)]"/>
+     {days===null?"—":days+"d"}</span>;
+  }},
+
+  {key:"status",header:"Current Status",mobilePriority:"secondary",cell:row=>
+   <span className="inline-flex flex-col items-start gap-1">
+    <StatusBadge tone={applicationStatusTone(row.stage)}>{stageLabel(row.stage)}</StatusBadge>
+    {row.stageMovedAt&&Number.isFinite(Date.parse(row.stageMovedAt))?
+     <span className="text-xs text-muted-foreground" title="Last stage change">{istDateTime.format(new Date(row.stageMovedAt))} IST</span>:null}
+   </span>},
+  {key:"screening",header:"Screening",mobilePriority:"secondary",cell:row=>row.screening?<StatusBadge tone={applicationStatusTone(row.screening)}>{stageLabel(row.screening)}</StatusBadge>:"—"},
   {key:"actions",header:"Actions",mobilePriority:"action",cell:row=>
-   <Disclosure title="Manage" className="min-w-0 md:min-w-44"><div className="flex min-w-0 flex-col items-stretch gap-2 pb-2">
-    <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)} className="min-h-11 w-full md:w-auto md:min-h-9"
-     >Details</Button>
+   <div className="flex min-w-[210px] flex-wrap items-center gap-2">
+    <Button type="button" variant="secondary" onClick={()=>void openDetail(row.id)}
+     aria-label={"View Details for "+(row.name||"learner")} disabled={busy}
+     className="min-h-11 text-xs md:min-h-9">View Details</Button>
     {row.stage==="INTERVIEW"&&basePath==="/college/placements"?
      <Link href={basePath+"/jobs/"+encodeURIComponent(jobId)+"/interviews?applicationId="+encodeURIComponent(row.id)}
-      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text underline md:min-h-9">
-      Schedule Interview
-     </Link>:null}
+      className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text underline md:min-h-9">
+      Schedule Interview</Link>:null}
     {row.stage==="REJECTED"?
      <Button type="button" disabled={busy||row.status!=="SUBMITTED"}
-      variant="secondary" onClick={()=>selectRow(row,"REINSTATE")} className="min-h-11 w-full md:w-auto md:min-h-9"
-      >Reinstate</Button>:
-     <Select aria-label={"Move "+(row.name??"learner")+" to"} value=""
+      aria-label={"Reinstate "+(row.name||"learner")} variant="secondary"
+      onClick={()=>selectRow(row,"REINSTATE")} className="min-h-11 text-xs md:min-h-9">Reinstate</Button>:
+     <Select aria-label={"Move "+(row.name||"learner")+" to"} value=""
       disabled={busy||row.status!=="SUBMITTED"}
       onChange={event=>{if(event.target.value)selectRow(row,event.target.value);}}
-      className="min-h-11 w-full max-w-full text-base md:min-h-9 md:text-sm">
+      className="min-h-11 min-w-32 max-w-full text-sm md:min-h-9">
       <option value="">Move to...</option>
       {(row.allowedNextStages??transitions[row.stage]??[]).filter(stage=>stage!=="REJECTED")
-       .map(stage=><option key={stage} value={stage}>{stage}</option>)}
+       .map(stage=><option key={stage} value={stage}>{stageLabel(stage)}</option>)}
      </Select>}
     {row.status==="SUBMITTED"&&(row.allowedNextStages??transitions[row.stage]??[]).includes("REJECTED")?
      <Button type="button" variant="danger" disabled={busy}
-      onClick={()=>selectRow(row,"REJECTED")} className="min-h-11 w-full md:w-auto md:min-h-9">
-      Reject
-     </Button>:null}
-   </div></Disclosure>},
+      aria-label={"Reject "+(row.name||"learner")}
+      onClick={()=>selectRow(row,"REJECTED")} className="min-h-11 text-xs md:min-h-9">Reject</Button>:null}
+   </div>},
  ];
  return <section className="space-y-4">
   <div className="grid min-w-0 grid-cols-1 items-center gap-[var(--lms-space-3)] border-b border-border pb-[var(--lms-space-4)] text-sm md:grid-cols-2 lg:grid-cols-[auto_auto_auto_minmax(0,1fr)_auto]">
