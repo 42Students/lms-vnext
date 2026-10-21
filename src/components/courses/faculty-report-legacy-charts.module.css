@@ -60,11 +60,11 @@
   background: var(--lms-neutral-100) !important;
 }
 .distributionTrack > div { border-radius: 999px; }
-.distributionExcellent > div { background: #059669 !important; }
+.distributionExcellent > div { background: var(--lms-success) !important; }
 .distributionGood > div { background: #64883c !important; }
-.distributionFair > div { background: #d97706 !important; }
+.distributionFair > div { background: var(--lms-warning) !important; }
 .distributionWeak > div { background: #e36421 !important; }
-.distributionPoor > div { background: #ef4444 !important; }
+.distributionPoor > div { background: var(--lms-error) !important; }
 .accuracyRow {
   min-width: 0;
   padding: 8px 12px;

@@ -301,8 +301,8 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/ui/split-button.tsx`
 - [x] `src/components/verification/CollegeVerificationPanel.tsx`
 - [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
 
 
 ## Dimension sweep: lane chat-9 owns "Colour tokens and raw colours (part 1 of 2)" across the whole codebase
@@ -311,17 +311,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 - [x] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
-- [ ] `src/app/(authenticated)/mentor/activity/page.tsx`
-- [ ] `src/app/globals.css`
-- [ ] `src/app/login-shell.module.css`
-- [ ] `src/components/academics/learner-class-schedule.module.css`
-- [ ] `src/components/academics/legacy-class-month-grid.module.css`
+- [x] `src/app/(authenticated)/mentor/activity/page.tsx`
+- [x] `src/app/globals.css`
+- [x] `src/app/login-shell.module.css`
+- [x] `src/components/academics/learner-class-schedule.module.css`
+- [x] `src/components/academics/legacy-class-month-grid.module.css`
 - [x] `src/components/activity/learner-notifications-inbox.tsx`
-- [ ] `src/components/admin/legacy-college-stat.module.css`
-- [ ] `src/components/courses/college-learner-progress-report.module.css`
-- [ ] `src/components/courses/faculty-course-home-signals.module.css`
-- [ ] `src/components/courses/faculty-report-legacy-charts.module.css`
-- [ ] `src/components/courses/learner-assessment-metrics.module.css`
+- [x] `src/components/admin/legacy-college-stat.module.css`
+- [x] `src/components/courses/college-learner-progress-report.module.css`
+- [x] `src/components/courses/faculty-course-home-signals.module.css`
+- [x] `src/components/courses/faculty-report-legacy-charts.module.css`
+- [x] `src/components/courses/learner-assessment-metrics.module.css`
 - [ ] `src/components/courses/learner-course-progress.module.css`
 - [ ] `src/components/courses/learner-quiz-attempt.module.css`
 - [ ] `src/components/courses/legacy-upload-meter.module.css`

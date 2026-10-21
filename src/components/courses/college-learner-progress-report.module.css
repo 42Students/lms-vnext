@@ -17,14 +17,14 @@
   height: 8px;
   overflow: hidden;
   border-radius: 999px;
-  background: #f1f4f9 !important;
+  background: var(--lms-neutral-100) !important;
 }
 .progressTrack > div {
   border-radius: 999px;
-  background: #6b7280 !important;
+  background: var(--lms-neutral-500) !important;
 }
 .progressValue {
-  color: #1a1d21;
+  color: var(--lms-neutral-900);
   font-size: 12px;
   font-weight: 600;
   font-variant-numeric: tabular-nums;
