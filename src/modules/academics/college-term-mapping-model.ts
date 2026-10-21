@@ -17,13 +17,28 @@ export const newTermCourseCreditsSchema = termCourseCreditsSchema.default(3);
 export function validateFullTermCourseOrder(
   existingIds: readonly string[], proposedIds: readonly string[],
 ): string[] {
-  if (!existingIds.length || !proposedIds.length || existingIds.length !== proposedIds.length ||
+  if (existingIds.length !== proposedIds.length ||
       new Set(proposedIds).size !== proposedIds.length ||
       existingIds.some(id => !proposedIds.includes(id))) {
     throw new Error("TERM_COURSE_POSITION_INVALID");
   }
   return [...proposedIds];
 }
+
+/** The legacy Course Type dropdown has no implicit "elective" guess:
+ * saving a new mapping requires the visible, selected CORE/ELECTIVE value.
+ * Programs with source mandatory flags retain those flags on reads. */
+export const collegeTermCourseTypeOptions=[
+  {value:"CORE",label:"Core (Mandatory)"},
+  {value:"ELECTIVE",label:"Elective"},
+] as const;
+
+export const collegeTermCourseFullOrderSchema=z.strictObject({
+  programTermId:z.uuid(),
+  mappingIds:z.array(z.uuid()).max(100),
+}).refine(value=>new Set(value.mappingIds).size===value.mappingIds.length,{
+  path:["mappingIds"],message:"Select each mapped course only once",
+});
 
 export const collegeTermCourseAddSchema = z.object({
   programTermId: z.string().uuid(),
@@ -79,10 +94,12 @@ export const TERM_MAPPING_COPY = {
   addButton: "Add Courses to Semester",
   removeButton: "Remove",
   courseTypeLabel: "Course Type",
+  reorderButton: "Save Course Order",
+  addIconText: "+",
   core: "Core (Mandatory)",
   elective: "Elective",
   columns: { semester: "Semester", courseName: "Course Name", courseCode: "Course Code", type: "Type", credits: "Credits", actions: "Actions" },
   removeTitle: (course: string) => `Remove “${course}” from this semester?`,
-  addedMessage: (count: number) => `Added ${count} course(s) to this semester.`,
+  addedMessage: (count: number) => count===1 ? "Course added to semester" : `${count} courses added to semester`,
   removedMessage: (course: string) => `Removed “${course}” from this semester.`,
 } as const;
