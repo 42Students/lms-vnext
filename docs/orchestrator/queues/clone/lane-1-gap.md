@@ -43,8 +43,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U002 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/AuthController.java`
 - [x] U003 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyProfileController.java`
 - [x] U004 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LearnerProfileController.java`
-- [ ] U005 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicE2eAuthController.java`
-- [ ] U006 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicMobileAuthController.java`
+- [x] U005 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicE2eAuthController.java`
+- [x] U006 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicMobileAuthController.java`
 - [ ] U007 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminUserAdminController.java`
 - [ ] U008 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/UserController.java`
 - [ ] U009 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/LearnerPlacementProfileController.java`
