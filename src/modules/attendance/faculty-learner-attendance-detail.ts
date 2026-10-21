@@ -100,7 +100,9 @@ export function facultyAttendanceMonthSummary(
   const markedMarks = presentMarks + absentMarks;
   return {
     learnerCount: ids.length,
-    sessionCount: sessions.length,
+    // Only MARKED sessions are evidenced as held; future timetable rows
+    // remain in upcomingSessions and do not inflate legacy held counts.
+    sessionCount: sessions.filter((s) => s.attendanceStatus === "MARKED").length,
     markedSessions: sessions.filter((s) => s.attendanceStatus === "MARKED").length,
     unmarkedSessions: sessions.filter((s) =>
       new Date(s.startsAt).getTime() <= now.getTime() &&

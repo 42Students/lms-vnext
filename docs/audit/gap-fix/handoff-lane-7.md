@@ -1018,3 +1018,12 @@ Legacy temporary testing fallback is intentionally removed. Never restore OTP by
 
 - G2-5-027-002 / G2-7-036-038 | `src/modules/people/college-student-csv-service.ts + import run ledger` | Add exact bulk register/history and audited safe undo after identity/enrollment reconciliation, keep PREVIEW vs IMPORT contract.
 - G2-10-021-030/-053/-054/-103 | `src/modules/placements/super-admin-hr-service.ts + schema` | Plan global-without-college recruiter creation and legacy grant mapping without bypassing verified company relation, contact and expiry rules.
+
+- G2-16-027-046 | `src/modules/attendance/faculty-schedule-mutation-model.ts` | Validate 12h maximum and no-past CREATE in server Zod/transaction; UI-only cap can be bypassed.
+- G2-14-009-015/-051 | `src/components/attendance/faculty-attendance-workspace.tsx` | Ensure Active days derives from marked/held sessions, not future scheduled, matching updated month sessionCount.
+
+- G2-2-030-010/-028 | `src/modules/placements/tpo-configuration-read-service.ts + other choices providers` | Compose genuine authorized 12-key catalogue from owning modules; do not return fabricated empty choices.
+- G2-17-026-010 / G2-18-004-014 | `src/app/(authenticated)/learn/notifications/page.tsx + learner notification source` | Map courseSlug over courseId with authorized enrollment and translate safe known CTA types; legacy tab alias already present.
+
+- G2-5-027-037 | `src/components/college/student-class-move-action.tsx` | On verified successful PATCH, show studentSectionMoveSuccessMessage and refreshed source/destination, do not show preemptively.
+- G2-13-011-024 / G2-18-010-036 | `src/modules/messaging/providers.ts + dev provisioning docs` | Migrate DEV_MAIL_ALLOW exact addresses to AUTH_TEST_EMAILS and classify suppression; domain wildcards require explicit owner approval and remain disabled in nonprod.
