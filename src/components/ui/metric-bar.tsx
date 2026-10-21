@@ -28,13 +28,13 @@ export function MetricBar({
       aria-valuenow={Math.min(safeMaximum, safeValue)}
       aria-valuetext={numericText + (unit ? " " + unit : "")}
       className={cx(
-        "overflow-hidden rounded-full bg-[var(--lms-primary-light)]",
-        size === "compact" ? "h-2" : size === "medium" ? "h-2.5" : "h-3",
+        "overflow-hidden rounded-[3px] bg-[rgba(0,0,0,0.06)]",
+        size === "compact" ? "h-[6px]" : size === "medium" ? "h-2.5" : "h-3",
         className,
       )}
     >
       <div
-        className="h-full rounded-full bg-[var(--lms-primary)] transition-[width] duration-[var(--lms-motion-base)] motion-reduce:transition-none"
+        className="h-full rounded-[3px] bg-[var(--lms-primary)] transition-[width] duration-[var(--lms-motion-base)] motion-reduce:transition-none"
         style={{ width: width + "%" }}
       />
     </div>
