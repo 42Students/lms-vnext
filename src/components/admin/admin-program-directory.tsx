@@ -243,7 +243,16 @@ export function AdminProgramDirectory({
         </div>
         </form>
       </section>
-      <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4" aria-label="Existing Programs"><h2 className="text-base font-semibold">Existing Programs</h2>
+      <section className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4" aria-label="Existing Programs">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+          <h2 className="m-0 text-base font-semibold">Existing Programs</h2>
+          <div className="flex flex-wrap items-center gap-2 print:hidden">
+            <a href={csvHref} download="programs.csv" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Export CSV</a>
+            <Button variant="secondary" size="sm" disabled={refreshPending} className="min-h-11 md:min-h-9"
+              onClick={()=>startRefresh(()=>router.refresh())}>{refreshPending?"Refreshing programs…":"Refresh"}</Button>
+          </div>
+        </div>
+        {refreshPending?<p role="status" aria-live="polite" className="text-sm text-muted-foreground">Refreshing programs…</p>:null}
         <div className="flex min-w-0 flex-col gap-3 print:hidden sm:flex-row sm:items-end sm:justify-between">
           <div className="w-full min-w-0 md:max-w-xl md:flex-1">
             <label htmlFor="admin-program-search" className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search programs or departments</label>
@@ -251,19 +260,6 @@ export function AdminProgramDirectory({
               onChange={(event) => { setSearch(event.target.value); setPage(1); }}
               placeholder="Search programs or departments" />
           </div>
-          <Disclosure title="View options" className="min-w-0 sm:self-end" contentClassName="flex min-w-0 flex-col items-stretch gap-2 pb-3 pt-2 sm:flex-row sm:flex-wrap sm:items-end">
-            <PageSizeSelect id="admin-program-page-size" label="Rows per page"
-              options={[10, 25, 50, 100]} value={pageSize}
-              onChange={(event) => { rememberSize(Number(event.target.value)); setPage(1); }}
-              wrapperClassName="min-w-0 flex-1 sm:w-28 sm:flex-none" />
-            {filtered.length ? (
-              <a
-                href={csvHref} download="programs.csv"
-                className="inline-flex min-h-11 flex-1 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-[var(--lms-font-base)] font-[650] text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] sm:min-h-9 sm:flex-none md:min-h-9 text-sm"
-              >Export CSV</a>
-            ) : <Button variant="secondary" disabled>Export CSV</Button>}
-            <Button variant="secondary" className="min-h-11 flex-1 sm:min-h-9 sm:flex-none" onClick={() => router.refresh()}>Refresh</Button>
-          </Disclosure>
         </div>
         <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
           <p role="status" aria-live="polite" className="text-sm text-muted-foreground">
@@ -273,18 +269,21 @@ export function AdminProgramDirectory({
             onClick={() => { setSearch(""); setPage(1); }}>Clear search</Button> : null}
         </div>
         <DataTable columns={columns(departments)} rows={result.items}
+          mobileMode="scroll" className="min-w-0 [&_table]:min-w-max"
           getRowKey={(item) => item.id}
           empty={<p className="m-0 text-sm text-muted-foreground">
-            {search
-              ? "No programs found."
-              : departments.length === 0
-                ? "No programs found. Create a department first."
-                : "No programs found. Create a new program using the form beside this list."}
+            {search.trim()
+              ? "No matching programs. Clear search to see all."
+              : "No programs found. Create a department first."}
           </p>} />
         {result.total > 0 ? (
           <div className="flex min-w-0 flex-col gap-3 text-sm text-muted-foreground print:hidden md:flex-row md:items-center md:justify-between">
             <span>Showing {(result.page - 1) * pageSize + 1}–{Math.min(result.page * pageSize, result.total)} of {result.total}</span>
             <div className="flex min-w-0 flex-wrap items-center justify-start gap-2 md:justify-end">
+              <PageSizeSelect id="admin-program-page-size" label="Rows per page"
+               options={[10,25,50,100]} value={pageSize}
+               onChange={event=>{rememberSize(Number(event.target.value));setPage(1);}}
+               wrapperClassName="w-28 shrink-0" />
               <Button size="sm" variant="secondary" className="min-h-11 md:min-h-9" disabled={result.page === 1}
                 onClick={() => setPage(result.page - 1)}>Previous</Button>
               <span aria-live="polite">Page {result.page} of {result.pages}</span>
