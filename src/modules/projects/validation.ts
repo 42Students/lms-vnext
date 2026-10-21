@@ -435,6 +435,7 @@ export const projectMentorCandidateQuerySchema = z
       z.string().regex(/^[0-9]+$/).transform(Number)
         .pipe(z.number().int().min(1).max(100)),
     ]).default(50),
+    offset:z.number().int().min(0).max(99900).default(0),
   })
   .strict();
 

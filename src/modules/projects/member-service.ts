@@ -267,7 +267,7 @@ export async function listProjectMentorCandidates(
       asc(users.displayName),
       asc(collegeMemberships.id),
     )
-    .limit(query.limit);
+    .limit(query.limit).offset(query.offset);
   });
 }
 

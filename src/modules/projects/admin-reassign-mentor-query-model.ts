@@ -10,6 +10,7 @@ const schema=z.strictObject({
   fromMentorId:z.union([z.string().uuid(),z.literal("UNASSIGNED")]).optional(),
   projectId:z.string().uuid().optional(),
   mentorSearch:z.string().trim().max(100).default(""),
+  mentorPage:decimal(1,1000,1),
   q:z.string().trim().max(120).optional(),
   status:z.enum(["PLANNED","ACTIVE","COMPLETED","ARCHIVED"]).optional(),
   page:decimal(1,10000,1),
@@ -23,7 +24,7 @@ export function parseProjectAdminReassignMentorQuery(
   params:Record<string,string|string[]|undefined>,
 ){
   if(Object.values(params).some(Array.isArray)||Object.keys(params).some(key=>
-    !["fromMentorId","projectId","mentorSearch","q","status","page","pageSize"].includes(key)))
+    !["fromMentorId","projectId","mentorSearch","mentorPage","q","status","page","pageSize"].includes(key)))
     return schema.safeParse(null);
   const entries=Object.fromEntries(Object.entries(params).filter(([key,value])=>
     value!==undefined&&(value!==""||key==="page"||key==="pageSize")));
@@ -41,6 +42,7 @@ export function projectAdminReassignMentorHref(
   if(query.fromMentorId)params.set("fromMentorId",query.fromMentorId);
   if(query.projectId)params.set("projectId",query.projectId);
   if(query.mentorSearch)params.set("mentorSearch",query.mentorSearch);
+  if(query.mentorPage>1)params.set("mentorPage",String(query.mentorPage));
   if(query.q)params.set("q",query.q);
   if(query.status)params.set("status",query.status);
   if(query.page>1)params.set("page",String(query.page));
