@@ -8,6 +8,7 @@ export const tpoDraftDriveStepOneSchema = z.object({
   title: z.string().trim().min(2).max(200),
   description: z.string().trim().min(1).max(20000),
   employmentType: z.enum(["FULL_TIME", "INTERNSHIP", "CONTRACT"]),
+  jobTypeLabel: z.string().trim().min(2).max(40).optional(),
   workMode: z.enum(["ONSITE", "REMOTE", "HYBRID"]),
   applicationDeadline: z.iso.datetime({ offset: true }).nullable(),
 }).strict().superRefine((value, ctx) => {
