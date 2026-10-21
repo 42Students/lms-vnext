@@ -130,6 +130,29 @@ export function LearnerQuizAttempt() {
   useEffect(() => () => { cancelPendingReturn.current?.(); }, []);
   const [error, setError] = useState<string | null>(null);
   const [accountScope,setAccountScope]=useState<string|null>(null);
+  const zUuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  // Old bookmarked /quiz?quizId=... links omitted deliveryId. Never guess
+  // a course from a numeric ID, or select the first of several enrollments:
+  // the own-attempts endpoint resolves only a uniquely authorized delivery.
+  // Replace the old location so Back does not loop through a broken URL.
+  useEffect(()=>{
+    if(!quizId||deliveryId)return;
+    const controller=new AbortController();
+    void fetch("/api/courses/quizzes/"+encodeURIComponent(quizId)+"/my-attempts",{
+      cache:"no-store",signal:controller.signal,
+    }).then(async response=>{
+      if(!response.ok)return;
+      const body:unknown=await response.json();
+      const value=body&&typeof body==="object"&&"deliveryId" in body
+        ?(body as {deliveryId:unknown}).deliveryId:null;
+      if(typeof value!=="string"||!zUuid.test(value)||controller.signal.aborted)return;
+      const newParams=new URLSearchParams({quizId,deliveryId:value});
+      if(reviewRequested)newParams.set("review","true");
+      if(returnToRaw&&returnToRaw===returnTo)newParams.set("returnTo",returnTo);
+      router.replace("/quiz?"+newParams.toString());
+    }).catch(()=>{ /* No unique authorized delivery: retain safe error state. */ });
+    return ()=>controller.abort();
+  },[quizId,deliveryId,reviewRequested,returnToRaw,returnTo,router]);
   useEffect(()=>{
     const controller=new AbortController();
     void fetch("/api/auth/memberships",{cache:"no-store",signal:controller.signal})
