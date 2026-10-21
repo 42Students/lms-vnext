@@ -155,13 +155,15 @@ export async function listTpoLeads(
       isNull(placementTpoFollowups.doneAt),
     )).groupBy(placementTpoFollowups.leadId),
     getTpoRecruiterLeadStages(context, collegeId),
-    db.select({
+    db.selectDistinctOn([placementTpoLeadActivities.leadId],{
       leadId:placementTpoLeadActivities.leadId,
-      lastActivityAt:max(placementTpoLeadActivities.createdAt),
+      lastActivityAt:placementTpoLeadActivities.createdAt,
+      lastActivityType:placementTpoLeadActivities.type,
     }).from(placementTpoLeadActivities).where(and(
       eq(placementTpoLeadActivities.collegeId,collegeId),
       inArray(placementTpoLeadActivities.leadId,ids),
-    )).groupBy(placementTpoLeadActivities.leadId),
+    )).orderBy(placementTpoLeadActivities.leadId,
+      desc(placementTpoLeadActivities.createdAt),desc(placementTpoLeadActivities.id)),
     db.select({membershipId:collegeMemberships.id,ownerName:users.displayName})
       .from(collegeMemberships)
       .innerJoin(users,eq(users.id,collegeMemberships.userId))
@@ -171,13 +173,13 @@ export async function listTpoLeads(
   const contactByLead = new Map(contacts.map(row => [row.leadId, row.lastContactAt]));
   const nextByLead = new Map(followups.map(row => [row.leadId, row.nextFollowupAt]));
   const now = new Date();
-  const activityByLead=new Map(activities.map(row=>[row.leadId,row.lastActivityAt]));
+  const activityByLead=new Map(activities.map(row=>[row.leadId,row]));
   const ownerByMembership=new Map(owners.map(row=>[row.membershipId,row.ownerName]));
   return rows.map(row => ({
     ...tpoLeadView(row, recruiterAttentionFromPersistedFacts({
     createdAt: row.createdAt,
     lastContactAt: contactByLead.get(row.id) ? new Date(contactByLead.get(row.id)!) : null,
-    lastActivityAt:activityByLead.get(row.id)??null,
+    lastActivityAt:activityByLead.get(row.id)?.lastActivityAt??null,
     stage:stages.get(row.id),
     nextFollowupAt: nextByLead.get(row.id) ? new Date(nextByLead.get(row.id)!) : null,
     inviteBouncedAt: row.inviteBouncedAt,
@@ -187,7 +189,8 @@ export async function listTpoLeads(
     unsubscribedAt: row.unsubscribedAt,
   }, now), stages.get(row.id)),
     ownerName:row.ownerMembershipId?ownerByMembership.get(row.ownerMembershipId)??null:null,
-    lastActivityAt:activityByLead.get(row.id)?.toISOString()??null,
+    lastActivityAt:activityByLead.get(row.id)?.lastActivityAt.toISOString()??null,
+    lastActivityType:activityByLead.get(row.id)?.lastActivityType??null,
     nextFollowupAt:nextByLead.get(row.id)?.toISOString()??null,
     inviteStatus:row.recruiterUserId?"JOINED":row.inviteBouncedAt?"BOUNCED":
       row.inviteClickedAt?"OPENED":row.inviteSentAt?"SENT":"NOT_INVITED",
