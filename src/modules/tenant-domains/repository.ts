@@ -24,6 +24,34 @@ import {
   type TenantDomainView,
 } from "./service";
 
+/** Legacy DNS debugging recorded up to 500 raw TXT characters. Never do
+ * that for vNext: TXT often embeds ownership secrets. Persist only one
+ * allowlisted outcome and give operators bounded safe diagnostic guidance.
+ * Client and activity-event payloads must not include the observed DNS rows. */
+export function tenantDnsDiagnostic(result:"VERIFIED"|"TXT_RECORD_MISSING"|"TXT_VALUE_MISMATCH"|"DNS_LOOKUP_FAILED"){
+ const description=result==="VERIFIED"?"Expected challenge matched":
+  result==="TXT_VALUE_MISMATCH"?"TXT records exist, but the current token did not match":
+  result==="TXT_RECORD_MISSING"?"No ownership challenge was found":
+  "DNS lookup timed out or failed";
+ return {result,description:description.slice(0,500),
+  retryable:result!=="VERIFIED",observedTxtValuesStored:false} as const;
+}
+
+/** Tenant host resolution in this repository is a current-row PostgreSQL
+ * query, not a process-cached mutable map:
+ * 1. DNS verifier checks the current token; recordVerificationResult stores
+ *    verified status, safely categorized result and immutable activity event.
+ * 2. Primary changes and host edits update verified/primary flags in the same
+ *    database transaction.
+ * 3. deleteDomain soft-deletes the row, clearing isVerified and isPrimary.
+ * 4. SSR request tenant resolution must call resolveVerifiedHost using the
+ *    request's normalized host; its WHERE clause denies deleted, unverified,
+ *    inactive-college and inactive-organization bindings.
+ * With no cached domain lookup, the next SSR read sees committed changes.
+ * A deployment CDN cache of tenant login HTML must be separately disabled
+ * or purged after domain mutations; never key one college's HTML by another
+ * college's host or fall back to an unverified binding.
+ */
 function isUniqueViolation(error: unknown) {
   return Boolean(
     error &&
@@ -340,7 +368,7 @@ export const drizzleTenantDomainRepository: TenantDomainRepository = {
           lastCheckResult: input.result,
           // Never store raw DNS TXT values (which may contain challenge
           // secrets). Keep a finite, human-readable failure category only.
-          lastFoundValues:input.result==="TXT_VALUE_MISMATCH"?"TXT value does not match":null,
+          lastFoundValues:input.verified?null:tenantDnsDiagnostic(input.result).description,
           updatedAt: input.checkedAt,
         })
         .where(and(eq(tenantDomains.id, domainId),isNull(tenantDomains.deletedAt)));

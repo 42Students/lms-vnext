@@ -78,7 +78,7 @@ export default async function TenantDirectory({searchParams}:{
     permitted safety scope before opening Launch setup.
   </Banner>
   <form className="grid gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] min-[768px]:grid-cols-2 xl:grid-cols-4">
-   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">College
+   <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search college, code, city or organization
     <Input type="search" name="q" maxLength={100} defaultValue={data.query.q}
      className="min-h-11 md:min-h-9"/>
    </label>
@@ -96,7 +96,10 @@ export default async function TenantDirectory({searchParams}:{
    </label>
    <Button type="submit" className="min-h-11 w-full self-end md:min-h-9 md:w-auto">Filter</Button>
   </form>
-  <p className="m-0 break-words text-xs text-muted-foreground">{data.total.toLocaleString("en-IN")} matching colleges · page {data.query.page} of {data.totalPages}</p>
+  <p className="m-0 break-words text-xs text-muted-foreground">
+   {data.total.toLocaleString("en-IN")} matching colleges · 25 per page · page {data.query.page} of {data.totalPages}.
+   Sorted by college name, then stable college identifier.
+  </p>
   <DataTable<(typeof data.items)[number]>
     caption="Tenant directory"
     rows={data.items}
@@ -109,7 +112,9 @@ export default async function TenantDirectory({searchParams}:{
         </Link>
         <span className="mt-1 block break-all text-xs text-muted-foreground">{tenant.code}</span>
       </>},
+      {key:"code",header:"Unique ID",mobilePriority:"secondary",cell:tenant=>tenant.uniqueId},
       {key:"organization",header:"Organization",mobilePriority:"secondary",cell:tenant=>tenant.organizationName},
+      {key:"city",header:"City",mobilePriority:"secondary",cell:tenant=>tenant.city||"—"},
       {key:"status",header:"Lifecycle",mobilePriority:"secondary",cell:tenant=>
         <div className="flex min-w-0 flex-wrap items-center gap-2">
           <StatusBadge tone={tenant.status==="ACTIVE"?"success":"neutral"}>College {tenant.status}</StatusBadge>
@@ -117,9 +122,9 @@ export default async function TenantDirectory({searchParams}:{
         </div>},
       {key:"location",header:"Location",mobilePriority:"secondary",cell:tenant=>
         [tenant.city,tenant.state,tenant.country].filter(Boolean).join(", ")||"Location not recorded"},
-      {key:"action",header:"Action",mobilePriority:"action",cell:tenant=>
+      {key:"action",header:"Manage College",mobilePriority:"action",cell:tenant=>
         <Link href={"/admin/colleges/"+encodeURIComponent(tenant.id)}
-          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Tenant details →</Link>},
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline-offset-2 hover:underline md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Manage →</Link>},
     ]}
     empty={<EmptyState title="No matching tenants" description="No colleges in the current scope match these lifecycle filters."
       action={<Link href="/admin/tenants" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Clear filters</Link>}/>}

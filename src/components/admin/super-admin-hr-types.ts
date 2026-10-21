@@ -31,6 +31,8 @@ export type HrAccount = {
   legacyStatus?:"ACTIVE"|"SUSPENDED"|"DELETED"|null;
   grants: HrGrant[];
   grantHistory?: HrGrant[];
+  /** Original integer recruiter identifier only for verified legacy imports. */
+  legacyNumericId?:number|null;
 };
 
 export type HrAccountsPageData = {
@@ -102,14 +104,24 @@ export function hrActiveCollegeCount(account:HrAccount,now:Date=new Date()):numb
  ).map(grant=>grant.collegeId));
  return current.size;
 }
+/** Combine current and ended college grants without presenting a revoked
+ * historical grant as active. Consumers should show status/expiry per row. */
+export function hrAllGrants(account:Pick<HrAccount,"grants"|"grantHistory">):HrGrant[]{
+ return [...new Map([
+  ...(account.grantHistory??[]),...account.grants,
+ ].map(grant=>[grant.id,grant] as const)).values()];
+}
 export function hrDisplayName(
-  account: Pick<HrAccount, "displayName" | "phoneE164">,
-) {
-  return (
-    account.displayName?.trim() ||
-    account.phoneE164 ||
-    "Unnamed recruiter"
-  );
+ account:Pick<HrAccount,"displayName"|"phoneE164"> & {legacyNumericId?:number|null},
+){
+ const name=account.displayName?.trim();
+ if(name)return name;
+ // Never infer a legacy numeric ID from the canonical UUID, and never
+ // surface private phone numbers when a verified legacy label is present.
+ if(account.legacyNumericId!==undefined&&account.legacyNumericId!==null
+  &&Number.isSafeInteger(account.legacyNumericId)&&account.legacyNumericId>=0)
+  return "#"+account.legacyNumericId;
+ return account.phoneE164||"Unnamed recruiter";
 }
 
 export function hrApiErrorMessage(

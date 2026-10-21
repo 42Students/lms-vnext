@@ -20,7 +20,8 @@ export function parseTenantLifecycleSearchParams(raw:Record<string,string|string
  );
  return parsed.success?parsed.data:null;
 }
-export const TENANT_LIFECYCLE_PAGE_SIZE = 20;
+/** Legacy Colleges and Organizations tables paginate 25 per page. */
+export const TENANT_LIFECYCLE_PAGE_SIZE = 25;
 export function tenantLifecyclePaging(total: number, requested: number) {
   const totalPages = Math.max(1, Math.ceil(total / TENANT_LIFECYCLE_PAGE_SIZE));
   const page = Math.min(tenantLifecycleQuerySchema.parse({ page: requested }).page, totalPages);
