@@ -6,6 +6,7 @@ import {
 import { PageHeader } from "@/components/ui/page-header";
 import { getLearnerAssessmentOverview } from "@/modules/courses/learner-assessment-service";
 import { AuthorizationError } from "@/modules/permissions/policy";
+import {hasMembershipRole} from "@/modules/identity/context";
 import Link from "next/link";
 import { Alert } from "@/components/ui/alert";
 import {redirect} from "next/navigation";
@@ -19,7 +20,13 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
   try {
     overview=await getLearnerAssessmentOverview(context,{courseId:query.course});
   } catch(error) {
-    if(error instanceof AuthorizationError)throw error;
+    if(error instanceof AuthorizationError){
+      // Old QuizzesContent was shared by faculty and learners. Keep the
+      // learner-only route secure while recovering faculty-only bookmarks.
+      if(hasMembershipRole(context,"FACULTY")&&!hasMembershipRole(context,"LEARNER"))
+        redirect("/teacher/allQuizzes");
+      throw error;
+    }
     // Render a genuine failure, not a fabricated empty successful quiz list.
     const course=typeof query.course==="string"&&
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(query.course)
