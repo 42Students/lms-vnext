@@ -1,3 +1,5 @@
 import HrHome from "@/app/(authenticated)/hr/home/page";
-/** Legacy entrypoint retains the URL while rendering the same scoped HR home. */
-export default function RecruiterHome(){return <HrHome/>;}
+/** Preserve /recruiter/home while forwarding the selected recruiter college. */
+export default function RecruiterHome({searchParams}:{
+ searchParams:Promise<{collegeId?:string|string[]}>
+}){return <HrHome searchParams={searchParams}/>;}
