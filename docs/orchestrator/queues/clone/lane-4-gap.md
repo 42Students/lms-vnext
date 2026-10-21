@@ -67,7 +67,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicPlacementsPageController.java`
 - [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LectureHallController.java`
 - [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/tpo/team.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/audit.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/audit.js`
 - [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ModuleAccess.js`
 - [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js`
 - [ ] U032 (Cross-cutting area) `cross/04: Notifications: in-app, email, SMS, push; every trigger, template, recipient rule, unsubscribe`
