@@ -8,7 +8,7 @@ import {Banner} from "@/components/ui/banner";
 import {Input} from "@/components/ui/input";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
-import { useRef, useState, type FormEvent, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
 import { useFormDraft } from "@/hooks/use-form-draft";
 import { apiFetch, FriendlyFetchError } from "@/lib/api-fetch";
 import { friendlyApiError } from "@/lib/friendly-error";
@@ -37,6 +37,9 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   const [similarLoading,setSimilarLoading]=useState(false);
   const [similarError,setSimilarError]=useState("");
   const [similarSearched,setSimilarSearched]=useState(false);
+  const similarRequest=useRef(0);
+  const [recentContext,setRecentContext]=useState({reporterName:"",accountRole:"",environment:""});
+  const [screenshotStatus,setScreenshotStatus]=useState("Screenshot upload is unavailable until private object scanning and signed storage are enabled.");
   const selectedPage = LOCATION_OPTIONS.find(item => item.value === page);
   const selectedScreen = selectedPage?.children?.find(item => item.value === screen);
 
@@ -91,6 +94,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       return;
     }
     setFieldErrors({});
+    // Flush the last keystroke before the network request begins; do not
+    // discard a draft on validation failure, provider error or link retry.
     flushDraft();
     submitLock.current=true;
     setPending(true); setError("");
@@ -100,6 +105,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         body: JSON.stringify(parsed.data),
       });
       clearDraft();
+      setRecentContext({reporterName:draft.reporterName,
+        accountRole:draft.accountRole,environment:draft.environment});
       setCreated(payload.issue.publicId);
       await linkCreatedIssue(payload.issue.publicId);
     } catch (caught) {
@@ -112,18 +119,51 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   }
 
   async function checkSimilar(){
-    if(!canSearchSimilar)return;
-    if(similarLoading || similarQuery.trim().length<3)return;
+    if(!canSearchSimilar||similarQuery.trim().length<15)return;
+    const generation=++similarRequest.current;
     setSimilarLoading(true);setSimilarError("");setSimilarResults([]);setSimilarSearched(false);
     try{
-      const query=new URLSearchParams({q:similarQuery.trim(),limit:"5",sort:"newest"});
+      const params=new URLSearchParams({q:similarQuery.trim().slice(0,100),limit:"5",sort:"newest"});
       const result=await apiFetch<{items:{publicId:string;description:string;status:string}[]}>(
-        "/api/tracker/issues?"+query.toString(),{cache:"no-store"});
-      setSimilarResults(result.items??[]);setSimilarSearched(true);
-    }catch(cause){
-      setSimilarError("Related issues are temporarily unavailable.");
-    }finally{setSimilarLoading(false);}
+        "/api/tracker/issues?"+params.toString(),{cache:"no-store"});
+      if(generation!==similarRequest.current)return;
+      setSimilarResults((result.items??[]).slice(0,5));setSimilarSearched(true);
+    }catch{
+      if(generation===similarRequest.current)
+        setSimilarError("Related issues are temporarily unavailable. You can still submit your report.");
+    }finally{
+      if(generation===similarRequest.current)setSimilarLoading(false);
+    }
   }
+  // Legacy related-issue lookup runs after a short description debounce.
+  // Ignore late responses when the user changes text or another search wins.
+  useEffect(()=>{
+    if(!canSearchSimilar)return;
+    const phrase=draft.description.trim().slice(0,100);
+    const generation=++similarRequest.current;
+    if(phrase.length<15){
+      setSimilarResults([]);setSimilarSearched(false);setSimilarLoading(false);
+      return;
+    }
+    const timer=window.setTimeout(()=>{
+      setSimilarQuery(phrase);
+      setSimilarLoading(true);setSimilarError("");
+      const params=new URLSearchParams({q:phrase,limit:"5",sort:"newest"});
+      void apiFetch<{items:{publicId:string;description:string;status:string}[]}>(
+        "/api/tracker/issues?"+params.toString(),{cache:"no-store"})
+        .then(result=>{
+          if(generation!==similarRequest.current)return;
+          setSimilarResults((result.items??[]).slice(0,5));setSimilarSearched(true);
+        })
+        .catch(()=>{
+          if(generation!==similarRequest.current)return;
+          setSimilarError("Related issues are temporarily unavailable. You can still report.");
+          setSimilarSearched(false);
+        })
+        .finally(()=>{if(generation===similarRequest.current)setSimilarLoading(false);});
+    },500);
+    return ()=>{window.clearTimeout(timer);similarRequest.current++;};
+  },[canSearchSimilar,draft.description]);
 
   function onFormKeyDown(event: KeyboardEvent<HTMLFormElement>) {
     if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
@@ -133,10 +173,15 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
   }
 
   if (created) return (
-    <section className="space-y-4 border-b border-border py-5" aria-live="polite">
-      <StatusBadge tone="success">Issue reported</StatusBadge>
-      <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{created}</h2>
+    <section className="space-y-4 rounded-[var(--lms-canvas-radius)] border border-border bg-white p-6" aria-live="polite">
+      <div className="flex items-center gap-2">
+        <span aria-hidden="true" className="text-2xl font-semibold text-success">✓</span>
+        <span className="text-xs uppercase tracking-wide text-muted-foreground">Issue reported</span>
+        <StatusBadge tone="success">Saved</StatusBadge>
+      </div>
+      <h1 className="font-semibold text-2xl leading-8 text-[var(--lms-heading)]">{created}</h1>
       <p className="text-sm text-body leading-[22px]">The issue is saved. You can continue testing immediately.</p>
+      <p className="text-sm text-muted-foreground">Screenshots: 0 uploaded. Private screenshot uploads are not yet enabled.</p>
       {linkIssueError?<InlineNotice tone="error" message={linkIssueError}/>:null}
       {knownErrorId&&linkIssueError?<Button type="button"
         variant="secondary"
@@ -145,7 +190,7 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
       <div className="flex flex-wrap gap-3">
         <Link className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none" href={(canSearchSimilar?"/tracker/issues/":"/tracker/mine/") + encodeURIComponent(created)}>View issue</Link>
         <Button 
-          onClick={() => {setCreated("");setDraft(initial);clearDraft();setError("");}}
+          onClick={() => {setCreated("");setDraft({...initial,...recentContext});clearDraft();setError("");setScreenshotStatus("Screenshot upload is unavailable until private object scanning and signed storage are enabled.");}}
           type="button" className="min-h-11 md:min-h-9">Report another</Button>
       </div>
     </section>
@@ -153,12 +198,13 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
 
   return (
     <form onSubmit={submit} onKeyDown={onFormKeyDown}
-      className="space-y-5">
+      className="space-y-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-white p-4 md:p-6">
       {restored?<Banner tone="info" action={<Button type="button" variant="secondary" onClick={()=>{setDraft(initial);clearDraft();}}>Discard draft</Button>}>
         Unsaved report restored.
       </Banner>:null}
       {dirty?<p className="text-xs text-muted-foreground leading-[20px]">Unsaved changes are kept on this device until your report is submitted.</p>:null}
-      <div className="grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
+      {error ? <InlineNotice tone="error" message={error}/> : null}
+      <div className="grid gap-4 min-[768px]:grid-cols-3">
         <label className={label}>Reporter
           <Select className={field} name="reporterName" required value={draft.reporterName} onChange={event=>patch("reporterName",event.target.value)}>
             <option value="" disabled>Select reporter</option>
@@ -213,8 +259,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
           </label>
         </div>
       </fieldset>
-      <div className="grid gap-4 min-[768px]:grid-cols-2 min-[992px]:grid-cols-3">
-        <label className={label + " min-[992px]:col-span-2"}>What kind of issue?
+      <div className="grid gap-4 min-[768px]:grid-cols-3">
+        <label className={label + " min-[768px]:col-span-2"}>What kind of issue?
           <Select className={field} name="issueType" required value={draft.issueType} onChange={event=>patch("issueType",event.target.value)}>
             <option value="" disabled>Search issue type</option>
             {ISSUE_TYPE_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
@@ -228,19 +274,35 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </label>
       </div>
       <label className={label}>What went wrong?
-        <Textarea className={field + " min-h-36 max-h-80"} name="description" required maxLength={4000} rows={5}
-          value={draft.description} onChange={event=>patch("description",event.target.value)}
+        <Textarea className={field + " min-h-36 max-h-80 resize-y overflow-y-auto"} name="description" required maxLength={4000} rows={5}
+          value={draft.description} onChange={event=>{
+            patch("description",event.target.value);
+            const element=event.currentTarget;
+            element.style.height="auto";
+            element.style.height=Math.min(element.scrollHeight,320)+"px";
+          }}
           placeholder="Example: I opened Lesson 3 and the lesson content kept loading without showing anything." />
         <span className="mt-1 block text-xs font-normal text-muted-foreground" aria-live="polite">{draft.description.length}/4000 characters</span>
         {fieldErrors.description?<span role="alert" className="mt-1 block text-xs text-error">{fieldErrors.description}</span>:null}
       </label>
-      <section className="min-w-0 border-b border-border pb-4" aria-label="Optional evidence link">
+      <section className="min-w-0 space-y-2 border-b border-border pb-4" aria-label="Screenshots and optional evidence">
+        <h2 className="text-sm font-semibold text-[var(--lms-heading)]">Screenshots</h2>
+        <div className="rounded-[var(--lms-control-radius)] border border-dashed border-border bg-[var(--lms-neutral-50)] p-4 text-sm text-muted-foreground">
+          <label className="flex min-w-0 items-center gap-2">
+            <input aria-label="Screenshot picker currently unavailable" type="file"
+              accept="image/png,image/jpeg,image/webp" disabled
+              className="min-w-0 max-w-full"/>
+            <span>Private upload unavailable</span>
+          </label>
+          <p role="status" className="mt-2">{screenshotStatus}</p>
+        </div>
         <label className={label + " mt-2"}>Evidence link
           <Input className={field} name="evidenceLink" type="url" maxLength={1000} placeholder="https://…" value={draft.evidenceLink} onChange={event=>patch("evidenceLink",event.target.value)}/>
           <span className="mt-1 block text-xs font-normal text-muted-foreground">
-            Optional — add a shareable HTTP/HTTPS evidence link (HTTPS recommended). Do not share private screenshots through public URLs. Direct clipboard paste and unscanned attachments are not accepted.
+            Optional — use this for a screen recording, Drive file, or other useful http/https link.
           </span>
         </label>
+        <p className="text-xs text-muted-foreground">For privacy, never publish private screenshots via an unrestricted URL.</p>
       </section>
       {canSearchSimilar ? <>
       <details aria-label="Similar issues" className="min-w-0 border-y border-border py-4" open={Boolean(similarQuery.trim())}>
@@ -252,16 +314,17 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
             maxLength={100} placeholder="e.g. Quiz submission"
             className={field+" min-h-11 min-w-0 w-full basis-full md:w-55 md:basis-auto md:flex-none"}/>
           <Button type="button" onClick={()=>void checkSimilar()}
-            disabled={similarLoading||similarQuery.trim().length<3} loading={similarLoading}
+            disabled={similarLoading||similarQuery.trim().length<15} loading={similarLoading}
             variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">
             {similarLoading?"Searching…":"Find similar issues"}
           </Button>
         </div>
+        {similarLoading?<p role="status" className="mt-2 text-xs text-muted-foreground">Checking for similar reports…</p>:null}
         {similarError?<InlineNotice tone="error" message={similarError}/>:null}
-        {similarSearched?<div role="status" className="mt-2 text-sm">
+        {similarSearched&&similarResults.length?<div role="status" className="mt-2 text-sm">
           {similarResults.length?<ul className="divide-y divide-border">
             {similarResults.map(issue=><li key={issue.publicId} className="py-3">
-              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{issue.publicId}</Link>
+              <Link href={"/tracker/issues/"+encodeURIComponent(issue.publicId)} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{issue.publicId}</Link>
               <span className="ml-2 inline-flex align-middle"><StatusBadge tone="neutral">{issue.status}</StatusBadge></span>
               <p className="mt-1 break-words text-xs text-body leading-[20px]">{issue.description.slice(0,160)}</p>
             </li>)}
@@ -269,9 +332,8 @@ export function TrackerReportForm({contextPrefill="",canSearchSimilar=true,known
         </div>:null}
       </details>
       </> : null}
-      {error ? <InlineNotice tone="error" message={error}/> : null}
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-muted-foreground leading-[20px]">Draft saves automatically on this device. Ctrl/⌘ + Enter to submit. Private screenshot uploads are not yet enabled.</p>
+        <p className="text-xs text-muted-foreground leading-[20px]">Draft saves automatically · Paste screenshots anywhere once private uploads are available · Ctrl/⌘ + Enter to submit.</p>
         <Button disabled={pending} loading={pending} type="submit" className="min-h-11 w-full md:min-h-9 md:w-auto">
           {pending ? "Reporting…" : "Report issue"}
         </Button>
