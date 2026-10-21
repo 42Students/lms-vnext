@@ -32,7 +32,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
   <PageHeader eyebrow="TPO · Applicant detail"
    title={data.application.student??"Name not recorded"}
    description={data.job.title+" · "+data.application.roleTitle}
-   actions={<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">← Applicant pipeline</Link>}/>
+   actions={<Link href={"/tpo/placements/jobs/"+jobId+"/applicants-pipeline"} className="inline-flex min-h-11 w-full items-center justify-center text-sm font-semibold text-[var(--lms-link-text)] underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-[var(--lms-control-height)] min-[768px]:w-auto">← Applicant pipeline</Link>}/>
   <section className="border-b border-border pb-6">
    <h2 className="font-semibold text-foreground">Application and screening</h2>
    <dl className="mt-3 grid min-w-0 grid-cols-1 gap-x-6 min-[768px]:grid-cols-2">
@@ -42,7 +42,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
       </div>)}
    </dl>
    <Link href={"/tpo/students/"+data.application.membershipId+"/history"}
-    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">
+    className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-[var(--lms-teal-deep)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">
     View student placement history →</Link>
   </section>
   {data.application.screeningUpdatedAt && canReviewApplicant(data.applicantStatus, data.screening) ?
@@ -51,7 +51,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
   <ApplicantNotesPanel endpoint={"/api/placements/tpo/jobs/"+jobId+"/applicants/"+applicationId+"/notes"}
    snapshot={notes} audience="the college placement cell (TPO)"/>
   <details className="border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Applied round outcomes <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Applied round outcomes <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
    {data.resultsTruncated?<Alert tone="warning">Only 100 applied result versions examined.</Alert>:null}
    {data.appliedRoundResults.length===0?<EmptyState title="No applied round outcomes recorded for this application."/>:
     <div className="mt-3 grid gap-3">{data.appliedRoundResults.map(r=>
@@ -62,7 +62,7 @@ export default async function TpoApplicantDetailPage({params}:Params){
      </article>)}</div>}
   </details>
   <details className="border-b border-border pb-6">
-   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Offer and joining evidence <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
+   <summary className="min-h-11 cursor-pointer list-none py-2 font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] [&::-webkit-details-marker]:hidden">Offer and joining evidence <span aria-hidden="true" className="ml-2 text-primary-text">⌄</span></summary>
    {data.offersTruncated?<Alert tone="warning">Only the latest 100 offer versions examined.</Alert>:null}
    {data.offers.length===0?<EmptyState title="No persisted offer versions for this application."/>:
     <div className="mt-3 grid gap-3">{data.offers.map(offer=>

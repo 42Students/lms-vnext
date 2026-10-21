@@ -45,7 +45,7 @@ export default async function TpoMorePage() {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="group block min-h-11 min-w-0 border-b border-border py-4 transition-colors hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9"
+                  className="group block min-h-11 min-w-0 border-b border-border py-4 transition-colors hover:bg-[rgba(38,186,199,0.07)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9"
                 >
                   <div className="flex min-w-0 items-start justify-between gap-3">
                     <h3 className="min-w-0 break-words text-base font-semibold text-link">
@@ -69,7 +69,7 @@ export default async function TpoMorePage() {
       </nav>
 
       <details className="min-w-0 text-xs leading-5 text-muted-foreground">
-        <summary className="min-h-11 cursor-pointer py-3 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary min-[768px]:min-h-9">Only implemented TPO destinations are linked.</summary>
+        <summary className="min-h-11 cursor-pointer py-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Only implemented TPO destinations are linked.</summary>
         <p className="mt-2 max-w-prose">This navigation links to the implemented scoped tools; complete
           legacy Messages and Settings parity remains open.</p>
       </details>
