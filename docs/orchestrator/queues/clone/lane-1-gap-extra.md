@@ -8,7 +8,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 
 - [x] L11-U031 (Cross-cutting area) `cross/11: Forms: validation rules, error wording, required markers, date/number formats, phone/email handling`
 - [x] L12-U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/notifications/NotificationSearchController.java`
-- [ ] L12-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoResultsController.java`
+- [x] L12-U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoResultsController.java`
 - [ ] L12-U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/InterviewForm.js`
 - [ ] L13-U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/FacultyLessonContentController.java`
 - [ ] L14-U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SuperAdminFeatureController.java`
