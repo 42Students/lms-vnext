@@ -13,6 +13,19 @@ import type { listFacultyCourseDeliveries } from "./faculty-course-service";
 import { countFacultyCourseCardItems } from "./faculty-course-card-summary-model";
 
 type AssignedCourse = Awaited<ReturnType<typeof listFacultyCourseDeliveries>>[number];
+/** Legacy Courses grid rendered 48 cards then progressively revealed up to
+ * 100. Always compute card summaries for the bounded visible slice, not every
+ * course in a very large faculty assignment directory.
+ */
+export const FACULTY_VISIBLE_CARD_LIMIT=48;
+export const FACULTY_PROGRESSIVE_CARD_LIMIT=100;
+export function facultyCourseSummaryWindow<T>(
+ assigned:readonly T[],revealAll:boolean,
+):{items:readonly T[];total:number;truncated:boolean}{
+ const max=revealAll?FACULTY_PROGRESSIVE_CARD_LIMIT:FACULTY_VISIBLE_CARD_LIMIT;
+ return {items:assigned.slice(0,max),total:assigned.length,
+  truncated:assigned.length>max};
+}
 
 export type FacultyCourseCardSummary = {
   learningPath: typeof courseLearningPaths.$inferSelect | null;
@@ -42,8 +55,9 @@ export async function listFacultyCourseCardSummaries(
   assigned: readonly AssignedCourse[],
 ): Promise<Map<string, FacultyCourseCardSummary>> {
   const result = new Map<string, FacultyCourseCardSummary>();
-  if (!assigned.length) return result;
-  const offeringIds = [...new Set(assigned.map((course) => course.offeringId))];
+  const visible=facultyCourseSummaryWindow(assigned,true).items;
+  if (!visible.length) return result;
+  const offeringIds = [...new Set(visible.map((course) => course.offeringId))];
   const paths = await getDb().select().from(courseLearningPaths)
     .where(and(
       inArray(courseLearningPaths.offeringId, offeringIds),
@@ -54,7 +68,7 @@ export async function listFacultyCourseCardSummaries(
   for (const path of paths) {
     if (!firstByOffering.has(path.offeringId)) firstByOffering.set(path.offeringId, path);
   }
-  for (const course of assigned) {
+  for (const course of visible) {
     result.set(course.deliveryId, {
       learningPath: firstByOffering.get(course.offeringId) ?? null,
       summary: emptySummary(),
@@ -81,7 +95,7 @@ export async function listFacultyCourseCardSummaries(
     set.add(lesson.id);
     lessonSetByPath.set(lesson.learningPathId, set);
   }
-  for (const course of assigned) {
+  for (const course of visible) {
     const card = result.get(course.deliveryId);
     if (!card?.learningPath) continue;
     const set = lessonSetByPath.get(card.learningPath.id) ?? new Set<string>();
