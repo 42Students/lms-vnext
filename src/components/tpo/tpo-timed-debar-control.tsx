@@ -43,8 +43,8 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
   finally{locked.current=false;setPending(false);}
  }
  return <section aria-label="Timed debarment" className="min-w-0 space-y-4 py-2">
-  <p className="text-sm text-body">A debarment blocks new placement applications until it expires or is lifted. Existing applications stay recorded.</p>
-  {active.length>0?<p role="status" className="text-sm font-semibold">Debarred · {active.length} active restriction(s)</p>:null}
+  <p className="text-sm text-body leading-[22px]">A debarment blocks new placement applications until it expires or is lifted. Existing applications stay recorded.</p>
+  {active.length>0?<p role="status" className="text-sm font-semibold leading-[22px]">Debarred · {active.length} active restriction(s)</p>:null}
   <Disclosure title="Create debarment" defaultOpen={active.length===0} className="border-t border-border" contentClassName="space-y-3 px-2 pb-3">
    <label className="grid min-w-0 gap-1 text-sm">Reason for Debar
     <Textarea className="w-full min-w-0" value={reason} rows={2} maxLength={500} disabled={pending||active.length>0} onChange={e=>{setReason(e.target.value);setError("");}}
@@ -64,16 +64,16 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     disabled={pending||active.length>0||reason.trim().length===0||duration==="DATE"&&!untilDate||
       duration==="DRIVES"&&(!Number.isInteger(Number(untilDrives))||Number(untilDrives)<1||Number(untilDrives)>10000)}
     onClick={()=>{setError("");setConfirm({action:"DEBAR"});}}>Review debarment</Button>
-   {active.length>0?<p className="text-xs text-muted-foreground">Lift the current debarment before creating another.</p>:null}
+   {active.length>0?<p className="text-xs text-muted-foreground leading-[20px]">Lift the current debarment before creating another.</p>:null}
   </Disclosure>
   <div className="min-w-0 space-y-3">
    <h3 className="font-semibold">Debarment history</h3>
-   {rows.length===0?<p role="status" className="text-sm text-body">No timed debarment is recorded for this student.</p>:null}
+   {rows.length===0?<p role="status" className="text-sm text-body leading-[22px]">No timed debarment is recorded for this student.</p>:null}
    {rows.map(row=><article key={row.id} className="min-w-0 space-y-2 border-b border-border py-3">
     <p className="break-words font-semibold">{row.active?"Active":"Ended"} · {row.reason}</p>
-    <p className="text-sm text-body">{row.untilDate?"Until "+row.untilDate+" IST":row.untilDrives!==null
+    <p className="text-sm text-body leading-[22px]">{row.untilDate?"Until "+row.untilDate+" IST":row.untilDrives!==null
      ?"For "+row.untilDrives+" drives ("+row.drivesCounted+" counted)":"Until lifted"}</p>
-    {row.liftedAt?<p className="text-sm">Lifted · {row.liftedReason??"No reason recorded"}</p>:null}
+    {row.liftedAt?<p className="text-sm leading-[22px]">Lifted · {row.liftedReason??"No reason recorded"}</p>:null}
     {row.active?<div className="min-w-0 space-y-2">
      <label className="grid min-w-0 gap-1 text-sm">Reason for lifting
       <Textarea className="w-full min-w-0" value={liftReason} maxLength={500} disabled={pending} onChange={e=>{setLiftReason(e.target.value);setError("");}}
@@ -94,9 +94,9 @@ export function TpoTimedDebarControl({membershipId,initial}:{membershipId:string
     <Button variant={confirm?.action==="DEBAR"?"danger":"primary"} className="min-h-11 w-full sm:w-auto md:min-h-9" loading={pending} disabled={pending} onClick={()=>void apply()}>{pending?"Saving…":"Confirm"}</Button>
    </div>}>
    <div className="min-w-0 space-y-2">
-    <p className="text-sm">The student&apos;s existing applications will remain recorded.</p>
-    <p className="break-words text-sm text-body">Reason: {confirm?.action==="LIFT"?liftReason.trim():reason.trim()}</p>
-    {confirm?.action==="DEBAR"?<p className="text-sm text-body">{duration==="DATE"?"Until: "+untilDate+" IST":duration==="DRIVES"?"Drives: "+untilDrives:"Until lifted"}</p>:null}
+    <p className="text-sm leading-[22px]">The student&apos;s existing applications will remain recorded.</p>
+    <p className="break-words text-sm text-body leading-[22px]">Reason: {confirm?.action==="LIFT"?liftReason.trim():reason.trim()}</p>
+    {confirm?.action==="DEBAR"?<p className="text-sm text-body leading-[22px]">{duration==="DATE"?"Until: "+untilDate+" IST":duration==="DRIVES"?"Drives: "+untilDrives:"Until lifted"}</p>:null}
     {error&&confirm?<InlineNotice tone="error" message={error}/>:null}
    </div>
   </Dialog>
