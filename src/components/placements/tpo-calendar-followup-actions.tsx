@@ -219,7 +219,7 @@ export function TpoCalendarMoveFollowup({
         type="button"
         disabled={busy}
         onClick={() => void onDone()}
-        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text hover:bg-primary-subtle disabled:opacity-50"
+        className="min-h-11 sm:min-h-9 rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-[650] text-primary-text hover:bg-primary-subtle disabled:opacity-50"
       >
         {busy ? "Saving…" : "Done"}
       </Button>
