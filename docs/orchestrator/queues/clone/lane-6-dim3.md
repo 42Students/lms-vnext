@@ -44,14 +44,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/styles/college-admin-north-star.css`
 - [x] `src/app/(authenticated)/tpo/team/[threadId]/loading.tsx`
 - [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/admin/college-at-glance-panel.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/courses/admin-assessment-read-directory.tsx`
-- [ ] `src/components/courses/faculty-choice-quiz-builder.tsx`
-- [ ] `src/components/courses/faculty-report-student-table.tsx`
-- [ ] `src/components/groups/college-group-detail-writes.tsx`
-- [ ] `src/components/placements/learner-jobs-browse.tsx`
+- [x] `src/components/admin/college-at-glance-panel.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/courses/admin-assessment-read-directory.tsx`
+- [x] `src/components/courses/faculty-choice-quiz-builder.tsx`
+- [x] `src/components/courses/faculty-report-student-table.tsx`
+- [x] `src/components/groups/college-group-detail-writes.tsx`
+- [x] `src/components/placements/learner-jobs-browse.tsx`
 - [ ] `src/components/placements/tpo-drive-change-requests.tsx`
 - [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
 - [ ] `src/components/projects/learner-board-interactive.tsx`
