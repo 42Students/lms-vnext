@@ -1089,6 +1089,8 @@ export const placementApplications = pgTable(
   "placement_applications",
   {
     id: uuid("id").defaultRandom().primaryKey(),
+    legacyApplicationId: integer("legacy_application_id"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     jobId: uuid("job_id")
       .notNull()
       .references(() => placementJobs.id, {
@@ -1136,6 +1138,8 @@ export const placementApplications = pgTable(
     })
       .notNull()
       .defaultNow(),
+    /** Original registration time, not the latest reapplication time. */
+    firstAppliedAt: timestamp("first_applied_at", {withTimezone:true}).defaultNow(),
     withdrawnAt: timestamp("withdrawn_at", {
       withTimezone: true,
     }),
@@ -1162,6 +1166,12 @@ export const placementApplications = pgTable(
     }).onDelete("restrict"),
     uniqueIndex("placement_applications_id_job_uq").on(table.id, table.jobId),
     uniqueIndex("placement_applications_public_ref_uq").on(table.publicRef),
+    uniqueIndex("placement_applications_legacy_id_uq").on(table.legacyApplicationId)
+      .where(sql`${table.legacyApplicationId} is not null`),
+    check("placement_applications_external_ref_len_ck",sql`
+      ${table.externalRef} is null or length(${table.externalRef}) <= 500`),
+    check("placement_applications_legacy_deleted_ck",sql`
+      ${table.legacyWasDeleted} is distinct from true or ${table.status} = 'WITHDRAWN'`),
     check("placement_applications_version_ck", sql`${table.version} > 0`),
     foreignKey({
       name: "placement_applications_current_round_job_fk",
@@ -1307,6 +1317,8 @@ export const placementApplicationStatusHistory = pgTable(
     index("placement_application_history_cascade_id_idx")
       .on(table.cascadeId)
       .where(sql`${table.cascadeId} is not null`),
+    check("placement_application_history_reason_len_ck",sql`
+      ${table.reason} is null or length(${table.reason}) <= 500`),
     check(
       "placement_application_status_history_from_ck",
       sql`${table.fromStatus} is null or ${table.fromStatus} in ('SUBMITTED', 'WITHDRAWN')`,
@@ -1355,6 +1367,8 @@ export const placementApplicationScreenings = pgTable(
     index(
       "placement_application_screenings_status_idx",
     ).on(table.status, table.updatedAt),
+    check("placement_screenings_candidate_message_len_ck",sql`
+      ${table.candidateMessage} is null or length(${table.candidateMessage}) <= 500`),
     check(
       "placement_application_screenings_status_ck",
       sql`${table.status} in ('PENDING', 'HOLD', 'SHORTLISTED', 'REJECTED')`,
@@ -1742,6 +1756,9 @@ export const placementOffers = pgTable(
       .references(() => placementApplications.id, {
         onDelete: "restrict",
       }),
+    /** Historic numeric key and ordering timestamp, neither grants authority. */
+    legacyOfferId: integer("legacy_offer_id"),
+    legacyCreatedAt: timestamp("legacy_created_at", {withTimezone:true}),
     /** Offer issuance ordinal per application, not optimistic row revision. */
     version: integer("version").notNull(),
     rowVersion: integer("row_version").notNull().default(1),
@@ -1819,6 +1836,12 @@ export const placementOffers = pgTable(
       .defaultNow(),
   },
   (table) => [
+    uniqueIndex("placement_offers_legacy_id_uq").on(table.legacyOfferId)
+      .where(sql`${table.legacyOfferId} is not null`),
+    index("placement_offers_expiry_due_idx").on(table.expiresAt)
+      .where(sql`${table.status} = 'ISSUED' and ${table.expiresAt} is not null`),
+    index("placement_offers_dispute_due_idx").on(table.acceptedDisputableUntil)
+      .where(sql`${table.status} = 'ACCEPTED' and ${table.acceptedDisputableUntil} is not null`),
     uniqueIndex(
       "placement_offers_application_version_uq",
     ).on(table.applicationId, table.version),
