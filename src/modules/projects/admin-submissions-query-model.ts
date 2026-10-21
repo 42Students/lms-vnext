@@ -22,14 +22,32 @@ const schema = z.strictObject({
   message:"Submission status applies only to the All submissions view",
 });
 const first = (value: string | string[] | undefined) => Array.isArray(value) ? value[0] : value;
+const legacySubmissionStatus: Record<string,string> = {
+  accepted:"APPROVED", approved:"APPROVED", submitted:"SUBMITTED",
+  underreview:"UNDER_REVIEW", "under review":"UNDER_REVIEW",
+  changesrequested:"CHANGES_REQUESTED", "changes requested":"CHANGES_REQUESTED",
+  draft:"DRAFT", "draft(revising)":"DRAFT_REVISING", "draft revising":"DRAFT_REVISING",
+  locked:"LOCKED",
+};
+function normalizeSubmissionStatus(value: string | undefined) {
+  if (!value) return value;
+  const trimmed=value.trim();
+  return legacySubmissionStatus[trimmed.toLowerCase()] ?? trimmed.toUpperCase().replace(/ +/g, "_");
+}
+
 
 export function parseProjectAdminSubmissionsQuery(params: Record<string,string|string[]|undefined>) {
   if (Object.values(params).some(Array.isArray) ||
-      Object.keys(params).some(key=>!["view","q","status","submissionStatus","page","pageSize"].includes(key)))
+      Object.keys(params).some(key=>!["view","q","status","submissionStatus","page","pageSize","tab","projectId"].includes(key)))
     return schema.safeParse(null);
+  const rawStatus=first(params.status)?.trim();
+  const workspaceStatus=rawStatus && ["PLANNED","ACTIVE","COMPLETED","ARCHIVED"].includes(rawStatus.toUpperCase())
+    ? rawStatus.toUpperCase() : undefined;
+  const legacySubmission=rawStatus && !workspaceStatus ? normalizeSubmissionStatus(rawStatus) : undefined;
   const entries = {
-    view:first(params.view),q:first(params.q),status:first(params.status),
-    submissionStatus:first(params.submissionStatus),
+    view:first(params.view)??(first(params.tab)?.toLowerCase()==="notsubmitted"?"NOT_SUBMITTED":"ALL"),
+    q:first(params.q)??first(params.projectId),status:workspaceStatus,
+    submissionStatus:normalizeSubmissionStatus(first(params.submissionStatus) ?? legacySubmission),
     page:first(params.page),pageSize:first(params.pageSize),
   };
   return schema.safeParse(Object.fromEntries(
@@ -70,4 +88,11 @@ export function projectAdminSubmissionHref(
   if(submissionStatus)params.set("submissionStatus",submissionStatus);
   const suffix=params.toString();
   return basePath+(suffix?"?"+suffix:"");
+}
+
+// The imported deep-link identifier remains scoped by the listing's college.
+export function focusedProjectIdFromSubmissionUrl(raw: Record<string, string | string[] | undefined>) {
+  const value = first(raw.projectId);
+  if (!value || value.length > 120 || /[^a-zA-Z0-9_-]/.test(value)) return null;
+  return value;
 }

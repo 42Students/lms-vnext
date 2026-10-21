@@ -88,3 +88,23 @@ export function getMembershipLifecyclePatch(
       };
   }
 }
+
+/** Hard-delete is exceptional: ending a membership preserves shared user identity and history. */
+export type MembershipDeletionAssessment = {
+  isLearnerMembership: boolean;
+  otherActiveMembershipCount: number;
+  dependentRecordCount: number;
+  retentionHold: boolean;
+  requestedPermanentErasure: boolean;
+};
+export function membershipDeletionDecision(value: MembershipDeletionAssessment) {
+  if (!value.requestedPermanentErasure) {
+    return { action: "END" as const, reason: "Preserve account history across workspaces" };
+  }
+  if (!value.isLearnerMembership || value.retentionHold ||
+      value.dependentRecordCount > 0 || value.otherActiveMembershipCount > 0) {
+    return { action: "END" as const, reason: "Dependent records or another active membership require retention" };
+  }
+  return { action: "REVIEW_FOR_ERASURE" as const,
+    reason: "Verify legal retention, private object deletion and audit before executing" };
+}

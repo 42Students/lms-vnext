@@ -35,6 +35,9 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  const pending=useRef(false);
  const createKey=useRef<string|null>(null);
  const [recipient,setRecipient]=useState(""),[topic,setTopic]=useState(""),[firstMessage,setFirstMessage]=useState("");
+ const [kind,setKind]=useState<"DIRECT"|"TOPIC"|"DRIVE"|"COMPANY">("DIRECT");
+ const [contextId,setContextId]=useState("");
+ const [additional,setAdditional]=useState<string[]>([]);
  useEffect(()=>{
   const handle=window.setTimeout(()=>{
    try {const raw=sessionStorage.getItem(draftKey);if(!raw)return;
@@ -54,13 +57,17 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
  }
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
  async function create(event:React.FormEvent<HTMLFormElement>){
-  event.preventDefault();if(pending.current||busy||!recipient||!topic.trim())return;
+  event.preventDefault();if(pending.current||busy||!recipient||!topic.trim()||
+   ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId))||
+   (kind!=="DIRECT"&&additional.length===0))return;
   pending.current=true;setBusy(true);setError("");
   try{
    if(!createKey.current){createKey.current=crypto.randomUUID();
     try{sessionStorage.setItem(draftKey+":createKey",createKey.current);}catch{/* Optional. */}}
    const result=await postForm("/api/placements/tpo/team/threads",{
     recipientMembershipId:recipient,topic:topic.trim(),firstMessage:firstMessage.trim(),idempotencyKey:createKey.current,
+    kind,participantMembershipIds:kind==="DIRECT"?"":additional.join(","),
+    contextId:kind==="DRIVE"||kind==="COMPANY"?contextId:"",
    });
    if(!result.ok||!result.href){
     setError(result.code==="RECIPIENT_NOT_FOUND"||result.code==="SESSION_EXPIRED"||result.code==="STALE_MESSAGE"?
@@ -74,7 +81,17 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
   finally{pending.current=false;setBusy(false);}
  }
  return <form onSubmit={event=>void create(event)} className="mt-4 grid gap-3 border-t border-border pt-4">
-  <h3 className="font-semibold text-foreground">Start a private placement team conversation</h3>
+  <h3 className="font-semibold text-foreground">Start a placement team conversation</h3>
+  <label className="grid gap-[6px] text-[13px] font-semibold">Conversation type
+   <Select value={kind} disabled={busy} onChange={event=>{
+    setKind(event.target.value as typeof kind);setAdditional([]);setContextId("");createKey.current=null;
+   }} className="min-h-11 md:min-h-9">
+    <option value="DIRECT">Private direct</option>
+    <option value="TOPIC">Group topic</option>
+    <option value="DRIVE">Drive discussion</option>
+    <option value="COMPANY">Company discussion</option>
+   </Select>
+  </label>
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Team member
    <Select required value={recipient} onChange={event=>updateDraft(event.target.value,topic)} disabled={busy}
     className="min-h-11 md:min-h-9">
@@ -82,6 +99,24 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
     {members.map(member=><option key={member.membershipId} value={member.membershipId}>{member.displayName}</option>)}
    </Select>
   </label>
+  {kind!=="DIRECT"?<fieldset className="grid gap-2 border-b border-border pb-3">
+   <legend className="text-[13px] font-semibold">Additional team members</legend>
+   {members.filter(member=>member.membershipId!==recipient).map(member=>
+    <label key={member.membershipId} className="flex min-h-11 items-center gap-2 text-sm">
+     <Checkbox checked={additional.includes(member.membershipId)} disabled={busy}
+      onChange={event=>{setAdditional(current=>event.target.checked?
+        [...current,member.membershipId]:current.filter(id=>id!==member.membershipId));
+       createKey.current=null;}}/>
+     {member.displayName}
+    </label>)}
+   <p className="text-xs text-muted-foreground">The author and selected active college teammates can read this topic.</p>
+  </fieldset>:null}
+  {(kind==="DRIVE"||kind==="COMPANY")?<label className="grid gap-2 text-[13px] font-semibold">
+   {kind==="DRIVE"?"Drive ID":"Company relationship ID"}
+   <Input value={contextId} maxLength={36} required disabled={busy}
+     onChange={event=>{setContextId(event.target.value);createKey.current=null;}}
+     placeholder="Paste the ID from the authorized workspace"/>
+  </label>:null}
   <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Topic
    <Input required value={topic} onChange={event=>updateDraft(recipient,event.target.value)} maxLength={200} disabled={busy}
     className="min-h-11 md:min-h-9" placeholder="Drive coordination"/>
@@ -91,9 +126,11 @@ export function TpoTeamThreadCreate({members,actorUserId}:{members:Member[];acto
     onChange={event=>updateDraft(recipient,topic,event.target.value)}
     className="w-full" placeholder="Tell the team what this is about"/>
   </label>
-  <p className="text-xs text-muted-foreground">Only named active placement team members can take part.</p>
+  <p className="text-xs text-muted-foreground">Only named, currently active placement team members can take part. Contexts are rechecked by the server.</p>
   {error?<InlineNotice tone="error" message={error}/>:null}
-  <Button type="submit" disabled={busy||!recipient||!topic.trim()}
+  <Button type="submit" disabled={busy||!recipient||!topic.trim()||
+   (kind!=="DIRECT"&&additional.length===0)||
+   ((kind==="DRIVE"||kind==="COMPANY")&&!/^[0-9a-f-]{36}$/i.test(contextId))}
    className="min-h-11 md:min-h-9">
    {busy?"Starting…":"Start conversation"}
   </Button>

@@ -1,7 +1,7 @@
 import "server-only";
 
 import { randomUUID } from "node:crypto";
-import { and, count, eq, gte, inArray, isNull } from "drizzle-orm";
+import { and, count, eq, inArray, isNull } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -21,7 +21,7 @@ import { recordActivityEventInTransaction } from "./service";
 import { ACTIVITY_EVENT_TYPES } from "./taxonomy";
 import { ActivityServiceError } from "./errors";
 import { listOwnNotificationPage } from "./notification-service";
-import { resolveTpoInboxQuery,tpoUnreadCutoff } from "./tpo-notifications-model";
+import { resolveTpoInboxQuery } from "./tpo-notifications-model";
 
 /**
  * Personal TPO inbox: centrally authorized and verified against the live
@@ -69,14 +69,13 @@ export async function requirePersistedTpoInboxMembership(context: RequestContext
 export async function getTpoPersonalInbox(context: RequestContext, rawQuery: unknown) {
   const { query, cursor } = resolveTpoInboxQuery(rawQuery);
   const membership = await requirePersistedTpoInboxMembership(context);
-  const recentCutoff=tpoUnreadCutoff(new Date());
+  // The legacy unread badge counts persisted unread across all history.
   const [page, unread] = await Promise.all([
     cursor.invalid
       ? Promise.resolve({ items: [], nextCursor: null })
       : listOwnNotificationPage(context, {
           limit: 50,
           unreadOnly: query.view === "unread",
-          unreadSince:recentCutoff,
           collegeId: membership.collegeId,
           ...(cursor.cursor ?? {}),
         }),
@@ -89,11 +88,10 @@ export async function getTpoPersonalInbox(context: RequestContext, rawQuery: unk
           eq(inAppNotifications.userId, context.user.id),
           eq(activityEvents.collegeId, membership.collegeId),
           isNull(inAppNotifications.readAt),
-          gte(inAppNotifications.createdAt,recentCutoff),
         ),
       ),
   ]);
-  return { query, cursor, page, unreadCount: Number(unread[0]?.total ?? 0),recentCutoff };
+  return { query, cursor, page, unreadCount: Number(unread[0]?.total ?? 0),recentCutoff: new Date(0) };
 }
 
 /** Recipient and persisted current college are both required. Repeats are idempotent. */

@@ -21,6 +21,7 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
   return {status:"NOT_REGISTERED" as const,items:[]};
  const readsReady=await placementTableExists("placement_tpo_internal_reads");
  const asksReady=await placementTableExists("placement_tpo_team_asks");
+ const groupsReady=await placementTableExists("placement_tpo_internal_thread_participants");
  return getDb().transaction(async tx=>{
   await assertPersistedPlatformPermission(tx,context,"placements.manage",{
    organizationId:college.organizationId,collegeId:college.id,
@@ -38,7 +39,14 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
      (case when ${tpoInternalThreads.startedByMembershipId}=${membership.id}::uuid
        then ${tpoInternalThreads.invitedMembershipId} else ${tpoInternalThreads.startedByMembershipId} end)
     limit 1)`,
-   kind:sql<"PRIVATE">`'PRIVATE'`,
+   kind:groupsReady?sql<"DIRECT" | "TOPIC" | "DRIVE" | "COMPANY">`case
+     when ${tpoInternalThreads.id} is not null and
+       exists(select 1 from placement_tpo_internal_thread_participants p
+         where p.thread_id=${tpoInternalThreads.id} and p.college_id=${college.id}::uuid
+           and p.left_at is null)
+       then (select coalesce(t.kind,'DIRECT') from placement_tpo_internal_threads t
+         where t.id=${tpoInternalThreads.id})
+     else 'DIRECT' end`:sql<"DIRECT">`'DIRECT'`,
 
    openAsks:asksReady?sql<number>`(select count(*)::integer from placement_tpo_team_asks a
     where a.thread_id=${tpoInternalThreads.id} and a.college_id=${college.id}::uuid
@@ -84,8 +92,20 @@ export async function listMyTpoInternalThreads(context:RequestContext,rawSearch=
      order by m.created_at desc,m.id desc limit 1)`:sql<string|null>`null`,
   }).from(tpoInternalThreads)
    .where(and(eq(tpoInternalThreads.collegeId,college.id),
-    or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
-       eq(tpoInternalThreads.invitedMembershipId,membership.id)),
+    groupsReady
+     ? sql`((
+         ${tpoInternalThreads.kind} = 'DIRECT'
+         and (${tpoInternalThreads.startedByMembershipId} = ${membership.id}::uuid
+           or ${tpoInternalThreads.invitedMembershipId} = ${membership.id}::uuid)
+       ) or (
+         ${tpoInternalThreads.kind} <> 'DIRECT'
+         and exists (select 1 from placement_tpo_internal_thread_participants part
+           where part.thread_id=${tpoInternalThreads.id}
+             and part.college_id=${college.id}::uuid
+             and part.membership_id=${membership.id}::uuid and part.left_at is null)
+       ))`
+     : or(eq(tpoInternalThreads.startedByMembershipId,membership.id),
+          eq(tpoInternalThreads.invitedMembershipId,membership.id)),
     q?or(sql`position(lower(${q}) in lower(${tpoInternalThreads.topic}))>0`,
       sql`exists(select 1 from placement_tpo_internal_messages m
         where m.thread_id=${tpoInternalThreads.id}
