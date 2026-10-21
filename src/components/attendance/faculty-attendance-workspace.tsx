@@ -1,6 +1,5 @@
 "use client";
 import { SummaryStrip } from "@/components/ui/summary-strip";
-import { PageHeader } from "@/components/ui/page-header";
 import { Alert } from "@/components/ui/alert";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -108,6 +107,16 @@ function dateTime(value: string) {
   }).format(new Date(value));
 }
 
+function legacySessionDate(value: string) {
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata", weekday: "short", day: "numeric", month: "short", year: "numeric",
+  }).format(new Date(value));
+}
+function legacyClockTime(value: string) {
+  return new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true,
+  }).format(new Date(value));
+}
 function sessionTime(value: Session) {
   return `${dateTime(value.startsAt)} – ${new Intl.DateTimeFormat(
     "en-IN",
@@ -157,6 +166,8 @@ export function FacultyAttendanceWorkspace({
   const [month, setMonth] = useState(
     () => indiaAttendanceMonthKey(new Date()),
   );
+  const monthLabel = new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", month: "long", year: "numeric" })
+    .format(new Date(month + "-01T12:00:00+05:30"));
   const [selectedSessionId, setSelectedSessionId] =
     useState(selection);
   const [selectedDate,setSelectedDate]=useState(
@@ -204,9 +215,39 @@ export function FacultyAttendanceWorkspace({
     useState("");
   const [endsAt, setEndsAt] =
     useState("");
-  const [location, setLocation] =
-    useState("");
-  const scheduleDirty = Boolean(scheduleTitle.trim() || startsAt || endsAt || location.trim());
+  const [location, setLocation] = useState("");
+  const scheduleBaseline = useRef({ start: "", end: "" });
+  const scheduleDirty = Boolean(scheduleTitle.trim() || location.trim() ||
+    startsAt !== scheduleBaseline.current.start || endsAt !== scheduleBaseline.current.end);
+  // Legacy authoring uses one date and separate 12-hour time fields. Retain
+  // ISO-local datetime values internally for the existing signed IST converter.
+  function setScheduleWallTimes(date: string, startTime: string, endTime: string) {
+    const beginning = date && startTime ? date + "T" + startTime : "";
+    const minutes = (time: string) => {
+      const [hour, minute] = time.split(":").map(Number);
+      return hour * 60 + minute;
+    };
+    let endDate = date;
+    if (date && startTime && endTime && minutes(endTime) < minutes(startTime)) {
+      endDate = indiaAttendanceDayKey(new Date(
+        new Date(date + "T12:00:00+05:30").getTime() + 24 * 60 * 60 * 1000,
+      ));
+    }
+    const finish = endDate && endTime ? endDate + "T" + endTime : "";
+    setStartsAt(beginning);
+    setEndsAt(finish);
+  }
+  function openScheduleDrawer() {
+    const start = selectedDate + "T09:00";
+    const end = selectedDate + "T10:00";
+    scheduleBaseline.current = { start, end };
+    setScheduleTitle("");
+    setStartsAt(start);
+    setEndsAt(end);
+    setLocation("");
+    setScheduleError(null);
+    setScheduleOpen(true);
+  }
 
   function closeScheduleDrawer() {
     if (scheduling || scheduleLock.current) {
@@ -457,7 +498,7 @@ export function FacultyAttendanceWorkspace({
         return;
       }
       setCorrectionReason("");
-      setSavedNotice("Attendance marked successfully.");
+      setSavedNotice(`Attendance recorded for ${workspace.roster.length} learner(s).`);
       router.refresh();
     } catch {
       setError(
@@ -494,7 +535,7 @@ export function FacultyAttendanceWorkspace({
           },
           body: JSON.stringify({
             deliveryId: workspace.course.deliveryId,
-            title: scheduleTitle,
+            title: scheduleTitle.trim() || workspace.course.courseName,
             ...timing,
             location: location || null,
           }),
@@ -525,18 +566,16 @@ export function FacultyAttendanceWorkspace({
   }
 
   return (
-    <div className="min-w-0 space-y-[var(--lms-space-4)]">
+    <div className="min-w-0 space-y-[var(--lms-space-4)] [--legacy-attendance-panel-gap:var(--lms-space-4)]">
       {savedNotice?<Alert tone="success">{savedNotice}</Alert>:null}
-      <section className="border-b border-border pb-4">
-        <PageHeader
-          title="Attendance"
-          eyebrow={workspace.course.courseCode + " · " + workspace.course.sectionName}
-          description="See attendance history and monthly trends in one place."
-          actions={<Button variant="secondary" onClick={() => setScheduleOpen(true)}>Schedule Class</Button>}
-        />
-        <p className="text-xs text-muted-foreground">
-          {workspace.course.courseName} · {workspace.course.academicPeriodName}
-        </p>
+      <section aria-label="Attendance toolbar" className="border-b border-border pb-4">
+        <h1 className="sr-only">Attendance</h1>
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <p className="text-sm font-semibold text-foreground">
+            {workspace.course.courseName} · {workspace.course.sectionName} · {workspace.course.academicPeriodName}
+          </p>
+          <Button variant="secondary" onClick={() => openScheduleDrawer()}>Schedule Class</Button>
+        </div>
 
         <SegmentedControl
           className="mt-4 w-full md:w-auto"
@@ -622,57 +661,21 @@ export function FacultyAttendanceWorkspace({
                   {monthSummary.averagePercent === null ? "—" : monthSummary.averagePercent + "%"}
                 </p>
                 <p className="mt-2 max-w-xl text-xs leading-5 text-muted-foreground">
-                  {monthSummary.presentMarks} present marks across {heldMonthSessions.length} held sessions.
-                  {" "}{monthSummary.unmarkedSessions} session(s) not yet marked, excluded from this percentage.
+                  {heldMonthSessions.length > 0 ? `${monthSummary.presentMarks} present marks across ${heldMonthSessions.length} scheduled sessions.` : "No scheduled sessions found for this month."}
+                   {monthSummary.unmarkedSessions > 0 ? ` ${monthSummary.unmarkedSessions} session${monthSummary.unmarkedSessions === 1 ? "" : "s"} not yet marked, excluded from this percentage.` : null}
                 </p>
               </div>
-              {monthSummary.learnerCount > 0 && monthSummary.sessionCount > 0 ? (
-                <FacultyReportDownload
-                  kind="attendance"
-                  title={workspace.course.courseName + " " + month}
-                  subtitle={workspace.course.courseCode + " · " + workspace.course.sectionName}
-                  summary={[
-                    "Month: " + month + " (Asia/Kolkata)",
-                    "Active students: " + monthSummary.learnerCount,
-                    "Sessions: " + monthSummary.sessionCount,
-                    "Marked sessions: " + monthSummary.markedSessions,
-                    "Unmarked sessions: " + monthSummary.unmarkedSessions,
-                    "Upcoming sessions: " + monthSummary.upcomingSessions,
-                    "Present marks: " + monthSummary.presentMarks,
-                    "Absent marks: " + monthSummary.absentMarks,
-                    "Below college guidance (" + attendanceRisk.threshold + "%): " + attendanceRisk.below.length,
-                    "No marked attendance yet: " + attendanceRisk.unknown.length,
-                    "Unmarked learner-session cells: " + monthSummary.unmarkedMarks,
-                    "Attendance: " + (monthSummary.averagePercent === null ? "Unknown" : monthSummary.averagePercent + "%"),
-                  ]}
-                  sections={[{
-                    title: "Active Section learner attendance",
-                    rows: monthSummary.learners.map((row) => {
-                      const learner = workspace.roster.find((item) => item.membershipId === row.membershipId);
-                      return [
-                        learner?.displayName ?? learner?.email ?? row.membershipId,
-                        learner?.rollNumber ? "Roll " + learner.rollNumber : "",
-                        "P " + row.present,
-                        "A " + row.absent,
-                        "Not marked " + row.unmarked,
-                        attendanceRisk.below.includes(row.membershipId) ? "Below guidance" : "",
-                        attendanceRisk.unknown.includes(row.membershipId) ? "Unknown" : "",
-                        "Upcoming " + row.upcoming,
-                        row.percentage === null ? "Not available" : row.percentage + "%",
-                      ].filter(Boolean).join(" | ");
-                    }),
-                  }]}
-                />
-              ) : null}
+              
             </div>
             <SummaryStrip label="Faculty monthly attendance summary" steps={[
-              {label:"Students",value:monthSummary.learnerCount},
-              {label:"Sessions",value:heldMonthSessions.length},
-              {label:"Absences",value:monthSummary.absentMarks},
-              {label:"Not marked",value:monthSummary.unmarkedMarks},
-              {label:"Active days",value:new Set(heldMonthSessions.map(session=>indiaAttendanceDayKey(session.startsAt))).size},
-              {label:"Upcoming",value:monthSummary.upcomingSessions},
-            ]}/>
+               {label:"Students",value:monthSummary.learnerCount},
+               {label:"Sessions",value:heldMonthSessions.length},
+               {label:"Absences",value:monthSummary.absentMarks},
+               ...(monthSummary.unmarkedSessions > 0 ? [{label:"Not marked",value:monthSummary.unmarkedSessions}] : []),
+             ]}/>
+             {monthSummary.upcomingSessions > 0 ? <p className="mt-2 text-xs text-muted-foreground">
+               {monthSummary.upcomingSessions} upcoming sessions, excluded from attendance for held classes.
+             </p> : null}
             <section aria-label="Attendance threshold guidance" className="mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
               <h3 className="text-sm font-semibold text-[var(--lms-heading)]">
                 College attendance guidance: {attendanceRisk.threshold}%
@@ -708,15 +711,62 @@ export function FacultyAttendanceWorkspace({
             </section>
           </section>
 
-          {allLearners.length === 0 ? (
-            <EmptyState
-              title="No learners to display"
-              description="There are no enrolled learners or historical attendance rows for this Course and Section."
-            />
+          {allLearners.length === 0 || monthSessions.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-4">
+              <EmptyState title={allLearners.length === 0 ? "No learners to display" : "No attendance data for this month"}
+                description={allLearners.length === 0 ? "There are no enrolled learners or historical attendance rows for this Course and Section." : "No scheduled sessions found for this month."}/>
+              <Button disabled type="button" variant="secondary" aria-label="Download Report unavailable with no attendance data">Download Report</Button>
+            </div>
           ) : (
             <section className="min-w-0">
               
-              <h2 className="mb-3 text-base font-semibold text-foreground">Monthly Attendance</h2>
+              <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+                <div><h2 className="text-base font-semibold text-foreground">Monthly Attendance</h2>
+                  <p className="mt-1 text-xs text-muted-foreground">See each student’s attendance day by day for this month.</p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
+                  <span className="text-xs text-muted-foreground"><strong className="tabular-nums text-foreground">{new Set(heldMonthSessions.map(session => indiaAttendanceDayKey(session.startsAt))).size}</strong> Active days</span>
+                  <strong className="text-xs text-foreground">{monthLabel}</strong>
+                  {monthSummary.learnerCount > 0 && monthSummary.sessionCount > 0 ? (
+                <FacultyReportDownload
+                  kind="attendance"
+                  title={workspace.course.courseName + " " + monthLabel}
+                  subtitle={workspace.course.courseCode + " · " + workspace.course.sectionName}
+                  summary={[
+                    "Month: " + monthLabel + " (Asia/Kolkata)",
+                    "Active students: " + monthSummary.learnerCount,
+                    "Sessions: " + monthSummary.sessionCount,
+                    "Marked sessions: " + monthSummary.markedSessions,
+                    "Unmarked sessions: " + monthSummary.unmarkedSessions,
+                    "Upcoming sessions: " + monthSummary.upcomingSessions,
+                    "Present marks: " + monthSummary.presentMarks,
+                    "Absent marks: " + monthSummary.absentMarks,
+                    "Below college guidance (" + attendanceRisk.threshold + "%): " + attendanceRisk.below.length,
+                    "No marked attendance yet: " + attendanceRisk.unknown.length,
+                    "Unmarked learner-session cells: " + monthSummary.unmarkedMarks,
+                    "Attendance: " + (monthSummary.averagePercent === null ? "Unknown" : monthSummary.averagePercent + "%"),
+                  ]}
+                  sections={[{
+                    title: "Active Section learner attendance",
+                    rows: monthSummary.learners.map((row) => {
+                      const learner = workspace.roster.find((item) => item.membershipId === row.membershipId);
+                      return [
+                        learner?.displayName?.trim() || "Name not recorded",
+                        learner?.rollNumber ? "Roll " + learner.rollNumber : "",
+                        "P " + row.present,
+                        "A " + row.absent,
+                        "Not marked " + row.unmarked,
+                        attendanceRisk.below.includes(row.membershipId) ? "Below guidance" : "",
+                        attendanceRisk.unknown.includes(row.membershipId) ? "Unknown" : "",
+                        "Upcoming " + row.upcoming,
+                        row.percentage === null ? "Not available" : row.percentage + "%",
+                      ].filter(Boolean).join(" | ");
+                    }),
+                  }]}
+                />
+              ) : <Button type="button" variant="secondary" disabled aria-label="Download Report unavailable with no attendance data">Download Report</Button>}
+                </div>
+              </div>
               <p className="mb-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground" aria-label="Attendance legend">
                 <StatusBadge tone="success">P</StatusBadge> Present
                 <StatusBadge tone="error">A</StatusBadge> Absent
@@ -724,42 +774,23 @@ export function FacultyAttendanceWorkspace({
                 <StatusBadge tone="neutral">✖</StatusBadge> No class
               </p>
               <Table scrollLabel="Faculty attendance monthly grid" className="min-w-[48rem]">
+                <caption className="sr-only">Attendance by student and day for {monthLabel}</caption>
                 <thead className="border-b border-border bg-[var(--lms-table-header)] text-xs uppercase tracking-wide text-muted-foreground">
-                  <tr>
-                    <th className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-3">
-                      Student Name
-                    </th>
-                    {calendarDays.map((day) => (
-                      <th
-                        key={day.dayKey}
-                        className="min-w-28 px-3 py-3 text-center"
-                        title={day.sessions
-                          .map((session) => sessionTime(session))
-                          .join(" · ")}
-                      >
-                        {new Intl.DateTimeFormat(
-                          "en-IN",
-                          {
-                            timeZone: "Asia/Kolkata",
-                            day: "2-digit",
-                            month: "short",
-                          },
-                        ).format(
-                          new Date(day.dayKey + "T12:00:00+05:30"),
-                        )}
-                        {day.sessions.length > 1 ? (
-                          <span className="ml-1 text-[10px] font-normal text-muted-foreground">
-                            ×{day.sessions.length}
-                          </span>
-                        ) : null}
-                      </th>
-                    ))}
+                  <tr><th scope="col" aria-label="Student name" className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-2" />
+                    {calendarDays.map(day=><th scope="col" key={day.dayKey+"-weekday"} className="min-w-16 px-2 py-2 text-center"
+                      aria-label={day.dayKey}>{new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",weekday:"short"})
+                      .format(new Date(day.dayKey+"T12:00:00+05:30")).slice(0,1)}</th>)}
+                  </tr>
+                  <tr><th scope="col" className="sticky left-0 z-10 bg-[var(--lms-table-header)] px-3 py-2">Student Name</th>
+                    {calendarDays.map(day=><th scope="col" key={day.dayKey} className="min-w-16 px-2 py-2 text-center"
+                      title={day.sessions.map(session=>sessionTime(session)).join(" · ")}>{Number(day.dayKey.slice(-2))}
+                      {day.sessions.length>1?<span className="ml-1 text-[10px] font-normal text-muted-foreground">×{day.sessions.length}</span>:null}</th>)}
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-border">
                   {allLearners.map((learner) => (
                     <tr key={learner.membershipId}>
-                      <td className="sticky left-0 z-10 bg-surface px-3 py-3">
+                      <th scope="row" className="sticky left-0 z-10 bg-surface px-3 py-3 text-left">
                         <Button
                           type="button"
                           onClick={() => setSelectedLearnerId(learner.membershipId)}
@@ -770,7 +801,7 @@ export function FacultyAttendanceWorkspace({
                           {learnerName(learner)}
                         </Button>
                         {learner.rollNumber ? <p className="mt-1 text-xs text-muted-foreground">Roll {learner.rollNumber}</p> : null}
-                      </td>
+                      </th>
                       {calendarDays.map((day) => {
                         if (day.sessions.length === 0) {
                           return <td key={day.dayKey} aria-label="No class" className="px-3 py-3 text-center"><StatusBadge tone="neutral">✖</StatusBadge></td>;
@@ -803,17 +834,33 @@ export function FacultyAttendanceWorkspace({
                           <td
                             key={day.dayKey}
                             aria-label={state.label}
-                            className={`px-3 py-3 text-center ${state.code === "MIXED" ? "partial" : ""}`}
+                            className={`relative px-3 py-3 text-center ${state.code === "MIXED" ? "partial" : ""}`}
                           >
-                            <StatusBadge tone={tone}>
-                              {state.ratio ? (
-                                <span className="attendance__ratio">
-                                  {state.ratio}
-                                </span>
-                              ) : (
-                                state.code
-                              )}
-                            </StatusBadge>
+                            {day.sessions.length > 1 ? (
+                              <details className="relative" onKeyDown={event => {
+                                if (event.key === "Escape") { event.currentTarget.open = false; event.stopPropagation(); }
+                              }} onMouseEnter={event => { event.currentTarget.open = true; }}
+                                onMouseLeave={event => { event.currentTarget.open = false; }}>
+                                <summary className="cursor-pointer list-none focus-visible:outline-2 focus-visible:outline-primary"
+                                  aria-label={state.label + ". Show session attendance details"}>
+                                  <StatusBadge tone={tone}>{state.ratio ?? state.code}</StatusBadge>
+                                </summary>
+                                <div className="absolute bottom-full left-0 z-30 min-w-48 rounded-lg border border-border bg-surface p-2 text-xs shadow-lg">
+                                  <table className="w-full text-left">
+                                    <thead><tr><th scope="col" className="pr-3">Session Time</th><th scope="col">Attendance</th></tr></thead>
+                                    <tbody>{day.sessions.map(session => {
+                                      const record = recordsByKey.get(session.id + ":" + learner.membershipId);
+                                      const code = new Date(session.startsAt).getTime() > clock.getTime() ? "S" :
+                                        record?.status === "ABSENT" ? "A" :
+                                        record || session.attendanceStatus === "MARKED" ? "P" : "N";
+                                      return <tr key={session.id}><td className="pr-3">{new Intl.DateTimeFormat("en-IN", {
+                                        timeZone:"Asia/Kolkata",hour:"numeric",minute:"2-digit",hour12:true,
+                                      }).format(new Date(session.startsAt))}</td><td>{code}</td></tr>;
+                                    })}</tbody>
+                                  </table>
+                                </div>
+                              </details>
+                            ) : <StatusBadge tone={tone}>{state.code}</StatusBadge>}
                           </td>
                         );
                       })}
@@ -834,7 +881,7 @@ export function FacultyAttendanceWorkspace({
             <div className="space-y-3">
               <EmptyState title="No class scheduled for this date"
                 description="Use Schedule Class to create a class session before marking attendance." />
-              <Button type="button" variant="secondary" onClick={() => setScheduleOpen(true)}>Schedule Class</Button>
+              <Button type="button" variant="secondary" onClick={openScheduleDrawer}>Schedule Class</Button>
             </div>
           ) : (
             <section className="border-b border-border pb-4">
@@ -878,15 +925,16 @@ export function FacultyAttendanceWorkspace({
                   <div className="border-l-2 border-border pl-[var(--lms-space-3)] text-sm text-body">
                     <h2 className="m-0 font-semibold text-foreground">Attendance Session</h2>
                     <p className="mt-1 font-medium text-foreground">
-                      {selectedSession.title}
+                      {legacySessionDate(selectedSession.startsAt)}
                     </p>
+                    <p className="mt-1 text-xs text-muted-foreground">{selectedSession.title}</p>
                     <div className="mt-2">
                       <StatusBadge tone={markingWindow === "OPEN" ? "success" : "warning"}>
                         {markingWindow === "OPEN" ? "Ready to mark" : "Marking unavailable"}
                       </StatusBadge>
                     </div>
                     <p className="mt-1">
-                      {sessionTime(selectedSession)}
+                      {legacyClockTime(selectedSession.startsAt)} - {legacyClockTime(selectedSession.endsAt)}
                       {selectedSession.location
                         ? ` · ${selectedSession.location}`
                         : ""}
@@ -964,7 +1012,7 @@ export function FacultyAttendanceWorkspace({
                 </div>
                 {visibleRoster.length === 0 ? (
                   <p className="p-6 text-sm text-muted-foreground">
-                    No learners match this search.
+                    {workspace.roster.length === 0 ? "No learners are enrolled in this class." : "No learners match this search."}
                   </p>
                 ) : (
                   <ul className="min-w-[500px] divide-y divide-border">
@@ -1108,7 +1156,7 @@ export function FacultyAttendanceWorkspace({
         title="Submit Attendance"
         description={selectedSession?.attendanceStatus === "MARKED"
           ? (attendanceConfirmation ?? "Review attendance corrections before submitting.")
-          : ("Mark " + absent.size + " students absent and " + (workspace.roster.length - absent.size) + " students present?")}
+          : ("Mark " + absent.size + (absent.size === 1 ? " student" : " students") + " absent and " + (workspace.roster.length - absent.size) + ((workspace.roster.length - absent.size) === 1 ? " student" : " students") + " present?")}
         confirmLabel="Confirm"
         cancelLabel="Cancel"
         confirmVariant="primary"
@@ -1253,32 +1301,38 @@ export function FacultyAttendanceWorkspace({
                   event.target.value,
                 )
               }
-              required
               maxLength={200}
-              placeholder="Lecture, Lab, Tutorial…"
+              placeholder={workspace.course.courseName}
             />
           </label>
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-            Starts at (IST)
-            <Input
-              className="w-full"
-              type="datetime-local"
-              value={startsAt}
-              onChange={(event) =>
-                setStartsAt(event.target.value)
-              }
-            />
+            Date
+            <Input type="date" className="w-full" required
+              value={startsAt.split("T")[0] || selectedDate}
+              onChange={event => setScheduleWallTimes(
+                event.target.value, startsAt.split("T")[1] || "", endsAt.split("T")[1] || "",
+              )}/>
           </label>
           <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
-            Ends at (IST)
-            <Input
-              className="w-full"
-              type="datetime-local"
-              value={endsAt}
-              onChange={(event) =>
-                setEndsAt(event.target.value)
-              }
-            />
+            Course
+            <Input className="w-full" value={workspace.course.courseName} disabled readOnly/>
+          </label>
+          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+            Start Time (IST)
+            <Input type="time" lang="en-US" className="w-full" required
+              value={startsAt.split("T")[1] || ""}
+              onChange={event => setScheduleWallTimes(
+                startsAt.split("T")[0] || selectedDate,event.target.value,endsAt.split("T")[1] || "",
+              )}/>
+          </label>
+          <label className="grid min-w-0 gap-2 font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
+            End Time (IST)
+            <Input type="time" lang="en-US" className="w-full" required
+              value={endsAt.split("T")[1] || ""}
+              onChange={event => setScheduleWallTimes(
+                startsAt.split("T")[0] || selectedDate,startsAt.split("T")[1] || "",event.target.value,
+              )}/>
+            <span className="text-xs font-normal text-muted-foreground">Class duration must be 12 hours or less. An earlier end time uses the next day.</span>
           </label>
           <label className="grid min-w-0 gap-2 font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Location
