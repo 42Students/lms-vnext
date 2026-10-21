@@ -17,6 +17,8 @@ const DRIVE_ERRORS: Readonly<Record<string,string>> = {
   PLACEMENT_ROLE_OPTION_REQUIRED: "Add at least one role before publishing.",
   PLACEMENT_ROLE_OPTION_PRIMARY_REQUIRED: "Save a primary role before continuing.",
   PLACEMENT_ROLE_OPTION_DUPLICATE: "This drive already has a role with that title.",
+  PLACEMENT_VERIFIED_MARKS_REQUIRED:"Verified marks only: enter marks verified by your college.",
+  PLACEMENT_MARKS_NOT_VERIFIED:"These marks are missing or not verified by your college. Verify them before publishing an eligibility rule that requires verified marks.",
   PLACEMENT_ELIGIBILITY_POLICY_LOCKED: "Eligibility can no longer be changed for this drive.",
   PLACEMENT_ROUND_JOB_READ_ONLY: "Rounds cannot be changed on this drive.",
   PLACEMENT_ROUND_STALE: "A round changed while you were working. Refresh and try again.",
@@ -41,6 +43,7 @@ const DRIVE_FIELD_LABELS: Readonly<Record<string,string>> = {
   minCgpa:"minimum CGPA",
   minPctThroughout:"percentage throughout",
   allowedPassingYears:"passing years",
+  verifiedMarksOnly:"Verified marks only",
 };
 
 
@@ -62,3 +65,10 @@ export function tpoDriveFormErrorMessage(reason:unknown):string{
     return FALLBACK;
   return safe;
 }
+
+/** Maps the legacy verifiedMarksOnly switch into a meaningful eligibility
+ * validation message without accepting unverified student-supplied marks. */
+export const VERIFIED_MARKS_ONLY_HELP={
+ label:"Verified marks only",
+ helper:"Only verified college marks count. Learners with missing or unverified marks cannot meet this rule until the college verifies them.",
+} as const;

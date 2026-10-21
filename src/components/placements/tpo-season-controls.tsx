@@ -7,6 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Alert} from "@/components/ui/alert";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
+import {TPO_SEASON_CREATE_REVIEW_COPY} from "@/modules/placements/tpo-season-write-model";
 
 type Season = {
   id: string;
@@ -26,6 +27,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
   const [form, setForm] = useState<FormValue>(empty);
   const [busy, setBusy] = useState(false);
   const [reviewOpen, setReviewOpen] = useState(false);
+  const [acknowledged, setAcknowledged] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const active = seasons.some((season) => season.status === "ACTIVE");
   function select(season: Season | null) {
@@ -33,6 +35,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
     setForm(season ? { name: season.name, code: season.code,
       startDate: season.startDate, endDate: season.endDate } : empty);
     setError(null);
+    setAcknowledged(false);
   }
   async function save() {
     if (busy) return;
@@ -41,7 +44,8 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
       setError("Complete the name, code and chronological date range.");
       return;
     }
-    if (!reviewOpen) { setReviewOpen(true); return; }
+    if (!reviewOpen) {setAcknowledged(false); setReviewOpen(true); return;}
+    if(!edit&&!acknowledged){setError("Confirm that season activation does not open learner registration.");return;}
     setBusy(true);
     setError(null);
     try {
@@ -82,6 +86,7 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
               </label>
             ))}
           </div>
+          <p className="text-xs leading-5 text-muted-foreground">{TPO_SEASON_CREATE_REVIEW_COPY.unavailable}</p>
           <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
             <Button type="button" onClick={() => void save()} disabled={busy}
               className="min-h-11 w-full sm:w-auto md:min-h-9">
@@ -114,6 +119,12 @@ export function TpoSeasonControls({ seasons }: { seasons: readonly Season[] }) {
          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Season code</dt><dd className="break-words">{form.code}</dd></div>
          <div className="grid grid-cols-[auto_minmax(0,1fr)] gap-3"><dt>Dates</dt><dd className="break-words">{form.startDate} – {form.endDate}</dd></div>
         </dl>
+        {!edit ? <label className="mt-3 flex items-start gap-2 text-sm text-body">
+          <input type="checkbox" checked={acknowledged} disabled={busy}
+            onChange={event=>{setAcknowledged(event.currentTarget.checked);setError(null);}}
+            className="mt-1 size-4 shrink-0" />
+          <span>{TPO_SEASON_CREATE_REVIEW_COPY.confirm}</span>
+        </label>:null}
         {error ? <InlineNotice tone="error" message={error} /> : null}
       </ConfirmDialog>
     </section>

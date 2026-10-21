@@ -81,6 +81,10 @@ export function TpoDebarControl({
 
   return (
     <section className="min-w-0 space-y-3 py-2">
+      <h3 className="text-base font-semibold text-foreground">Manual placement restriction</h3>
+      <p className="rounded border border-border bg-muted p-3 text-sm text-body">
+        This action sets a learner-level eligibility decision, not a timed debarment, job-specific ban, or removal of existing applications.
+      </p>
       <p className="mt-2 text-sm text-body leading-[22px]">
         Debar records a learner-level Ineligible decision with a required reason.
         The student loses Placements self-service access and cannot submit new
