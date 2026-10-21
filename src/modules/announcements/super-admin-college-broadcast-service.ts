@@ -42,6 +42,8 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
  if(!isSuperAdmin(context)||!canAccessAnnouncements(context.user.platformStatus))throw new AuthorizationError("college.manage");
  requirePermission(context,"admin-scope.select");
  const input=superAdminCollegeBroadcastSchema.parse(raw);
+ // Fail closed for direct clients until a durable due-time worker is deployed.
+ if(input.scheduledAt)throw new AnnouncementError("INVALID_SCHEDULE");
  const requested=requestedBroadcastCollegeIds(input.collegeIds);
  const db=getDb();
  const restrictions=[
@@ -71,9 +73,9 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    organizationId:target.organizationId,collegeId:target.id,
    receiverType:"COLLEGE",receiverId:target.id,
    title:input.title,message:input.message,
-   buttonLabel:input.buttonLabel||null,buttonUrl:input.buttonUrl||null,
+   buttonLabel:input.buttonUrl?(input.buttonLabel||"Open"):null,buttonUrl:input.buttonUrl||null,
    senderUserId:context.user.id,senderType:"SUPER_ADMIN",
-   scheduledAt:input.scheduledAt?new Date(input.scheduledAt):null,
+   scheduledAt:null,
    expiresAt:input.expiresAt?new Date(input.expiresAt):null,
    isPinned:input.isPinned,
   }));
@@ -87,9 +89,8 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    importance:"HIGH" as const,summary:"Super Admin published an in-app college notice",
    metadata:{audienceMode:input.audienceMode,noticeId:row.id},
   }))).returning({id:activityEvents.id,collegeId:activityEvents.collegeId});
-  // Immediate notices notify every ACTIVE TPO user of the college. Scheduled
-  // notices remain passive until the scheduled-delivery worker is configured.
-  if(!input.scheduledAt||new Date(input.scheduledAt).getTime()<=Date.now()){
+  // Fan-out and announcement rows share one transaction. An immediate
+  // notification failure rolls back the entire publication.
    const recipients=await tx.select({collegeId:collegeMemberships.collegeId,userId:collegeMemberships.userId})
     .from(collegeMemberships)
     .innerJoin(membershipRoles,eq(membershipRoles.membershipId,collegeMemberships.id))
@@ -105,11 +106,10 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    for(const event of events){
     if(!event.collegeId)continue;
     await deliverInAppNotificationInTransaction(tx,event.id,byCollege.get(event.collegeId)??[],{
-     title:"From 42: "+input.title.slice(0,220),body:input.message.slice(0,2000),
-     actionHref:"/tpo/announcements",
+     title:"From 42: "+input.title.slice(0,200),body:input.message.slice(0,140),
+     actionHref:"/tpo/announcements?tab=from42",
     });
    }
-  }
   return inserted;
  });
  return {count:created.length,noticeIds:created.map(x=>x.id)};

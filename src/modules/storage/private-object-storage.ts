@@ -23,6 +23,30 @@ export type PrivateObjectNamespace =
   (typeof PRIVATE_OBJECT_NAMESPACES)[number];
 
 const namespaces = new Set<string>(PRIVATE_OBJECT_NAMESPACES);
+
+/** Legacy inventory ONLY; never bypass scope authorization with a public URL,
+ * private-doc: reference, or a raw unscoped R2 key. No legacy-data migration
+ * is required for vNext. Should a migration ever be commissioned, rehost the
+ * bytes in the private bucket, verify/scan, then rewrite owner-scoped records.
+ * Null entries require a dedicated destination feature, not a guessed folder.
+ */
+export const LEGACY_STORAGE_FOLDER_CROSSWALK = {
+  "lesson-content": "course-resource",
+  "profile-images": null,
+  "video-intros": null,
+  resumes: null,
+  assignments: "assignment-submission",
+  "course-images": "course-resource",
+  "identity-docs": "profile-verification",
+  marksheets: "profile-verification",
+  "college-branding": null,
+  "offer-letters": null,
+  "jd-files": null,
+} as const satisfies Record<string, PrivateObjectNamespace | null>;
+// Legacy lesson videos instead use lesson-video; project assignment attachments
+// use project-resource. The authorized parent type, never the folder string,
+// determines their namespace during an explicit migration.
+
 const uuidPattern =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const mimePattern =
@@ -87,18 +111,7 @@ export function validatePrivateReadRequest(
 ) {
   requireUuid(input.collegeId);
   requireUuid(input.ownerMembershipId);
-  const prefix =
-    `private/${input.collegeId}/${input.ownerMembershipId}/`;
-  if (
-    !input.objectKey.startsWith(prefix) ||
-    input.objectKey.includes("..") ||
-    input.objectKey.includes("://") ||
-    input.objectKey.includes("\\")
-  ) {
-    throw new PrivateObjectStorageError(
-      "PRIVATE_STORAGE_INVALID_SCOPE",
-    );
-  }
+  assertScopedKey(input.objectKey, input);
   const expiresInMs =
     input.expiresInMs ?? 5 * 60 * 1000;
   if (
@@ -158,12 +171,16 @@ function assertScopedKey(
 ) {
   requireUuid(expected.collegeId);
   requireUuid(expected.ownerMembershipId);
-  const prefix = `private/${expected.collegeId}/${expected.ownerMembershipId}/`;
+  // Exact generated namespace/UUID shape: no extra slashes, raw legacy
+  // keys, traversal, public URLs or arbitrary prefix-matching objects.
+  const parts = objectKey.split("/");
   if (
-    !objectKey.startsWith(prefix) ||
-    objectKey.includes("..") ||
-    objectKey.includes("://") ||
-    objectKey.includes("\\")
+    parts.length !== 5 ||
+    parts[0] !== "private" ||
+    parts[1] !== expected.collegeId ||
+    parts[2] !== expected.ownerMembershipId ||
+    !namespaces.has(parts[3] ?? "") ||
+    !uuidPattern.test(parts[4] ?? "")
   ) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_INVALID_SCOPE");
   }
@@ -174,6 +191,7 @@ export async function readPrivateObjectAttestation(
   expected: { collegeId: string; ownerMembershipId: string; uploadTokenHash?: string },
 ) {
   assertScopedKey(objectKey, expected);
+  // 404 is missing; network/configuration errors must propagate separately.
   const head = await headObject(getPrivateR2Config(), objectKey);
   if (!head) {
     throw new PrivateObjectStorageError("PRIVATE_STORAGE_OBJECT_NOT_ATTESTED");
@@ -258,7 +276,8 @@ export async function recordPrivateObjectScanVerdict(
 
 /**
  * Produces a short-lived read URL after the caller has already authorized
- * access to the owning membership. The object must still pass the same tenant
+ * access to the owning membership. Scope IDs alone are NOT authorization:
+ * the caller must check parent row, college, role, visibility and enrollment. The object must still pass the same tenant
  * scope, malware scan and checksum attestation. Public bucket URLs are never
  * returned or persisted.
  */
