@@ -24,7 +24,7 @@ export default async function MyTrackerReportsPage(){
     <ErrorState title="Could not load reports" description="We could not load your reports."
       action={<Link href="/tracker/mine" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Retry</Link>} />
   </div>;}
-  return <section className="min-w-0 max-w-full space-y-5">
+  return <section className="min-w-0 max-w-full space-y-6">
     <PageHeader title="My reports" description="See the issues you have reported."
       actions={<Link href="/tracker" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-primary)] bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] md:min-h-9 w-full md:w-auto">Report an issue</Link>}/>
     {!reports.length?<EmptyState title="No reports yet" description="You have not reported any issues yet." action={<Link href="/tracker" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-on-primary md:min-h-9">Report an issue</Link>}/>:

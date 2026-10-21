@@ -44,23 +44,23 @@ export function CollegeHallBookingAction({hallId,classes,faculty}:{
     <p className="mt-2 text-sm text-body">Dates and times use IST. A booking is only confirmed after rechecking persisted overlaps.</p>
     {classes.length===0?<p role="status">No active classes are available for booking.</p>:
       <form onSubmit={submit} className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2 min-[992px]:grid-cols-3">
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class
           <Select className={field} required value={sectionId} onChange={e=>setSectionId(e.target.value)}>
             <option value="">Select class</option>
             {classes.map(c=><option key={c.id} value={c.id}>{c.name} · {c.cohortName}</option>)}
           </Select></label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Faculty (optional)
           <Select className={field} value={facultyId} onChange={e=>setFacultyId(e.target.value)}>
             <option value="">None</option>{faculty.map(f=><option key={f.id} value={f.id}>{f.displayName||"Unnamed Faculty"}</option>)}
           </Select></label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Title
           <Input className={field} required maxLength={160} value={title} onChange={e=>setTitle(e.target.value)}/></label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date (IST)
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date (IST)
           <DateInput className={field} required mode="date" min={selected?.periodStart} max={selected?.periodEnd}
             value={date} onChange={e=>setDate(e.target.value)}/></label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Starts (IST)
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Starts (IST)
           <DateInput className={field} required mode="time" value={from} onChange={e=>setFrom(e.target.value)}/></label>
-        <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ends (IST)
+        <label className="grid gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Ends (IST)
           <DateInput className={field} required mode="time" value={to} onChange={e=>setTo(e.target.value)}/></label>
         <div className="md:col-span-2 min-[992px]:col-span-3">
           <Button variant="primary" type="submit" loading={pending} className="min-h-11 w-full md:min-h-9 md:w-auto" disabled={pending||!sectionId||!title.trim()}>
