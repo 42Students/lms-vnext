@@ -616,9 +616,20 @@ export async function archiveCollege(
     await assertPersistedPlatformPermission(tx,context,"college.manage",{
       collegeId,organizationId:college.organizationId,
     });
+    // Scope must be rechecked under the tenant row lock before archiving.
+    const [current]=await tx.select({
+      id:colleges.id,organizationId:colleges.organizationId,
+      collegeStatus:colleges.status,organizationStatus:organizations.status,
+    }).from(colleges)
+      .innerJoin(organizations,eq(organizations.id,colleges.organizationId))
+      .where(eq(colleges.id,collegeId)).for("update").limit(1);
+    if(!current||current.organizationId!==college.organizationId||
+       current.collegeStatus!=="ACTIVE"||current.organizationStatus!=="ACTIVE")
+      throw new AuthorizationError("college.manage");
     const [archived]=await tx.update(colleges)
       .set({status:"ARCHIVED",updatedAt:archivedAt})
-      .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE")))
+      .where(and(eq(colleges.id,collegeId),eq(colleges.status,"ACTIVE"),
+        eq(colleges.organizationId,current.organizationId)))
       .returning({id:colleges.id,organizationId:colleges.organizationId,
         name:colleges.name,code:colleges.code,status:colleges.status});
     if(!archived)throw new CollegeServiceError("COLLEGE_NOT_FOUND");
