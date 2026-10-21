@@ -25,7 +25,7 @@ export default async function ProfileCompleteness({searchParams}:{
     {value:"missing",label:"Not filled"},
     {value:"filled",label:"Filled"},
   ] as const;
-  return <div className="min-w-0 space-y-5">
+  return <div className="min-w-0 space-y-6">
     <Link href="/learn/profile" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text md:min-h-9">
       ← Back to Profile
     </Link>

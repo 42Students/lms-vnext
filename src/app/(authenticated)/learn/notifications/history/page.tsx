@@ -42,7 +42,7 @@ export default async function LearnerNotificationHistoryPage({
   );
 
   return (
-    <div className="min-w-0 space-y-5">
+    <div className="min-w-0 space-y-6">
       <Link href="/learn/notifications"
         className="inline-flex min-h-11 min-[768px]:min-h-9 items-center text-[13px] font-semibold text-[var(--lms-link-text)] underline hover:underline">
         ← Notifications
