@@ -3,6 +3,9 @@ import { Disclosure } from "@/components/ui/disclosure";
 import { Pagination } from "@/components/ui/pagination";
 import { Select } from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {Input} from "@/components/ui/input";
+import {getMentorMeetingChangeHistory} from "@/modules/projects/mentor-meeting-history-service";
+import {PROJECT_MEETING_HISTORY_TITLE} from "@/db/schema/project-audit-staged";
 import Link from "next/link";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -14,7 +17,7 @@ import {
 import { getMentorProjectActivityHistory } from "@/modules/projects/mentor-project-activity-service";
 import {singleValueMentorFilters} from "@/modules/projects/mentor-filter-query";
 
-type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[];pageSize?:string|string[]};
+type Params={importance?:string|string[];view?:string|string[];window?:string|string[];order?:string|string[];page?:string|string[];pageSize?:string|string[];meetingKey?:string|string[];meetingPage?:string|string[]};
 
 export default async function MentorProjectActivityHistoryPage({
   params,searchParams,
@@ -34,6 +37,16 @@ export default async function MentorProjectActivityHistoryPage({
   </section>;
   const context=await getCurrentRequestContext();
   const data=await getMentorProjectActivityHistory(context,parsed.data);
+  const meetingKey=typeof raw.meetingKey==="string"&&raw.meetingKey.trim().length<=120
+    ?raw.meetingKey.trim():"";
+  const meetingPage=typeof raw.meetingPage==="string"?raw.meetingPage:"1";
+  // Only load typed revisions when the meeting-history view is requested.
+  // The service independently checks current mentor membership and project.
+  const meetingHistory=data.enabled&&data.query.view==="MEETINGS"
+    ?await getMentorMeetingChangeHistory(context,{
+      projectId, ...(meetingKey?{meetingKey}:{}), page:meetingPage,
+    }).catch(()=>null)
+    :null;
   const advancedActive=data.query.window!=="ALL"||data.query.order!=="NEWEST"||data.query.pageSize!==20;
   const filtered=advancedActive||data.query.importance!=="ALL"||data.query.view!=="ALL";
   return <div className={mentorProjectActivityMobileLayout}>
@@ -65,11 +78,12 @@ export default async function MentorProjectActivityHistoryPage({
             <option value="ALL">All recorded events</option>
             <option value="PROJECT">Project lifecycle</option>
             <option value="REVIEWS">Review decisions</option><option value="DELIVERIES">Final delivery history</option>
-            <option value="MEETINGS">Meeting decisions</option>
+            <option value="MEETINGS">Meeting change history</option>
             <option value="TASKS">Task events</option>
             <option value="EVALUATIONS">Recorded evaluations</option><option value="SPRINTS">Sprint changes</option><option value="ASSIGNMENTS">Mentor assignments</option><option value="RESOURCES">Resources</option><option value="TEAM">Team membership</option>
           </Select>
         </label>
+        {meetingKey?<input type="hidden" name="meetingKey" value={meetingKey}/>:null}
         <Button type="submit" variant="primary" className="min-h-11 md:min-h-9">
           Filter
         </Button>
@@ -135,10 +149,81 @@ export default async function MentorProjectActivityHistoryPage({
             </time>
           </li>)}</ol>}
       {data.totalPages>1?<Pagination label="Project activity history pages" page={data.page} pageCount={data.totalPages} hrefForPage={page=>mentorProjectActivityHref({...data.query,page})}/>:null}
+      {data.query.view==="MEETINGS" ? <section aria-label={PROJECT_MEETING_HISTORY_TITLE}
+        className="min-w-0 space-y-4 border-t border-[var(--lms-canvas-border)] pt-4">
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{PROJECT_MEETING_HISTORY_TITLE}</h2>
+          <Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=meetings"}
+            className="min-h-9 text-sm font-semibold text-link underline">Back to meetings</Link>
+        </div>
+        <p className="text-sm text-body">Recorded meeting revisions, newest first. Details show only allowed fields
+          from this project&apos;s persisted history; legacy records may be incomplete.</p>
+        <form method="get" action={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history"}
+          className="flex min-w-0 flex-wrap items-end gap-2" role="search" aria-label="Filter meeting history">
+          <input type="hidden" name="view" value="MEETINGS"/>
+          <label className="grid min-w-0 flex-1 gap-1 text-sm font-semibold text-body">
+            Meeting key
+            <Input name="meetingKey" maxLength={120} defaultValue={meetingKey}
+              placeholder="All project meetings"/>
+          </label>
+          <Button type="submit" variant="secondary">Filter</Button>
+          {meetingKey?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history?view=MEETINGS"}
+            className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+            Clear</Link>:null}
+        </form>
+        {!meetingHistory ? <p role="alert" className="text-sm text-error">
+          Meeting history could not be loaded. Other activity events are still available.
+          <Link href={mentorProjectActivityHref({...data.query,view:"MEETINGS",page:1})}
+            className="ml-2 font-semibold underline">Retry</Link>
+        </p> : meetingHistory.items.length===0 ?
+          <EmptyState title="No meeting changes recorded"
+            description="No persisted meeting revisions match this project and meeting key."/> :
+          <div className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
+            {meetingHistory.items.map(item=><article key={item.id} className="min-w-0 space-y-2 py-3 text-sm">
+              <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+                <strong>{item.actionType.replaceAll("_"," ")} · {item.meetingKey}</strong>
+                <time dateTime={item.createdAt} className="text-xs text-muted-foreground">
+                  {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+                    timeZone:"Asia/Kolkata"}).format(new Date(item.createdAt))} IST
+                </time>
+              </div>
+              <p className="text-xs text-body">By {item.actorName}
+                {item.actorUserType?" · "+item.actorUserType:""}</p>
+              {item.notes?<p className="whitespace-pre-wrap break-words text-sm text-body">{item.notes}</p>:null}
+              <Disclosure title="View before and after" className="border-b border-border"
+                contentClassName="space-y-3 pt-3">
+                {item.changedFields.length?<p className="text-xs text-muted-foreground">
+                  Changed fields: {item.changedFields.join(", ")}</p>:null}
+                <div className="grid min-w-0 gap-3 md:grid-cols-2">
+                  <div className="min-w-0">
+                    <h3 className="font-semibold">Before</h3>
+                    <pre className="mt-1 max-h-52 overflow-auto whitespace-pre-wrap break-words rounded border border-border p-3 text-xs">
+                      {item.before?JSON.stringify(item.before,null,2):"Not recorded"}
+                    </pre>
+                  </div>
+                  <div className="min-w-0">
+                    <h3 className="font-semibold">After</h3>
+                    <pre className="mt-1 max-h-52 overflow-auto whitespace-pre-wrap break-words rounded border border-border p-3 text-xs">
+                      {item.after?JSON.stringify(item.after,null,2):"Not recorded"}
+                    </pre>
+                  </div>
+                </div>
+              </Disclosure>
+            </article>)}
+          </div>}
+        {meetingHistory&&meetingHistory.pageCount>1?
+          <Pagination label="Meeting change history pages" page={meetingHistory.page}
+            pageCount={meetingHistory.pageCount}
+            hrefForPage={nextPage=>{
+              const query=new URLSearchParams({view:"MEETINGS",meetingPage:String(nextPage)});
+              if(meetingKey)query.set("meetingKey",meetingKey);
+              return "/mentor/projects/"+encodeURIComponent(projectId)+"/activity-history?"+query.toString();
+            }}/> :null}
+      </section> :null}
     </>}
     <p className="text-xs leading-5 text-muted-foreground">
-      This safe timeline shows only registered event types and timestamps;
-      raw summaries, metadata, actor identities and private project details are withheld.
+      General activity records show registered event types and timestamps only.
+      Typed meeting revisions are separately restricted to the assigned mentor and safely redacted.
       It does not claim to contain every historic action.
     </p>
   </div>;

@@ -38,6 +38,19 @@ export default async function SuperAdminHrPage({
 
   const params = await searchParams;
 
+  // Legacy recruiter list used zero-based page + size=25. Accept that
+  // bookmark shape, but retain the vNext one-based canonical URLs.
+  if(typeof params.size==="string" && params.size==="25" &&
+     (params.page===undefined || (typeof params.page==="string" && /^[0-9]{1,5}$/.test(params.page)))) {
+    const oldPage=Number(params.page??"0");
+    if(Number.isSafeInteger(oldPage)&&oldPage>=0&&oldPage<10000) {
+      const target=new URLSearchParams();
+      if(typeof params.q==="string"&&params.q.trim())target.set("q",params.q.slice(0,120));
+      if(typeof params.status==="string"&&params.status)target.set("status",params.status);
+      if(oldPage)target.set("page",String(oldPage+1));
+      redirect("/admin/recruiters"+(target.size?"?"+target.toString():""));
+    }
+  }
   const parsed = parseSuperAdminHrPageParams(params);
 
   if (!parsed) {
@@ -171,6 +184,17 @@ export default async function SuperAdminHrPage({
     );
   }
 
+  // These are counts for the visible page, not platform-wide totals.
+  // The old Deleted state is a migration-only provenance field and must not
+  // be inferred from a DISABLED platform identity.
+  const pageLifecycle = list ? {
+    active: list.items.filter(item=>item.status==="ACTIVE").length,
+    suspended: list.items.filter(item=>item.status==="ARCHIVED").length,
+    disabled: list.items.filter(item=>item.status==="DISABLED").length,
+    deleted: list.items.filter(item=>item.legacyStatus==="DELETED").length,
+    hasLegacyProvenance: list.items.some(item=>item.legacyStatus!=null),
+  } : null;
+
   const scopeKey = [
     context.adminScope?.organizationId ?? "",
     context.adminScope?.collegeId ?? "",
@@ -178,6 +202,33 @@ export default async function SuperAdminHrPage({
 
   return (
     <div className="min-w-0 space-y-3">
+      <nav aria-label="Recruiter administration location" className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+        <Link href="/admin/placements" className="min-h-9 content-center font-semibold text-link underline">
+          Placements</Link>
+        <span aria-hidden="true">›</span><span>Recruiter accounts</span>
+        <span className="text-body">· {scopeDescription}</span>
+      </nav>
+      {pageLifecycle ? <section aria-label="Recruiter lifecycle counts on this page"
+        className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+        <p className="mb-2 text-xs font-semibold text-muted-foreground">On this page · {list?.items.length??0} recruiters</p>
+        <dl className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+          <div><dt className="text-muted-foreground">Active</dt>
+            <dd className="font-semibold tabular-nums">{pageLifecycle.active}</dd></div>
+          <div><dt className="text-muted-foreground">Suspended</dt>
+            <dd className="font-semibold tabular-nums">{pageLifecycle.suspended}</dd></div>
+          <div><dt className="text-muted-foreground">Disabled</dt>
+            <dd className="font-semibold tabular-nums">{pageLifecycle.disabled}</dd></div>
+          <div><dt className="text-muted-foreground">Deleted (legacy)</dt>
+            <dd className="font-semibold tabular-nums">
+              {pageLifecycle.hasLegacyProvenance?pageLifecycle.deleted:"Not available"}</dd></div>
+        </dl>
+      </section> : null}
+      <p role="note" className="max-w-3xl text-xs text-muted-foreground">
+        Changing the selected college or organization reloads this directory and closes unsaved
+        recruiter forms. Save or discard your edits before switching. Search and pagination use
+        the selected scope; <Link href="/admin/recruiters" className="font-semibold text-link underline">
+          reset filters</Link> after switching if the previous search no longer applies.
+      </p>
       <p role="note" className="max-w-3xl text-xs leading-5 text-muted-foreground">
         Recruiter college access is now time-limited and verified. New grants expire
         after three months unless an explicit future expiry (up to five years) is
