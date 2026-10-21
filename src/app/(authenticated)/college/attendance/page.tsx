@@ -51,7 +51,17 @@ export default async function CollegeAttendancePage({
   if (!parsed.success) return <div className="min-w-0 space-y-6"><PageHeader title="Attendance" /><ErrorState title="Unable to load attendance" description="These attendance filters are not valid. Clear them and choose a class, course and month again." action={<Link href="/college/attendance" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-[var(--lms-space-3)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center px-4">Reset attendance filters</Link>}/></div>;
   const query=parsed.data;
   const month = query.month ?? currentMonth();
-  const options = await getAdminAttendanceOptions(context, collegeId);
+  const optionsResult = await Promise.allSettled([getAdminAttendanceOptions(context, collegeId)]);
+  if (optionsResult[0].status === "rejected") {
+    return <div className="min-w-0 space-y-[var(--lms-space-4)]">
+      <PageHeader title="Attendance" />
+      <ErrorState title="Couldn't load classes/courses for this college"
+        description="Attendance options are unavailable. Your chosen month and filters are preserved."
+        action={<Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} />
+    </div>;
+  }
+  const options = optionsResult[0].value;
   const requestedDelivery = options.deliveries.find(
     (entry) => entry.deliveryId === query.deliveryId,
   );
@@ -68,13 +78,15 @@ export default async function CollegeAttendancePage({
     (entry) => entry.sectionId === selectedSectionId &&
       entry.courseId === selectedCourseId,
   ) ?? null;
-  const grid = delivery
-    ? await getAdminAttendanceGrid(context, {
+  const gridResult = delivery
+    ? await Promise.allSettled([getAdminAttendanceGrid(context, {
         collegeId,
         deliveryId: delivery.deliveryId,
         month,
-      })
+      })])
     : null;
+  const grid = gridResult?.[0].status === "fulfilled" ? gridResult[0].value : null;
+  const gridFailed = gridResult?.[0].status === "rejected";
 
   const data: AdminAttendanceWorkspaceData = {
     collegeId,
@@ -131,6 +143,10 @@ export default async function CollegeAttendancePage({
           { value: "/college/attendance/settings", label: "Attendance policy", href: "/college/attendance/settings" },
         ]}
       />
+      {gridFailed ? <ErrorState title="Unable to load monthly attendance"
+        description="The attendance grid could not be refreshed. Retry with the same filters."
+        action={<Link href={"/college/attendance?" + new URLSearchParams(Object.entries(query).filter((entry): entry is [string,string] => typeof entry[1] === "string")).toString()}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>} /> : null}
       <AdminAttendanceWorkspace
         data={data}
         basePath="/college/attendance"
