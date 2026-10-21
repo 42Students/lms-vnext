@@ -138,14 +138,15 @@ export async function getDriveChangeRequests(context:RequestContext,jobId:unknow
   hasMore:all.length>100,nextCursor:all.length>100&&last?last.createdAt.toISOString()+"|"+last.id:null,
   requests:requests.map(r=>({
    ...r,createdAt:r.createdAt.toISOString(),updatedAt:r.updatedAt.toISOString(),
-   decidedAt:r.decidedAt?.toISOString()??null,resolvedAt:r.decidedAt?.toISOString()??null,
+   decidedAt:r.decidedAt?.toISOString()??null,
+   resolvedAt:(r.resolvedAt??r.decidedAt)?.toISOString()??null,
    createdByName:names.get(r.createdByUserId)??null,
    fieldLabel:FIELD_LABELS[r.legacyField??r.field]??FIELD_LABELS[r.field]??"Other",
    kind:r.mode==="SUGGEST"?"PROPOSE":"ASK",
    direction:r.proposerParty==="TPO"?"COLLEGE_TO_COMPANY":"COMPANY_TO_COLLEGE",
-   answerValue:r.status==="ANSWERED"?r.decisionNote:null,
-   replyText:r.status==="DECLINED"?r.decisionNote:null,
-   currentValue:null, // Historical snapshot absent in migration 0114; do not invent it.
+   answerValue:r.answerValue??(r.status==="ANSWERED"?r.decisionNote:null),
+   replyText:r.replyText??(r.status==="DECLINED"?r.decisionNote:null),
+   currentValue:r.currentValue, // Null means no imported baseline was saved.
    messages:(grouped.get(r.id)??[]).map(m=>({...m,sentAt:m.sentAt.toISOString()})),
   }))};
 }
@@ -164,10 +165,10 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   if(input.action==="CREATE"){
    const target:Party=party==="TPO"?"COMPANY":"TPO";
    const mode=input.field==="OTHER"?"ASK":input.mode==="PROPOSE"?"SUGGEST":input.mode;
-   const canonicalField={
+   const canonicalField=({
     ROLE_TITLE:"OTHER",DESCRIPTION:"OTHER",JOB_TYPE:"OTHER",WORK_MODE:"OTHER",
     CTC:"PAY",STIPEND:"PAY",MIN_CGPA:"ELIGIBILITY",BRANCHES:"ELIGIBILITY",
-   }[input.field]??input.field;
+   } as Record<string,string>)[input.field]??input.field;
    if(input.field!=="OTHER"){
     const [duplicate]=await tx.select({id:placementDriveChangeRequests.id})
      .from(placementDriveChangeRequests).where(and(
@@ -179,9 +180,12 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
     if(duplicate)throw new PlacementsServiceError("PLACEMENT_REQUEST_CONFLICT");
    }
    if(mode==="SUGGEST"&&["PAY","CTC","STIPEND"].includes(input.field)){
-    const [{total}]=await tx.select({total:sql<number>`count(*)::integer`})
-     .from(placementJobRoleOptions).where(eq(placementJobRoleOptions.jobId,job.id));
-    if(total>1)throw new Error("This drive has multiple roles. Please ask for the package instead.");
+    const roleCounts=await tx.select({total:sql<number>`count(*)::integer`.mapWith(Number)})
+     .from(placementJobRoleOptions).where(and(
+      eq(placementJobRoleOptions.jobId,job.id),
+      eq(placementJobRoleOptions.status,"ACTIVE")));
+    if((roleCounts[0]?.total??0)>1)
+     throw new Error("This drive has multiple roles. Please ask for the package instead.");
    }
    if(mode==="SUGGEST"&&input.field==="LOCATION"&&
     lockedJob.locations.join(", ").trim().toLocaleLowerCase("en-IN")===
@@ -243,7 +247,10 @@ export async function mutateDriveChangeRequest(context:RequestContext,rawJobId:u
   const status=input.action==="ACCEPT"?"ACCEPTED":
    input.action==="ANSWER"?"ANSWERED":input.action==="DECLINE"?"DECLINED":"WITHDRAWN";
   const [updated]=await tx.update(placementDriveChangeRequests).set({
-   status,decisionNote:input.note,decidedByUserId:context.user.id,decidedAt:new Date(),
+   status,decisionNote:input.note,
+   ...(input.action==="ANSWER"?{answerValue:input.note}:{}),
+   ...(input.action==="DECLINE"?{replyText:input.note}:{}),
+   decidedByUserId:context.user.id,decidedAt:new Date(),resolvedAt:new Date(),
    updatedAt:new Date(),
   }).where(and(eq(placementDriveChangeRequests.id,request.id),
    eq(placementDriveChangeRequests.status,"OPEN"))).returning({id:placementDriveChangeRequests.id});

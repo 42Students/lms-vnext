@@ -35,6 +35,8 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
  ]);
  const academicFilter=query.departmentId||query.programId||query.cohortId;
  const base=db.select({
+  applicationId:placementApplications.id,
+  previousStage:placementCollegeApplicationStages.previousStage,
   jobId:placementJobs.id,jobTitle:placementJobs.title,
   companyId:placementCompanies.id,companyName:placementCompanies.name,
   status:placementApplications.status,
@@ -77,7 +79,24 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
     query.cohortId?eq(learnerProgramEnrollments.cohortId,query.cohortId):undefined,
    ))):undefined,
  )).as("college_hiring_funnel_base");
- const [groupRows,averages]=await Promise.all([
+ const observedStageCount=(stage:string)=>sql<number>`count(*) filter (
+   where ${base.stage}=${stage}
+   or ${base.previousStage}=${stage}
+   or exists (
+    select 1 from placement_college_application_stages stage_fact
+    inner join placement_college_application_stage_history stage_event
+      on stage_event.stage_id=stage_fact.id
+    where stage_fact.application_id=${base.applicationId}
+      and (stage_event.to_stage=${stage} or stage_event.from_stage=${stage})
+   )
+  )::integer`.mapWith(Number);
+ // These are actual observed stage transitions, not inferred intermediate
+ // stages: they intentionally differ from the one-current-stage KPI snapshot.
+ const stageProjections=Object.fromEntries(stages.map(stage=>[
+  stage,stage==="APPLIED"?sql<number>`count(*)::integer`.mapWith(Number):
+   observedStageCount(stage),
+ ]));
+ const [groupRows,averages,reachedRows]=await Promise.all([
   db.select({jobId:base.jobId,jobTitle:base.jobTitle,
    companyId:base.companyId,companyName:base.companyName,
    stage:base.stage,total:count()}).from(base)
@@ -85,6 +104,7 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
    .orderBy(asc(base.companyName),asc(base.jobTitle)),
   db.select({avgHours:sql<number|null>`avg(${base.shortlistHours})`}).from(base)
    .where(sql`${base.shortlistHours} >= 0`),
+  db.select(stageProjections).from(base),
  ]);
  const totals=Object.fromEntries(stages.map(stage=>[stage,0])) as Record<string,number>;
  const companies=new Map<string,{
@@ -110,7 +130,11 @@ export async function getCollegeHiringFunnel(context:RequestContext,raw:unknown)
   if(row.stage in subtotal.byStage)subtotal.byStage[row.stage]+=row.total;
   companySubtotals.set(row.companyId,subtotal);
  }
- return {query,totals,totalApplications:Object.values(totals).reduce((sum,n)=>sum+n,0),
+ const cumulativeTotals=Object.fromEntries(stages.map(stage=>
+  [stage,Number(reachedRows[0]?.[stage]??0)])) as Record<(typeof stages)[number],number>;
+ return {query,totals,cumulativeTotals,
+  funnelBasis:"OBSERVED_TRANSITIONS" as const,
+  totalApplications:Object.values(totals).reduce((sum,n)=>sum+n,0),
   companyRows:[...companies.values()],
   companySubtotals:[...companySubtotals.values()].sort((a,b)=>
    a.company.localeCompare(b.company)||a.companyId.localeCompare(b.companyId)),
