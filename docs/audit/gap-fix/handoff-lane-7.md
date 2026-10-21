@@ -918,3 +918,17 @@ Do not unconditionally enable reorder or fabricate successful migration before r
 - G2-20-011-015 | `src/modules/placements/application-status-history-service.ts + parent status mutation transaction` | Decide audit integrity fail-closed vs legacy fail-open, implement consistent safe response/retry Do not swallow audit write errors without documented audit-integrity policy and transactional compensation.
 - G2-20-024-017 | `src/db/schema/db04-profile-education-images.staged.ts + src/modules/verification/document-manifest.ts + learner gallery API/UI` | Implement authorized upload/grant/read lifecycle Do not expose public image URLs or accept arbitrary image keys: verify learner membership, scoped receipt, private scan and one-time grant completion.
 - G2-20-015-025 | `src/db/schema/db04-profile-education-images.staged.ts + src/modules/verification/document-manifest.ts + learner gallery API/UI` | Integrate upload grant/complete and authorized read URLs before profile gallery launch Do not expose public image URLs or accept arbitrary image keys: verify learner membership, scoped receipt, private scan and one-time grant completion.
+
+## Legacy template assignment actor — lane-7 handoff (2026-10-21)
+
+- G2-6-017-008 | `src/db/schema/projects.ts + template assignment import mapping` | Choose explicit system actor for historical unowned assignments; provide backward-compatible import fallback.
+
+Choose an auditable migration/system principal for legacy null actor; do not silently turn not-null FK nullable without owner decision.
+
+## Temporary SMS outage recovery — lane-7 handoff (2026-10-21)
+
+- G2-2-005-010 | `src/modules/notifications/exotel-sms.ts` | Confirm business-level handling of provider false and non-runtime exceptions; avoid swallowing unrelated runtime exceptions.
+- G2-2-005-011 | `src/modules/notifications/exotel-sms.ts` | Record intentional log format change; no obsolete fallback wording required.
+- G2-2-005-012 | `src/modules/notifications/exotel-sms.ts` | Retain non-PII error class observability but do not mention expired bypass.
+
+Legacy temporary testing fallback is intentionally removed. Never restore OTP bypass on provider failure; retain bounded retries, typed unavailable UX and no-PII error classes.
