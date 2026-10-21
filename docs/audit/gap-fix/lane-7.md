@@ -55,3 +55,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-7_l15-u025-recruiter-college-controller.md.md` | 15/15 recruiter college overview/draft/request lifecycle issues mapped to own service and schema paths. Zero edits outside lane-7; preserve vNext grant-scoped privacy and TPO approvals. **Handoff, not fixed**.
 
 - `src_app_company-share_token_page.tsx.md` | 15/15 findings triaged in one pass of `src/app/company-share/[token]/page.tsx`. Inline CSV is now visible without disclosure, unavailable ZIP explained, and code-page resend limitation gives safe recovery guidance. **Partial page/UI fix; resend-email and audited resume ZIP require protected services and are handed off**, not falsely marked implemented. Existing access POST and proof cookie untouched. Static JSX/import review only.
+
+- `NEW_docs_audit_gap2_lane-13_l18-u026-new-program-controller.md.md` | 14/14 audit findings mapped to current Academics program APIs/service/model/schema target files. No lane-owned code changes; legacy integer IDs and duration-year fields need explicit safe conversion. **Handoff, not fixed**; static review only.
+
+- `NEW_docs_audit_gap2_lane-2_admin-attendance-policy-controller.md.md` | 14/14 audit findings mapped to current Attendance policy editor/service and college attendance page target files. No lane-owned code changes; per-key inheritance/CAS and Admin mutation rights need a coordinated policy decision. **Handoff, not fixed**; static review only.

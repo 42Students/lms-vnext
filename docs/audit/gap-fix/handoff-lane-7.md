@@ -517,3 +517,41 @@ Existing recruiter grants are scoped to a company/college and do not authorize a
 - G2-20-031-022 | `src/app/company-share/[token]/page.tsx` | Page now keeps the exact accessible invalid-code text and presents CSV directly; true legacy toast is intentionally not fabricated on a server-only page.
 
 Page ownership change: surfaced code resend unavailability and included direct CSV action with explicit unavailable ZIP note. Existing protected code gate, 10/hour lockout and CSV audit stay intact. Actual resend and ZIP remain **unfixed** and must be implemented by Placements/company-share owner, with strict authorization. Do not create email send or download links to nonexistent routes. No tests/CI.
+
+## New program controller — lane-7 handoff (2026-10-21)
+
+- G2-18-026-001 | `src/app/api/academics/programs/route.ts` | Inventory legacy consumers and map fetchAll/fetchByDept/fetchByCollege/fetch/{id}/details/paged explicitly; update callers or add scoped compatibility routes; never preserve insecure unscoped access
+- G2-18-026-007 | `src/modules/academics/program-service.ts` | Define complete conversion contract (terms=years*2) for reads/writes; prevent fractional legacy years in compatibility projections
+- G2-18-026-012 | `src/modules/academics/college-program-mutation-model.ts` | Explicitly adapt snake_case and derive code/terms at legacy-client boundary; do not silently accept missing required code
+- G2-18-026-013 | `src/app/api/academics/programs/[programId]/route.ts` | Document PUT→PATCH payload migration and make old edit callers write required vNext fields atomically
+- G2-18-026-018 | `src/modules/academics/college-program-mutation-service.ts` | Return structured blocking batch/semester(s), then render readable legacy-style actionable details before save
+- G2-18-026-023 | `src/modules/academics/college-program-mutation-service.ts` | Crosswalk action/event taxonomy, entity and actor fields; confirm same admin audit screen can discover new records
+- G2-18-026-024 | `src/modules/academics/college-program-mutation-service.ts` | Ensure old audit consumer maps archived vs deleted and retains college/actor/payload and outcome semantics
+- G2-18-026-026 | `src/modules/academics/college-program-mutation-service.ts` | Verify role and organization checks for every mutation and preserve explicit unauthorized feedback for selected wrong college
+- G2-18-026-027 | `src/modules/academics/program-service.ts` | Audit every role caller; provide tenant-safe scoped list for learner and unscoped Super Admin without opening cross-tenant read
+- G2-18-026-029 | `src/modules/academics/college-program-mutation-service.ts` | Decide archived-name reuse and restoration collisions explicitly; document stronger code constraint
+- G2-18-026-030 | `src/modules/academics/college-program-mutation-service.ts` | Verify all legacy relationships (including classes and references) map to vNext dependency checks and show blocker-specific messages
+- G2-18-026-031 | `src/modules/academics/college-program-mutation-service.ts` | Include historical semester/course and active enrollments in shrink decision; document behavior for partially built future terms
+- G2-18-026-044 | `src/db/schema/academics.ts + legacy ID crosswalk` | Maintain explicit table/ID/field migration crosswalk for reports and old client routes; no assumption that ints are compatible with UUIDs
+- G2-18-026-045 | `src/db/schema/academics.ts` | Record deliberate stronger constraints, test conflict codes and archived-record uniqueness/restoration; keep duration terms <=20 for legacy 10-year UI
+
+Acad program identity, duration terms, archived-name reuse and selected-college permissions are Academics/schema ownership. The vNext UUID & audit event model cannot be replaced by the old int client contract without explicit adapters. **14/14 handed off, not fixed**.
+
+## Attendance policy controller — lane-7 handoff (2026-10-21)
+
+- G2-2-010-004 | `src/components/attendance/admin-attendance-policy-editor.tsx` | Restrict College Admin to read-only as legacy or obtain explicit new write-permission decision.
+- G2-2-010-012 | `src/components/attendance/admin-attendance-policy-editor.tsx` | Remove College Admin save actions until explicit owner approval for expanded rights.
+- G2-2-010-024 | `src/modules/attendance/policy-service.ts` | Support per-setting inherited/global reset and source-of-value provenance.
+- G2-2-010-025 | `src/app/api/college/attendance/policy/route.ts` | Separate attendance.policy.read vs update permissions or owner-authorize new mutation.
+- G2-2-010-027 | `src/components/attendance/admin-attendance-policy-editor.tsx` | Reinstate role-based read-only state for strict legacy behavior.
+- G2-2-010-030 | `src/modules/attendance/policy-service.ts` | Restore inheritance semantics, avoid immutable default override.
+- G2-2-010-041 | `src/modules/attendance/policy-service.ts` | Add row version/CAS and independent update capability; prevent lost policy edits.
+- G2-2-010-046 | `src/modules/attendance/policy-service.ts` | Persist null/inherited flags per individual setting or separate override rows.
+- G2-2-010-048 | `src/modules/attendance/policy-service.ts` | Implement effective precedence and granular reset.
+- G2-2-010-016 | `src/app/(authenticated)/college/attendance/page.tsx` | Provide per-policy-field unavailable state with retry while keeping attendance grid usable.
+- G2-2-010-015 | `src/app/api/college/attendance/policy/route.ts` | Map invalid requested college to clear user-visible field error.
+- G2-2-010-017 | `src/components/attendance/admin-attendance-policy-editor.tsx` | Restore field-specific failure copy for permitted editors.
+- G2-2-010-019 | `src/components/attendance/admin-attendance-policy-editor.tsx` | Match exact field-specific success and avoid claiming both fields changed when only one.
+- G2-2-010-020 | `src/components/attendance/admin-attendance-policy-editor.tsx` | Provide independent reset notice and semantics.
+
+Attendance policy read/update/reset semantics, override provenance and permission partition need the Attendance/Academics owner, and resetting defaults must not be represented as deleting one override. College Admin expanded mutation rights require owner approval. **14/14 handed off, not fixed**.
