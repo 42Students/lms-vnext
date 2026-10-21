@@ -192,20 +192,20 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/tpo/verification/page.tsx`
 - [x] `src/app/campaign-unsubscribe/[token]/loading.tsx`
 - [x] `src/app/quiz/page.tsx`
-- [ ] `src/components/academics/college-hall-cancellation-action.tsx`
-- [ ] `src/components/academics/college-recurring-preview.tsx`
-- [ ] `src/components/academics/college-section-lifecycle-action.tsx`
-- [ ] `src/components/activity/notification-toolbar.tsx`
-- [ ] `src/components/admin/admin-revoke-sessions.tsx`
-- [ ] `src/components/admin/admin-scoped-csv-control.tsx`
-- [ ] `src/components/admin/college-at-glance-panel.tsx`
-- [ ] `src/components/admin/college-branding-preview.tsx`
-- [ ] `src/components/admin/copy-finding-for-claude.tsx`
-- [ ] `src/components/admin/department-actions.tsx`
-- [ ] `src/components/admin/descendant-feature-rule-editor.tsx`
-- [ ] `src/components/admin/organization-actions.tsx`
-- [ ] `src/components/admin/organization-create-form.tsx`
-- [ ] `src/components/admin/people-pagination.tsx`
+- [x] `src/components/academics/college-hall-cancellation-action.tsx`
+- [x] `src/components/academics/college-recurring-preview.tsx`
+- [x] `src/components/academics/college-section-lifecycle-action.tsx`
+- [x] `src/components/activity/notification-toolbar.tsx`
+- [x] `src/components/admin/admin-revoke-sessions.tsx`
+- [x] `src/components/admin/admin-scoped-csv-control.tsx`
+- [x] `src/components/admin/college-at-glance-panel.tsx`
+- [x] `src/components/admin/college-branding-preview.tsx`
+- [x] `src/components/admin/copy-finding-for-claude.tsx`
+- [x] `src/components/admin/department-actions.tsx`
+- [x] `src/components/admin/descendant-feature-rule-editor.tsx`
+- [x] `src/components/admin/organization-actions.tsx`
+- [x] `src/components/admin/organization-create-form.tsx`
+- [x] `src/components/admin/people-pagination.tsx`
 - [ ] `src/components/admin/placement-panel-error-boundary.tsx`
 - [ ] `src/components/admin/student-rule-editor.tsx`
 - [ ] `src/components/admin/super-admin-company-edit.tsx`
