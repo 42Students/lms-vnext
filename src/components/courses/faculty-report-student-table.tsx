@@ -4,6 +4,7 @@ import {useMemo,useState} from "react";
 import {Input} from "@/components/ui/input";
 import {DataTable} from "@/components/ui/data-table";
 import type {FacultyReportStudentRow} from "@/modules/courses/faculty-report-students";
+import {Button} from "@/components/ui/button";
 
 const avatarTints=[
  {bg:"#e0f2f1",fg:"#0f766e"},{bg:"#ede9fe",fg:"#5b21b6"},
@@ -56,10 +57,10 @@ export function FacultyReportStudentTable({rows,title,emptyMessage="No learners 
      </svg>
      <Input type="search" aria-label="Search students" className="min-h-11 w-full pl-9 pr-10 md:min-h-9"
       placeholder="Search students…" value={search} onChange={event=>setSearch(event.target.value)}/>
-     {search?<button type="button" onClick={clear} aria-label="Clear student search"
-      className="absolute right-1 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded text-muted-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">
+     {search?<Button variant="secondary" type="button" onClick={clear} aria-label="Clear student search"
+      className="absolute right-1 top-1/2">
       <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-3"><path d="M3 3l10 10M13 3 3 13"/></svg>
-     </button>:null}
+     </Button>:null}
     </div>
    </label>:null}
   </div>

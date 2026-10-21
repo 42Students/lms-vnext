@@ -9,6 +9,8 @@ import {StatusBadge} from "@/components/ui/status-badge";
 import {isSuperAdmin,hasMembershipRole} from "@/modules/identity/context";
 import {listSmsDeliveryAttemptsForSupport} from "@/modules/notifications/exotel-sms";
 import {validateSuperAdminAuditRouteQuery} from "@/modules/activity/super-admin-audit-route-query-model";
+import {Select} from "@/components/ui/select";
+import {Button} from "@/components/ui/button";
 
 function smsDate(value:Date){
  return new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",
@@ -91,11 +93,11 @@ export default async function SuperAdminAuditPage({searchParams}:{
      {Object.entries(raw).filter(([key,value])=>key!=="smsPage"&&key!=="smsSize"&&typeof value==="string")
       .map(([key,value])=><input key={key} type="hidden" name={key} value={value as string}/>)}
      <label className="text-xs font-semibold text-muted-foreground">Rows per page
-      <select name="smsSize" aria-label="SMS attempts per page" defaultValue={String(currentSmsSize)}
-       className="ml-2 min-h-11 rounded border border-border bg-surface px-2 text-sm md:min-h-9">
+      <Select name="smsSize" aria-label="SMS attempts per page" defaultValue={String(currentSmsSize)}
+       className="ml-2">
        {[50,100,200].map(size=><option key={size} value={size}>{size}</option>)}
-      </select></label>
-     <button type="submit" className="min-h-11 rounded border border-border px-3 text-sm font-semibold text-primary-text md:min-h-9">Apply</button>
+      </Select></label>
+     <Button variant="secondary" type="submit" >Apply</Button>
     </form>:null}
    </div>
    {!isGlobal?<Alert tone="info">SMS provider attempts are available only from the unscoped Super Admin support view. Switch out of the selected college or organization to inspect them; this section never falls back to global data within a scoped view.</Alert>:
