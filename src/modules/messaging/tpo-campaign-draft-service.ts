@@ -12,6 +12,24 @@ import {planTpoCampaignRecipients} from "./tpo-campaign-send-policy";
 import {resolveTpoCampaignRecipientSecret,issueTpoCampaignEmailRecipientKey} from "./tpo-campaign-recipient-token";
 import {tpoCampaignDraftSchema} from "./tpo-campaign-draft-model";
 
+/** Migration-only historical campaign marker. Importing an already-sent
+ * legacy header is never a SEND command: no provider API, recipient tokens,
+ * or new outbound queue may be created from this projection.
+ */
+export function mapHistoricalTpoCampaignState(input:{
+ legacyStatus:string|null|undefined;
+ sentAt:Date|null;
+ totalRecipients:number;
+}):{status:"SENT";dispatchAllowed:false;requiresReview:false}|
+ {status:"DRAFT";dispatchAllowed:false;requiresReview:true} {
+ const code=input.legacyStatus?.trim().toUpperCase();
+ if((code==="SENT"||code==="COMPLETED") &&
+    input.sentAt instanceof Date && Number.isFinite(input.sentAt.getTime()) &&
+    Number.isSafeInteger(input.totalRecipients) && input.totalRecipients>=0)
+  return {status:"SENT",dispatchAllowed:false,requiresReview:false};
+ return {status:"DRAFT",dispatchAllowed:false,requiresReview:true};
+}
+
 export class TpoCampaignDraftError extends Error{
  constructor(readonly code:"NOT_READY"|"NO_RECIPIENTS"|"INVALID_SELECTION"){super(code);}
 }
