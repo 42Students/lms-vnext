@@ -545,6 +545,7 @@ export async function getJobEligibilityPolicy(
       minDiplomaPercentage: null as number | null,
       minUndergraduatePercentage:
         null as number | null,
+      minPostgraduatePercentage: null as number | null,
       minPctThroughout: null as number | null,
       maxGapYears: null as number | null,
       allowedPassingYears: [] as number[],
@@ -959,6 +960,18 @@ export async function evaluatePlacementEligibility(
   membershipIdInput?: string,
   db: Client | Tx = getDb(),
 ): Promise<PlacementEligibilityResult> {
+  return evaluatePlacementEligibilityInternal(context, jobIdInput, membershipIdInput, db);
+}
+
+/** Bulk previews reuse a job-scoped override read while retaining the
+ * normal active membership, audience and verified-evidence guards. */
+async function evaluatePlacementEligibilityInternal(
+  context: RequestContext,
+  jobIdInput: string,
+  membershipIdInput?: string,
+  db: Client | Tx = getDb(),
+  preloaded?: {override: typeof placementEligibilityOverrides.$inferSelect | null},
+): Promise<PlacementEligibilityResult> {
   const jobId = placementJobIdSchema.parse(jobIdInput);
   const job = await loadJob(jobId, db);
   let membershipId: string;
@@ -983,7 +996,8 @@ export async function evaluatePlacementEligibility(
   );
   const [[override], [policy], [evidence], enrollments] =
     await Promise.all([
-      db
+      preloaded ? Promise.resolve(preloaded.override ? [preloaded.override] : [])
+        : db
         .select()
         .from(placementEligibilityOverrides)
         .where(
@@ -1040,6 +1054,23 @@ export async function evaluatePlacementEligibility(
         .limit(2),
     ]);
 
+  // Legacy-to-vNext column crosswalk:
+  // Legacy JSON CGPA/backlogs/10th/12th/diploma/UG/PG/gap/passing-year
+  // → nullable placement_job_eligibility_policies thresholds; null marks
+  // → Not provided, never a synthetic zero or failure.
+  // LearnerAcademicRecord and marks → candidateAcademicEvidence (SELF
+  // versus VERIFIED); TPO override → placementEligibilityOverrides.
+  // Legacy program/batch targeting → active program/cohort/section scopes;
+  // talk/exam blocks and college batch rules remain independent scheduling
+  // and placement-policy gates, not academic marks or overrideable scores.
+  // INCLUDE/EXCLUDE supersedes grades but not authorization, audience or
+  // verified-only evidence. Gender/degree/specialization are not visibility
+  // conditions in the normalized policy; do not hide jobs using score checks.
+  const overrideDetail = override ? {
+    id: override.id,
+    decision: override.decision as "INCLUDE" | "EXCLUDE",
+    reason: override.reason,
+  } : null;
   // Legacy ↔ vNext eligibility crosswalk:
   // - JobEligibility JSON scores → placement_job_eligibility_policies columns.
   // - LearnerAcademicRecord/marks → placement_candidate_academic_evidence
@@ -1061,7 +1092,7 @@ export async function evaluatePlacementEligibility(
         required: "Eligible cohort",
         detail: "Active academic cohort not found",
       }],
-      override: null,
+      override: overrideDetail,
     };
   }
   const [enrollment] = enrollments;
@@ -1083,7 +1114,7 @@ export async function evaluatePlacementEligibility(
         required: "An active eligible academic cohort",
         detail: "Active academic enrollment not found (non-overridable audience restriction)",
       }],
-      override: null,
+      override: overrideDetail,
     };
   }
 
@@ -1104,7 +1135,7 @@ export async function evaluatePlacementEligibility(
           ? "Program is not eligible (non-overridable audience restriction)"
           : "Cohort is not eligible (non-overridable audience restriction)",
       }],
-      override: null,
+      override: overrideDetail,
     };
   }
 
@@ -1126,7 +1157,7 @@ export async function evaluatePlacementEligibility(
         criterion: "Cohort", status: "FAIL", actual: null,
         required: "Eligible cohort",
         detail: "Cohort is not eligible (non-overridable section restriction)",
-      }], override: null };
+      }], override: overrideDetail };
     }
   }
 
@@ -1140,7 +1171,7 @@ export async function evaluatePlacementEligibility(
       actual: evidence?.source==="SELF"?"Self provided":"Not provided",
       required: "College-verified academic evidence",
       detail: "Not provided or not verified. Manual INCLUDE cannot bypass this requirement.",
-    }], override: null };
+    }], override: overrideDetail };
   }
 
   if (override) {
@@ -1343,7 +1374,7 @@ export async function evaluatePlacementEligibility(
         status: "MISSING",
         actual: null,
         required: policy.allowedPassingYears.join(", "),
-        detail: "Passing year not provided",
+        detail: "Not provided",
       });
     } else {
       const pass =
@@ -1387,4 +1418,37 @@ export async function evaluatePlacementEligibility(
     checks,
     override: null,
   };
+}
+
+/** Preload all active overrides in one scoped query before a college-scale
+ * preview. Grade/evidence queries remain membership-scoped, in 50-row waves
+ * to avoid overwhelming the database pool. */
+export async function evaluatePlacementEligibilityBatch(
+  context: RequestContext,
+  jobIdInput: string,
+  membershipIds: readonly string[],
+  db: Client | Tx = getDb(),
+): Promise<Map<string, PlacementEligibilityResult>> {
+  const jobId = placementJobIdSchema.parse(jobIdInput);
+  const job = await loadJob(jobId, db);
+  requirePermission(context, "placements.manage", {collegeId: job.collegeId});
+  const ids = [...new Set(membershipIds)];
+  if (ids.length > 1000) throw new RangeError("Eligibility preview is limited to 1,000 learners");
+  const result = new Map<string, PlacementEligibilityResult>();
+  if (!ids.length) return result;
+  const rows = await db.select().from(placementEligibilityOverrides).where(and(
+    eq(placementEligibilityOverrides.jobId, jobId),
+    inArray(placementEligibilityOverrides.membershipId, ids),
+    isNull(placementEligibilityOverrides.revokedAt),
+  ));
+  const byMember = new Map(rows.map(row => [row.membershipId, row]));
+  for (let offset = 0; offset < ids.length; offset += 50) {
+    const group = await Promise.all(ids.slice(offset, offset + 50).map(
+      async id => [id, await evaluatePlacementEligibilityInternal(
+        context, jobId, id, db, {override: byMember.get(id) ?? null},
+      )] as const,
+    ));
+    for (const [id, eligibility] of group) result.set(id, eligibility);
+  }
+  return result;
 }

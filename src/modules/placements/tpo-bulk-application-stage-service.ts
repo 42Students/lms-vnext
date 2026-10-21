@@ -10,6 +10,14 @@ import {requireTpoJobCollege,requireTpoJobActor} from "./tpo-job-write-base";
 import {placementTableExists} from "./staged-tables";
 
 export type TpoBulkStageAction="MOVE_TEST"|"MOVE_INTERVIEW";
+export const TPO_BULK_STAGE_LIMIT = 100;
+/** Legacy statuses are stored in distinct vNext application facts. */
+export const TPO_LEGACY_APPLICATION_STAGE_MAP = {
+ APPLIED:"Application submission",SHORTLISTED:"Screening shortlist",
+ ASSESSMENT:"TPO test round",INTERVIEW:"TPO interview round",
+ OFFERED:"Placement offer",HIRED:"Offer and joining outcome",
+ REJECTED:"Screening or college pipeline rejection",
+} as const;
 export class TpoBulkStageError extends Error{
  constructor(readonly code:"STAGE_STORAGE_PENDING"|"STAGE_STALE"|"STAGE_NOT_ALLOWED"){
   super(code);this.name="TpoBulkStageError";
@@ -131,4 +139,50 @@ export async function moveTpoBulkApplicationStage(ctx:RequestContext,jobId:strin
   });
   return {applicationId,stage:target,roundId:round.id};
  });
+}
+
+/** Independently transactional, version-guarded legacy-style bulk moves.
+ * Return every attempted ID in original order, including recoverable failures. */
+export async function moveTpoBulkApplicationStages(
+ ctx:RequestContext,jobId:string,
+ items:readonly {applicationId:string;action:TpoBulkStageAction;expectedVersion:string}[],
+){
+ if(!items.length)throw new RangeError("Select at least one application.");
+ if(items.length>TPO_BULK_STAGE_LIMIT)
+  throw new RangeError("You can update at most 100 applications at a time.");
+ const uuid=/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+ if(!uuid.test(jobId))throw new RangeError("Select a valid placement drive.");
+ const seen=new Set<string>();
+ for(const item of items){
+  if(!uuid.test(item.applicationId))throw new RangeError("Select valid application IDs.");
+  if(seen.has(item.applicationId))throw new RangeError("Remove duplicate application IDs.");
+  if(item.action!=="MOVE_TEST"&&item.action!=="MOVE_INTERVIEW")
+   throw new RangeError("Select a valid applicant status.");
+  if(!item.expectedVersion)throw new RangeError("Refresh the applicant list before updating.");
+  seen.add(item.applicationId);
+ }
+ await requireTpoJobCollege(ctx);
+ await getDb().transaction(async tx=>requireTpoJobActor(tx,ctx));
+ const results:{
+  applicationId:string;success:boolean;stage:"TEST"|"INTERVIEW"|null;error:string|null
+ }[]=[];
+ for(const item of items){
+  try{
+   const changed=await moveTpoBulkApplicationStage(
+    ctx,jobId,item.applicationId,item.action,item.expectedVersion);
+   results.push({applicationId:item.applicationId,success:true,stage:changed.stage,error:null});
+  }catch(error){
+   if(!(error instanceof TpoBulkStageError))throw error;
+   const message=error.code==="STAGE_STALE"
+    ?"Applicant status changed. Refresh and try again."
+    :error.code==="STAGE_STORAGE_PENDING"
+    ?"Applicant stage storage is unavailable."
+    :"Applicant cannot move to this stage.";
+   results.push({applicationId:item.applicationId,success:false,stage:null,error:message});
+  }
+ }
+ const succeeded=results.filter(x=>x.success).length,failed=results.length-succeeded;
+ return {requested:results.length,succeeded,failed,
+  summary:failed?"Bulk status update completed with "+failed+" failure(s)"
+   :"Bulk status update completed",results};
 }
