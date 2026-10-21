@@ -24,6 +24,8 @@ export function AdminRevokeSessions({collegeId,userId,count}:{collegeId:string;u
       method:"POST",headers:{"content-type":"application/json"},credentials:"same-origin",
       body:JSON.stringify({userId,confirm:true}),
      });
+    if(!result || !Number.isSafeInteger(result.revoked) || result.revoked < 0)
+      throw new Error("Session revocation could not be confirmed. Refresh before retrying.");
     setConfirmOpen(false);
     setMessage(result.revoked+" session(s) revoked.");
     router.refresh();
