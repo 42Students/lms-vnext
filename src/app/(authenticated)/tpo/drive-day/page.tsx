@@ -98,7 +98,7 @@ export default async function DriveDayPage({searchParams}:{searchParams:Promise<
                     Open round
                   </Link></div>
                 </div>
-                <p role="status" className="mt-3 text-sm text-body leading-[22px]">{tpoLiveAttendanceAttention(round.counts)}</p>
+                <p role="status" className="mt-3 text-sm text-body leading-[1.6]">{tpoLiveAttendanceAttention(round.counts)}</p>
                 <dl className="mt-4 grid min-w-0 grid-cols-2 gap-px overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border bg-border md:grid-cols-5">
                   {([
                     ["Roster", round.counts.total], ["Checked in", round.counts.checkedIn],

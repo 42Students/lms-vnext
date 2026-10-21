@@ -134,7 +134,7 @@ export default async function TpoMessagesPage({
    <ErrorState title="Recruiter conversations are temporarily unavailable"
     description="Your placement notifications remain available separately. No recruiter messages were loaded."
     action={<Link href="/tpo/notifications"
-      className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-primary-text">
+      className="md:min-h-9 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius,9px)] border border-border px-4 font-semibold text-primary-text">
       Open notifications
      </Link>}/>
   </div>;
@@ -374,7 +374,7 @@ export default async function TpoMessagesPage({
 
         {items.length === 0 ? (
           <EmptyState
-            action={<Link href="/tpo/messages" className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
+            action={<Link href="/tpo/messages" className="md:min-h-9 inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-body focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}
             title="No matching communication records"
             description={
               isRecruiterInbox
