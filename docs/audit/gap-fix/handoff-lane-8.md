@@ -105,3 +105,7 @@
 ## Semester structure compatibility adapter (semester mutation packet)
 - Legacy `NewProgramStructureDTO` has numeric program/course IDs, optional dates and a three-state historical status; `src/modules/academics/semester-mutation-model.ts` now validates these strictly in an import-only schema, but the UUID program/term/course resolver, controlled legacy-id table and activity audit need a separately authorized migration owner (G2-13-026-012/-015, G2-12-018-005/-021). Do not expose it on the normal create API or treat `COMPLETED` as ordinary inactive.
 - `src/modules/academics/semester-mutation-service.ts` and public API error adapter — translate identity/scope and term number conflict messages to old LMS wording where safe without revealing foreign tenant existence (G2-13-026-019, G2-12-016-016).
+
+## Legacy program search and usage API separation
+- Legacy ProgramSearchController `GET` limit/department scope and `POST /{programId}/select` click/event tracking are distinct from vNext `/api/academics/programs` CRUD. G2-8-013-014/-038/-015/-017/-018 and G2-14-026-018 need an approved versioned search/selection controller with explicit college+department permission enforcement, bounded pagination, rate limiting and event persistence. Never accept legacy numeric IDs or raw cross-college selectors in current POST.
+- Legacy consumers should intentionally migrate from 200 Spring wrapped responses to vNext 201 create/200 empty-list response (G2-13-018-022/G2-14-026-019/-021); avoid changing current consumers to chase the old envelope.
