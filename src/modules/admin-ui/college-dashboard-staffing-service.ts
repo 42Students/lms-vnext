@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, isNull } from "drizzle-orm";
+import { and, count, eq, isNull } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   academicPeriods, courseOfferings, courseSectionDeliveries,
@@ -39,7 +39,7 @@ export async function getCollegeDashboardUnstaffedCourses(context: RequestContex
       eq(courses.status, "ACTIVE"), eq(sections.status, "ACTIVE"),
       isNull(courseSectionDeliveries.endedAt),
       isNull(courseTeachingAssignments.id)))
-    .orderBy(courses.name, sections.name).limit(300);
+    .orderBy(sections.name, courses.name).limit(8);
   const byCourse = new Map<string, {
     courseId: string; name: string; code: string; offeringId: string;
     sections: string[];
@@ -53,4 +53,32 @@ export async function getCollegeDashboardUnstaffedCourses(context: RequestContex
     });
   }
   return [...byCourse.values()];
+}
+
+/** Full number of unstaffed section-course deliveries, independent of the
+ * eight-row dashboard preview and its grouping by course. */
+export async function getCollegeDashboardUnstaffedDeliveriesCount(context: RequestContext) {
+  const member = context.membership;
+  if (!member || member.status !== "ACTIVE")
+    throw new Error("COLLEGE_MEMBERSHIP_REQUIRED");
+  requirePermission(context, "courses.read", {
+    collegeId: member.collegeId, organizationId: member.organizationId,
+  });
+  const [row] = await getDb().select({ total: count() })
+    .from(courseSectionDeliveries)
+    .innerJoin(courseOfferings, eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+    .innerJoin(courses, eq(courses.id, courseOfferings.courseId))
+    .innerJoin(departments, eq(departments.id, courses.departmentId))
+    .innerJoin(sections, eq(sections.id, courseSectionDeliveries.sectionId))
+    .innerJoin(academicPeriods, eq(academicPeriods.id, courseOfferings.academicPeriodId))
+    .leftJoin(courseTeachingAssignments, and(
+      eq(courseTeachingAssignments.deliveryId, courseSectionDeliveries.id),
+      isNull(courseTeachingAssignments.endedAt)))
+    .where(and(eq(departments.collegeId, member.collegeId),
+      eq(academicPeriods.collegeId, member.collegeId),
+      eq(academicPeriods.status, "ACTIVE"), eq(courseOfferings.status, "ACTIVE"),
+      eq(courses.status, "ACTIVE"), eq(sections.status, "ACTIVE"),
+      isNull(courseSectionDeliveries.endedAt),
+      isNull(courseTeachingAssignments.id)));
+  return row?.total ?? 0;
 }

@@ -2,6 +2,7 @@
  * never from recruiter stage, lead notes or merely an application. */
 export type CompanyPlacementOfferFact={
  membershipId:string|null;offerStatus:string|null;offerKind:string|null;
+ countsAsPlaced?:boolean;
  joiningStatus:string|null;joiningDate:string|null;
 };
 export type CountsAsPlacedPolicy="OFFER_RELEASED"|"OFFER_ACCEPTED"|"SELECTED";
@@ -10,7 +11,7 @@ export function companyPlacedCount(facts:readonly CompanyPlacementOfferFact[],
  if(policy==="SELECTED")return null; // needs separate selection ledger
  const members=new Set<string>();
  for(const fact of facts){
-  if(!fact.membershipId||fact.offerKind!=="OFFER")continue;
+  if(!fact.membershipId||fact.offerKind!=="OFFER"||fact.countsAsPlaced===false)continue;
   if(policy==="OFFER_ACCEPTED"&&fact.offerStatus!=="ACCEPTED")continue;
   if(policy==="OFFER_RELEASED"&&fact.offerStatus!=="ISSUED"&&fact.offerStatus!=="ACCEPTED")continue;
   members.add(fact.membershipId);

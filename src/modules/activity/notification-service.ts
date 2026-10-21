@@ -1,3 +1,5 @@
+import "server-only";
+
 import {
   and,
   count,
@@ -8,21 +10,35 @@ import {
   isNull,
   lt,
   or,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
+  academicPeriods,
+  courses,
+  courseOfferings,
+  courseSectionDeliveries,
+  courseTeachingAssignments,
+  departments,
   collegeMemberships,
   colleges,
   inAppNotifications,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
+  sections,
+  sectionFacultyAssignments,
   systemRoles,
   users,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
+import {
+  hasMembershipRole,
+  isSuperAdmin,
+  type RequestContext,
+} from "@/modules/identity/context";
+import { requirePermission } from "@/modules/permissions/policy";
 import { ActivityServiceError } from "./errors";
 import { safeNotificationActionHref } from "./notification-action";
 
@@ -56,6 +72,169 @@ const deliverySchema = z
       .optional(),
   })
   .strict();
+
+
+/**
+ * The legacy announcement composer is a staff-only operation. This input is
+ * deliberately distinct from the small, plain-text per-recipient delivery
+ * payload: the latter must never become a public notification creation API.
+ * Rich HTML is not forwarded to inbox rows until a dedicated sanitizer and
+ * authored-notice store are available.
+ */
+export const staffNotificationDraftSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  htmlContent: z.string().trim().min(1).max(50_000),
+  classId: z.string().uuid().optional(),
+  courseId: z.string().uuid().optional(),
+  assessmentUrl: z.string().trim().url()
+    .refine((value) => {
+      const protocol = new URL(value).protocol;
+      return protocol === "http:" || protocol === "https:";
+    }, "Assessment URL must use http or https")
+    .optional(),
+}).strict().refine(
+  (input) => Boolean(input.classId) !== Boolean(input.courseId),
+  { message: "classId or courseId required", path: ["classId"] },
+);
+
+export type StaffNotificationDraft = z.input<typeof staffNotificationDraftSchema>;
+
+type StaffNotificationAudience = {
+  collegeId: string;
+  organizationId: string;
+  classId: string | null;
+  courseId: string | null;
+};
+
+/**
+ * Resolve the audience from persisted academic records, NOT request-supplied
+ * tenant identifiers. Faculty need a live assignment to the section/course;
+ * college admins and superadmins need their central scoped permission.
+ */
+export async function requireStaffNotificationAudience(
+  context: RequestContext,
+  rawDraft: unknown,
+): Promise<{ draft: z.output<typeof staffNotificationDraftSchema>; audience: StaffNotificationAudience }> {
+  const draft = staffNotificationDraftSchema.parse(rawDraft);
+  if (context.user.platformStatus !== "ACTIVE" ||
+      (!isSuperAdmin(context) &&
+       !hasMembershipRole(context, "COLLEGE_ADMIN") &&
+       !hasMembershipRole(context, "FACULTY"))) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+
+  const db = getDb();
+  const [scope] = draft.classId
+    ? await db.select({
+        collegeId: colleges.id,
+        organizationId: colleges.organizationId,
+      }).from(sections)
+        .innerJoin(academicPeriods, eq(academicPeriods.id, sections.academicPeriodId))
+        .innerJoin(colleges, eq(colleges.id, academicPeriods.collegeId))
+        .where(and(
+          eq(sections.id, draft.classId),
+          eq(sections.status, "ACTIVE"),
+          eq(colleges.status, "ACTIVE"),
+        )).limit(1)
+    : await db.select({
+        collegeId: colleges.id,
+        organizationId: colleges.organizationId,
+      }).from(courses)
+        .innerJoin(departments, eq(departments.id, courses.departmentId))
+        .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+        .where(and(
+          eq(courses.id, draft.courseId!),
+          eq(courses.status, "ACTIVE"),
+          eq(colleges.status, "ACTIVE"),
+        )).limit(1);
+
+  if (!scope) throw new ActivityServiceError("ACTIVITY_SCOPE_NOT_FOUND");
+  const audience: StaffNotificationAudience = {
+    ...scope,
+    classId: draft.classId ?? null,
+    courseId: draft.courseId ?? null,
+  };
+  if (isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN")) {
+    requirePermission(context, "courses.manage", scope);
+    return { draft, audience };
+  }
+
+  // A generic faculty role in the college is not permission to post into
+  // every class/course. Verify a current assignment for this exact audience.
+  requirePermission(context, "courses.read", scope);
+  if (!context.membership ||
+      context.membership.collegeId !== scope.collegeId) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  const [assigned] = draft.classId
+    ? await db.select({ id: sectionFacultyAssignments.id })
+        .from(sectionFacultyAssignments)
+        .where(and(
+          eq(sectionFacultyAssignments.sectionId, draft.classId),
+          eq(sectionFacultyAssignments.membershipId, context.membership.id),
+          isNull(sectionFacultyAssignments.endedAt),
+        )).limit(1)
+    : await db.select({ id: courseTeachingAssignments.id })
+        .from(courseTeachingAssignments)
+        .innerJoin(courseSectionDeliveries,
+          eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
+        .innerJoin(courseOfferings,
+          eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .where(and(
+          eq(courseOfferings.courseId, draft.courseId!),
+          eq(courseTeachingAssignments.membershipId, context.membership.id),
+          isNull(courseTeachingAssignments.endedAt),
+          isNull(courseSectionDeliveries.endedAt),
+        )).limit(1);
+  if (!assigned) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  return { draft, audience };
+}
+
+/**
+ * Mandatory preflight for edit/recall: inspect the original persisted scope
+ * before checking the requested destination; author ownership applies to
+ * faculty while authorized admins may manage their own scoped notices.
+ * Caller must still perform its edit/delete and commit atomically.
+ */
+export async function requireStaffNotificationRetarget(
+  context: RequestContext,
+  eventIdInput: unknown,
+  nextDraft: unknown,
+): Promise<StaffNotificationAudience> {
+  const eventId = z.string().uuid().parse(eventIdInput);
+  const [existing] = await getDb().select({
+    actorUserId: activityEvents.actorUserId,
+    organizationId: activityEvents.organizationId,
+    collegeId: activityEvents.collegeId,
+    subjectType: activityEvents.subjectType,
+    metadata: activityEvents.metadata,
+  }).from(activityEvents).where(eq(activityEvents.id, eventId)).limit(1);
+  if (!existing || existing.subjectType !== "NOTIFICATION" ||
+      !existing.collegeId || !existing.organizationId) {
+    throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+  }
+  const isAdmin = isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN");
+  if (!isAdmin && existing.actorUserId !== context.user.id) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  if (isAdmin) {
+    requirePermission(context, "courses.manage", {
+      collegeId: existing.collegeId,
+      organizationId: existing.organizationId,
+    });
+  } else {
+    const previous = staffNotificationDraftSchema.safeParse({
+      title: "Existing notification",
+      htmlContent: "Existing notification",
+      classId: existing.metadata.classId,
+      courseId: existing.metadata.courseId,
+    });
+    if (!previous.success) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    await requireStaffNotificationAudience(context, previous.data);
+  }
+  const { audience } = await requireStaffNotificationAudience(context, nextDraft);
+  return audience;
+}
 
 export type InAppNotificationDeliveryInput =
   z.input<typeof deliverySchema>;
@@ -127,6 +306,24 @@ async function assertScopedNotificationRecipients(
   ]);
   if (activeUserIds.some((id) => !eligible.has(id))) {
     throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+}
+
+/**
+ * Course/class filters use producer-authored, server-persisted activity
+ * metadata. They never broaden the personal recipient scope.
+ */
+function appendNotificationContextFilters(
+  conditions: ReturnType<typeof eq>[],
+  options: { classId?: string; courseId?: string },
+) {
+  if (options.classId) {
+    const classId = z.string().uuid().parse(options.classId);
+    conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'classId'`, classId));
+  }
+  if (options.courseId) {
+    const courseId = z.string().uuid().parse(options.courseId);
+    conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'courseId'`, courseId));
   }
 }
 
@@ -270,6 +467,80 @@ export async function deliverInAppNotificationInTransaction(
   );
 }
 
+
+/**
+ * The legacy fetchAll route listed authored notices, not every recipient's
+ * read receipt. Keep this supervisory query separate from the personal inbox.
+ * A global page is permitted only for an active global Super Admin. Selected
+ * organization/college scope is always applied before paging and counting.
+ */
+export async function listScopedAdminNotificationPage(
+  context: RequestContext,
+  rawOptions: {
+    organizationId?: string;
+    collegeId?: string;
+    pageNo?: number;
+    pageSize?: number;
+  } = {},
+) {
+  if (!isSuperAdmin(context)) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  const options = z.object({
+    organizationId: z.string().uuid().optional(),
+    collegeId: z.string().uuid().optional(),
+    pageNo: z.number().int().min(0).default(0),
+    pageSize: z.number().int().min(1).max(200).default(50),
+  }).strict().parse(rawOptions);
+
+  const collegeId = options.collegeId ?? context.adminScope?.collegeId ?? null;
+  let organizationId = options.organizationId ??
+    context.adminScope?.organizationId ?? null;
+  if (collegeId) {
+    const [college] = await getDb().select({
+      id: colleges.id,
+      organizationId: colleges.organizationId,
+    }).from(colleges).where(eq(colleges.id, collegeId)).limit(1);
+    if (!college || (organizationId && college.organizationId !== organizationId)) {
+      throw new ActivityServiceError("ACTIVITY_SCOPE_NOT_FOUND");
+    }
+    organizationId = college.organizationId;
+  }
+  requirePermission(context, "activity.read", { organizationId, collegeId });
+
+  const conditions = [eq(activityEvents.subjectType, "NOTIFICATION")];
+  if (collegeId) conditions.push(eq(activityEvents.collegeId, collegeId));
+  else if (organizationId) {
+    conditions.push(eq(activityEvents.organizationId, organizationId));
+  }
+  const where = and(...conditions);
+  const db = getDb();
+  const [[totalRow], items] = await Promise.all([
+    db.select({ total: count() }).from(activityEvents).where(where),
+    db.select({
+      id: activityEvents.id,
+      actorUserId: activityEvents.actorUserId,
+      collegeId: activityEvents.collegeId,
+      organizationId: activityEvents.organizationId,
+      subjectId: activityEvents.subjectId,
+      subjectLabel: activityEvents.subjectLabel,
+      summary: activityEvents.summary,
+      metadata: activityEvents.metadata,
+      occurredAt: activityEvents.occurredAt,
+    }).from(activityEvents).where(where)
+      .orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id))
+      .limit(options.pageSize).offset(options.pageNo * options.pageSize),
+  ]);
+  return {
+    items,
+    pagination: {
+      pageNo: options.pageNo,
+      pageSize: options.pageSize,
+      total: totalRow?.total ?? 0,
+    },
+  };
+}
+
 export async function listOwnNotifications(
   context: RequestContext,
   options: {
@@ -277,6 +548,8 @@ export async function listOwnNotifications(
     unreadSince?: Date;
     limit?: number;
     collegeId?: string;
+    classId?: string;
+    courseId?: string;
   } = {},
 ) {
   const limit = z
@@ -299,6 +572,8 @@ export async function listOwnNotifications(
       ),
     );
   }
+
+  appendNotificationContextFilters(conditions, options);
 
   const rows = await getDb()
     .select({
@@ -482,6 +757,8 @@ export async function listOwnNotificationPage(
     unreadSince?: Date;
     beforeId?: string;
     collegeId?: string;
+    classId?: string;
+    courseId?: string;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -495,6 +772,7 @@ export async function listOwnNotificationPage(
     conditions.push(isNull(inAppNotifications.readAt));
     if(options.unreadSince)conditions.push(gte(inAppNotifications.createdAt,options.unreadSince));
   }
+  appendNotificationContextFilters(conditions, options);
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);
     const id = z.string().uuid().parse(options.beforeId);

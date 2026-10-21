@@ -13,6 +13,7 @@ import type { RequestContext } from "@/modules/identity/context";
 import {hasMembershipRole} from "@/modules/identity/context";
 import { listPlacementCompanies } from "@/modules/placements/company-service";
 import { listPlacementSeasons } from "@/modules/placements/season-service";
+import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 
 export async function PlacementJobCreateWorkspace({
   context,
@@ -44,6 +45,8 @@ export async function PlacementJobCreateWorkspace({
         collegeId,
       ),
     ]);
+
+  const jobTypes=await listPlacementJobTypeChoices(context,collegeId);
 
   // TPO-drives-25: one college-scoped aggregate, never one query per company.
   // TPO-drives-26: only this college's completed, non-archived drives can be cloned.
@@ -113,6 +116,7 @@ export async function PlacementJobCreateWorkspace({
         </ul>
       </Disclosure>:null}
       <PlacementJobCreateForm
+        jobTypes={jobTypes}
         userId={context.user.id}
         collegeId={collegeId}
         activeSeason={

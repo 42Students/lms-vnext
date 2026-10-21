@@ -294,6 +294,8 @@ const placementJobFieldsSchema = z
     description: z.string().trim().max(15_000).default(""),
     legacyPostingDetails:placementLegacyPostingDetailsSchema.nullable().optional(),
     employmentType: z.enum(placementEmploymentTypes),
+    /** Optional college Job types label, distinct from the normalized employment category. */
+    jobTypeLabel: z.string().trim().min(2).max(40).optional(),
     workMode: z.enum(placementJobWorkModes),
     locations: distinctTextList(20, 120).optional().default([]),
     openings: z.number().int().positive().max(100_000).nullable().optional(),

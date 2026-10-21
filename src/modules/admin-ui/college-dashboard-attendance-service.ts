@@ -1,5 +1,5 @@
 import "server-only";
-import { and, eq, gte, lt } from "drizzle-orm";
+import { and, eq, desc, gte, lt, lte, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
   attendanceSessions, cohorts, collegeMemberships, departments,
@@ -18,8 +18,8 @@ function indiaDayBounds(now: Date) {
   return { start, end: new Date(start.getTime() + 86_400_000) };
 }
 
-/** COL-dashboard-03 / COL-dashboard-04. A held class is a scheduled,
- * non-cancelled event whose scheduled end is in the past. */
+/** COL-dashboard-03 / COL-dashboard-04. Query accurate totals separately from
+ * the eight-row preview; do not discard older sessions with a fixed 2000 cap. */
 export async function getCollegeDashboardAttendance(context: RequestContext, now = new Date()) {
   const member = context.membership;
   if (!member || member.status !== "ACTIVE") throw new Error("COLLEGE_MEMBERSHIP_REQUIRED");
@@ -27,43 +27,69 @@ export async function getCollegeDashboardAttendance(context: RequestContext, now
     organizationId: member.organizationId, collegeId: member.collegeId,
   });
   const { start, end } = indiaDayBounds(now);
-  const weekStart = new Date(start.getTime() - 6 * 86_400_000);
-  const events = await getDb().select({
-    id: sectionScheduleEvents.id,
-    title: sectionScheduleEvents.title,
-    startsAt: sectionScheduleEvents.startsAt,
-    endsAt: sectionScheduleEvents.endsAt,
-    sectionName: sections.name,
-    facultyName: users.displayName,
-    attendanceStatus: attendanceSessions.status,
+  const weekStart = new Date(start.getTime() - 7 * 86_400_000);
+  const db = getDb();
+
+  const todayTotals = await db.select({
+    scheduled: sql<number>`count(*)::int`,
+    held: sql<number>`count(*) filter (where ${sectionScheduleEvents.endsAt} <= ${now})::int`,
+    marked: sql<number>`count(*) filter (where ${attendanceSessions.status} = 'MARKED')::int`,
   }).from(sectionScheduleEvents)
     .innerJoin(sections, eq(sections.id, sectionScheduleEvents.sectionId))
     .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(departments, eq(departments.id, programs.departmentId))
     .leftJoin(attendanceSessions, eq(attendanceSessions.scheduleEventId, sectionScheduleEvents.id))
-    .leftJoin(collegeMemberships, eq(collegeMemberships.id, sectionScheduleEvents.facultyMembershipId))
-    .leftJoin(users, eq(users.id, collegeMemberships.userId))
     .where(and(eq(departments.collegeId, member.collegeId),
       eq(sectionScheduleEvents.status, "SCHEDULED"),
-      gte(sectionScheduleEvents.startsAt, weekStart),
-      lt(sectionScheduleEvents.startsAt, end)))
-    .orderBy(sectionScheduleEvents.startsAt)
-    .limit(2000);
-  const today = events.filter(event => event.startsAt >= start);
-  const unattended = events.filter(event =>
-    event.endsAt <= now && event.attendanceStatus !== "MARKED").reverse();
+      gte(sectionScheduleEvents.startsAt, start),
+      lt(sectionScheduleEvents.startsAt, end)));
+
+  const pendingFilter = and(
+    eq(departments.collegeId, member.collegeId),
+    eq(sectionScheduleEvents.status, "SCHEDULED"),
+    gte(sectionScheduleEvents.startsAt, weekStart),
+    lte(sectionScheduleEvents.endsAt, now),
+    sql`${attendanceSessions.status} is distinct from 'MARKED'`,
+  );
+  const [pendingCounts, events] = await Promise.all([
+    db.select({ total: sql<number>`count(*)::int` })
+      .from(sectionScheduleEvents)
+      .innerJoin(sections, eq(sections.id, sectionScheduleEvents.sectionId))
+      .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .leftJoin(attendanceSessions, eq(attendanceSessions.scheduleEventId, sectionScheduleEvents.id))
+      .where(pendingFilter),
+    db.select({
+      id: sectionScheduleEvents.id,
+      title: sectionScheduleEvents.title,
+      startsAt: sectionScheduleEvents.startsAt,
+      sectionName: sections.name,
+      facultyName: users.displayName,
+    }).from(sectionScheduleEvents)
+      .innerJoin(sections, eq(sections.id, sectionScheduleEvents.sectionId))
+      .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
+      .innerJoin(programs, eq(programs.id, cohorts.programId))
+      .innerJoin(departments, eq(departments.id, programs.departmentId))
+      .leftJoin(attendanceSessions, eq(attendanceSessions.scheduleEventId, sectionScheduleEvents.id))
+      .leftJoin(collegeMemberships, eq(collegeMemberships.id, sectionScheduleEvents.facultyMembershipId))
+      .leftJoin(users, eq(users.id, collegeMemberships.userId))
+      .where(pendingFilter)
+      .orderBy(desc(sectionScheduleEvents.startsAt))
+      .limit(8),
+  ]);
   return {
     today: {
-      scheduled: today.length,
-      held: today.filter(event => event.endsAt <= now).length,
-      marked: today.filter(event => event.attendanceStatus === "MARKED").length,
+      scheduled: todayTotals[0]?.scheduled ?? 0,
+      held: todayTotals[0]?.held ?? 0,
+      marked: todayTotals[0]?.marked ?? 0,
     },
-    unattended: unattended.slice(0, 20).map(event => ({
+    unattended: events.map(event => ({
       id: event.id, title: event.title, section: event.sectionName,
       faculty: event.facultyName || "Faculty not assigned",
       when: event.startsAt.toISOString(),
     })),
-    unattendedCount: unattended.length,
+    unattendedCount: pendingCounts[0]?.total ?? 0,
   };
 }

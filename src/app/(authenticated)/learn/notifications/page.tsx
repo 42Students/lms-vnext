@@ -6,18 +6,28 @@ import { announcementsRuntimeEnabled } from "@/modules/announcements/readiness";
 import { listVisibleAnnouncementsForMembership } from "@/modules/announcements/service";
 import { listOwnNotifications } from "@/modules/activity/notification-service";
 import { requirePersistedLearnerNotificationMembership } from "@/modules/activity/learner-notification-membership-service";
-import { learnerNotificationInboxQuerySchema } from "@/modules/activity/learner-notification-inbox-model";
-import { notFound } from "next/navigation";
+import { learnerNotificationInboxHref, learnerNotificationInboxQuerySchema } from "@/modules/activity/learner-notification-inbox-model";
+import { notFound, redirect } from "next/navigation";
 import { AuthorizationError } from "@/modules/permissions/policy";
 
 export default async function NotificationsPage({searchParams}:{
-  searchParams:Promise<{category?:string|string[];unread?:string|string[];q?:string|string[]}>;
+  searchParams:Promise<{category?:string|string[];tab?:string|string[];unread?:string|string[];q?:string|string[]}>;
 }) {
-  const query=learnerNotificationInboxQuerySchema.safeParse(await searchParams);
+  const { tab, ...filters } = await searchParams;
+  // Old LMS links persist the selected tab as ?tab=. Keep that deep link
+  // working, but accept only known inbox categories and canonicalize the URL.
+  if (tab !== undefined && filters.category !== undefined && filters.category !== tab) {
+    notFound();
+  }
+  const query = learnerNotificationInboxQuerySchema.safeParse(
+    tab === undefined ? filters : { ...filters, category: tab },
+  );
   if (!query.success) notFound();
   const context =
     await getCurrentRequestContext();
   const membership = await requirePersistedLearnerNotificationMembership(context);
+  // Authorize the selected learner membership before redirecting an old link.
+  if (tab !== undefined) redirect(learnerNotificationInboxHref(query.data));
   const announcementsEnabled =
     announcementsRuntimeEnabled();
   // Personal notifications are required. A failed announcement source must

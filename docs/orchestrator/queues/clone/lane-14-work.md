@@ -1,0 +1,83 @@
+# Gap FIX queue, wave 1 (by file): lane chat-14
+
+You own 68 work packets (634 findings, 1 P0, 588 P1) in: shared UI/auth/permissions. No other lane edits these files.
+
+For EACH packet below, in order (highest severity first), strictly one at a time:
+1. Open the packet. It lists the audit findings for ONE file (or one new-feature group). Read the target file in the repo, then apply ALL findings of the packet in a single editing pass so vNext matches the old LMS (old source: docs/legacy-source/frontend/src and docs/legacy-source/backend/src). Wording parity with docs/audit/legacy-copy-A.md and legacy-copy-B.md is mandatory. Packets of the same file come in parts (part 1 of N, ...): do the parts in order.
+2. Edit ONLY files in your areas. If a finding needs a change in a file another lane owns, append one line to docs/audit/gap-fix/handoff-lane-14.md (target file, finding ID, change needed) and go on.
+3. Keep the intentional vNext model: one workspace per role, college x role switcher, membership model. Skip UNKNOWN, conflicting or already-fixed findings with a one-line note in your proof file.
+4. TypeScript strict, valid syntax. You cannot run code, so re-read each edited file for matching tags, imports, props and exports. No new packages. Never reformat untouched code. Never rename or change the signature of shared exports without checking every caller you can find with search.
+6. You are the SHARED lane: you alone edit src/components/ui, auth, permissions and identity code. Keep every exported name and prop backwards compatible; add new optional props instead of changing existing ones.
+7. You ALSO own half of the schema files (the schema packets in your queue). For those, add NEW SQL migration files numbered from 0200 upward (0200_*.sql, 0201_*.sql, ...), one per logical change. Do NOT edit drizzle/meta/_journal.json: lane 15 adds the journal entries for your 02xx files. Never edit an existing migration. Nothing is executed.
+5. Tick [x] in this queue and append one line per packet to docs/audit/gap-fix/lane-14.md (packet | findings applied | skipped and why). Push to chatgpt/chat-14-b with commits tagged [chat-14] after every 2 packets (git fetch first; on conflict keep the other lane's lines and re-apply yours). If the merge robot restores one of your files because of a syntax error, you will be told: redo that packet.
+
+Packets:
+
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db05-lesson-discussions.staged.ts.md` (edit src/db/schema/db05-lesson-discussions.staged.ts; 9 findings; best P0)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part1of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part2of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part3of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part4of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part5of6.md` (edit src/db/schema/courses.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_courses.ts.part6of6.md` (edit src/db/schema/courses.ts; 15 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part1of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part2of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part3of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part4of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part5of6.md` (edit src/db/schema/projects.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_projects.ts.part6of6.md` (edit src/db/schema/projects.ts; 5 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_activity.ts.part1of3.md` (edit src/db/schema/activity.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_activity.ts.part2of3.md` (edit src/db/schema/activity.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_activity.ts.part3of3.md` (edit src/db/schema/activity.ts; 16 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_auth_login-service.ts.part1of2.md` (edit src/modules/auth/login-service.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_auth_login-service.ts.part2of2.md` (edit src/modules/auth/login-service.ts; 17 findings; best P2)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_users.ts.part1of2.md` (edit src/db/schema/users.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_users.ts.part2of2.md` (edit src/db/schema/users.ts; 12 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_academic-terms.ts.part1of2.md` (edit src/db/schema/academic-terms.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_academic-terms.ts.part2of2.md` (edit src/db/schema/academic-terms.ts; 8 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db10-announcements.ts.part1of2.md` (edit src/db/schema/db10-announcements.ts; 20 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db10-announcements.ts.part2of2.md` (edit src/db/schema/db10-announcements.ts; 7 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db04-profile-education-images.staged.ts.md` (edit src/db/schema/db04-profile-education-images.staged.ts; 19 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_auth_request-tenant.ts.md` (edit src/modules/auth/request-tenant.ts; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_quizzes.ts.md` (edit src/db/schema/quizzes.ts; 17 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-round-candidate-slots.ts.md` (edit src/db/schema/placement-round-candidate-slots.ts; 16 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_attendance.ts.md` (edit src/db/schema/attendance.ts; 13 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_permissions_policy.ts.md` (edit src/modules/permissions/policy.ts; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-company-identities.ts.md` (edit src/db/schema/placement-company-identities.ts; 11 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_course-assignment-materials.ts.md` (edit src/db/schema/course-assignment-materials.ts; 10 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_lecture-halls.ts.md` (edit src/db/schema/lecture-halls.ts; 9 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_identity_context-service.ts.md` (edit src/modules/identity/context-service.ts; 7 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_college-branding.ts.md` (edit src/db/schema/college-branding.ts; 7 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-drive-change-requests.ts.md` (edit src/db/schema/placement-drive-change-requests.ts; 7 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db10-general-notices.draft.ts.md` (edit src/db/schema/db10-general-notices.draft.ts; 6 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_profile-verification.ts.md` (edit src/db/schema/profile-verification.ts; 5 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-learner-general-requests.ts.md` (edit src/db/schema/placement-learner-general-requests.ts; 5 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_auth_session.ts.md` (edit src/auth/session.ts; 4 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_auth_login-repository.ts.md` (edit src/modules/auth/login-repository.ts; 4 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-collaboration.ts.md` (edit src/db/schema/tpo-collaboration.ts; 4 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-crm.ts.md` (edit src/db/schema/tpo-crm.ts; 4 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db10-skills-catalog.draft.ts.md` (edit src/db/schema/db10-skills-catalog.draft.ts; 4 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-internal.ts.md` (edit src/db/schema/tpo-internal.ts; 4 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_db01-auth-handoffs.staged.ts.md` (edit src/db/schema/db01-auth-handoffs.staged.ts; 3 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_placement-public-joins.ts.md` (edit src/db/schema/placement-public-joins.ts; 3 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_lesson-content-materials.ts.md` (edit src/db/schema/lesson-content-materials.ts; 3 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_assignment-submission-links.ts.md` (edit src/db/schema/assignment-submission-links.ts; 3 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_components_ui_data-table.tsx.md` (edit src/components/ui/data-table.tsx; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_identity_constants.ts.md` (edit src/modules/identity/constants.ts; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_auth_admin-scope.ts.md` (edit src/auth/admin-scope.ts; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0067_faculty_profile_document.sql.md` (edit drizzle/0067_faculty_profile_document.sql; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_storage-files.ts.md` (edit src/db/schema/storage-files.ts; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_identity-device-sessions.ts.md` (edit src/db/schema/identity-device-sessions.ts; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0052_db02_lecture_hall_timetable_integrity.sql.md` (edit drizzle/0052_db02_lecture_hall_timetable_integrity.sql; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0098_academics_legacy_fidelity_columns.sql.md` (edit drizzle/0098_academics_legacy_fidelity_columns.sql; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_groups.ts.md` (edit src/db/schema/groups.ts; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0114_drive_change_requests.sql.md` (edit drizzle/0114_drive_change_requests.sql; 2 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_modules_auth_session-service.ts.md` (edit src/modules/auth/session-service.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0000_hard_the_spike.sql.md` (edit drizzle/0000_hard_the_spike.sql; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0133_lanes_round_1.sql.md` (edit drizzle/0133_lanes_round_1.sql; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_lesson-content-order-staged.ts.md` (edit src/db/schema/lesson-content-order-staged.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-campaign-drafts.ts.md` (edit src/db/schema/tpo-campaign-drafts.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0021_placements_p5_application_history.sql.md` (edit drizzle/0021_placements_p5_application_history.sql; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_organizations.ts.md` (edit src/db/schema/organizations.ts; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/drizzle_0022_placements_p6a_screening.sql.md` (edit drizzle/0022_placements_p6a_screening.sql; 1 findings; best P1)
+- [ ] `docs/audit/gap-fix-work/packets/lane-14/src_db_schema_tpo-policy.ts.md` (edit src/db/schema/tpo-policy.ts; 1 findings; best P1)

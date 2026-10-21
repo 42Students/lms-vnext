@@ -32,6 +32,7 @@ export async function createTpoDraftDriveStepOne(
     title: input.title,
     description: input.description,
     employmentType: input.employmentType,
+    jobTypeLabel: input.jobTypeLabel,
     workMode: input.workMode,
     applicationMode: "INTERNAL",
     locations: [],

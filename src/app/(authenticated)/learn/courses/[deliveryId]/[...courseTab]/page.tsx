@@ -41,8 +41,11 @@ export default async function LearnerCourseTabPage({
 }) {
   const { deliveryId, courseTab } = await params;
   const query = await searchParams;
+  const context = await getCurrentRequestContext();
   const activeTab = learnerCourseTabPath(courseTab, learnerCourseTabs.map((tab) => tab.path));
   if (activeTab === null) {
+    // A malformed/foreign delivery must not redirect before checking scope.
+    await getLearnerCourseWorkspace(context, deliveryId);
     // Legacy deep links with an unknown course tab resolve to Overview.
     // Keep query context, but never interpolate it into a path segment.
     const safeQuery=new URLSearchParams();
@@ -55,7 +58,6 @@ export default async function LearnerCourseTabPage({
     redirect("/learn/courses/"+encodeURIComponent(deliveryId)+"/home"+(suffix?"?"+suffix:""));
   }
 
-  const context = await getCurrentRequestContext();
   const [workspace, deliveries, instructors] = await Promise.all([
     getLearnerCourseWorkspace(context, deliveryId),
     listLearnerCourseDeliveries(
@@ -82,11 +84,16 @@ export default async function LearnerCourseTabPage({
   let content: ReactNode;
 
   if (activeTab === "home") {
-    const [announcements, display] =
+    const [announcements, displayResult] =
       await Promise.all([
         listLearnerCourseClassAnnouncements(context,courseMeta.sectionId),
-        loadCourseDisplayContentIfReady(workspace.course.id),
+        // The optional course home description must not hide the course
+        // workspace when its own fetch fails.
+        loadCourseDisplayContentIfReady(workspace.course.id)
+          .then(value => ({ data: value, failed: false }))
+          .catch(() => ({ data: null, failed: true })),
       ]);
+    const display = displayResult.data;
     const courseUpdates = announcements.map(announcement=>({
       id:announcement.id,
       title:announcement.title,
@@ -97,6 +104,13 @@ export default async function LearnerCourseTabPage({
     }));
 
     content = (
+      <>
+      {displayResult.failed ? <Banner tone="warning" action={
+        <Link href={`/learn/courses/${encodeURIComponent(deliveryId)}/home`}
+          className="inline-flex min-h-9 items-center font-semibold text-primary-text underline">
+          Try again
+        </Link>
+      }>Failed to load course details.</Banner> : null}
       <LearnerCourseOverview
         deliveryId={deliveryId}
         workspace={workspace}
@@ -121,6 +135,7 @@ export default async function LearnerCourseTabPage({
         readOnly={readOnly}
         courseUpdates={courseUpdates}
       />
+      </>
     );
   } else if (activeTab === "roadmap") {
     content = (

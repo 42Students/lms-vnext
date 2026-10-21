@@ -8,6 +8,7 @@ import {
   check,
   date,
   foreignKey,
+  integer,
   jsonb,
   pgTable,
   text,
@@ -26,15 +27,16 @@ export const placementTpoJobTypes = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
-    label: varchar("label", { length: 100 }).notNull(),
+    label: varchar("label", { length: 40 }).notNull(),
+    sortOrder: integer("sort_order").notNull().default(0),
     active: boolean("active").notNull().default(true),
-    countsAsPlaced: boolean("counts_as_placed"),
+    countsAsPlaced: boolean("counts_as_placed").notNull().default(true),
     isBuiltin: boolean("is_builtin").notNull().default(false),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => [
-    uniqueIndex("placement_tpo_job_types_college_label_uq").on(table.collegeId, table.label),
-    check("placement_tpo_job_types_label_ck", sql`length(btrim(${table.label})) > 0`),
+    uniqueIndex("placement_tpo_job_types_college_label_uq").on(table.collegeId, sql`lower(${table.label})`),
+    check("placement_tpo_job_types_label_ck", sql`length(btrim(${table.label})) between 2 and 40 and ${table.label} ~ ${"^[[:alnum:] +&/().,'-]{2,40}$"}`),
   ],
 );
 

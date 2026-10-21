@@ -1,8 +1,8 @@
 import "server-only";
-import {and,eq,sql} from "drizzle-orm";
+import {and,eq,isNull,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {activityEvents,colleges} from "@/db/schema";
+import {activityEvents,colleges,placementJobs} from "@/db/schema";
 import {placementTpoJobTypes} from "@/db/schema/tpo-configuration";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireTpoBatchActor} from "./tpo-batch-workspace-read-service";
@@ -10,7 +10,17 @@ import {placementTableExists} from "./staged-tables";
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {tpoJobTypeNameSchema} from "./tpo-configuration-model";
 import {TPO_BUILTIN_JOB_TYPES,isTpoBuiltinJobType} from "./tpo-builtin-job-types";
-const createSchema=z.object({label:tpoJobTypeNameSchema,countsAsPlaced:z.boolean()}).strict();
+// Match the old LMS validation message while preserving the vNext schema's
+// supported Unicode letters and punctuation. Never echo unescaped HTML.
+const legacyLabelSchema=z.string().transform((raw,ctx)=>{
+ const label=raw.trim().replace(/\s+/g," ");
+ if(!tpoJobTypeNameSchema.safeParse(label).success){
+  ctx.addIssue({code:"custom",message:'"'+label+'": a job type name is 2-40 letters, digits or simple punctuation'});
+  return z.NEVER;
+ }
+ return label;
+});
+const createSchema=z.object({label:legacyLabelSchema,countsAsPlaced:z.boolean()}).strict();
 export class TpoConfigError extends Error{
  constructor(public readonly code:"TPO_SETTINGS_PENDING"|"TPO_JOB_TYPE_EXISTS"|"TPO_SETTINGS_STALE"|"TPO_SETTINGS_NOT_FOUND"|"TPO_JOB_TYPE_LIMIT"|"TPO_JOB_TYPE_LAST_ACTIVE"|"TPO_JOB_TYPE_BUILTIN"|"TPO_JOB_TYPE_IN_USE"){
   super(code);this.name="TpoConfigError";
@@ -96,7 +106,7 @@ export async function setTpoJobTypeActive(context:RequestContext,raw:unknown){
  });
 }
 
-const renameSchema=z.object({jobTypeId:z.string().uuid(),label:tpoJobTypeNameSchema,
+const renameSchema=z.object({jobTypeId:z.string().uuid(),label:legacyLabelSchema,
  expectedVersion:z.iso.datetime({offset:true})}).strict();
 export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
  const input=renameSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
@@ -127,6 +137,10 @@ export async function renameTpoJobType(ctx:RequestContext,raw:unknown){
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!updated)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  // Legacy job types are stored on each drive; a rename must update those records atomically.
+  await tx.update(placementJobs).set({jobTypeLabel:updated.label})
+   .where(and(eq(placementJobs.collegeId,collegeId),
+    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`));
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
    actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.renamed",
@@ -213,11 +227,163 @@ export async function setTpoJobTypeCountsAsPlaced(ctx:RequestContext,raw:unknown
    .where(and(eq(placementTpoJobTypes.id,current.id),eq(placementTpoJobTypes.collegeId,collegeId),
     eq(placementTpoJobTypes.updatedAt,current.updatedAt))).returning();
   if(!saved)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  // Snapshot placement policy on every existing drive sharing this college type.
+  await tx.update(placementJobs).set({countsAsPlaced:input.countsAsPlaced})
+   .where(and(eq(placementJobs.collegeId,collegeId),
+    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`));
   await tx.insert(activityEvents).values({organizationId:college.organizationId,collegeId,
    actorUserId:ctx.user.id,actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",
    eventType:"placements.tpo_job_type.placed_rule_changed",subjectType:"JOB_TYPE",
    subjectId:current.id,summary:"TPO changed a custom job type placement rule",
    metadata:{oldValue:current.countsAsPlaced,newValue:input.countsAsPlaced}});
   return {changed:true,updatedAt:saved.updatedAt.toISOString()};
+ });
+}
+
+const removeSchema=z.object({jobTypeId:z.string().uuid(),
+ expectedVersion:z.iso.datetime({offset:true})}).strict();
+/** Delete only unused college custom types; existing drives always retain their historical label. */
+export async function removeTpoJobType(ctx:RequestContext,raw:unknown){
+ const input=removeSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const [current]=await tx.select().from(placementTpoJobTypes)
+   .where(and(eq(placementTpoJobTypes.id,input.jobTypeId),eq(placementTpoJobTypes.collegeId,collegeId)))
+   .for("update").limit(1);
+  if(!current)throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  if(current.isBuiltin||isTpoBuiltinJobType(current.label))throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+  if(current.updatedAt.toISOString()!==input.expectedVersion)throw new TpoConfigError("TPO_SETTINGS_STALE");
+  const [usage]=await tx.select({n:sql<number>`count(*)::integer`}).from(placementJobs)
+   .where(and(eq(placementJobs.collegeId,collegeId),
+    sql`lower(${placementJobs.jobTypeLabel}) = lower(${current.label}::text)`,
+    sql`${placementJobs.archivedAt} is null`));
+  if((usage?.n??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE");
+  await tx.delete(placementTpoJobTypes).where(and(eq(placementTpoJobTypes.id,current.id),
+   eq(placementTpoJobTypes.collegeId,collegeId)));
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
+   actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_type.removed",
+   subjectType:"JOB_TYPE",subjectId:current.id,summary:"TPO removed an unused custom job type",
+   metadata:{label:current.label},
+  });
+  return {changed:true};
+ });
+}
+
+const bulkJobTypeSchema=z.array(z.object({
+ id:z.string().uuid().nullable(),
+ label:tpoJobTypeNameSchema,
+ isBuiltin:z.boolean(),
+ active:z.boolean(),
+ countsAsPlaced:z.boolean(),
+ expectedVersion:z.union([z.literal("none"),z.iso.datetime({offset:true})]),
+}).strict()).min(5).max(35);
+
+/** Settings parity: save all visibility/placed/name/add/remove edits in one tenant-scoped transaction. */
+export async function saveTpoJobTypes(ctx:RequestContext,raw:unknown){
+ const input=bulkJobTypeSchema.parse(raw),collegeId=await requireTpoBatchActor(ctx);
+ if(!await placementTableExists("placement_tpo_job_types"))throw new TpoConfigError("TPO_SETTINGS_PENDING");
+ return getDb().transaction(async tx=>{
+  const [college]=await tx.select({organizationId:colleges.organizationId,status:colleges.status})
+   .from(colleges).where(eq(colleges.id,collegeId)).for("update").limit(1);
+  if(!college||college.status!=="ACTIVE")throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+  await assertPersistedPlatformPermission(tx,ctx,"placements.manage",{
+   collegeId,organizationId:college.organizationId,
+  });
+  const names=new Set<string>(),seenIds=new Set<string>();
+  let customCount=0;
+  for(const item of input){
+   const key=item.label.toLowerCase();
+   if(names.has(key))throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
+   names.add(key);
+   const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label.toLowerCase()===key);
+   if(item.isBuiltin){
+    if(!fixed||item.countsAsPlaced!==fixed.countsAsPlaced)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+   }else{
+    if(fixed)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+    customCount++;
+   }
+   if(item.id){
+    if(seenIds.has(item.id))throw new TpoConfigError("TPO_JOB_TYPE_EXISTS");
+    seenIds.add(item.id);
+   }
+  }
+  if(TPO_BUILTIN_JOB_TYPES.some(row=>!input.some(item=>item.isBuiltin&&item.label===row.label)))
+   throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+  if(customCount>30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
+  if(!input.some(item=>item.active))throw new TpoConfigError("TPO_JOB_TYPE_LAST_ACTIVE");
+  const existing=await tx.select().from(placementTpoJobTypes)
+   .where(eq(placementTpoJobTypes.collegeId,collegeId)).for("update");
+  const byId=new Map(existing.map(item=>[item.id,item]));
+  const usage=await tx.select({
+   label:sql<string>`lower(${placementJobs.jobTypeLabel})`,
+   count:sql<number>`count(*)::integer`,
+  }).from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
+    sql`${placementJobs.archivedAt} is null`))
+   .groupBy(sql`lower(${placementJobs.jobTypeLabel})`);
+  const counts=new Map(usage.map(item=>[item.label,item.count]));
+  // Remove absent custom types before renames; only unused labels may be removed.
+  for(const old of existing){
+   if(old.isBuiltin||isTpoBuiltinJobType(old.label)||seenIds.has(old.id))continue;
+   if((counts.get(old.label.toLowerCase())??0)>0)throw new TpoConfigError("TPO_JOB_TYPE_IN_USE");
+   await tx.delete(placementTpoJobTypes).where(and(
+    eq(placementTpoJobTypes.id,old.id),eq(placementTpoJobTypes.collegeId,collegeId)));
+  }
+  for(let index=0;index<input.length;index++){
+   const item=input[index];
+   if(item.isBuiltin){
+    const fixed=TPO_BUILTIN_JOB_TYPES.find(row=>row.label===item.label)!;
+    const old=existing.find(row=>row.label.toLowerCase()===fixed.label.toLowerCase());
+    if((old?.updatedAt.toISOString()??"none")!==item.expectedVersion)
+     throw new TpoConfigError("TPO_SETTINGS_STALE");
+    if(old){
+     if(!old.isBuiltin)throw new TpoConfigError("TPO_JOB_TYPE_BUILTIN");
+     if(old.active!==item.active)await tx.update(placementTpoJobTypes).set({
+      active:item.active,sortOrder:index,
+      updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
+     }).where(and(eq(placementTpoJobTypes.id,old.id),eq(placementTpoJobTypes.collegeId,collegeId)));
+    }else if(!item.active){
+     await tx.insert(placementTpoJobTypes).values({collegeId,label:fixed.label,isBuiltin:true,
+      active:false,countsAsPlaced:fixed.countsAsPlaced,sortOrder:index});
+    }
+    continue;
+   }
+   const old=item.id?byId.get(item.id):null;
+   if(item.id&&(!old||old.isBuiltin||isTpoBuiltinJobType(old.label)))
+    throw new TpoConfigError("TPO_SETTINGS_NOT_FOUND");
+   if((old?.updatedAt.toISOString()??"none")!==item.expectedVersion)
+    throw new TpoConfigError("TPO_SETTINGS_STALE");
+   if(old){
+    if(old.label!==item.label||old.countsAsPlaced!==item.countsAsPlaced){
+     await tx.update(placementJobs).set({jobTypeLabel:item.label,countsAsPlaced:item.countsAsPlaced})
+      .where(and(eq(placementJobs.collegeId,collegeId),
+       sql`lower(${placementJobs.jobTypeLabel}) = lower(${old.label}::text)`));
+    }
+    await tx.update(placementTpoJobTypes).set({
+     label:item.label,active:item.active,countsAsPlaced:item.countsAsPlaced,sortOrder:index,
+     updatedAt:sql`greatest(clock_timestamp(),date_trunc('milliseconds',${placementTpoJobTypes.updatedAt}) + interval '1 millisecond')`,
+    }).where(and(eq(placementTpoJobTypes.id,old.id),eq(placementTpoJobTypes.collegeId,collegeId)));
+   }else{
+    await tx.insert(placementTpoJobTypes).values({
+     collegeId,label:item.label,isBuiltin:false,active:item.active,
+     countsAsPlaced:item.countsAsPlaced,sortOrder:index,
+    });
+   }
+  }
+  await tx.insert(activityEvents).values({
+   organizationId:college.organizationId,collegeId,actorUserId:ctx.user.id,
+   actorMembershipId:ctx.membership!.id,module:"PLACEMENTS",eventType:"placements.tpo_job_types.updated",
+   subjectType:"COLLEGE",subjectId:collegeId,
+   summary:"JOB_TYPES_UPDATED",
+   metadata:{customCount,hiddenCount:input.filter(item=>!item.active).length,
+    changedLabels:input.map(item=>item.label)},
+  });
+  return {saved:true};
  });
 }

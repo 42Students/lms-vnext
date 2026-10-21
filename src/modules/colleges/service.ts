@@ -24,10 +24,7 @@ import {
   tenantDomains,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
-import {
-  hasMembershipRole,
-  isSuperAdmin,
-} from "@/modules/identity/context";
+import { isSuperAdmin } from "@/modules/identity/context";
 import {
   AuthorizationError,
   requirePermission,
@@ -235,24 +232,20 @@ export async function listColleges(
         updatedAt: colleges.updatedAt,
       })
       .from(colleges)
-      .where(
+      .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
+      .where(and(
+        eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE"),
         effectiveOrganizationId
-          ? and(
-              eq(colleges.status, "ACTIVE"),
-              eq(
-                colleges.organizationId,
-                effectiveOrganizationId,
-              ),
-            )
-          : eq(colleges.status, "ACTIVE"),
-      )
+          ? eq(colleges.organizationId, effectiveOrganizationId)
+          : undefined,
+      ))
       .orderBy(asc(colleges.name));
   }
 
-  if (
-    !context.membership ||
-    !hasMembershipRole(context, "COLLEGE_ADMIN")
-  ) {
+  // Any active college membership can discover its own college. This is a
+  // read-only lookup, not permission to administer the college or switch tenants.
+  if (!context.membership) {
     throw new AuthorizationError("college.read");
   }
 
@@ -286,10 +279,12 @@ export async function listColleges(
       updatedAt: colleges.updatedAt,
     })
     .from(colleges)
+    .innerJoin(organizations, eq(organizations.id, colleges.organizationId))
     .where(
       and(
         eq(colleges.id, context.membership.collegeId),
         eq(colleges.status, "ACTIVE"),
+        eq(organizations.status, "ACTIVE"),
       ),
     )
     .limit(1);

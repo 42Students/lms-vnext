@@ -10,8 +10,8 @@ import { CollegeAdminQuickActions } from "@/components/admin/admin-dashboard-act
 import { getCollegeDashboardCards } from "@/modules/admin-ui/college-dashboard-cards-service";
 import { getCollegeDashboardAttendance } from "@/modules/admin-ui/college-dashboard-attendance-service";
 import { getCollegeDashboardLowAttendance } from "@/modules/admin-ui/college-dashboard-risk-service";
-import { getCollegeDashboardUnstaffedCourses } from "@/modules/admin-ui/college-dashboard-staffing-service";
-import { getCollegeDashboardPendingGrades } from "@/modules/admin-ui/college-dashboard-grading-service";
+import { getCollegeDashboardUnstaffedCourses, getCollegeDashboardUnstaffedDeliveriesCount } from "@/modules/admin-ui/college-dashboard-staffing-service";
+import { getCollegeDashboardPendingGrades, getCollegeDashboardPendingGradesCount } from "@/modules/admin-ui/college-dashboard-grading-service";
 import { getCollegeDashboardSetupGaps } from "@/modules/admin-ui/college-dashboard-setup-gaps-service";
 import { EmptyState } from "@/components/ui/empty-state";
 import { PageHeader } from "@/components/ui/page-header";
@@ -47,7 +47,7 @@ export default async function CollegeOverviewPage() {
   // A secondary feed failing must not hide other dashboard sections or suggest
   // that missing data is a real zero. Keep each result independently visible.
   const [dashboardResult,attendanceResult,riskResult,staffingResult,
-    gradingResult,setupResult,closingResult]=await Promise.allSettled([
+    gradingResult,setupResult,closingResult,gradingCountResult,staffingCountResult]=await Promise.allSettled([
     getCollegeDashboardCards(context, {}),
     getCollegeDashboardAttendance(context),
     getCollegeDashboardLowAttendance(context),
@@ -55,12 +55,16 @@ export default async function CollegeOverviewPage() {
     getCollegeDashboardPendingGrades(context),
     getCollegeDashboardSetupGaps(context),
     getCollegeClosingQuizzes(context),
+    getCollegeDashboardPendingGradesCount(context),
+    getCollegeDashboardUnstaffedDeliveriesCount(context),
   ]);
   const dashboard=dashboardResult.status==="fulfilled"?dashboardResult.value:null;
   const attendance=attendanceResult.status==="fulfilled"?attendanceResult.value:null;
   const lowAttendance=riskResult.status==="fulfilled"?riskResult.value:null;
   const unstaffed=staffingResult.status==="fulfilled"?staffingResult.value:null;
+  const unstaffedDeliveriesCount=staffingCountResult.status==="fulfilled"?staffingCountResult.value:null;
   const pendingGrades=gradingResult.status==="fulfilled"?gradingResult.value:null;
+  const pendingGradesCount=gradingCountResult.status==="fulfilled"?gradingCountResult.value:null;
   const setupGaps=setupResult.status==="fulfilled"?setupResult.value:null;
   const closingQuizzes=closingResult.status==="fulfilled"?closingResult.value:null;
 
@@ -164,7 +168,7 @@ export default async function CollegeOverviewPage() {
           </Link>
         </div>
         {attendance.unattended.length === 0
-          ? <p className="text-sm text-muted-foreground">All held sessions have attendance recorded.</p>
+          ? <p className="text-sm text-muted-foreground">Every class held in last 7 days has attendance</p>
           : <ul className="divide-y divide-border">
             {attendance.unattended.map(event => <li key={event.id}
               className="flex min-w-0 flex-wrap items-center justify-between gap-3 py-3 text-sm">
@@ -177,7 +181,7 @@ export default async function CollegeOverviewPage() {
             </li>)}
           </ul>}
         {attendance.unattendedCount > attendance.unattended.length &&
-          <p className="text-xs text-muted-foreground">Showing the 20 most recent sessions. Open attendance to review more.</p>}
+          <p className="text-xs text-muted-foreground">and {attendance.unattendedCount - attendance.unattended.length} more · Open attendance to review more.</p>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Attendance not taken"/>}
       <details className="min-w-0 border-t border-border pt-2">
@@ -192,7 +196,7 @@ export default async function CollegeOverviewPage() {
             className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review attendance</Link>
         </div>
         <p className="text-sm text-muted-foreground">
-          Last 30 days · marked sessions only · {lowAttendance.rows.length} learner(s) shown
+          Last 30 days · marked sessions only · {lowAttendance.total} learner(s) below threshold
         </p>
         {lowAttendance.rows.length === 0
           ? <p className="text-sm text-muted-foreground">No learners below the attendance threshold.</p>
@@ -200,12 +204,14 @@ export default async function CollegeOverviewPage() {
             caption="Learners below attendance threshold"
             columns={[
               {key:"name",header:"Student",mobilePriority:"primary",cell:row=>row.displayName??row.membershipId},
+              {key:"roll",header:"Roll No.",mobilePriority:"secondary",cell:row=>row.rollNumber??"—"},
+              {key:"class",header:"Class",mobilePriority:"secondary",cell:row=>row.className},
               {key:"attendance",header:"Attendance",mobilePriority:"secondary",cell:row=>row.percent+"%"},
               {key:"sessions",header:"Sessions attended",mobilePriority:"secondary",cell:row=>row.attended+" / "+row.marked},
             ]}
             empty={<p className="text-sm text-muted-foreground">No learners below the attendance threshold.</p>}/>}
-        {lowAttendance.rows.length === 200 &&
-          <p className="text-xs text-muted-foreground">Showing first 200 at-risk learners. Open attendance for full reports.</p>}
+        {lowAttendance.total > lowAttendance.rows.length &&
+          <p className="text-xs text-muted-foreground">and {lowAttendance.total - lowAttendance.rows.length} more · Open attendance for full reports.</p>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Low attendance"/>}
       </details>
@@ -220,7 +226,7 @@ export default async function CollegeOverviewPage() {
           </Link>
         </div>
         <p className="text-sm text-muted-foreground">
-          {unstaffed.length} active course(s) with unstaffed sections this semester.
+          {unstaffedDeliveriesCount === null ? "—" : unstaffedDeliveriesCount} unstaffed section-course delivery(ies) this semester.
         </p>
         {unstaffed.length === 0 ? <p className="text-sm text-muted-foreground">
           All active semester deliveries have a teaching assignment.
@@ -235,6 +241,8 @@ export default async function CollegeOverviewPage() {
               className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Assign faculty</Link>
           </li>)}
         </ul>}
+        {unstaffedDeliveriesCount !== null && unstaffedDeliveriesCount > unstaffed.length &&
+          <p className="text-xs text-muted-foreground">Showing up to eight section-course gaps. Open faculty assignment for all {unstaffedDeliveriesCount}.</p>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Courses with no teacher"/>}
       </details>
@@ -248,6 +256,7 @@ export default async function CollegeOverviewPage() {
             Review assignments
           </Link>
         </div>
+        {pendingGradesCount !== null && <p className="text-sm text-muted-foreground">{pendingGradesCount} ungraded submission(s) across the college.</p>}
         {pendingGrades.length === 0
           ? <p className="text-sm text-muted-foreground">No assignment submissions awaiting a grade.</p>
           : <ul className="divide-y divide-border">
@@ -261,6 +270,8 @@ export default async function CollegeOverviewPage() {
               <Link href="/college/assignments" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Review</Link>
             </li>)}
           </ul>}
+        {pendingGradesCount !== null && pendingGrades.length === 8 &&
+          <p className="text-xs text-muted-foreground">Showing eight course groups. Open assignments to review the full backlog.</p>}
       </section>
       </>:<CollegeDashboardSectionFailure title="Waiting to be graded"/>}
       </details>

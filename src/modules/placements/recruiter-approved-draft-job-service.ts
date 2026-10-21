@@ -48,6 +48,9 @@ export async function createRecruiterApprovedDraftJob(
    collegeId:request.collegeId,seasonId:seasons[0].id,
    companyRelationshipId:request.companyRelationshipId,
    title:draft.title,description:draft.description,employmentType:draft.employmentType,
+   jobTypeLabel:draft.employmentType==="INTERNSHIP"?"Internship":
+    draft.employmentType==="CONTRACT"?"Contract":"Full-time",
+   countsAsPlaced:draft.employmentType!=="INTERNSHIP",
    workMode:draft.workMode,locations:[draft.location],
    recruiterDriveMode:draft.driveMode,eligibleBranches:draft.branches,
    eligiblePassingYear:draft.passingYear?Number(draft.passingYear):null,
