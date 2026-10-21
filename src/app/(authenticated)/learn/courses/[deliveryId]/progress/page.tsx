@@ -26,6 +26,11 @@ export default async function LearnerCourseProgressPage({
   const context = await getCurrentRequestContext();
   const progress = await getOwnLearnerCourseProgressBreakdown(context, deliveryId);
   if (!progress) notFound();
+  // A retake is a privileged, explicit staff action handled by the separate
+  // admin progress-retake workflow; never offer the write action to learners.
+  // Each content item uses its own latest attempt; do not infer a retake from
+  // semester promotion, enrollment dates or course completion percentages.
+  const latestContentAttempt=Math.max(1,...Object.values(progress.attemptByContent));
 
   return (
     <div className="min-w-0 space-y-6">
@@ -34,6 +39,14 @@ export default async function LearnerCourseProgressPage({
         ← Course overview
       </Link>
       <PageHeader title="Course progress by lesson" />
+      {latestContentAttempt>1 ? (
+        <div role="status" className="rounded-[var(--lms-control-radius)] border border-border bg-[var(--lms-soft-surface)] px-4 py-3 text-sm text-body">
+          Attempt {latestContentAttempt} started. The previous attempt is kept as history.
+          <span className="mt-1 block text-xs text-muted-foreground">
+            The placement of items below follows your published learning path; progress for earlier attempts is not overwritten.
+          </span>
+        </div>
+      ) : null}
       <section aria-label="Progress summary" className="border-y border-border py-4">
         <dl className="grid grid-cols-2 gap-x-4 gap-y-4 md:grid-cols-4">
           {[
@@ -88,7 +101,8 @@ export default async function LearnerCourseProgressPage({
                         <p className="mt-1 text-xs text-muted-foreground leading-5">
                           {item.kind.toLowerCase()}
                           {item.kind==="CONTENT"?
-                            " · Current attempt "+(progress.attemptByContent[item.id]??1):""}
+                            " · Current attempt "+(progress.attemptByContent[item.id]??1)+
+                            ((progress.attemptByContent[item.id]??1)>1?" · Earlier attempt kept as history":""):""}
                         </p>
                       </div>
                       <StatusBadge tone={tone(item.status)}>
