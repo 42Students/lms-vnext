@@ -413,7 +413,7 @@ export async function PlacementDriveWorkspace({
         job.legacyPostingDetails.campusPool?.travelNote||
         job.legacyPostingDetails.skillsWanted?.length)?(
         <section aria-label="Supplementary employer details" className="min-w-0 border-b border-border pb-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Employer information</h2>
+          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Employer information</h2>
           {job.legacyPostingDetails.portal?.studentsRegisterSeparately?(
             <p className="mt-2 text-sm text-body leading-[22px]">
               Students also register on {job.legacyPostingDetails.portal.name}.
@@ -449,7 +449,7 @@ export async function PlacementDriveWorkspace({
       ):null}
       {nextStep ? (
         <section aria-label="Next step" className="border-b border-border pb-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Next step</h2>
+          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Next step</h2>
           <p className="mt-2 text-sm text-body leading-[22px]">{nextStep.primary.description}</p>
           <Link href={nextStep.primary.href}
             className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] bg-primary px-4 text-sm font-semibold text-primary-foreground sm:w-auto md:min-h-9">
@@ -469,7 +469,7 @@ export async function PlacementDriveWorkspace({
         </section>
       ) : null}
       {journey?<section aria-label="Drive applicant journey" className="min-w-0 border-b border-border pb-4">
-        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Journey</h2>
+        <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Journey</h2>
         <p className="mt-1 text-xs text-body leading-[20px]">{journey.definition}</p>
         <div className="mt-4 grid grid-cols-2 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-3 xl:grid-cols-6">
           {journey.stages.map(stage=><Link key={stage.name} href={stage.href}
@@ -482,7 +482,7 @@ export async function PlacementDriveWorkspace({
       </section>:null}
       {isTpo && driveDay.rounds.length > 0 ? (
         <section aria-label="Round journey" className="min-w-0 border-b border-border pb-4">
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Rounds</h2>
+          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Rounds</h2>
           <p className="mt-1 text-sm text-body leading-[22px]">Round status, schedule and outcome progress. Open a round to see who has reached it.</p>
           <div className="mt-3 divide-y divide-border">
             {driveDay.rounds.map(round => {
@@ -551,7 +551,7 @@ export async function PlacementDriveWorkspace({
           aria-label="Current screening shortlist"
           className="min-w-0 border-b border-border pb-4"
         >
-          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+          <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
             Persisted screening shortlist
           </h2>
           <p className="mt-2 text-sm text-body leading-[22px]">
@@ -706,7 +706,7 @@ export async function PlacementDriveWorkspace({
       ) : null}
       {job.status==="PUBLISHED"?<section id="drive-registered-not-applied" aria-label="Registered students who have not applied"
         className="min-w-0 border-b border-border pb-4">
-        <h2 className="mb-2 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Registered, not applied</h2>
+        <h2 className="mb-2 font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Registered, not applied</h2>
         <p className="mb-3 text-sm text-body leading-[22px]">{reminderPreview && reminderPreview.allowed
           ? reminderPreview.count+" eligible registered students have not applied. Remind once per day, before the deadline."
           : "Remind eligible registered students who have not applied. Once per day, and only before the deadline."}</p>
