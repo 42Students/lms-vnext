@@ -39,7 +39,7 @@ export default async function SuperAdminElectivesPage({
       description="Choose a college in the header above to see its electives." /> :
     <>
       {options ? <CollegeSlotManager options={options} /> : null}
-      <form aria-label="Filter elective slots" className="grid min-w-0 gap-3 border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
+      <form aria-label="Filter elective slots" className="grid min-w-0 gap-[8px] border-b border-border pb-4 sm:grid-cols-2 xl:grid-cols-4">
         <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search
           <Input name="q" defaultValue={data.query.q} placeholder="Slot or program"
             className="min-h-11 md:min-h-9" />
