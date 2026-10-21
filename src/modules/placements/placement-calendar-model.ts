@@ -49,6 +49,9 @@ export type PlacementCalendarEvent = {
   status: string;
   timezone: string | null;
   venue: string | null;
+  /** Legacy ROUND/TALK cards showed the schedule mode and owner. */
+  mode?: string | null;
+  ownerUserId?: string | null;
   note: string | null;
   completedAt: Date | null;
 };

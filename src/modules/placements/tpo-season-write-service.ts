@@ -16,6 +16,7 @@ import { PlacementsServiceError } from "./errors";
  * The required schema migration + eligibility read must ship atomically with
  * a separately authorized write route, CAS, activity and notification policy. */
 export const legacySeasonRegistrationWriteContract = {
+ navigation:["Placement seasons","Current season","Start season","Open registration"],
  action: "OPEN_REGISTRATION",
  needsColumns: ["is_registration_open", "registration_deadline"],
  mustNotConflateWith: ["status", "endDate"],
@@ -24,6 +25,15 @@ export const legacySeasonRegistrationWriteContract = {
  supported: false,
 } as const;
 
+/** Historic @Version increments were a Java persistence detail, not a
+ * portable UUID-era token. VNext exports millisecond-precision UTC instants
+ * and requires that exact revision on every authorised write; no old
+ * integer version is silently interpreted as a timestamp. */
+export function tpoSeasonVersionToken(updatedAt:Date){
+ const ms=updatedAt.getTime();
+ if(!Number.isFinite(ms))throw new TpoSettingsStaleError();
+ return new Date(Math.trunc(ms)).toISOString();
+}
 export class TpoSettingsStaleError extends Error {
   constructor() { super("TPO_SETTINGS_STALE"); this.name = "TpoSettingsStaleError"; }
 }
@@ -52,7 +62,7 @@ export async function changeTpoSeason(context: RequestContext, raw: unknown) {
       .for("update").limit(1);
     if (!current) throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_FOUND");
     if (current.status !== "ACTIVE") throw new PlacementsServiceError("PLACEMENT_SEASON_NOT_ACTIVE");
-    if (current.updatedAt.toISOString() !== new Date(input.expectedUpdatedAt).toISOString()) {
+    if (tpoSeasonVersionToken(current.updatedAt) !== tpoSeasonVersionToken(new Date(input.expectedUpdatedAt))) {
       throw new TpoSettingsStaleError();
     }
     const duplicates = await tx.select({ id: placementSeasons.id, code: placementSeasons.code })
@@ -63,11 +73,14 @@ export async function changeTpoSeason(context: RequestContext, raw: unknown) {
     }
     if (current.name === input.name && current.code === input.code &&
       current.startDate === input.startDate && current.endDate === input.endDate) return current;
-    const now = new Date();
+    // Keep a fresh CAS token even if consecutive writes happen within one ms.
+    const now = new Date(Math.max(Date.now(),current.updatedAt.getTime()+1));
     const [updated] = await tx.update(placementSeasons).set({
       name: input.name, code: input.code, startDate: input.startDate,
       endDate: input.endDate, updatedAt: now,
-    }).where(and(eq(placementSeasons.id, current.id), eq(placementSeasons.collegeId, auth.collegeId))).returning();
+    }).where(and(eq(placementSeasons.id, current.id),
+      eq(placementSeasons.collegeId, auth.collegeId),
+      sql`date_trunc('milliseconds',${placementSeasons.updatedAt}) = ${tpoSeasonVersionToken(current.updatedAt)}::timestamptz`)).returning();
     if (!updated) throw new TpoSettingsStaleError();
     await tx.insert(activityEvents).values({
       organizationId: auth.organizationId, collegeId: auth.collegeId,

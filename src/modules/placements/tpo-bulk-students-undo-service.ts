@@ -11,6 +11,16 @@ import {requirePlacementManageScope} from "./scope";
 const inputSchema=z.strictObject({confirmed:z.literal(true),runAuditId:z.string().uuid()});
 const rowSchema=z.strictObject({membershipId:z.string().uuid(),actionId:z.string().uuid(),
  afterUpdatedAt:z.iso.datetime({offset:true}).nullable()});
+/** The short Undo window never overwrites later per-student decisions.
+ * After expiry, perform a fresh audited manual correction from Students. */
+export const TPO_STUDENT_BULK_UNDO_WINDOW_MS=5*60*1000;
+export function tpoStudentBulkUndoErrorCopy(code:string):string{
+ if(code==="EXPIRED")return "Undo is available for five minutes. Restore these learner decisions manually from Students.";
+ if(code==="STALE")return "Student eligibility changed since this run. Refresh Students and restore individual decisions.";
+ if(code==="ALREADY_UNDONE")return "This run was already undone.";
+ if(code==="UNSAFE_RUN")return "The original changes cannot be verified. Restore each learner manually.";
+ return "This bulk change is no longer available to undo.";
+}
 export class TpoStudentBulkUndoError extends Error {
  constructor(readonly code:"NOT_FOUND"|"STALE"|"EXPIRED"|"ALREADY_UNDONE"|"UNSAFE_RUN"){
   super(code);
@@ -35,7 +45,8 @@ export async function undoTpoStudentBulkRun(ctx:RequestContext,raw:unknown){
   )).for("update").limit(1);
   if(!run||run.metadata.target!=="STUDENTS")throw new TpoStudentBulkUndoError("NOT_FOUND");
   const age=Date.now()-run.occurredAt.getTime();
-  if(age<0||age>300000)throw new TpoStudentBulkUndoError("EXPIRED");
+  if(age<0||age>TPO_STUDENT_BULK_UNDO_WINDOW_MS)
+   throw new TpoStudentBulkUndoError("EXPIRED");
   const rows=z.array(rowSchema).min(1).max(200).safeParse(run.metadata.undoRows);
   if(!rows.success||new Set(rows.data.map(row=>row.membershipId)).size!==rows.data.length)
    throw new TpoStudentBulkUndoError("UNSAFE_RUN");

@@ -25,3 +25,17 @@ export function adminDeliveryToast(action:AdminDeliveryAction){
  return action==="APPROVED"?"Submission accepted.":
   action==="CHANGES_REQUESTED"?"Changes requested.":"Submission locked.";
 }
+
+/** Always allow the read-only Review modal, even for completed or invalid
+ * states; buttons remain disabled until the persisted state can settle. */
+export function adminSubmissionReviewAvailability(
+ status:string,locked:boolean,projectStatus:string,
+){
+ const actions:AdminDeliveryAction[]=["APPROVED","CHANGES_REQUESTED","LOCK"];
+ const available=actions.filter(action=>canAdminSettleDelivery(status,locked,projectStatus,action));
+ const reason=locked?"Submission is locked.":
+  projectStatus!=="ACTIVE"?"This project is not active.":
+  status!=="SUBMITTED"&&status!=="APPROVED"?"The submission is not awaiting review.":
+  available.length===0?"No review action is available.":null;
+ return {canOpen:true,readOnly:available.length===0,actions:available,reason};
+}
