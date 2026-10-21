@@ -1,0 +1,110 @@
+# Dimension re-sweep after the polish pass: lane chat-10 owns "Buttons and links (part 2 of 2)" across the whole codebase
+
+300 files (1027 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: variant per legacy (primary #0a7c88 white radius 9 height 36 weight 650 size 14), secondary/ghost/danger, hover, focus-visible, disabled, loading spinner, icon-only size, link colour and underline.
+Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
+
+
+
+## Dimension sweep: lane chat-10 owns "Colour tokens and raw colours (part 2 of 2)" across the whole codebase
+
+50 files (101 files use this aspect; yours are the ones with the most instances). For EACH file: find every instance of this aspect, compare with the legacy values (docs/design/old-lms-shell-spec.md, legacy-styles/, ui-clone-checklist.md) and fix every deviation. Checklist: every colour must be a legacy token or exactly a legacy value; replace tailwind default palette and stray hex with tokens; check text contrast; no pure black text.
+Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
+
+
+- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/error.tsx`
+- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [ ] `src/app/company-share/[token]/error.tsx`
+- [ ] `src/components/academics/college-academic-directory.tsx`
+- [ ] `src/components/college/college-department-insights.tsx`
+- [ ] `src/components/courses/college-live-classes-directory.tsx`
+- [ ] `src/components/placements/learner-placement-job-detail.tsx`
+- [ ] `src/components/profile/learner-profile-workspace.tsx`
+- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
+- [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
+- [ ] `src/components/placements/tpo-round-results-import.tsx`
+- [ ] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [ ] `src/components/projects/mentor-lane-board.tsx`
+- [ ] `src/components/projects/project-admin-collection-controls.tsx`
+- [ ] `src/components/projects/project-participant-list-controls.tsx`
+- [ ] `src/components/projects/super-admin-template-create-form.tsx`
+- [ ] `src/components/shell/topbar/topbar.module.css`
+- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [ ] `src/components/ui/bottom-sheet.tsx`
+- [ ] `src/components/ui/drawer.tsx`
+- [ ] `src/components/ui/graceful-page-loading.tsx`
+- [ ] `src/components/ui/needs-doing-chips.tsx`
+- [ ] `src/components/ui/stat-tile.tsx`
+- [ ] `src/styles/legacy-skin.css`
+- [ ] `src/components/projects/learner-board-task-index.tsx`
+- [ ] `src/components/projects/mentor-product-backlog.tsx`
+- [ ] `src/components/projects/project-admin-submissions-page.tsx`
+- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [ ] `src/components/shell/sidebar-legacy.css`
+- [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
+- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [ ] `src/components/tpo/tpo-students-spreadsheet.tsx`
+- [ ] `src/components/ui/dropdown.tsx`
+- [ ] `src/components/ui/pagination.tsx`
+- [ ] `src/components/ui/tabs.tsx`
+- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/history/page.tsx`
+- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [ ] `src/components/academics/college-recurring-preview.tsx`
+- [ ] `src/components/admin/college-dashboard-cards.tsx`
+- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
+- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
+- [ ] `src/components/courses/college-learner-progress-report.tsx`
+- [ ] `src/components/courses/faculty-course-roster.tsx`
+- [ ] `src/components/courses/learner-course-attendance.tsx`
+- [ ] `src/components/hr/hr-recruiter-bell.tsx`
+- [ ] `src/components/placements/placement-operations-overview.tsx`
+- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
+- [ ] `src/components/placements/tpo-round-results-import.tsx`
+- [ ] `src/components/projects/mentor-lane-board.tsx`
+- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [ ] `src/components/tpo/tpo-students-bulk-add.tsx`
+- [ ] `src/components/ui/loading-state.tsx`
+- [ ] `src/components/tpo/tpo-student-note-editor.tsx`
+- [ ] `src/components/tpo/tpo-team-assign-unowned.tsx`
+- [ ] `src/components/tpo/tpo-team-rename.tsx`
+- [ ] `src/components/tracker/tracker-issue-logs-panel.tsx`
+- [ ] `src/components/ui/inline-notice.tsx`
+- [ ] `src/styles/micro-details.css`
+- [ ] `src/app/(authenticated)/tpo/audit/page.tsx`
+- [ ] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
+- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [ ] `src/components/activity/activity-center.tsx`
+- [ ] `src/components/attendance/learner-attendance-workspace.tsx`
+- [ ] `src/components/courses/admin-offering-teachers-panel.tsx`
+- [ ] `src/components/courses/learner-assessment-overview.tsx`
+- [ ] `src/components/courses/quiz-attempt-control.tsx`
+- [ ] `src/components/placements/learner-career-calendar.tsx`
+- [ ] `src/components/placements/learner-recent-placement-activity.tsx`
+- [ ] `src/components/placements/tpo-drive-act-on-panel.tsx`
+- [ ] `src/components/projects/project-admin-audit-page.tsx`
+- [ ] `src/components/shell/learner-notification-bell.tsx`
+- [ ] `src/components/tpo/recruiter-lead-csv-import.tsx`
+- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [ ] `src/components/ui/date-input.tsx`
+- [ ] `src/components/verification/VerificationWorkspace.tsx`
+- [ ] `src/app/(authenticated)/tracker/logs/page.tsx`
+- [ ] `src/components/academics/academics-overview.tsx`
+- [ ] `src/components/admin/college-logo-uploader.tsx`
+- [ ] `src/components/announcements/announcement-admin-workspace.tsx`
+- [ ] `src/components/courses/college-live-classes-directory.tsx`
+- [ ] `src/components/courses/faculty-quiz-question-editor.tsx`
+- [ ] `src/components/placements/college-application-pipeline-controls.tsx`
+- [ ] `src/components/placements/report-interactive-table.tsx`
+- [ ] `src/components/projects/mentor-lane-board.tsx`
+- [ ] `src/components/projects/project-delivery-reopen-control.tsx`
+- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [ ] `src/components/placements/tpo-request-page-clipboard.tsx`
+- [ ] `src/components/projects/mentor-product-backlog.tsx`
+- [ ] `src/components/projects/project-task-submission-control.tsx`
+- [ ] `src/components/tpo/grid/grid-workspace.tsx`
+- [ ] `src/components/tpo/tpo-company-create-form.tsx`
+- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [ ] `src/components/ui/action-pagination.tsx`
