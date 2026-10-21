@@ -11,8 +11,8 @@ This is wave 2 of the fix job. Work every packet below, in order, one at a time,
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-role-directory-workspace.tsx.part1of2.md` (edit src/components/college/college-role-directory-workspace.tsx; 40 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-role-directory-workspace.tsx.part2of2.md` (edit src/components/college/college-role-directory-workspace.tsx; 21 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-role-directory-workspace.tsx.part1of2.md` (edit src/components/college/college-role-directory-workspace.tsx; 40 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_college_college-role-directory-workspace.tsx.part2of2.md` (edit src/components/college/college-role-directory-workspace.tsx; 21 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_tracker_tracker-live-logs-explorer.tsx.md` (edit src/components/tracker/tracker-live-logs-explorer.tsx; 35 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_tracker_tracker-report-form.tsx.md` (edit src/components/tracker/tracker-report-form.tsx; 30 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-10/W2_src_components_public_graceful-screen.tsx.md` (edit src/components/public/graceful-screen.tsx; 24 findings; best P2)

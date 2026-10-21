@@ -116,6 +116,14 @@ export async function CollegeRoleDirectoryWorkspace({
       membershipId={item.membershipId} name={item.name} status={item.membershipStatus}/>
     : <CollegeStudentLifecycleAction membershipId={item.membershipId}
       name={item.name} status={item.membershipStatus}/>}
+    {kind==="LEARNER" && item.membershipStatus==="ACTIVE"&&
+      item.userStatus==="ACTIVE"&&item.cohort!==null
+      ? <StudentClassMoveAction membershipId={item.membershipId} name={item.name}/> : null}
+    <Link href={(kind==="LEARNER"?"/college/students/":"/college/faculty/")+item.membershipId}
+      className="inline-flex min-h-11 items-center text-xs font-semibold text-link underline md:min-h-9"
+      aria-label={"Open full "+(kind==="LEARNER"?"student":"faculty")+" profile for "+item.name}>
+      Full profile
+    </Link>
   </div>;
   // Legacy student order: Name, Roll No., Mobile, Email, Class, Gender,
   // Status, Actions. Sensitive contact/gender and roll are not present in the
@@ -189,14 +197,27 @@ export async function CollegeRoleDirectoryWorkspace({
         )}
       />
 
-      {kind === "LEARNER" ? <p className="text-xs text-muted-foreground">
-        College: {context.membership.collegeId}. Registration uses this authorized college;
-        single registration and bulk registration are separate steps.
-      </p> : null}
+      {kind === "LEARNER" ? <div className="min-w-0 space-y-2">
+        <h2 className="text-base font-semibold text-[var(--lms-heading)]">Registered Students</h2>
+        <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-3">
+          <summary className="min-h-11 cursor-pointer py-2 font-semibold text-[var(--lms-primary-text)] md:min-h-9">
+            Register students
+          </summary>
+          <div className="flex flex-wrap items-center gap-4 py-2 text-sm">
+            <Link href="/college/students/register" className="font-semibold text-link underline">
+              Single student registration form
+            </Link>
+            <Link href="/college/students/import" className="font-semibold text-link underline">
+              Bulk Register Students (CSV)
+            </Link>
+            <span className="text-muted-foreground">Registration is scoped to your current college and its active batch.</span>
+          </div>
+        </details>
+      </div> : null}
       {kind === "LEARNER" ? <nav aria-label="Student directory tools"
         className="flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 border-b border-border pb-3 text-sm">
         <Link href="/college/students/import"
-          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Import CSV</Link>
+          className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Bulk Register Students</Link>
         <CollegeStudentImportHistory />
         <details className="min-w-0">
           <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-link underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">CSV exports</summary>
@@ -472,7 +493,11 @@ export async function CollegeRoleDirectoryWorkspace({
                 kind==="FACULTY"?"No faculty found. Register faculty members to get started.":"No students found. Register students to get started."
               : "There are no records on this page. Select an earlier page."}
             action={collegeRoleDirectoryHasActiveFilters(kind,result.filter)?
-              <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear roster filters</Link>:undefined}/>
+              <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear roster filters</Link>:
+              kind==="LEARNER"?<Link href="/college/students/register"
+                className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+                Register students
+              </Link>:<PersonOnboardDialog collegeId={context.membership.collegeId} forcedRole="FACULTY" />}/>
         ) : (
           <>
           <ul aria-label={title + " mobile records"} className="space-y-2 md:hidden">
@@ -481,7 +506,14 @@ export async function CollegeRoleDirectoryWorkspace({
                 <div className="min-w-0">
                   <Link href={kind==="LEARNER"?"/college/students/"+item.membershipId:"/college/faculty/"+item.membershipId}
                     className="break-words font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.name}</Link>
-                  <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">{item.email??"No email recorded"}</p>
+                  <p className="mt-1 break-all text-xs text-muted-foreground leading-[20px]">
+                    {item.email??"—"}
+                  </p>
+                  {kind==="LEARNER"?<p className="mt-1 text-xs text-muted-foreground">
+                    Roll No.: {item.rollNumber||"—"} · Class: {item.sections.join(", ")||"—"}
+                  </p>:<p className="mt-1 text-xs text-muted-foreground">
+                    Department: {item.department||"—"} · Type: {item.employmentType||"—"}
+                  </p>}
                 </div>
                 <div className="flex flex-wrap items-center gap-2">
                   <StatusBadge tone={effectiveStatus(item)==="Active"?"success":"warning"}>
