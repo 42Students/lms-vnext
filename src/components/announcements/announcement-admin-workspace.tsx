@@ -57,6 +57,12 @@ function splitTarget(value: string) {
   };
 }
 
+/** Group identity is not yet persisted on announcement rows: never mutate one
+ * recipient copy of a Super Admin broadcast as if it were the whole broadcast. */
+function isBroadcastCopy(item: AnnouncementAdminItem) {
+  return item.senderType === "SUPER_ADMIN" && item.receiverType === "COLLEGE";
+}
+
 export function AnnouncementAdminWorkspace({
   items,
   targets,
@@ -82,6 +88,7 @@ export function AnnouncementAdminWorkspace({
   const [expiresAt, setExpiresAt] = useState("");
   const [pinned, setPinned] = useState(false);
   const [editing, setEditing] = useState<AnnouncementAdminItem | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<AnnouncementAdminItem | null>(null);
   const [editConsent,setEditConsent]=useState(false);
   const createTiming = announcementLocalTiming(scheduledAt, expiresAt);
   const [reviewPublish,setReviewPublish]=useState(false);
@@ -139,7 +146,11 @@ export function AnnouncementAdminWorkspace({
     item: AnnouncementAdminItem,
     action: "DELETE" | "RESTORE" | "PIN",
   ) {
-    if(pending||flight.current)return;
+    if (pending || flight.current) return;
+    if (isBroadcastCopy(item)) {
+      showToast({ tone: "error", title: "Broadcast action unavailable", description: "A broadcast must be changed for every selected placement cell together." });
+      return;
+    }
     flight.current=true;
     startTransition(async () => {
       try {
@@ -166,6 +177,10 @@ export function AnnouncementAdminWorkspace({
         });
         return;
       }
+      if (action === "DELETE") {
+        setConfirmDelete(null);
+        showToast({ tone: "success", title: "Deleted" });
+      }
       router.refresh();
       } catch {showToast({tone:"error",title:"Announcement update failed",description:"Please retry."});}
       finally {flight.current=false;}
@@ -174,6 +189,10 @@ export function AnnouncementAdminWorkspace({
 
   function saveEdit() {
     if (!editing || pending || flight.current) return;
+    if (isBroadcastCopy(editing)) {
+      showToast({ tone: "error", title: "Broadcast edit unavailable", description: "All placement cells must be updated in one operation." });
+      return;
+    }
     const form = editFormRef.current;
     if (!form) return;
     const data = new FormData(form);
@@ -214,7 +233,7 @@ export function AnnouncementAdminWorkspace({
       }
       setEditing(null);
       setEditConsent(false);
-      showToast({ tone: "success", title: "Announcement updated" });
+      showToast({ tone: "success", title: editing.senderType === "SUPER_ADMIN" ? "Saved" : "Announcement updated" });
       router.refresh();
       } catch {showToast({tone:"error",title:"Announcement edit failed",description:"Check the fields and schedule."});}
       finally {flight.current=false;}
@@ -310,13 +329,15 @@ export function AnnouncementAdminWorkspace({
                     </p>
                   </div>
                   <div className="flex min-w-0 shrink-0 flex-wrap items-center justify-start gap-[var(--lms-space-2)] min-[768px]:justify-end">
-                    {!item.deletedAt ? (
+                    {isBroadcastCopy(item) ? (
+                      <span role="status" className="max-w-56 text-xs text-muted-foreground">Group-wide broadcast editing and withdrawal are not available yet.</span>
+                    ) : !item.deletedAt ? (
                       <>
                         <Button size="sm" variant="secondary" disabled={pending} onClick={() => {setEditConsent(false);setEditing(item);}}>Edit</Button>
                         <Dropdown trigger="More" label="Announcement actions" align="end" mobileSheet triggerClassName="md:!min-h-9">
                           <Menu className="w-full min-w-0">
                             <MenuItem disabled={pending} onClick={() => mutate(item, "PIN")}>{item.isPinned ? "Unpin" : "Pin"}</MenuItem>
-                            <MenuItem disabled={pending} onClick={() => mutate(item, "DELETE")}>Delete</MenuItem>
+                            <MenuItem disabled={pending} onClick={() => setConfirmDelete(item)}>Delete</MenuItem>
                           </Menu>
                         </Dropdown>
                       </>
@@ -348,6 +369,19 @@ export function AnnouncementAdminWorkspace({
        <p className="mt-3 text-xs text-muted-foreground">You are confirming publication to the selected audience. No external outbound delivery is initiated.</p>
       </Dialog>:null}
       <Dialog
+        open={Boolean(confirmDelete)}
+        onOpenChange={(open) => { if (!open && !pending) setConfirmDelete(null); }}
+        dismissible={!pending}
+        title="Delete this announcement?"
+        description="Recipients will stop seeing this announcement."
+        footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
+          <Button variant="secondary" disabled={pending} onClick={() => setConfirmDelete(null)}>Cancel</Button>
+          <Button variant="danger" disabled={pending} onClick={() => { if (confirmDelete) mutate(confirmDelete, "DELETE"); }}>{pending ? "Deleting…" : "Delete"}</Button>
+        </div>}
+      >
+        <p className="text-sm text-body">Placement cells stop seeing this announcement after deletion.</p>
+      </Dialog>
+      <Dialog
         open={Boolean(editing)}
         onOpenChange={(open) => { if (!open&&!pending) setEditing(null); }}
         dismissible={!pending}
@@ -371,6 +405,7 @@ export function AnnouncementAdminWorkspace({
               <Select
                 name="target"
                 defaultValue={`${editing.receiverType}:${editing.receiverId}`}
+                disabled={isBroadcastCopy(editing)}
                 className="min-h-11 w-full md:min-h-9"
               >
                 {!targets.some(
@@ -391,11 +426,11 @@ export function AnnouncementAdminWorkspace({
             </label>
             <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Title
-              <Input name="title" defaultValue={editing.title} maxLength={255} className="w-full" />
+              <Input name="title" defaultValue={editing.title} maxLength={editing.senderType === "SUPER_ADMIN" ? 200 : 255} className="w-full" />
             </label>
             <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Message
-              <Textarea name="message" defaultValue={editing.message} maxLength={10000} className="w-full" />
+              <Textarea name="message" defaultValue={editing.message} maxLength={editing.senderType === "SUPER_ADMIN" ? 8000 : 10000} className="w-full" />
             </label>
             <label className="grid min-w-0 gap-2 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
               Schedule · local time
