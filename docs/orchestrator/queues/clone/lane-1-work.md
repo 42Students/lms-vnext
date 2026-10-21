@@ -115,7 +115,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-project-list-query.ts.md` (edit src/modules/projects/mentor-project-list-query.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_admin-risk-query-model.ts.md` (edit src/modules/projects/admin-risk-query-model.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_template-college-availability-model.ts.md` (edit src/modules/projects/template-college-availability-model.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-template-view.tsx.md` (edit src/components/projects/project-template-view.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-template-view.tsx.md` (edit src/components/projects/project-template-view.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-audit-page-export.tsx.md` (edit src/components/projects/project-audit-page-export.tsx; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_meeting-service.ts.md` (edit src/modules/projects/meeting-service.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_mentor-sprint-write.tsx.md` (edit src/components/projects/mentor-sprint-write.tsx; 1 findings; best P1)

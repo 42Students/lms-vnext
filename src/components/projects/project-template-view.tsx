@@ -13,9 +13,10 @@ type ProjectTemplateBlueprintView = {
   };
   submission?: {instructions?:string;requiredEvidence?:readonly string[]};
   overview?: {
-    goal?: string;
-    deliverables?: readonly string[];
-    definitionOfDone?: readonly string[];
+    goal?:string;description?:string;courseLabel?:string;phase?:string;
+    submissionType?:string;submissionInstructions?:string;
+    deliverables?:readonly string[];definitionOfDone?:readonly string[];
+    personas?:readonly string[];
   };
   releases?: readonly {
     key?: string;
@@ -85,6 +86,14 @@ export function ProjectTemplateView({
           {data.overview?.goal?.trim() ||
             "No project goal recorded."}
         </p>
+        {data.overview?.description?<p className="mt-2 whitespace-pre-wrap text-sm text-body">
+          {data.overview.description}</p>:null}
+        <dl className="mt-3 grid gap-3 text-xs text-body sm:grid-cols-2">
+          <div><dt className="font-semibold">Course</dt>
+            <dd>{data.overview?.courseLabel??data.legacy?.courseLabel??"Not recorded"}</dd></div>
+          <div><dt className="font-semibold">Phase</dt>
+            <dd>{data.overview?.phase??data.legacy?.phase??"Not recorded"}</dd></div>
+        </dl>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <div>
             <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">
@@ -100,6 +109,10 @@ export function ProjectTemplateView({
             </h3>
             {list(data.overview?.definitionOfDone)}
           </div>
+          <div>
+            <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">Personas</h3>
+            {list(data.overview?.personas)}
+          </div>
         </div>
       </section>
 
@@ -112,11 +125,16 @@ export function ProjectTemplateView({
           <div><dt>Lifecycle</dt><dd>{data.legacy.lifecycleStatus||"Not recorded"}</dd></div>
         </dl>
       </section> : null}
-      {data.submission?<section className="border-b border-border pb-4" aria-label="Template submission settings">
-        <h2 className="font-semibold">Submission settings</h2>
-        <p className="mt-2 whitespace-pre-wrap break-words text-sm">{data.submission.instructions||"No instructions recorded."}</p>
-        {list(data.submission.requiredEvidence)}
-      </section>:null}
+      {data.submission||data.overview?.submissionType||data.overview?.submissionInstructions?
+        <section className="border-b border-border pb-4" aria-label="Template submission settings">
+          <h2 className="font-semibold">Submission settings</h2>
+          <p className="mt-2 text-xs font-semibold text-body">
+            Type: {data.overview?.submissionType??"Not recorded"}</p>
+          <p className="mt-2 whitespace-pre-wrap break-words text-sm">
+            {data.overview?.submissionInstructions??data.submission?.instructions??
+              "No instructions recorded."}</p>
+          {data.submission?.requiredEvidence?list(data.submission.requiredEvidence):null}
+        </section>:null}
       <section className="grid min-w-0 grid-cols-1 gap-4">
         <TemplateRows
           title="Releases"
