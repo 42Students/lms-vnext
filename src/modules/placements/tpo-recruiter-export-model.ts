@@ -27,12 +27,14 @@ export function recruiterLeadsCsv(rows:readonly RecruiterExportRow[]){
 
 /** The columns currently shown in the Engage table; exclude selection/actions. */
 export const RECRUITER_TABLE_HEADERS=[
- "Contact","Company","Status","Stage","Owner","Last activity",
- "Next follow-up","Company drives","Invite","Added","Flags","Source","Email","Phone",
+ "Contact","Status","Stage","Company","Designation","Email","Phone","Flags",
+ "Owner","Last activity","Next follow-up","Invite","Added","Came from",
+ "Company drives","Students placed",
 ] as const;
 export type RecruiterTableExportRow=RecruiterExportRow&{
  recruiterUserId?:string|null;unsubscribedAt?:string|null;
  chips?:readonly string[];quietDays?:number;drivesRan?:number|null;
+ designation?:string|null;studentsPlaced?:number|null;
 };
 function exportDate(date:string|null){
  if(!date)return "";
@@ -48,13 +50,15 @@ export function recruiterTableExportGrid(rows:readonly RecruiterTableExportRow[]
  const grid={
   headers:[...RECRUITER_TABLE_HEADERS],
   values:rows.map(row=>[
-   row.name,row.companyName??"",
+   row.name,
    row.recruiterUserId?"Joined":row.unsubscribedAt?"Unsubscribed":"Not joined",
-   stageLabels[row.stage]??row.stage,row.ownerName??"Unassigned",
-   exportDate(row.lastActivityAt),exportDate(row.nextFollowupAt),
-   row.drivesRan==null?"":String(row.drivesRan),row.inviteStatus,exportDate(row.createdAt),
+   stageLabels[row.stage]??row.stage,row.companyName??"Not set",
+   row.designation??"",row.emailNorm??"",row.phoneNorm??"",
    (row.chips??[]).map(chip=>chip==="QUIET"?"Quiet "+(row.quietDays??0)+"d":chip).join("; "),
-   row.source??"Manual",row.emailNorm??"",row.phoneNorm??"",
+   row.ownerName??"Unassigned",exportDate(row.lastActivityAt),exportDate(row.nextFollowupAt),
+   row.inviteStatus,exportDate(row.createdAt),row.source??"Manual",
+   row.drivesRan==null?"":String(row.drivesRan),
+   row.studentsPlaced==null?"":String(row.studentsPlaced),
   ]),
  };
  if(!columns)return grid;

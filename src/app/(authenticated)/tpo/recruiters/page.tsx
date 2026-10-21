@@ -39,6 +39,20 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
     redirect("/dashboard");
   }
   const query = await searchParams;
+  // Legacy ?due=1 is a bookmarked two-bucket filter (today + overdue).
+  // Canonicalize the URL while preserving every other allowlisted roster filter.
+  if(first(query.due)==="1"){
+    const params=new URLSearchParams();
+    const accepted=["view","add","company","page","purpose","q","stage","owner","invite",
+      "status","source","reach","designation","nextFollowup","lastActivity","added",
+      "need","attention","drives"] as const;
+    for(const key of accepted){
+      const value=first(query[key]);
+      if(typeof value==="string"&&value.length<=100)params.set(key,value);
+    }
+    if(!params.has("nextFollowup"))params.set("nextFollowup","DUE");
+    redirect("/tpo/recruiters?"+params.toString());
+  }
   const requested = first(query.view);
   if (requested === "campaigns") {
     return <CampaignHistory searchParams={Promise.resolve({

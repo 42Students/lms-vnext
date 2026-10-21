@@ -69,22 +69,46 @@ type Lead = {
   inviteStatus:string;
 };
 
-type RosterGridRow=Lead & {drivesRan:number|null};
+type RosterGridRow=Lead & {drivesRan:number|null;studentsPlaced:number|null};
+const recruiterDate=(value:string|null|undefined,withYear=false):string=>{
+ if(!value)return "-";
+ const parsed=new Date(value);
+ if(Number.isNaN(parsed.getTime()))return "-";
+ return new Intl.DateTimeFormat("en-GB",{
+  timeZone:"Asia/Kolkata",day:"numeric",month:"short",...(withYear?{year:"numeric" as const}:{})
+ }).format(parsed);
+};
+function sourceLabel(code:string|null|undefined):string{
+ if(!code)return "Manual";
+ return SOURCE_CHOICES.find(([key])=>key===code)?.[1]??code.replaceAll("_"," ").toLowerCase().replace(/^./,letter=>letter.toUpperCase());
+}
+function inviteLabel(status:string):string{
+ const labels:Record<string,string>={NOT_SENT:"Not sent",NOT_INVITED:"Not sent",SENT:"Sent",
+  CLICKED:"Clicked",OPENED:"Clicked",JOINED:"Joined",BOUNCED:"Bounced"};
+ return labels[status]??status.replaceAll("_"," ");
+}
 const RECRUITER_GRID_COLUMNS:readonly TpoGridColumn<RosterGridRow>[]=[
- {key:"Contact",label:"Contact",read:lead=>lead.name||"Unnamed contact"},
+ {key:"Contact",label:"Contact",read:lead=>(lead.name||"Unnamed contact")+
+ (lead.designation?" · "+lead.designation:"")},
  {key:"Status",label:"Status",read:lead=>lead.recruiterUserId?"Joined":lead.unsubscribedAt?"Unsubscribed":"Not joined"},
  {key:"Stage",label:"Stage",read:lead=>RECRUITER_STAGE_LEGACY_LABELS[lead.stage]},
- {key:"Company",label:"Company",read:lead=>lead.companyName??""},
+ {key:"Company",label:"Company",read:lead=>lead.companyName||"Not set"},
+  {key:"Designation",label:"Designation",read:lead=>lead.designation||"-"},
  {key:"Email",label:"Email",read:lead=>lead.emailNorm},
  {key:"Phone",label:"Phone",read:lead=>lead.phoneNorm},
- {key:"Flags",label:"Flags",read:lead=>lead.chips.map(chip=>RECRUITER_ATTENTION_LABELS[chip]).join("; ")},
- {key:"Owner",label:"Owner",read:lead=>lead.ownerName??""},
- {key:"Last activity",label:"Last activity",read:lead=>lead.lastActivityAt??"",sortKind:"date"},
- {key:"Next follow-up",label:"Next follow-up",read:lead=>lead.nextFollowupAt??"",sortKind:"date"},
- {key:"Invite",label:"Invite",read:lead=>lead.inviteStatus.replaceAll("_"," ")},
- {key:"Added",label:"Added",read:lead=>lead.createdAt,sortKind:"date"},
- {key:"Source",label:"Source",read:lead=>lead.source??"Manual"},
+ {key:"Flags",label:"Flags",read:lead=>lead.chips.map(chip=>chip==="QUIET"?
+ "Quiet "+lead.quietDays+"d":RECRUITER_ATTENTION_LABELS[chip]).join(" · ")||"-"},
+ {key:"Owner",label:"Owner",read:lead=>lead.ownerName||"Unassigned"},
+ {key:"Last activity",label:"Last activity",read:lead=>recruiterDate(lead.lastActivityAt),
+  sortKind:"date",sortValue:lead=>lead.lastActivityAt?new Date(lead.lastActivityAt).getTime():null},
+ {key:"Next follow-up",label:"Next follow-up",read:lead=>recruiterDate(lead.nextFollowupAt),
+  sortKind:"date",sortValue:lead=>lead.nextFollowupAt?new Date(lead.nextFollowupAt).getTime():null},
+ {key:"Invite",label:"Invite",read:lead=>inviteLabel(lead.inviteStatus)},
+ {key:"Added",label:"Added",read:lead=>recruiterDate(lead.createdAt,true),
+  sortKind:"date",sortValue:lead=>new Date(lead.createdAt).getTime()},
+ {key:"Came from",label:"Came from",read:lead=>sourceLabel(lead.source)},
  {key:"Company drives",label:"Company drives",read:lead=>lead.drivesRan,sortKind:"number"},
+  {key:"Students placed",label:"Students placed",read:lead=>lead.studentsPlaced??"-",sortKind:"number"},
  {key:"Actions",label:"Actions",read:lead=>lead.recruiterUserId?"Joined":"Invite"},
 ];
 
@@ -124,6 +148,12 @@ type NewLead = {
   followupDate: string;
   followupNote: string;
 };
+function followupInstant(when:string):Date|null{
+ if(!when)return null;
+ const instant=new Date(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(when)?
+  when+":00+05:30":when+"T09:00:00+05:30");
+ return Number.isFinite(instant.getTime())?instant:null;
+}
 const EMPTY: NewLead = {
   name: "", email: "", phone: "", companyName: "",
   designation: "", source: "", followupDate: "", followupNote: "",
@@ -225,13 +255,18 @@ export function RecruiterLeadsWorkspace({
   const [error, setError] = useState("");
   const [query, setQuery] = useState(initialFilters.q??"");
   const [filterOpen,setFilterOpen]=useState(false);
-  const [needsExpanded,setNeedsExpanded]=useState(true);
   const [ownerFilter,setOwnerFilter]=useState(initialFilters.owner??"ALL");
   const [inviteFilter,setInviteFilter]=useState(initialFilters.invite??"ALL");
   const [statusFilter,setStatusFilter]=useState(initialFilters.status??"ALL");
   const [sourceFilter,setSourceFilter]=useState(initialFilters.source??"ALL");
   const [companyFilter,setCompanyFilter]=useState(initialFilters.company??"ALL");
   const [driveFilter,setDriveFilter]=useState(initialFilters.drives??"ALL");
+  const [placedFilter,setPlacedFilter]=useState("ALL");
+  const sourceOptions=useMemo(()=>{
+    const known=new Map<string,string>(SOURCE_CHOICES.map(([key,label])=>[key,label]));
+    for(const row of rows)if(row.source&&!known.has(row.source))known.set(row.source,sourceLabel(row.source));
+    return [...known.entries()];
+  },[rows]);
   const [designationFilter,setDesignationFilter]=useState(initialFilters.designation??"");
   const [reachFilter,setReachFilter]=useState(initialFilters.reach??"ALL");
   const [nextFilter,setNextFilter]=useState(initialFilters.nextFollowup??"ALL");
@@ -414,17 +449,24 @@ export function RecruiterLeadsWorkspace({
   ];
   const leadDriveCounts=useMemo(()=>new Map(companies.flatMap(company=>
     company.people.map(person=>[person.id,company.drivesRan] as const))),[companies]);
+  const leadPlacementCounts=useMemo(()=>new Map(companies.flatMap(company=>
+    company.people.map(person=>[person.id,company.studentsPlaced] as const))),[companies]);
   const rosterRows=useMemo(()=>rows.map(row=>({
     ...row,drivesRan:companiesPhase==="ready"?leadDriveCounts.get(row.id)??null:null,
-  })),[rows,leadDriveCounts,companiesPhase]);
+    studentsPlaced:companiesPhase==="ready"?leadPlacementCounts.get(row.id)??null:null,
+  })),[rows,leadDriveCounts,leadPlacementCounts,companiesPhase]);
   const needCounts=useMemo(()=>engageNeedsCounts(rows),[rows]);
   const filters:EngageRosterFilters={stage,query,owner:ownerFilter,invite:inviteFilter,status:statusFilter,
     source:sourceFilter,company:companyFilter,designation:designationFilter,reach:reachFilter,
     nextFollowup:nextFilter,lastActivity:activityFilter,added:addedFilter,drives:driveFilter};
   const visible=useMemo(()=>filterEngageRoster(rosterRows,filters,lead=>
-    matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))),
+    matchesEngageNeed(lead,need)&&(attention==="ALL"||lead.chips?.includes(attention))&&
+      (placedFilter==="ALL"||
+       (lead.studentsPlaced!==null&&(placedFilter==="NONE"?lead.studentsPlaced===0:
+        placedFilter==="ONE_TWO"?lead.studentsPlaced>=1&&lead.studentsPlaced<=2:
+        placedFilter==="THREE_PLUS"?lead.studentsPlaced>=3:true)))),
     [rosterRows,stage,query,need,attention,ownerFilter,inviteFilter,statusFilter,
-      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter,driveFilter]);
+      companyFilter,designationFilter,reachFilter,nextFilter,activityFilter,addedFilter,driveFilter,placedFilter]);
   const sortedVisible=useMemo(()=>sortEngageRows(visible,rosterSort,sortAscending),
     [visible,rosterSort,sortAscending]);
   const filterChips=([
@@ -437,6 +479,7 @@ export function RecruiterLeadsWorkspace({
     {key:"source",label:"Source",value:sourceFilter},
     {key:"company",label:"Company",value:companyFilter},
     {key:"drives",label:"Drives that ran",value:driveFilter},
+    {key:"placed",label:"Students placed",value:placedFilter},
     {key:"designation",label:"Designation",value:designationFilter},
     {key:"reach",label:"Reach",value:reachFilter},
     {key:"nextFollowup",label:"Next follow-up",value:nextFilter},
@@ -587,9 +630,13 @@ export function RecruiterLeadsWorkspace({
     event.preventDefault();
     if(checking||saving)return;
     const sequence=++contactCheckSeq.current;
-    if (!form.name.trim() || !(form.email.trim() || form.phone.trim())) {
-      setSaveError("Enter a name and at least one contact method.");
-      return;
+    if(!form.name.trim()){setSaveError("Name is required");createNameRef.current?.focus();return;}
+    if(!(form.email.trim()||form.phone.trim())){setSaveError("Enter at least one contact method.");return;}
+    if(form.email.trim()&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())){
+      setSaveError("Enter a valid email");return;
+    }
+    if(form.phone.trim()&&!/^\+?[\d() .-]{7,30}$/.test(form.phone.trim())){
+      setSaveError("Enter a phone number");return;
     }
     if (form.companyName.trim().length < 2) {
       setSaveError("Company is required.");
@@ -620,8 +667,9 @@ export function RecruiterLeadsWorkspace({
       return;
     }finally{if(sequence===contactCheckSeq.current)setChecking(false);}
     if(sequence!==contactCheckSeq.current)return;
-    if(form.followupDate && new Date(form.followupDate+"T09:00:00+05:30").getTime() <= Date.now()){
-      setSaveError("Choose a future follow-up date (IST).");return;
+    if(form.followupDate&&(!followupInstant(form.followupDate)||
+     followupInstant(form.followupDate)!.getTime()<=Date.now())){
+      setSaveError("Choose a future follow-up time (IST).");return;
     }
     if(!reviewingCreate){setReviewingCreate(true);return;}
     if(sequence!==contactCheckSeq.current)return;
@@ -642,7 +690,7 @@ export function RecruiterLeadsWorkspace({
             ...(form.companyName.trim() ? { companyName: form.companyName.trim() } : {}),
             ...(form.designation.trim() ? { designation: form.designation.trim() } : {}),
             ...(form.source ? { source: form.source } : {}),
-            ...(form.followupDate ? {followup:{dueAt:new Date(form.followupDate+"T09:00:00+05:30").toISOString(),note:form.followupNote.trim()}} : {}),
+            ...(form.followupDate ? {followup:{dueAt:followupInstant(form.followupDate)!.toISOString(),note:form.followupNote.trim()}} : {}),
           },
         }),
       });
@@ -664,9 +712,10 @@ export function RecruiterLeadsWorkspace({
     <section className="min-w-0 space-y-4" aria-label="Recruiter leads">
       <PageHeader
         title={TPO_OWNER_PAGE_COPY.recruiterLeads}
-        description="Every company contact you find, and what you will do next."
+        description="Manage company relationships, follow-ups, and placement drives."
         actions={
           <div className="flex w-full min-w-0 flex-col gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center">
+            <RecruiterLeadCsvImport onImported={()=>void load()} />
             <Button variant="primary" ref={createLaunchRef} type="button" className={primaryStyle} disabled={phase!=="ready"}
               onClick={()=>{setAdding(true);setForm(EMPTY);setSaveError("");setDuplicate(null);setReviewingCreate(false);}}>
               <Image src="/assets/images/common/plus.svg" width={16} height={16} alt="" aria-hidden="true" className="mr-2 inline-block"/>
@@ -677,7 +726,6 @@ export function RecruiterLeadsWorkspace({
                 <Link href="/tpo/recruiters/campaigns/preview" className={buttonStyle}>Preview campaign</Link>
                 <Link href="/tpo/recruiters/campaigns" className={buttonStyle}>Campaign history</Link>
                 <Link href="/tpo/follow-ups" className={buttonStyle}>Follow-ups Due</Link>
-                <RecruiterLeadCsvImport onImported={()=>void load()} />
               </nav>
             </Dropdown>
           </div>
@@ -703,31 +751,22 @@ export function RecruiterLeadsWorkspace({
         </div>
       ) : (
         <>
-          <section aria-label="Needs doing" className="space-y-2 border-b border-border py-4">
-            <Button variant="ghost" type="button" aria-expanded={needsExpanded}
-              className="w-full"
-              onClick={()=>setNeedsExpanded(open=>!open)}>
-              Needs doing <span className="text-xs font-normal">{needsExpanded?"Hide":"Show"}</span>
-            </Button>
-            {needsExpanded?<div className="flex flex-wrap gap-2">
+          <section aria-label="Needs doing" className="space-y-2 border-b border-border py-3">
+            <div className="flex min-w-0 flex-wrap gap-2">
               {([
                 ["OVERDUE","Follow-ups due",rows.filter(row=>row.chips?.includes("OVERDUE")).length],
                 ["NO_NEXT_STEP","No next step",rows.filter(row=>row.chips?.includes("NO_NEXT_STEP")).length],
                 ["QUIET","Gone quiet",rows.filter(row=>row.chips?.includes("QUIET")).length],
-              ] as const).filter(([, ,count])=>count>0).map(([key,label,count])=>
-                <FilterChip key={key} type="button" aria-pressed={attention===key}
-                  onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>{label} ({count})</FilterChip>)}
-              {needCounts.unassigned>0?<FilterChip type="button" aria-pressed={need==="UNASSIGNED"}
-                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>
-                Unassigned ({needCounts.unassigned})</FilterChip>:null}
-            </div>:null}
-            {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
-             needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
-            <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
-              href="/tpo/settings/recruiters">
-              {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
-            </Link>
-            {!needsExpanded?<p className="text-xs text-muted-foreground leading-[20px]">Show needs doing to review outreach priorities.</p>:null}
+              ] as const).map(([key,label,count])=>
+                <FilterChip key={key} type="button" data-testid={"needs-"+key.toLowerCase().replaceAll("_","-")}
+                  aria-pressed={attention===key} onClick={()=>updateFilter("attention",attention===key?"ALL":key)}>
+                  {label} · <strong>{count}</strong>
+                </FilterChip>)}
+              <FilterChip type="button" data-testid="needs-unassigned" aria-pressed={need==="UNASSIGNED"}
+                onClick={()=>updateFilter("need",need==="UNASSIGNED"?"ALL":"UNASSIGNED")}>Unassigned · <strong>{needCounts.unassigned}</strong></FilterChip>
+            </div>
+            <Link className="inline-flex min-h-11 items-center text-sm text-link underline md:min-h-9"
+              href="/tpo/settings/recruiters">{rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access</Link>
           </section>
           <div className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
             <label className="min-w-48 flex-1 text-sm">
@@ -791,7 +830,7 @@ export function RecruiterLeadsWorkspace({
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={inviteFilter}
                   onChange={e=>updateFilter("invite",e.target.value)}>
                   {["ALL","NOT_INVITED","SENT","OPENED","BOUNCED","JOINED"].map(item=>
-                   <option key={item} value={item}>{item==="ALL"?"All invites":item.replaceAll("_"," ")}</option>)}
+                   <option key={item} value={item}>{item==="ALL"?"All invites":inviteLabel(item)}</option>)}
                 </Select>
               </label>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
@@ -818,6 +857,15 @@ export function RecruiterLeadsWorkspace({
                   <option value="ONE_TWO">1–2 drives</option>
                   <option value="THREE_FIVE">3–5 drives</option>
                   <option value="SIX_PLUS">6 or more drives</option>
+                </Select>
+              </label>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students placed
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={placedFilter}
+                  onChange={e=>setPlacedFilter(e.target.value)}>
+                  <option value="ALL">Any number</option>
+                  <option value="NONE">No confirmed placements</option>
+                  <option value="ONE_TWO">1–2 students</option>
+                  <option value="THREE_PLUS">3 or more students</option>
                 </Select>
               </label>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation
@@ -870,7 +918,7 @@ export function RecruiterLeadsWorkspace({
               <Button variant="secondary" type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
                   "reach","nextFollowup","lastActivity","added","drives"] as const)updateFilter(key,"ALL");
-                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");
+                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");setPlacedFilter("ALL");
               }}>Clear filters</Button>
             </div>:null}
           </div>
@@ -1131,10 +1179,16 @@ export function RecruiterLeadsWorkspace({
           <form ref={createDialogRef} onSubmit={e=>void create(e)}
             className="min-w-0 space-y-4">
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Name *<Input ref={createNameRef} className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
+              placeholder="Ravi Kumar" autoComplete="name"
               value={form.name} onChange={e => field("name", e.target.value)} /></label>
+            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation<Input className={inputStyle + " mt-1.5 min-w-0"} maxLength={100}
+              placeholder="HR Manager" autoComplete="organization-title"
+              value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Email<Input className={inputStyle + " mt-1.5 min-w-0"} type="email" maxLength={150}
+              placeholder="ravi@acme.com" autoComplete="email"
               value={form.email} onChange={e => field("email", e.target.value)} /></label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Phone<Input className={inputStyle + " mt-1.5 min-w-0"} type="tel" maxLength={30}
+              placeholder="98xxxxxx01" inputMode="tel" autoComplete="tel"
               value={form.phone} onChange={e => field("phone", e.target.value)} /></label>
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
@@ -1151,19 +1205,17 @@ export function RecruiterLeadsWorkspace({
                 Choose a company you&apos;ve worked with, or type a new company name.
               </span>
             </label>
-            <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation<Input className={inputStyle + " mt-1.5 min-w-0"} maxLength={100}
-              value={form.designation} onChange={e => field("designation", e.target.value)} /></label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Where did you find them?
               <Select className={inputStyle + " mt-1.5 min-w-0"} value={form.source}
                 onChange={e => field("source", e.target.value)}>
-                <option value="">Added by hand</option>
-                {SOURCE_CHOICES.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
+                <option value="">Alumni, referral, LinkedIn… (optional)</option>
+                {sourceOptions.map(([code,label]) => <option value={code} key={code}>{label}</option>)}
               </Select>
             </label>
             <details className="border-t border-border pt-3" open={Boolean(form.followupDate)}>
               <summary className="min-h-11 cursor-pointer py-3 text-[13px] font-semibold md:min-h-9">First follow-up (optional, IST)</summary>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">First follow-up (optional, IST)
-              <Input type="date" className={inputStyle+" mt-1.5 min-w-0"} min={new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(new Date())} value={form.followupDate}
+              <Input type="datetime-local" step={60} className={inputStyle+" mt-1.5 min-w-0"} value={form.followupDate}
                 onChange={e=>field("followupDate",e.target.value)}/>
             </label>
             <label className="block min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Follow-up note (optional)
@@ -1177,7 +1229,7 @@ export function RecruiterLeadsWorkspace({
               <p>Confirm: Create recruiter lead for <strong>{form.name.trim()}</strong> at <strong>{form.companyName.trim()}</strong>?
                 This saves a new college contact and records an auditable creation event.
               </p>
-              {form.followupDate?<p>First follow-up: {form.followupDate} (IST)</p>:null}
+              {form.followupDate?<p>First follow-up: {form.followupDate.replace("T"," ")} (IST)</p>:null}
               <Button variant="secondary" type="button" className="mt-2 text-link underline lms-inline-link focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewingCreate(false)}>
                 Edit details
               </Button>
