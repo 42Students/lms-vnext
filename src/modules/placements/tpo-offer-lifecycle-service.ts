@@ -148,7 +148,6 @@ export async function recordTpoOfferLifecycle(
         throw new PlacementsServiceError("PLACEMENT_OFFER_EXPIRED");
       }
       let nextStatus: (typeof placementOffers.$inferSelect)["status"] = offer.status;
-      let cascade: Awaited<ReturnType<typeof cascadeTpoRecordedAcceptance>> | null = null;
       if (input.action === "EXTEND") {
         const newExpiry = new Date(input.expiresAt!);
         if (newExpiry <= now ||
@@ -218,11 +217,9 @@ export async function recordTpoOfferLifecycle(
           fromStatus: offer.status,
           toStatus: nextStatus,
           actorUserId: context.user.id,
-          reason: cascade ? "cascade:"+cascade.cascadeId :
-            nextStatus === "ACCEPTED"
-              ? input.reason + " (external acceptance; 48h dispute window)"
-              : input.reason,
-          ...(cascade ? {cascadeId:cascade.cascadeId} : {}),
+          reason: nextStatus === "ACCEPTED"
+            ? input.reason + " (external acceptance; 48h dispute window)"
+            : input.reason,
         });
         if (nextStatus === "ACCEPTED") {
           await tx.insert(placementJoiningOutcomes)
@@ -246,9 +243,9 @@ export async function recordTpoOfferLifecycle(
           previousStatus: offer.status,
           nextStatus,
           reason: input.reason,
-          cascadeId:cascade?.cascadeId??null,
-          cascadedOfferCount:cascade?.cascadedOfferCount??0,
-          withdrawnApplicationCount:cascade?.withdrawnApplicationCount??0,
+          cascadeId:null,
+          cascadedOfferCount:0,
+          withdrawnApplicationCount:0,
         },
         groupKey: "placement-job:" + jobId + ":offers",
       });
@@ -338,7 +335,7 @@ export async function finalizeMaturedExternalTpoAcceptances(
             eq(placementLearnerGeneralRequests.membershipId, item.membershipId),
             eq(placementLearnerGeneralRequests.kind, "OFFER_ACCEPTANCE_DISPUTE"),
             eq(placementLearnerGeneralRequests.targetKey, offer.id),
-            eq(placementLearnerGeneralRequests.status, "PENDING"),
+            inArray(placementLearnerGeneralRequests.status, ["PENDING", "APPROVED"]),
           )).limit(1);
         if (pendingDispute) return "DISPUTED" as const;
 
