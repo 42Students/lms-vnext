@@ -121,6 +121,7 @@ export async function createCollegeSemester(context: RequestContext, rawInput: u
         programId: program.id,
         termNumber: input.termNumber,
         name: input.name,
+        isActive:input.isActive??true,
         totalCredits: input.totalCredits ?? null,
       }).returning();
       await recordActivityEventInTransaction(tx, context, {
@@ -131,7 +132,8 @@ export async function createCollegeSemester(context: RequestContext, rawInput: u
         subjectId: created.id,
         subjectLabel: created.name,
         summary: "Semester created",
-        metadata: { programId: created.programId, termNumber: created.termNumber },
+        metadata: { programId: created.programId, termNumber: created.termNumber,
+          isActive:created.isActive,legacyStructureId:created.legacyStructureId },
       });
       return created;
     });
@@ -154,10 +156,13 @@ export async function updateCollegeSemester(
           sql`date_trunc('milliseconds',${programTerms.updatedAt}) = ${input.expectedUpdatedAt}::timestamptz`))
         .limit(1);
       if(!version)throw new SemesterMutationError("SEMESTER_STALE");
-      if (current.legacyStructureStatus === "COMPLETED" && input.isActive !== current.isActive) {
+      const nextName=input.name??current.name;
+      const nextCredits=input.totalCredits===undefined?current.totalCredits:input.totalCredits;
+      const nextIsActive=input.isActive??current.isActive;
+      if (current.legacyStructureStatus === "COMPLETED" && nextIsActive !== current.isActive) {
         throw new SemesterMutationError("SEMESTER_COMPLETED_IMMUTABLE");
       }
-      if(current.isActive && !input.isActive){
+      if(current.isActive && !nextIsActive){
         const [[mapped],[live]] = await Promise.all([
           tx.select({id:programTermCourses.id}).from(programTermCourses)
             .where(eq(programTermCourses.programTermId,current.id)).limit(1),
@@ -171,7 +176,7 @@ export async function updateCollegeSemester(
         if(mapped||live)throw new SemesterMutationError("SEMESTER_ACTIVE_CURRICULUM");
       }
       const deactivatedSiblings: { id: string; termNumber: number }[] = [];
-      if (input.isActive && !current.isActive) {
+      if (nextIsActive && !current.isActive) {
         // The parent program is locked in lockedTerm(), serializing status
         // changes for all terms of the SAME program. "Completed" import
         // history is immutable and must not be collapsed into isActive.
@@ -225,9 +230,9 @@ export async function updateCollegeSemester(
         }
       }
       const [updated] = await tx.update(programTerms).set({
-        name: input.name,
-        totalCredits: input.totalCredits,
-        isActive: input.isActive,
+        name: nextName,
+        totalCredits: nextCredits,
+        isActive: nextIsActive,
         updatedAt: sql<Date>`greatest(${programTerms.updatedAt}+interval '1 millisecond',clock_timestamp())`,
       }).where(and(eq(programTerms.id, termId), eq(programTerms.programId, current.programId)))
         .returning();
@@ -242,7 +247,10 @@ export async function updateCollegeSemester(
         summary: "Semester updated",
         metadata: {
           programId: updated.programId, termNumber: updated.termNumber,
-          fromName: current.name, isActive: updated.isActive,
+          fromName: current.name, toName:updated.name,
+          fromCredits:current.totalCredits,toCredits:updated.totalCredits,
+          fromActive:current.isActive,isActive: updated.isActive,
+          legacyStructureId:updated.legacyStructureId,
           deactivatedSiblings, activationSerializedByProgram: true,
         },
       });
@@ -285,7 +293,8 @@ export async function deleteCollegeSemester(
         subjectId: deleted.id,
         subjectLabel: deleted.name,
         summary: "Semester deleted",
-        metadata: { programId: deleted.programId, termNumber: deleted.termNumber },
+        metadata: { programId: deleted.programId, termNumber: deleted.termNumber,
+          legacyStructureId:deleted.legacyStructureId,legacySemesterId:deleted.legacySemesterId },
       });
       return { id: deleted.id };
     });
