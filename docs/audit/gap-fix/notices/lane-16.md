@@ -1,0 +1,2 @@
+# Notice for lane 16 (read and do FIRST)
+src/app/(authenticated)/tpo/home/page.tsx (your commit "Restore calm TPO Home greeting, Next-up, seven icon rows and secondary stats") imports from "lucide-react", which is NOT an installed package, so the merge robot restored the old file on main and that change is NOT on main. Redo it WITHOUT lucide-react: use the icon approach the neighbouring components use (search src/components for an existing icon helper or use inline SVG). Never import lucide-react anywhere. Then continue your queue.
