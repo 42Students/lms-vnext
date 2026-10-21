@@ -52,7 +52,8 @@ export function CollegeContentAggregate({ data, showHeader = true }: { data: Dat
   const courseChoices=[...new Map(data.sectionOptions.map(option=>[option.courseCode,{
    code:option.courseCode,name:option.courseName,
   }])).values()].sort((a,b)=>a.code.localeCompare(b.code));
-  const selectedLesson=Boolean(data.query.courseCode&&data.query.lessonId);
+  const selectedLesson=Boolean(data.query.courseCode&&data.query.lessonId&&
+    data.lessonOptions.some(option=>option.id===data.query.lessonId));
   return (
     <div className="min-w-0 space-y-6 md:space-y-6">
       {showHeader ? <PageHeader
