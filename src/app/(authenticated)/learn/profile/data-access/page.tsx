@@ -41,6 +41,13 @@ export default async function LearnerProfileDataAccessPage(){
  return <div className="min-w-0 space-y-5">
   <Link href="/learn/profile" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">← Profile</Link>
   <PageHeader title="Who has my data" description="Your saved academic details, access boundaries and recorded changes."/>
+  <p className="max-w-3xl text-xs leading-5 text-muted-foreground">
+    The old learner academic-record and data-access GET endpoints are represented by
+    authenticated, membership-scoped pages at <Link href="/learn/profile/academic-record" className="font-semibold text-link underline">Academic record</Link> and this page.
+    Requests are always scoped to your signed-in membership; no other learner identifier is accepted.
+    Imported legacy date-times are displayed in Asia/Kolkata (IST); when the source lacked a timezone,
+    migration provenance must be checked before interpreting an original instant.
+  </p>
   <section aria-labelledby="data-access-permissions" className="min-w-0 border-t border-border pt-4">
    <h2 id="data-access-permissions" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Who may use your information</h2>
    <ul className="mt-3 max-w-3xl list-disc space-y-2 pl-5 text-sm leading-6 text-body">
@@ -65,11 +72,11 @@ export default async function LearnerProfileDataAccessPage(){
      <p>External recipient: {share.company} (individual recipient not recorded)</p>
      <p>Shared: <time dateTime={share.sharedAt.toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(share.sharedAt)} IST</time></p>
      <p>First recorded download: {share.firstDownloadedAt?<time dateTime={new Date(String(share.firstDownloadedAt)).toISOString()}>{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"}).format(new Date(String(share.firstDownloadedAt)))} IST</time>:"Never downloaded"}</p>
-    </li>)}</ul>:<p role="status" className="mt-3 text-sm text-body">No company shortlist shares containing your application are recorded.</p>}
+    </li>)}</ul>:<p role="status" className="mt-3 text-sm text-body">No companies have been given your data through a recorded placement shortlist share.</p>}
   </section>
   <section aria-labelledby="data-access-changes" className="min-w-0 border-t border-border pt-4">
    <h2 id="data-access-changes" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Recent recorded profile-related changes</h2>
-   <p className="mt-1 max-w-3xl text-xs leading-5 text-muted-foreground">Only saved events directly referencing your current college membership are listed. Access without a recorded change cannot be shown.</p>
+   <p className="mt-1 max-w-3xl text-xs leading-5 text-muted-foreground">Only saved events directly referencing your current college membership are listed. Access without a recorded change cannot be shown. Event timestamps are shown in IST; old LocalDateTime values without offsets cannot be reinterpreted without their original migration timezone.</p>
    {history.length?<ol className="mt-3 divide-y divide-border">
     {history.map((event,index)=><li key={event.occurredAt.toISOString()+":"+index}
      className="min-w-0 py-3 first:pt-0 last:pb-0 text-sm leading-6 text-body">

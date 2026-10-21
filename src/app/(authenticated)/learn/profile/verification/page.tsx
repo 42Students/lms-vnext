@@ -23,9 +23,13 @@ export default async function LearnerVerificationPage() {
     getOwnLearnerVerificationStatus(context),
     getOwnLearnerProfileWithRuntime(context).catch(()=>null),
   ]);
-  const currentEducation=currentProfile
-    ?learnerProfileDocumentSchema.parse(currentProfile.profile.profileDocument).education
-    :null;
+  // Legacy GET /profile/verification maps to this membership-scoped SSR
+  // reader. Legacy POST /{section}/submit maps to /api/profile-verification/self
+  // with {section,expectedVersion}; the server never accepts a learner ID.
+  const document=currentProfile
+    ?learnerProfileDocumentSchema.parse(currentProfile.profile.profileDocument):null;
+  const currentEducation=document?.education??null;
+  const mask=(value:string)=>value?"•••• "+value.slice(-4):"Not saved";
   const label = {
     NOT_SUBMITTED: "Incomplete", WAITING: "Waiting for the college",
     SENT_BACK: "Needs a change", VERIFIED: "Verified", UPDATE_PENDING: "Verified · update waiting",
@@ -35,6 +39,20 @@ export default async function LearnerVerificationPage() {
     <LearnerVerificationLiveRefresh />
     <PageHeader title="Profile verification"
       description="Your own Education and Identity review status. A saved detail does not mean it is verified." />
+    <section aria-label="Current identity document comparison" className="border-t border-border pt-4">
+      <details>
+        <summary className="min-h-11 cursor-pointer text-sm font-semibold text-link">Compare saved identity and verification evidence</summary>
+        <p className="mt-2 text-xs text-muted-foreground">
+          Masked values below come from your current saved profile, not an approved identity snapshot.
+          For privacy, a verified identity number is never repeated in this summary.
+        </p>
+        <dl className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+          <div><dt className="font-semibold">Aadhaar (current)</dt><dd className="mt-1">{document?mask(document.identity.aadhaarNumber):"Unavailable"}</dd></div>
+          <div><dt className="font-semibold">PAN (current)</dt><dd className="mt-1">{document?mask(document.identity.panNumber):"Unavailable"}</dd></div>
+        </dl>
+        <p className="mt-2 text-xs text-body">Document readiness is shown in your private evidence receipts below. A clean scan does not mean the college has verified an identity.</p>
+      </details>
+    </section>
     <section aria-labelledby="own-private-receipts" className="border-t border-border pt-5">
       <h2 id="own-private-receipts" className="text-base font-semibold text-[var(--lms-heading)]">Your saved private evidence receipts</h2>
       <p className="mt-2 text-sm text-body">These counts describe private upload receipts and scan status, not verified documents or proof that a reviewer has accepted them. Rejected, revoked and expired receipts cannot be used for approval.</p>
@@ -51,6 +69,7 @@ export default async function LearnerVerificationPage() {
         <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{item.heading}</h2>
         <div className="mt-2"><StatusBadge tone={row.status==="VERIFIED"?"success":row.status==="SENT_BACK"?"warning":row.status==="NOT_SUBMITTED"?"neutral":"info"}>{row.status==="NOT_SUBMITTED"&&row.missing.length===0?
           "Ready to send":label[row.status]}</StatusBadge></div>
+        {row.status==="NOT_SUBMITTED"&&row.missing.length===0?<p role="status" className="mt-2 text-xs text-body">Ready, but not submitted or verified. Use Send for review to request college verification.</p>:null}
         {learnerVerificationNoticeCopy({status:row.status,reason:row.reason,
           decidedByName:row.decidedByName,verifiedAt:row.verifiedAt,
           heading:item.heading})?<Banner tone={row.status==="SENT_BACK"?"warning":"info"} className="mt-2 whitespace-pre-wrap">

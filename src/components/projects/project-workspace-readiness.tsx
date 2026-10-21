@@ -50,6 +50,10 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
   const total=readiness.execution.tasks.total+readiness.execution.sprints.total;
   const complete=readiness.execution.tasks.done+readiness.execution.sprints.completed;
   const overall=total?Math.min(100,Math.max(0,Math.round(100*complete/total))):0;
+  const taskPercent=readiness.execution.tasks.total?
+    Math.round(100*readiness.execution.tasks.done/readiness.execution.tasks.total):0;
+  const sprintPercent=readiness.execution.sprints.total?
+    Math.round(100*readiness.execution.sprints.completed/readiness.execution.sprints.total):0;
   const override=readiness.readinessOverride;
   const overrideDate=override.occurredAt && Number.isFinite(new Date(override.occurredAt).getTime())
     ?formatProjectAdminActivityDateIst(override.occurredAt):"—";
@@ -79,7 +83,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
       aria-labelledby="workspace-readiness-title">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Workspace readiness</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Current readiness</p>
           <h2 id="workspace-readiness-title" className="mt-1 text-lg font-semibold text-[var(--lms-heading)]">
             {isReady?"This workspace is ready to submit":"This workspace still has readiness gaps"}
           </h2>
@@ -96,6 +100,16 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         </div>
         <MetricBar label="Overall project progress" value={overall} maximum={100}
           role="progressbar" />
+      </div>
+      <div className="grid min-w-0 gap-4 border-b border-border pb-4 sm:grid-cols-2">
+        <div className="space-y-2">
+          <p className="flex justify-between gap-3 text-sm font-semibold"><span>Task completion</span><span className="tabular-nums">{taskPercent}%</span></p>
+          <MetricBar label="Task completion" value={taskPercent} maximum={100} role="progressbar"/>
+        </div>
+        <div className="space-y-2">
+          <p className="flex justify-between gap-3 text-sm font-semibold"><span>Sprint completion</span><span className="tabular-nums">{sprintPercent}%</span></p>
+          <MetricBar label="Sprint completion" value={sprintPercent} maximum={100} role="progressbar"/>
+        </div>
       </div>
       <dl className="grid min-w-0 grid-cols-2 gap-3 text-sm lg:grid-cols-4">
         <div className="min-w-0 rounded-[8px] border border-border p-3">
@@ -120,10 +134,29 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
             readiness.finalSubmission.latest.status||"—":"Not submitted"}</dd>
         </div>
       </dl>
-      <p className="text-xs text-muted-foreground">
-        Releases shipped: {readiness.execution.releases.shipped} / {readiness.execution.releases.total}.
-        Releases are informational and do not independently block submission.
-      </p>
+      <section className="overflow-x-auto" aria-label="Readiness detail">
+        <table className="w-full min-w-[420px] border-collapse text-left text-sm">
+          <caption className="pb-2 text-left font-semibold text-[var(--lms-heading)]">Readiness details</caption>
+          <tbody className="divide-y divide-border">
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Tasks</th>
+              <td className="py-2">{readiness.execution.tasks.done} / {readiness.execution.tasks.total} complete · {taskPercent}%</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Sprints</th>
+              <td className="py-2">{readiness.execution.sprints.completed} / {readiness.execution.sprints.total} complete · {sprintPercent}%</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Releases</th>
+              <td className="py-2">{readiness.execution.releases.shipped} / {readiness.execution.releases.total} shipped (informational)</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Final submission</th>
+              <td className="py-2">{hasFinalSubmission?"Exists":"Not submitted"} · {readiness.finalSubmission.latest?.status??"—"}</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Workspace state</th>
+              <td className="py-2">{readiness.projectStatus} · {readiness.execution.complete?"Complete":"Incomplete"}</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Override</th>
+              <td className="py-2">{override.state??"None"} · {override.note??"No override reason"}</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Override set by / at</th>
+              <td className="py-2">{override.overriddenBy??"—"} · {overrideDate}</td></tr>
+            <tr><th scope="row" className="py-2 pr-4 font-medium">Effective readiness</th>
+              <td className="py-2">{isReady?"Ready":"Not ready"} · {readiness.projectStatus==="ARCHIVED"?"Archived workspaces cannot submit":hasFinalSubmission?"Final submission takes precedence":"Tasks, sprints and override policy apply"}</td></tr>
+          </tbody>
+        </table>
+      </section>
     </section>
     <section aria-label="Manual readiness override" className="rounded-[8px] border border-border bg-surface p-4">
       {override.state ? <>

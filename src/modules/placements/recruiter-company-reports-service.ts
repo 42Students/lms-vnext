@@ -326,6 +326,11 @@ export async function getRecruiterCompanyReports(
     interview:0,offered:0,hired:0};
 
   const matchedTotal = selectedTotal;
+  // Unlike the legacy unbounded table, pages stay bounded even for a
+  // 200+ drive portfolio. The summary and funnel above use the whole
+  // authorized relationship, independent of the current page or filter.
+  const startRow=matchedTotal?(effectivePage-1)*query.pageSize+1:0;
+  const endRow=Math.min(matchedTotal,effectivePage*query.pageSize);
 
   return {
     status: "READY" as const,
@@ -337,6 +342,13 @@ export async function getRecruiterCompanyReports(
       name: companyScope.company.name,
     },
     summary,
+    // Legacy /recruiter/colleges/{collegeId}/reports maps to this self-scoped
+    // summary + paged jobs contract. Individual recruiter attribution was
+    // not persisted in all vNext jobs, so these are company-wide totals.
+    reportingScope:"COMPANY_COLLEGE" as const,
+    reportingScopeLabel:"All company drives with this college",
+    paginationNotice:"Showing authorized company drives in pages of up to 50. Export CSV includes the complete matching report.",
+    firstRow:startRow,lastRow:endRow,
     funnel:totalFunnel,
     matchedTotal,
     page: effectivePage,
