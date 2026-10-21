@@ -4,6 +4,7 @@ import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {TpoBulkDriveReminder} from "./tpo-bulk-drive-reminder";
 import {Button} from "@/components/ui/button";
+import {Checkbox} from "@/components/ui/checkbox";
 import {InlineNotice} from "@/components/ui/inline-notice";
 import {Select} from "@/components/ui/select";
 import {Textarea} from "@/components/ui/textarea";
@@ -28,11 +29,12 @@ export function TpoDriveActOnPanel(){
  const [rows,setRows]=useState<Preview[]>([]);
  const [results,setResults]=useState<Outcome[]>([]);
  const [reason,setReason]=useState("");
+ const [acknowledged,setAcknowledged]=useState(false);
  const [notice,setNotice]=useState("");
  const {pending,run}=useGuardedAction({timeoutMs:60000});
  async function preview(event:MouseEvent<HTMLButtonElement>){
   const ids=selectedFrom(event);
-  setNotice("");setResults([]);
+  setNotice("");setResults([]);setAcknowledged(false);
   if(!ids.length){setNotice("Select at least one visible drive.");return;}
   const path=action==="CLOSE"?"close-preview":"cancel-preview";
   const proposed:Preview[]=[];
@@ -62,6 +64,9 @@ export function TpoDriveActOnPanel(){
  }
  async function apply(onlyFailed=false,confirmed=false){
   if(reason.trim().length<10){setNotice("Explain the bulk action in at least 10 characters.");return;}
+  if(action==="CLOSE"&&!acknowledged){
+   setNotice("Acknowledge the irreversible close consequences before continuing.");return;
+  }
   const current=rows.filter(item=>item.allowed&&item.expectedUpdatedAt&&
    (!onlyFailed||results.some(v=>v.id===item.id&&v.status==="failed")));
   if(!current.length){setNotice("No applicable drives to change.");return;}
@@ -106,7 +111,7 @@ export function TpoDriveActOnPanel(){
    </details>
    <div className="grid min-w-0 items-end gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold">Action
-    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);setNotice("");}}
+    <Select className="min-h-11 w-full min-w-0 md:min-h-9" value={action} onChange={e=>{setAction(e.target.value as Action);setRows([]);setResults([]);setNotice("");setAcknowledged(false);}}
      >
      <option value="CLOSE">Close selected live drives</option>
      <option value="CANCEL">Cancel selected drives</option>
@@ -117,12 +122,28 @@ export function TpoDriveActOnPanel(){
    </div>
    {rows.length?<div className="min-w-0 space-y-3 border-t border-border pt-4">
     <p role="status" className="text-sm leading-[22px]">{rows.filter(row=>row.allowed).length} applicable · {rows.filter(row=>!row.allowed).length} left out</p>
-    <ul className="min-w-0 divide-y divide-border text-sm">{rows.map(row=><li key={row.id} className="flex min-w-0 flex-col gap-1 py-2 sm:flex-row sm:justify-between sm:gap-3"><span className="break-words font-medium">{row.title}</span><span className={row.allowed?"text-body":"text-muted-foreground"}>{row.reason}</span></li>)}</ul>
+    {action==="CLOSE"?<p role="status" className="text-sm text-body">
+     Preflight impact for {rows.filter(item=>item.allowed).length} eligible drives:
+     {" "+rows.filter(item=>item.allowed).reduce((sum,item)=>sum+(item.expectedCounts?.applications??0),0)} applications,
+     {" "+rows.filter(item=>item.allowed).reduce((sum,item)=>sum+(item.expectedCounts?.rounds??0),0)} rounds and
+     {" "+rows.filter(item=>item.allowed).reduce((sum,item)=>sum+(item.expectedCounts?.offers??0),0)} offers.
+     Only drives with verified snapshots can be changed. Historical records remain visible.
+    </p>:null}
+    <ul className="min-w-0 divide-y divide-border text-sm">{rows.map(row=><li key={row.id} className="flex min-w-0 flex-col gap-1 py-2 sm:flex-row sm:justify-between sm:gap-3">
+     <span className="break-words font-medium">{row.title}</span>
+     <span className={row.allowed?"text-body":"text-muted-foreground"}>{row.reason}
+      {action==="CLOSE"&&row.expectedCounts?<span className="block text-xs">Applications: {row.expectedCounts.applications}, rounds: {row.expectedCounts.rounds}, offers: {row.expectedCounts.offers}</span>:null}
+     </span>
+    </li>)}</ul>
     <label className="grid min-w-0 max-w-xl gap-[6px] text-[13px] font-semibold">Reason (audited)
      <Textarea className="min-w-0 w-full" value={reason} onChange={e=>{setReason(e.target.value);setNotice("");}} rows={3} minLength={10} maxLength={1000}
       />
     </label>
-    <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending||!rows.some(row=>row.allowed)||reason.trim().length<10}
+    {action==="CLOSE"?<label className="flex min-h-11 items-start gap-2 text-sm font-medium leading-6">
+      <Checkbox checked={acknowledged} onChange={event=>setAcknowledged(event.target.checked)}/>
+      I understand that closing the selected drives is irreversible in this workflow. Applicants and offers can be affected; results remain in the audit history.
+     </label>:null}
+    <Button variant="primary" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={pending||!rows.some(row=>row.allowed)||reason.trim().length<10||(action==="CLOSE"&&!acknowledged)}
       onClick={()=>void apply()} >
      {pending?"Applying…":"Confirm selected action"}</Button>
    </div>:null}
@@ -144,7 +165,7 @@ export function TpoDriveActOnPanel(){
     onOpenChange={next=>{if(!next&&!pending)setConfirmRetry(null);}}
     pending={pending}
     title={"Apply "+action.toLowerCase()+" to "+rows.filter(item=>item.allowed&&item.expectedUpdatedAt&&(confirmRetry!==true||results.some(v=>v.id===item.id&&v.status==="failed"))).length+" eligible drives?"}
-    description="Each change is audited. Changes to applicants and offers are not silently reversible."
+    description={action==="CLOSE"?"Closing these drives is irreversible in this workflow. Affected applications, rounds and offers remain auditable.":"Each change is audited. Changes to applicants and offers are not silently reversible."}
     confirmLabel="Confirm selected action"
     onConfirm={()=>{if(confirmRetry===null||pending)return;const retry=confirmRetry;void (async()=>{try{await apply(retry,true);}catch{setNotice("Could not complete the bulk action. Refresh the preview and try again.");}finally{setConfirmRetry(null);}})();}}/>
  </section>;
