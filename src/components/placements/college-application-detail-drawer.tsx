@@ -103,7 +103,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
       className="mt-4">Open application details</Button>:null}
     {loading?<p role="status" className="py-4 text-sm">Loading application details…</p>:null}
     {error?<p ref={errorRef} tabIndex={-1} role="alert" className="my-4 text-sm text-error">{error}</p>:null}
-    {detail?<div className="mt-4 min-w-0 space-y-5">
+    {detail?<div className="mt-4 min-w-0 space-y-6">
       <div className="border-b border-border py-4">
        <h3 className="font-semibold">{detail.application.name??"Unnamed learner"} · {detail.application.role}</h3>
        <div className="mt-3 grid min-w-0 gap-x-4 gap-y-2 text-sm sm:grid-cols-2 [&>p]:min-w-0 [&>p]:break-words [&>p]:[overflow-wrap:anywhere]">
@@ -175,7 +175,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
          {o.offerLetterUrl?<a href={o.offerLetterUrl}  rel="noreferrer noopener"
            className="font-semibold text-[var(--lms-teal-deep)] underline">View offer letter</a>:null}
          {["ISSUED","ACCEPTED"].includes(o.status)?<div className="space-y-2">
-          <label className="grid gap-[6px] text-[13px] text-body font-semibold leading-4">Offer-letter HTTPS link
+          <label className="grid gap-2 text-[13px] text-body font-semibold leading-4">Offer-letter HTTPS link
            <Input type="url" placeholder="https://..." value={letterInput[o.id]??""}
             onChange={e=>setLetterInput(prev=>({...prev,[o.id]:e.target.value}))}
             />
@@ -193,7 +193,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
        {detail.notes.length>3?<p id="application-notes-scroll-cue" className="mt-2 text-xs text-muted-foreground">More internal notes below ↓</p>:null}
        <div tabIndex={0} role="region" aria-label="Internal notes history"
         aria-describedby={detail.notes.length>3?"application-notes-scroll-cue":undefined}
-        className="mt-3 max-h-48 space-y-2 overflow-y-auto overscroll-contain pb-5 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">{detail.notes.map(n=>
+        className="mt-3 max-h-48 space-y-2 overflow-y-auto overscroll-contain pb-6 [mask-image:linear-gradient(to_bottom,#000_0%,#000_calc(100%-1.25rem),transparent_100%)]">{detail.notes.map(n=>
         <div key={n.id} className="border-b border-border py-2 text-sm">
          <p>{n.body}</p><p className="mt-1 text-xs text-muted-foreground">{when(n.createdAt)}</p>
          <Button variant="secondary" type="button" onClick={()=>{setAmendsNoteId(n.id);setNote(n.body);setSuccess("");}}
@@ -201,7 +201,7 @@ export function CollegeApplicationDetailDrawer({jobId,applicationId,onClose,init
           Edit Internal Notes
          </Button>
         </div>)}</div>
-       <label className="mt-3 grid gap-[6px] text-[13px] font-semibold text-body leading-4">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
+       <label className="mt-3 grid gap-2 text-[13px] font-semibold text-body leading-4">{amendsNoteId?"Correct internal note":"Add internal notes (visible only to admins)"}
         <Textarea rows={3} maxLength={2000} value={note} onChange={e=>setNote(e.target.value)}
          className="w-full"/></label>
        {success?<p role="status" className="text-sm text-body">{success}</p>:null}

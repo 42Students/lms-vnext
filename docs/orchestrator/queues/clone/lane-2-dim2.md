@@ -420,35 +420,35 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-2.md: file, number of 
 - [x] `src/components/hr/recruiter-private-rating-editor.tsx`
 - [x] `src/components/marketing/marketing-layout.tsx`
 - [x] `src/components/people/faculty-profile-editor.tsx`
-- [ ] `src/components/people/faculty-profile-metadata.tsx`
-- [ ] `src/components/people/faculty-profile-repeatable.tsx`
-- [ ] `src/components/people/faculty-profile-skills.tsx`
+- [x] `src/components/people/faculty-profile-metadata.tsx`
+- [x] `src/components/people/faculty-profile-repeatable.tsx`
+- [x] `src/components/people/faculty-profile-skills.tsx`
 - [ ] `src/components/placements/applicant-notes-panel.tsx`
-- [ ] `src/components/placements/college-application-detail-drawer.tsx`
+- [x] `src/components/placements/college-application-detail-drawer.tsx`
 - [ ] `src/components/placements/college-hiring-funnel.tsx`
 - [ ] `src/components/placements/college-interview-appointments.tsx`
-- [ ] `src/components/placements/college-report-navigation.tsx`
+- [x] `src/components/placements/college-report-navigation.tsx`
 - [ ] `src/components/placements/drive-day-roster.tsx`
 - [ ] `src/components/placements/learner-applications-browse.tsx`
-- [ ] `src/components/placements/learner-career-calendar.module.css`
+- [x] `src/components/placements/learner-career-calendar.module.css`
 - [ ] `src/components/placements/learner-career-calendar.tsx`
 - [ ] `src/components/placements/learner-career-rounds-workspace.tsx`
-- [ ] `src/components/placements/learner-interview-withdrawal-request.tsx`
+- [x] `src/components/placements/learner-interview-withdrawal-request.tsx`
 - [ ] `src/components/placements/learner-placement-job-detail.tsx`
 - [ ] `src/components/placements/learner-placement-jobs.tsx`
 - [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-metrics.module.css`
-- [ ] `src/components/placements/learner-placement-notification-settings.tsx`
+- [x] `src/components/placements/learner-placement-metrics.module.css`
+- [x] `src/components/placements/learner-placement-notification-settings.tsx`
 - [ ] `src/components/placements/learner-placement-offers.tsx`
 - [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/learner-schedule-reschedule.tsx`
-- [ ] `src/components/placements/legacy-calendar-theme.module.css`
-- [ ] `src/components/placements/legacy-tpo-report-stats.module.css`
-- [ ] `src/components/placements/placement-bulk-add-applicants.tsx`
-- [ ] `src/components/placements/placement-bulk-offer-withdraw.tsx`
+- [x] `src/components/placements/learner-schedule-reschedule.tsx`
+- [x] `src/components/placements/legacy-calendar-theme.module.css`
+- [x] `src/components/placements/legacy-tpo-report-stats.module.css`
+- [x] `src/components/placements/placement-bulk-add-applicants.tsx`
+- [x] `src/components/placements/placement-bulk-offer-withdraw.tsx`
 - [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-draft-edit-form.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-draft-edit-form.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
 - [ ] `src/components/placements/placement-drive-day-overview.tsx`
 - [ ] `src/components/placements/placement-drive-workspace.tsx`
 - [ ] `src/components/placements/placement-job-create-form.tsx`

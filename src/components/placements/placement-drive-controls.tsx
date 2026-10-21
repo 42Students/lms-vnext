@@ -837,7 +837,7 @@ export function PlacementDriveControls({
         </div>
         <div className="divide-y divide-border">
           {data.screening.length === 0 ? (
-            <p className="m-0 px-5 py-6 text-sm text-muted-foreground">
+            <p className="m-0 px-6 py-6 text-sm text-muted-foreground">
               No submitted applications are waiting in this drive.
             </p>
           ) : (
@@ -1467,7 +1467,7 @@ export function PlacementDriveControls({
           return (
             <article
               key={round.id}
-              className="border-b border-border py-5"
+              className="border-b border-border py-6"
             >
               <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
                 <div>
@@ -1752,7 +1752,7 @@ export function PlacementDriveControls({
               {round.kind !== "TALK" &&
               round.participants.length >
                 0 ? (
-                <div className="mt-5 min-w-0 divide-y divide-border border-y border-border">
+                <div className="mt-6 min-w-0 divide-y divide-border border-y border-border">
                   {round.participants.map(
                     (participant) => {
                       const key =
