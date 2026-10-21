@@ -373,24 +373,29 @@ export async function requireStaffNotificationMutation(
     courseId: typeof existing.metadata.courseId === "string"
       ? existing.metadata.courseId : null,
   };
+  // A stored event's scope and the source class/course must still agree.
+  // Do not allow a creator (or an administrator) to mutate an event if
+  // imported or stale metadata points at another tenant's audience.
+  const previous = staffNotificationDraftSchema.safeParse({
+    title: "Existing notification",
+    htmlContent: "Existing notification",
+    classId: audience.classId ?? undefined,
+    courseId: audience.courseId ?? undefined,
+  });
+  if (!previous.success) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  const { audience: originalAudience } =
+    await requireStaffNotificationAudience(context, previous.data);
+  if (originalAudience.collegeId !== existing.collegeId ||
+      originalAudience.organizationId !== existing.organizationId) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
   if (isAdmin) {
     requirePermission(context, "courses.manage", {
       collegeId: existing.collegeId,
       organizationId: existing.organizationId,
     });
-  } else {
-    // Treat missing/invalid legacy audience metadata as a denial, not as
-    // permission to fall back to an arbitrary current faculty membership.
-    const previous = staffNotificationDraftSchema.safeParse({
-      title: "Existing notification",
-      htmlContent: "Existing notification",
-      classId: audience.classId ?? undefined,
-      courseId: audience.courseId ?? undefined,
-    });
-    if (!previous.success) {
-      throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
-    }
-    await requireStaffNotificationAudience(context, previous.data);
   }
   return audience;
 }
@@ -572,6 +577,8 @@ async function writeInAppNotification(
           id: activityEvents.id,
           collegeId: activityEvents.collegeId,
           organizationId: activityEvents.organizationId,
+          subjectType: activityEvents.subjectType,
+          metadata: activityEvents.metadata,
         })
         .from(activityEvents)
         .where(
@@ -597,6 +604,15 @@ async function writeInAppNotification(
     throw new ActivityServiceError(
       "ACTIVITY_EVENT_NOT_FOUND",
     );
+  }
+  // An authored notice cannot be sent while scheduled, failed or recalled.
+  // The release worker must commit SENT before recipient delivery; generic
+  // activity events without a notice lifecycle retain existing behaviour.
+  if (event.subjectType === "NOTIFICATION" &&
+      (event.metadata.deletedAt != null ||
+       (event.metadata.deliveryStatus != null &&
+        event.metadata.deliveryStatus !== "SENT"))) {
+    throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
   if (recipients.length !== userIds.length) {
     throw new ActivityServiceError(
