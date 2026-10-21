@@ -6,63 +6,157 @@ import { PageHeader } from "@/components/ui/page-header";
 import { EmptyState } from "@/components/ui/empty-state";
 import { DataTable, type DataTableColumn } from "@/components/ui/data-table";
 import { ErrorState } from "@/components/ui/error-state";
-import { listCollegeDriveApplications } from "@/modules/placements/college-drive-applications-service";
-import { DRIVE_APPLICATION_EXPORT_CAP, driveApplicationsHref, driveApplicationsQuerySchema } from "@/modules/placements/college-drive-applications-model";
-import { collegeShortlistedQuery, collegeShortlistedHref } from "@/modules/placements/college-shortlisted-query";
-import {Input} from "@/components/ui/input";
-import {Button} from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
+import { Tabs } from "@/components/ui/tabs";
+import { getCollegeApplicationPipeline } from "@/modules/placements/college-application-stage-service";
+import { CollegeApplicationPipelineControls } from "@/components/placements/college-application-pipeline-controls";
+import {
+  DRIVE_APPLICATION_EXPORT_CAP,
+  driveApplicationsHref,
+  driveApplicationsParams,
+  type DriveApplicationsQuery,
+} from "@/modules/placements/college-drive-applications-model";
+import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
-/** Dedicated legacy shortlisted surface, with persisted college-scoped applicant status. */
+/**
+ * Legacy Shortlisted workbench. Pipeline stage (ASSESSMENT by default) is the
+ * authoritative filter; screening SHORTLISTED is only a historical decision,
+ * not the current interview/offer/hire status.
+ */
 export default async function CollegeDriveShortlistedPage({
   params, searchParams,
 }: {
-  params: Promise<{jobId:string}>;
-  searchParams: Promise<Record<string,string|string[]|undefined>>;
+  params: Promise<{ jobId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
   const context = await getCurrentRequestContext();
-  if (!context.membership || !hasMembershipRole(context,"COLLEGE_ADMIN")) {
-    redirect("/dashboard");
+  if (!context.membership || !hasMembershipRole(context, "COLLEGE_ADMIN")) {
+    // Do not expose drive details outside the selected College Admin workspace.
+    return <div className="min-w-0 space-y-4">
+      <PageHeader title="Shortlisted" />
+      <ErrorState title="College assignment required"
+        description="Your account is not assigned to this College Admin workspace. Ask your college administrator to assign the appropriate college role, then sign in again."
+        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>} />
+    </div>;
   }
-  const {jobId}=await params;
-  const parsed=collegeShortlistedQuery(await searchParams);
-  if (!parsed.success) return <ErrorState title="Invalid applicant filters"
-    description="The requested search or page is invalid." action={<Link href={collegeShortlistedHref(jobId,{q:"",page:1})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>;
-  const query=driveApplicationsQuerySchema.parse({...parsed.data,status:"SUBMITTED",screening:"SHORTLISTED"});
-  const data=await listCollegeDriveApplications(context,jobId,query);
-  if(query.page>data.totalPages) {
-    redirect(collegeShortlistedHref(jobId,{q:query.q,page:data.totalPages}));
-  }
-  const columns:DataTableColumn<(typeof data.items)[number]>[]=[
-    {key:"student",header:"Student",mobilePriority:"primary",cell:item=><strong className="break-words [overflow-wrap:anywhere]">{item.name??"Unnamed learner"}</strong>},
-    {key:"roll",header:"Roll",cell:item=>item.rollNumber},
-    {key:"role",header:"Role",cell:item=>item.roleTitle},
+  const { jobId } = await params;
+  const requested = await searchParams;
+  const query = driveApplicationsParams({
+    ...requested,
+    stage: requested.stage ?? "ASSESSMENT",
+    status: "SUBMITTED",
+    screening: "ALL",
+  });
+  const href = (selection: DriveApplicationsQuery) =>
+    driveApplicationsHref(jobId, selection).replace("/applications", "/shortlisted");
+
+  if (!query) return <div className="min-w-0 space-y-4">
+    <PageHeader title="Shortlisted" />
+    <ErrorState title="Invalid applicant filters"
+      description="The requested search, pipeline stage or page is invalid."
+      action={<Link href={href({
+        q: "", status: "SUBMITTED", stage: "ASSESSMENT", screening: "ALL",
+        source: "ALL", page: 1,
+      })} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>} />
+  </div>;
+
+  const data = await getCollegeApplicationPipeline(context, jobId, query);
+  if (query.page > data.totalPages) redirect(href({ ...query, page: data.totalPages }));
+  const stages = ["ASSESSMENT", "INTERVIEW", "OFFERED", "HIRED", "SHORTLISTED", "WAITLISTED", "REJECTED", "APPLIED"] as const;
+  const stageName = (value: string) => value.charAt(0) + value.slice(1).toLowerCase();
+  const date = new Intl.DateTimeFormat("en-IN", { dateStyle: "medium", timeZone: "Asia/Kolkata" });
+  const external = data.items.filter(row => row.source === "EXTERNAL");
+  const internal = data.items.filter(row => row.source !== "EXTERNAL");
+  // Current shared pipeline controls do not safely exclude external candidates
+  // from bulk matching across pages. Limit mutation selection to the current
+  // internal page. External entries remain visible but strictly read-only.
+  const externalColumns: DataTableColumn<(typeof data.items)[number]>[] = [
+    { key: "name", header: "Learner Name", mobilePriority: "primary", cell: row => row.name ?? "Unnamed learner" },
+    { key: "email", header: "Email", cell: row => row.email ?? "Not provided" },
+    { key: "college", header: "College", cell: row => row.collegeName },
+    { key: "source", header: "Source", cell: row => row.source },
+    { key: "status", header: "Current Status", cell: row => row.stage },
+    { key: "date", header: "Applied Date", cell: row => date.format(new Date(row.submittedAt)) },
+    { key: "actions", header: "Actions", cell: () => "View only" },
   ];
+
   return <div className="min-w-0 space-y-[var(--lms-space-4)]">
-    <PageHeader title="Shortlisted"
-      description={data.drive.title}
-      actions={<Link href={driveApplicationsHref(jobId,{...query,screening:"ALL"})}
-        className="font-semibold text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Applications</Link>} />
-    <form method="get" role="search" aria-label="Shortlisted student filters" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-[minmax(0,2fr)_auto_auto]">
-      <label className="grid min-w-0 flex-1 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Student
-        <Input type="search" name="q" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9" />
+    <PageHeader title="Shortlisted" description={data.drive.title}
+      actions={<Link href={driveApplicationsHref(jobId, {
+        ...query, stage: "ALL", screening: "ALL", status: "ALL", page: 1,
+      })} className="inline-flex min-h-11 items-center font-semibold text-link underline hover:text-[var(--lms-primary-text)] md:min-h-9">All applications</Link>} />
+    <Tabs ariaLabel="Shortlisted pipeline stages" renderPanel={false} value={query.stage}
+      items={stages.map(stage => ({
+        value: stage,
+        label: stageName(stage),
+        count: data.stageCounts[stage] ?? 0,
+        href: href({ ...query, stage, page: 1 }),
+      }))} />
+    <form method="get" role="search" aria-label="Shortlisted application filters"
+      className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto_auto]">
+      <input type="hidden" name="stage" value={query.stage} />
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        Name, email, roll or role
+        <Input name="q" type="search" maxLength={100} defaultValue={query.q} className="min-h-11 min-w-0 md:min-h-9" />
       </label>
-      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filter</Button>
-      {query.q ? <Link href={collegeShortlistedHref(jobId,{q:"",page:1})} className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline underline-offset-4 md:min-h-9">Clear filters</Link> : null}
+      <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+        Source
+        <Select name="source" defaultValue={query.source} className="min-h-11 min-w-0 md:min-h-9">
+          <option value="ALL">All sources</option>
+          <option value="INTERNAL">Internal</option>
+          <option value="EXTERNAL">External</option>
+        </Select>
+      </label>
+      <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9">Filters</Button>
+      {query.q || query.source !== "ALL"
+        ? <Link href={href({ ...query, q: "", source: "ALL", page: 1 })}
+            className="inline-flex min-h-11 items-center justify-center font-semibold text-link underline md:min-h-9">Clear filters</Link>
+        : null}
     </form>
-    <p role="status" className="text-sm leading-[1.6]">{data.total} shortlisted</p>
-    <a className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline underline-offset-4 md:min-h-9 lms-inline-link hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" href={
-      "/api/college/placements/jobs/"+encodeURIComponent(jobId)+"/applications/export"+
-      (driveApplicationsHref(jobId,query,true).split("/export")[1]??"")
-    }>Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})</a>
-    <DataTable caption="Shortlisted students" rows={data.items} columns={columns}
-      getRowKey={item=>item.id}
-      empty={<EmptyState title="No shortlisted students" description="No shortlisted students match these filters." action={<Link href={query.q?collegeShortlistedHref(jobId,{q:"",page:1}):driveApplicationsHref(jobId,{...query,status:"ALL",screening:"ALL",source:"ALL",stage:"ALL",departmentId:undefined,programId:undefined,cohortId:undefined})} className="inline-flex min-h-11 items-center font-semibold text-link underline underline-offset-4 md:min-h-9">{query.q?"Clear filters":"View applications"}</Link>}/>} />
-    <nav aria-label="Shortlisted pages" className="flex min-w-0 flex-col items-stretch justify-between gap-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center">
+    <div className="flex min-w-0 flex-wrap items-center justify-between gap-3 text-sm">
+      <span role="status">{data.total.toLocaleString("en-IN")} matching {stageName(query.stage).toLowerCase()} applications</span>
+      <a href={"/api/college/placements/jobs/" + encodeURIComponent(jobId) + "/applications/export" +
+        (driveApplicationsHref(jobId, query, true).split("/export")[1] ?? "")}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Export CSV (up to {DRIVE_APPLICATION_EXPORT_CAP.toLocaleString("en-IN")})
+      </a>
+    </div>
+    {query.stage === "ASSESSMENT"
+      ? <Alert tone="info">Assessment candidates receive in-app notifications when their application stage is updated. An optional assessment-link distribution workflow is not yet available here.</Alert>
+      : null}
+    {internal.length ? (
+      <CollegeApplicationPipelineControls
+        key={jobId + ":" + JSON.stringify(query)}
+        jobId={jobId} rows={internal} total={internal.length}
+        query={{ ...query, source: "INTERNAL" }} />
+    ) : null}
+    {external.length ? <section className="min-w-0 space-y-3">
+      <h2 className="text-[18px] font-semibold text-[var(--lms-heading)]">External applications</h2>
+      <Alert tone="info">Externally sourced candidates are visible for review only. Bulk selection and stage changes are disabled here.</Alert>
+      <DataTable caption="External shortlisted applications" rows={external} columns={externalColumns}
+        getRowKey={row => row.id} />
+    </section> : null}
+    {!data.items.length ? <EmptyState
+      title={query.q || query.source !== "ALL" ? "No applications match these filters." : "No applications yet"}
+      description={query.q || query.source !== "ALL"
+        ? "Try clearing search and source filters."
+        : "There are no applications in this pipeline stage yet."}
+      action={<Link href={href({ ...query, q: "", source: "ALL", page: 1 })}
+        className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Clear filters</Link>} /> : null}
+    <nav aria-label="Shortlisted pages" className="flex min-w-0 flex-col gap-3 border-t border-[var(--lms-canvas-border)] pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">
       <span>Page {query.page} of {data.totalPages}</span>
-      <div className="flex min-w-0 flex-wrap gap-3 max-[767px]:[&_a]:flex-1 max-[767px]:[&_a]:justify-center">
-      {query.page>1 ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page-1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Previous</Link>:null}
-      {query.page<data.totalPages ? <Link href={collegeShortlistedHref(jobId,{q:query.q,page:query.page+1})} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Next</Link>:null}
+      <div className="flex min-w-0 flex-wrap gap-3">
+        {query.page > 1 ? <Link href={href({ ...query, page: query.page - 1 })}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Previous</Link> : null}
+        {query.page < data.totalPages ? <Link href={href({ ...query, page: query.page + 1 })}
+          className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Next</Link> : null}
       </div>
     </nav>
+    <p className="text-xs leading-5 text-muted-foreground">
+      Stage moves require confirmation and are checked against the latest saved screening and offer history.
+      The current internal-page selection is bounded; historical cross-page bulk matching is not yet enabled on this view.
+    </p>
   </div>;
 }
