@@ -14,3 +14,10 @@ Validation mode: static source review only. No application execution, tests, lin
 
 ## Queue
 All 28 documents remain unticked pending full GAP/MISSING closure and static syntax review. Never infer runtime parity from authored code alone.
+
+## Wave 1 — Courses / assignment submission (2026-10-21, static review)
+
+- `src_modules_courses_assignment-submission-service.ts.part1of2.md` | **IN PROGRESS; not ticked.** Applied `G2-12-021-019`, `G2-12-021-034`: insert submission -> guarded consume receipt -> insert composite-FK-attested file, all in one transaction; additionally check receipt delivery and claim-time expiry. Applied `G2-2-026-064`: `previousPoints` reads persisted grade atomically from CAS update. Advanced `G2-2-026-004` (scoped learner-wide history service; route pending), `G2-2-026-084` (SQL page/count available, caller wiring pending), and `G2-3-016-024` (batch publisher service; modal/API pending). Remaining ledger/history, multipart/mixed-parts, descriptive-point workflow, UI and parity findings are OPEN, not falsely counted as fixed. Historical ID import `G2-13-008-080` / `G2-15-031-061` intentionally retains UUID + membership model rather than replacing vNext identity. Scan attestation and retention prerequisites require DB06 coordination; see handoff.
+- `src_modules_courses_assignment-submission-service.ts.part2of2.md` | **IN PROGRESS; not ticked.** Advanced `G2-3-016-029`: individually authorized batch publish reports published, skippedUngraded, alreadyPublished, failed and failures, with independent transactions, CAS and 100-item cap; consumer endpoint and confirm/results dialog remain OPEN. Corrected status validation to distinguish unpublished vs ungraded. Remaining multipart receipts, link assets, notification/copy parity and grade-ledger findings are OPEN; no unsupported claim of completion.
+
+Static proof: re-read full modified source, including imports, ordered transaction, authorized paging and batch publisher, to inspect syntax and match braces. Did **not** execute code, typecheck, tests, app or CI. Exact runtime DB06 receipt/grade-event promotion remains unverified. Commits: `5d3b020c`, `8bff4961`, `176443c1`.

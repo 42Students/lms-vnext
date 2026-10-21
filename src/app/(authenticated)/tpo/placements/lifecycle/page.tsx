@@ -16,10 +16,11 @@ import { can } from "@/modules/permissions/policy";
 import { getTpoDriveLifecycleList } from "@/modules/placements/tpo-drive-lifecycle-list-service";
 import {driveRequestStatusTone,driveRequestStatusLabel,TPO_REQUESTS_COPY,tpoDriveStatusLabel,tpoDriveStatusTone,tpoDriveWhereItIs,tpoDriveEmploymentLabel,tpoDriveWorkModeLabel} from "@/modules/placements/tpo-drive-lifecycle-list-model";
 import {Select} from "@/components/ui/select";
+import {listPlacementJobTypeChoices} from "@/modules/placements/tpo-configuration-read-service";
 import {Input} from "@/components/ui/input";
 import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
-type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
+type Search = { cohortId?:string|string[];ownerUserId?:string|string[];companyId?:string|string[];seasonId?: string | string[]; view?: string | string[];search?:string|string[];deadline?:string|string[];workMode?:string|string[];employmentType?:string|string[];jobTypeLabel?:string|string[];sort?:string|string[];minApplied?:string|string[];maxApplied?:string|string[];minOffers?:string|string[];maxOffers?:string|string[];payCategory?:string|string[];attention?:string|string[];journey?:string|string[];display?:string|string[];page?:string|string[] };
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 export default async function TpoDriveLifecyclePage({ searchParams }: { searchParams: Promise<Search> }) {
   const context = await getCurrentRequestContext();
@@ -35,6 +36,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.deadline)?{deadline:first(params.deadline)}:{}),
     ...(first(params.workMode)?{workMode:first(params.workMode)}:{}),
     ...(first(params.employmentType)?{employmentType:first(params.employmentType)}:{}),
+    ...(first(params.jobTypeLabel)?{jobTypeLabel:first(params.jobTypeLabel)}:{}),
     ...(first(params.sort)?{sort:first(params.sort)}:{}),
     ...(first(params.minApplied)?{minApplied:first(params.minApplied)}:{}),
     ...(first(params.maxApplied)?{maxApplied:first(params.maxApplied)}:{}),
@@ -46,6 +48,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(first(params.display)?{display:first(params.display)}:{}),
     ...(first(params.page)?{page:first(params.page)}:{}),
   });
+  const jobTypes=await listPlacementJobTypeChoices(context,context.membership.collegeId);
   const savedViewScope=context.user.id+":"+context.membership.collegeId;
   const exportParams=new URLSearchParams({
     view:data.view,search:data.search,deadline:data.deadline,
@@ -61,6 +64,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
     ...(data.minOffers!==undefined?{minOffers:String(data.minOffers)}:{}),
     ...(data.maxOffers!==undefined?{maxOffers:String(data.maxOffers)}:{}),
     workMode:data.workMode,employmentType:data.employmentType,
+    ...(data.jobTypeLabel?{jobTypeLabel:data.jobTypeLabel}:{}),
     sort:data.sort,page:String(data.page),
     ...(data.season?{seasonId:data.season.id}:{}),
   });
@@ -71,7 +75,8 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
   const metrics=[["Drafts",data.counts.drafts],["Live",data.counts.live],["Closed",data.counts.closed],
    ["Deadlines in 7 days",data.counts.deadlinesNextSevenDays]] as const;
   function pageHref(page:number){return {pathname:"/tpo/placements/lifecycle",query:{
-   ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),...(data.cohortId?{cohortId:data.cohortId}:{}),...(data.ownerUserId?{ownerUserId:data.ownerUserId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,sort:data.sort,payCategory:data.payCategory,
+   ...(data.season?{seasonId:data.season.id}:{}),...(data.companyId?{companyId:data.companyId}:{}),...(data.cohortId?{cohortId:data.cohortId}:{}),...(data.ownerUserId?{ownerUserId:data.ownerUserId}:{}),view:data.view,search:data.search,deadline:data.deadline,workMode:data.workMode,employmentType:data.employmentType,
+   ...(data.jobTypeLabel?{jobTypeLabel:data.jobTypeLabel}:{}),sort:data.sort,payCategory:data.payCategory,
    attention:data.attention,
    journey:data.journey,
    display:data.display,
@@ -81,7 +86,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
    ...(data.maxOffers!==undefined?{maxOffers:data.maxOffers}:{}),page,
   }};}
   const advancedFiltersActive = Boolean(data.companyId || data.ownerUserId || data.deadline !== "ALL" ||
-    data.journey !== "ALL" || data.workMode !== "ALL" || data.employmentType !== "ALL" ||
+    data.journey !== "ALL" || data.workMode !== "ALL" || data.employmentType !== "ALL" || Boolean(data.jobTypeLabel) ||
     data.payCategory !== "ALL" || data.display !== "DETAILED" || data.sort !== "COMPANY" ||
     data.minApplied !== undefined || data.maxApplied !== undefined ||
     data.minOffers !== undefined || data.maxOffers !== undefined);
@@ -203,11 +208,14 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           <option value="REMOTE">Remote</option><option value="HYBRID">Hybrid</option>
         </Select>
       </label>
-      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Employment type
-        <Select name="employmentType" defaultValue={data.employmentType} className="mt-[6px] block w-full">
-          <option value="ALL">All employment</option><option value="FULL_TIME">Full-time</option>
-          <option value="INTERNSHIP">Internship</option><option value="CONTRACT">Contract</option>
+      <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Job type
+        <Select name="jobTypeLabel" defaultValue={data.jobTypeLabel??""} className="mt-[6px] block w-full">
+          <option value="">All job types</option>
+          {jobTypes.map(type=><option key={type.label} value={type.label}>{type.label}</option>)}
+          {data.jobTypeLabel&&!jobTypes.some(type=>type.label===data.jobTypeLabel)?
+            <option value={data.jobTypeLabel}>{data.jobTypeLabel} (historic)</option>:null}
         </Select>
+        {data.employmentType!=="ALL"?<input type="hidden" name="employmentType" value={data.employmentType}/>:null}
       </label>
       <label className="min-w-[144px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort drives
         <Select name="sort" defaultValue={data.sort} className="mt-[6px] block w-full">
@@ -323,11 +331,11 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
                  <Checkbox name="ids" value={job.id} aria-label={"Select "+job.company+" "+job.title}/>
                  Select for export
                 </label>
-                <p className="flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={tpoDriveStatusTone(job.status)}>{tpoDriveStatusLabel(job.status)}</StatusBadge><span>{tpoDriveEmploymentLabel(job.employmentType)} · {tpoDriveWorkModeLabel(job.workMode)}</span></p>
+                <p className="flex flex-wrap items-center gap-2 text-sm text-body"><StatusBadge tone={tpoDriveStatusTone(job.status)}>{tpoDriveStatusLabel(job.status)}</StatusBadge><span>{job.jobTypeLabel??tpoDriveEmploymentLabel(job.employmentType)} · {tpoDriveWorkModeLabel(job.workMode)}</span></p>
                 {data.display==="DETAILED"?<dl className="mt-2 flex flex-wrap gap-x-6 gap-y-1 text-sm text-body">
                   <div className="flex gap-1"><dt>Applied:</dt><dd className="font-semibold tabular-nums">{job.appliedCount}</dd></div>
                   <div className="flex gap-1"><dt>Created by:</dt><dd>{job.createdBy??"College staff"}</dd></div>
-                  <div className="flex gap-1"><dt>Job type:</dt><dd>{tpoDriveEmploymentLabel(job.employmentType)}</dd></div>
+                  <div className="flex gap-1"><dt>Job type:</dt><dd>{job.jobTypeLabel??tpoDriveEmploymentLabel(job.employmentType)}</dd></div>
                   <div className="flex gap-1"><dt>Mode:</dt><dd>{tpoDriveWorkModeLabel(job.workMode)}</dd></div>
                   <div className="flex gap-1"><dt>Pay:</dt><dd className="font-semibold">
                     {job.minimumAnnualCtcInr == null && job.maximumAnnualCtcInr == null
