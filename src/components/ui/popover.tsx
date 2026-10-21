@@ -10,15 +10,16 @@ import { cx } from "@/lib/class-names";
  */
 export type PopoverPanelProps = Omit<ComponentPropsWithoutRef<"section">, "role" | "aria-modal" | "aria-label"> & {
   label: string;
+  "data-slot"?: string;
   /** Used by nonmodal menus; callers still own their open state. */
   onDismiss?: () => void;
 };
 
 export const PopoverPanel = forwardRef<HTMLElement, PopoverPanelProps>(
-  function PopoverPanel({ label, className, children, onDismiss, onKeyDown, ...rest }, ref) {
+  function PopoverPanel({ label, className, children, onDismiss, onKeyDown, "data-slot": dataSlot, ...rest }, ref) {
     return <section {...rest} ref={ref} role="dialog" aria-modal={false} aria-label={label}
       onKeyDown={event => { onKeyDown?.(event); if (!event.defaultPrevented && event.key === "Escape" && onDismiss) { event.preventDefault(); event.stopPropagation(); onDismiss(); } }}
-      data-slot={rest["data-slot"] ?? "popover"}
+      data-slot={dataSlot ?? "popover"}
       className={cx("min-w-0 max-w-[calc(100vw_-_1.5rem)] break-words rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-3 py-2 shadow-[var(--lms-dropdown-shadow)] max-[767px]:rounded-[var(--lms-canvas-radius)] max-[767px]:p-4", className)}>
       {children}
     </section>;
