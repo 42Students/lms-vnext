@@ -22,3 +22,5 @@
 | `src/app/(authenticated)/admin/inbound-mail/page.tsx` | 23 | 375 ≥44px ↔ 6 min-h-11=44px; 768 transition ↔ 15 md:768px rules; 1280/375 fit ↔ 15 zero-min/maximum-width rules | none |
 | `src/app/(authenticated)/admin/lecture-halls/page.tsx` | 33 | 375 ≥44px ↔ 13 min-h-11=44px; 768 transition ↔ 18 md:768px rules; 1280/375 fit ↔ 20 zero-min/maximum-width rules | none |
 | `src/app/(authenticated)/admin/lessons/page.tsx` | 29 | 375 ≥44px ↔ 11 min-h-11=44px; 768 transition ↔ 17 md:768px rules; 1280/375 fit ↔ 17 zero-min/maximum-width rules | none |
+
+Shared responsive primitive correction: `src/components/ui/error-state.tsx`, `src/components/ui/empty-state.tsx` — legacy 375px minimum action hit area 44 × 44px vs prior bare inline link with text-height only; add mobile-only `min-h-11 min-w-11 inline-flex items-center` to anchor children; at 768/1280 shared wrapper values unchanged. Applies to page recovery states without changing their markup.
