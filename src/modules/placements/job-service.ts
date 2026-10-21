@@ -13,6 +13,8 @@ import {
   placementCompanyRelationships,
   placementCompanies,
   placementApplications,
+  collegeMemberships,
+  inAppNotifications,
   placementOffers,
   placementOfferStatusHistory,
   placementDebarmentDriveEvents,
@@ -1199,6 +1201,33 @@ export async function archivePlacementJob(
         version:sql`${placementJobs.version}+1`})
       .where(and(eq(placementJobs.id,jobId),eq(placementJobs.status,locked.status)))
       .returning();
+    if(!archived)throw new PlacementsServiceError("PLACEMENT_JOB_NOT_ARCHIVABLE");
+    // College-admin and TPO archives now have the same durable, transactional
+    // source event and learner notice behavior as the Super Admin archive.
+    // Historical applications/offers remain; no speculative email is sent.
+    const event=await recordActivityEventInTransaction(tx,context,{
+      eventType:ACTIVITY_EVENT_TYPES.PLACEMENTS_JOB_ARCHIVED,
+      collegeId:archived.collegeId,subjectType:"placement_job",
+      subjectId:archived.id,subjectLabel:archived.title,
+      summary:"Placement drive archived",
+      metadata:{previousStatus:locked.status,jobId:archived.id},
+      groupKey:"placement-job:"+archived.id,
+      dedupeKey:"placement-job:"+archived.id+":archived",
+    });
+    const applicantUsers=await tx.select({userId:collegeMemberships.userId})
+      .from(placementApplications)
+      .innerJoin(collegeMemberships,and(
+        eq(collegeMemberships.id,placementApplications.membershipId),
+        eq(collegeMemberships.collegeId,archived.collegeId),
+      )).where(eq(placementApplications.jobId,archived.id));
+    const recipients=[...new Set(applicantUsers.map(row=>row.userId))];
+    for(let i=0;i<recipients.length;i+=200){
+      await tx.insert(inAppNotifications).values(recipients.slice(i,i+200).map(userId=>({
+        userId,eventId:event.id,title:"Placement drive archived",
+        body:"The "+archived.title+" drive has been archived.",
+        actionHref:"/learn/my-placements/applications",
+      }))).onConflictDoNothing();
+    }
     return archived;
   });
 }

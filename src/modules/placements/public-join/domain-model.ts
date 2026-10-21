@@ -18,13 +18,43 @@ export function registrableWorkDomain(email: string):string|null{
  }
  return labels.slice(-2).join(".");
 }
+/** Normalize a reviewed company-domain input from the legacy forms.
+ * Accept a bare host, @host, an email address or a standard HTTP(S) URL;
+ * reject credentials, wildcard hosts, ports and ambiguous hostname syntax.
+ * This only normalizes a candidate; it never verifies company ownership.
+ */
+export function normalizeCompanyDomainInput(raw:string):string|null{
+ let source=raw.trim().toLocaleLowerCase("en-US");
+ if(!source)return null;
+ if(/^https?:\/\//.test(source)){
+  try{
+   const url=new URL(source);
+   if(url.username||url.password||url.port||!["http:","https:"].includes(url.protocol))
+    return null;
+   source=url.hostname;
+  }catch{return null;}
+ }else if(source.startsWith("@")){
+  source=source.slice(1);
+ }else if(source.includes("@")){
+  const pieces=source.split("@");
+  if(pieces.length!==2||!pieces[0])return null;
+  source=pieces[1]!;
+ }
+ if(source.endsWith("."))source=source.slice(0,-1);
+ if(source.length>253||source.length<4||!source.includes(".")||
+    source.includes("..")||!/^[a-z0-9.-]+$/.test(source))return null;
+ const labels=source.split(".");
+ if(labels.some(label=>!label||label.length>63||label.startsWith("-")||label.endsWith("-")))
+  return null;
+ return source;
+}
 /** Only an exact company domain or its subdomain can use the company's link. */
 export function matchesCompanyDomain(workEmail:string,companyDomain:string){
  const parsed=publicRecruiterWorkEmailSchema.safeParse(workEmail);
- const domain=companyDomain.trim().toLowerCase().replace(/^@/,"");
- // Reject leading/trailing empty labels and lookalike host syntax; only
- // exact or subdomain matching is used for authorization.
- if(!parsed.success||!domain.includes(".")||domain.startsWith(".")||domain.endsWith(".")||domain.includes("..")||!/^[a-z0-9.-]+$/.test(domain))return false;
+ const domain=normalizeCompanyDomainInput(companyDomain);
+ // Input normalization does not confer authorization; the email must still
+ // exactly match the reviewed domain or a dot-delimited subdomain.
+ if(!parsed.success||!domain)return false;
  const host=parsed.data.split("@")[1];
  return host===domain||host.endsWith("."+domain);
 }

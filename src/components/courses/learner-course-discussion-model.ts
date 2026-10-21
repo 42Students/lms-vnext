@@ -131,15 +131,23 @@ export function reconcileLatestDiscussionPage<T extends DiscussionHistoryItem>(
   latest: readonly T[],
   serverPageCount = latest.length,
   pageLimit = 60,
+  locallyDeletedIds: ReadonlySet<string> = new Set<string>(),
 ): T[] {
-  const sortedLatest = mergeDiscussionHistory([], latest);
+  // A moderator removal or the viewer's own tombstone must stay removed when
+  // an older page arrives late. The server remains authoritative for every
+  // record in its latest window; local delete IDs only narrow the result.
+  const sortedLatest = mergeDiscussionHistory(
+    [], latest.filter(row => !locallyDeletedIds.has(row.id)),
+  );
   if (serverPageCount < pageLimit || sortedLatest.length === 0) {
     return sortedLatest;
   }
   const oldest = sortedLatest[0]!;
   const older = previous.filter((row) =>
-    row.createdAtExact < oldest.createdAtExact ||
-    (row.createdAtExact === oldest.createdAtExact && row.id < oldest.id),
+    !locallyDeletedIds.has(row.id) && (
+      row.createdAtExact < oldest.createdAtExact ||
+      (row.createdAtExact === oldest.createdAtExact && row.id < oldest.id)
+    ),
   );
   return mergeDiscussionHistory(older, sortedLatest);
 }
