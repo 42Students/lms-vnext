@@ -183,26 +183,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/projects/mentor-release-editor.tsx`
 - [x] `src/components/projects/mentor-task-status-transition.tsx`
 - [x] `src/components/projects/project-admin-submission-review.tsx`
-- [ ] `src/components/projects/project-delivery-file-uploader.tsx`
-- [ ] `src/components/projects/project-delivery-reopen-control.tsx`
-- [ ] `src/components/projects/project-lifecycle-actions.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/project-readiness-override-form.tsx`
-- [ ] `src/components/projects/project-task-assignee-control.tsx`
-- [ ] `src/components/projects/project-task-comments.tsx`
-- [ ] `src/components/projects/project-task-submission-control.tsx`
-- [ ] `src/components/projects/template-metadata-edit-control.tsx`
-- [ ] `src/components/projects/workspace-brief-editor.tsx`
-- [ ] `src/components/shell/admin-scope-switcher.tsx`
-- [ ] `src/components/shell/learner-topbar-tools.tsx`
-- [ ] `src/components/shell/membership-switcher.tsx`
-- [ ] `src/components/shell/topbar/command-search.tsx`
-- [ ] `src/components/tpo/grid/grid-workspace.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
-- [ ] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
-- [ ] `src/components/tpo/recruiter-inline-owner.tsx`
-- [ ] `src/components/tpo/recruiter-inline-stage.tsx`
+- [x] `src/components/projects/project-delivery-file-uploader.tsx`
+- [x] `src/components/projects/project-delivery-reopen-control.tsx`
+- [x] `src/components/projects/project-lifecycle-actions.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/project-readiness-override-form.tsx`
+- [x] `src/components/projects/project-task-assignee-control.tsx`
+- [x] `src/components/projects/project-task-comments.tsx`
+- [x] `src/components/projects/project-task-submission-control.tsx`
+- [x] `src/components/projects/template-metadata-edit-control.tsx`
+- [x] `src/components/projects/workspace-brief-editor.tsx`
+- [x] `src/components/shell/admin-scope-switcher.tsx`
+- [x] `src/components/shell/learner-topbar-tools.tsx`
+- [x] `src/components/shell/membership-switcher.tsx`
+- [x] `src/components/shell/topbar/command-search.tsx`
+- [x] `src/components/tpo/grid/grid-workspace.tsx`
+- [x] `src/components/tpo/recruiter-bulk-invite-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-owner-controls.tsx`
+- [x] `src/components/tpo/recruiter-bulk-stage-controls.tsx`
+- [x] `src/components/tpo/recruiter-inline-owner.tsx`
+- [x] `src/components/tpo/recruiter-inline-stage.tsx`
 - [ ] `src/components/tpo/recruiter-roster-display-controls.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-preview.tsx`
 - [ ] `src/components/tpo/tpo-academic-import-workspace.tsx`

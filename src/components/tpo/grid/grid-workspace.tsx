@@ -239,7 +239,7 @@ export function GridWorkspace<Row>({
    <span className="text-xs text-muted-foreground">Exports contain only rows on this page{selectedPage.length?" that are selected":""}; server-side Excel uses existing permissions.</span>
   </div>:null}
   {pasteOpen&&selection&&rollOf?<div id={id+"-paste"} className="space-y-2">
-   <label className="block text-sm font-semibold">Roll numbers (one per line, space or comma separated)
+   <label className="block text-[13px] font-semibold">Roll numbers (one per line, space or comma separated)
     <Textarea className="mt-1 w-full min-w-0" value={pasteText} maxLength={15000} rows={3}
      onChange={event=>setPasteText(event.target.value)}/>
    </label>

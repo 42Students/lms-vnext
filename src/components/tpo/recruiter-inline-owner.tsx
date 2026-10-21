@@ -46,7 +46,7 @@ export function RecruiterInlineOwner({lead,onUpdated}:{
   </Button>
   {open?<div role="group" aria-label={"Change owner for "+lead.name} className="min-w-0 space-y-2">
    {loading?<p role="status" className="text-xs">Loading…</p>:null}
-   <label className="block text-xs">Owner
+   <label className="block text-[13px]">Owner
     <Select value={target} onChange={e=>setTarget(e.target.value)}
      className="min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface" disabled={loading}>
      <option value="">Select staff</option>

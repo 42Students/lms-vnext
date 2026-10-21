@@ -189,7 +189,7 @@ export function RecruiterBulkStageControls({
             ))}
           </div>
           <div className="flex flex-wrap items-end gap-3">
-            <label className="text-sm font-medium text-foreground">
+            <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
               New manual stage
               <Select
                 value={action}
@@ -207,7 +207,7 @@ export function RecruiterBulkStageControls({
             </label>
             {action === "NOT_NOW" ? (
               <>
-                <label className="min-w-44 flex-1 text-sm font-medium text-foreground">
+                <label className="min-w-44 flex-1 text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                   Reason (required)
                   <Input
                     value={reason}
@@ -217,7 +217,7 @@ export function RecruiterBulkStageControls({
                     className={fieldClass + " mt-1 w-full"}
                   />
                 </label>
-                <label className="text-sm font-medium text-foreground">
+                <label className="text-[13px] font-semibold text-[var(--lms-neutral-400)]">
                   Revisit date (optional)
                   <Input
                     type="date"

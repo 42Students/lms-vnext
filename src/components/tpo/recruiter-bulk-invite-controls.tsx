@@ -80,7 +80,7 @@ export function RecruiterBulkInviteControls({collegeId,rows,onUpdated}:{
    {eligible.length>100?<p role="alert" className="text-sm">Select at most 100 eligible recruiters.</p>:null}
    {results.length>0?<div aria-live="polite" className="space-y-2">
     <p className="text-sm">{results.filter(item=>item.url).length} links · No invitation emails sent · {failed.length} failed</p>
-    {linkLines?<><label className="block text-sm">Fresh links
+    {linkLines?<><label className="block text-[13px]">Fresh links
       <Textarea readOnly value={linkLines} rows={5} className="mt-1 min-h-11 w-full"
        onFocus={event=>event.currentTarget.select()}/>
      </label><Button variant="secondary" type="button" className="min-h-11 md:min-h-9" 
