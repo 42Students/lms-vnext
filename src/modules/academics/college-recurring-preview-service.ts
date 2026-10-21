@@ -6,8 +6,8 @@ import {
   membershipRoles, programs, sectionScheduleEvents, sections, users,
   courseSectionDeliveries, courseOfferings, courses,
 } from "@/db/schema";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError, can, requirePermission } from "@/modules/permissions/policy";
+import type { RequestContext } from "@/modules/identity/context";
+import { resolveActingCollege } from "@/modules/permissions/acting-college";
 import {
   expandIstSessions, findPreviewConflicts, recurringPreviewSchema,
 } from "./college-recurring-preview-model";
@@ -18,14 +18,7 @@ export class RecurringPreviewNotFoundError extends Error {
 
 export async function previewCollegeRecurringSchedule(context: RequestContext, raw: unknown) {
   const input = recurringPreviewSchema.parse(raw);
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.manage", {
-      collegeId: member.collegeId, organizationId: member.organizationId,
-    })) throw new AuthorizationError("academics.manage");
-  requirePermission(context, "academics.manage", {
-    collegeId: member.collegeId, organizationId: member.organizationId,
-  });
+  const member = await resolveActingCollege(context, "academics.manage");
   const db = getDb();
   const [section] = await db.select({
     id: sections.id, status: sections.status,
@@ -115,14 +108,7 @@ export async function previewCollegeRecurringSchedule(context: RequestContext, r
 
 /** Selectable options are scoped and safe for College Admin only. */
 export async function listRecurringPreviewOptions(context: RequestContext) {
-  const member = context.membership;
-  if (!member || !hasMembershipRole(context, "COLLEGE_ADMIN") ||
-    !can(context, "academics.read", {
-      collegeId: member.collegeId, organizationId: member.organizationId,
-    })) throw new AuthorizationError("academics.read");
-  requirePermission(context, "academics.read", {
-    collegeId: member.collegeId, organizationId: member.organizationId,
-  });
+  const member = await resolveActingCollege(context, "academics.read");
   const db = getDb();
   const [classes, halls, faculty, deliveries] = await Promise.all([
     db.select({ id: sections.id, name: sections.name, updatedAt: sections.updatedAt, cohortName: cohorts.name,
