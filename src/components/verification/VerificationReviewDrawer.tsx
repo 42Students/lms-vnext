@@ -80,11 +80,11 @@ export function VerificationReviewDrawer({row,onClose,onSaved,apiBase="/api/coll
  return <Drawer open={true} onOpenChange={next=>{if(!next&&!saving)onClose();}} dismissible={!saving}
   title={row.learnerName+(row.rollNumber?" · "+row.rollNumber:"")} description={(row.section==="EDUCATION"?"Education":"Identity")+" · "+row.status.replaceAll("_"," ")}
   className="w-full sm:w-[min(760px,100vw)]" bodyClassName="pb-[max(1rem,env(safe-area-inset-bottom))]">
-   {sequenceProgress&&<nav aria-label="Sequential verification progress" className="grid min-w-0 grid-cols-2 items-center gap-2 border-b border-[var(--lms-canvas-border)] py-3 text-[13px] sm:flex sm:flex-wrap sm:gap-3">
+   {sequenceProgress&&<div role="group" aria-label="Sequential verification progress" className="grid min-w-0 grid-cols-2 items-center gap-2 border-b border-[var(--lms-canvas-border)] py-3 text-[13px] sm:flex sm:flex-wrap sm:gap-3">
      <span role="status" className="col-span-2 min-w-0 break-words sm:col-span-1">{sequenceProgress}</span>
-     <Button variant="secondary" type="button" disabled={saving} onClick={onNext} className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">Next</Button>
-     <Button variant="secondary" type="button" disabled={saving} onClick={onFinish} className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">Finish</Button>
-   </nav>}
+     <Button variant="secondary" type="button" disabled={saving||!onNext} onClick={onNext} className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">Next</Button>
+     <Button variant="secondary" type="button" disabled={saving||!onFinish} onClick={onFinish} className="min-h-11 w-full sm:min-h-[var(--lms-control-height)] sm:w-auto">Finish</Button>
+   </div>}
    {loading?<div role="status" aria-label="Loading student verification details" className="space-y-3 py-6">
     <p className="text-[14px] text-[var(--lms-muted-text)]">Loading submitted details…</p>
     {Array.from({length:6},(_,i)=><div key={i} aria-hidden="true" className="h-6 animate-pulse rounded bg-muted"/>)}
