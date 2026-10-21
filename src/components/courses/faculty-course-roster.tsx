@@ -23,12 +23,28 @@ export type FacultyCourseRosterLearner = {
 };
 
 const PAGE_SIZE = 25;
+const AVATAR_TINTS=[
+ "bg-amber-100 text-amber-800","bg-sky-100 text-sky-800",
+ "bg-emerald-100 text-emerald-800","bg-violet-100 text-violet-800",
+ "bg-rose-100 text-rose-800","bg-indigo-100 text-indigo-800",
+ "bg-teal-100 text-teal-800","bg-orange-100 text-orange-800",
+] as const;
+function avatarTint(learner:FacultyCourseRosterLearner){
+ let n=0;
+ for(const char of learner.membershipId)n=(n*31+char.charCodeAt(0))%8;
+ return AVATAR_TINTS[n]??AVATAR_TINTS[0];
+}
+function phoneLabel(raw:string|null){
+ if(!raw)return "No number";
+ const value=raw.replace(/[\s-]/g,"");
+ const india=/^\+91([6-9][0-9]{4})([0-9]{5})$/.exec(value);
+ return india?"+91 "+india[1]+" "+india[2]:value;
+}
 
 function nameOf(learner: FacultyCourseRosterLearner) {
   return (
     learner.displayName?.trim() ||
-    learner.email?.trim() ||
-    `Learner ${learner.membershipId.slice(0, 8)}`
+    "—"
   );
 }
 
@@ -87,10 +103,10 @@ export function FacultyCourseRoster({
     currentPage * PAGE_SIZE,
   );
 
-  const {missingRoll,contactLabel,rollLabel}=facultyRosterMetrics(learners);
+  const {missingRoll}=facultyRosterMetrics(learners);
   const contacts = learners.filter(
     (learner) =>
-      Boolean(learner.email || learner.phoneE164),
+      Boolean(learner.phoneE164?.trim()),
   ).length;
 
   // Faculty exports exclude phone/email and cap the already authorized roster.
@@ -123,32 +139,32 @@ export function FacultyCourseRoster({
     <div className="min-w-0 space-y-6">
       <header className="min-w-0 space-y-1">
         <h2 className="text-2xl font-semibold leading-8 text-[var(--lms-heading)]">Class list</h2>
-        <p className="text-sm text-muted-foreground">{sectionName}</p>
+        <p className="text-sm text-muted-foreground">Students enrolled in {sectionName}.</p>
       </header>
-      <div className="grid grid-cols-2 gap-x-4 border-y border-[var(--lms-canvas-border)] md:grid-cols-3">
+      <div className="flex flex-wrap items-center gap-2" aria-label="Class roster metrics">
         {[
-          ["Students", learners.length],
-          [rollLabel, missingRoll],
-          [contactLabel, contacts],
-        ].map(([label, value]) => (
-          <section
-            key={label}
-            className="min-w-0 py-4 last:col-span-2 md:last:col-span-1"
-          >
-            <p className="m-0 text-xs font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              {label}
-            </p>
-            <p className="mt-2 text-xl font-semibold leading-7 tabular-nums text-[var(--lms-heading)]">
-              {value}
-            </p>
-          </section>
-        ))}
+          [learners.length+" students","bg-blue-50 text-blue-800","students"],
+          [missingRoll?missingRoll+" without a roll number":"All have roll numbers",
+           "bg-amber-50 text-amber-800","roll"],
+          [contacts+" contacts","bg-emerald-50 text-emerald-800","contacts"],
+        ].map(([text,tint,id])=><span key={id}
+          className={"inline-flex min-h-9 items-center gap-2 rounded-[var(--lms-radius-full)] border border-border px-3 text-sm font-semibold "+tint}>
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16"
+            fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round">
+            {id==="students"?<><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M18 6a3 3 0 0 1 0 6m0 3a4 4 0 0 1 3 4"/></>:
+            id==="roll"?<><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M5 16h8m2-7h4m-4 4h4"/></>:
+            <path d="M4 4h4l2 5-2 2a15 15 0 0 0 5 5l2-2 5 2v4c-10 2-18-6-16-16z"/>}
+          </svg>
+          {text}
+        </span>)}
       </div>
-
       <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <div className="flex min-w-0 flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div className="min-w-0">
-            <p className="text-sm text-body">Search or export students in this class.</p>
+            <p className="text-sm font-semibold text-body">Class list</p>
+            <Link href="/teacher/courses" className="inline-flex min-h-9 items-center font-semibold text-link underline">
+              Change class
+            </Link>
           </div>
           <div className="grid w-full min-w-0 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end lg:max-w-[42rem]">
           <label className="block w-full min-w-0 text-[13px] font-semibold text-[var(--lms-neutral-400)] print:hidden leading-4">
@@ -160,9 +176,11 @@ export function FacultyCourseRoster({
                 setSearch(event.target.value);
                 setPage(1);
               }}
-              placeholder="Name, roll number, phone or email"
+              placeholder="Search by name, roll no, phone or email"
               aria-label="Search students"
             />
+            {search?<Button size="sm" type="button" variant="ghost"
+              aria-label="Clear student search" onClick={()=>{setSearch("");setPage(1);}}>Clear search ×</Button>:null}
           </label>
           <Button
             type="button"
@@ -177,32 +195,33 @@ export function FacultyCourseRoster({
           </div>
         </div>
         {search.trim()?<p className="mt-3 text-xs text-muted-foreground" aria-live="polite">
-          Showing {rows.length} of {filtered.length} students
-          {filtered.length!==learners.length?" · "+learners.length+" in class":""}
+          Showing {filtered.length} of {learners.length}
         </p>:null}
       </section>
 
       {filtered.length === 0 ? (
         <EmptyState
-          title="No students match this search"
+          title="No matching students"
           description="Try searching by name, roll number, or contact number."
         />
       ) : (
         <>
+          <div className="hidden min-w-0 md:block">
           <DataTable
             caption="Students in this class"
             rows={rows}
+            mobileMode="scroll"
             getRowKey={learner=>learner.membershipId}
-            empty={<EmptyState title="No students match this search" description="Try searching by name, roll number, or contact number." />}
+            empty={<EmptyState title="No matching students" description="Try searching by name, roll number, or contact number." />}
             columns={[
               {key:"student",header:"Student",mobilePriority:"primary" as const,
                 cell:(learner)=><div className="flex min-w-0 items-center gap-3">
                   <Button type="button" variant="ghost" onClick={()=>setPreview(learner)}
-                    aria-label={"Preview avatar for "+nameOf(learner)}
-                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text print:hidden">
+                    aria-label={"View "+nameOf(learner)+" profile photo"}
+                    className={"flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xs font-bold print:hidden "+avatarTint(learner)}>
                     {initials(nameOf(learner))}
                   </Button>
-                  <span aria-hidden="true" className="hidden h-11 w-11 shrink-0 items-center justify-center rounded-full bg-primary-subtle text-xs font-bold text-primary-text print:inline-flex">{initials(nameOf(learner))}</span>
+                  <span aria-hidden="true" className={"hidden h-11 w-11 shrink-0 items-center justify-center rounded-full text-xs font-bold print:inline-flex "+avatarTint(learner)}>{initials(nameOf(learner))}</span>
                   <div className="min-w-0">
                     <p className="m-0 break-words font-semibold text-foreground">{nameOf(learner)}</p>
                     <StatusBadge tone={learner.rollNumber?"info":"warning"}>
@@ -218,7 +237,7 @@ export function FacultyCourseRoster({
               {key:"phone",header:"Phone",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.phoneE164?<a href={`tel:${learner.phoneE164}`}
                   className="inline-flex min-h-11 items-center break-all font-semibold text-[var(--lms-link-text)] md:min-h-9"
-                  aria-label={`Call ${nameOf(learner)}`}>{learner.phoneE164}</a>:
+                  aria-label={`Call ${nameOf(learner)}`}>{phoneLabel(learner.phoneE164)}</a>:
                   <span className="text-muted-foreground">No number</span>},
               {key:"email",header:"Email",mobilePriority:"secondary" as const,
                 cell:(learner)=>learner.email?<a href={`mailto:${learner.email}`}
@@ -227,6 +246,28 @@ export function FacultyCourseRoster({
                   <span className="text-muted-foreground">No email</span>},
             ]}
           />
+          </div>
+          <ul className="divide-y divide-border md:hidden" aria-label="Students in this class">
+            {rows.map(learner=><li key={learner.membershipId} className="py-3">
+              <div className="flex items-start gap-3">
+                <Button type="button" variant="ghost" onClick={()=>setPreview(learner)}
+                  aria-label={"View "+nameOf(learner)+" profile photo"}
+                  className={"h-11 w-11 shrink-0 rounded-full text-xs font-bold "+avatarTint(learner)}>
+                  {initials(nameOf(learner))}
+                </Button>
+                <div className="min-w-0 flex-1 space-y-1">
+                  <strong className="block break-words text-sm text-foreground">{nameOf(learner)}</strong>
+                  <p className="text-xs text-muted-foreground">Roll No: {learner.rollNumber||"Roll not assigned"}</p>
+                  <p className="text-xs text-body">Contact: {phoneLabel(learner.phoneE164)}</p>
+                  {deliveryId?<Link href={"/teacher/courses/"+encodeURIComponent(deliveryId)+
+                    "/students/"+encodeURIComponent(learner.membershipId)}
+                    className="inline-flex min-h-9 items-center text-xs font-semibold text-link underline">
+                    View student details
+                  </Link>:null}
+                </div>
+              </div>
+            </li>)}
+          </ul>
 
           {totalPages > 1 ? (
             <ActionPagination label="Student roster pages" page={currentPage}
@@ -235,17 +276,18 @@ export function FacultyCourseRoster({
         </>
       )}
       <Dialog open={preview!==null} onOpenChange={open=>{if(!open)setPreview(null);}}
-        title={preview?"Photo preview · "+nameOf(preview):"Photo preview"}
-        description="Only photos provided through an authorized course roster can be displayed.">
+        title={preview?nameOf(preview):"Photo preview"}
+        description={preview?"Roll "+(preview.rollNumber||"not assigned"):undefined}
+        className="max-w-[360px] w-[calc(100%_-_32px)]">
         {preview&&facultyRosterPhotoPreview(preview.photoDownloadUrl)?
           <img src={facultyRosterPhotoPreview(preview.photoDownloadUrl)!}
             alt={"Profile photograph of "+nameOf(preview)}
             className="mx-auto max-h-[60vh] max-w-full rounded-[var(--lms-control-radius)] object-contain"/>:
           <div className="space-y-3 text-center">
-            <div aria-hidden="true" className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-primary-subtle text-2xl font-semibold text-primary-text">
+            <div aria-hidden="true" className={"mx-auto flex h-24 w-24 items-center justify-center rounded-full text-2xl font-semibold "+(preview?avatarTint(preview):"bg-primary-subtle text-primary-text")}>
               {preview?initials(nameOf(preview)):""}
             </div>
-            <p className="text-sm text-body">No photo is available for this student.</p>
+
           </div>}
       </Dialog>
     </div>
