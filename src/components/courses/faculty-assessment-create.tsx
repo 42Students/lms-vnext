@@ -1,6 +1,6 @@
 "use client";
 
-import {useMemo,useState} from "react";
+import {useId,useMemo,useState} from "react";
 import {useRouter} from "next/navigation";
 import {Alert} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
@@ -23,6 +23,7 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{
  kind:"ASSIGNMENT"|"QUIZ";lessons:readonly LessonChoice[];lessonsLoadError?:string|null;
 }){
  const router=useRouter();
+ const formId="faculty-new-assessment-"+useId().replace(/:/g,"");
  const [open,setOpen]=useState(false);
  const [courseKey,setCourseKey]=useState("");
  const [lessonKey,setLessonKey]=useState("");
@@ -121,6 +122,7 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{
     nextAssignmentSequence={selectedContext.nextSequence}
     nextQuizSequence={selectedContext.nextSequence}
     onBusyChange={setEditorBusy}
+    formId={formId}
     onSaved={()=>{setDraftDirty(false);setContinued(false);setSnapshot(null);setOpen(false);router.refresh();}}
    />
  </div>:null;
@@ -164,8 +166,7 @@ export function FacultyAssessmentCreate({kind,lessons,lessonsLoadError=null}:{
     side="right" className="md:!w-[640px]"
     footer={<div className="flex w-full flex-wrap justify-end gap-2">
      <Button variant="secondary" disabled={editorBusy} type="button" onClick={()=>requestClose(false)}>Cancel</Button>
-     <Button type="button" disabled={!lesson||!course||editorBusy}
-      onClick={()=>{if(!lesson||!course)setError("Select course and lesson");else setError("Complete the assignment form above and use its Create button to save.");}}>
+     <Button type="submit" form={formId} loading={editorBusy} disabled={!lesson||!course||editorBusy}>
       Create
      </Button>
     </div>}>
