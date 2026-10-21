@@ -27,7 +27,7 @@ export function FacultyCourseFilterAutoSubmit(){
     const query=params.toString();
     // App Router soft navigation: no document reload or unscoped client rows.
     router.replace("/teacher/courses"+(query?"?"+query:""),{scroll:false});
-   },target.name==="q"?350:0);
+   },target.name==="q"?120:0);
   }
   form.addEventListener("input",changed);
   form.addEventListener("change",changed);
