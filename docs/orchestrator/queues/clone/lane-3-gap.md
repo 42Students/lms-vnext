@@ -62,7 +62,7 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BugReportActivity.java`
 - [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoTeamThreadController.java`
 - [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoDriveController.java`
-- [ ] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java`
+- [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/groups/AdminGroupController.java`
 - [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/StudentCourseController.java`
 - [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicRecruiterInviteController.java`
 - [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LessonContentController.java`
