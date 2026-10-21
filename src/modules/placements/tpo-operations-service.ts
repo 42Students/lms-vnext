@@ -309,7 +309,7 @@ db
       db.select({
         jobId: placementApplications.jobId,
         issued: sql<number>`count(*) filter (where ${placementOffers.status} = 'ISSUED')::int`,
-        acceptedPending: sql<number>`count(*) filter (where ${placementOffers.status} = 'ACCEPTED' and ${placementJoiningOutcomes.status} = 'PENDING')::int`,
+        acceptedPending: sql<number>`count(*) filter (where ${placementOffers.status} = 'ACCEPTED' and ${placementJoiningOutcomes.status} = 'PENDING' and (${placementOffers.acceptanceChannel} is distinct from 'EXTERNAL_IMPORT' or ${placementOffers.cascadeId} is not null))::int`,
         joined: sql<number>`count(*) filter (where ${placementJoiningOutcomes.status} = 'JOINED')::int`,
         missingLetter: sql<number>`count(*) filter (where ${placementOffers.status} in ('ISSUED', 'ACCEPTED') and (${placementOffers.offerLetterUrl} is null or ${placementOffers.offerLetterUrl} = ''))::int`,
       }).from(placementOffers)
@@ -366,7 +366,7 @@ db
           isNull(placementJobs.archivedAt), ne(placementRoundResults.status, "SUPERSEDED"))),
       db.select({
         issued: sql<number>`count(*) filter (where ${placementOffers.status} = 'ISSUED')::int`,
-        pendingJoining: sql<number>`count(*) filter (where ${placementOffers.status} = 'ACCEPTED' and ${placementJoiningOutcomes.status} = 'PENDING')::int`,
+        pendingJoining: sql<number>`count(*) filter (where ${placementOffers.status} = 'ACCEPTED' and ${placementJoiningOutcomes.status} = 'PENDING' and (${placementOffers.acceptanceChannel} is distinct from 'EXTERNAL_IMPORT' or ${placementOffers.cascadeId} is not null))::int`,
         joined: sql<number>`count(*) filter (where ${placementJoiningOutcomes.status} = 'JOINED')::int`,
       }).from(placementOffers)
         .innerJoin(placementApplications, eq(placementApplications.id, placementOffers.applicationId))
