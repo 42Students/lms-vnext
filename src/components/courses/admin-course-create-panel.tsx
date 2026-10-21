@@ -114,7 +114,7 @@ export function AdminCourseCreatePanel({
   const superAdmin=courseBasePath.startsWith("/admin/");
 
   const [courseDescription, setCourseDescription] = useState(copy?.description??"");
-  const [createErrors, setCreateErrors] = useState<Partial<Record<"department"|"name"|"shortTitle"|"code",string>>>({});
+  const [createErrors, setCreateErrors] = useState<Partial<Record<"department"|"name"|"shortTitle"|"code"|"description"|"cardColor",string>>>({});
 
   const [offeringCourseId, setOfferingCourseId] = useState("");
   const [offeringCohortId, setOfferingCohortId] = useState("");
@@ -190,7 +190,7 @@ export function AdminCourseCreatePanel({
 
   function createCourse(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    const issues: Partial<Record<"department"|"name"|"shortTitle"|"code",string>> = {};
+    const issues: Partial<Record<"department"|"name"|"shortTitle"|"code"|"description"|"cardColor",string>> = {};
     if (!courseDepartmentId) issues.department = "Select a department";
     if (!courseName.trim()) issues.name = "Enter a course name";
     else if (courseName.trim().length > 255) issues.name = "Maximum 255 characters";
@@ -200,11 +200,17 @@ export function AdminCourseCreatePanel({
     if (superAdmin && officialCode.trim().length > 40)
       issues.code = "Maximum 40 characters";
     if (!superAdmin && !courseCode.trim()) issues.code = "Enter course code";
+    if (superAdmin && !courseDescription.trim())
+      issues.description = "Enter course description";
+    if (superAdmin && cardColor.trim() && !/^#[0-9a-fA-F]{6}$/.test(cardColor.trim()))
+      issues.cardColor = "Enter a valid card colour (#RRGGBB).";
     setCreateErrors(issues);
     if (Object.keys(issues).length > 0) {
       const field = issues.department ? "course-department"
         : issues.name ? "course-name"
-        : issues.shortTitle ? "course-short-title" : "course-code";
+        : issues.shortTitle ? "course-short-title"
+        : issues.code ? (superAdmin ? "course-official-code" : "course-code")
+        : issues.description ? "course-description" : "course-card-color";
       document.getElementById(field)?.focus();
       return;
     }
@@ -312,7 +318,7 @@ export function AdminCourseCreatePanel({
         <div className="mt-[var(--lms-space-4)] grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
           <div className="md:col-span-2">
             <FieldLabel htmlFor="course-department">{COLLEGE_COURSES_COPY.departmentLabel}</FieldLabel>
-            <Select id="course-department" value={courseDepartmentId} onChange={(event) => setCourseDepartmentId(event.target.value)} required>
+            <Select id="course-department" value={courseDepartmentId} onChange={(event) => {setCourseDepartmentId(event.target.value);setCreateErrors(previous=>({...previous,department:undefined}));}} required>
               <option value="">Select Department</option>
               {departments.map((department) => <option key={department.id} value={department.id}>{department.name}</option>)}
             </Select>
@@ -341,8 +347,9 @@ export function AdminCourseCreatePanel({
             </div>
             <div>
               <FieldLabel htmlFor="course-card-color">Card colour</FieldLabel>
-              <Input id="course-card-color" value={cardColor} onChange={event=>setCardColor(event.target.value)}
+              <Input id="course-card-color" value={cardColor} onChange={event=>{setCardColor(event.target.value);setCreateErrors(previous=>({...previous,cardColor:undefined}));}}
                 maxLength={7} pattern="#[0-9A-Fa-f]{6}" placeholder="Optional #RRGGBB"/>
+              {createErrors.cardColor ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.cardColor}</p> : null}
             </div>
           </div>:<div>
             <FieldLabel htmlFor="course-code">Code</FieldLabel>
@@ -350,8 +357,9 @@ export function AdminCourseCreatePanel({
             {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
           </div>}
           <div className="md:col-span-2">
-            <FieldLabel htmlFor="course-description">Description</FieldLabel>
-            <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => setCourseDescription(event.target.value)} maxLength={5000} placeholder="Optional Course description" />
+            <FieldLabel htmlFor="course-description">{superAdmin ? "In this Course – Description" : "Description"}</FieldLabel>
+            <Textarea id="course-description" className="min-h-24" value={courseDescription} onChange={(event) => {setCourseDescription(event.target.value);setCreateErrors(previous=>({...previous,description:undefined}));}} maxLength={5000} placeholder={superAdmin?"Enter course description":"Optional Course description"} required={superAdmin} />
+            {createErrors.description ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.description}</p> : null}
           </div>
         </div>
         <div className="mt-4">
