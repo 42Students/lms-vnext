@@ -888,12 +888,16 @@ export async function publishAssignmentGrade(
     current,
   );
 
-  if(!facultyAssignmentGradePublicationAllowed(current.assignmentStatus,current.gradingStatus))
+  if (current.assignmentStatus !== "PUBLISHED") {
     throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
+  }
   if (current.gradingStatus !== "GRADED") {
     throw new CoursesServiceError(
       "ASSIGNMENT_NOT_GRADED",
     );
+  }
+  if (!facultyAssignmentGradePublicationAllowed(current.assignmentStatus, current.gradingStatus)) {
+    throw new CoursesServiceError("ASSIGNMENT_NOT_PUBLISHED");
   }
 
   // Even a duplicate publish must carry the current optimistic token:
