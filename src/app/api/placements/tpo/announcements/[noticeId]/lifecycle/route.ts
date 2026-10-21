@@ -19,6 +19,9 @@ export async function POST(request:Request,{params}:{params:Promise<{noticeId:st
  if(!parsed.success)return noticePostError(request,"INVALID_BODY",400);
  try{
   await mutateTpoNotice(await getCurrentRequestContext(),parsed.data);
+  if(request.headers.get("accept")?.includes("application/json"))
+   return NextResponse.json({saved:true,action:parsed.data.action,noticeId},
+    {headers:{"Cache-Control":"private, no-store"}});
   const tab=parsed.data.action==="RESTORE"?"deleted":"yours";
   const destination=new URL("/tpo/announcements?tab="+tab,request.url);
   if(parsed.data.action==="DELETE")destination.searchParams.set("noticeSuccess","DELETED");

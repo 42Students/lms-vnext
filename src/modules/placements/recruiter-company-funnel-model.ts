@@ -22,7 +22,9 @@ export function buildRecruiterReportFunnel(counts:RecruiterCompanyFunnelCounts){
    total,rawTotal:raw,invalidCount,
    backwardsStage:index>0&&total>previous,
    appliedPercentRaw,
-   appliedPercent:Math.max(0,Math.min(100,appliedPercentRaw)),
+   appliedPercent:Math.max(0,Math.min(100,Math.round(appliedPercentRaw))),
+   ofAllLabel:appliedRaw>0?Math.round(appliedPercentRaw)+"% of all applicants":"—",
+   legacyStageLabel:legacyLabels[index]!,
    previousPercentLabel:previous===0?"—":Math.round(total/previous*100)+"%",
   };
  });

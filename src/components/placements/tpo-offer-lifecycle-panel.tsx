@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {useGuardedAction} from "@/hooks/use-guarded-action";
 import {friendlyApiError} from "@/lib/friendly-error";
-import { canRecordTpoOfferAction, parseTpoOfferExpiryIstInput, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
+import { canRecordTpoOfferAction, parseTpoOfferExpiryIstInput, TPO_OFFER_REASON_PRESETS, TPO_OFFER_ACTIONS, type TpoOfferAction } from "@/modules/placements/tpo-offer-lifecycle-model";
 import {Button} from "@/components/ui/button";
 
 type CandidateOffer = {
@@ -46,7 +46,7 @@ export function TpoOfferLifecyclePanel({
   const statuses = [...new Set(selected.map((item) => item.status))];
   const parsedExpiry = parseTpoOfferExpiryIstInput(expiresAt);
   const valid = selected.length > 0 && selected.length === ids.length &&
-    selected.length <= 200 && statuses.length === 1 &&
+    selected.length <= 200 && new Set(selected.map(choice=>choice.id)).size===selected.length && statuses.length === 1 &&
     reason.trim().length >= 10 &&
     (action !== "EXTEND" || parsedExpiry !== null) &&
     (action !== "RECORD_JOINED" || Boolean(joiningDate));
@@ -168,6 +168,14 @@ export function TpoOfferLifecyclePanel({
           />
         </label>
       ) : null}
+      <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
+        Reason
+        <Select className="mt-2 min-h-11 w-full md:min-h-9" value={TPO_OFFER_REASON_PRESETS.includes(reason as typeof TPO_OFFER_REASON_PRESETS[number])?reason:""} disabled={busy}
+         onChange={event=>setReason(event.target.value)}>
+         <option value="">Choose a reason or write your own</option>
+         {TPO_OFFER_REASON_PRESETS.map(option=><option value={option} key={option}>{option}</option>)}
+        </Select>
+      </label>
       <label className="block text-[13px] font-semibold text-[var(--lms-neutral-400)]">
         Mandatory evidence / reason (10–1200 characters)
         <Textarea
