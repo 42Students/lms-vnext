@@ -1,9 +1,9 @@
 import "server-only";
-import {and,asc,desc,eq,ilike,inArray,ne,or,sql} from "drizzle-orm";
+import {and,asc,count,desc,eq,gt,ilike,inArray,lt,or,sql} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
-import {collegeMemberships,departments,learnerProgramEnrollments,placementApplications,
- placementCompanies,placementCompanyRelationships,placementJobRounds,placementJobs,programs,users}
+import {collegeMemberships,departments,placementApplications,
+ placementCompanies,placementCompanyRelationships,placementJobRounds,placementJobs,users}
  from "@/db/schema";
 import {placementRoundCandidateSlots as interviews} from "@/db/schema/placement-round-candidate-slots";
 import type {RequestContext} from "@/modules/identity/context";
@@ -31,19 +31,29 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
    .where(eq(departments.collegeId,collegeId)).orderBy(asc(departments.name)),
  ]);
 
+ const literalSearch="%"+filters.q.replace(/[\\%_]/g,"\\$&")+"%";
  const conditions=and(eq(placementJobs.collegeId,collegeId),
   eq(interviews.status,"BOOKED"),
   filters.type==="ALL"?inArray(placementJobRounds.kind,["INTERVIEW","GD"]):eq(placementJobRounds.kind,filters.type),
   filters.companyId?eq(placementCompanyRelationships.companyId,filters.companyId):undefined,
-  filters.departmentId?eq(departments.id,filters.departmentId):undefined,
-  filters.q?or(ilike(users.displayName,"%"+filters.q+"%"),
-   ilike(placementJobs.title,"%"+filters.q+"%"),
-   ilike(placementCompanies.name,"%"+filters.q+"%")):undefined);
+  filters.departmentId?sql`exists(select 1 from learner_program_enrollments e
+   join programs p on p.id=e.program_id
+   join departments d on d.id=p.department_id
+   where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+   and d.college_id=${collegeId} and d.id=${filters.departmentId})`:undefined,
+  filters.q?or(ilike(users.displayName,literalSearch),
+   ilike(placementJobs.title,literalSearch),
+   ilike(placementCompanies.name,literalSearch)):undefined);
  const source=db.select({
   id:interviews.id,jobId:interviews.jobId,roundId:interviews.roundId,
   applicationId:interviews.applicationId,studentId:collegeMemberships.id,
   student:users.displayName,company:placementCompanies.name,companyId:placementCompanies.id,
-  department:departments.name,job:placementJobs.title,roundName:placementJobRounds.name,
+  department:sql<string|null>`(select d.name from learner_program_enrollments e
+   join programs p on p.id=e.program_id join departments d on d.id=p.department_id
+   where e.membership_id=${collegeMemberships.id} and e.status='ACTIVE'
+    and d.college_id=${collegeId}
+   order by e.admitted_at desc,e.id desc limit 1)`.as("department_name"),
+  job:placementJobs.title,roundName:placementJobRounds.name,
   kind:placementJobRounds.kind,start:interviews.startsAt,
   duration:sql<number>`extract(epoch from(${interviews.endsAt}-${interviews.startsAt}))/60`.as("slot_minutes"),
   status:sql<string>`case when exists(select 1 from activity_events ae
@@ -68,44 +78,64 @@ export async function listCollegeInterviewDirectory(ctx:RequestContext,raw:unkno
  .innerJoin(placementJobRounds,eq(placementJobRounds.id,interviews.roundId))
  .innerJoin(placementCompanyRelationships,eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId))
  .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
- .leftJoin(learnerProgramEnrollments,and(eq(learnerProgramEnrollments.membershipId,collegeMemberships.id),
-  eq(learnerProgramEnrollments.status,"ACTIVE")))
- .leftJoin(programs,eq(programs.id,learnerProgramEnrollments.programId))
- .leftJoin(departments,eq(departments.id,programs.departmentId))
- .where(conditions);
- const rows=await source.orderBy(filters.sort==="RECENT"?desc(interviews.startsAt):
-  filters.sort==="STUDENT"?asc(users.displayName):asc(interviews.startsAt),asc(interviews.id)).limit(5001);
- const limited=rows.length>5000;
- const selected=rows.filter(row=>
-   (filters.status==="ALL"||row.status===filters.status)&&
-   (filters.mode==="ALL"||row.mode===filters.mode)).slice(0,5000);
+ .where(conditions).as("interview_base");
+ // Filter BEFORE any LIMIT. Status/mode are SQL projections, not client-side
+ // predicates against the first 5,000 interviews in the college.
+ const filtered=db.select().from(source).where(and(
+  filters.status==="ALL"?undefined:eq(source.status,filters.status),
+  filters.mode==="ALL"?undefined:eq(source.mode,filters.mode),
+ )).as("interview_filtered");
+ const [summaries,selected]=await Promise.all([
+  db.select({
+   total:count(),
+   scheduled:sql<number>`count(*) filter(where ${filtered.status}='SCHEDULED')::int`.mapWith(Number),
+   today:sql<number>`count(*) filter(where (${filtered.start} at time zone 'Asia/Kolkata')::date=(now() at time zone 'Asia/Kolkata')::date)::int`.mapWith(Number),
+   companies:sql<number>`count(distinct ${filtered.companyId})::int`.mapWith(Number),
+  }).from(filtered),
+  db.select().from(filtered).orderBy(
+   filters.sort==="RECENT"?desc(filtered.start):
+    filters.sort==="STUDENT"?asc(filtered.student):asc(filtered.start),
+   asc(filtered.id),
+  ).limit(options.exportAll?5000:25).offset(options.exportAll?0:(filters.page-1)*25),
+ ]);
+ const totals=summaries[0]??{total:0,scheduled:0,today:0,companies:0};
+ const total=totals.total;
+ const limited=options.exportAll&&total>5000;
+ // Re-evaluate collisions against ALL active college bookings for the
+ // displayed learners and time span, including records on other pages/jobs.
+ // A completed or no-show appointment cannot block a new booking.
+ const selectedIds=[...new Set(selected.map(row=>row.studentId))];
+ const windowStart=selected.length?Math.min(...selected.map(r=>r.start.getTime())):0;
+ const windowEnd=selected.length?Math.max(...selected.map(r=>r.start.getTime()+r.duration*60000)):0;
+ const buffer=15*60_000;
+ const active=(selectedIds.length?await db.select({
+   id:interviews.id,studentId:placementApplications.membershipId,
+   start:interviews.startsAt,end:interviews.endsAt,
+  }).from(interviews)
+   .innerJoin(placementApplications,eq(placementApplications.id,interviews.applicationId))
+   .innerJoin(placementJobs,and(eq(placementJobs.id,interviews.jobId),
+    eq(placementJobs.collegeId,collegeId)))
+   .where(and(eq(interviews.status,"BOOKED"),
+    inArray(placementApplications.membershipId,selectedIds),
+    lt(interviews.startsAt,new Date(windowEnd+buffer)),
+    gt(interviews.endsAt,new Date(windowStart-buffer)),
+    sql`not exists(select 1 from activity_events ended
+     where ended.subject_type='placement_round_candidate_slot'
+     and ended.subject_id=${interviews.id}::text and ended.college_id=${collegeId}
+     and ended.event_type in ('PLACEMENTS_COLLEGE_INTERVIEW_COMPLETED','PLACEMENTS_COLLEGE_INTERVIEW_NO_SHOW'))`)):[]);
  const conflicting=new Set<string>();
- // Conflicts require the same student to be booked in two overlapping
- // active interviews. Same-time college-wide rounds are not a conflict alone.
- const byStudent=new Map<string,typeof selected>();
  for(const row of selected){
   if(row.status!=="SCHEDULED")continue;
-  const list=byStudent.get(row.studentId)??[];list.push(row);byStudent.set(row.studentId,list);
+  const start=row.start.getTime(),end=start+row.duration*60000;
+  if(active.some(other=>other.id!==row.id&&other.studentId===row.studentId&&
+   other.start.getTime()<end+buffer&&other.end.getTime()>start-buffer))
+   conflicting.add(row.id);
  }
- for(const list of byStudent.values()){
-  list.sort((a,b)=>a.start.getTime()-b.start.getTime());
-  for(let i=0;i<list.length;i++)for(let j=i+1;j<list.length;j++){
-   if(list[j].start.getTime()>=list[i].start.getTime()+list[i].duration*60000)break;
-   conflicting.add(list[i].id);conflicting.add(list[j].id);
-  }
- }
- const now=new Date();
- const today=new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(now);
- const inIndia=(date:Date)=>new Intl.DateTimeFormat("en-CA",{timeZone:"Asia/Kolkata",year:"numeric",month:"2-digit",day:"2-digit"}).format(date);
- const total=selected.length;
- const pages=Math.max(1,Math.ceil(total/25));
- return {ready:true,filters,total,limited,pageCount:pages,
-  rows:(options.exportAll?selected:selected.slice((filters.page-1)*25,filters.page*25))
-   .map(row=>({...row,conflict:conflicting.has(row.id)})),
+ return {ready:true,filters,total,limited,pageCount:Math.max(1,Math.ceil(total/25)),
+  rows:selected.map(row=>({...row,conflict:conflicting.has(row.id)})),
   companies,departments:departmentChoices,
-  summary:{scheduled:selected.filter(row=>row.status==="SCHEDULED").length,
-   today:selected.filter(row=>inIndia(row.start)===today).length,
-   companies:new Set(selected.map(row=>row.companyId)).size,
-   conflicts:conflicting.size},
+  summary:{scheduled:totals.scheduled,today:totals.today,
+   companies:totals.companies,conflicts:conflicting.size},
+  conflictScope:options.exportAll?"EXPORTED_ROWS":"CURRENT_PAGE",
  };
 }
