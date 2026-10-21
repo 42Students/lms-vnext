@@ -448,6 +448,80 @@ export async function deliverInAppNotificationInTransaction(
   );
 }
 
+
+/**
+ * The legacy fetchAll route listed authored notices, not every recipient's
+ * read receipt. Keep this supervisory query separate from the personal inbox.
+ * A global page is permitted only for an active global Super Admin. Selected
+ * organization/college scope is always applied before paging and counting.
+ */
+export async function listScopedAdminNotificationPage(
+  context: RequestContext,
+  rawOptions: {
+    organizationId?: string;
+    collegeId?: string;
+    pageNo?: number;
+    pageSize?: number;
+  } = {},
+) {
+  if (!isSuperAdmin(context)) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  const options = z.object({
+    organizationId: z.string().uuid().optional(),
+    collegeId: z.string().uuid().optional(),
+    pageNo: z.number().int().min(0).default(0),
+    pageSize: z.number().int().min(1).max(200).default(50),
+  }).strict().parse(rawOptions);
+
+  const collegeId = options.collegeId ?? context.adminScope?.collegeId ?? null;
+  let organizationId = options.organizationId ??
+    context.adminScope?.organizationId ?? null;
+  if (collegeId) {
+    const [college] = await getDb().select({
+      id: colleges.id,
+      organizationId: colleges.organizationId,
+    }).from(colleges).where(eq(colleges.id, collegeId)).limit(1);
+    if (!college || (organizationId && college.organizationId !== organizationId)) {
+      throw new ActivityServiceError("ACTIVITY_SCOPE_NOT_FOUND");
+    }
+    organizationId = college.organizationId;
+  }
+  requirePermission(context, "activity.read", { organizationId, collegeId });
+
+  const conditions = [eq(activityEvents.subjectType, "NOTIFICATION")];
+  if (collegeId) conditions.push(eq(activityEvents.collegeId, collegeId));
+  else if (organizationId) {
+    conditions.push(eq(activityEvents.organizationId, organizationId));
+  }
+  const where = and(...conditions);
+  const db = getDb();
+  const [[totalRow], items] = await Promise.all([
+    db.select({ total: count() }).from(activityEvents).where(where),
+    db.select({
+      id: activityEvents.id,
+      actorUserId: activityEvents.actorUserId,
+      collegeId: activityEvents.collegeId,
+      organizationId: activityEvents.organizationId,
+      subjectId: activityEvents.subjectId,
+      subjectLabel: activityEvents.subjectLabel,
+      summary: activityEvents.summary,
+      metadata: activityEvents.metadata,
+      occurredAt: activityEvents.occurredAt,
+    }).from(activityEvents).where(where)
+      .orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id))
+      .limit(options.pageSize).offset(options.pageNo * options.pageSize),
+  ]);
+  return {
+    items,
+    pagination: {
+      pageNo: options.pageNo,
+      pageSize: options.pageSize,
+      total: totalRow?.total ?? 0,
+    },
+  };
+}
+
 export async function listOwnNotifications(
   context: RequestContext,
   options: {
