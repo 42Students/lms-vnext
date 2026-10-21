@@ -1,4 +1,16 @@
 import { z } from "zod";
+
+/** Intentional vNext report-policy difference from legacy:
+ * class-level filters were removed, because hiring application facts are
+ * currently attached to learner program/cohort enrollment, not to a historic
+ * per-class membership at application time. Applying a classId as though it
+ * were a cohortId would produce misleading hiring totals. A legacy classId
+ * query is rejected by the strict schema rather than silently ignored.
+ */
+export const COLLEGE_HIRING_CLASS_FILTER_POLICY = {
+ supported:false,
+ reason:"Class-level hiring reports are not available. Filter by department, program or cohort instead.",
+} as const;
 export const collegeHiringAnalyticsSchema = z.strictObject({
   seasonId: z.uuid().optional(),
   jobId: z.uuid().optional(),
