@@ -332,3 +332,6 @@
 
 - work2 #51 `learner-placement-job-detail.tsx` | G2-18-023-005/020: shows primary persisted application denial before generic availability, supplies REGISTER and RULES destinations derived from existing blockers; no eligibility-only OPEN assertion added. Need typed actionCode from apply service for exact parity.
 - work2 #52 `admin-readiness-overrides-service.ts` | G2-7-004-043/G2-7-032-078: includes archived projects in existing active override audit listing (chooser remains separate); exports active/clear, value, note, actor and timestamp event mapping; CLEAR remains excluded from active list.
+
+- work2 #53 `session-response-guard.tsx` | G2-1-037-028: root sign-in already shows session expired/revoked notice from validated auth query; replaced history entry to prevent Back loops after failed API auth and retained returnTo.
+- work2 #54 `mentor-notifications-service.ts` | G2-7-026-086: explicit legacy created_at/createdAt, type/title/message, receiverType, readAt projection into event plus authenticated recipient receipt; malformed timestamps and non-mentor audiences rejected. Persistence import/historical crosswalk requires authorized import service.

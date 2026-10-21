@@ -172,3 +172,5 @@
 
 - Learner job apply gate G2-18-023-005/020: add typed backend actionCode REGISTER/RULES and authoritative denial reason to authorized per-role job detail DTO; current UI maps text blockers as fallback only, must agree with real apply service at click.
 - Project readiness historical audit G2-7-032-078: query all persisted events to show CLEAR and transitions using readinessOverrideAuditProjection; active list intentionally filters latest FORCE states while archived projects with active overrides remain visible.
+
+- Mentor legacy notification migration G2-7-026-086: translate vetted records through projectLegacyMentorNotification then persist activityEvents and inAppNotifications under trusted member college/user grant, never accept receiverType or userId from client as authorization. Ensure historical audience and readAt preserved.
