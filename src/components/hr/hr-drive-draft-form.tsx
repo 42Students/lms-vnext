@@ -326,18 +326,25 @@ export function HrDriveDraftForm({
           Hire again · copied from: <strong>{sourceJobTitle}</strong>. Changes here do not update the existing drive.
         </p>
       ) : null}
-      <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
+      {notice === "We restored your unsent draft" ? <Alert tone="info" title="We restored your unsent draft" className="mb-4">
+         <span>Your choices remain on this device until you send them for review.</span>
+         <Button type="button" variant="secondary" disabled={submitting}
+           onClick={() => setDraftDecision("CLEAR")}>Start over</Button>
+       </Alert> : null}
+       {fixRequestId && JSON.stringify(draft) !== JSON.stringify(initial) ?
+         <span role="status" className="inline-flex rounded-full border border-warning px-2 py-1 text-xs font-semibold text-warning">Unsaved changes</span> : null}
+       <div className="grid min-w-0 items-start gap-6 lg:grid-cols-[minmax(0,1.6fr)_minmax(280px,1fr)]">
       <div className="min-w-0 space-y-5">
       <section className="rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4">
         <h2 className="font-semibold text-foreground">Role and work</h2>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Role title
-            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)} placeholder="e.g. Software Engineer"
+            <Input className="w-full" data-draft-field="title" aria-invalid={Boolean(fieldErrors.title)} placeholder="e.g. Software Engineer" aria-describedby={fieldErrors.title ? "hr-title-error" : undefined}
               value={draft.title} maxLength={200}
               onChange={(event) => { setFieldErrors(current => ({ ...current, title: "" }));
                 setDraft((current) => ({ ...current, title: event.target.value })); }} />
-            {fieldErrors.title ? <span role="alert" className="text-xs text-error">{fieldErrors.title}</span> : null}
+            {fieldErrors.title ? <span role="alert" id="hr-title-error" className="text-xs text-error">{fieldErrors.title}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] md:col-span-2 leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Description (optional)
@@ -393,10 +400,10 @@ export function HrDriveDraftForm({
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             {draft.employmentType==="INTERNSHIP"?"CTC after the internship (LPA, optional)":"CTC (LPA)"}
             <Input className="w-full" data-draft-field="ctcLpa" aria-invalid={Boolean(fieldErrors.ctcLpa)}
-              inputMode="decimal" value={draft.ctcLpa??""}
+              inputMode="decimal" value={draft.ctcLpa??""} aria-describedby={fieldErrors.ctcLpa ? "hr-ctc-error" : undefined}
               onChange={event=>{setFieldErrors(current=>({...current,ctcLpa:""}));
                 setDraft(current=>({...current,ctcLpa:event.target.value}));}}/>
-            {fieldErrors.ctcLpa ? <span role="alert" className="text-xs text-error">{fieldErrors.ctcLpa}</span> : null}
+            {fieldErrors.ctcLpa ? <span role="alert" id="hr-ctc-error" className="text-xs text-error">{fieldErrors.ctcLpa}</span> : null}
           </label>
           <label className="grid min-w-0 gap-[6px] text-[length:var(--lms-font-sm)] leading-4 font-semibold text-[13px] text-[var(--lms-neutral-400)]">
             Fixed (optional)
@@ -657,12 +664,21 @@ export function HrDriveDraftForm({
               Live preview of your unsent request. The college decides what students see after approval.
             </p>
           </div>
-        {notice ? <InlineNotice tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"} message={notice}/> : null}
+        {notice && notice !== "We restored your unsent draft" ? <InlineNotice
+           tone={/could not|unable|cannot|changed|ended|unexpired|complete|before|too large|access/i.test(notice)?"error":"info"}
+           message={notice} /> : null}
         <p className="mt-3 text-xs text-muted-foreground">
           Formal requests are persisted for placement-cell review. Job-description file uploads and automatic publication are not available here.
         </p>
       </section>
       </aside>
+      </div>
+      <div className="flex justify-stretch border-t border-border pt-4 lg:hidden">
+        <Button type="button" className="w-full" disabled={!result.success || submitting}
+          loading={submitting} aria-busy={submitting}
+          onClick={() => void sendFormalDriveRequest()}>
+          {fixRequestId ? editMode === "EDIT" ? "Save changes" : "Fix and Resend" : "Send for review"}
+        </Button>
       </div>
     </div>
   );
