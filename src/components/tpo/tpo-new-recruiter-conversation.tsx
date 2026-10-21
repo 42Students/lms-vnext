@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useId,useRef,useState} from "react";
 import {Dialog} from "@/components/ui/dialog";
 import {useRouter} from "next/navigation";
+import {useToast} from "@/components/ui/toast";
 import {TPO_QUICK_REPLIES} from "@/modules/placements/tpo-message-draft-model";
 
 type Recruiter={userId:string;displayName:string|null;companyName:string};
@@ -14,6 +15,7 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
  recruiters:Recruiter[];actorUserId:string;
 }){
  const router=useRouter();
+ const {showToast}=useToast();
  const formId=useId();
  const [open,setOpen]=useState(false),[id,setId]=useState("");
  const [busy,setBusy]=useState(false),[error,setError]=useState("");
@@ -68,8 +70,13 @@ export function TpoNewRecruiterConversation({recruiters,actorUserId}:{
     method:"POST",credentials:"same-origin",headers:{"Content-Type":"application/json"},
     body:JSON.stringify({body:message.trim()}),
    });
-   if(!sent.ok)throw new Error("Conversation opened, but the message was not sent. Retry or open the conversation.");
+   if(!sent.ok){
+    showToast({tone:"error",title:"Failed to send",
+      description:"Conversation opened, but the message was not sent. Retry or open the conversation."});
+    throw new Error("Conversation opened, but the message was not sent. Retry or open the conversation.");
+   }
    editMessage("");
+   showToast({tone:"success",title:"Message sent"});
    router.push("/tpo/messages/"+encodeURIComponent(threadId));
    router.refresh();
   }catch(e){setError(e instanceof Error?e.message:"Couldn't start conversation.");}

@@ -7,11 +7,12 @@ import {AuthorizationError,requirePermission} from "@/modules/permissions/policy
 import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted-actor";
 import {recordActivityEventInTransaction} from "@/modules/activity/service";
 import {ACTIVITY_EVENT_TYPES} from "@/modules/activity/taxonomy";
-import {globalCompanyEditSchema,isGlobalCompanyScope} from "./super-admin-company-edit-model";
+import {globalCompanyEditSchema} from "./super-admin-company-edit-model";
 
 /** Updates only the canonical employer record. All drive/relationship readers join this identity. */
 export async function editGlobalCompany(context:RequestContext,raw:unknown){
- if(!isSuperAdmin(context)||!isGlobalCompanyScope(context.adminScope))
+ // Canonical employer catalogue is platform scope even while acting in a college.
+ if(!isSuperAdmin(context))
   throw new AuthorizationError("admin-scope.select");
  requirePermission(context,"admin-scope.select");
  const input=globalCompanyEditSchema.parse(raw);
