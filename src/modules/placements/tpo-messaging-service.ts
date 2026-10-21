@@ -406,6 +406,41 @@ export async function openRecruiterMessageThread(
   });
 }
 
+/**
+ * Legacy compose-and-send: the first recruiter message creates its thread
+ * atomically. Do not create an empty thread when the message fails, and do
+ * not infer a recruiter grant from an unrelated TPO membership.
+ */
+export async function composeAndSendRecruiterThreadMessage(
+ context:RequestContext,
+ input:{collegeId:string;jobId?:string|null;message:string},
+) {
+ const collegeId=collegeIdSchema.parse(input.collegeId);
+ const jobId=input.jobId?jobIdSchema.parse(input.jobId):null;
+ const body=bodySchema.parse(input.message);
+ if(context.recruiter?.status!=="ACTIVE"||context.recruiter.userId!==context.user.id)
+  throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+ return getDb().transaction(async tx=>{
+  const grant=await loadActiveRecruiterGrant(tx,context.user.id,collegeId,true);
+  if(!grant)throw new TpoMessagingError("TPO_MESSAGE_FORBIDDEN");
+  const job=await assertJobForThread(tx,collegeId,jobId,grant.companyRelationshipId,true);
+  const thread=await getOrCreateThread(tx,collegeId,context.user.id,job?.id??null);
+  const now=new Date();
+  const [message]=await tx.insert(placementTpoMessages).values({
+   threadId:thread.id,senderType:"RECRUITER",senderUserId:context.user.id,
+   body,createdAt:now,
+  }).returning({id:placementTpoMessages.id});
+  if(!message)throw new Error("RECRUITER_MESSAGE_PERSISTENCE_FAILED");
+  await tx.update(placementTpoMessageThreads).set({lastMessageAt:now})
+    .where(eq(placementTpoMessageThreads.id,thread.id));
+  await notifyTpoOfRecruiterMessage(tx,{
+   collegeId:thread.collegeId,threadId:thread.id,messageId:message.id,
+   senderUserId:context.user.id,at:now,
+  });
+  return {id:thread.id,messageId:message.id};
+ });
+}
+
 export async function listMessageThreads(
   context: RequestContext,
   collegeIdInput: string,
