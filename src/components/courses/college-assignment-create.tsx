@@ -120,7 +120,7 @@ export function CollegeAssignmentCreate({lessons,deliveries}:{
      </option>)}
     </Select></label>
    <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Lesson
-    <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");}}
+    <Select value={lessonId} disabled={pending} onChange={e=>{setLessonId(e.target.value);setDeliveryId("");setAudience("SHARED");}}
      className="min-h-11 w-full md:min-h-9">
      {availableLessons.map(lesson=><option key={lesson.id} value={lesson.id}>{lesson.name}</option>)}
     </Select></label>
