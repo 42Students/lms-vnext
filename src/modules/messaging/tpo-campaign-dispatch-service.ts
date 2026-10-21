@@ -252,10 +252,9 @@ export async function dispatchTpoCampaign(context:RequestContext,rawId:unknown){
     suppressed?"SUPPRESSED" as const:"QUEUED" as const;
    return {id:randomUUID(),batchId:id,recipientKey:row.recipientKey,
     channel:"EMAIL",templateKey:draft.template_key,purpose,status,
-    reason:suppressed?(row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":
-      row.status==="SKIPPED_UNSUBSCRIBED"?"unsubscribed":"already-unsubscribed"):
-      row.status==="FAILED"?"provider-rejected":
-      row.status==="QUEUED"?"provider-result-unknown":null};
+    // Receipt reasons are constrained by messaging_delivery_receipts_reason_check;
+    // rejection/unknown status is represented by the status, not a new reason.
+    reason:suppressed?(row.status==="SKIPPED_NO_EMAIL"?"invalid-recipient":"unsubscribed"):null};
   });
   // PENDING means a worker stopped before claiming the recipient; QUEUED
   // means the HTTP send might already have happened. Neither is safe to

@@ -1,25 +1,18 @@
 import {NextResponse} from "next/server";
 import {isSameOriginRequest} from "@/auth/origin";
-import {POST as unsubscribe} from "@/app/api/public/campaign-unsubscribe/route";
-
+import {unsubscribeTpoCampaignRecipient} from "@/modules/messaging/tpo-campaign-unsubscribe-service";
 export const runtime="nodejs";
-/** Compat for old LMS TpoService.unsubscribeCampaign(token). A GET never
- * mutates an email preference; only an explicit same-origin POST may do so. */
-export async function POST(request:Request,{params}:{
-  params:Promise<{token:string}>;
-}){
-  if(!isSameOriginRequest(request))
-    return NextResponse.json({error:"INVALID_ORIGIN"},{status:403});
-  const {token}=await params;
-  if(!token||token.length>2048)
-    return NextResponse.json({error:"INVALID_OR_EXPIRED_LINK"},{status:400});
-  const headers=new Headers();
-  headers.set("content-type","application/x-www-form-urlencoded");
-  headers.set("accept","application/json");
-  const origin=request.headers.get("origin");
-  if(origin)headers.set("origin",origin);
-  const synthetic=new Request(new URL("/api/public/campaign-unsubscribe",request.url),{
-    method:"POST",headers,body:new URLSearchParams({token}),
-  });
-  return unsubscribe(synthetic);
+export const dynamic="force-dynamic";
+type Ctx={params:Promise<{token:string}>};
+/** Old outbound campaign links may POST here. This compatibility path never
+ * performs an opt-out via GET and never embeds the token in a response. */
+export async function POST(request:Request,{params}:Ctx){
+ if(!isSameOriginRequest(request))
+  return NextResponse.json({error:"INVALID_ORIGIN"},{status:403,headers:{"Cache-Control":"no-store"}});
+ const {token}=await params;
+ if(token.length>0&&token.length<=2048)
+  await unsubscribeTpoCampaignRecipient(token);
+ return NextResponse.json({status:"UNSUBSCRIBED"},{
+  headers:{"Cache-Control":"no-store","Referrer-Policy":"no-referrer"},
+ });
 }

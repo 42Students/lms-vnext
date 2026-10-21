@@ -27,6 +27,9 @@ export async function unsubscribeTpoCampaignRecipient(
   // Migrated recipient records carry the historical digest separately.
   // Unknown and already-used links receive the same confirmation to avoid
   // exposing whether an email address or campaign ever existed.
+  // A legacy public campaign link is opaque and is resolved solely by its
+  // migrated SHA-256 digest, never by an address, token prefix or numeric ID.
+  // Both a missing digest and a reused digest return the same safe success.
   const legacyCandidate=!claim && typeof token==="string" &&
     token.length>0 && token.length<=200 && !token.includes(".");
   if(!claim && !legacyCandidate)return {unsubscribed:true};
@@ -65,8 +68,20 @@ export async function unsubscribeTpoCampaignRecipient(
         eq(placementTpoLeads.collegeId,row.collegeId),
         isNull(placementTpoLeads.unsubscribedAt),
       )).returning({id:placementTpoLeads.id,name:placementTpoLeads.name});
-    // Every scoped recipient FK must resolve to the same lead, even when
-    // their unsubscribe flag was already recorded by another channel.
+    // A campaign recipient opt-out suppresses every still-unclaimed campaign
+    // for this same college+lead. In-flight QUEUED rows cannot be rewritten:
+    // dispatch rechecks the live lead before provider contact and leaves any
+    // crash-ambiguous send for manual reconciliation, never automatic replay.
+    await tx.update(placementTpoEmailCampaignRecipients)
+      .set({status:"SKIPPED_UNSUBSCRIBED"})
+      .where(and(
+        eq(placementTpoEmailCampaignRecipients.collegeId,row.collegeId),
+        eq(placementTpoEmailCampaignRecipients.leadId,row.leadId),
+        eq(placementTpoEmailCampaignRecipients.status,"PENDING"),
+      ));
+    // Invite creation and dispatch also consult the lead's unsubscribedAt.
+    // Only the first successful lead-level opt-out emits a TPO bell/CRM
+    // activity, so concurrent campaign and invite links never spam officers.
     if(lead){
       const eventCopy=tpoCampaignUnsubscribeEvent(lead.name,row.leadId);
       await tx.insert(placementTpoLeadActivities).values({
@@ -101,6 +116,8 @@ export async function unsubscribeTpoCampaignRecipient(
     }
     return "APPLY";
   });
-  if(outcome==="DENY")return {unsubscribed:true};
+  // Client-safe idempotency: unknown, repeated, and successful links have
+  // identical outward responses. Do not leak whether a recruiter exists.
+  void outcome;
   return {unsubscribed:true};
 }
