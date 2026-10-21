@@ -46,7 +46,12 @@ export default async function CollegeContactsPage({searchParams}:{searchParams:P
     action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Back to dashboard</Link>}/>
  </div>;
  if(context.membership.status!=="ACTIVE"||!hasMembershipRole(context,"COLLEGE_ADMIN"))redirect("/dashboard");
- const raw=await searchParams;
+ const submitted=await searchParams;
+ // Old pagination bookmarks used page=0 (or negative) for the first page.
+ // Recover only that legacy shape; keep strict rejection of forged pages.
+ const oldPage=Array.isArray(submitted.page)?submitted.page[0]:submitted.page;
+ const raw=oldPage&&/^-?\d+$/.test(oldPage)&&Number(oldPage)<=0
+  ?{...submitted,page:"1"}:submitted;
  let filter:ReturnType<typeof parseCollegeContactsSearchParams>;
  try{filter=parseCollegeContactsSearchParams(raw);}
  catch(error){
