@@ -400,7 +400,7 @@ export function RecruiterLeadDetailWorkspace({
     <section className="min-w-0 space-y-5">
       {(phase==="loading"||phase==="error"||!lead)?<Link href="/tpo/recruiters" onClick={event=>{if(!confirmLeave())event.preventDefault();}} className="lms-inline-link inline-flex min-h-11 items-center text-sm font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 focus-visible:underline">← Recruiter leads</Link>:null}
       {phase === "loading" ? (
-        <GracefulPageLoading label="Loading recruiter details…" shape="detail"/>
+        <GracefulPageLoading label="Loading recruiter details…" shape="card"/>
       ) : phase === "error" || !lead ? (
         <div role="alert" className="space-y-3 border-b border-border pb-5">
           <PageHeader title={error.includes("not found")?"Recruiter not found":"Could not load recruiter details"} />
