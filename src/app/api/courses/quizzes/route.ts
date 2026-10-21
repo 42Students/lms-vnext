@@ -105,7 +105,8 @@ export async function GET(request: Request) {
         message:"Choose a lesson or course to view quizzes."},{status:400});
     }
     const total=quizzes.length;
-    const selected=shape==="array"&&!query.has("page")&&!query.has("limit")
+    const unpaged=!query.has("page")&&!query.has("limit")&&!query.has("size");
+    const selected=unpaged&&(shape==="array"||(Boolean(lessonId)&&!shape))
       ?quizzes:quizzes.slice((page-1)*size,page*size);
     const headers={"Cache-Control":"private, no-store"};
     if(shape==="array")return NextResponse.json(selected,{headers});
