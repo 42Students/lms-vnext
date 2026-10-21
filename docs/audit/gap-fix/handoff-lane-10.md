@@ -1,0 +1,5 @@
+# Lane chat-10 cross-file handoffs
+
+- G2-12-024-014 / G2-16-005-044 / G2-16-005-080 | `src/app/api/tracker/logs/deploy-health/route.ts` and rollout health service | Add validated ISO deploy-health comparisons/digest backend, restricted to named unscoped Super Admin; never imply deployment health from a commit string. Not in tracker page packet ownership.
+- G2-17-010-001 / G2-17-010-002 / G2-5-032-013 | deployment worker and schedule registration (not `src/modules/operations/scheduled-job-lease.ts`) | Register `TPO_DEADLINE_TODAY_SCHEDULE` at 08:00 Asia/Kolkata, fence each callback via the persisted Postgres adapter, and keep outbox delivery separate with recipient-level idempotency. Only enable after migration replay and multi-worker validation.
+- G2-16-005-015 | `src/components/tracker/tracker-live-logs-explorer.tsx` | Implement WARNING/1-hour default, grouped by default and auto-refresh off in that file's later lane-10 packet; page cannot change child state without touching the other queued packet.

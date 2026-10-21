@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Tabs } from "@/components/ui/tabs";
 import { redirect } from "next/navigation";
 import { getCurrentRequestContext } from "@/auth/request-context";
@@ -19,99 +20,111 @@ import { telegramAlertsConfigured } from "@/modules/log-alerts/telegram-notifier
 import { knownErrorListSchema } from "@/modules/log-alerts/validation";
 
 export const dynamic = "force-dynamic";
+export const metadata: Metadata = { title: "Logs · 42 Tracker" };
 
 export default async function TrackerLogsPage({
   searchParams,
 }: {
   searchParams: Promise<{ environment?: string; query?: string }>;
 }) {
+  // Logs are platform-wide and can contain operational identifiers. A named,
+  // unscoped Super Admin session is required; never recreate the old shared
+  // password endpoint that silently granted a full Super Admin session.
   const context = await getCurrentRequestContext();
   if (!isSuperAdmin(context) || context.adminScope?.collegeId ||
       context.adminScope?.organizationId) redirect("/dashboard");
-  const search=await searchParams;
+
+  const search = await searchParams;
   const environment = search.environment ?? "PRODUCTION";
-  const liveQuery=typeof search.query==="string"?search.query.slice(0,150):"";
+  const liveQuery = typeof search.query === "string" ? search.query.slice(0, 150) : "";
   const parsed = knownErrorListSchema.safeParse({ environment, limit: 40 });
+  const alertsReady = logAlertsRuntimeEnabled();
+  const pollingReady = cloudLogPollConfigured();
+  const telegramReady = telegramAlertsConfigured();
+  const commit = process.env.DEPLOY_COMMIT ?? "";
+  const deploy = /^[0-9a-f]{7,64}$/i.test(commit) ? commit : null;
 
   const header = (
     <>
       <PageHeader
-        title="Known errors"
-        description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
+        eyebrow="42 Logs"
+        title="Logs"
+        description="What the backend is telling us, and what to do about it."
       />
       <TrackerAdminNav />
     </>
   );
 
-  if (context.adminScope?.collegeId || context.adminScope?.organizationId) {
-    return (
-      <div className="min-w-0 space-y-4">
-        {header}
-        <ErrorState title="Platform log access is scoped" description="Clear the Super Admin organization/college safety scope to view platform-wide log signatures."/>
-      </div>
-    );
-  }
-
-  if (!logAlertsRuntimeEnabled()) {
-    return (
-      <div className="min-w-0 space-y-4">
-        {header}
-        <Alert tone="warning">Known errors persistence is staged but not enabled. W01 must register and replay the DB10 log-alert tables before this page can read data. This message is not a healthy-log status.</Alert>
-      </div>
-    );
-  }
-
   if (!parsed.success) {
     return (
       <div className="min-w-0 space-y-4">
         {header}
-        <ErrorState title="Invalid log environment." description="Durable error signatures, recurrence and triage. Cloud Logging collection is an optional, separately configured backup."
-          action={<Link href="/tracker/logs" className="md:min-h-9 inline-flex min-h-11 md:min-h-[var(--lms-control-height)] items-center font-semibold text-primary-text underline">
-            Reset filter
-          </Link>}/>
+        <ErrorState title="Invalid log environment." description="Choose Production, Development or UAT."
+          action={<Link href="/tracker/logs" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Reset filter</Link>} />
       </div>
     );
   }
 
-  const [items, state] = await Promise.all([
-    listKnownErrorsForAdmin(context, parsed.data),
-    readLogAlertAdminState(context),
-  ]);
+  // The Cloud Logging workbench must remain usable even when the independent
+  // DB10 Known Errors persistence feature has not been enabled by operations.
+  const knownErrors = alertsReady
+    ? await Promise.all([
+        listKnownErrorsForAdmin(context, parsed.data),
+        readLogAlertAdminState(context),
+      ])
+    : null;
+  const items = knownErrors?.[0] ?? [];
+  const lastViewedAt = knownErrors?.[1].adminLastViewedAt ?? null;
+  const newSinceLastVisit = lastViewedAt
+    ? items.filter(item => item.lastSeenAt.getTime() > lastViewedAt.getTime()).length
+    : 0;
 
   return (
-    <div className="min-w-0 space-y-4">
+    <div className="min-w-0 space-y-5">
       {header}
+      <div className="flex min-w-0 flex-wrap items-center gap-3 text-xs text-muted-foreground">
+        <span>Platform logs · Named Super Admin access</span>
+        {deploy ? <span className="rounded-full border border-[var(--lms-canvas-border)] px-3 py-1">Deploy {deploy.slice(0, 8)}</span> : null}
+        <span>{pollingReady ? "Cloud log collection enabled" : "Cloud log collection not configured"}</span>
+      </div>
       <Tabs ariaLabel="Log environment" renderPanel={false} value={environment}
-        items={(["PRODUCTION","UAT","DEVELOPMENT"] as const).map(value=>({
-          value, label:value, href:"/tracker/logs?environment="+value,
+        items={(["PRODUCTION", "DEVELOPMENT", "UAT"] as const).map(value => ({
+          value, label: value, href: "/tracker/logs?environment=" + value,
         }))} />
-      <KnownErrorsWorkspace items={items} lastViewedAt={state.adminLastViewedAt} />
-      <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4" open={Boolean(liveQuery)}>
-        <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Live logging tools</summary>
-        <div className="min-w-0 space-y-4 pt-3">
-      {!context.adminScope?.collegeId&&!context.adminScope?.organizationId?
-        <TrackerLiveLogsExplorer initialQuery={liveQuery}/>:null}
-      {!cloudLogPollConfigured() ? (
-        <Alert tone="warning">Cloud Logging backup is not configured. In-app errors can still be reported to Telegram.</Alert>
+      {newSinceLastVisit > 0 ? (
+        <Alert tone="info">{newSinceLastVisit}{items.length === 40 ? "+" : ""} new tracked error {newSinceLastVisit === 1 ? "signature" : "signatures"} since your last review.</Alert>
       ) : null}
-      {!telegramAlertsConfigured() ? (
-        <Alert tone="warning">Telegram alerts are not configured</Alert>
+      <TrackerLiveLogsExplorer initialQuery={liveQuery} />
+      {!pollingReady ? (
+        <Alert tone="warning">Cloud Logging polling is not configured for this deployment. The live source may be unavailable; this is not a healthy-log result.</Alert>
       ) : null}
-        </div>
-      </details>
+      <section className="min-w-0 space-y-3" aria-labelledby="known-errors-heading">
+        <h2 id="known-errors-heading" className="text-[20px] font-semibold text-[var(--lms-heading)]">Known errors</h2>
+        <p className="text-sm text-body">Durable signatures, recurrence, acknowledgements and triage are kept separate from the live log feed.</p>
+        {knownErrors ? (
+          <>
+            <KnownErrorsWorkspace items={items} lastViewedAt={lastViewedAt} />
+            {items.length === 40 ? (
+              <p className="text-xs leading-5 text-muted-foreground">
+                Showing the 40 most recent signatures. This list does not include complete historical results; use live-log pagination for older events.
+              </p>
+            ) : null}
+          </>
+        ) : (
+          <Alert tone="warning">Known errors persistence is not enabled or its migration replay has not been verified. This does not mean there are no errors. Live logging above remains available independently.</Alert>
+        )}
+      </section>
       <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-4">
         <summary className="flex min-h-11 cursor-pointer items-center text-[16px] font-semibold text-[var(--lms-heading)] md:min-h-9">Telegram alert tools</summary>
-        <div className="min-w-0 pt-3">
-      <TrackerTelegramManualPanel items={items} configured={telegramAlertsConfigured()}
-        deploy={/^[0-9a-f]{7,64}$/i.test(process.env.DEPLOY_COMMIT??"")
-          ?process.env.DEPLOY_COMMIT??null:null} />
+        <div className="min-w-0 space-y-3 pt-3">
+          {knownErrors ? (
+            <TrackerTelegramManualPanel items={items} configured={telegramReady} deploy={deploy} />
+          ) : (
+            <Alert tone="warning">Telegram digest tools require verified Known errors persistence.</Alert>
+          )}
+          {!telegramReady ? <Alert tone="info">Telegram alerts are not configured.</Alert> : null}
         </div>
       </details>
-      {items.length === 40 ? (
-        <p className="text-xs text-muted-foreground leading-[20px]">
-          Showing the most recent 40 signatures. Historical pagination is not yet implemented.
-        </p>
-      ) : null}
     </div>
   );
 }

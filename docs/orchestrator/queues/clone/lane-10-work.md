@@ -11,8 +11,8 @@ For EACH packet below, in order (highest severity first), strictly one at a time
 
 Packets:
 
-- [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_tracker_logs_page.tsx.md` (edit src/app/(authenticated)/tracker/logs/page.tsx; 19 findings; best P0)
-- [ ] `docs/audit/gap-fix-work/packets/lane-10/src_modules_operations_scheduled-job-lease.ts.md` (edit src/modules/operations/scheduled-job-lease.ts; 9 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_authenticated_tracker_logs_page.tsx.md` (edit src/app/(authenticated)/tracker/logs/page.tsx; 19 findings; best P0)
+- [x] `docs/audit/gap-fix-work/packets/lane-10/src_modules_operations_scheduled-job-lease.ts.md` (edit src/modules/operations/scheduled-job-lease.ts; 9 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_modules_module-access_super-admin-student-bulk-rule-service.ts.md` (edit src/modules/module-access/super-admin-student-bulk-rule-service.ts; 2 findings; best P0)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_modules_operations_scheduled-job-runner.ts.part1of2.md` (edit src/modules/operations/scheduled-job-runner.ts; 20 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_modules_operations_scheduled-job-runner.ts.part2of2.md` (edit src/modules/operations/scheduled-job-runner.ts; 17 findings; best P1)
