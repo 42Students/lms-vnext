@@ -454,6 +454,7 @@ export function FacultyAttendanceWorkspace({
     }
     submitLock.current = true;
     setSubmitting(true);
+    let persisted = false;
     try {
       const absentMembershipIds =
         workspace.roster
@@ -497,6 +498,7 @@ export function FacultyAttendanceWorkspace({
         );
         return;
       }
+      persisted = true;
       setCorrectionReason("");
       setSavedNotice(`Attendance recorded for ${workspace.roster.length} learner(s).`);
       router.refresh();
@@ -507,7 +509,7 @@ export function FacultyAttendanceWorkspace({
     } finally {
       submitLock.current = false;
       setSubmitting(false);
-      setConfirmingAttendance(false);
+      if (persisted) setConfirmingAttendance(false);
     }
   }
 
@@ -1003,36 +1005,26 @@ export function FacultyAttendanceWorkspace({
                 </div>
               </div>
 
-              <div
-                className="mt-[var(--lms-space-4)] max-h-[420px] min-w-0 overflow-auto border-y border-border"
-                aria-label="Attendance roster" role="region" tabIndex={0}
-              >
-                <div aria-hidden="true" className="sticky top-0 z-10 grid min-w-[500px] grid-cols-2 border-b border-border bg-surface px-3 py-2 text-xs font-semibold text-muted-foreground">
-                  <span>Student Name</span><span>Status</span>
-                </div>
-                {visibleRoster.length === 0 ? (
-                  <p className="p-6 text-sm text-muted-foreground">
-                    {workspace.roster.length === 0 ? "No learners are enrolled in this class." : "No learners match this search."}
-                  </p>
-                ) : (
-                  <ul className="min-w-[500px] divide-y divide-border">
-                    {visibleRoster.map(
-                      (learner) => {
-                        const isAbsent = absent.has(
-                          learner.membershipId,
-                        );
-                        return (
-                          <li
-                            key={learner.membershipId}
-                            className="grid min-w-0 grid-cols-2 items-center gap-3 px-3 py-3"
-                          >
-                            <div>
-                              <p className="m-0 text-sm font-semibold text-foreground">
-                                {learnerName(learner)}
-                              </p>
-                              {learner.rollNumber ? <p className="mt-1 text-xs text-muted-foreground">Roll {learner.rollNumber}</p> : null}
-                            </div>
-                            <div className="grid grid-cols-2 gap-2 [&>button]:w-full" role="group" aria-label={"Attendance for "+learnerName(learner)}>
+              <div className="mt-[var(--lms-space-4)] max-h-[420px] min-w-0 overflow-auto border-y border-border"
+                aria-label="Attendance roster" role="region" tabIndex={0}>
+                <table className="min-w-[500px] w-full table-fixed border-collapse text-left text-sm">
+                  <thead className="sticky top-0 z-10 border-b border-border bg-surface text-xs font-semibold text-muted-foreground">
+                    <tr><th scope="col" className="w-1/2 px-3 py-2">Student Name</th><th scope="col" className="w-1/2 px-3 py-2">Status</th></tr>
+                  </thead>
+                  <tbody className="divide-y divide-border">
+                    {visibleRoster.length === 0 ? (
+                      <tr><td colSpan={2} className="p-6 text-sm text-muted-foreground">
+                        {workspace.roster.length === 0 ? "No learners are enrolled in this class." : "No learners match this search."}
+                      </td></tr>
+                    ) : visibleRoster.map(learner => {
+                      const isAbsent = absent.has(learner.membershipId);
+                      return <tr key={learner.membershipId}>
+                        <th scope="row" className="w-1/2 px-3 py-3 text-left align-middle">
+                          <span className="block text-sm font-semibold text-foreground">{learnerName(learner)}</span>
+                          {learner.rollNumber ? <span className="mt-1 block text-xs font-normal text-muted-foreground">Roll {learner.rollNumber}</span> : null}
+                        </th>
+                        <td className="w-1/2 px-3 py-3 align-middle">
+                          <div className="grid grid-cols-2 gap-2 [&>button]:w-full" role="group" aria-label={"Attendance for "+learnerName(learner)}>
                               <Button
                                 size="md"
                                 className="min-h-11 md:min-h-9"
@@ -1078,12 +1070,11 @@ export function FacultyAttendanceWorkspace({
                                 <span aria-hidden="true">× A</span><span className="sr-only">Absent</span>
                               </Button>
                             </div>
-                          </li>
-                        );
-                      },
-                    )}
-                  </ul>
-                )}
+                        </td>
+                      </tr>;
+                    })}
+                  </tbody>
+                </table>
               </div>
 
               {selectedSession?.attendanceStatus==="MARKED"?(
@@ -1152,11 +1143,11 @@ export function FacultyAttendanceWorkspace({
 
       <ConfirmDialog
         open={confirmingAttendance}
-        onOpenChange={setConfirmingAttendance}
+        onOpenChange={next => { if (!submitting) setConfirmingAttendance(next); }}
         title="Submit Attendance"
-        description={selectedSession?.attendanceStatus === "MARKED"
+        description={error ?? (selectedSession?.attendanceStatus === "MARKED"
           ? (attendanceConfirmation ?? "Review attendance corrections before submitting.")
-          : ("Mark " + absent.size + (absent.size === 1 ? " student" : " students") + " absent and " + (workspace.roster.length - absent.size) + ((workspace.roster.length - absent.size) === 1 ? " student" : " students") + " present?")}
+          : ("Mark " + absent.size + (absent.size === 1 ? " student" : " students") + " absent and " + (workspace.roster.length - absent.size) + ((workspace.roster.length - absent.size) === 1 ? " student" : " students") + " present?"))}
         confirmLabel="Confirm"
         cancelLabel="Cancel"
         confirmVariant="primary"
