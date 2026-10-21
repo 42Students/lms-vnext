@@ -75,12 +75,48 @@ export async function getTpoInterviewSlotWorkspace(context:RequestContext,jobId:
  // An officer may be revoked while the roster and slot reads are in flight.
  // Fail closed before returning candidate names and work email addresses.
  await getDb().transaction(async tx=>{await requireTpoJobActor(tx,context);});
+ const now=new Date();
  return {...info,storageReady,roster,unassigned:roster.filter(r=>!booked.has(r.applicationId)),
+  upcomingSlotCount:slots.filter(slot=>slot.startsAt>=now).length,
+  pastSlotCount:slots.filter(slot=>slot.startsAt<now).length,
+  pendingRescheduleCount:reschedules.length,
   recruiterProposals:recruiterProposals.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString()})),
   reschedules:reschedules.map(row=>({...row,requestedAt:row.requestedAt.toISOString()})),
   slots:slots.map(row=>({...row,startsAt:row.startsAt.toISOString(),endsAt:row.endsAt.toISOString(),
    createdAt:row.createdAt.toISOString(),updatedAt:row.updatedAt.toISOString(),
    confirmedAt:row.confirmedAt?.toISOString()??null}))};
+}
+/** Booking in distinct placement rounds must serialize on the learner
+ * membership before checking overlapping time windows. */
+async function assertLearnerTimeAvailable(tx:TpoJobTx,collegeId:string,
+ applicationId:string,startsAt:Date,endsAt:Date,ignoreSlotId?:string){
+ const [application]=await tx.select({membershipId:placementApplications.membershipId})
+  .from(placementApplications).innerJoin(placementJobs,
+   eq(placementJobs.id,placementApplications.jobId))
+  .where(and(eq(placementApplications.id,applicationId),
+   eq(placementJobs.collegeId,collegeId))).limit(1);
+ if(!application)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+ const [membership]=await tx.select({id:collegeMemberships.id})
+  .from(collegeMemberships).where(and(
+   eq(collegeMemberships.id,application.membershipId),
+   eq(collegeMemberships.collegeId,collegeId),
+   eq(collegeMemberships.status,"ACTIVE"))).for("update").limit(1);
+ if(!membership)throw new PlacementsServiceError("PLACEMENT_APPLICATION_NOT_FOUND");
+ const [conflict]=await tx.select({id:placementRoundCandidateSlots.id})
+  .from(placementRoundCandidateSlots)
+  .innerJoin(placementApplications,
+   eq(placementApplications.id,placementRoundCandidateSlots.applicationId))
+  .innerJoin(placementJobs,eq(placementJobs.id,placementApplications.jobId))
+  .where(and(
+   eq(placementJobs.collegeId,collegeId),
+   eq(placementApplications.membershipId,application.membershipId),
+   eq(placementRoundCandidateSlots.status,"BOOKED"),
+   ignoreSlotId?ne(placementRoundCandidateSlots.id,ignoreSlotId):undefined,
+   lt(placementRoundCandidateSlots.startsAt,endsAt),
+   gt(placementRoundCandidateSlots.endsAt,startsAt),
+  )).limit(1);
+ if(conflict)throw Error("This learner already has an interview at that time. "+
+  "Choose another slot; the existing booking has been preserved.");
 }
 async function notice(tx:TpoJobTx,context:RequestContext,job:{id:string;title:string},applicationId:string,
  action:string,message:string){
@@ -285,6 +321,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementRoundCandidateSlots.roundId,info.round.id),
     eq(placementRoundCandidateSlots.applicationId,request.applicationId),
     eq(placementRoundCandidateSlots.status,"BOOKED"))).for("update").limit(1);
+   await assertLearnerTimeAvailable(tx,info.collegeId,
+    request.applicationId,target.startsAt,target.endsAt,existing?.id);
    if(existing)await tx.update(placementRoundCandidateSlots).set({
     applicationId:null,status:"CANCELLED",updatedAt:new Date(),version:existing.version+1,
    }).where(eq(placementRoundCandidateSlots.id,existing.id));
@@ -390,6 +428,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
      eq(placementLearnerRequests.requestType,"APPLICATION_WITHDRAWAL"),
      eq(placementLearnerRequests.status,"PENDING"))).limit(1);
    if(pendingWithdrawal)throw Error("Resolve the learner's pending withdrawal before assigning a new interview.");
+   await assertLearnerTimeAvailable(tx,info.collegeId,
+    input.applicationId,slot.startsAt,slot.endsAt);
    const [saved]=await tx.update(placementRoundCandidateSlots).set({
     applicationId:input.applicationId,status:"BOOKED",
     confirmedAt:new Date(),updatedAt:new Date(),version:slot.version+1,
@@ -428,6 +468,8 @@ export async function mutateTpoInterviewSlots(context:RequestContext,rawJobId:un
     eq(placementRoundCandidateSlots.roundId,info.round.id))).for("update").limit(1);
    if(!target||target.status!=="AVAILABLE"||target.startsAt<=new Date())
     throw Error("The destination must be a future available interview slot.");
+   await assertLearnerTimeAvailable(tx,info.collegeId,
+    slot.applicationId,target.startsAt,target.endsAt,slot.id);
    await tx.update(placementRoundCandidateSlots).set({
     status:"CANCELLED",applicationId:null,updatedAt:new Date(),version:slot.version+1,
    }).where(eq(placementRoundCandidateSlots.id,slot.id));
