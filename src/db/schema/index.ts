@@ -115,3 +115,5 @@ export { projectMeetingAuditHistoryStaged, projectResourceAuditHistoryStaged } f
 
 // Registered DB10 taxonomy; runtime gate stays closed until PostgreSQL replay/seed audit.
 export { db10Skills, db10SkillSynonyms, db10SkillUsage } from "./db10-skills-catalog.draft";
+
+export { db10AuditFindingFiles } from "./db10-audit-findings.draft";
