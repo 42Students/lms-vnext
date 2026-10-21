@@ -51,7 +51,6 @@ export default async function AnnouncementsPage({
     return (
       <div className="min-w-0 space-y-6">
         <PageHeader
-          eyebrow="Super Admin"
           title="Announcements"
           description="Announcements are temporarily unavailable. Please try again later."
         />
@@ -127,7 +126,6 @@ export default async function AnnouncementsPage({
   return (
     <div className="min-w-0 space-y-6">
       <PageHeader
-        eyebrow="Super Admin"
         title="Announcements"
         description="Target, schedule, pin, edit, soft-delete and restore college communications."
         actions={

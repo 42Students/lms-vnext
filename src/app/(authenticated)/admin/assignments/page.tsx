@@ -57,7 +57,7 @@ export default async function SuperAdminAssignmentsPage({
     <AdminAssessmentDirectory data={data} showHeader={false} />
     <div className="flex min-w-0 justify-start print:hidden">
       <a href={adminAssessmentExportHref("ASSIGNMENT",query.data)}
-     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">Export assignments.csv</a>
+     className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-[var(--lms-white)] px-[var(--lms-space-4)] text-[var(--lms-font-base)] font-[650] text-[var(--lms-body-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9 print:hidden hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)]">Export</a>
     </div>
   </div>;
 }
