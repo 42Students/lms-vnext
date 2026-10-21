@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Radio } from "@/components/ui/radio";
 import { InlineNotice } from "@/components/ui/inline-notice";
 import { useConfirmFlow } from "@/components/ui/use-confirm-flow";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useToast } from "@/components/ui/toast";
 
 export type EditableJobType = {
@@ -35,6 +36,8 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
   const router = useRouter();
   const {showToast} = useToast();
   const serial = useRef(0);
+  const allowUnload = useRef(false);
+  const [leaveHref,setLeaveHref] = useState<string|null>(null);
   const [rows, setRows] = useState<Row[]>(() => fromProps(types));
   const [saved, setSaved] = useState<Row[]>(() => fromProps(types));
   const [newName, setNewName] = useState("");
@@ -52,11 +55,32 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
   useEffect(() => {
     if (!dirty) return;
     const preventExit = (event: BeforeUnloadEvent) => {
+      if (allowUnload.current) return;
       event.preventDefault();
       event.returnValue = "";
     };
     window.addEventListener("beforeunload", preventExit);
     return () => window.removeEventListener("beforeunload", preventExit);
+  }, [dirty]);
+  useEffect(() => {
+    if (!dirty) return;
+    const onAnchorClick = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey ||
+          event.ctrlKey || event.shiftKey || event.altKey) return;
+      if (!(event.target instanceof Element)) return;
+      const anchor = event.target.closest("a[href]");
+      if (!(anchor instanceof HTMLAnchorElement) || anchor.target === "_blank" ||
+          anchor.hasAttribute("download")) return;
+      const url = new URL(anchor.href,window.location.href);
+      if (url.origin !== window.location.origin ||
+          (url.pathname === window.location.pathname && url.search === window.location.search))
+        return;
+      event.preventDefault();
+      event.stopPropagation();
+      setLeaveHref(url.href);
+    };
+    document.addEventListener("click",onAnchorClick,true);
+    return () => document.removeEventListener("click",onAnchorClick,true);
   }, [dirty]);
 
   const activeCount = rows.filter(row => row.active).length;
@@ -166,6 +190,19 @@ export function TpoUnifiedJobTypesEditor({ types }: { types: readonly EditableJo
 
   return <div className="min-w-0 space-y-4" data-testid="settings.job-types">
     {dialog}
+    <ConfirmDialog open={leaveHref !== null}
+      title="Leave without saving?"
+      description="You have unsaved job types changes."
+      confirmLabel="Leave without saving"
+      confirmVariant="danger"
+      onOpenChange={open => { if (!open) setLeaveHref(null); }}
+      onConfirm={() => {
+        if (!leaveHref) return;
+        const target = new URL(leaveHref,window.location.href);
+        setLeaveHref(null);
+        allowUnload.current = true;
+        router.push(target.pathname+target.search+target.hash);
+      }}/>
     <p className="text-sm text-muted-foreground">
       The drive form, filters and reports use this list. Switching a type off hides it from new drives; drives that already have it keep it.
     </p>
