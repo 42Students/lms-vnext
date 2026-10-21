@@ -250,7 +250,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
       <EmptyState title={TPO_REQUESTS_COPY.tab} description={TPO_REQUESTS_COPY.unavailable}
         action={<Link href="/tpo/placements/overview" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Operations overview</Link>}/> :
       <section aria-label="Recruiter drive requests" className="space-y-3">
-        <p role="status" className="text-sm">{data.totalMatching} recruiter drive requests</p>
+        <p role="status" className="text-sm leading-[1.6]">{data.totalMatching} recruiter drive requests</p>
         {data.requestRows.length===0?<EmptyState title="No requests" description="No recruiter drive requests need review."
             action={<Link href="/tpo/placements/lifecycle?view=DRAFT" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">Drafts</Link>}/>:
           data.requestRows.map(item=><article key={item.id} className="border-b border-border py-4">
@@ -297,7 +297,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
           </div>)}
       </section>
       <p className="text-sm text-body">Requests are tracked separately from drafts and published drives.</p>
-      <p role="status" className="text-sm text-body">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
+      <p role="status" className="text-sm text-body leading-[1.6]">{data.totalMatching} matching drives · Page {data.page} of {data.totalPages}.
        Counts cover the selected college season (or all seasons) and search across every page.</p>
       {data.rows.length === 0 ?
         <div className="space-y-3">
