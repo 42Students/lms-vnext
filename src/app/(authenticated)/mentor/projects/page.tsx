@@ -88,7 +88,12 @@ async function MentorProjectsContent({
 
   // MEN-projects-meetings-10: common filters are paged and counted in SQL.
   // Nontrivial attention/task ranking keeps the legacy full-set path.
-  const retryLink = <Link href="/mentor/projects" className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>;
+  const retrySearch=new URLSearchParams();
+  Object.entries(query).forEach(([key,value])=>{
+    if(typeof value==="string"&&value)retrySearch.set(key,value);
+    if(typeof value==="number"&&Number.isFinite(value))retrySearch.set(key,String(value));
+  });
+  const retryLink = <Link href={"/mentor/projects"+(retrySearch.size?"?"+retrySearch.toString():"")} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>;
   const readFailure = () => <div className="min-w-0 space-y-4">
     <PageHeader title="Projects"/>
     <ErrorState title="Projects could not be loaded"
@@ -313,7 +318,7 @@ async function MentorProjectsContent({
             dueState:(()=>{
               const raw=row.project.endDate;
               if(!raw)return "No due date";
-              const parsed=Date.parse(/^\\d{4}-\\d{2}-\\d{2}$/.test(raw)?raw+"T23:59:59+05:30":raw);
+              const parsed=Date.parse(/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(raw)?raw+"T23:59:59+05:30":raw);
               if(!Number.isFinite(parsed))return "Due";
               const days=Math.ceil((parsed-Date.now())/86_400_000);
               return days<0?"Overdue":days<=7?"Due soon":"Due";
