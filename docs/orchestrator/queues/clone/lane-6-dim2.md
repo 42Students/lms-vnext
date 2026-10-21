@@ -193,16 +193,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/academics/college-structure-directory.tsx`
 - [x] `src/components/activity/learner-notifications-inbox.tsx`
 - [x] `src/components/activity/notification-list.tsx`
-- [ ] `src/components/admin/academic-module-scope-inventory.tsx`
-- [ ] `src/components/admin/academic-setup-steps.tsx`
-- [ ] `src/components/admin/college-closing-quizzes-card.tsx`
-- [ ] `src/components/admin/college-setup-checklist.tsx`
-- [ ] `src/components/admin/learner-module-access-drawer.tsx`
-- [ ] `src/components/admin/super-admin-company-identities.tsx`
-- [ ] `src/components/admin/super-admin-hr-accounts.tsx`
-- [ ] `src/components/admin/super-admin-hr-detail-drawer.tsx`
-- [ ] `src/components/admin/super-admin-student-bulk-access.tsx`
-- [ ] `src/components/admin/tenant-settings-editor.tsx`
+- [x] `src/components/admin/academic-module-scope-inventory.tsx`
+- [x] `src/components/admin/academic-setup-steps.tsx`
+- [x] `src/components/admin/college-closing-quizzes-card.tsx`
+- [x] `src/components/admin/college-setup-checklist.tsx`
+- [x] `src/components/admin/learner-module-access-drawer.tsx`
+- [x] `src/components/admin/super-admin-company-identities.tsx`
+- [x] `src/components/admin/super-admin-hr-accounts.tsx`
+- [x] `src/components/admin/super-admin-hr-detail-drawer.tsx`
+- [x] `src/components/admin/super-admin-student-bulk-access.tsx`
+- [x] `src/components/admin/tenant-settings-editor.tsx`
 - [ ] `src/components/admin/tenant-settings-other-keys.tsx`
 - [ ] `src/components/announcements/announcement-admin-workspace.tsx`
 - [ ] `src/components/attendance/faculty-attendance-workspace.tsx`
