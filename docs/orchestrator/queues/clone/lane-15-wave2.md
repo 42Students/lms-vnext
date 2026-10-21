@@ -54,7 +54,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_topbar_legacy-topbar.tsx.md` (edit src/components/shell/topbar/legacy-topbar.tsx; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_college-drive-archive-action.tsx.md` (edit src/components/placements/college-drive-archive-action.tsx; 6 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_bug-tracker_admin-validation.ts.md` (edit src/modules/bug-tracker/admin-validation.ts; 5 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_placements_recruiter_bell_route.ts.md` (edit src/app/api/placements/recruiter/bell/route.ts; 5 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_placements_recruiter_bell_route.ts.md` (edit src/app/api/placements/recruiter/bell/route.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_platform-setting-overrides.ts.md` (edit src/db/schema/platform-setting-overrides.ts; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_learner-career-rounds-workspace.tsx.md` (edit src/components/placements/learner-career-rounds-workspace.tsx; 5 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_placements_tpo-public-placement-content-editor.tsx.md` (edit src/components/placements/tpo-public-placement-content-editor.tsx; 5 findings; best P2)
