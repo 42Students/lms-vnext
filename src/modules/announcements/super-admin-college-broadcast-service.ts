@@ -1,4 +1,5 @@
 import "server-only";
+import {randomUUID} from "node:crypto";
 import {and,eq,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {colleges} from "@/db/schema/colleges";
@@ -45,6 +46,9 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
  // Fail closed for direct clients until a durable due-time worker is deployed.
  if(input.scheduledAt)throw new AnnouncementError("INVALID_SCHEDULE");
  const requested=requestedBroadcastCollegeIds(input.collegeIds);
+ // A single request is one logical broadcast even though DB10 still stores
+ // one recipient-scoped announcement row per authorized college.
+ const broadcastGroupId=randomUUID();
  const db=getDb();
  const restrictions=[
   eq(colleges.status,"ACTIVE"),
@@ -62,7 +66,10 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
   .from(colleges).innerJoin(organizations,eq(organizations.id,colleges.organizationId))
   .where(and(...restrictions)).orderBy(colleges.id).limit(501);
  if(targets.length===0||targets.length>500)throw new AnnouncementError("TARGET_NOT_FOUND");
- if(input.reviewedCollegeIds && !sameReviewedBroadcastAudience(input.reviewedCollegeIds,targets.map(row=>row.id)))
+ // Audience review is mandatory: an omitted preview may not silently send to
+ // extra colleges if a role/scope or the active TPO directory has changed.
+ if(!input.reviewedCollegeIds ||
+    !sameReviewedBroadcastAudience(input.reviewedCollegeIds,targets.map(row=>row.id)))
   throw new AnnouncementError("STALE_AUDIENCE");
  if(input.audienceMode==="SELECTED_COLLEGES"&&targets.length!==requested.length)throw new AnnouncementError("TARGET_NOT_FOUND");
  for(const target of targets){
@@ -87,7 +94,10 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    eventType:ACTIVITY_EVENT_TYPES.PLATFORM_COLLEGE_ANNOUNCEMENT_PUBLISHED,
    subjectType:"announcement",subjectId:row.id,
    importance:"HIGH" as const,summary:"Super Admin published an in-app college notice",
-   metadata:{audienceMode:input.audienceMode,noticeId:row.id},
+   groupKey:"college-broadcast:"+broadcastGroupId,
+   dedupeKey:"college-broadcast:"+broadcastGroupId+":"+row.collegeId,
+   metadata:{audienceMode:input.audienceMode,noticeId:row.id,broadcastGroupId,
+    reviewedTargetCount:targets.length},
   }))).returning({id:activityEvents.id,collegeId:activityEvents.collegeId});
   // Fan-out and announcement rows share one transaction. An immediate
   // notification failure rolls back the entire publication.
@@ -112,5 +122,5 @@ export async function publishSuperAdminCollegeBroadcast(context:RequestContext,r
    }
   return inserted;
  });
- return {count:created.length,noticeIds:created.map(x=>x.id)};
+ return {broadcastGroupId,count:created.length,noticeIds:created.map(x=>x.id)};
 }
