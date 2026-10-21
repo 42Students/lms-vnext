@@ -14,34 +14,34 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/placements/learner-jobs-browse.tsx`
 - [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
 - [x] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
-- [ ] `src/components/placements/tpo-round-result-recorder.tsx`
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
-- [ ] `src/components/projects/mentor-delivery-lock-control.tsx`
-- [ ] `src/components/projects/project-admin-audit-page.tsx`
-- [ ] `src/components/projects/project-mentor-reassignment.tsx`
-- [ ] `src/components/projects/super-admin-template-college-bulk.tsx`
-- [ ] `src/components/shell/sidebar-legacy.css`
-- [ ] `src/components/tpo/recruiter-invite-landing.tsx`
-- [ ] `src/components/tpo/tpo-header-indicators.tsx`
-- [ ] `src/components/ui/banner.tsx`
-- [ ] `src/components/ui/disclosure.tsx`
-- [ ] `src/components/ui/filter-chip.tsx`
-- [ ] `src/components/ui/multi-select.tsx`
-- [ ] `src/components/ui/skeleton.tsx`
-- [ ] `src/styles/college-admin-north-star.css`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/mentor-meetings-calendar.module.css`
-- [ ] `src/components/projects/project-admin-reassign-mentor-page.tsx`
-- [ ] `src/components/projects/project-workspace.tsx`
-- [ ] `src/components/shell/learner-notification-bell.tsx`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/tpo-company-memory-workspace.tsx`
-- [ ] `src/components/tpo/tpo-student-quick-panel.tsx`
-- [ ] `src/components/ui/drawer.tsx`
-- [ ] `src/components/ui/needs-doing-chips.tsx`
-- [ ] `src/components/ui/split-button.tsx`
-- [ ] `src/styles/micro-details.css`
+- [x] `src/components/placements/tpo-offer-lifecycle-panel.tsx`
+- [x] `src/components/placements/tpo-round-result-recorder.tsx`
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
+- [x] `src/components/projects/mentor-delivery-lock-control.tsx`
+- [x] `src/components/projects/project-admin-audit-page.tsx`
+- [x] `src/components/projects/project-mentor-reassignment.tsx`
+- [x] `src/components/projects/super-admin-template-college-bulk.tsx`
+- [x] `src/components/shell/sidebar-legacy.css`
+- [x] `src/components/tpo/recruiter-invite-landing.tsx`
+- [x] `src/components/tpo/tpo-header-indicators.tsx`
+- [x] `src/components/ui/banner.tsx`
+- [x] `src/components/ui/disclosure.tsx`
+- [x] `src/components/ui/filter-chip.tsx`
+- [x] `src/components/ui/multi-select.tsx`
+- [x] `src/components/ui/skeleton.tsx`
+- [x] `src/styles/college-admin-north-star.css`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/projects/mentor-meetings-calendar.module.css`
+- [x] `src/components/projects/project-admin-reassign-mentor-page.tsx`
+- [x] `src/components/projects/project-workspace.tsx`
+- [x] `src/components/shell/learner-notification-bell.tsx`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/tpo-company-memory-workspace.tsx`
+- [x] `src/components/tpo/tpo-student-quick-panel.tsx`
+- [x] `src/components/ui/drawer.tsx`
+- [x] `src/components/ui/needs-doing-chips.tsx`
+- [x] `src/components/ui/split-button.tsx`
+- [x] `src/styles/micro-details.css`
 - [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
 - [ ] `src/components/academics/college-archived-programs.tsx`
 - [ ] `src/components/admin/college-closing-quizzes-card.tsx`

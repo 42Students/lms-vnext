@@ -69,7 +69,7 @@ type CompanyMemory = {
 type Phase = "loading" | "ready" | "error" | "migration-pending" | "not-found";
 
 const buttonStyle =
-  "lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9";
+  "lms-inline-link inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-link hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9";
 
 function dateLabel(value: string) {
   const date = new Date(value);
@@ -222,12 +222,12 @@ export function TpoCompanyMemoryWorkspace({
            <nav aria-label={"New work for "+company.name}
             className="w-[min(15rem,calc(100vw_-_5rem))] max-w-full space-y-1">
             <Link href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}
-             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New recruiter lead for {company.name}</Link>
+             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">New recruiter lead for {company.name}</Link>
             <Link href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}
-             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">New drive for {company.name}</Link>
+             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">New drive for {company.name}</Link>
             <MenuSeparator />
             <Link href={"/tpo/calendar?company="+encodeURIComponent(company.name)}
-             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">Follow-up</Link>
+             className="lms-inline-link block min-h-11 rounded-[var(--lms-control-radius)] px-2 py-3 text-sm text-link underline hover:bg-[rgba(0,0,0,0.035)] active:bg-[rgba(0,0,0,0.06)] transition-[background-color] duration-[200ms] ease-[ease] motion-reduce:transition-none break-words [overflow-wrap:anywhere] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Follow-up</Link>
            </nav>
           </Dropdown>
           {company.canonicalCompanyId?<Link className={buttonStyle}
@@ -302,7 +302,7 @@ export function TpoCompanyMemoryWorkspace({
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">People</h2>
             {company.people.length === 0 ? (
-              <p className="mt-3 text-sm text-body">No contacts yet. <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}>Add contact</Link></p>
+              <p className="mt-3 text-sm text-body">No contacts yet. <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={"/tpo/recruiters?add=1&company="+encodeURIComponent(company.name)}>Add contact</Link></p>
             ) : (
               <div className="mt-3 divide-y divide-border">
                 {company.people.map(person => (
@@ -310,7 +310,7 @@ export function TpoCompanyMemoryWorkspace({
                     <div className="flex min-w-0 items-center gap-3">
                       <Avatar name={person.name} size="md"/>
                       <div className="min-w-0">
-                      <Link className="lms-inline-link inline-flex min-h-11 items-center break-words font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                      <Link className="lms-inline-link inline-flex min-h-11 items-center break-words font-medium text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
                         href={"/tpo/recruiters/" + encodeURIComponent(person.id)}>
                         {person.name}
                       </Link>
@@ -345,7 +345,7 @@ export function TpoCompanyMemoryWorkspace({
                 {company.documents.map(doc=><li key={doc.id} className="py-3">
                   <p className="text-sm text-body">Applicant list shared {dateLabel(doc.createdAt)}</p>
                   <p className="text-xs text-muted-foreground">{doc.jobTitle} · {doc.selectedCount>0?doc.selectedCount+" selected applicants":"Current shortlist"}{doc.revokedAt?" · Link withdrawn":new Date(doc.expiresAt).getTime()<renderedAt?" · Link expired":" · Expires "+dateLabel(doc.expiresAt)}</p>
-                  <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+                  <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
                     href={"/tpo/placements/jobs/"+encodeURIComponent(doc.jobId)}>Open drive</Link>
                 </li>)}
               </ul>}
@@ -356,7 +356,7 @@ export function TpoCompanyMemoryWorkspace({
           <section className="border-b border-border py-4">
             <h2 className="font-semibold text-foreground">Drives</h2>
             {company.drives.length===0?
-              <p className="mt-3 text-sm text-body">No drives yet. <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9" href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}>Create drive</Link></p>:
+              <p className="mt-3 text-sm text-body">No drives yet. <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9" href={"/tpo/placements/new?company="+encodeURIComponent(company.name)}>Create drive</Link></p>:
               <div className="mt-3">
                 <TpoCompanyMemoryDriveGrid companyName={company.name} drives={company.drives}
                   search={driveSearch} onSearchChange={setDriveSearch}/>
