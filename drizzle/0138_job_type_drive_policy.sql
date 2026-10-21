@@ -14,6 +14,17 @@ UPDATE "placement_jobs" SET
  "counts_as_placed" = ("employment_type" <> 'INTERNSHIP')
  WHERE "job_type_label" IS NULL;
 --> statement-breakpoint
+-- Preserve custom choice order independent of renames and version timestamps.
+ALTER TABLE "placement_tpo_job_types"
+ ADD COLUMN "sort_order" integer NOT NULL DEFAULT 0;
+--> statement-breakpoint
+WITH ranked AS (
+ SELECT id, row_number() OVER (PARTITION BY college_id ORDER BY updated_at, id)::integer AS pos
+ FROM "placement_tpo_job_types"
+)
+UPDATE "placement_tpo_job_types" jt SET sort_order = ranked.pos
+ FROM ranked WHERE jt.id = ranked.id;
+--> statement-breakpoint
 -- Prevent two custom types with names differing only by case from being persisted.
 DROP INDEX IF EXISTS "placement_tpo_job_types_college_label_uq";
 --> statement-breakpoint
