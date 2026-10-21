@@ -32,5 +32,5 @@ export async function legacyShareBody(request:Request){
 }
 export function legacyShareCode(body:unknown):string|null{
  if(!body||typeof body!=="object"||!("code" in body))return null;
- return typeof body.code==="string"&&/^\\d{6}$/.test(body.code)?body.code:null;
+ return typeof body.code==="string"&&/^\d{6}$/.test(body.code)?body.code:null;
 }
