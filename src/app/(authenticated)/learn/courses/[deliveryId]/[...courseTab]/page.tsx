@@ -3,6 +3,7 @@ import { LEARNER_BACK_TO_COURSES } from "@/modules/courses/learner-course-copy-m
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { learnerCourseTabPath } from "@/modules/courses/learner-course-tab-route-model";
+import {resolveLegacyLearnerCourseDelivery} from "@/modules/courses/learner-course-legacy-route-service";
 import {learnerCourseTabPersistentQuery} from "@/modules/courses/learner-course-tab-context-model";
 import {LearnerCourseDocumentTitle} from "@/components/courses/learner-course-document-title";
 import { notFound, redirect } from "next/navigation";
@@ -43,6 +44,19 @@ export default async function LearnerCourseTabPage({
   const query = await searchParams;
   const context = await getCurrentRequestContext();
   const activeTab = learnerCourseTabPath(courseTab, learnerCourseTabs.map((tab) => tab.path));
+  if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(deliveryId)){
+    const authorizedDeliveryId=await resolveLegacyLearnerCourseDelivery(context,deliveryId);
+    if(!authorizedDeliveryId)notFound();
+    const safeQuery=new URLSearchParams();
+    for(const [key,value] of Object.entries(query)){
+      if(!["filter","lesson","content","month"].includes(key))continue;
+      const firstValue=Array.isArray(value)?value[0]:value;
+      if(firstValue&&firstValue.length<=100)safeQuery.set(key,firstValue);
+    }
+    const suffix=safeQuery.toString();
+    redirect("/learn/courses/"+encodeURIComponent(authorizedDeliveryId)+"/"+
+      (activeTab??"home")+(suffix?"?"+suffix:""));
+  }
   if (activeTab === null) {
     // A malformed/foreign delivery must not redirect before checking scope.
     await getLearnerCourseWorkspace(context, deliveryId);
