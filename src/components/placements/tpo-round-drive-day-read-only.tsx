@@ -152,7 +152,7 @@ export function TpoRoundDriveDayReadOnly({
       return false;
     }finally{setGateBusy(false);inFlight.current=false;}
   }
-  const pasteTokens=pasteText.split(/[\\n,;]+/).map(value=>value.trim()).filter(Boolean);
+  const pasteTokens=pasteText.split(/[\n,;]+/).map(value=>value.trim()).filter(Boolean);
   const pastePreview=useMemo(()=>{
     const matched:RoundRow[]=[];
     const unresolved:string[]=[];
@@ -229,6 +229,89 @@ export function TpoRoundDriveDayReadOnly({
         }
       />
 
+
+      <section aria-label="Gate quick check-in" className="min-w-0 space-y-3 border-b border-border pb-5">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="text-base font-semibold text-foreground">Gate check-in</h2>
+            <p className="text-sm text-body">Find a candidate by exact roll number or an unambiguous prefix/suffix.</p>
+          </div>
+          <Button type="button" variant="secondary" disabled={locked||gateBusy||pasteBusy}
+            onClick={()=>{setPasteFailure("");setPasteFeedback("");setPasteOpen(true);}}>
+            Paste a list of roll numbers
+          </Button>
+        </div>
+        <form className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:items-end"
+          onSubmit={event=>{event.preventDefault();prepareGate();}}>
+          <label className="min-w-0 flex-1 text-sm font-semibold text-body">
+            Roll number
+            <Input autoFocus type="search" autoComplete="off" value={gateInput}
+              disabled={locked||gateBusy||pasteBusy} placeholder="Roll number, then Enter"
+              onChange={event=>{setGateInput(event.target.value);setGateError("");setGateCandidates([]);}}
+              className="mt-1" />
+          </label>
+          <Button type="submit" disabled={locked||gateBusy||pasteBusy||!gateInput.trim()}>
+            Mark present
+          </Button>
+        </form>
+        {locked?<InlineNotice tone="info" message="This round is locked. Attendance changes are unavailable."/>:null}
+        {gateError?<InlineNotice tone="error" message={gateError} onDismiss={()=>setGateError("")}/>:null}
+        {gateCandidates.length>0?<ul className="text-xs text-body">
+          {gateCandidates.map(row=><li key={row.applicationId}>{row.rollNumber??"—"} · {row.displayName}</li>)}
+        </ul>:null}
+        {gateSuccess?<InlineNotice tone="success" message={gateSuccess} onDismiss={()=>setGateSuccess("")}/>:null}
+        {pasteFeedback?<InlineNotice tone="success" message={pasteFeedback} onDismiss={()=>setPasteFeedback("")}/>:null}
+        {pasteFailure?<InlineNotice tone="error" message={pasteFailure} onDismiss={()=>setPasteFailure("")}/>:null}
+      </section>
+      <section aria-label="Round progress">
+        <h2 className="mb-3 text-base font-semibold text-foreground">
+          Applicant progress
+        </h2>
+
+        <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
+          {summary.slice(0,6).map(([label, count], index) => (
+            <div
+              key={label}
+              className={"min-w-0 p-3 sm:p-4 " +
+                (index < 6 ? "border-b border-border " : "") +
+                (index % 2 === 0 ? "border-r border-border " : "") +
+                (index < 4 ? "lg:border-b " : "lg:border-b-0 ") +
+                (index % 4 !== 3 ? "lg:border-r " : "lg:border-r-0 ")}
+            >
+              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                {label}
+              </p>
+              <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
+                {count}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          Results staged: {data.counts.stagedResults} · Results applied: {data.counts.appliedResults}
+        </p>
+        {data.counts.unknownAttendance > 0 ? (
+          <p
+            role="status"
+            className="mt-3 text-sm text-body"
+          >
+            {data.counts.unknownAttendance} roster
+            entries have an unrecognized attendance state.
+          </p>
+        ) : null}
+
+        <p className="mt-3 text-xs text-muted-foreground">
+          Attendance counts reflect the current persisted
+          Drive Day state. Staged results are not final
+          applied outcomes.
+          {" "}
+          {data.counts.noResult}
+          {" "}
+          applicants have no current result record.
+        </p>
+      </section>
+
       <nav aria-label="Round operational actions" className="flex min-w-0 flex-col items-stretch gap-2 border-b border-border pb-4 sm:flex-row sm:flex-wrap sm:items-center">
         <Link href={destinations.results} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-primary bg-primary px-4 text-sm font-[650] text-on-primary hover:bg-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Review round results →</Link>
         <Link href={destinations.schedule} className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Candidate schedule →</Link>
@@ -304,52 +387,6 @@ export function TpoRoundDriveDayReadOnly({
             </dd>
           </div>
         </dl>
-      </section>
-
-      <section aria-label="Round progress">
-        <h2 className="mb-3 text-base font-semibold text-foreground">
-          Applicant progress
-        </h2>
-
-        <div className="grid overflow-hidden rounded-[var(--lms-canvas-radius)] border border-border md:grid-cols-2 lg:grid-cols-4">
-          {summary.map(([label, count], index) => (
-            <div
-              key={label}
-              className={"min-w-0 p-3 sm:p-4 " +
-                (index < 6 ? "border-b border-border " : "") +
-                (index % 2 === 0 ? "border-r border-border " : "") +
-                (index < 4 ? "lg:border-b " : "lg:border-b-0 ") +
-                (index % 4 !== 3 ? "lg:border-r " : "lg:border-r-0 ")}
-            >
-              <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                {label}
-              </p>
-              <p className="mt-2 text-2xl font-bold tabular-nums text-foreground">
-                {count}
-              </p>
-            </div>
-          ))}
-        </div>
-
-        {data.counts.unknownAttendance > 0 ? (
-          <p
-            role="status"
-            className="mt-3 text-sm text-body"
-          >
-            {data.counts.unknownAttendance} roster
-            entries have an unrecognized attendance state.
-          </p>
-        ) : null}
-
-        <p className="mt-3 text-xs text-muted-foreground">
-          Attendance counts reflect the current persisted
-          Drive Day state. Staged results are not final
-          applied outcomes.
-          {" "}
-          {data.counts.noResult}
-          {" "}
-          applicants have no current result record.
-        </p>
       </section>
 
       <section
