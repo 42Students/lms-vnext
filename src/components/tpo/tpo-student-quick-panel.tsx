@@ -43,11 +43,11 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     "/api/placements/tpo/students/"+encodeURIComponent(student.membershipId)+"/panel",
     {cache:"no-store",signal:controller.signal});
    if(controller.signal.aborted||activeLoad.current!==controller)return;
-   if(!body?.student)throw Error("Could not load student records. Please try again.");
+   if(!body?.student)throw Error("We couldn\'t open this student");
    setStoredDetail({studentId:student.membershipId,value:body as PanelDetail});
   }catch(e){
    if(!controller.signal.aborted&&activeLoad.current===controller)
-    setError(e instanceof Error?e.message:"Could not load student records. Please try again.");
+    setError("We couldn\'t open this student");
   }finally{
    if(activeLoad.current===controller){
     activeLoad.current=null;
@@ -170,7 +170,7 @@ export function TpoStudentQuickPanel({student,rows,onNavigate,onClose,recordedOu
     </>:null}
     {loading&&(tab==="Requests"||tab==="Notes"||tab==="History"||tab==="Placement")?<p role="status" className="text-sm text-body">Loading student records…</p>:null}
     {error?<div className="min-w-0 space-y-2"><InlineNotice tone="error" message={error}/>
-     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void fetchDetail()}>Retry loading student details</Button></div>:null}
+     <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>void fetchDetail()}>Retry</Button></div>:null}
     {tab==="Requests"?<>
       <h3 className="font-semibold">Requests</h3>
       {detail&&!detail.requests.length?<p>No placement requests recorded for this student.</p>:null}
