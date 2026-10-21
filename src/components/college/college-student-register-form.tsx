@@ -68,36 +68,36 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     });
   }
   return <>{confirmation}<form onSubmit={event=>{void submit(event);}} className="grid min-w-0 max-w-4xl gap-4 md:grid-cols-2">
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">First Name
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">First Name
       <Input required maxLength={120} value={firstName} onChange={e=>setFirstName(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Last Name
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Last Name
       <Input required maxLength={120} value={lastName} onChange={e=>setLastName(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Mobile Number
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Mobile Number
       <span className="text-xs font-normal text-muted-foreground">Used for OTP login</span>
       <Input required type="tel" placeholder="9876543210" value={phoneE164}
         onChange={e=>setPhone(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Email
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Email
       <Input type="email" maxLength={320} value={email} onChange={e=>setEmail(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Roll Number
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Roll Number
       <Input maxLength={128} value={rollNumber} onChange={e=>setRoll(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Program
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Program
       <Select required value={programId} onChange={e=>{setProgramId(e.target.value);setCohortId("");setSectionId("");}} className={field}>
         <option value="">Choose program</option>
         {choices.programs.map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Batch
       <Select required value={cohortId} onChange={e=>{setCohortId(e.target.value);setSectionId("");}} className={field}>
         <option value="">Choose batch</option>
         {choices.batches.filter(p=>p.programId===programId).map(p=><option key={p.id} value={p.id}>{p.name}</option>)}
       </Select>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Class/Section
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Class/Section
       <Select value={sectionId} onChange={e=>setSectionId(e.target.value)} className={field}>
         <option value="">Assign class later</option>
         {choices.classes.filter(p=>p.cohortId===cohortId).map(p=>
@@ -107,15 +107,15 @@ export function CollegeStudentRegisterForm({choices}:{choices:Choices}) {
     <details className="group min-w-0 border-t border-border pt-4 md:col-span-2">
       <summary className="flex min-h-11 cursor-pointer items-center font-semibold text-primary-text md:min-h-9">Gender · Date of Birth · Address</summary>
       <div className="grid min-w-0 gap-4 pt-3 md:grid-cols-2">
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Gender
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Gender
       <Select value={gender} onChange={e=>setGender(e.target.value as typeof gender)} className={field}>
         {["","Male","Female","Other","Prefer not to say"].map(g=><option key={g} value={g}>{g||"Not specified"}</option>)}
       </Select>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Date of Birth
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">Date of Birth
       <Input type="date" value={dateOfBirth} onChange={e=>setDob(e.target.value)} className={field}/>
     </label>
-    <label className="grid gap-1 text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2">Address
+    <label className="grid gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] md:col-span-2 text-[13px]">Address
       <Textarea maxLength={1000} rows={3} value={address} onChange={e=>setAddress(e.target.value)}
         className="min-w-0"/>
     </label>

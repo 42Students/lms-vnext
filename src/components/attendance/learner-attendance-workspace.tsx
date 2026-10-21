@@ -277,10 +277,10 @@ export function LearnerAttendanceWorkspace({
       {urlNotice ? <p role="status" className="rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-3 text-sm text-body">{urlNotice}</p> : null}
       <section className="min-w-0 border-b border-border pb-5 pt-4 md:pb-6 md:pt-5">
         <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-end md:justify-between md:gap-4">
-          <label className="w-full max-w-sm text-xs font-semibold text-body">
+          <label className="w-full max-w-sm font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Course
             <Select
-              className="mt-1.5"
+              className="mt-[6px]"
               value={deliveryId}
               onChange={(event) =>
                 changeCourse(
@@ -312,11 +312,11 @@ export function LearnerAttendanceWorkspace({
             >
               ←
             </Button>
-            <label className="text-xs font-semibold text-body">
+            <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">
               Jump to month
               <Input
                 type="month"
-                className="mt-1.5"
+                className="mt-[6px]"
                 value={monthKey(month)}
                 onChange={(event) =>
                   changeMonth(
@@ -497,15 +497,15 @@ export function LearnerAttendanceWorkspace({
           <p className="mt-1 text-xs text-muted-foreground">Status filters affect only the session list, not attendance totals.</p>
         </div>
         <div className="grid min-w-0 w-full gap-3 sm:grid-cols-2 md:w-auto">
-        <label className="min-w-0 w-full text-xs font-semibold text-body">Order
-          <Select className="mt-1.5 min-h-11 md:min-h-9 w-full" value={historyOrder}
+        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Order
+          <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyOrder}
             onChange={event=>changeHistoryOrder(event.target.value as LearnerAttendanceOrder)}>
             <option value="NEWEST">Newest first</option>
             <option value="OLDEST">Oldest first</option>
           </Select>
         </label>
-        <label className="min-w-0 w-full text-xs font-semibold text-body">Show
-          <Select className="mt-1.5 min-h-11 md:min-h-9 w-full" value={historyFilter}
+        <label className="min-w-0 w-full font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Show
+          <Select className="mt-[6px] min-h-11 md:min-h-9 w-full" value={historyFilter}
             onChange={event => changeHistoryFilter(event.target.value as LearnerAttendanceHistoryFilter)}>
             {LEARNER_ATTENDANCE_HISTORY_OPTIONS.map(option => <option key={option.value} value={option.value}>{option.label}</option>)}
           </Select>
