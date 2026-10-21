@@ -24,5 +24,17 @@ export function learnerCalendarMetricsWindow(now:Date):{from:Date;to:Date}{
  if(!Number.isFinite(now.getTime()))throw new Error("INVALID_CALENDAR_DATE");
  const dayMs=86_400_000;
  const istDay=Math.floor((now.getTime()+330*60_000)/dayMs)*dayMs-330*60_000;
- return {from:new Date(istDay-30*dayMs),to:new Date(istDay+61*dayMs)};
+ return {from:new Date(istDay-30*dayMs),to:new Date(istDay+181*dayMs)};
+}
+
+/** Fetch the independent 180-day metrics in scoped, 90-day intervals; the
+ * learner schedule service rejects any one query longer than 100 days. */
+export function learnerCalendarMetricWindows(now: Date): Array<{ from: Date; to: Date }> {
+  const { from, to } = learnerCalendarMetricsWindow(now);
+  const chunkMs = 90 * 86_400_000;
+  const windows: Array<{ from: Date; to: Date }> = [];
+  for (let start = from.getTime(); start < to.getTime(); start += chunkMs) {
+    windows.push({ from: new Date(start), to: new Date(Math.min(start + chunkMs, to.getTime())) });
+  }
+  return windows;
 }

@@ -31,6 +31,7 @@ import {
   useTransition,
 } from "react";
 import { Button } from "@/components/ui/button";
+import { Alert } from "@/components/ui/alert";
 import { FilterChip } from "@/components/ui/filter-chip";
 import { EmptyState } from "@/components/ui/empty-state";
 import { Select } from "@/components/ui/select";
@@ -309,6 +310,9 @@ export function LearnerClassSchedule({
   courses,
   sections,
   events,
+  metricEvents,
+  courseLookupWarning,
+  metricsWarning,
   courseBasePath = "/learn/courses",
   initialView = "week",
   initialAnchor,
@@ -319,6 +323,9 @@ export function LearnerClassSchedule({
   courses: readonly CourseChoice[];
   sections: readonly SectionChoice[];
   events: readonly LearnerScheduleEvent[];
+  metricEvents?: readonly LearnerScheduleEvent[];
+  courseLookupWarning?: string | null;
+  metricsWarning?: string | null;
   courseBasePath?: string;
   initialView?: LearnerScheduleView;
   initialAnchor?: Date;
@@ -329,6 +336,7 @@ export function LearnerClassSchedule({
   const router = useRouter();
   const [navigationPending, startNavigation] = useTransition();
   const [overflowDay, setOverflowDay] = useState<string | null>(null);
+  const [dismissedWarnings, setDismissedWarnings] = useState<string[]>([]);
   const [view, setView] =
     useState<LearnerScheduleView>(initialView);
   const [chosenDay, setChosenDay] = useState(() => initialAnchorDay ?? istCalendarDay(initialAnchor ?? new Date()));
@@ -377,6 +385,12 @@ export function LearnerClassSchedule({
       ), sectionId),sessionSearch),sessionKind),upcomingOnly,filterNowMs),
     [events, selectedDeliveryIds, sectionId,sessionSearch,sessionKind,upcomingOnly,filterNowMs],
   );
+  const filteredMetrics = useMemo(
+    () => filterLearnerScheduleUpcoming(filterLearnerScheduleByKind(filterLearnerScheduleBySearch(filterLearnerScheduleSections(filterScheduleEvents(
+      metricEvents ?? events, selectedDeliveryIds,
+    ), sectionId), sessionSearch), sessionKind), upcomingOnly, filterNowMs),
+    [metricEvents, events, selectedDeliveryIds, sectionId, sessionSearch, sessionKind, upcomingOnly, filterNowMs],
+  );
   const days = useMemo(
     () => calendarDays(anchor, view),
     [anchor, view],
@@ -390,13 +404,13 @@ export function LearnerClassSchedule({
   function scheduleEventsForDay(rows: readonly LearnerScheduleEvent[], day: Date) {
     return calendarMode === "IST" ? eventsForLearnerIstScheduleDay(rows, day) : eventsForLocalDay(rows, day);
   }
-  // Summary cards must use the same authorized, course-filtered event set as the calendar.
+  // Today and Next follow the independent authorized 180-day horizon.
   const todayEvents = scheduleEventsForDay(
-    filteredEvents,
+    filteredMetrics,
     calendarToday,
   );
   const upcoming = upcomingScheduleEvents(
-    filteredEvents,
+    filteredMetrics,
     now,
     3,
   );
@@ -464,6 +478,22 @@ export function LearnerClassSchedule({
             No sessions found for this day.</p> : null}
         </div>
       </Dialog>
+      {courseLookupWarning && !dismissedWarnings.includes("courses") ? (
+        <Alert tone="warning">{courseLookupWarning}
+          <span className="ml-2 inline-flex flex-wrap gap-2">
+            <Button type="button" variant="secondary" onClick={() => router.refresh()}>Retry</Button>
+            <Button type="button" variant="ghost" onClick={() => setDismissedWarnings(current => [...current, "courses"])}>Dismiss</Button>
+          </span>
+        </Alert>
+      ) : null}
+      {metricsWarning && !dismissedWarnings.includes("metrics") ? (
+        <Alert tone="warning">{metricsWarning}
+          <span className="ml-2 inline-flex flex-wrap gap-2">
+            <Button type="button" variant="secondary" onClick={() => router.refresh()}>Retry</Button>
+            <Button type="button" variant="ghost" onClick={() => setDismissedWarnings(current => [...current, "metrics"])}>Dismiss</Button>
+          </span>
+        </Alert>
+      ) : null}
       <div className={styles.summary} aria-label="Class schedule overview">
         <Metric
           label="Today"
@@ -483,7 +513,7 @@ export function LearnerClassSchedule({
                 }).format(
                   new Date(nextEvent.startsAt),
                 )} · Next: ${nextEvent.courseName || nextEvent.title}`
-              : "No upcoming classes"
+              : metricsWarning ? "Upcoming classes temporarily unavailable" : "No upcoming classes"
           }
         />
       </div>

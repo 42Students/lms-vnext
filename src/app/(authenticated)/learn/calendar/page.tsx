@@ -2,7 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { resolveOwnLearnerCalendarFilters } from "@/modules/academics/learner-calendar-filter-model";
 import {learnerCalendarQuerySchema} from "@/modules/academics/learner-calendar-filter-model";
-import {learnerCalendarVisibleWindow} from "@/modules/academics/learner-calendar-window-model";
+import {learnerCalendarVisibleWindow, learnerCalendarMetricWindows} from "@/modules/academics/learner-calendar-window-model";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import {
   LearnerClassSchedule,
@@ -17,16 +17,26 @@ export default async function LearnerCalendarPage({searchParams}:{
   const rawQuery=await searchParams;
   const validated=learnerCalendarQuerySchema.safeParse(rawQuery);
   if(!validated.success)notFound();
-  const window=learnerCalendarVisibleWindow(validated.data.month,new Date());
+  const now = new Date();
+  const window=learnerCalendarVisibleWindow(validated.data.month,now);
   const context =
     await getCurrentRequestContext();
   const schedule =
     await getLearnerClassSchedule(context,window);
+  // Today and upcoming are independent of whichever calendar month is visible.
+  // Each metric window is bounded and re-authorized for this learner.
+  const metrics = await Promise.allSettled(
+    learnerCalendarMetricWindows(now).map(range => getLearnerClassSchedule(context,range)),
+  );
+  const metricsWarning = metrics.some(result => result.status === "rejected")
+    ? "Unable to load the complete upcoming class schedule. Please try again." : null;
+  const metricRows = metrics.flatMap(result =>
+    result.status === "fulfilled" ? result.value.events : []);
   const filters = resolveOwnLearnerCalendarFilters(rawQuery, schedule.courses, new Date());
   if (!filters) notFound();
 
-  const events: LearnerScheduleEvent[] =
-    schedule.events.map((event) => ({
+  function toScheduleEvent(event: (typeof schedule.events)[number]): LearnerScheduleEvent {
+    return {
       id: event.id,
       sectionId: event.sectionId,
       sectionName: event.sectionName,
@@ -40,7 +50,10 @@ export default async function LearnerCalendarPage({searchParams}:{
       courseId: event.courseId,
       courseName: event.courseName,
       courseCode: event.courseCode,
-    }));
+    };
+  }
+  const events = schedule.events.map(toScheduleEvent);
+  const metricEvents = metricRows.map(toScheduleEvent);
 
   return (
     <div className="min-w-0 space-y-4 md:space-y-6">
@@ -65,6 +78,9 @@ export default async function LearnerCalendarPage({searchParams}:{
         )}
         courses={schedule.courses}
         events={events}
+        metricEvents={metricEvents}
+        courseLookupWarning={schedule.courseLookupWarning}
+        metricsWarning={metricsWarning}
         initialView={filters.view}
         initialAnchor={filters.anchor}
         initialSelectedDeliveryIds={filters.selectedDeliveryIds}
