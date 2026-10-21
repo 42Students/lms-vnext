@@ -3,8 +3,8 @@ import "server-only";
 import { and, asc, desc, eq, isNull, ne, or, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
-import { learnerContentProgress, lessonContents, lessonVideoAssets } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
+import { learnerContentProgress, lessonContents, lessonVideoAssets, collegeMemberships } from "@/db/schema";
+import { isSuperAdmin, type RequestContext } from "@/modules/identity/context";
 import { can } from "@/modules/permissions/policy";
 import { authorizeOrNotFound } from "@/modules/storage/file-access";
 import { planCompletion, videoStatusForPlan } from "@/modules/storage/file-completion";
@@ -148,17 +148,25 @@ async function requireManage(
   return requireDeliveryContentMutation(context, deliveryId);
 }
 
-function requireUploader(context: RequestContext, collegeId: string) {
-  const membership = context.membership;
-  if (
-    !membership ||
-    membership.status !== "ACTIVE" ||
-    membership.collegeId !== collegeId ||
-    context.user.platformStatus !== "ACTIVE"
-  ) {
+async function requireUploader(context: RequestContext, collegeId: string) {
+  const membership=context.membership;
+  if(context.user.platformStatus!=="ACTIVE")
     throw new StorageFileError("STORAGE_UPLOADER_MEMBERSHIP_REQUIRED");
-  }
-  return membership;
+  if(membership?.status==="ACTIVE"&&membership.collegeId===collegeId)
+    return membership;
+  // Acting Super Admin permissions grant authoring, but private storage
+  // ownership remains a persisted college membership; never manufacture an
+  // uploader ID from a global platform role.
+  if(!isSuperAdmin(context)||context.adminScope?.collegeId!==collegeId)
+    throw new StorageFileError("STORAGE_UPLOADER_MEMBERSHIP_REQUIRED");
+  const [persisted]=await getDb().select({id:collegeMemberships.id})
+   .from(collegeMemberships).where(and(
+    eq(collegeMemberships.userId,context.user.id),
+    eq(collegeMemberships.collegeId,collegeId),
+    eq(collegeMemberships.status,"ACTIVE"),
+   )).limit(1);
+  if(!persisted)throw new StorageFileError("STORAGE_UPLOADER_MEMBERSHIP_REQUIRED");
+  return persisted;
 }
 
 async function loadVideo(videoId: string) {
@@ -208,7 +216,7 @@ export async function issueVideoUploadGrant(
   const lesson = await authorizeOrNotFound(() => loadCourseLessonScope(lessonId));
   const deliveryId = input.deliveryId ?? null;
   await requireManage(context, lesson, deliveryId);
-  const uploader = requireUploader(context, lesson.collegeId);
+  const uploader = await requireUploader(context, lesson.collegeId);
 
   let replaced: VideoRow | null = null;
   if (input.replaceVideoId) {
@@ -824,4 +832,22 @@ export async function issueVideoPlaybackGrant(
     thumbnailUrl,
     video: toLearnerVideoDto(row),
   };
+}
+
+/** Super Admin's selected college may request a short-lived inline playback
+ * grant only for a video already linked to an authorized course delivery.
+ * Reuse the learner/staff playback access checks; no raw R2 key is returned.
+ */
+export async function issueSuperAdminContentVideoPlaybackGrant(
+ context:RequestContext,rawVideoId:unknown,rawDeliveryId:unknown,
+){
+ if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE"||
+    !context.adminScope?.collegeId)
+   throw new StorageFileError("STORAGE_FORBIDDEN");
+ const videoId=idSchema.parse(rawVideoId);
+ const deliveryId=idSchema.parse(rawDeliveryId);
+ const row=await loadVideo(videoId);
+ if(row.collegeId!==context.adminScope.collegeId)
+   throw new StorageFileError("STORAGE_NOT_FOUND");
+ return issueVideoPlaybackGrant(context,videoId,{deliveryId});
 }

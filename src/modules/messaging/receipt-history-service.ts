@@ -81,3 +81,24 @@ export async function listTpoMessagingHistory(
       total, pages: window.pages };
   });
 }
+
+/** Cross-channel help-desk audit, unlike the college-only TPO batch history.
+ * The implementation requires an active GLOBAL Super Admin and deliberately
+ * projects only a last-four suffix, never the submitted phone or message body.
+ */
+export async function listSupportSmsDeliveryHistory(
+ context:RequestContext,
+ raw:{recipientSuffix?:unknown;purpose?:unknown;page?:unknown;size?:unknown}={},
+){
+ const {listSmsDeliveryAttemptsForSupport}=await import("@/modules/notifications/exotel-sms");
+ const digits=typeof raw.recipientSuffix==="string"
+  ?raw.recipientSuffix.replace(/[^0-9]/g,""):"";
+ if(raw.recipientSuffix!==undefined&&digits.length<4)
+  throw new Error("Enter at least four digits for the recipient suffix");
+ return listSmsDeliveryAttemptsForSupport(context,{
+  suffix:digits?digits.slice(-4):undefined,
+  purpose:raw.purpose,
+  page:typeof raw.page==="number"?raw.page:1,
+  size:typeof raw.size==="number"?raw.size:25,
+ });
+}
