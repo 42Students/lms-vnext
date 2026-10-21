@@ -72,13 +72,33 @@ export default async function MentorProjectsPage({
   // MEN-projects-meetings-10: common filters are paged and counted in SQL.
   // Nontrivial attention/task ranking keeps the legacy full-set path.
   const canPageInSql=canPageMentorProjectList(query);
-  const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
-  const allRows=paged?.items??await listMyProjectInstances(context);
-  const [attentionRows,workCounts,teamSizes]=await Promise.all([
-    listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
-    getMentorProjectWorkCounts(context,paged?allRows:undefined),
-    getMentorProjectTeamSizes(context,paged?allRows:undefined),
-  ]);
+  // A list failure belongs next to this page, not to a route-level error that
+  // loses the current filter controls. Never infer an empty list from a failed read.
+  const loaded=await (async()=>{
+    const paged=canPageInSql?await listPagedMentorProjects(context,query):null;
+    const allRows=paged?.items??await listMyProjectInstances(context);
+    if(!Array.isArray(allRows))throw new Error("INVALID_PROJECT_RECORDS");
+    const [attentionRows,workCounts,teamSizes]=await Promise.all([
+      listMyMentorProjectAttention(context,new Date(),paged?allRows:undefined),
+      getMentorProjectWorkCounts(context,paged?allRows:undefined),
+      getMentorProjectTeamSizes(context,paged?allRows:undefined),
+    ]);
+    return {paged,allRows,attentionRows,workCounts,teamSizes};
+  })().catch(error=>({
+    failure:error instanceof Error&&error.message==="INVALID_PROJECT_RECORDS"
+      ?"The projects page did not return a valid records array."
+      :"Projects could not be loaded",
+  }));
+  if("failure" in loaded)return <div className="min-w-0 space-y-4">
+    <PageHeader title="Projects" description="Choose a project to open its workspace."/>
+    <ErrorState title={loaded.failure}
+      description="Check your connection, then try again. Your project data has not been changed."
+      action={<Link href={"/mentor/projects?"+new URLSearchParams(
+        Object.entries(params).filter((item):item is [string,string]=>
+          typeof item[1]==="string"&&item[1].length<=120)
+      ).toString()} className="inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">Retry</Link>}/>
+  </div>;
+  const {paged,allRows,attentionRows,workCounts,teamSizes}=loaded;
   const alerts = new Map<
     string,
     Set<string>
@@ -275,8 +295,10 @@ export default async function MentorProjectsPage({
             courseLabel:row.project.courseLabel,
             phase:row.project.phase,
             dueLabel:row.project.dueLabel || row.project.endDate,
-            actionLine:projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() || (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
-            blockedHref:row.project.blocker?.trim()
+            actionLine:row.project.status==="ARCHIVED"?undefined:
+              projectKinds?.has("REVIEW")?"Review submission":row.project.nextAction?.trim() ||
+              (row.project.blocker?.trim()?"Open blocked work":"Open workspace"),
+            blockedHref:row.project.status!=="ARCHIVED"&&row.project.blocker?.trim()
               ? "/mentor/projects/"+row.project.id+"?tab=board&lane=BLOCKED" : undefined,
             participation:
               row.isPrimaryMentor
