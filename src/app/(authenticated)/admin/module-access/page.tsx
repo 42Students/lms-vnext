@@ -31,7 +31,7 @@ export default async function SuperAdminModuleAccessPage({
     <PageHeader title="Module Access"/>
     <ErrorState title="Invalid feature filters"
       description="The search or page value is invalid."
-      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center text-sm font-semibold text-link hover:text-primary-hover md:min-h-9 hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear filters</Link>}/>
+      action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center text-sm font-[650] text-link hover:text-primary-hover md:min-h-9 hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>
   </div>;
   const result=await listSuperAdminFeatureControls(context,parsed);
   const scopeMetrics=await getModuleAccessOverviewMetrics(context,result.items.map(item=>item.id));
@@ -63,7 +63,7 @@ export default async function SuperAdminModuleAccessPage({
       {result.total} colleges · page {result.page} of {result.totalPages}
     </p>
     {result.items.length===0?<EmptyState title="No matching colleges"
-      description="No college in the current scope matches these filters." action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 md:min-h-9">Clear filters</Link>}/>:
+      description="No college in the current scope matches these filters." action={<Link href="/admin/module-access" className="inline-flex min-h-11 items-center font-[650] text-primary-text underline underline-offset-4 md:min-h-9 w-full md:w-auto justify-center rounded-[var(--lms-control-radius)] px-4">Clear filters</Link>}/>:
       <div className="min-w-0 divide-y divide-border border-y border-border">
         {result.items.map(college=><article key={college.id}
           className="grid min-w-0 grid-cols-1 gap-[var(--lms-space-2)] py-[var(--lms-space-4)] first:pt-0 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center">
