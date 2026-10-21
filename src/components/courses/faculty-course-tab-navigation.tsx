@@ -10,6 +10,8 @@ import { facultyCourseTabs, facultyCourseTabFromPath, facultyCourseTabHref } fro
 type FacultyTeachingSection = {
   deliveryId: string;
   label: string;
+  /** Populated only from an active, authorized Section join on the server. */
+  legacyClassId?: number | null;
 };
 
 export function FacultyCourseTabNavigation({
@@ -27,9 +29,31 @@ export function FacultyCourseTabNavigation({
   const router = useRouter();
   const activeTab = facultyCourseTabFromPath(pathname);
   useEffect(() => {
+    // A historical numeric cls is never an unconstrained Section lookup. It
+    // must match a teaching grant already authorized by the server.
+    const cls = new URLSearchParams(window.location.search).get("cls");
+    if(cls){
+      const target = teachingSections.find(section =>
+        section.deliveryId === cls ||
+        (section.legacyClassId !== null &&
+         section.legacyClassId !== undefined &&
+         /^\\d{1,10}$/.test(cls) &&
+         String(section.legacyClassId) === cls));
+      if(!target){
+        router.replace("/teacher/courses");
+        return;
+      }
+      const canonical = facultyCourseTabHref(target.deliveryId, activeTab);
+      router.replace(canonical);
+    }
+  }, [activeTab,router,teachingSections]);
+  useEffect(() => {
     // Revalidate current persisted Faculty assignment on tab return.
     const onReturn = () => {
-      if (document.visibilityState === "visible") router.refresh();
+      if (document.visibilityState !== "visible") return;
+      // Never keep a possibly revoked roster mounted while disconnected.
+      if (!navigator.onLine) { router.replace("/teacher/courses"); return; }
+      router.refresh();
     };
     window.addEventListener("focus", onReturn);
     document.addEventListener("visibilitychange", onReturn);

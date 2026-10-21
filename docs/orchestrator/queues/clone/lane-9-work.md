@@ -107,7 +107,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_faculty-course-navigation.ts.md` (edit src/modules/courses/faculty-course-navigation.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_college-content-aggregate.tsx.md` (edit src/components/courses/college-content-aggregate.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_college-content-authoring-service.ts.md` (edit src/modules/courses/college-content-authoring-service.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-tab-navigation.tsx.md` (edit src/components/courses/faculty-course-tab-navigation.tsx; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-9/src_components_courses_faculty-course-tab-navigation.tsx.md` (edit src/components/courses/faculty-course-tab-navigation.tsx; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_college-assessment-export-model.ts.md` (edit src/modules/courses/college-assessment-export-model.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_faculty-report-pdf.ts.md` (edit src/modules/courses/faculty-report-pdf.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-9/src_modules_courses_faculty-inbox-query-model.ts.md` (edit src/modules/courses/faculty-inbox-query-model.ts; 2 findings; best P1)
