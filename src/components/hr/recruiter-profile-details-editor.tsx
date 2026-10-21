@@ -43,8 +43,27 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   };
   window.addEventListener("beforeunload",warn);
   document.addEventListener("click",intercept,true);
+  // Navigation API intercepts back/forward and programmatic same-document
+  // navigation in supporting browsers. Link/unload protection remains the fallback.
+  type NavigateEventLike=Event & {destination?:{url:string}};
+  type NavigationLike={
+   addEventListener:(type:string,listener:(event:NavigateEventLike)=>void)=>void;
+   removeEventListener:(type:string,listener:(event:NavigateEventLike)=>void)=>void;
+  };
+  const navigation=(window as Window & {navigation?:NavigationLike}).navigation;
+  const preventNavigation=(event:NavigateEventLike)=>{
+   if(!event.cancelable||!event.destination?.url)return;
+   const url=new URL(event.destination.url,window.location.href);
+   if(url.origin!==window.location.origin)return;
+   if(url.pathname===window.location.pathname&&
+      url.search===window.location.search&&url.hash===window.location.hash)return;
+   event.preventDefault();
+   setLeaveHref(url.pathname+url.search+url.hash);
+  };
+  navigation?.addEventListener("navigate",preventNavigation);
   return ()=>{window.removeEventListener("beforeunload",warn);
-   document.removeEventListener("click",intercept,true);};
+   document.removeEventListener("click",intercept,true);
+   navigation?.removeEventListener("navigate",preventNavigation);};
  },[dirty]);
  useEffect(()=>{
   if(feedback!=="Profile saved")return;
@@ -110,17 +129,25 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   </div>
   <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
-    <label key={key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}
+    <label key={key} className={`grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] ${key==="title"||key==="phone"?"min-[768px]:col-span-2":""}`}>
+     {label}{key==="lastName"?<span className="ml-1 text-xs font-normal">(optional)</span>:null}
      <Input name={key} type={key==="phone"?"tel":"text"} autoComplete={key==="firstName"?"given-name":key==="lastName"?"family-name":key==="phone"?"tel":"organization-title"}
       value={form[key]} required={key==="firstName"} pattern={key==="phone"?"(?:[0-9]{10}|\\+91[0-9]{10})?":undefined}
       aria-invalid={Boolean(fieldErrors[key])} aria-describedby={fieldErrors[key]?`recruiter-profile-${key}-error`:undefined}
-      disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?160:100}
+      disabled={busy||(key==="phone"&&!contactReady)} maxLength={key==="phone"?14:key==="title"?150:100}
       onChange={e=>update(key,e.target.value)}
       className="min-h-11 w-full min-[768px]:min-h-9"/>
+     {key==="phone"?<span className="text-xs font-normal text-muted-foreground">
+       Optional. Enter 10 digits, or +91 followed by 10 digits.
+      </span>:null}
      {fieldErrors[key]?<span id={`recruiter-profile-${key}-error`} className="text-xs font-normal text-error">{fieldErrors[key]}</span>:null}
     </label>)}
   </div>
-  {!contactReady?<p role="status" className="text-xs text-body">Mobile editing is temporarily unavailable. You can still save your name and designation.</p>:null}
+  {!contactReady?<div role="status" className="flex flex-wrap items-center gap-2 text-xs text-body">
+   Mobile editing is temporarily unavailable. You can still save your name and designation.
+   <Button type="button" variant="secondary" disabled={busy}
+     onClick={()=>router.refresh()}>Retry contact details</Button>
+  </div>:null}
   <div className="flex min-w-0 flex-col gap-2 border-t border-border pt-4 min-[768px]:flex-row min-[768px]:items-center">
     <Button type="submit" loading={busy} disabled={busy||!dirty}
       className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">
