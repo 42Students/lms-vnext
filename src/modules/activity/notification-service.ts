@@ -1,3 +1,5 @@
+import "server-only";
+
 import {
   and,
   count,
@@ -13,16 +15,29 @@ import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
   activityEvents,
+  academicPeriods,
+  courses,
+  courseOfferings,
+  courseSectionDeliveries,
+  courseTeachingAssignments,
+  departments,
   collegeMemberships,
   colleges,
   inAppNotifications,
   placementCompanyRelationships,
   placementRecruiterCollegeGrants,
   placementRecruiterProfiles,
+  sections,
+  sectionFacultyAssignments,
   systemRoles,
   users,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
+import {
+  hasMembershipRole,
+  isSuperAdmin,
+  type RequestContext,
+} from "@/modules/identity/context";
+import { requirePermission } from "@/modules/permissions/policy";
 import { ActivityServiceError } from "./errors";
 import { safeNotificationActionHref } from "./notification-action";
 
@@ -56,6 +71,169 @@ const deliverySchema = z
       .optional(),
   })
   .strict();
+
+
+/**
+ * The legacy announcement composer is a staff-only operation. This input is
+ * deliberately distinct from the small, plain-text per-recipient delivery
+ * payload: the latter must never become a public notification creation API.
+ * Rich HTML is not forwarded to inbox rows until a dedicated sanitizer and
+ * authored-notice store are available.
+ */
+export const staffNotificationDraftSchema = z.object({
+  title: z.string().trim().min(1).max(200),
+  htmlContent: z.string().trim().min(1).max(50_000),
+  classId: z.string().uuid().optional(),
+  courseId: z.string().uuid().optional(),
+  assessmentUrl: z.string().trim().url()
+    .refine((value) => {
+      const protocol = new URL(value).protocol;
+      return protocol === "http:" || protocol === "https:";
+    }, "Assessment URL must use http or https")
+    .optional(),
+}).strict().refine(
+  (input) => Boolean(input.classId) !== Boolean(input.courseId),
+  { message: "classId or courseId required", path: ["classId"] },
+);
+
+export type StaffNotificationDraft = z.input<typeof staffNotificationDraftSchema>;
+
+type StaffNotificationAudience = {
+  collegeId: string;
+  organizationId: string;
+  classId: string | null;
+  courseId: string | null;
+};
+
+/**
+ * Resolve the audience from persisted academic records, NOT request-supplied
+ * tenant identifiers. Faculty need a live assignment to the section/course;
+ * college admins and superadmins need their central scoped permission.
+ */
+export async function requireStaffNotificationAudience(
+  context: RequestContext,
+  rawDraft: unknown,
+): Promise<{ draft: z.output<typeof staffNotificationDraftSchema>; audience: StaffNotificationAudience }> {
+  const draft = staffNotificationDraftSchema.parse(rawDraft);
+  if (context.user.platformStatus !== "ACTIVE" ||
+      (!isSuperAdmin(context) &&
+       !hasMembershipRole(context, "COLLEGE_ADMIN") &&
+       !hasMembershipRole(context, "FACULTY"))) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+
+  const db = getDb();
+  const [scope] = draft.classId
+    ? await db.select({
+        collegeId: colleges.id,
+        organizationId: colleges.organizationId,
+      }).from(sections)
+        .innerJoin(academicPeriods, eq(academicPeriods.id, sections.academicPeriodId))
+        .innerJoin(colleges, eq(colleges.id, academicPeriods.collegeId))
+        .where(and(
+          eq(sections.id, draft.classId),
+          eq(sections.status, "ACTIVE"),
+          eq(colleges.status, "ACTIVE"),
+        )).limit(1)
+    : await db.select({
+        collegeId: colleges.id,
+        organizationId: colleges.organizationId,
+      }).from(courses)
+        .innerJoin(departments, eq(departments.id, courses.departmentId))
+        .innerJoin(colleges, eq(colleges.id, departments.collegeId))
+        .where(and(
+          eq(courses.id, draft.courseId!),
+          eq(courses.status, "ACTIVE"),
+          eq(colleges.status, "ACTIVE"),
+        )).limit(1);
+
+  if (!scope) throw new ActivityServiceError("ACTIVITY_SCOPE_NOT_FOUND");
+  const audience: StaffNotificationAudience = {
+    ...scope,
+    classId: draft.classId ?? null,
+    courseId: draft.courseId ?? null,
+  };
+  if (isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN")) {
+    requirePermission(context, "courses.manage", scope);
+    return { draft, audience };
+  }
+
+  // A generic faculty role in the college is not permission to post into
+  // every class/course. Verify a current assignment for this exact audience.
+  requirePermission(context, "courses.read", scope);
+  if (!context.membership ||
+      context.membership.collegeId !== scope.collegeId) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  const [assigned] = draft.classId
+    ? await db.select({ id: sectionFacultyAssignments.id })
+        .from(sectionFacultyAssignments)
+        .where(and(
+          eq(sectionFacultyAssignments.sectionId, draft.classId),
+          eq(sectionFacultyAssignments.membershipId, context.membership.id),
+          isNull(sectionFacultyAssignments.endedAt),
+        )).limit(1)
+    : await db.select({ id: courseTeachingAssignments.id })
+        .from(courseTeachingAssignments)
+        .innerJoin(courseSectionDeliveries,
+          eq(courseSectionDeliveries.id, courseTeachingAssignments.deliveryId))
+        .innerJoin(courseOfferings,
+          eq(courseOfferings.id, courseSectionDeliveries.offeringId))
+        .where(and(
+          eq(courseOfferings.courseId, draft.courseId!),
+          eq(courseTeachingAssignments.membershipId, context.membership.id),
+          isNull(courseTeachingAssignments.endedAt),
+          isNull(courseSectionDeliveries.endedAt),
+        )).limit(1);
+  if (!assigned) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  return { draft, audience };
+}
+
+/**
+ * Mandatory preflight for edit/recall: inspect the original persisted scope
+ * before checking the requested destination; author ownership applies to
+ * faculty while authorized admins may manage their own scoped notices.
+ * Caller must still perform its edit/delete and commit atomically.
+ */
+export async function requireStaffNotificationRetarget(
+  context: RequestContext,
+  eventIdInput: unknown,
+  nextDraft: unknown,
+): Promise<StaffNotificationAudience> {
+  const eventId = z.string().uuid().parse(eventIdInput);
+  const [existing] = await getDb().select({
+    actorUserId: activityEvents.actorUserId,
+    organizationId: activityEvents.organizationId,
+    collegeId: activityEvents.collegeId,
+    subjectType: activityEvents.subjectType,
+    metadata: activityEvents.metadata,
+  }).from(activityEvents).where(eq(activityEvents.id, eventId)).limit(1);
+  if (!existing || existing.subjectType !== "NOTIFICATION" ||
+      !existing.collegeId || !existing.organizationId) {
+    throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
+  }
+  const isAdmin = isSuperAdmin(context) || hasMembershipRole(context, "COLLEGE_ADMIN");
+  if (!isAdmin && existing.actorUserId !== context.user.id) {
+    throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+  }
+  if (isAdmin) {
+    requirePermission(context, "courses.manage", {
+      collegeId: existing.collegeId,
+      organizationId: existing.organizationId,
+    });
+  } else {
+    const previous = staffNotificationDraftSchema.safeParse({
+      title: "Existing notification",
+      htmlContent: "Existing notification",
+      classId: existing.metadata.classId,
+      courseId: existing.metadata.courseId,
+    });
+    if (!previous.success) throw new ActivityServiceError("NOTIFICATION_SCOPE_MISMATCH");
+    await requireStaffNotificationAudience(context, previous.data);
+  }
+  const { audience } = await requireStaffNotificationAudience(context, nextDraft);
+  return audience;
+}
 
 export type InAppNotificationDeliveryInput =
   z.input<typeof deliverySchema>;
