@@ -18,11 +18,14 @@ import {
   placementCompanies,
   placementCompanyRelationships,
   placementJobs,
+  placementPublicJoinLinks,
+  placementCompanyDomains,
   users,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requirePlacementManageScope } from "./scope";
 import { PlacementsServiceError } from "./errors";
+import {changeTpoPublicJoinLink,getTpoPublicJoinLinkStatus} from "./tpo-public-join-link-service";
 import {
   createPlacementCompanyInputSchema,
   placementCompanyRelationshipIdSchema,
@@ -121,6 +124,24 @@ export async function listPlacementCompanies(
       name: placementCompanies.name,
       websiteUrl: placementCompanies.websiteUrl,
       primaryDomain: placementCompanies.primaryDomain,
+      legacyCompanyId:placementCompanies.legacyCompanyId,
+      logoPublicUrl:placementCompanies.logoPublicUrl,
+      domainVerification:sql<Array<{domain:string;verifiedBy42:boolean;verifiedAt:string|null}>>`(select
+        coalesce(jsonb_agg(jsonb_build_object('domain',d.domain,'verifiedBy42',d.verified_by_42,
+        'verifiedAt',d.verified_at) order by d.domain),'[]'::jsonb)
+        from placement_company_domains d where d.company_id=${placementCompanies.id})`,
+      joinLinkOpens:sql<number>`coalesce((select l.opens_count from placement_public_join_links l
+        where l.company_id=${placementCompanies.id} and l.college_id=${placementCompanyRelationships.collegeId}
+          and l.scope='COMPANY' and l.revoked_at is null
+        order by l.created_at desc,l.id desc limit 1),0)::int`,
+      joinLinkJoins:sql<number>`coalesce((select l.joins_count from placement_public_join_links l
+        where l.company_id=${placementCompanies.id} and l.college_id=${placementCompanyRelationships.collegeId}
+          and l.scope='COMPANY' and l.revoked_at is null
+        order by l.created_at desc,l.id desc limit 1),0)::int`,
+      joinLinkCreatedAt:sql<Date|null>`(select l.created_at from placement_public_join_links l
+        where l.company_id=${placementCompanies.id} and l.college_id=${placementCompanyRelationships.collegeId}
+          and l.scope='COMPANY' and l.revoked_at is null
+        order by l.created_at desc,l.id desc limit 1)`,
       otherNames: sql<string[]>`(select coalesce(array_agg(a.alias order by a.alias),array[]::text[])
         from placement_company_aliases a where a.company_id=${placementCompanies.id})`,
       domains: sql<string[]>`(select coalesce(array_agg(d.domain order by d.domain),array[]::text[])
@@ -155,6 +176,59 @@ export async function listPlacementCompanies(
       ),
     )
     .orderBy(asc(placementCompanies.name));
+}
+
+/** College-private contact detail and link engagement. Never return this from a public company lookup. */
+export async function getPlacementCompanyRelationshipDetails(
+  context:RequestContext, relationshipIdInput:string,
+){
+  const relationshipId=placementCompanyRelationshipIdSchema.parse(relationshipIdInput);
+  const {relationship,company}=await loadRelationship(relationshipId);
+  await requirePlacementManageScope(context,relationship.collegeId);
+  const [link]=await getDb().select({
+    createdAt:placementPublicJoinLinks.createdAt,
+    opens:placementPublicJoinLinks.opensCount,
+    joins:placementPublicJoinLinks.joinsCount,
+    enabled:placementPublicJoinLinks.enabled,
+    expiresAt:placementPublicJoinLinks.expiresAt,
+  }).from(placementPublicJoinLinks).where(and(
+    eq(placementPublicJoinLinks.collegeId,relationship.collegeId),
+    eq(placementPublicJoinLinks.companyId,company.id),
+    eq(placementPublicJoinLinks.scope,"COMPANY"),
+    isNull(placementPublicJoinLinks.revokedAt),
+  )).orderBy(sql`${placementPublicJoinLinks.createdAt} desc,${placementPublicJoinLinks.id} desc`).limit(1);
+  const domains=await getDb().select({
+    domain:placementCompanyDomains.domain,
+    verifiedBy42:placementCompanyDomains.verifiedBy42,
+    verifiedAt:placementCompanyDomains.verifiedAt,
+  }).from(placementCompanyDomains).where(eq(placementCompanyDomains.companyId,company.id))
+    .orderBy(asc(placementCompanyDomains.domain));
+  return {
+    company:{id:company.id,name:company.name,primaryDomain:company.primaryDomain,
+      legacyCompanyId:company.legacyCompanyId,logoObjectPath:company.logoObjectPath,
+      logoPublicUrl:company.logoPublicUrl?.startsWith("https://")?company.logoPublicUrl:null,
+      requiresSignedLogoUrl:Boolean(company.logoObjectPath)},
+    relationship:{id:relationship.id,companyId:relationship.companyId,
+      isTrusted:relationship.isTrusted,status:relationship.status,
+      contactPersonName:relationship.contactPersonName,
+      contactEmail:relationship.contactEmail,contactPhone:relationship.contactPhone,
+      internalNotes:relationship.internalNotes,ownerMembershipId:relationship.ownerMembershipId,
+      createdAt:relationship.createdAt,updatedAt:relationship.updatedAt},
+    domains,joinLink:link??null,
+  };
+}
+
+/** One-time token generation remains in the centralized hashed public-link service. */
+export async function changePlacementCompanyJoinLink(
+  context:RequestContext,companyId:string,
+  action:"CREATE"|"REPLACE",expectedLinkId?:string,
+){
+  return changeTpoPublicJoinLink(context,{scope:"COMPANY",companyId,action,
+    confirmed:true,...(action==="REPLACE"?{expectedLinkId}:{})});
+}
+
+export async function getPlacementCompanyJoinLinkStatus(context:RequestContext,companyId:string){
+  return getTpoPublicJoinLinkStatus(context,"COMPANY",companyId);
 }
 
 export async function listPlacementRelationshipOwners(
@@ -259,9 +333,14 @@ export async function createPlacementCompany(
       new URL(input.websiteUrl!).hostname.replace(/^www\./i,""))
       .toLocaleLowerCase("en-US");
     await tx.execute(sql`select pg_advisory_xact_lock(hashtextextended(${domain},0))`);
+    const [domainOwner]=await tx.select({companyId:placementCompanyDomains.companyId})
+      .from(placementCompanyDomains)
+      .where(ilike(placementCompanyDomains.domain,domain)).limit(1);
     const [canonical] = await tx.select().from(placementCompanies)
       .where(ilike(placementCompanies.primaryDomain,domain))
       .for("update").limit(1);
+    if(domainOwner&&(!canonical||domainOwner.companyId!==canonical.id))
+      throw new PlacementsServiceError("PLACEMENT_COMPANY_IDENTITY_CONFLICT");
     if (canonical && (canonical.status !== "ACTIVE" ||
         canonical.name.trim().toLocaleLowerCase("en-US") !==
           input.name.trim().toLocaleLowerCase("en-US"))) {
@@ -289,8 +368,17 @@ export async function createPlacementCompany(
         existed=true;
       }
     }
-    // Never "enrich" the shared company name, URL, logo or ownership through
-    // linking a college relationship. Canonical edits need a verified owner.
+    // An active relationship is idempotent. Do not send another join notice
+    // or audit event when the college already has this employer linked.
+    const [existingLink]=await tx.select().from(placementCompanyRelationships)
+      .where(and(eq(placementCompanyRelationships.collegeId,input.collegeId),
+        eq(placementCompanyRelationships.companyId,company.id)))
+      .for("update").limit(1);
+    if(existingLink?.status==="ACTIVE")return {
+      company,relationship:existingLink,existed:true,alreadyLinked:true,
+      createdByUserId:existingLink.createdByUserId,
+    };
+    // Canonical employer edits need verified ownership, not a link operation.
     const now = new Date();
     const [relationship] = await tx
       .insert(placementCompanyRelationships)
@@ -324,11 +412,14 @@ export async function createPlacementCompany(
         companyId: company.id,
         relationshipId: relationship.id,
         companyStatus: company.status,
+        action:existingLink?"RESTORE":"CREATE",
+        existed,createdByUserId:context.user.id,
       },
       groupKey: "placement-companies:" + input.collegeId,
     });
 
-    return { company, relationship, existed };
+    return { company, relationship, existed,alreadyLinked:false,
+      createdByUserId:context.user.id };
   });
 }
 
@@ -380,7 +471,8 @@ export async function updatePlacementCompanyRelationship(
       subjectType:"placement_company_relationship",subjectId:updated.id,
       subjectLabel:current.company.name,summary:"College employer relationship updated",
       metadata:{companyId:current.company.id,relationshipId:updated.id,
-        action:"UPDATE",before:{isTrusted:locked.isTrusted,ownerMembershipId:locked.ownerMembershipId},
+        action:"UPDATE",actorUserId:context.user.id,
+        before:{isTrusted:locked.isTrusted,ownerMembershipId:locked.ownerMembershipId},
         after:{isTrusted:updated.isTrusted,ownerMembershipId:updated.ownerMembershipId}},
       groupKey:"placement-companies:"+current.relationship.collegeId,
     });
@@ -428,7 +520,8 @@ export async function archivePlacementCompanyRelationship(
       collegeId:current.relationship.collegeId,
       subjectType:"placement_company_relationship",subjectId:relationship.id,
       subjectLabel:current.company.name,summary:"College employer relationship archived",
-      metadata:{companyId:current.company.id,relationshipId:relationship.id,action:"ARCHIVE"},
+      metadata:{companyId:current.company.id,relationshipId:relationship.id,action:"ARCHIVE",
+        actorUserId:context.user.id,beforeStatus:locked.status,afterStatus:relationship.status},
       groupKey:"placement-companies:"+current.relationship.collegeId,
     });
     return {company:current.company,relationship};
@@ -471,7 +564,8 @@ export async function restorePlacementCompanyRelationship(
    collegeId:current.relationship.collegeId,
    subjectType:"placement_company_relationship",subjectId:restored.id,
    subjectLabel:current.company.name,summary:"Placement employer restored",
-   metadata:{companyId:current.company.id,relationshipId:restored.id,action:"RESTORE"},
+   metadata:{companyId:current.company.id,relationshipId:restored.id,action:"RESTORE",
+     actorUserId:context.user.id,beforeStatus:locked.relationship.status,afterStatus:restored.status},
   });
   return {company:current.company,relationship:restored};
  });
