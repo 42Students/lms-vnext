@@ -73,6 +73,7 @@ const activityFilterSchema = z
       .enum(ACTIVITY_IMPORTANCE)
       .optional(),
     importantOnly: z.boolean().optional(),
+    legacyCategory: z.enum(["important","setup","people","teaching","projects"]).optional(),
     actorUserId:
       z.string().uuid().optional(),
     eventType: z
@@ -503,6 +504,33 @@ async function resolveReadScope(
   };
 }
 
+/** Historical audit categories, scoped before LIMIT/cursor to preserve counts. */
+function legacyCategoryCondition(category:"important"|"setup"|"people"|"teaching"|"projects"):SQL{
+ const subject=sql`lower(${activityEvents.subjectType})`;
+ const event=sql`upper(${activityEvents.eventType})`;
+ if(category==="important")return or(
+  inArray(activityEvents.importance,["HIGH","CRITICAL"]),
+  sql`${event} ~ '(DELETE|RESTORE|PROMOTE|BATCH[._]SEMESTER[._]UPDATE|SUSPEND|REACTIVAT|IMPERSONAT|MODULE[._]ACCESS|FEATURE[._]TOGGLE|IDENTITY[._]READ|BULK[._]STATUS)'`,
+ )!;
+ if(category==="setup")return or(
+  sql`${subject} in ('department','program','semester','batch','class','course','lesson','lecture_hall','academic_year')`,
+  inArray(activityEvents.module,["ACADEMICS","COURSES"]),
+ )!;
+ if(category==="people")return or(
+  sql`${subject} in ('faculty','learner','learner_profile','user','college_membership')`,
+  sql`${event} like '%MODULE_ACCESS%'`,
+  eq(activityEvents.module,"IDENTITY"),
+ )!;
+ if(category==="teaching")return or(
+  sql`${subject} in ('class_schedule','announcement','quiz','lesson_content','attendance')`,
+  eq(activityEvents.module,"COURSES"),
+ )!;
+ return or(
+  sql`${subject} in ('project','project_task','project_template','project_instance','project_task_comment')`,
+  eq(activityEvents.module,"PROJECTS"),
+ )!;
+}
+
 export async function listActivityEvents(
   context: RequestContext,
   rawInput: ActivityFilterInput = {},
@@ -551,7 +579,11 @@ export async function listActivityEvents(
     );
   }
   if (input.importantOnly && !input.importance) {
-    conditions.push(inArray(activityEvents.importance, ["HIGH", "CRITICAL"]));
+    // Historical important actions count even when emitted as LOW importance.
+    conditions.push(legacyCategoryCondition("important"));
+  }
+  if (input.legacyCategory && !(input.legacyCategory==="important"&&input.importantOnly)) {
+    conditions.push(legacyCategoryCondition(input.legacyCategory));
   }
   if (input.actorUserId) {
     conditions.push(
