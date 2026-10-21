@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { LearnerSkillCatalogInput, type CatalogSkillItem, type CatalogSkillSelection } from "./learner-skill-catalog-input";
+import {Select} from "@/components/ui/select";
 
 /**
  * Controlled multi-skill editor for screens that store an array of skill
@@ -124,7 +125,7 @@ export function LearnerSkillCatalogMultiInput({
         <span className="min-w-0 flex-1 break-words text-sm text-body">{item.skill}</span>
         {allowProficiency ? <label className="flex items-center gap-2 text-xs text-muted-foreground">
           Proficiency
-          <select className="min-h-9 rounded-[var(--lms-radius-sm)] border border-border bg-background px-2 text-sm text-body"
+          <Select 
             disabled={disabled} value={item.proficiency || "Intermediate"} onChange={event => {
               onChange(value.map((skill, itemIndex) =>
                 itemIndex === index ? { ...skill, proficiency: event.target.value } : skill
@@ -133,7 +134,7 @@ export function LearnerSkillCatalogMultiInput({
             {["Beginner", "Intermediate", "Advanced", "Expert"].map(level =>
               <option key={level} value={level}>{level}</option>
             )}
-          </select>
+          </Select>
         </label> : null}
         <Button type="button" size="sm" variant="ghost" disabled={disabled}
           onClick={() => onChange(value.filter((_, itemIndex) => itemIndex !== index))}>Remove</Button>
