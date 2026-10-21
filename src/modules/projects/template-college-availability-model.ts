@@ -34,8 +34,12 @@ export function templateAssignmentRevocationNotice() {
   return "This college will no longer be able to create new workspaces from the template. Existing workspaces retain their pinned snapshots.";
 }
 
+/** Explicit platform-wide option is only for a centrally verified active
+ * Super Admin. Caller must check that role before passing platformWide=true.
+ * Default is unchanged: selected admin scope remains restrictive. */
 export function templateAvailabilityCollegesInScope<T extends { id: string; organizationId: string }>(
-  colleges: readonly T[], scope: TemplateAssignmentReadScope,
+  colleges: readonly T[], scope: TemplateAssignmentReadScope, platformWide=false,
 ): T[] {
+  if(platformWide)return [...colleges];
   return colleges.filter(row => templateAssignmentMatchesScope({ collegeId: row.id, organizationId: row.organizationId }, scope));
 }
