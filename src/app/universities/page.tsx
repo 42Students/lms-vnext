@@ -1,8 +1,12 @@
-import type {Metadata} from "next";
-import {MarketingLayout,MarketingHero,MarketingFeatureGrid,MarketingCta} from "@/components/marketing/marketing-layout";
-export const metadata:Metadata={title:"Universities | 42 LMS",description:"Develop employable graduates through learning and placements."};
+
+import {MarketingLayout,MarketingHero,MarketingFeatureGrid,MarketingCta,marketingPageMetadata} from "@/components/marketing/marketing-layout";
+const title="For Universities — 42 LMS";
+const description="Develop employable graduates: evaluate performance across exams, assignments, projects, and interviews, identify gaps early, and improve career readiness.";
+// The shared marketing layout emits the Organization, WebSite, WebPage and
+// BreadcrumbList JSON-LD graph when the route's canonical metadata is supplied.
+export const metadata=marketingPageMetadata("/universities",title,description);
 export default function UniversitiesPage(){
- return <MarketingLayout>
+ return <MarketingLayout path="/universities" pageTitle={title} pageDescription={description}>
   <MarketingHero eyebrow="For universities" title="Develop employable graduates through learning and placements"
    description="Bring academics, applied projects and campus placements together to strengthen student outcomes."/>
   <div className="min-w-0" aria-label="Campus roles"><MarketingFeatureGrid title="For the entire campus" items={[
