@@ -48,7 +48,7 @@ export default async function HrMessagesPage({searchParams}:{
      </Link>:null}
    </>}/>
   {result.status!=="READY"?<section className="space-y-3 border-b border-border pb-4">
-   <p className="text-sm text-body">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
+   <p className="text-sm text-body leading-[22px]">{result.status==="NO_ACCESS"?"No active college access.":"Choose a college."}</p>
    <NeedsDoingChips label="Authorized colleges:"
      items={result.choices.map(grant=>({
        key:grant.collegeId,label:grant.collegeName,
@@ -76,10 +76,10 @@ export default async function HrMessagesPage({searchParams}:{
        placeholder="Search drive titles" className="min-h-11 min-w-0 w-full md:min-h-9 md:max-w-sm md:flex-1" />
      <Button type="submit" variant="secondary" className="min-h-11 w-full md:min-h-9 md:w-auto">Search</Button>
    </form>
-   <p className="text-sm text-body">{result.unread} unread · {result.total} matching authorized notifications</p>
+   <p className="text-sm text-body leading-[22px]">{result.unread} unread · {result.total} matching authorized notifications</p>
 
    {result.rows.length?<div className="space-y-6">
-     <p className="text-xs text-muted-foreground">Grouped by drive within this page only. This is not a conversation thread.</p>
+     <p className="text-xs text-muted-foreground leading-5">Grouped by drive within this page only. This is not a conversation thread.</p>
      {groupHrNotificationPage(result.rows).map(group=><section key={group.jobId}
        aria-label={"Notifications for "+group.title}
        className="border-b border-border pb-4">
@@ -105,7 +105,7 @@ export default async function HrMessagesPage({searchParams}:{
      description="No matching notifications for this employer and college."
      action={query.data.q||query.data.unreadOnly==="true" ? <Link href={"/hr/notifications?collegeId="+encodeURIComponent(result.collegeId)} className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">Reset</Link> : undefined}/>}
    <nav aria-label="Notification pages" className="flex flex-wrap items-center justify-between gap-3">
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-5">
        {result.first?result.first+"–"+result.last:"No rows on this page"}
        {" of "+(query.data.unreadOnly==="true"?result.unread:result.total)}
       </p>
@@ -116,7 +116,7 @@ export default async function HrMessagesPage({searchParams}:{
         className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-3 py-2 text-sm text-primary-text md:min-h-9 hover:bg-[rgba(38,186,199,0.07)] hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Next</Link>:null}
       </div>
     </nav>
-   <p className="text-xs text-muted-foreground"><Link href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
+   <p className="text-xs text-muted-foreground leading-5"><Link href="/hr/messages" className="min-h-11 md:min-h-9 inline-flex items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-hover)] active:text-[var(--lms-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Messages</Link> opens conversations with the placement cell. Notification read acknowledgement applies only to your own employer-scoped notification.</p>
   </>}
  </div>;
 }

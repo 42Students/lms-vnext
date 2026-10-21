@@ -62,7 +62,7 @@ export default async function LearnerCourseProgressPage({
               <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
                 <div className="min-w-0">
                   <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{lesson.name}</h2>
-                  <p className="mt-1 text-sm text-body">
+                  <p className="mt-1 text-sm text-body leading-[22px]">
                     {lesson.total === 0
                       ? "No published learning items"
                       : lesson.completed + " of " + lesson.total + " items completed"}
@@ -84,8 +84,8 @@ export default async function LearnerCourseProgressPage({
                     <li key={item.kind + ":" + item.id}
                       className="flex min-w-0 flex-col items-start justify-between gap-2 py-3 sm:flex-row sm:gap-3">
                       <div className="min-w-0 flex-1">
-                        <p className="break-words text-sm font-medium text-foreground">{item.title}</p>
-                        <p className="mt-1 text-xs text-muted-foreground">
+                        <p className="break-words text-sm font-medium text-foreground leading-[22px]">{item.title}</p>
+                        <p className="mt-1 text-xs text-muted-foreground leading-5">
                           {item.kind.toLowerCase()}
                         </p>
                       </div>
@@ -106,7 +106,7 @@ export default async function LearnerCourseProgressPage({
           ))}
         </section>
       )}
-      <p className="text-xs text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-5">
         Completion is computed from persisted learner progress and submitted assessments.
         Unpublished grades and untracked attendance are not inferred.
       </p>

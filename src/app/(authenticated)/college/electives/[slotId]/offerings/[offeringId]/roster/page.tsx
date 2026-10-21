@@ -175,11 +175,11 @@ export default async function ElectiveRoster({
               </div> : "—" },
         ]}
       />
-      {detail.members.length >= 500 && <p className="text-xs text-muted-foreground">Showing first 500 members.</p>}
+      {detail.members.length >= 500 && <p className="text-xs text-muted-foreground leading-5">Showing first 500 members.</p>}
     </section>
     <section className="min-w-0 space-y-[var(--lms-space-3)] border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
       <h2 className="m-0 text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Faculty</h2>
-      <p className="text-sm text-muted-foreground">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
+      <p className="text-sm text-muted-foreground leading-[22px]">Assign a primary lecturer and co-teachers to this offering&apos;s course delivery.</p>
       {assignments.length === 0 && <EmptyState title="No faculty assigned" description="Assign an eligible faculty member to this elective offering."/>}
       {assignments.map(item => <div key={item.id} className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)] text-sm sm:flex-row sm:items-center sm:justify-between">
         <span>{item.displayName ?? item.membershipId} · {item.role}</span>

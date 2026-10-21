@@ -28,7 +28,7 @@ export default async function SuperAdminStudentRules({params}:{params:Promise<{c
   <div className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {studentRuleCards(student.modules).map(rule=><article key={rule.module} className="min-w-0 py-[var(--lms-space-4)]">
     <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-      <h2 className="font-semibold text-foreground">{rule.label}</h2>
+      <h2 className="font-semibold text-[var(--lms-heading)]">{rule.label}</h2>
       <p className="text-sm text-body">Stored: {rule.state}{rule.locked?" · Locked":""}</p>
     </div>
     <p className="mt-2 max-w-3xl break-words text-xs text-muted-foreground">{rule.consequence}</p>

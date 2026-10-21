@@ -30,13 +30,13 @@ export default async function SuperAdminAuthSettings(){
   <ul className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {platformAuthPostureItems().map(item=><li key={item.id} className="min-w-0 py-[var(--lms-space-4)]">
     <h2 className="m-0 break-words text-lg font-semibold leading-7 text-[var(--lms-heading)]">{item.title}</h2>
-    <p className="mt-2 break-words text-sm text-body">{item.description}</p>
+    <p className="mt-2 break-words text-sm text-body leading-[22px]">{item.description}</p>
     <div className="mt-3"><StatusBadge tone="neutral" className="max-w-full">{item.state}</StatusBadge></div>
    </li>)}
   </ul>
   <section aria-label="Legacy platform and auth setting keys" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <h2 className="font-semibold text-[var(--lms-heading)] text-[18px] leading-[1.4]">Platform &amp; auth policy keys</h2>
-   <p className="text-sm text-body">Names and validation are listed for review. Environment and live network configuration are never displayed. Changes to host, cookie or network controls require manual deployment acceptance.</p>
+   <p className="text-sm text-body leading-[22px]">Names and validation are listed for review. Environment and live network configuration are never displayed. Changes to host, cookie or network controls require manual deployment acceptance.</p>
    <ul className="min-w-0 space-y-2 text-sm">{LEGACY_TENANT_SETTING_SPECS.filter(spec=>spec.group==="Platform & auth").map(spec=><li key={spec.key} className="border-b border-[var(--lms-canvas-border)] py-[var(--lms-space-3)]">
     <strong className="block break-words">{spec.label}</strong>
     <code className="break-all text-xs">{spec.key}</code>
@@ -44,6 +44,6 @@ export default async function SuperAdminAuthSettings(){
    </li>)}</ul>
    <Link href="/admin/settings" className="inline-flex min-h-11 items-center text-primary-text underline md:min-h-9">Open Global Tenant Settings editor</Link>
   </section>
-  <p className="text-xs text-muted-foreground">No credentials, cookie secrets, signing keys, permitted IPs, provider tokens or environment values are displayed or editable.</p>
+  <p className="text-xs text-muted-foreground leading-5">No credentials, cookie secrets, signing keys, permitted IPs, provider tokens or environment values are displayed or editable.</p>
  </div>;
 }

@@ -35,9 +35,9 @@ export default async function LearnerApplicationDetailPage({params}:{
         <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Application actions</h2>
         {record.currentStatus==="SUBMITTED"
           ? <LearnerApplicationDetailWithdraw applicationId={record.applicationId} requiresRequest={requiresRequest}/>
-          : <p className="text-sm text-muted-foreground">Withdrawal unavailable in the current status.</p>}
+          : <p className="text-sm text-muted-foreground leading-[22px]">Withdrawal unavailable in the current status.</p>}
       </div>
-      <p className="mt-2 text-sm text-body">
+      <p className="mt-2 text-sm text-body leading-[22px]">
         {requiresRequest?"A booked round requires the placement cell to review your withdrawal request. Your application stays active until approved.":"Withdrawing requires a reason and confirmation. Only a successful response updates your status."}
       </p>
       <Link href={"/learn/my-placements/applications/"+encodeURIComponent(record.applicationId)+"/company"}
@@ -47,7 +47,7 @@ export default async function LearnerApplicationDetailPage({params}:{
     </section>
     <section className="border-b border-border py-4 md:py-6" aria-label="Recorded application timeline">
       <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Status timeline</h2>
-      <p className="mt-2 max-w-2xl text-sm leading-6 text-body">
+      <p className="mt-2 max-w-2xl text-sm leading-[22px] text-body">
         Only persisted application status changes are listed. Internal notes and actor IDs are withheld.
         Screening and interview decisions appear in your placement journey.
       </p>
@@ -57,12 +57,12 @@ export default async function LearnerApplicationDetailPage({params}:{
             <h3 className="min-w-0 break-words font-semibold text-[16px] leading-[1.4] text-[var(--lms-heading)]">{event.label}</h3>
             <time className="text-xs text-muted-foreground" dateTime={event.occurredAt.toISOString()}>{when(event.occurredAt)}</time>
           </div>
-          <p className="mt-2 text-sm text-body">
+          <p className="mt-2 text-sm text-body leading-[22px]">
             {event.fromStatus?event.fromStatus.replaceAll("_"," ")+" → ":"Initial: "}
             {event.toStatus.replaceAll("_"," ")}
           </p>
         </li>)}
-      </ol>:<p role="status" className="mt-4 text-sm text-muted-foreground">
+      </ol>:<p role="status" className="mt-4 text-sm text-muted-foreground leading-[22px]">
         No status-history records yet. Your current persisted status is shown above.
       </p>}
     </section>
