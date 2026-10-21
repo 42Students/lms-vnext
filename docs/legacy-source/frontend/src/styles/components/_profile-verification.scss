@@ -1,0 +1,34 @@
+// Profile verification: the student's card and the verifier's page (docs/tpo-ux/PROFILE-VERIFICATION-DESIGN.md).
+.profile-verification {
+  &__title { display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  &__badge { margin-left: 4px; }
+  &__sections { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+    @media (max-width: 767px) { grid-template-columns: minmax(0, 1fr); }
+  }
+  &__section { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 12px; border: 1px solid #e4e9f0; border-radius: 10px; }
+  &__head { display: flex; align-items: center; justify-content: space-between; width: 100%; gap: 8px; }
+  &__missing { margin: 0; padding-left: 18px; color: #5b6b82; }
+  &__by.ant-typography { font-size: 13px; }
+}
+.profile-marksheet { display: flex; flex-wrap: wrap; align-items: center; gap: 8px;
+  > .mb-1 { flex-basis: 100%; }
+  &__ok { color: #16a34a; font-size: 13px; }
+}
+
+.verification-workspace {
+  &__setting-row { display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    @media (max-width: 575px) { flex-direction: column; align-items: flex-start; }
+  }
+  &__summary { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;
+    span { padding: 6px 12px; border: 1px solid #e4e9f0; border-radius: 999px; background: #fff; color: #5b6b82; font-size: 13px; }
+    b { color: #1f2a3c; margin-right: 4px; }
+  }
+  &__toolbar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-bottom: 12px; }
+}
+.verification-queue__student { display: flex; flex-direction: column; .ant-typography { font-size: 12px; } }
+.verification-review {
+  &__section .ant-card-body { display: flex; flex-direction: column; gap: 8px; }
+  &__identity { display: flex; flex-direction: column; gap: 8px; > div { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; } }
+  &__line { display: flex; align-items: center; gap: 8px; }
+  &__changed { background: #fff4d6; border-radius: 4px; padding: 0 4px; }
+}

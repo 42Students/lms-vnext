@@ -1,0 +1,101 @@
+@import "../components/variables.scss";
+
+.ln-AllcontactTab {
+  background: $white;
+  border-radius: 8px;
+  padding: 24px;
+  padding-bottom: 0;
+}
+
+// table
+.contactable {
+
+  th.ant-table-cell
+  {
+    background: none !important;
+    font-weight: 600 !important;
+    font-size: 14px;
+    line-height: 16px;
+    color: $neutral-400 !important;
+
+    &::before {
+      content: none !important;
+    }
+  }
+
+  .td.ant-table-cell , .ant-table-tbody >tr >td{
+    border-top: 0px solid transparent !important;
+    border-bottom: none !important;
+  }
+
+  .ant-table-tbody >tr:last-child>td {
+    border-bottom: 0px solid transparent !important;
+  }
+
+  .ant-table-cell {
+    // font-weight: 600;
+    font-size: 14px;
+    line-height: 20px;
+    color: $neutral-500;
+  }
+
+  .ant-table-tbody tr:nth-child(even) {
+    background-color: unset !important;
+  }
+
+}
+
+// discussion
+
+.ln-discussionTab {
+  .otherDiscussionWrap {
+    background: $white;
+    border-radius: 4px;
+    padding: 24px;
+
+    ul {
+      li {
+        margin-bottom: 16px;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  // Was missing entirely when this page moved onto PageShell (src/components/Common/PageShell.jsx)
+  // — every sibling page migrated the same way (Courses, Attendance, Quizzes, Notifications,
+  // Class Schedule) got this exact rule restoring the outer padding that `.learn-layout
+  // .learn-contacts-page { padding: 0 !important }` zeroes out at this breakpoint. Without it,
+  // Contacts content sat flush against the screen edges on mobile.
+  .learn-contacts-page .learn-projects__content {
+    padding: 16px;
+  }
+
+  .teacher-contacts-module,
+  .teacher-contacts-module__cards,
+  .teacher-contacts-module__card-item,
+  .teacher-contacts-module__card-body {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .teacher-contacts-module__card-item {
+    align-items: flex-start;
+    overflow: hidden;
+  }
+
+  .teacher-contacts-card-item__body,
+  .teacher-contacts-module__card-body {
+    overflow: hidden;
+  }
+
+  .teacher-contacts-card-item__value,
+  .teacher-contacts-module__card-name,
+  .teacher-contacts-card-item__name {
+    min-width: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+  }
+}

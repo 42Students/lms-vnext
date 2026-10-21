@@ -1,0 +1,129 @@
+// PX to Rem values
+@use "sass:math";
+@function rem($size) {
+    @return math.div($size, 16px) * 1rem;
+}
+
+// border-radius
+@mixin border-radius($r) {
+    border-radius: $r;
+}
+
+@mixin border-radiusall($tl:null, $tr:null, $br:null, $bl:null) {
+    border-top-left-radius    : $tl !important;
+    border-top-right-radius   : $tr !important;
+    border-bottom-right-radius: $br !important;
+    border-bottom-left-radius : $bl !important;
+}
+
+// Thin scrollbar — reusable for sidebar, drawers, dropdowns
+// Usage: @include thin-scrollbar;  or  @include thin-scrollbar(#aaa, 6px);
+@mixin thin-scrollbar($color: #c4c4c4, $width: 4px) {
+    scrollbar-width: thin;
+    scrollbar-color: $color transparent;
+
+    &::-webkit-scrollbar {
+        width: $width;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: $color;
+        border-radius: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+}
+
+// Hide scrollbar — content still scrollable, scrollbar visually hidden
+// Usage: @include hide-scrollbar;
+@mixin hide-scrollbar {
+    scrollbar-width: none;          // Firefox
+    -ms-overflow-style: none;       // IE / Edge
+    &::-webkit-scrollbar { display: none; } // Chrome / Safari
+}
+
+// Gradient colors
+
+@mixin gradient($color1, $color2) {
+    background-color: $color1;
+    filter          : progid:DXImageTransform.Microsoft.gradient(GradientType=0, startColorstr=#{$color1}, endColorstr=#{$color2});
+    background-image: -moz-linear-gradient(center top, $color1, $color2);
+    background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from($color1), to($color2));
+}
+
+// ---------------------------------------------------------------------------
+// Learn header mixins — canonical compact listing-page header pattern
+// Reference: _learn-courses.scss L63–157 (gold standard)
+// Usage: new learn pages can @include these instead of copy-pasting.
+// Existing pages are NOT refactored to use these — they are forward-only.
+// ---------------------------------------------------------------------------
+
+// Main flex container — title/metrics left, search/actions right
+@mixin learn-header-base($gap: 24px, $bp: 767px, $gap-mobile: 16px) {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $gap;
+    width: 100%;
+    box-sizing: border-box;
+
+    @media (max-width: $bp) {
+        flex-direction: column;
+        gap: $gap-mobile;
+    }
+}
+
+// Title — 28px desktop, 22px mobile
+@mixin learn-header-title($bp: 767px) {
+    font-size: 28px;
+    font-weight: 600;
+    color: $neutral-900;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+
+    @media (max-width: $bp) {
+        font-size: 22px;
+    }
+}
+
+// Metrics row — wrapping flex row below the title
+@mixin learn-header-metrics {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+// Right column (search, buttons) — baseline-aligned with title
+@mixin learn-header-right($bp: 767px) {
+    flex-shrink: 0;
+    padding-top: 8px;
+
+    @media (max-width: $bp) {
+        width: 100%;
+        padding-top: 0;
+    }
+}
+
+// Metric pill — compact stat badge
+@mixin learn-metric-pill($bg: rgba(38, 186, 199, 0.08), $fg: $teal-text) {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+    white-space: nowrap;
+    color: $fg;
+    background: $bg;
+
+    .anticon {
+        font-size: 13px;
+    }
+}

@@ -1,0 +1,1173 @@
+// TPO Home KPI cards act as real links (role="link", tabIndex 0 — HOME-14 accessibility fix),
+// so they need a visible keyboard-focus state; antd's Card has none by default.
+.tpo-kpi-card {
+  &:focus-visible {
+    outline: 2px solid $clrThird;
+    outline-offset: 2px;
+  }
+}
+
+// Season Lens (SHELL-07/09): the season selector is a persistent scope indicator, not an
+// ordinary dropdown — it needs to look unmistakably different when it's showing a read-only
+// historical season versus the live current one.
+.tpo-season-lens {
+  &.tpo-season-lens--current .ant-select-selector {
+    border-color: #b7eb8f !important;
+    background: #f6ffed !important;
+  }
+  &.tpo-season-lens--past .ant-select-selector {
+    border-color: #ffd591 !important;
+    background: #fff7e6 !important;
+  }
+}
+// TPO workspace identity (SHELL-14): a subtle, distinct professional feel - denser than the
+// learner/teacher layout the TPO shell otherwise inherits verbatim, calmer than superadmin.
+// Scoped to body.tpo-workspace-active (toggled by Sidebar only while inside /tpo), so nothing
+// here touches any other role's screens.
+body.tpo-workspace-active {
+  .ant-card:not(.ant-card-small) .ant-card-body {
+    padding: 16px;
+  }
+  .ant-list-item {
+    padding-top: 8px;
+    padding-bottom: 8px;
+  }
+}
+
+.tpo-season-lens__past-chip {
+  padding: 2px 8px;
+  border-radius: 4px;
+  background: #fff7e6;
+  border: 1px solid #ffd591;
+  color: #ad4e00;
+}
+
+// TPO command bar (SHELL-10): give the topbar room to grow instead of the generic header's
+// "col-4" (33% max-width), which packed Season + search + New + Messages + Bell too tight and
+// forced wrapping on anything less than a wide desktop.
+.tpo-command-bar {
+  flex: 1 1 480px;
+  max-width: 720px;
+  min-width: 0;
+}
+
+// Drive Day hero (HOME-05): a live operational moment gets a treatment that reads as "happening
+// right now", not the same blue Alert used for routine informational banners.
+.tpo-drive-day-hero {
+  background: #fff;
+  color: $neutral-900;
+  border: 1px solid $neutral-200;
+
+  .ant-list-item-meta-title,
+  .ant-list-item-meta-description {
+    color: inherit;
+  }
+  .ant-list-item {
+    border-block-end: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+}
+
+
+// TPO Home command-center redesign.
+// Keep page-specific visual decisions scoped here so the rest of the TPO workspace can evolve
+// independently. The hierarchy is intentional: today's work first, season analytics second.
+.tpo-home {
+  &__header {
+    margin-bottom: 18px;
+    padding: 2px 0 18px;
+    border-bottom: 1px solid $tpo-line;
+
+    .listing-page-header__title {
+      max-width: 920px;
+      color: $tpo-ink;
+      font-size: clamp(21px, 2vw, 29px);
+      line-height: 1.25;
+      letter-spacing: -0.02em;
+    }
+
+    .listing-page-header__subtitle {
+      margin-top: 7px;
+    }
+
+    .listing-page-header__right {
+      align-self: flex-start;
+    }
+
+    .ant-segmented {
+      padding: 3px;
+      border: 1px solid #e4e9f0;
+      border-radius: 10px;
+      background: #f6f8fb;
+    }
+  }
+
+  &__content {
+    width: 100%;
+    max-width: 1480px;
+    margin: 0 auto;
+  }
+
+  &__section-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin: 22px 0 12px;
+
+    > .ant-typography {
+      max-width: 620px;
+      text-align: right;
+      font-size: 13px;
+    }
+
+    &--analytics {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid $tpo-line;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    margin: 0;
+    color: #526581;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__section-title.ant-typography {
+    margin: 3px 0 0 !important;
+    color: $tpo-ink;
+    font-size: 18px;
+    line-height: 1.35;
+  }
+
+  &__panel.ant-card,
+  &__pulse,
+  &__analytics .tpo-drive-pipeline {
+    border: 1px solid $tpo-line;
+    border-radius: $radius-card;
+    background: #fff;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.055);
+  }
+
+  &__panel.ant-card {
+    overflow: hidden;
+
+    .ant-card-head {
+      min-height: 48px;
+      padding-inline: 16px;
+      border-bottom-color: $tpo-line;
+      background: $tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      color: $tpo-text;
+      font-size: 15px;
+      font-weight: 650;
+    }
+  }
+
+  &__needs {
+    .ant-card-body {
+      padding-top: 12px !important;
+    }
+
+    .ant-badge-count {
+      box-shadow: none;
+      font-weight: 700;
+    }
+  }
+
+  &__needs-list {
+    .ant-list-item {
+      margin-bottom: 8px;
+      padding: 11px 12px !important;
+      border: 1px solid $tpo-line;
+      border-left-width: 4px !important;
+      border-radius: 10px;
+      background: $tpo-surface-soft;
+      transition: background 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+
+      &:hover {
+        border-color: #dce4ee;
+        background: #f7faff;
+        transform: translateY(-1px);
+      }
+
+      &:last-child {
+        margin-bottom: 0;
+      }
+
+      .ant-list-item-meta {
+        min-width: 0;
+        margin-bottom: 0;
+      }
+
+      .ant-list-item-meta-title {
+        margin-bottom: 4px;
+        color: #233047;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+    }
+  }
+
+  &__followups {
+    .ant-list-item {
+      gap: 12px;
+      padding-inline: 4px !important;
+    }
+
+    // On a phone the title was squeezed to one word per line and Done fell off the edge: let the buttons drop under the text.
+    @media (max-width: 767px) {
+      .ant-list-item { flex-wrap: wrap; }
+      .ant-list-item-meta { flex: 1 1 100%; min-width: 0; }
+      .ant-list-item-action { margin: 0; padding-inline-start: 0; display: flex; flex-wrap: wrap; gap: 6px; max-width: 100%; padding-top: 4px; > li { padding: 0; } }
+      .ant-list-item-action-split { display: none; }
+    }
+
+    .ant-list-item-meta-title a {
+      color: $tpo-text;
+      font-weight: 600;
+
+      &:hover {
+        color: $tpo-primary;
+      }
+    }
+  }
+
+  &__pulse {
+    padding: 15px;
+
+    .tpo-kpi-card.ant-card {
+      min-height: 108px;
+      border: 0;
+      border-radius: 10px;
+      background: #f6f8fb;
+      box-shadow: none;
+      transition: background 0.15s ease, transform 0.15s ease;
+
+      &:hover {
+        background: #eef4ff;
+        transform: translateY(-1px);
+      }
+
+      .ant-card-body {
+        padding: 13px !important;
+      }
+
+      .ant-statistic-title {
+        margin-bottom: 5px;
+        color: $tpo-muted;
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .ant-statistic-content {
+        color: $tpo-ink;
+        font-size: 25px;
+        line-height: 1.1;
+      }
+
+      .ant-typography {
+        display: block;
+        margin-top: 7px;
+        font-size: $tpo-fs-xs;
+        line-height: 1.35;
+      }
+    }
+  }
+
+  &__agenda,
+  &__branches {
+    .ant-card-body {
+      padding-top: 12px !important;
+    }
+  }
+
+  &__agenda {
+    .ant-list-item {
+      padding: 7px 0 !important;
+      border-block-end-color: #f0f2f5 !important;
+    }
+  }
+
+  &__branches {
+    .ant-progress {
+      margin-top: 4px;
+    }
+
+    .ant-progress-inner {
+      background: #eef2f6;
+    }
+  }
+
+  &__analytics {
+    > .ant-col {
+      display: flex;
+    }
+
+    .tpo-drive-pipeline {
+      width: 100%;
+      overflow: hidden;
+
+      .ant-card-head {
+        min-height: 48px;
+        border-bottom-color: $tpo-line;
+        background: $tpo-surface-soft;
+      }
+
+      .ant-card-head-title {
+        color: $tpo-text;
+        font-size: 15px;
+        font-weight: 650;
+      }
+
+      &__chart {
+        min-height: 215px;
+      }
+
+      &__note {
+        line-height: 1.45;
+      }
+    }
+  }
+
+  &__setup {
+    border-style: dashed !important;
+    box-shadow: none !important;
+
+    &--compact {
+      background: $tpo-surface-soft !important;
+    }
+  }
+
+  .tpo-drive-day-hero {
+    overflow: hidden;
+    border-radius: $radius-card;
+    box-shadow: 0 8px 24px rgba(22, 119, 255, 0.18);
+
+    .ant-card-body {
+      padding: 18px 20px !important;
+    }
+
+    .ant-list-item:last-child {
+      border-block-end: 0 !important;
+    }
+  }
+}
+
+@media (max-width: 991px) {
+  .tpo-home {
+    &__section-heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+  }
+}
+
+@media (max-width: 575px) {
+  .tpo-home {
+    &__header {
+      margin-bottom: 14px;
+      padding-bottom: 14px;
+
+      .listing-page-header__title {
+        font-size: 21px;
+      }
+
+      .listing-page-header__right,
+      .ant-segmented {
+        width: 100%;
+      }
+
+      .ant-segmented-group {
+        width: 100%;
+      }
+
+      .ant-segmented-item {
+        flex: 1;
+        text-align: center;
+      }
+    }
+
+    &__section-heading {
+      margin-top: 18px;
+
+      &--analytics {
+        margin-top: 22px;
+        padding-top: 20px;
+      }
+    }
+
+    &__panel.ant-card .ant-card-head,
+    &__panel.ant-card .ant-card-body {
+      padding-inline: 13px;
+    }
+
+    &__needs-list .ant-list-item {
+      padding: 10px !important;
+
+      > div:first-child {
+        align-items: flex-start !important;
+        flex-direction: column;
+      }
+    }
+
+    &__pulse {
+      padding: 12px;
+
+      .tpo-kpi-card.ant-card {
+        min-height: 100px;
+      }
+    }
+  }
+}
+
+
+// TPO Home Demo/Wow pass — executive first viewport.
+.tpo-home {
+  &__executive {
+    display: grid;
+    grid-template-columns: minmax(0, 1.65fr) minmax(320px, 0.75fr);
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  &__executive-card.ant-card {
+    overflow: hidden;
+    border: 0;
+    border-radius: 18px;
+    background:
+      radial-gradient(circle at 88% 16%, rgba(56, 189, 248, 0.22), transparent 30%),
+      radial-gradient(circle at 64% 85%, rgba(99, 102, 241, 0.18), transparent 34%),
+      linear-gradient(135deg, $tpo-ink 0%, #16253f 52%, $tpo-ink 100%);
+    box-shadow: 0 18px 46px rgba(15, 23, 42, 0.18);
+    color: #fff;
+
+    > .ant-card-body {
+      padding: 22px 24px !important;
+    }
+  }
+
+  &__executive-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 22px;
+    margin-bottom: 22px;
+
+    h3.ant-typography {
+      margin: 4px 0 4px !important;
+      color: #fff;
+      font-size: clamp(22px, 2.2vw, 30px);
+      line-height: 1.18;
+      letter-spacing: -0.025em;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      color: rgba(226, 232, 240, 0.78);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  &__executive-eyebrow.ant-typography {
+    color: $tpo-primary;
+    font-size: $tpo-fs-xs;
+    font-weight: 750;
+    letter-spacing: 0.105em;
+    text-transform: uppercase;
+  }
+
+  &__executive-actions {
+    flex: 0 0 auto;
+
+    .ant-btn {
+      min-height: 40px;
+      border-radius: 9px;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+      box-shadow: none;
+    }
+
+    .ant-btn-background-ghost {
+      border-color: rgba(255, 255, 255, 0.28);
+      color: #fff;
+
+      &:hover {
+        border-color: rgba(255, 255, 255, 0.55);
+        color: #fff;
+        background: rgba(255, 255, 255, 0.08);
+      }
+    }
+  }
+
+  &__executive-grid {
+    display: grid;
+    grid-template-columns: minmax(330px, 0.95fr) minmax(0, 1.25fr);
+    gap: 18px;
+    align-items: stretch;
+  }
+
+  &__placement-rate {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 18px;
+    padding: 15px;
+    border: 1px solid rgba(148, 163, 184, 0.16);
+    border-radius: $radius-card;
+    background: rgba(15, 23, 42, 0.3);
+    backdrop-filter: blur(10px);
+
+    .ant-progress {
+      flex: 0 0 auto;
+    }
+
+    .ant-progress-text {
+      color: #fff !important;
+    }
+
+    > div:last-child {
+      min-width: 0;
+      flex: 1;
+    }
+
+    > div:last-child > .ant-typography {
+      display: block;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      display: block;
+      margin-top: 4px;
+      color: #fff;
+      font-size: 23px;
+      line-height: 1.1;
+    }
+
+    span:not(.ant-progress-text) {
+      display: block;
+      margin-top: 3px;
+      color: #cbd5e1;
+      font-size: $tpo-fs-xs;
+    }
+
+    small {
+      display: block;
+      margin-top: 6px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      line-height: 1.35;
+    }
+  }
+
+  &__placement-rate-value {
+    color: #fff;
+    font-size: 29px;
+    font-weight: 750;
+    letter-spacing: -0.04em;
+  }
+
+  &__placement-composition {
+    position: relative;
+    height: 7px;
+    margin-top: 10px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.11);
+
+    > span {
+      height: 100%;
+      min-width: 2px;
+      margin: 0 !important;
+      border-radius: inherit;
+      background: linear-gradient(90deg, $light-cyan, $clrThird);
+    }
+  }
+
+  &__hero-kpis {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+
+    > button {
+      min-width: 0;
+      padding: 13px 14px;
+      border: 1px solid rgba(148, 163, 184, 0.15);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.055);
+      color: #fff;
+      font: inherit;
+      text-align: left;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+
+      &:hover,
+      &:focus-visible {
+        border-color: rgba(125, 211, 252, 0.42);
+        outline: none;
+        background: rgba(255, 255, 255, 0.09);
+        transform: translateY(-1px);
+      }
+
+      > span {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        color: $tpo-primary;
+        font-size: $tpo-fs-xs;
+        font-weight: 700;
+        letter-spacing: 0.065em;
+        text-transform: uppercase;
+      }
+
+      strong {
+        display: block;
+        margin-top: 5px;
+        color: #fff;
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      small {
+        display: block;
+        margin-top: 6px;
+        color: $tpo-muted;
+        font-size: $tpo-fs-xs;
+        line-height: 1.35;
+      }
+    }
+  }
+
+  &__brief.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: 0 12px 34px rgba(26, 45, 72, 0.075);
+
+    > .ant-card-body {
+      padding: 17px !important;
+    }
+  }
+
+  &__brief-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 12px;
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 17px;
+    }
+
+    > .ant-typography {
+      max-width: 110px;
+      text-align: right;
+      font-size: $tpo-fs-xs;
+      line-height: 1.35;
+    }
+  }
+
+  &__brief-list {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  &__brief-item {
+    display: grid;
+    width: 100%;
+    grid-template-columns: 8px minmax(0, 1fr) auto;
+    gap: 9px;
+    padding: 10px 9px;
+    align-items: start;
+    border: 1px solid $tpo-line;
+    border-radius: 10px;
+    background: $tpo-surface-soft;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.15s ease;
+
+    &:not(:disabled):hover,
+    &:not(:disabled):focus-visible {
+      border-color: #cbd8e8;
+      outline: none;
+      background: #f7faff;
+      transform: translateX(2px);
+    }
+
+    &:disabled {
+      cursor: default;
+    }
+
+    > span:nth-child(2) {
+      min-width: 0;
+    }
+
+    strong,
+    small {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-text;
+      font-size: $tpo-fs-xs;
+      line-height: 1.35;
+    }
+
+    small {
+      margin-top: 3px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      line-height: 1.4;
+    }
+
+    > .anticon {
+      margin-top: 2px;
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+    }
+
+    &--positive .tpo-home__brief-dot {
+      background: #22c55e;
+    }
+
+    &--attention .tpo-home__brief-dot {
+      background: #f59e0b;
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.11);
+    }
+
+    &--info .tpo-home__brief-dot {
+      background: $clrThird;
+    }
+
+    &--neutral .tpo-home__brief-dot {
+      background: $tpo-muted;
+    }
+  }
+
+  &__brief-dot {
+    width: 7px;
+    height: 7px;
+    margin-top: 4px;
+    border-radius: 50%;
+  }
+
+  &__brief-footer {
+    display: flex;
+    margin-top: 11px;
+    padding: 10px 11px;
+    align-items: center;
+    gap: 8px;
+    border-radius: 10px;
+    background: #f6f9fc;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+
+    > .anticon {
+      color: #a16207;
+    }
+
+    strong {
+      color: $tpo-text;
+    }
+  }
+
+  &__branch-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+
+    > .ant-typography {
+      font-size: $tpo-fs-xs;
+    }
+
+    .ant-tag {
+      margin: 0;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__branch-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 11px;
+  }
+
+  &__branch-row {
+    display: grid;
+    grid-template-columns: minmax(88px, 0.9fr) minmax(120px, 2fr) 52px;
+    gap: 9px;
+    align-items: center;
+  }
+
+  &__branch-label {
+    min-width: 0;
+
+    > span {
+      color: $tpo-text;
+      font-size: $tpo-fs-xs;
+      font-weight: 650;
+    }
+
+    .ant-tag {
+      display: block;
+      width: fit-content;
+      margin: 3px 0 0;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+  }
+
+  &__branch-track {
+    position: relative;
+    height: 9px;
+    border-radius: 999px;
+    background: $tpo-line;
+  }
+
+  &__branch-fill {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+    border-radius: inherit;
+    background: linear-gradient(90deg, $light-cyan, $clrThird);
+
+    &.is-attention {
+      background: linear-gradient(90deg, #fb923c, #ef4444);
+    }
+  }
+
+  &__branch-benchmark {
+    position: absolute;
+    top: -3px;
+    width: 2px;
+    height: 15px;
+    border-radius: 2px;
+    background: $tpo-text;
+    opacity: 0.6;
+    transform: translateX(-1px);
+  }
+
+  &__branch-value {
+    text-align: right;
+
+    strong,
+    small {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-text;
+      font-size: $tpo-fs-xs;
+      line-height: 1.15;
+    }
+
+    small {
+      margin-top: 2px;
+      color: $tpo-muted;
+      font-size: 12px;
+    }
+  }
+}
+
+@media (max-width: 1180px) {
+  .tpo-home {
+    &__executive {
+      grid-template-columns: 1fr;
+    }
+
+    &__brief-head > .ant-typography {
+      max-width: none;
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-home {
+    &__executive-card.ant-card > .ant-card-body {
+      padding: 17px 14px !important;
+    }
+
+    &__executive-head {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    &__executive-actions {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr;
+
+      .ant-btn {
+        width: 100%;
+      }
+    }
+
+    &__executive-grid {
+      grid-template-columns: 1fr;
+    }
+
+    &__placement-rate {
+      align-items: flex-start;
+      flex-direction: column;
+
+      .ant-progress {
+        align-self: center;
+      }
+    }
+
+    &__hero-kpis {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    &__brief-head {
+      align-items: flex-start;
+      flex-direction: column;
+
+      > .ant-typography {
+        text-align: left;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .tpo-home {
+    &__executive-actions,
+    &__hero-kpis {
+      grid-template-columns: 1fr;
+    }
+
+    &__branch-row {
+      grid-template-columns: 74px minmax(90px, 1fr) 44px;
+      gap: 6px;
+    }
+  }
+}
+
+
+/* Demo/Wow pass: compensation intelligence reuses the backend CTC-report definition. */
+.tpo-home {
+  &__compensation.ant-card {
+    width:100%;
+    overflow:hidden;
+    border:1px solid $tpo-line;
+    border-radius:16px;
+    box-shadow:0 10px 28px rgba(26,45,72,.065);
+
+    .ant-card-head {
+      min-height:48px;
+      border-bottom-color:$tpo-line;
+      background:$tpo-surface-soft;
+    }
+
+    .ant-card-head-title {
+      color:$tpo-text;
+      font-size:15px;
+      font-weight:650;
+    }
+
+    > .ant-card-body { padding:16px !important; }
+  }
+
+  &__compensation-summary {
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:9px;
+
+    > div {
+      padding:12px 13px;
+      border:1px solid $tpo-line;
+      border-radius:10px;
+      background:$tpo-surface-soft;
+    }
+
+    span,strong,small { display:block; }
+    span {
+      color:$tpo-muted;
+      font-size: 12px;
+      font-weight:750;
+      letter-spacing:.06em;
+      text-transform:uppercase;
+    }
+    strong {
+      margin-top:4px;
+      color:$tpo-ink;
+      font-size:20px;
+      line-height:1.1;
+    }
+    small {
+      margin-top:5px;
+      color:$tpo-muted;
+      font-size: 12px;
+      line-height:1.35;
+    }
+  }
+
+  &__compensation-distribution {
+    margin-top:10px;
+    padding:12px 13px;
+    border:1px solid $tpo-line;
+    border-radius:10px;
+    background:#fff;
+  }
+
+  &__compensation-distribution-head {
+    display:flex;
+    margin-bottom:10px;
+    align-items:baseline;
+    justify-content:space-between;
+    gap:12px;
+
+    span {
+      color:#526581;
+      font-size: $tpo-fs-xs;
+      font-weight:750;
+      letter-spacing:.055em;
+      text-transform:uppercase;
+    }
+
+    small {
+      color:$tpo-muted;
+      font-size: 12px;
+    }
+  }
+
+  &__compensation-bands {
+    display:grid;
+    grid-template-columns:repeat(5,minmax(0,1fr));
+    gap:8px;
+  }
+
+  &__compensation-band {
+    min-width:0;
+
+    > span,> strong { display:block; }
+    > span {
+      color:$tpo-muted;
+      font-size: 12px;
+      font-weight:650;
+    }
+    > div {
+      height:8px;
+      margin-top:5px;
+      overflow:hidden;
+      border-radius:999px;
+      background:$tpo-line;
+    }
+    > div i {
+      display:block;
+      height:100%;
+      min-width:2px;
+      border-radius:inherit;
+      background:linear-gradient(90deg, $light-cyan, $clrThird);
+    }
+    > strong {
+      margin-top:5px;
+      color:$tpo-text;
+      font-size: $tpo-fs-xs;
+    }
+  }
+}
+
+@media(max-width:767px){
+  .tpo-home {
+    &__compensation-summary { grid-template-columns:1fr; }
+    &__compensation-bands { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    &__compensation-distribution-head { align-items:flex-start; flex-direction:column; gap:3px; }
+  }
+}
+
+
+/* Same-day season pace: contextual, not a misleading final-season comparison. */
+.tpo-home {
+  &__placement-pace {
+    display:flex;
+    margin-top:10px;
+    padding:8px 9px;
+    align-items:flex-start;
+    gap:7px;
+    border:1px solid rgba(148,163,184,.16);
+    border-radius:9px;
+    background:rgba(255,255,255,.045);
+
+    > .anticon {
+      margin-top:2px;
+      color:$tpo-muted;
+      font-size: $tpo-fs-xs;
+    }
+
+    > span {
+      min-width:0;
+      margin:0 !important;
+    }
+
+    strong,small {
+      display:block;
+    }
+
+    strong {
+      margin:0;
+      color:#e2e8f0;
+      font-size: $tpo-fs-xs;
+      line-height:1.35;
+    }
+
+    small {
+      margin-top:2px;
+      color:$tpo-muted;
+      font-size: 12px;
+      line-height:1.35;
+    }
+
+    &.is-ahead {
+      border-color:rgba(74,222,128,.22);
+      background:rgba(34,197,94,.07);
+
+      > .anticon { color:#4ade80; }
+      strong { color:#dcfce7; }
+    }
+
+    &.is-behind {
+      border-color:rgba(245,158,11,.24);
+      background:rgba(245,158,11,.07);
+
+      > .anticon { color:#fbbf24; }
+      strong { color:#fef3c7; }
+    }
+  }
+}
+
+// The one-line "Season setup" widget sits right above the Needs you card; it needs air below.
+.tpo-home__setup--compact { margin-bottom: 16px; }
+
+// Nothing waiting: one quiet line instead of two empty boxes.
+.tpo-home__quiet.ant-card .ant-card-body { display: flex; align-items: center; gap: 10px; padding: 14px 16px; color: $tpo-text; }
+.tpo-home__quiet-icon { color: #237804; font-size: 18px; }
+.tpo-home__branch-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }

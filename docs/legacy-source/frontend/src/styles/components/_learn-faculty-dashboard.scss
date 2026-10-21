@@ -1,0 +1,649 @@
+// =============================================================================
+// Faculty Course Dashboard (fcd-*) — Analytics cards on course home page
+// =============================================================================
+
+// Variables (scoped to this file; pulls from global _variables.scss)
+$fcd-primary: $clrThird;       // #26bac7
+$fcd-primary-dark: $teal-dark; // #1e9aa8
+$fcd-green: $status-success;
+$fcd-amber: $status-warning;
+$fcd-amber-text: #b45309; // amber-700 — 4.7:1 contrast on white (WCAG AA)
+$fcd-red: #d97777;
+$fcd-text: $neutral-900;
+$fcd-text-muted: $neutral-500;
+$fcd-border: $neutral-200;
+$fcd-bg: $neutral-50;
+$fcd-bg-page: $neutral-100;
+$fcd-radius: 12px;
+$fcd-pad: 24px;
+$fcd-mobile-bp: 767px;
+
+// ---------------------------------------------------------------------------
+// Grid layout — 2 columns on desktop, 1 on mobile
+// ---------------------------------------------------------------------------
+.fcd-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+  margin-top: 16px;
+
+  @media (max-width: $fcd-mobile-bp) {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Card base
+// ---------------------------------------------------------------------------
+.fcd-card {
+  background: $fcd-bg;
+  border: 1px solid $fcd-border;
+  border-radius: $fcd-radius;
+  padding: $fcd-pad;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  @media (max-width: $fcd-mobile-bp) {
+    padding: 16px;
+    gap: 12px;
+    max-width: 100%;
+    overflow: hidden;
+    box-sizing: border-box;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  &__icon {
+    font-size: 18px;
+    color: $fcd-primary;
+
+    &--amber { color: $fcd-amber-text; }
+    &--green { color: $fcd-green; }
+    &--red { color: $fcd-red; }
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: $fcd-text;
+    line-height: 1.3;
+    flex: 1;
+  }
+
+  &__badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 8px;
+    border-radius: 12px;
+    background: rgba($fcd-amber, 0.15);
+    color: darken($fcd-amber, 10%);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  &__empty {
+    text-align: center;
+    padding: 20px 0;
+    color: $fcd-text-muted;
+
+    p {
+      margin: 8px 0 4px;
+      font-weight: 500;
+      color: $fcd-text;
+      font-size: 14px;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+
+  &__empty-icon {
+    font-size: 32px;
+    color: $fcd-border;
+  }
+
+  &__success {
+    text-align: center;
+    padding: 20px 0;
+    color: $fcd-text-muted;
+
+    p {
+      margin: 0 0 4px;
+      font-weight: 500;
+      color: $fcd-green;
+      font-size: 14px;
+    }
+    span {
+      font-size: 14px;
+    }
+  }
+
+  &__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: auto;
+    padding: 0;
+    border: none;
+    background: none;
+    color: $fcd-primary;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: color 0.15s;
+
+    &:hover {
+      color: $fcd-primary-dark;
+    }
+
+    .anticon {
+      font-size: 12px;
+    }
+  }
+}
+
+.learn-course-layout {
+  .fcd-card {
+    background: $white;
+    border-color: $neutral-200;
+    box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+  }
+
+  .fcd-card__icon,
+  .fcd-card__icon--amber,
+  .fcd-card__icon--green,
+  .fcd-card__icon--red,
+  .fcd-card__badge,
+  .fcd-card__success p,
+  .fcd-card__link,
+  .fcd-stat__value--green,
+  .fcd-stat__value--amber,
+  .fcd-stat__value--red {
+    color: $neutral-500;
+  }
+
+  .fcd-card__badge,
+  .fcd-alert-item--amber,
+  .fcd-alert-item--red {
+    background: $neutral-100;
+  }
+
+  .fcd-alert-item--amber,
+  .fcd-alert-item--red {
+    color: $neutral-500;
+
+    .anticon {
+      color: $neutral-500;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Stat row — horizontal stat cards
+// ---------------------------------------------------------------------------
+.fcd-stat-row {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  @media (max-width: $fcd-mobile-bp) {
+    gap: 12px;
+  }
+}
+
+.fcd-stat {
+  display: flex;
+  flex-direction: column;
+  min-width: 80px;
+
+  &__value {
+    font-size: 28px;
+    font-weight: 700;
+    color: $fcd-text;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+
+    &--green { color: $fcd-green; }
+    &--amber { color: $fcd-amber-text; }
+    &--red { color: $fcd-red; }
+
+    @media (max-width: $fcd-mobile-bp) {
+      font-size: 24px;
+    }
+  }
+
+  &__label {
+    font-size: 12px;
+    color: $fcd-text-muted;
+    margin-top: 2px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Section header within a card
+// ---------------------------------------------------------------------------
+.fcd-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  &__title {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: $fcd-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Alert items (warnings)
+// ---------------------------------------------------------------------------
+.fcd-alert-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fcd-alert-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  width: 100%;
+  border: none;
+
+  &--amber {
+    background: rgba($fcd-amber, 0.08);
+    color: darken($fcd-amber, 15%);
+
+    .anticon { color: $fcd-amber; }
+  }
+
+  &--red {
+    background: rgba($fcd-red, 0.08);
+    color: darken($fcd-red, 10%);
+
+    .anticon { color: $fcd-red; }
+  }
+
+  &--clickable {
+    cursor: pointer;
+    transition: background 0.15s;
+
+    &:hover {
+      background: rgba($fcd-red, 0.14);
+    }
+
+    span { flex: 1; text-align: left; }
+  }
+
+  &__chevron {
+    font-size: 12px;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Low attendance student list (expandable inside attendance card)
+// ---------------------------------------------------------------------------
+.fcd-low-att-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 240px;
+  overflow-y: auto;
+  @include thin-scrollbar;
+}
+
+.fcd-low-att-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: background 0.15s;
+
+  &:hover {
+    background: $fcd-border;
+  }
+
+  &__name {
+    color: $fcd-text;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 12px;
+  }
+
+  &__pct {
+    font-weight: 600;
+    color: $fcd-amber-text;
+    flex-shrink: 0;
+
+    &--critical {
+      color: $fcd-red;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Deadline list
+// ---------------------------------------------------------------------------
+.fcd-deadline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fcd-deadline-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 14px;
+  color: $fcd-text-muted;
+
+  .anticon {
+    margin-top: 2px;
+    color: $fcd-text-muted;
+  }
+
+  &--urgent .anticon {
+    color: $fcd-amber-text;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  &__name {
+    font-weight: 500;
+    color: $fcd-text;
+  }
+
+  &__meta {
+    font-size: 12px;
+    color: $fcd-text-muted;
+
+    strong {
+      color: $fcd-amber-text;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Attendance bars
+// ---------------------------------------------------------------------------
+.fcd-attendance-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fcd-att-bar-row {
+  display: grid;
+  grid-template-columns: 48px 1fr 90px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+
+  @media (max-width: $fcd-mobile-bp) {
+    grid-template-columns: 40px 1fr auto;
+    max-width: 100%;
+  }
+
+  &__date {
+    color: $fcd-text-muted;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &__pct {
+    text-align: right;
+    color: $fcd-text;
+    font-weight: 500;
+    white-space: nowrap;
+
+    &--low {
+      color: $fcd-red;
+    }
+  }
+}
+
+.fcd-att-bar {
+  height: 8px;
+  background: $fcd-border;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    background: $fcd-primary;
+    transform-origin: left;
+    transition: transform 0.3s ease;
+
+    &--low {
+      background: $fcd-red;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Grade distribution bars
+// ---------------------------------------------------------------------------
+.fcd-distribution {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fcd-dist-row {
+  display: grid;
+  grid-template-columns: 80px 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+
+  &__label {
+    color: $fcd-text-muted;
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  &__count {
+    text-align: right;
+    color: $fcd-text;
+    font-weight: 600;
+  }
+}
+
+.fcd-dist-bar {
+  height: 8px;
+  background: $fcd-border;
+  border-radius: 4px;
+  overflow: hidden;
+
+  &__fill {
+    height: 100%;
+    width: 100%;
+    border-radius: 4px;
+    background: $fcd-primary;
+    transform-origin: left;
+    transition: transform 0.3s ease;
+
+    &--low {
+      background: $fcd-red;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Content averages
+// ---------------------------------------------------------------------------
+.fcd-content-avgs {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fcd-content-avg-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 14px;
+
+  &__name {
+    color: $fcd-text;
+    font-weight: 500;
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    padding-right: 12px;
+  }
+
+  &__pct {
+    font-weight: 600;
+    color: $fcd-text;
+    flex-shrink: 0;
+
+    &--low {
+      color: $fcd-red;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// At-risk students list
+// ---------------------------------------------------------------------------
+.fcd-risk-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fcd-risk-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  border-bottom: 1px solid $fcd-border;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+    background: $fcd-amber; // default warning color
+
+    &--warning { background: $fcd-amber; }
+    &--critical { background: $fcd-red; }
+  }
+
+  &__severity-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $fcd-text-muted;
+  }
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  &__name {
+    font-size: 14px;
+    font-weight: 500;
+    color: $fcd-text;
+  }
+
+  &__reasons {
+    font-size: 12px;
+    color: $fcd-text-muted;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Content progress module list
+// ---------------------------------------------------------------------------
+.fcd-module-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fcd-module-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  padding: 4px 0;
+
+  &__icon {
+    font-size: 14px;
+    flex-shrink: 0;
+
+    &--done { color: $fcd-green; }
+    &--partial { color: $fcd-amber-text; }
+    &--pending { color: $fcd-text-muted; }
+  }
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+    color: $fcd-text;
+    font-weight: 500;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__count {
+    flex-shrink: 0;
+    color: $fcd-text-muted;
+    font-weight: 500;
+  }
+
+  &--more {
+    color: $fcd-text-muted;
+    font-size: 12px;
+    padding-left: 22px;
+  }
+}

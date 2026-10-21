@@ -1,0 +1,1051 @@
+@import "../../../../styles/components/variables";
+@import "../../../../styles/components/mixins";
+
+.attendance-list {
+  font-family: "Lato-Regular";
+
+  .attendee-header-wrapper {
+    background-color: #fff;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .attendee-header-filters {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+  .attendence-legend {
+    height: 19px;
+    width: 12px;
+    background-color: $clrThird;
+    border-radius: 3px;
+    margin-right: 15px;
+    margin-left: 5px;
+  }
+  .slider {
+    // display: flex;
+    width: 100%;
+    height: 100%;
+  }
+
+  .attend-body {
+    position: relative;
+    width: 100% !important;
+    overflow: auto;
+
+    // A fixed-layout table pinned to 100% squeezed every day column to fit the container no
+    // matter how many days were in range, so nothing could ever overflow and the (also
+    // previously hidden, see below) scrollbar had nothing to scroll to. Let the table size to
+    // its own content instead - same pattern already used by table.attendance-grid further
+    // down this file - so a wide month genuinely overflows and the visible scrollbar can reach it.
+    table {
+      width: max-content;
+      min-width: 100%;
+      border-collapse: collapse;
+    }
+
+    .item,
+    .days {
+      min-width: 32px;
+    }
+  }
+
+  // These were `display: flex` with `flex: 0 0 5em` on <th>/<td>, which stripped row/cell roles
+  // from the accessibility tree (browsers derive ARIA roles from the USED display value) and
+  // forced 80px-wide columns to hold a single character. Table display is restored in the
+  // corrections block at the end of this file.
+  .item,
+  .days,
+  .attendance {
+    color: $gray7AE;
+    text-align: center;
+    background-color: #fff;
+  }
+  .sunday {
+    border-right: 1px solid #e3e6ef;
+  }
+
+  .item.sunday,
+  .days.sunday {
+    color: $gray7AE;
+  }
+
+  // Same reason as above — <tr> must stay a table-row for scope="col"/"row" to mean anything.
+  .week-days-header,
+  .days-header,
+  .attendee-header {
+    display: table-row;
+  }
+  .noData {
+    text-align: center;
+    padding: 20px;
+    width: 100%;
+  }
+  .takeAttendanceBtn {
+    // border: 1px solid #ddd;
+
+    padding: 6px;
+    // border-radius: 5px;
+    cursor: pointer;
+    button {
+      margin-bottom: 2px;
+    }
+    .takeAttendance {
+      margin-left: 10px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .attendee-header-wrapper {
+      .attendee-header-filters {
+        justify-content: center;
+        padding-top: 10px;
+      }
+      flex-direction: column;
+      .takeAttendanceBtn {
+        justify-content: flex-end;
+        padding-left: 10px;
+        padding-left: 4em;
+      }
+    }
+  }
+}
+
+.learn-course-attendance-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 18px;
+  align-items: stretch;
+  padding: 20px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgba(2, 6, 23, 0.05);
+
+  &__eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    margin-bottom: 8px;
+    color: rgba(15, 23, 42, 0.54);
+    font-size: 12px;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  h2 {
+    margin: 0;
+    color: rgba(15, 23, 42, 0.96);
+    font-size: 22px;
+    font-weight: 950;
+    letter-spacing: -0.03em;
+  }
+
+  p {
+    max-width: 680px;
+    margin: 8px 0 0;
+    color: rgba(15, 23, 42, 0.66);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  &__cards {
+    min-width: 280px;
+    display: grid;
+    gap: 10px;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 11px 12px;
+      border: 1px solid rgba(15, 23, 42, 0.07);
+      border-radius: 14px;
+      background: rgba(248, 250, 252, 0.8);
+      color: rgba(15, 23, 42, 0.68);
+      font-size: 12px;
+      font-weight: 850;
+    }
+  }
+}
+
+.learn-course-attendance__toolbar {
+  gap: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.04);
+}
+
+.learn-course-attendance__toolbar-left {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.learn-course-attendance__mode {
+  padding: 4px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 12px;
+  background: rgba(248, 250, 252, 0.9);
+
+  // The selected segment used AntD's default (a near-white pill on this control's own
+  // near-white background), so "Mark attendance" vs "Attendance report" had almost no visible
+  // difference and the whole control read as inert next to the solidly-bordered, teal
+  // "Schedule Class" button beside it.
+  .ant-segmented-item-selected {
+    background: $clrThird;
+  }
+
+  .ant-segmented-item-selected .ant-segmented-item-label {
+    color: $white;
+    font-weight: 600;
+  }
+}
+
+.learn-attendance-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 16px;
+  padding: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.045);
+
+  &__primary {
+    display: grid;
+    gap: 4px;
+
+    span {
+      color: rgba(15, 23, 42, 0.48);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      color: rgba(15, 23, 42, 0.96);
+      font-size: 34px;
+      font-weight: 950;
+      line-height: 1;
+      letter-spacing: -0.05em;
+    }
+
+    p {
+      margin: 4px 0 0;
+      color: rgba(15, 23, 42, 0.62);
+      font-size: 13px;
+      font-weight: 750;
+    }
+  }
+
+  &__stats {
+    min-width: 320px;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+
+    span {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border: 1px solid rgba(15, 23, 42, 0.07);
+      border-radius: 14px;
+      background: rgba(248, 250, 252, 0.8);
+      color: rgba(15, 23, 42, 0.56);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    strong {
+      color: rgba(15, 23, 42, 0.95);
+      font-size: 20px;
+      font-weight: 950;
+      line-height: 1;
+    }
+  }
+
+  &--safe {
+    border-color: rgba(15, 23, 42, 0.08);
+  }
+
+  &--risk {
+    border-color: rgba($status-error, 0.2);
+  }
+
+  &--faculty {
+    border-color: rgba(15, 23, 42, 0.08);
+  }
+}
+
+.learn-attendance-grid-card {
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.045);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 16px 18px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    background: rgba(248, 250, 252, 0.74);
+
+    span {
+      color: rgba(15, 23, 42, 0.54);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 4px 0 0;
+      color: rgba(15, 23, 42, 0.94);
+      font-size: 15px;
+      font-weight: 900;
+    }
+
+    h3 {
+      max-width: 640px;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 8px;
+
+    span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 10px 12px;
+      border: 1px solid rgba(15, 23, 42, 0.08);
+      border-radius: 999px;
+      background: #fff;
+      font-size: 12px;
+      font-weight: 800;
+    }
+  }
+
+  &__legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 12px 18px 0;
+  }
+}
+
+// Had no rule of its own, so the legend row sat with no breathing room between the card header
+// above it and the attendance grid below it — the chips looked glued to whatever was adjacent.
+.learn-attendance-grid-card__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+
+.legend-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 850;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+
+  &--present {
+    color: $status-success;
+    background: rgba($status-success, 0.08);
+    border-color: rgba($status-success, 0.2);
+  }
+
+  &--absent {
+    color: $status-error;
+    background: rgba($status-error, 0.08);
+    border-color: rgba($status-error, 0.2);
+  }
+
+  &--none {
+    color: rgba(15, 23, 42, 0.62);
+    background: rgba(148, 163, 184, 0.12);
+    border-color: rgba(148, 163, 184, 0.24);
+  }
+
+  &--not-marked {
+    color: $status-warning;
+    background: rgba($status-warning, 0.08);
+    border-color: rgba($status-warning, 0.2);
+  }
+}
+
+.learn-attendance-detail-card {
+  overflow: hidden;
+  margin-top: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.045);
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 14px;
+    // Was `16px 18px` — the table below (`.attendance-table.ln-table` in _announcements.scss)
+    // pads its cells `16px 24px`. The 18px vs 24px left inset meant the "Attendance History"
+    // title sat 6px to the left of the "Date" column text directly beneath it, so the first
+    // column read as misaligned against its own section header. Match the table's horizontal
+    // cell padding so the title and the first column line up.
+    padding: 16px 24px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    background: rgba(248, 250, 252, 0.74);
+
+    span {
+      color: rgba(15, 23, 42, 0.54);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 4px 0 0;
+      color: rgba(15, 23, 42, 0.94);
+      font-size: 15px;
+      font-weight: 900;
+    }
+  }
+
+  &__meta span {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 12px;
+    border: 1px solid rgba(15, 23, 42, 0.08);
+    border-radius: 999px;
+    background: #fff;
+    color: rgba(15, 23, 42, 0.64);
+    font-size: 12px;
+    font-weight: 800;
+  }
+}
+
+.take-attendance-panel {
+  overflow: hidden;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 10px 28px rgba(2, 6, 23, 0.045);
+
+  &__summary {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+    padding: 14px;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.06);
+    background: rgba(248, 250, 252, 0.72);
+
+    span {
+      display: grid;
+      gap: 4px;
+      padding: 12px;
+      border-radius: 14px;
+      background: #fff;
+      color: rgba(15, 23, 42, 0.58);
+      font-size: 12px;
+      font-weight: 850;
+    }
+
+    strong {
+      color: rgba(15, 23, 42, 0.95);
+      font-size: 20px;
+      font-weight: 950;
+      line-height: 1;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    // The card wraps this in `overflow: hidden` to clip to its border-radius. Without wrapping,
+    // the status pill on the right had nowhere to go once the title got long enough to not fit
+    // on one line between the two breakpoints below -- it just got clipped off past the card's
+    // right edge, which read as "the status section moving to the right and going out of screen".
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 16px 18px 0;
+
+    span {
+      color: rgba(15, 23, 42, 0.54);
+      font-size: 11px;
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    h3 {
+      margin: 4px 0 0;
+      color: rgba(15, 23, 42, 0.95);
+      font-size: 18px;
+      font-weight: 900;
+    }
+
+    p {
+      margin: 6px 0 0;
+      color: rgba(15, 23, 42, 0.62);
+      font-size: 13px;
+      font-weight: 700;
+    }
+  }
+
+  &__status {
+    display: inline-flex;
+    align-items: center;
+    padding: 10px 12px;
+    border-radius: 999px;
+    background: rgba($status-success, 0.08);
+    border: 1px solid rgba($status-success, 0.18);
+    color: $status-success;
+    font-size: 12px;
+    font-weight: 850;
+
+    &--future {
+      background: rgba(245, 158, 11, 0.1);
+      border-color: rgba(245, 158, 11, 0.22);
+      color: #b45309;
+    }
+  }
+
+  &__header-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+    flex-shrink: 0;
+  }
+
+  .ln-table {
+    border-radius: 0;
+  }
+
+  // The fixed-height (y: 420) scroll body for the 60-row roster otherwise renders the browser's
+  // bare default scrollbar, which reads as a heavy black bar next to the rest of this page.
+  .ant-table-body {
+    @include thin-scrollbar;
+  }
+
+  .ms-100 {
+    margin: 16px !important;
+  }
+}
+
+.learn-attendance-student-card {
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 24px rgba(2, 6, 23, 0.04);
+}
+
+@media (max-width: 767px) {
+  .learn-course-attendance-hero,
+  .learn-attendance-summary {
+    grid-template-columns: 1fr;
+    padding: 16px;
+    border-radius: 16px;
+  }
+
+  .learn-course-attendance-hero h2 {
+    font-size: 19px;
+  }
+
+  .learn-course-attendance-hero__cards,
+  .learn-attendance-summary__stats {
+    min-width: 0;
+    grid-template-columns: 1fr;
+  }
+
+  .learn-course-attendance__toolbar {
+    align-items: stretch !important;
+    padding: 12px;
+  }
+
+  .learn-course-attendance__toolbar-left,
+  .attendee-header-filters {
+    width: 100%;
+  }
+
+  .learn-course-attendance__class-select,
+  .learn-course-attendance__mode {
+    width: 100% !important;
+  }
+
+  .learn-course-attendance__mode .ant-segmented-group {
+    width: 100%;
+  }
+
+  .learn-course-attendance__mode .ant-segmented-item {
+    flex: 1;
+    text-align: center;
+  }
+
+  .learn-attendance-grid-card__header {
+    display: grid;
+  }
+
+  .learn-attendance-grid-card__meta,
+  .learn-attendance-detail-card__header,
+  .take-attendance-panel__header {
+    grid-template-columns: 1fr;
+  }
+
+  .learn-attendance-detail-card__header,
+  .take-attendance-panel__header {
+    display: grid;
+  }
+
+  .attendance-list .attend-body {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  // This orphaned duplicate of the selector above (no trailing `,` or `;`) used to concatenate
+  // with the next rule via a descendant combinator -- ".attendance-list .attend-body
+  // .take-attendance-panel__summary" -- which never matches anything in this markup, so the
+  // mobile single-column summary grid below silently never applied.
+  .take-attendance-panel__summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+.attendance {
+  // `height: 50px !important` was one half of the pixel handshake that kept the sibling <ul> of
+  // student names aligned to the grid; the name column is now a real <th scope="row"> inside the
+  // table, so rows align structurally and this must not override the table's own row height.
+  // `background-color: $grayCFD !important` (#fbfcfd) also forced every cell to near-white, which
+  // is why P/A ended up luminance-identical and why zebra striping and row hover were impossible.
+  border-bottom: 1px solid $neutral-200;
+  .ant-scroll-number {
+    position: absolute !important;
+    transform: translate(50%, -50%) !important;
+  }
+}
+
+.attendance-totp {
+  border-bottom: none;
+  background-color: inherit;
+  padding: 0 !important;
+  height: 0px !important;
+  display: flex;
+  align-items: center;
+  margin: auto;
+  justify-content: center;
+}
+.attendance.P {
+  color: $status-success;
+}
+
+.attendance.A {
+  color: $status-error;
+}
+
+.attendance.N {
+  color: $status-warning;
+}
+.take-attendance-view {
+  .ln-table .ant-table-thead > tr > th:first-child,
+  .ln-table .ant-table-tbody > tr > td:first-child {
+    padding-left: 24px !important;
+  }
+
+  .take-attendance-std-wrapper {
+    font-weight: 600;
+    font-size: 15px;
+    img {
+      margin-right: 16px;
+      border-radius: 20%;
+    }
+  }
+  .present-btn,
+  .absent-btn {
+    margin-right: 15px;
+    cursor: pointer;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Subtle attendance buttons (replacing bold SVG images)
+// ---------------------------------------------------------------------------
+.attendance-btns-wrapper {
+  gap: 8px;
+}
+
+.att-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid #dce0e8;
+  background: #f8f9fb;
+  color: #64748b;
+  transition: background 0.15s, border-color 0.15s, color 0.15s;
+  min-height: 36px;
+
+  .anticon {
+    font-size: 13px;
+  }
+
+  &:hover {
+    background: #f1f3f5;
+  }
+
+  &--present.att-btn--active {
+    background: rgba($status-success, 0.08);
+    border-color: rgba($status-success, 0.28);
+    color: $status-success;
+
+    &:hover {
+      background: rgba($status-success, 0.12);
+    }
+  }
+
+  &--absent.att-btn--active {
+    background: rgba($status-error, 0.08);
+    border-color: rgba($status-error, 0.28);
+    color: $status-error;
+
+    &:hover {
+      background: rgba($status-error, 0.12);
+    }
+  }
+
+  &:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
+    background: #f8fafc;
+    color: #94a3b8;
+  }
+}
+
+
+// ===========================================================================================
+// Attendance — contrast, density and state corrections
+// ===========================================================================================
+
+.learn-course-attendance {
+  // Day numbers and weekday letters were $gray7AE (#a9a7ae) on white = 2.41:1 — they fail AA and
+  // even the large-text bar, and they are the column identifiers for the entire grid.
+  .item,
+  .days,
+  .week-days-header,
+  .days-header {
+    color: $neutral-700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  // Cells were pinned to `#fbfcfd !important`, which made P (#059669) and A (#ef4444) both fail
+  // AA *and* land on effectively identical relative luminance (0.2287 vs 0.2290) — i.e. in
+  // greyscale or for a deuteranope the only difference was the glyph. The pastel attendance
+  // palette already existed in _variables.scss and was unused; use it, and darken the glyph.
+  .attendance {
+    font-variant-numeric: tabular-nums;
+
+    &.P {
+      background-color: $presentBgColor !important;
+      color: #04653f !important;
+    }
+
+    &.A {
+      background-color: $absentBgColor !important;
+      color: #b3243a !important;
+    }
+  }
+
+  // Sticky header: 60 students x 50px is 3000px of scroll, past which the day numbers were gone
+  // with no way to tell which column was the 23rd.
+  .attend-body thead th,
+  .week-days-header,
+  .days-header {
+    position: sticky;
+    top: 0;
+    z-index: 3;
+    background: $white;
+  }
+
+  // Scrollbars were deliberately hidden on both axes with no edge affordance, so there was no
+  // signal that 22 more days existed to the right.
+  .attend-body {
+    scrollbar-width: thin;
+    -ms-overflow-style: auto;
+
+    &::-webkit-scrollbar {
+      display: block;
+      width: 10px;
+      height: 10px;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: $neutral-300;
+      border-radius: $radius-pill;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: $neutral-100;
+    }
+  }
+}
+
+// The learner's risk state was a 1px hairline at rgba($status-error,.2) ~= 1.15:1 against the
+// card — the entire visual difference between "you're fine" and "you may be barred from exams".
+.learn-attendance-summary {
+  &--risk {
+    border-color: rgba($status-error, 0.45) !important;
+    border-left: 4px solid $status-error !important;
+    background: $status-error-bg;
+
+    .learn-attendance-summary__primary strong {
+      color: #b3243a;
+    }
+  }
+
+  &--safe {
+    border-left: 4px solid $status-success !important;
+  }
+
+  &--neutral {
+    border-left: 4px solid $neutral-300 !important;
+  }
+
+  &__primary strong {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__stats strong {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+// Disabled marking buttons composited to ~1.9:1 with no nearby explanation.
+.att-btn:disabled {
+  opacity: 1;
+  color: $neutral-500;
+  background: $neutral-100;
+  border-color: $neutral-200;
+  cursor: not-allowed;
+}
+
+// Partially-attended multi-session day: distinct from both full-present and full-absent, and
+// carried by a ratio glyph rather than a tint alone.
+.learn-course-attendance .attendance.partial {
+  background-color: $attendanceLegendColor !important;
+  color: #7a4b00 !important;
+}
+
+.learn-course-attendance .attendance__ratio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 30px;
+  min-height: 24px;
+  padding: 0 4px;
+  border-radius: $radius-control;
+  font-size: 11px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  cursor: default;
+
+  &:focus-visible {
+    outline: 2px solid $teal-text;
+    outline-offset: 1px;
+  }
+}
+
+// ===========================================================================================
+// Attendance grid — real table semantics
+// ===========================================================================================
+// The grid previously set `display: flex` on <tr> and <td>. Browsers derive ARIA roles from the
+// USED display value, so that stripped row/cell from the accessibility tree, made every
+// scope="col" inert, and turned <td aria-label="Absent"> into an unassociated label on a generic
+// box — a screen-reader user heard "Absent, Present, Present…" with no day and no student.
+// Restoring table display fixes semantics, and lets the name column be a sticky <th scope="row">
+// instead of a sibling <ul> aligned by matching pixel heights.
+.learn-course-attendance {
+  .attend-body {
+    display: block;
+    overflow: auto;
+    max-height: min(70vh, 720px);
+  }
+
+  table.attendance-grid {
+    border-collapse: separate;
+    // A hard 0px gap made every column butt directly against its neighbor, so 30+ days read as
+    // one dense, cramped block with nothing to rest the eye on between them.
+    border-spacing: 2px 3px;
+    width: max-content;
+    min-width: 100%;
+
+    tr {
+      display: table-row;
+    }
+
+    th,
+    td {
+      display: table-cell;
+      vertical-align: middle;
+      height: 48px;          // was a hardcoded 50px handshake between two separate elements
+      text-align: center;
+      white-space: nowrap;
+    }
+
+    // Day columns: a single glyph does not need 80px. 31 x 44 fits a normal screen alongside
+    // the name column, instead of ~2680px of content forced into a 960px container.
+    thead th:not(.ln-stu-corner),
+    tbody td {
+      min-width: 44px;
+      width: 44px;
+    }
+
+    // Sticky name column — impossible with the old sibling-list layout.
+    .ln-stu-name,
+    .ln-stu-corner {
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      min-width: 190px;
+      width: 190px;
+      max-width: 190px;
+      text-align: left;
+      padding: 0 14px;
+      background: $white;
+      border-right: 1px solid $neutral-200;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      font-weight: 600;
+      color: $neutral-900;
+    }
+
+    // Corner cells must sit above both the sticky header row and the sticky column.
+    thead .ln-stu-corner {
+      z-index: 4;
+    }
+
+    thead th {
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      background: $white;
+    }
+
+    thead tr.week-days-header th {
+      top: 0;
+    }
+
+    thead tr.days-header th {
+      top: 44px;
+      border-bottom: 1px solid $neutral-200;
+    }
+
+    // Row separation — the grid had none, so the eye tracked across 31 columns with nothing to
+    // follow. This is the classic row-misattribution setup on a record that gates eligibility.
+    tbody tr:nth-child(even) td:not(.attendance),
+    tbody tr:nth-child(even) .ln-stu-name {
+      background: $neutral-50;
+    }
+
+    tbody tr:hover .ln-stu-name {
+      background: $teal-subtle;
+    }
+
+    tbody tr:hover td {
+      box-shadow: inset 0 -1px 0 rgba(38, 186, 199, 0.25), inset 0 1px 0 rgba(38, 186, 199, 0.25);
+    }
+  }
+}
+
+// Visually-hidden caption — names the table for assistive tech without changing the layout.
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ===========================================================================================
+// Take attendance — retrieval, bulk actions, reachable submit
+// ===========================================================================================
+.take-attendance-panel {
+  &__tools {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 12px 0;
+  }
+
+  &__search {
+    max-width: 320px;
+    flex: 1 1 220px;
+  }
+
+  &__bulk {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  // Submit used to sit below every row, so a 60-student class required scrolling the whole
+  // roster to reach it.
+  &__submit {
+    position: sticky;
+    bottom: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 16px;
+    margin-top: 16px;
+    padding: 12px 0;
+    background: $white;
+    border-top: 1px solid $neutral-200;
+  }
+
+  &__submit-hint {
+    font-size: 13px;
+    color: $neutral-500;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@media (max-width: 767px) {
+  .take-attendance-panel__search { max-width: none; }
+
+  .take-attendance-panel__submit {
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 8px;
+  }
+}

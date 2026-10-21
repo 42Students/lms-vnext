@@ -1,0 +1,17 @@
+.ln-head {
+  height: 85px;
+  padding: 25px 30px 13px 30px;
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+}
+@media (max-width: 576px) {
+  .ln-head {
+    padding: 25px 10px 13px 10px !important;
+  }
+}
+
+.menu-side-icon img {
+  height: 40px !important;
+  width: 40px !important;
+}/*# sourceMappingURL=header.css.map */

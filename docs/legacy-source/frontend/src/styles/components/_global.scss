@@ -1,0 +1,81 @@
+@import "./variables";
+
+body {
+  height: auto;
+  margin: 0;
+  font-family: $font-stack;
+  // Explicitly refuse synthetic bold/italic. If a real face is ever missing, this makes it a
+  // visible bug rather than a silently smeared approximation.
+  font-synthesis-weight: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-weight: 400;
+  overflow-x: hidden;
+  font-size: $text-md;
+  color: $neutral-900;
+
+  p {
+    font-size: $text-md;
+    line-height: 24px;
+    // text-align: justify !important;
+  }
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+html,
+body {
+  max-width: 100vw;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+html {
+  // The LMS is an explicitly light UI. Advertising a dark browser color-scheme made native
+  // controls switch dark under OS dark mode while the surrounding LMS surface stayed white.
+  color-scheme: light;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+// ---------------------------------------------------------------------------
+// Inline-style replacement utilities (Phase 8)
+// ---------------------------------------------------------------------------
+
+// Icon action: teal clickable icon (edit/delete/view in syllabus, quizzes, etc.)
+.ln-icon-action {
+  font-size: $text-lg;
+  color: $clrThird;
+  cursor: pointer;
+}
+
+// Required field asterisk (profile forms)
+.ln-required-asterisk {
+  color: $status-error;
+  margin-left: 4px;
+}
+
+// Form validation error text (profile forms)
+.ln-form-error {
+  color: $status-error;
+  font-size: $text-xs;
+  margin-top: $space-1;
+}
+
+// Teal accent icon (checkmarks, confirmations)
+.ln-icon-teal {
+  color: $clrThird;
+}
+
+// Muted icon (unfavorited, secondary actions)
+.ln-icon-muted {
+  color: $neutral-500;
+}

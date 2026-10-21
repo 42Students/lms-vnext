@@ -1,0 +1,34 @@
+.login-page {
+  height: 100vh;
+  background-image: url("/assets/images/login/login-bg2.png");
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.Login-Section {
+  height: calc(100vh - 88px);
+}
+@media (min-width: 767px) {
+  .Login-Section .ln-login-form {
+    margin-top: 5em;
+    margin-right: 10rem;
+  }
+}
+@media (max-width: 767px) {
+  .Login-Section {
+    padding-top: 110px;
+    align-items: flex-start;
+  }
+}
+
+.ln-login-btn:hover {
+  border-color: #ffffff !important;
+}
+
+@media (min-width: 768px) {
+  .ln-login-lb {
+    color: #ffffff;
+  }
+}/*# sourceMappingURL=login.css.map */

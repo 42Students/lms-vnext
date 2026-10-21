@@ -1,0 +1,327 @@
+// =============================================================================
+// _responsive-hardening.scss — product-wide responsive/mobile safety net
+//
+// Imported after role/page styles so it only resolves viewport/touch/overflow failures that
+// should never be role-specific. Page-specific layout remains authoritative above these guards.
+// =============================================================================
+@import "./variables";
+
+:where(
+  .dashboard-container,
+  .admin-layout-main,
+  .learn-dashboard,
+  .learn-page-wrapper,
+  .ln-module,
+  .learn-projects,
+  .learn-projects__shell,
+  .learn-projects__content,
+  .listing-page-header,
+  .admin-list-page,
+  .tpo-elig,
+  .tpo-grid,
+  .recruiter-shell,
+  .tpo-shell
+) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+:where(.ant-card, .ant-card-body, .ant-form, .ant-form-item, .ant-form-item-control, .ant-form-item-control-input-content) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+img,
+video,
+canvas,
+iframe {
+  max-width: 100%;
+}
+
+.ant-table-wrapper {
+  max-width: 100%;
+
+  .ant-table-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 1199px) {
+  .ant-table-wrapper .ant-table-content,
+  .ant-table-wrapper .ant-table-body {
+    max-width: 100%;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+    touch-action: pan-x pan-y;
+  }
+
+  .ant-modal-root .ant-modal {
+    max-width: calc(100vw - 32px) !important;
+  }
+
+  .ant-drawer-root .ant-drawer-content-wrapper {
+    max-width: 100vw !important;
+  }
+
+  .listing-page-header,
+  .listing-page-header__right,
+  .admin-list-page__header,
+  .admin-table-toolbar,
+  .tpo-elig__toolbar,
+  .tpo-elig__act,
+  .tpo-elig__bulk {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .listing-page-header__right,
+  .admin-list-page__header,
+  .admin-table-toolbar,
+  .tpo-elig__toolbar,
+  .tpo-elig__act,
+  .tpo-elig__bulk {
+    flex-wrap: wrap;
+  }
+
+  .tpo-elig__search {
+    min-width: min(220px, 100%);
+    max-width: 100%;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+  .listing-page-header,
+  .admin-list-page__header,
+  .tpo-elig__toolbar {
+    row-gap: 10px;
+  }
+
+  .ant-modal-root .ant-modal {
+    max-width: calc(100vw - 48px) !important;
+  }
+
+  .learn-projects__tabs,
+  .ant-tabs-nav-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+@media (max-width: 767px) {
+  .dashboard-container,
+  .admin-layout-main,
+  .learn-dashboard {
+    width: 100%;
+    max-width: 100vw;
+    min-height: 100dvh;
+  }
+
+  .ant-modal-root .ant-modal-wrap {
+    padding:
+      calc(12px + env(safe-area-inset-top, 0px))
+      12px
+      calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ant-modal-root .ant-modal {
+    width: auto;
+    max-width: calc(100vw - 24px) !important;
+    margin-inline: auto !important;
+  }
+
+  .ant-modal-root .ant-modal-content {
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+  }
+
+  // Projects' task/member/submission modal skins intentionally hide overflow on desktop so
+  // rounded corners and hero backgrounds clip cleanly. On phones/short viewports that local
+  // rule used to override the global modal safety net and could trap long forms below the
+  // visible viewport or behind the software keyboard. This final-import layer restores a
+  // bounded vertical scroll surface without changing desktop presentation.
+  :where(
+    .learn-projects-detail__submission-modal-wrap,
+    .learn-projects-detail__member-modal-wrap,
+    .learn-projects-detail__task-modal,
+    .learn-projects-detail__task-modal-wrap
+  ) .ant-modal-content {
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  :where(
+    .learn-projects-detail__submission-modal-wrap,
+    .learn-projects-detail__member-modal-wrap,
+    .learn-projects-detail__task-modal,
+    .learn-projects-detail__task-modal-wrap
+  ) .ant-modal-body {
+    min-height: 0;
+    max-height: calc(100dvh - 96px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  // Projects local modal styles use overflow:hidden for rounded clipping. On phones that can
+  // override the global viewport cap and make long task/member/submission forms unreachable.
+  // Restore a scroll container after those local rules while keeping the same rounded shell.
+  :where(
+    .learn-projects-detail__submission-modal-wrap,
+    .learn-projects-detail__member-modal-wrap,
+    .learn-projects-detail__task-modal-wrap,
+    .learn-projects-detail__task-modal
+  ) .ant-modal-content {
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ant-drawer-root .ant-drawer-content-wrapper {
+    max-width: 100vw !important;
+  }
+
+  .ant-drawer-root:not(.ln-notification-drawer-root) .ant-drawer-body {
+    min-height: 0;
+    overflow-y: auto !important;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ant-drawer-root .ant-drawer-header {
+    padding-top: calc(14px + env(safe-area-inset-top, 0px));
+  }
+
+  .ant-drawer-root .ant-drawer-footer {
+    padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  :where(
+    input:not([type="checkbox"]):not([type="radio"]),
+    textarea,
+    select,
+    .ant-input,
+    .ant-input-number-input,
+    .ant-picker-input > input,
+    .ant-select-selection-search-input
+  ) {
+    font-size: 16px !important;
+  }
+
+  :where(.ant-input-affix-wrapper, .ant-input-number, .ant-picker, .ant-select) {
+    max-width: 100%;
+  }
+
+  .ant-form-item-label > label {
+    height: auto;
+    white-space: normal;
+    line-height: 1.35;
+  }
+
+  :where(
+    .listing-page-header__title,
+    .admin-list-page__title,
+    .ant-card-head-title,
+    .ant-modal-title,
+    .ant-drawer-title,
+    .learn-projects__tab,
+    .ant-breadcrumb-link,
+    .panel-state__title,
+    .panel-state__subtitle
+  ) {
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    white-space: normal;
+  }
+
+  .listing-page-header__right {
+    width: 100%;
+  }
+
+  .listing-page-header__right > :where(.ant-input-affix-wrapper, .ant-input-search, .ant-select, .ant-picker) {
+    max-width: 100%;
+  }
+
+  .tpo-elig__toolbar > * {
+    max-width: 100%;
+  }
+
+  .tpo-grid {
+    width: 100%;
+    max-width: 100%;
+    min-height: 260px;
+  }
+
+  .learn-projects__tabs,
+  .ant-tabs-nav-wrap {
+    max-width: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .ant-tabs-tab {
+    min-height: 44px;
+  }
+
+  .ant-table-row :where(.ant-btn, [role="button"]),
+  .ant-card :where(.ant-btn, [role="button"]),
+  .ant-list-item-action {
+    visibility: visible !important;
+  }
+}
+
+@media (pointer: coarse) {
+  :where(
+    .ant-btn,
+    button,
+    [role="button"],
+    .ant-checkbox-wrapper,
+    .ant-radio-wrapper,
+    .ant-switch,
+    .ant-tabs-tab,
+    .fl-module-link
+  ) {
+    min-height: 44px;
+  }
+
+  :where(.ant-btn-icon-only, button[aria-label], [role="button"][aria-label]) {
+    min-width: 44px;
+  }
+
+  .ant-checkbox-wrapper,
+  .ant-radio-wrapper {
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
+@media (max-width: 375px) {
+  .listing-page-header__right,
+  .tpo-elig__toolbar {
+    width: 100%;
+  }
+
+  .listing-page-header__right {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .tpo-elig__toolbar > :where(.ant-input-affix-wrapper, .ant-input-search, .ant-select, .ant-picker, .ant-btn) {
+    max-width: 100%;
+  }
+
+  .ln-footer li a {
+    padding-inline: 1px;
+  }
+
+  .ln-footer .ln-footer-label {
+    max-width: 52px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

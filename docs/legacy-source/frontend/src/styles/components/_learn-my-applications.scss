@@ -1,0 +1,2072 @@
+@import "./variables.scss";
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+
+// Shared design tokens (align with blueprint + subtle accents)
+$primary: $clrThird;
+$primary-dark: $teal-dark;
+$success: $status-success;
+$warning: $status-warning;
+$learn-warning: $status-warning;
+$learn-success: $status-success;
+$error: $status-error;
+$text: $neutral-900;
+$text-muted: $neutral-500;
+$text-subtle: $neutral-400;
+$bg: $white;
+$bg-subtle: $neutral-50;
+$bg-page: $neutral-100;
+$border: $neutral-200;
+$border-soft: $neutral-50;
+$radius: 8px;
+$radius-lg: 12px;
+
+$s1: 8px;
+$s2: 16px;
+$s3: 24px;
+$s4: 32px;
+$s5: 40px;
+$s6: 48px;
+$t-h1: 28px;
+$t-h2: 20px;
+$t-body: 16px;
+$t-caption: 14px;
+$t-small: 12px;
+
+// Subtle tints (teal + amber + green — reduce blue dominance)
+$tint-teal: rgba($clrThird, 0.08);
+$tint-amber: rgba($status-warning, 0.08);
+$tint-green: rgba($status-success, 0.08);
+
+// ---------------------------------------------------------------------------
+// Applications page in placements context — white card enabled (inherits ln-module-card)
+// ---------------------------------------------------------------------------
+.learn-my-applications-page--placements .learn-placements-dashboard__overview {
+  border-bottom: none;
+  padding-bottom: $s2;
+  margin-bottom: $s3;
+}
+
+// ─── New compact header ──────────────────────────────────────────────────────
+.learn-my-applications-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: $s3;
+  width: 100%;
+  box-sizing: border-box;
+
+  &__left {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: $s1;
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: 600;
+    color: $text;
+    margin: 0;
+    letter-spacing: -0.02em;
+    line-height: 1.3;
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $s1;
+    flex-shrink: 0;
+    padding-top: $s1;
+
+    .learn-apps-search-input.ant-input-affix-wrapper {
+      width: 220px;
+      min-height: 44px;
+      border-radius: $radius;
+      border-color: $border;
+
+      &.ant-input-affix-wrapper-focused {
+        border-color: $primary;
+        box-shadow: 0 0 0 2px rgba($primary, 0.2);
+      }
+
+      input { font-size: 14px; }
+    }
+  }
+}
+
+// ─── Filter bar (tabs + status select below header) ──────────────────────────
+.learn-my-applications-filter-bar {
+  display: flex;
+  align-items: center;
+  gap: $s1;
+  margin-bottom: $s2;
+  flex-wrap: wrap;
+
+  &__tabs {
+    display: flex;
+    align-items: center;
+    gap: $s1;
+  }
+}
+
+// ─── Tab pills (filter) ───────────────────────────────────────────────────────
+.learn-my-applications-tab-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: $s1;
+  padding: $s1 $s2;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+  border: 1px solid $border;
+  background: transparent;
+  color: $text-muted;
+  cursor: pointer;
+  transition: color 0.15s ease, border-color 0.15s ease, background 0.15s ease;
+  white-space: nowrap;
+
+  &:hover {
+    color: $primary;
+    border-color: rgba($primary, 0.4);
+    background: rgba($primary, 0.04);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: $primary;
+    border-color: $primary;
+    color: $white;
+
+    &:hover {
+      background: $primary-dark;
+      border-color: $primary-dark;
+      color: $white;
+    }
+  }
+
+  &__count {
+    font-size: 12px;
+    line-height: 1.3;
+    opacity: 0.85;
+  }
+}
+
+// ─── Grid section (content floats on gray bg, no wrapper card) ────────────────
+.learn-my-applications-grid-section {
+  margin-top: $s3;
+}
+
+.learn-my-applications-results-info {
+  font-size: 14px;
+  line-height: 1.4;
+  color: $text-muted;
+  margin: 0 0 $s2;
+}
+
+// ─── Mobile overrides ─────────────────────────────────────────────────────────
+@media (max-width: $learn-mobile-bp) {
+  // Compound selector, not descendant: both classes now live on the same div (see
+  // src/components/Common/PageShell.jsx for why the old wrapper div is gone).
+  .learn-my-applications-page--placements.learn-placements-dashboard__body {
+    padding: $s2;
+  }
+
+  .learn-my-applications-header {
+    flex-direction: column;
+    align-items: stretch;
+
+    &__right {
+      width: 100%;
+      padding-top: 0;
+
+      .learn-apps-search-input.ant-input-affix-wrapper {
+        flex: 1;
+        width: 100%;
+      }
+    }
+  }
+
+  .learn-my-applications-header__title {
+    font-size: 20px;
+  }
+
+  .learn-my-applications-filter-bar {
+    &__tabs {
+      width: 100%;
+      overflow-x: auto;
+      flex-wrap: nowrap;
+      padding-bottom: $s1;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      &::-webkit-scrollbar { display: none; }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// My Applications page — base layout
+// ---------------------------------------------------------------------------
+.learn-my-applications-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0 $s2;
+  padding-bottom: calc(#{$learn-mobile-footer-height} + $s3 + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    padding: 0 $s3;
+    padding-bottom: $s6;
+  }
+
+  // Was also `background: $bg-page` + its own independent scroll container — correct back when
+  // this div WAS the outer scrollable page. Now it's ordinary content inside PageShell's white
+  // ln-module-card (see src/components/Common/PageShell.jsx), so its own gray page-background
+  // showed through as a visible band in the gaps between sections. Kept the mobile footer
+  // clearance padding — that's still needed regardless of who owns the background.
+  &--placements {
+    padding-bottom: calc(#{$learn-mobile-footer-height} + $s3 + env(safe-area-inset-bottom, 0px));
+
+    @media (min-width: #{$learn-mobile-bp + 1}) {
+      padding-bottom: $s6;
+    }
+  }
+}
+
+.learn-apps-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.learn-apps-list__item {
+  margin-bottom: $s2;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+$apps-touch-min: 44px;
+
+// Application row card — modern card layout (matches Jobs)
+.learn-apps-row-card {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  text-align: left;
+  background: $bg;
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  cursor: pointer;
+  overflow: hidden;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: rgba($primary, 0.25);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+
+  &--skeleton {
+    cursor: default;
+    pointer-events: none;
+  }
+
+  &__main {
+    display: flex;
+    align-items: flex-start;
+    gap: $s2;
+    padding: $s3;
+
+    @media (max-width: $learn-mobile-bp) {
+      flex-wrap: wrap;
+      padding: $s2;
+    }
+  }
+
+  &__avatar {
+    flex-shrink: 0;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+    padding-right: $s2;
+
+    @media (max-width: $learn-mobile-bp) {
+      order: 1;
+      flex: 1 1 100%;
+      padding-right: 0;
+    }
+  }
+
+  &__header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $s1;
+    margin-bottom: $s1;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $text;
+    margin: 0;
+    line-height: 1.35;
+    word-wrap: break-word;
+    flex: 1;
+    min-width: 0;
+
+    @media (max-width: $learn-mobile-bp) {
+      font-size: 14px;
+    }
+  }
+
+  &__badges {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $s1;
+    flex-shrink: 0;
+
+    .ant-tag {
+      margin: 0;
+      font-size: 12px;
+      line-height: 1.3;
+      padding: 4px $s1;
+      border-radius: 6px;
+    }
+  }
+
+  &__company {
+    display: block;
+    font-size: 14px;
+    color: $text-muted;
+    margin: 0 0 $s1;
+    line-height: 1.4;
+
+    @media (max-width: $learn-mobile-bp) {
+      font-size: 14px;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: $s1;
+    font-size: 12px;
+    line-height: 1.4;
+    color: $text-subtle;
+
+    .anticon {
+      font-size: 12px;
+      margin-right: 4px;
+    }
+  }
+
+  &__meta-item {
+    display: inline-flex;
+    align-items: center;
+
+    &--next {
+      color: $primary;
+      font-weight: 500;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: $s1;
+    flex-shrink: 0;
+    margin-left: auto;
+  }
+
+}
+
+// ---------------------------------------------------------------------------
+// Status tags — subtle color tints (unchanged)
+// ---------------------------------------------------------------------------
+.learn-ma-status-tag,
+.learn-ma-job-type-tag {
+  margin: 0;
+  font-size: $t-small;
+  border-radius: 6px;
+  padding: $s1 $s2;
+  line-height: 1.5;
+
+  .anticon {
+    margin-right: 4px;
+  }
+}
+
+// Canonical status pairs — shared with the placements dashboard, contrast-verified (AA).
+$ma-status-pairs: (
+  applied:     (#475569, #f1f4f9),
+  waitlisted:  (#475569, #f1f4f9),
+  on_hold:     (#475569, #f1f4f9),
+  assessment:  (#b45309, #fef6e7),
+  shortlisted: (#0c6f79, #e8f5f6),
+  interview:   (#6d3fa3, #f4eefb),
+  offered:     (#a16207, #fef6e7),
+  hired:       (#047857, #e7f6f1),
+  onboarded:   (#047857, #e7f6f1),
+  withdrawn:   (#5f6673, #f1f4f9),
+  rejected:    (#b42318, #fdf1f0)
+);
+
+.learn-ma-status-tag {
+  background: $bg-subtle !important;
+  border: 1px solid $border !important;
+  color: $neutral-700 !important;
+  font-weight: $fnt-medium;
+  .anticon { color: currentColor !important; }
+
+  @each $name, $pair in $ma-status-pairs {
+    &.learn-ma-status-#{$name} {
+      background: nth($pair, 2) !important;
+      border: 1px solid rgba(nth($pair, 1), 0.22) !important;
+      color: nth($pair, 1) !important;
+      .anticon { color: nth($pair, 1) !important; }
+    }
+  }
+}
+
+.learn-ma-job-type-tag {
+  background: $bg-subtle !important;
+  border: 1px solid $border !important;
+  color: $text-muted !important;
+}
+
+// ---------------------------------------------------------------------------
+// Empty states — rich (illustration + CTA)
+// ---------------------------------------------------------------------------
+.learn-apps-empty {
+  padding: $s5 $s3;
+  text-align: center;
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  background: $bg;
+
+  &--rich {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: $s2;
+  }
+}
+
+.learn-apps-empty__illustration {
+  width: 120px;
+  height: 80px;
+  margin-bottom: $s1;
+
+  .learn-apps-empty-illus {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.learn-apps-empty__icon {
+  font-size: 32px;
+  color: $text-subtle;
+}
+
+.learn-apps-empty__title {
+  font-size: $t-h2;
+  font-weight: 600;
+  color: $text;
+  margin: 0;
+}
+
+.learn-apps-empty__subtitle {
+  font-size: $t-caption;
+  line-height: 1.5;
+  color: $text-muted;
+  margin: 0;
+  max-width: 360px;
+}
+
+.learn-apps-empty__cta {
+  margin-top: $s1;
+}
+
+.learn-apps-empty-filter,
+.learn-apps-empty-mobile {
+  margin-top: $s2;
+}
+
+// ---------------------------------------------------------------------------
+// Error state
+// ---------------------------------------------------------------------------
+.learn-apps-error-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: $s2;
+  padding: $s5 $s3;
+  text-align: center;
+  border-radius: $radius-lg;
+  border: 1px solid $border;
+  background: $bg;
+}
+
+.learn-apps-error-icon {
+  font-size: 40px;
+  color: $text-subtle;
+}
+
+.learn-apps-error-text {
+  font-size: $t-caption;
+  line-height: 1.5;
+}
+
+.learn-apps-cta-btn {
+  min-width: 140px;
+}
+
+// ---------------------------------------------------------------------------
+// Application detail modal
+// ---------------------------------------------------------------------------
+.learn-app-detail-modal {
+  .ant-modal-header {
+    border-bottom: 1px solid $border;
+  }
+
+  .ant-modal-title {
+    font-size: $t-h2 !important;
+    font-weight: 600 !important;
+  }
+}
+
+.learn-app-detail-modal__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: $text;
+}
+
+.learn-app-detail-modal__body {
+  padding-top: $s2;
+}
+
+.learn-app-detail-modal__meta {
+  display: flex;
+  flex-direction: column;
+  gap: $s2;
+  margin-bottom: $s3;
+}
+
+.learn-app-detail-modal__meta-row {
+  display: flex;
+  align-items: center;
+  gap: $s2;
+}
+
+.learn-app-detail-modal__label {
+  font-size: $t-caption;
+  line-height: 1.4;
+  color: $text-muted;
+  min-width: 90px;
+}
+
+.learn-app-detail-modal__next-step {
+  padding: $s3;
+  background: linear-gradient(135deg, rgba($primary, 0.06) 0%, rgba($learn-success, 0.04) 100%);
+  border-radius: $radius-lg;
+  border: 1px solid rgba($primary, 0.12);
+  margin-bottom: $s3;
+}
+
+.learn-app-detail-modal__next-step-title {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  color: $text;
+  margin: 0 0 8px;
+}
+
+.learn-app-detail-modal__next-step-text {
+  font-size: 14px;
+  color: $text-muted;
+  line-height: 1.5;
+  margin: 0 0 $s2;
+}
+
+.learn-app-detail-modal__cta {
+  margin-top: $s1;
+}
+
+.learn-app-detail-modal__next-interview,
+.learn-app-detail-modal__feedback {
+  padding: $s2;
+  background: $bg-subtle;
+  border-radius: $radius;
+  margin-bottom: $s3;
+}
+
+.learn-app-detail-modal__assessment {
+  margin-bottom: $s3;
+}
+
+.learn-app-detail-modal__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $s2;
+  margin-top: $s3;
+  padding-top: $s3;
+  border-top: 1px solid $border;
+}
+
+// ---------------------------------------------------------------------------
+// Legacy empty/error (standalone page fallback)
+// ---------------------------------------------------------------------------
+.learn-my-applications-error,
+.learn-my-applications-empty {
+  border-radius: $radius-lg !important;
+  border: 1px solid $border !important;
+  background: $bg !important;
+  padding: $s5 $s3 !important;
+  text-align: center;
+
+  .ant-empty-description {
+    max-width: 360px;
+    margin: 0 auto;
+  }
+}
+
+// Interviews modal (unchanged)
+.learn-interviews-modal {
+  .ant-modal-header {
+    border-bottom: 1px solid $border;
+  }
+
+  .ant-modal-title {
+    font-size: $t-h2 !important;
+    font-weight: 600 !important;
+  }
+
+  .ant-card {
+    border-radius: $radius !important;
+    border: 1px solid $border !important;
+  }
+
+  .ant-tag {
+    font-size: $t-small;
+    border-radius: 6px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Company avatar
+// ---------------------------------------------------------------------------
+.learn-ma-avatar {
+  border-radius: $radius;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: $bg-subtle;
+
+  &--initial {
+    font-weight: 600;
+    user-select: none;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Application history modal
+// ---------------------------------------------------------------------------
+.learn-app-history-empty {
+  padding: $s3 0;
+  text-align: center;
+}
+
+.learn-app-history-item__label {
+  font-weight: 600;
+  margin-bottom: $s1;
+}
+
+.learn-app-history-item__date {
+  font-size: $t-small;
+  line-height: 1.4;
+}
+
+.learn-app-history-item__reason {
+  margin-top: $s1;
+  font-size: $t-small;
+  line-height: 1.4;
+  color: $text-muted;
+}
+
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+// PHASE 3 â€” Premium overhaul: pipeline stepper, offer moment, rejection,
+// unified header/tabs, redesigned states. Everything below owns this page only.
+// NOTE: the local $radius-lg in this file is 12px (it shadows the 14px design
+// token), so card radii use the explicit locals below.
+// â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+$ma-r-card : 14px;
+$ma-r-inner: 10px;
+$ma-touch  : 44px;
+
+// Canonical accent inks reused by the stepper + panels
+$ma-teal-ink   : #0c6f79;
+$ma-gold-ink   : #a16207;
+$ma-gold-bg    : #fef6e7;
+$ma-reject-ink : #b42318;
+$ma-reject-bg  : #fdf1f0;
+$ma-quiet-ink  : #5f6673;
+
+// Screen-reader-only helper (scoped to this page)
+.learn-apps-sr-only {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Header (single markup, both layouts)
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+.learn-my-applications-header__subtitle {
+  margin: 0;
+  font-size: $text-base;
+  line-height: $leading-snug;
+  color: $neutral-500;
+  max-width: 46ch;
+}
+
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Tab pills â€” one treatment, used in both branches
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+.learn-my-applications-filter-bar__tabs {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+}
+
+.learn-my-applications-tab-pill {
+  border-radius: $radius-full;
+  padding: $space-2 $space-4;
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  color: $neutral-700;
+  border: 1px solid $neutral-200;
+  background: $white;
+  transition: color $duration-fast $ease-std, border-color $duration-fast $ease-std,
+    background $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+
+  &:hover {
+    color: $teal-deep;
+    border-color: rgba($teal-deep, 0.35);
+    background: rgba($teal-deep, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+
+  &--active,
+  &--active:hover {
+    background: $teal-deep;
+    border-color: $teal-deep;
+    color: $white;
+    box-shadow: $elev-1;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    margin-left: $space-2;
+    font-size: $text-xs;
+    font-weight: $fnt-semi;
+    line-height: 1;
+    border-radius: $radius-full;
+    background: $neutral-100;
+    color: $neutral-700;
+    opacity: 1;
+  }
+
+  &--active .learn-my-applications-tab-pill__count {
+    background: rgba($white, 0.22);
+    color: $white;
+  }
+}
+
+// ─── Sort control ────────────────────────────────────────────────────────────
+.learn-apps-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-2;
+  margin-left: auto;
+
+  &__label {
+    font-size: $text-sm;
+    color: $neutral-500;
+    white-space: nowrap;
+  }
+
+  .learn-apps-sort__select.ant-select {
+    width: 170px;
+
+    .ant-select-selector {
+      min-height: 40px;
+      border-radius: $radius-md;
+      border-color: $neutral-200;
+      font-size: $text-base;
+      display: flex;
+      align-items: center;
+    }
+
+    &.ant-select-focused .ant-select-selector {
+      border-color: $teal-deep;
+      box-shadow: 0 0 0 2px rgba($teal-deep, 0.18);
+    }
+  }
+}
+
+// ─── Stage summary strip ─────────────────────────────────────────────────────
+// One filter model for the page: only stages the learner actually has are offered,
+// each with a live count, so no selection here can return an empty list.
+.learn-apps-stage-strip {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: $space-2;
+  margin: 0 0 $space-4;
+}
+
+.learn-apps-stage-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 34px;
+  padding: 0 $space-3;
+  border-radius: $radius-full;
+  border: 1px solid $neutral-200;
+  background: $white;
+  color: $neutral-700;
+  font-size: $text-sm;
+  font-weight: $fnt-medium;
+  line-height: 1.3;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: border-color $duration-fast $ease-std, background $duration-fast $ease-std,
+    color $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+
+  &:hover {
+    border-color: rgba($teal-deep, 0.4);
+    background: rgba($teal-deep, 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $teal-deep;
+    outline-offset: 2px;
+  }
+
+  &__dot {
+    width: 7px;
+    height: 7px;
+    border-radius: $radius-full;
+    background: $neutral-300;
+    flex: 0 0 auto;
+  }
+
+  &__count {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: $radius-full;
+    background: $neutral-100;
+    color: $neutral-700;
+    font-size: $text-xs;
+    font-weight: $fnt-semi;
+    line-height: 1;
+  }
+
+  // Selection is carried by fill, weight AND aria-pressed — never colour alone.
+  &.is-active {
+    border-color: $ink-800;
+    background: $ink-800;
+    color: $white;
+    font-weight: $fnt-semi;
+    box-shadow: $elev-1;
+
+    .learn-apps-stage-chip__count {
+      background: rgba($white, 0.2);
+      color: $white;
+    }
+
+    .learn-apps-stage-chip__dot { background: $white; }
+  }
+
+  // Stage identity dots, using the canonical status inks
+  &--applied .learn-apps-stage-chip__dot,
+  &--waitlisted .learn-apps-stage-chip__dot,
+  &--on_hold .learn-apps-stage-chip__dot { background: #475569; }
+  &--assessment .learn-apps-stage-chip__dot { background: #b45309; }
+  &--shortlisted .learn-apps-stage-chip__dot { background: $ma-teal-ink; }
+  &--interview .learn-apps-stage-chip__dot { background: #6d3fa3; }
+  &--offered .learn-apps-stage-chip__dot { background: $ma-gold-ink; }
+  &--hired .learn-apps-stage-chip__dot,
+  &--onboarded .learn-apps-stage-chip__dot { background: #047857; }
+  &--withdrawn .learn-apps-stage-chip__dot { background: $ma-quiet-ink; }
+  &--rejected .learn-apps-stage-chip__dot { background: $ma-reject-ink; }
+}
+
+// ─── Attention banner — the one interruption worth making ────────────────────
+.learn-apps-attention {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  padding: $space-3 $space-4;
+  margin-bottom: $space-4;
+  border-radius: $ma-r-inner;
+  border: 1px solid rgba($ma-gold-ink, 0.3);
+  background: $ma-gold-bg;
+
+  &__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    flex: 0 0 auto;
+    border-radius: $radius-full;
+    background: rgba($ma-gold-ink, 0.14);
+    color: $ma-gold-ink;
+    font-size: 16px;
+  }
+
+  &__text {
+    margin: 0;
+    flex: 1;
+    min-width: 0;
+    font-size: $text-base;
+    font-weight: $fnt-medium;
+    line-height: $leading-snug;
+    color: $ink-800;
+  }
+
+  &__cta {
+    flex: 0 0 auto;
+    min-height: 36px;
+    padding: 0 $space-4;
+    border-radius: $ma-r-inner;
+    border: 1px solid $ma-gold-ink;
+    background: $ma-gold-ink;
+    color: $white;
+    font-size: $text-base;
+    font-weight: $fnt-semi;
+    cursor: pointer;
+    transition: background $duration-fast $ease-std;
+
+    &:hover { background: darken($ma-gold-ink, 7%); }
+    &:focus-visible { outline: 2px solid $ma-gold-ink; outline-offset: 2px; }
+  }
+}
+
+// ─── Load more (windowing past PAGE_SIZE) ────────────────────────────────────
+.learn-apps-load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: $space-4;
+
+  .learn-apps-load-more__btn.ant-btn {
+    min-height: 44px;
+    padding-left: $space-5;
+    padding-right: $space-5;
+    border-radius: $ma-r-inner;
+    border-color: $neutral-200;
+    color: $neutral-700;
+    font-weight: $fnt-medium;
+
+    &:hover {
+      border-color: rgba($teal-deep, 0.45);
+      color: $teal-deep;
+    }
+  }
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Pipeline stepper â€” quiet by default, explicit at the ends.
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+.learn-apps-pipeline {
+  display: flex;
+  align-items: flex-start;
+  list-style: none;
+  margin: $space-4 0 0;
+  padding: 0;
+}
+
+.learn-apps-pipeline__stage {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  text-align: center;
+
+  // Segment leading into this node
+  &:not(:first-child)::before {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: -50%;
+    right: 50%;
+    height: 2px;
+    border-radius: $radius-full;
+    background: $neutral-200;
+  }
+}
+
+.learn-apps-pipeline__node {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  border-radius: $radius-full;
+  background: $white;
+  border: 1.5px solid $neutral-300;
+  box-sizing: border-box;
+  transition: background $duration-fast $ease-std, border-color $duration-fast $ease-std;
+
+  .anticon {
+    font-size: 8px;
+    line-height: 1;
+    color: $white;
+  }
+}
+
+.learn-apps-pipeline__label {
+  font-size: 11px;
+  line-height: $leading-snug;
+  color: $neutral-500;
+  letter-spacing: 0.01em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+// travelled
+.learn-apps-pipeline__stage.is-done {
+  &::before { background: $teal-deep; }
+  .learn-apps-pipeline__node { background: $teal-deep; border-color: $teal-deep; }
+  .learn-apps-pipeline__label { color: $neutral-700; }
+}
+
+// you are here
+.learn-apps-pipeline__stage.is-current {
+  &::before { background: $teal-deep; }
+  .learn-apps-pipeline__node {
+    background: $white;
+    border: 4px solid $teal-deep;
+    box-shadow: 0 0 0 3px rgba($teal-deep, 0.14);
+  }
+  .learn-apps-pipeline__label {
+    color: $neutral-900;
+    font-weight: $fnt-semi;
+  }
+}
+
+// reached, but paused (waitlisted / on hold)
+.learn-apps-pipeline__stage.is-paused {
+  &::before { background: $ma-gold-ink; }
+  .learn-apps-pipeline__node {
+    background: $ma-gold-bg;
+    border: 2px solid $ma-gold-ink;
+    .anticon { color: $ma-gold-ink; font-size: 7px; }
+  }
+  .learn-apps-pipeline__label { color: $ma-gold-ink; font-weight: $fnt-semi; }
+}
+
+// never reached
+.learn-apps-pipeline__stage.is-todo {
+  .learn-apps-pipeline__node { background: $white; border-color: $neutral-200; }
+  .learn-apps-pipeline__label { color: $neutral-400; }
+}
+
+// terminated journey: the whole track goes quiet â€” never a half-full bar
+.learn-apps-pipeline--ended {
+  .learn-apps-pipeline__stage::before {
+    background: none;
+    background-image: repeating-linear-gradient(to right, $neutral-300 0 4px, transparent 4px 8px);
+  }
+
+  .learn-apps-pipeline__stage.is-ended-reached {
+    .learn-apps-pipeline__node { background: $neutral-300; border-color: $neutral-300; }
+    .learn-apps-pipeline__label { color: $neutral-500; }
+  }
+
+  .learn-apps-pipeline__stage.is-ended-todo {
+    .learn-apps-pipeline__node { background: $white; border-color: $neutral-200; }
+    .learn-apps-pipeline__label { color: $neutral-400; }
+  }
+}
+
+.learn-apps-pipeline__stage--terminal {
+  flex: 0 0 auto;
+  padding-left: $space-3;
+
+  &::before {
+    left: -#{$space-3};
+    right: 50%;
+  }
+
+  .learn-apps-pipeline__node {
+    width: 16px;
+    height: 16px;
+    .anticon { font-size: 8px; }
+  }
+
+  &.is-terminal-rejected {
+    .learn-apps-pipeline__node {
+      background: $ma-reject-bg;
+      border-color: rgba($ma-reject-ink, 0.5);
+      .anticon { color: $ma-reject-ink; }
+    }
+    .learn-apps-pipeline__label { color: $ma-reject-ink; font-weight: $fnt-semi; }
+  }
+
+  &.is-terminal-withdrawn {
+    .learn-apps-pipeline__node {
+      background: $neutral-100;
+      border-color: rgba($ma-quiet-ink, 0.45);
+      .anticon { color: $ma-quiet-ink; }
+    }
+    .learn-apps-pipeline__label { color: $ma-quiet-ink; font-weight: $fnt-semi; }
+  }
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Card redesign
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+.learn-apps-list__item { margin-bottom: $space-3; }
+
+.learn-apps-row-card {
+  border-radius: $ma-r-card;
+  border: 1px solid $neutral-200;
+  box-shadow: $elev-1;
+  transition: box-shadow $duration-normal $ease-std, border-color $duration-normal $ease-std;
+
+  &:hover {
+    box-shadow: $elev-2;
+    border-color: rgba($teal-deep, 0.28);
+  }
+
+  &:focus-within {
+    border-color: rgba($teal-deep, 0.4);
+  }
+
+  &__main { gap: $space-4; padding: $space-5; align-items: flex-start; }
+
+  &__title {
+    font-size: $text-md;
+    line-height: $leading-snug;
+    color: $neutral-900;
+  }
+
+  &__title-btn {
+    display: inline;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover { color: $teal-deep; }
+
+    &:focus-visible {
+      outline: 2px solid $teal-deep;
+      outline-offset: 3px;
+      border-radius: $radius-sm;
+    }
+  }
+
+  &__company {
+    font-size: $text-base;
+    color: $neutral-700;
+    margin-bottom: 6px;
+  }
+
+  // Meta carries the interview date, so it is held at AA: $neutral-500 on white
+  // is 4.83:1, and 13px keeps it legible rather than merely present.
+  &__meta {
+    gap: $space-3;
+    font-size: $text-sm;
+    color: $neutral-500;
+
+    .anticon { font-size: 13px; }
+  }
+
+  &__meta-item--movement { color: $neutral-700; font-weight: $fnt-medium; }
+
+  &__meta-item--next { color: $teal-deep; font-weight: $fnt-semi; }
+
+  // Passive application: flagged by icon + words, never by colour alone.
+  &__meta-item--stale {
+    gap: 4px;
+    padding: 2px $space-2;
+    border-radius: $radius-full;
+    background: $ma-gold-bg;
+    color: $ma-gold-ink;
+    font-weight: $fnt-medium;
+
+    .anticon { margin-right: 2px; }
+  }
+
+  &__closing-note {
+    margin: $space-3 0 0;
+    font-size: $text-xs;
+    line-height: $leading-snug;
+    color: $neutral-500;
+  }
+
+  &__actions { align-items: center; }
+
+  &__action {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: $space-2;
+    min-height: 38px;
+    padding: $space-2 $space-4;
+    border-radius: $ma-r-inner;
+    border: 1px solid transparent;
+    font-size: $text-base;
+    font-weight: $fnt-medium;
+    line-height: $leading-snug;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background $duration-fast $ease-std, color $duration-fast $ease-std,
+      border-color $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+
+    .anticon { font-size: 12px; }
+
+    &:focus-visible {
+      outline: 2px solid $teal-deep;
+      outline-offset: 2px;
+    }
+
+    &--quiet {
+      background: $neutral-100;
+      color: $neutral-700;
+      border-color: $neutral-200;
+      &:hover { background: $neutral-200; color: $neutral-900; }
+    }
+
+    &--primary {
+      background: $teal-deep;
+      color: $white;
+      border-color: $teal-deep;
+      box-shadow: $elev-1;
+      &:hover { background: darken($teal-deep, 6%); }
+    }
+
+    &--gold {
+      background: $ma-gold-ink;
+      color: $white;
+      border-color: $ma-gold-ink;
+      box-shadow: $elev-1;
+      &:hover { background: darken($ma-gold-ink, 6%); }
+      &:focus-visible { outline-color: $ma-gold-ink; }
+    }
+  }
+
+  // Offer: a genuine milestone, not another row
+  &--offer {
+    border-color: rgba($ma-gold-ink, 0.35);
+    background: linear-gradient(180deg, $ma-gold-bg 0%, $white 92px);
+    box-shadow: $elev-2;
+
+    &:hover {
+      border-color: rgba($ma-gold-ink, 0.55);
+      box-shadow: $elev-3;
+    }
+  }
+
+  &__ribbon {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2 $space-5;
+    font-size: $text-xs;
+    font-weight: $fnt-semi;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+
+    &--offer {
+      background: rgba($ma-gold-ink, 0.1);
+      color: $ma-gold-ink;
+      border-bottom: 1px solid rgba($ma-gold-ink, 0.18);
+    }
+  }
+
+  // Closed journeys: restrained, never shouty
+  &--ended {
+    background: $neutral-50;
+    border-color: $neutral-200;
+    box-shadow: none;
+
+    .learn-apps-row-card__title { color: $neutral-700; }
+    .learn-apps-row-card__avatar { opacity: 0.72; }
+
+    &:hover { box-shadow: $elev-1; border-color: $neutral-300; }
+  }
+
+  &--rejected {
+    border-left: 3px solid rgba($ma-reject-ink, 0.35);
+  }
+}
+
+// Skeleton mirrors the real card, including the stepper row
+.learn-apps-skeleton-pipeline {
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  margin-top: $space-4;
+
+  &__node {
+    flex: 1 1 0;
+    height: 6px;
+    border-radius: $radius-full;
+    background: $neutral-100;
+  }
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Detail modal â€” journey, offer, closure
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+.learn-app-detail-modal {
+  .ant-modal-content { border-radius: $ma-r-card; }
+  .ant-modal-header { border-bottom: 1px solid $neutral-200; }
+}
+
+// Modal titles are real headings now — reset the browser's h2 metrics.
+.learn-app-detail-modal__title,
+.learn-app-history-modal__title {
+  margin: 0;
+  font-size: $text-md;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+  color: $neutral-900;
+}
+
+.learn-app-detail-modal__value {
+  font-size: $text-base;
+  color: $neutral-700;
+}
+
+.learn-app-detail-modal__meta {
+  gap: $space-3;
+  margin: $space-5 0 0;
+  padding-top: $space-4;
+  border-top: 1px solid $neutral-100;
+}
+
+.learn-app-detail-modal__label {
+  color: $neutral-500;
+  font-weight: $fnt-medium;
+}
+
+.learn-app-detail-modal__next-step {
+  padding: $space-4;
+  background: linear-gradient(135deg, rgba($teal-deep, 0.07) 0%, rgba($teal-deep, 0.02) 100%);
+  border: 1px solid rgba($teal-deep, 0.16);
+  border-radius: $ma-r-inner;
+  margin-bottom: $space-5;
+}
+
+.learn-app-detail-modal__next-step-title {
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $teal-deep;
+  margin: 0 0 6px;
+}
+
+.learn-app-detail-modal__next-step-text {
+  font-size: $text-md;
+  line-height: $leading-snug;
+  color: $neutral-900;
+  margin: 0;
+}
+
+.learn-app-detail-modal__cta { margin-top: $space-4; }
+
+// Vertical journey
+.learn-app-journey {
+  margin-top: $space-5;
+}
+
+.learn-app-journey__title {
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $neutral-500;
+  margin: 0 0 $space-3;
+}
+
+.learn-app-journey__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.learn-app-journey__row {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: $space-3;
+  padding-bottom: $space-4;
+
+  &:last-child { padding-bottom: 0; }
+
+  &:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 7px;
+    top: 18px;
+    bottom: -2px;
+    width: 2px;
+    border-radius: $radius-full;
+    background: $neutral-200;
+  }
+
+  &.is-done:not(:last-child)::before { background: $teal-deep; }
+
+  &.is-done .learn-app-journey__node { background: $teal-deep; border-color: $teal-deep; }
+
+  &.is-current {
+    .learn-app-journey__node {
+      border: 4px solid $teal-deep;
+      box-shadow: 0 0 0 3px rgba($teal-deep, 0.14);
+    }
+    .learn-app-journey__label { color: $neutral-900; font-weight: $fnt-semi; }
+  }
+
+  &.is-paused {
+    .learn-app-journey__node {
+      background: $ma-gold-bg;
+      border: 2px solid $ma-gold-ink;
+      .anticon { color: $ma-gold-ink; }
+    }
+    .learn-app-journey__label { color: $ma-gold-ink; font-weight: $fnt-semi; }
+  }
+
+  &.is-todo,
+  &.is-ended-todo {
+    .learn-app-journey__node { border-color: $neutral-200; }
+    .learn-app-journey__label { color: $neutral-400; }
+  }
+
+  &.is-ended-reached .learn-app-journey__node { background: $neutral-300; border-color: $neutral-300; }
+
+  &.is-terminal-rejected {
+    .learn-app-journey__node {
+      background: $ma-reject-bg;
+      border-color: rgba($ma-reject-ink, 0.5);
+      .anticon { color: $ma-reject-ink; }
+    }
+    .learn-app-journey__label { color: $ma-reject-ink; font-weight: $fnt-semi; }
+  }
+
+  &.is-terminal-withdrawn {
+    .learn-app-journey__node {
+      background: $neutral-100;
+      border-color: rgba($ma-quiet-ink, 0.45);
+      .anticon { color: $ma-quiet-ink; }
+    }
+    .learn-app-journey__label { color: $ma-quiet-ink; font-weight: $fnt-semi; }
+  }
+}
+
+.learn-app-journey__node {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: $radius-full;
+  background: $white;
+  border: 1.5px solid $neutral-300;
+  box-sizing: border-box;
+  z-index: 1;
+
+  .anticon { font-size: 8px; color: $white; }
+}
+
+.learn-app-journey__content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.learn-app-journey__label {
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  line-height: $leading-snug;
+  color: $neutral-700;
+}
+
+.learn-app-journey__date {
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  color: $neutral-500;
+}
+
+.learn-app-journey__reason {
+  margin-top: 4px;
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  color: $neutral-700;
+}
+
+// The offer moment
+.learn-app-detail-modal--offer .ant-modal-header { border-bottom-color: rgba($ma-gold-ink, 0.2); }
+
+.learn-app-offer {
+  position: relative;
+  text-align: center;
+  padding: $space-5 $space-4 $space-4;
+  border-radius: $ma-r-card;
+  border: 1px solid rgba($ma-gold-ink, 0.28);
+  background: linear-gradient(180deg, $ma-gold-bg 0%, $white 78%);
+  box-shadow: $elev-1;
+  margin-bottom: $space-5;
+}
+
+.learn-app-offer__crest {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: $radius-full;
+  background: rgba($ma-gold-ink, 0.12);
+  color: $ma-gold-ink;
+  font-size: 22px;
+  margin-bottom: $space-3;
+}
+
+.learn-app-offer__eyebrow {
+  margin: 0;
+  font-size: $text-xs;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: $ma-gold-ink;
+}
+
+.learn-app-offer__title {
+  // Was a scoped Playfair Display override — see _learn-placements.scss's "PREMIUM PASS"
+  // comment for why it's gone: every other student-facing page uses the app's Lato stack.
+  font-size: $text-2xl;
+  line-height: $leading-tight;
+  font-weight: $fnt-semi;
+  color: $ink-800;
+  margin: 4px 0 $space-2;
+}
+
+.learn-app-offer__role {
+  margin: 0 0 $space-4;
+  font-size: $text-base;
+  line-height: $leading-snug;
+  color: $neutral-700;
+
+  strong { color: $neutral-900; font-weight: $fnt-semi; }
+}
+
+.learn-app-offer__details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-3;
+  margin: 0 0 $space-4;
+  padding: $space-3;
+  background: rgba($white, 0.75);
+  border: 1px solid rgba($ma-gold-ink, 0.16);
+  border-radius: $ma-r-inner;
+  text-align: left;
+}
+
+.learn-app-offer__detail {
+  min-width: 0;
+
+  dt {
+    margin: 0;
+    font-size: 11px;
+    font-weight: $fnt-semi;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: $neutral-500;
+  }
+
+  dd {
+    margin: 2px 0 0;
+    font-size: $text-base;
+    line-height: $leading-snug;
+    color: $neutral-900;
+    word-break: break-word;
+  }
+}
+
+.learn-app-offer__letter {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: $space-4;
+  font-size: $text-base;
+  font-weight: $fnt-medium;
+  color: $ma-gold-ink;
+  text-decoration: underline;
+
+  &:hover { color: darken($ma-gold-ink, 8%); }
+  &:focus-visible { outline: 2px solid $ma-gold-ink; outline-offset: 2px; border-radius: $radius-sm; }
+}
+
+.learn-app-offer__accept.ant-btn {
+  height: 48px;
+  border-radius: $ma-r-inner;
+  font-size: $text-md;
+  font-weight: $fnt-semi;
+  background: $ma-gold-ink;
+  border-color: $ma-gold-ink;
+  box-shadow: $elev-2;
+
+  &:hover,
+  &:focus {
+    background: darken($ma-gold-ink, 7%) !important;
+    border-color: darken($ma-gold-ink, 7%) !important;
+  }
+}
+
+.learn-app-offer__divider {
+  height: 1px;
+  margin: $space-4 0 $space-3;
+  background: rgba($ma-gold-ink, 0.16);
+}
+
+.learn-app-offer__decline {
+  border: 0;
+  background: none;
+  padding: $space-2 $space-3;
+  border-radius: $radius-sm;
+  font-size: $text-base;
+  color: $neutral-500;
+  text-decoration: underline;
+  cursor: pointer;
+  min-height: 32px;
+
+  &:hover:not(:disabled) { color: $ma-reject-ink; }
+  &:focus-visible { outline: 2px solid $neutral-500; outline-offset: 2px; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.learn-app-offer__note {
+  margin: $space-2 0 0;
+  font-size: $text-xs;
+  line-height: $leading-snug;
+  color: $neutral-500;
+}
+
+// Rejection / withdrawal, with dignity
+.learn-app-closed {
+  padding: $space-4;
+  border-radius: $ma-r-inner;
+  border: 1px solid $neutral-200;
+  background: $neutral-50;
+  margin-bottom: $space-5;
+}
+
+.learn-app-closed__title {
+  margin: 0 0 6px;
+  font-size: $text-md;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+  color: $neutral-900;
+}
+
+.learn-app-closed__text {
+  margin: 0;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $neutral-700;
+}
+
+.learn-app-closed__feedback {
+  margin-top: $space-3;
+  padding: $space-3;
+  border-radius: $radius-sm;
+  border-left: 3px solid rgba($ma-reject-ink, 0.35);
+  background: $white;
+}
+
+.learn-app-closed__feedback-label {
+  display: block;
+  font-size: 11px;
+  font-weight: $fnt-semi;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $neutral-500;
+}
+
+.learn-app-closed__feedback-text {
+  margin: 4px 0 0;
+  font-size: $text-base;
+  line-height: $leading-snug;
+  color: $neutral-900;
+}
+
+.learn-app-closed__cta { margin-top: $space-4; }
+
+// Designed confirmation dialog
+.learn-app-confirm-modal {
+  .ant-modal-content { border-radius: $ma-r-card; padding-top: $space-5; }
+  .ant-modal-header { display: none; }
+}
+
+.learn-app-confirm-modal__body { text-align: center; }
+
+.learn-app-confirm-modal__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border-radius: $radius-full;
+  font-size: 20px;
+  margin-bottom: $space-3;
+}
+
+.learn-app-confirm-modal--gold .learn-app-confirm-modal__icon {
+  background: $ma-gold-bg;
+  color: $ma-gold-ink;
+}
+
+.learn-app-confirm-modal--danger .learn-app-confirm-modal__icon {
+  background: $ma-reject-bg;
+  color: $ma-reject-ink;
+}
+
+.learn-app-confirm-modal__heading {
+  margin: 0 0 $space-2;
+  font-size: $text-xl;
+  font-weight: $fnt-semi;
+  line-height: $leading-snug;
+  color: $neutral-900;
+}
+
+.learn-app-confirm-modal__text {
+  margin: 0 auto;
+  max-width: 44ch;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $neutral-700;
+}
+
+.learn-app-confirm-modal__actions {
+  display: flex;
+  justify-content: center;
+  gap: $space-3;
+  margin-top: $space-5;
+
+  .ant-btn { min-width: 120px; min-height: 40px; border-radius: $ma-r-inner; }
+}
+
+.learn-app-confirm-modal--gold .learn-app-confirm-modal__ok.ant-btn-primary {
+  background: $ma-gold-ink;
+  border-color: $ma-gold-ink;
+
+  &:hover,
+  &:focus {
+    background: darken($ma-gold-ink, 7%) !important;
+    border-color: darken($ma-gold-ink, 7%) !important;
+  }
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// States â€” first-run empty, filtered empty, error
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+.learn-apps-empty {
+  border-radius: $ma-r-card;
+  border: 1px solid $neutral-200;
+  background: $white;
+  box-shadow: $elev-1;
+  padding: $space-7 $space-5;
+}
+
+.learn-apps-empty__title {
+  // Was a scoped Playfair Display override — see _learn-placements.scss's "PREMIUM PASS"
+  // comment for why it's gone: every other student-facing page uses the app's Lato stack.
+  font-size: $text-2xl;
+  line-height: $leading-tight;
+  color: $ink-800;
+}
+
+.learn-apps-empty__subtitle {
+  font-size: $text-md;
+  line-height: $leading-normal;
+  color: $neutral-700;
+  max-width: 46ch;
+}
+
+.learn-apps-empty__steps {
+  list-style: none;
+  margin: $space-2 0 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: $space-3;
+
+  li {
+    display: inline-flex;
+    align-items: center;
+    gap: $space-2;
+    padding: $space-2 $space-4;
+    border-radius: $radius-full;
+    background: $neutral-100;
+    font-size: $text-base;
+    color: $neutral-700;
+  }
+}
+
+.learn-apps-empty__step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  border-radius: $radius-full;
+  background: $teal-deep;
+  color: $white;
+  font-size: 11px;
+  font-weight: $fnt-semi;
+  line-height: 1;
+}
+
+.learn-apps-empty__cta.ant-btn {
+  margin-top: $space-3;
+  min-height: 44px;
+  border-radius: $ma-r-inner;
+  padding-left: $space-5;
+  padding-right: $space-5;
+}
+
+.learn-apps-error-card {
+  border-radius: $ma-r-card;
+  box-shadow: $elev-1;
+  padding: $space-7 $space-5;
+  gap: $space-3;
+}
+
+.learn-apps-error-icon { color: $ma-reject-ink; font-size: 32px; }
+
+.learn-apps-error-title {
+  margin: 0;
+  font-size: $text-xl;
+  font-weight: $fnt-semi;
+  color: $neutral-900;
+}
+
+.learn-apps-error-text {
+  margin: 0;
+  font-size: $text-base;
+  line-height: $leading-normal;
+  color: $neutral-700;
+}
+
+.learn-my-applications-results-info {
+  font-size: $text-xs;
+  color: $neutral-500;
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Mobile â€” real design, 44px targets. Overrides live HERE, not in _learn-mobile.
+// This file is imported after _learn-mobile.scss so equal specificity wins;
+// `!important` is used only where _learn-mobile.scss already used it.
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+@media (max-width: $learn-mobile-bp) {
+  .learn-my-applications-header__subtitle { font-size: $text-sm; }
+
+  .learn-my-applications-filter-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: $space-3 !important;
+
+    &__tabs {
+      width: 100%;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 6px;
+      overflow: visible;
+    }
+  }
+
+  .learn-my-applications-tab-pill {
+    min-height: $ma-touch;
+    justify-content: center;
+    padding: $space-2;
+    font-size: $text-sm;
+
+    &__count { margin-left: 4px; }
+  }
+
+  // _learn-mobile.scss forces every .ant-select inside the filter bar to 100%/38px;
+  // the sort control keeps that width but is restored to a 44px touch target here.
+  .learn-apps-sort {
+    width: 100%;
+    margin-left: 0;
+    gap: $space-2;
+
+    .learn-apps-sort__select.ant-select {
+      width: 100% !important;
+
+      .ant-select-selector {
+        min-height: $ma-touch !important;
+        height: $ma-touch !important;
+      }
+    }
+  }
+
+  .learn-apps-stage-strip {
+    gap: 6px;
+    margin-bottom: $space-3;
+  }
+
+  .learn-apps-stage-chip { min-height: $ma-touch; }
+
+  .learn-apps-attention {
+    flex-wrap: wrap;
+
+    &__text { flex: 1 1 100%; order: 2; }
+    &__cta { flex: 1 1 100%; order: 3; min-height: $ma-touch; }
+  }
+
+  .learn-apps-row-card__main {
+    flex-wrap: wrap;
+    padding: $space-4;
+    gap: $space-3;
+  }
+
+  .learn-apps-row-card__content {
+    flex: 1 1 100%;
+    order: 1;
+    padding-right: 0;
+  }
+
+  .learn-apps-row-card__actions {
+    order: 2;
+    flex: 1 1 100%;
+    margin-left: 0;
+  }
+
+  .learn-apps-row-card__action {
+    width: 100%;
+    min-height: $ma-touch;
+  }
+
+  .learn-apps-row-card__ribbon { padding: $space-2 $space-4; }
+
+  // Compact stepper: dots only, with the meaningful stage keeping its label
+  .learn-apps-pipeline--card {
+    margin-top: $space-3;
+
+    .learn-apps-pipeline__label { display: none; }
+
+    .learn-apps-pipeline__stage.is-current .learn-apps-pipeline__label,
+    .learn-apps-pipeline__stage.is-paused .learn-apps-pipeline__label,
+    .learn-apps-pipeline__stage--terminal .learn-apps-pipeline__label {
+      display: block;
+      font-size: 11px;
+    }
+  }
+
+  .learn-app-offer { padding: $space-4 $space-3; }
+
+  .learn-app-offer__details { grid-template-columns: minmax(0, 1fr); }
+
+  .learn-app-offer__accept.ant-btn { height: $ma-touch; }
+
+  .learn-app-offer__decline { min-height: $ma-touch; width: 100%; }
+
+  .learn-app-confirm-modal__actions {
+    flex-direction: column-reverse;
+
+    .ant-btn { width: 100%; min-height: $ma-touch; }
+  }
+
+  .learn-apps-empty__steps { flex-direction: column; align-items: stretch; }
+
+  .learn-apps-empty__steps li { justify-content: flex-start; }
+}
+
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// Reduced motion
+// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+@media (prefers-reduced-motion: reduce) {
+  .learn-apps-row-card,
+  .learn-apps-row-card__action,
+  .learn-apps-row-card__title-btn,
+  .learn-apps-stage-chip,
+  .learn-apps-attention__cta,
+  .learn-my-applications-tab-pill,
+  .learn-apps-pipeline__node,
+  .learn-app-offer__accept.ant-btn {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+

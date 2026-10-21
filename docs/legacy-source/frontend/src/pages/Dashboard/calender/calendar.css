@@ -1,0 +1,46 @@
+.calendar-wrapper .course-items .ant-checkbox-wrapper {
+  font-size: 15px;
+  font-weight: 500;
+}
+.calendar-wrapper .rbc-time-view,
+.calendar-wrapper .rbc-time-content {
+  border: 1px solid rgba(221, 221, 221, 0.3215686275);
+}
+.calendar-wrapper .rbc-time-content > * + * > *,
+.calendar-wrapper .rbc-time-header-content {
+  border-left: 1px solid rgba(221, 221, 221, 0.3215686275);
+}
+.calendar-wrapper .rbc-timeslot-group,
+.calendar-wrapper .rbc-header {
+  border-bottom: 1px solid rgba(221, 221, 221, 0.3215686275);
+}
+.calendar-wrapper .rbc-timeslot-group .rbc-label,
+.calendar-wrapper .rbc-header .rbc-label {
+  color: #A9A7AE;
+}
+.calendar-wrapper .all-day-text {
+  margin-top: 50px;
+  margin-left: 3px;
+  color: #A9A7AE;
+}
+.calendar-wrapper .rbc-label.rbc-time-header-gutter {
+  width: 79.85px !important;
+  min-width: 79.85px !important;
+  max-width: 79.85px !important;
+}
+.calendar-wrapper .rbc-time-header-content {
+  height: 120px;
+}
+.calendar-wrapper .rbc-row.rbc-time-header-cell {
+  height: 80px;
+}
+.calendar-wrapper .rbc-header.rbc-today {
+  color: #26BAC7;
+}
+.calendar-wrapper .rbc-calendar-sunday {
+  color: #FF7576;
+}
+.calendar-wrapper .rbc-row .rbc-date-cell:nth-child(1),
+.calendar-wrapper .rbc-month-header .rbc-header:nth-child(1) {
+  color: #FF7576;
+}/*# sourceMappingURL=calendar.css.map */

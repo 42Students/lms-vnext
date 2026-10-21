@@ -1,0 +1,1634 @@
+@import "../components/variables.scss";
+
+// Admin list pages: Departments, Courses, Lessons
+// Desktop + mobile UI/UX for .admin-list-page
+
+$admin-list-title-gap: 24px;
+$admin-list-card-gap: 24px;
+$admin-list-touch-min: 44px;
+$admin-list-filter-width: 220px;
+
+.admin-list-page {
+  padding-bottom: 24px;
+
+  .admin-list-page__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: $admin-list-title-gap;
+
+    // Overrides .admin-list-page__title's own margin-bottom below — inside the header row the
+    // title sits directly above its subtitle and shouldn't carry the same 24px gap the title
+    // uses everywhere else (e.g. above a table with no subtitle).
+    &.admin-list-page__header .admin-list-page__title {
+      margin-bottom: 4px;
+    }
+  }
+
+  .admin-list-page__subtitle {
+    color: $neutral-500;
+    font-size: 0.875rem;
+  }
+
+  // Shared width for the filter Selects that sit above admin Projects list tables — previously
+  // each page hand-picked its own (180/220/260px), producing visibly different filter-bar
+  // proportions between sibling pages.
+  .admin-list-page__filter {
+    width: $admin-list-filter-width;
+  }
+
+  // Shared vertical rhythm between stacked cards on admin Projects detail pages — several pages
+  // used a hardcoded 16px inline style instead of this scale.
+  .admin-list-page__card-gap {
+    margin-bottom: $admin-list-card-gap;
+  }
+
+  // AntD's default light "gold"/"green" Tag text fails WCAG AA at 12px (~2.75:1 / ~3.37:1
+  // against the 4.5:1 required) — these color the DRAFT/PUBLISHED lifecycle badges across the
+  // admin Projects dashboard and templates list. Darken just these two tones.
+  .ant-tag-gold {
+    color: #ad6800;
+  }
+  .ant-tag-green {
+    color: #237804;
+  }
+
+  .admin-list-page__title {
+    margin: 0 0 $admin-list-title-gap 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: $neutral-900;
+  }
+
+  .ant-card {
+    border-radius: 8px;
+  }
+
+  .ant-card-head {
+    min-height: 48px;
+    padding: 0 16px;
+  }
+
+  .ant-card-head-title {
+    padding: 12px 0;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+
+  .ant-card-extra {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ant-card-body {
+    padding: 20px;
+  }
+
+  // Form and table cards spacing
+  .ant-row.ant-form-item {
+    margin-bottom: 16px;
+  }
+
+  .ant-table-wrapper {
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    &::-webkit-scrollbar { height: 4px; }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    &::-webkit-scrollbar-track { background: transparent; }
+  }
+
+  .ant-table {
+    font-size: 14px;
+    min-width: 600px;
+  }
+
+  // Compact 2-column preview table embedded in the narrower "Project templates"
+  // dashboard card — the global 600px min-width above forced it wider than its
+  // xl={11} column, pushing description text off the right edge of the page.
+  .admin-projects-home__template-table .ant-table {
+    min-width: 0;
+  }
+
+  .ant-table-cell {
+    padding: 12px 16px;
+  }
+
+  // Action buttons: ensure adequate hit area
+  .ant-space-item .ant-btn.ant-btn-text {
+    min-width: 32px;
+    min-height: 32px;
+    padding: 4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  // Day-divider row on the Project audit page — separates a multi-day range (7d/30d/all) into
+  // scannable "today / yesterday / ..." groups instead of one flat list repeating its own date.
+  .admin-audit-day-divider > td {
+    background: $neutral-50;
+    font-size: 0.75rem;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    color: $neutral-500;
+  }
+
+  // A "create/edit X" form's content Card previously had no width cap at all — on a normal
+  // desktop monitor a one-word Title field rendered 1300px+ wide. Capping it keeps every field
+  // (and every repeating-item row) at a reasonable reading/scanning width without centering the
+  // whole page (would look like it's floating, since the surrounding chrome stays full-width).
+  .admin-form-card {
+    max-width: 920px;
+  }
+
+  // Same "unconstrained width on a normal monitor looks broken" issue as .admin-form-card, but
+  // for pages built from single-purpose Cards (Migrations, Readiness, Submissions) rather than a
+  // Form — a Card holding a short Descriptions block or a couple of checkboxes stretched to the
+  // full page width, leaving a single narrow row of content adrift in a mostly-empty ~2000px card.
+  .admin-list-page__narrow-content {
+    max-width: 900px;
+  }
+
+  // Section headings inside a long form (e.g. "Basic info" / "Lifecycle settings" / "Content")
+  // — gives the admin scannable landmarks instead of one unbroken flat list of fields.
+  .admin-form-section-title {
+    display: block;
+    margin: 28px 0 12px;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: $neutral-500;
+
+    &:first-child {
+      margin-top: 4px;
+    }
+  }
+
+  // Footer action bar for "Create"/"Save" — visually separated from the form fields above it
+  // with a top border. Deliberately NOT `position: sticky`: that caused the bar to render mid-
+  // form on shorter viewports and cover the remaining fields (Lifecycle settings selects,
+  // Content section) instead of just floating at the bottom — a real, confirmed regression, not
+  // just a cosmetic nuisance. A normal in-flow bar is less flashy but never hides content.
+  .admin-form-actions {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    margin: 24px -20px -20px;
+    padding: 16px 20px;
+    background: #fff;
+    border-top: 1px solid $neutral-200;
+  }
+
+  // ---------- Mobile ----------
+  @media (max-width: 767px) {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+
+    .admin-list-page__title {
+      font-size: 1.25rem;
+      margin-bottom: 16px;
+    }
+
+    .ant-card-body {
+      padding: 16px;
+    }
+
+    .ant-card-extra {
+      margin-top: 4px;
+    }
+
+    // Touch-friendly action buttons
+    .ant-space-item .ant-btn.ant-btn-text {
+      min-width: $admin-list-touch-min;
+      min-height: $admin-list-touch-min;
+      padding: 8px;
+    }
+
+    .admin-form-actions {
+      margin: 16px -16px -16px;
+      padding: 12px 16px;
+    }
+  }
+}
+
+// Horizontal lateral-navigation tabs shown at the top of every admin Projects page (dashboard,
+// templates, workspaces, at-risk, workload, submissions, readiness, reassign-mentor, audit,
+// migrations, settings). Lets an admin jump sideways between sections without needing the
+// browser's own back button. Scoped outside .admin-list-page since it also sits above pages that
+// aren't built on that wrapper class (e.g. the create/edit forms).
+.projects-sub-nav {
+  margin-bottom: 20px;
+
+  .ant-tabs-nav {
+    margin-bottom: 0;
+  }
+
+  .ant-tabs-nav::before {
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .ant-tabs-tab {
+    padding: 8px 4px;
+    font-size: 0.875rem;
+  }
+
+  .ant-tabs-nav-wrap {
+    // Let the tab list scroll horizontally as its own contained region on narrow viewports
+    // instead of pushing the page body wider.
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    &::-webkit-scrollbar { height: 3px; }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+  }
+}
+
+// Rows inside RepeatingItemEditor (sprints/tasks/resources) — a lighter, flatter treatment
+// than a full antd Card per row, so 3-5 rows don't read as a stack of boxes nested inside the
+// page's own Card. Scoped outside .admin-list-page since KeyValueEditor/RepeatingItemEditor are
+// also usable outside that wrapper class.
+.repeating-item-editor__row {
+  border: 1px solid $neutral-200;
+  border-radius: 6px;
+  padding: 10px 12px 12px;
+  background: $neutral-50;
+}
+
+.repeating-item-editor__row-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+// Per-row summary (state, dates, owner) beside a collapsed row.
+.repeating-item-editor__row-meta {
+  display: inline-flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 10px;
+  color: $neutral-500;
+  font-size: 12px;
+  .ant-tag { margin-inline-end: 0; }
+}
+
+.repeating-item-editor__row-title {
+  font-size: 0.875rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.repeating-item-editor__field-label {
+  display: block;
+  font-size: 0.75rem;
+  margin-bottom: 2px;
+}
+
+.repeating-item-editor__hint {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 2px;
+}
+
+.key-value-editor__row {
+  align-items: flex-start;
+}
+
+.key-value-editor__hint {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: -4px;
+  margin-bottom: 4px;
+}
+
+// Modal from admin list pages (renders in body; use className on Modal)
+.admin-list-page-modal .ant-modal,
+.ant-modal.admin-list-page-modal {
+  max-width: calc(100vw - 32px);
+}
+
+.admin-list-page-modal .ant-modal-body {
+  padding: 20px 24px;
+}
+
+@media (max-width: 767px) {
+  .admin-list-page-modal .ant-modal,
+  .ant-modal.admin-list-page-modal {
+    top: 16px;
+    max-width: calc(100vw - 24px);
+    padding-bottom: 0;
+  }
+
+  .admin-list-page-modal .ant-modal-content {
+    border-radius: 12px;
+  }
+
+  .admin-list-page-modal .ant-modal-body {
+    padding: 16px;
+    max-height: calc(100vh - 120px);
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(0, 0, 0, 0.2) transparent;
+    &::-webkit-scrollbar { width: 4px; }
+    &::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 2px;
+    }
+    &::-webkit-scrollbar-track { background: transparent; }
+  }
+
+  .admin-list-page-modal .ant-modal-footer {
+    padding: 12px 16px;
+    border-top: 1px solid $neutral-200;
+  }
+
+  .admin-list-page-modal .ant-modal-footer .ant-btn {
+    min-height: $admin-list-touch-min;
+    min-width: 88px;
+  }
+}
+
+// Re-open .admin-list-page for form column rule
+.admin-list-page {
+  @media (max-width: 767px) {
+    // Form: force single column for half-width fields on small screens
+    .ant-form .ant-row .ant-col.ant-form-item-control {
+      max-width: 100%;
+    }
+  }
+}
+
+// Placements module (Drives/Companies/Interviews/Analytics + drive detail pages) — the shared
+// admin layout's gray page chrome (AdminLayout.js's "section.bg-gray") read as the page
+// constantly breaking into disconnected gray/white sections against these particularly
+// card-and-table-heavy screens. Scoped to just the placements pages via :has() so every other
+// admin section (Departments, Courses, Projects, etc.) keeps its current background untouched.
+// Cards already carry antd's default 1px border, so removing the gray gutter alone gives the
+// intended "white page + hairline borders" separation without needing extra border rules here.
+section.bg-gray:has(.placements-page) {
+  background: #fff;
+}
+
+// Create workspace -> "Split a class into teams" preview.
+.project-teams-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.project-teams-preview__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 4px 0;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 13px;
+
+  &:last-child { border-bottom: 0; }
+}
+
+
+// Workspace Summary — read-first health snapshot + settings editor
+.admin-list-page {
+  .project-workspace-summary__snapshot {
+    max-width: 1180px;
+    margin-bottom: $admin-list-card-gap;
+    border-color: $neutral-200;
+    box-shadow: none;
+
+    .ant-card-body {
+      padding: 20px;
+    }
+  }
+
+  .project-workspace-summary__snapshot-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
+    gap: 24px;
+    align-items: stretch;
+  }
+
+  .project-workspace-summary__primary {
+    min-width: 0;
+  }
+
+  .project-workspace-summary__eyebrow {
+    margin-bottom: 10px;
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-summary__tags {
+    margin-bottom: 12px;
+  }
+
+  .project-workspace-summary__template-tag {
+    margin-inline-end: 0;
+  }
+
+  .project-workspace-summary__summary {
+    max-width: 760px;
+    margin-bottom: 18px;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+  }
+
+  .project-workspace-summary__progress-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+    font-size: 0.8125rem;
+  }
+
+  .project-workspace-summary__metrics {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .project-workspace-summary__metric {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    min-height: 82px;
+    padding: 12px 14px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+  }
+
+  .project-workspace-summary__metric-label {
+    font-size: 0.75rem;
+  }
+
+  .project-workspace-summary__metric-value {
+    overflow: hidden;
+    color: $neutral-900;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.35;
+    text-overflow: ellipsis;
+  }
+
+  .admin-form-card.project-workspace-summary__editor {
+    max-width: 1180px;
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-summary__snapshot-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 575px) {
+    .project-workspace-summary__snapshot .ant-card-body {
+      padding: 16px;
+    }
+
+    .project-workspace-summary__metrics {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .project-workspace-summary__metric {
+      min-height: 74px;
+      padding: 10px 12px;
+    }
+  }
+}
+
+
+// Workspace Overview — structured project-brief editor
+.admin-list-page {
+  .admin-form-card.project-workspace-overview__editor {
+    max-width: 1180px;
+  }
+
+  .project-workspace-overview__lede {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(300px, 1.1fr);
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 20px;
+    border-bottom: 1px solid $neutral-200;
+
+    .ant-typography {
+      margin-bottom: 0;
+    }
+
+    h4.ant-typography {
+      margin-top: 4px;
+      color: $neutral-900;
+    }
+  }
+
+  .project-workspace-overview__eyebrow {
+    display: block;
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-overview__section {
+    margin-top: 22px;
+  }
+
+  .project-workspace-overview__section--boxed {
+    height: 100%;
+    margin-top: 0;
+    padding: 16px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+  }
+
+  .project-workspace-overview__section-heading {
+    margin-bottom: 12px;
+
+    .ant-typography {
+      margin-bottom: 0;
+    }
+
+    h5.ant-typography {
+      margin-bottom: 3px;
+      color: $neutral-900;
+    }
+  }
+
+  .project-workspace-overview__split {
+    margin-top: 22px;
+  }
+
+  .project-workspace-overview__editor .ant-form-item:last-child {
+    margin-bottom: 0;
+  }
+
+  .project-workspace-overview__editor .admin-form-actions {
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: 767px) {
+    .project-workspace-overview__lede {
+      grid-template-columns: 1fr;
+      gap: 10px;
+      align-items: start;
+    }
+
+    .project-workspace-overview__section--boxed {
+      padding: 14px;
+    }
+  }
+}
+
+
+// Workspace Team — role summary + member roster
+.admin-list-page {
+  .project-workspace-team__snapshot {
+    max-width: 1180px;
+    border-color: $neutral-200;
+    box-shadow: none;
+  }
+
+  .project-workspace-team__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-team__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-team__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-team__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .project-workspace-team__metric {
+    min-width: 0;
+    min-height: 84px;
+    padding: 12px 14px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+  }
+
+  .project-workspace-team__metric--warning {
+    border-color: #ffd591;
+    background: #fff7e6;
+  }
+
+  .project-workspace-team__metric-label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 0.75rem;
+  }
+
+  .project-workspace-team__metric-value {
+    color: $neutral-900;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+
+  .project-workspace-team__roster {
+    max-width: 1180px;
+  }
+
+  .project-workspace-team__roster .ant-card-extra {
+    color: $neutral-500;
+    font-size: 0.75rem;
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-team__intro {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .project-workspace-team__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 575px) {
+    .project-workspace-team__metrics {
+      grid-template-columns: 1fr;
+    }
+
+    .project-workspace-team__metric {
+      min-height: 0;
+    }
+
+    .project-workspace-team__roster .ant-card-extra {
+      width: 100%;
+      margin-top: 0;
+    }
+  }
+}
+
+
+// Workspace Sprints — delivery-plan editor
+.admin-list-page {
+  .admin-form-card.project-workspace-sprints__editor {
+    max-width: 1180px;
+  }
+
+  .project-workspace-sprints__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-sprints__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-sprints__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-sprints__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 16px 0 18px;
+  }
+
+  .project-workspace-sprints__metric {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 3px;
+      color: $neutral-900;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+  }
+
+  .project-workspace-sprints__notice {
+    margin-bottom: 18px;
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-sprints__intro {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .project-workspace-sprints__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+
+// Workspace Tasks — work-breakdown + submissions
+.admin-list-page {
+  .admin-form-card.project-workspace-tasks__editor,
+  .admin-form-card.project-workspace-tasks__submissions {
+    max-width: 1180px;
+  }
+
+  .project-workspace-tasks__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-tasks__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-tasks__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-tasks__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 16px 0 18px;
+  }
+
+  .project-workspace-tasks__metric {
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 3px;
+      color: $neutral-900;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+  }
+
+  .project-workspace-tasks__notice {
+    margin-bottom: 18px;
+  }
+
+  .project-workspace-tasks__submissions {
+    margin-top: $admin-list-card-gap;
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-tasks__intro {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .project-workspace-tasks__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+
+// Workspace Resources — curated library editor
+.admin-list-page {
+  .admin-form-card.project-workspace-resources__editor {
+    max-width: 1180px;
+  }
+
+  .project-workspace-resources__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-resources__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-resources__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-resources__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 16px 0 18px;
+  }
+
+  .project-workspace-resources__metric {
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 3px;
+      color: $neutral-900;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-resources__intro {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .project-workspace-resources__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+
+// Workspace Meetings — cadence planner
+.admin-list-page {
+  .admin-form-card.project-workspace-meetings__editor {
+    max-width: 1180px;
+  }
+
+  .project-workspace-meetings__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-meetings__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-meetings__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-meetings__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 16px 0 18px;
+  }
+
+  .project-workspace-meetings__metric {
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 3px;
+      color: $neutral-900;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-meetings__intro {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .project-workspace-meetings__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+}
+
+
+// Workspace Readiness — decision-first readiness snapshot
+.admin-list-page {
+  .project-workspace-readiness__hero,
+  .project-workspace-readiness__override,
+  .project-workspace-readiness__override-empty {
+    max-width: 1180px;
+  }
+
+  .project-workspace-readiness__hero {
+    border-color: $neutral-200;
+    box-shadow: none;
+  }
+
+  .project-workspace-readiness__topline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-readiness__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-readiness__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-readiness__progress {
+    margin-top: 16px;
+  }
+
+  .project-workspace-readiness__progress-label {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 4px;
+    font-size: 0.8125rem;
+  }
+
+  .project-workspace-readiness__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .project-workspace-readiness__metric {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 3px;
+      color: $neutral-900;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .project-workspace-readiness__override-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(160px, 1fr) minmax(180px, 1fr);
+    gap: 16px;
+    margin-top: 8px;
+
+    .ant-typography {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 0.75rem;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-readiness__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .project-workspace-readiness__override-grid {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 575px) {
+    .project-workspace-readiness__topline {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+}
+
+
+// Workspace Delivery — submission package review
+.admin-list-page {
+  .project-workspace-delivery,
+  .project-workspace-delivery__empty {
+    max-width: 1180px;
+  }
+
+  .project-workspace-delivery > .ant-card + .ant-card {
+    margin-top: $admin-list-card-gap;
+  }
+
+  .project-workspace-delivery__hero {
+    border-color: $neutral-200;
+    box-shadow: none;
+  }
+
+  .project-workspace-delivery__topline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-delivery__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-delivery__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.25rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-delivery__facts {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .project-workspace-delivery__fact {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 3px;
+      color: $neutral-900;
+      font-size: 0.9375rem;
+      font-weight: 700;
+      overflow-wrap: anywhere;
+    }
+  }
+
+  .project-workspace-delivery__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid $neutral-200;
+
+    .ant-btn-link {
+      padding-inline: 0 14px;
+    }
+  }
+
+  .project-workspace-delivery__attachment-list {
+    display: grid;
+    gap: 8px;
+  }
+
+  .project-workspace-delivery__attachment {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+  }
+
+  .project-workspace-delivery__attachment-title {
+    color: $neutral-900;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  .project-workspace-delivery__review-meta {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+
+    .ant-typography {
+      display: block;
+      margin-bottom: 2px;
+      font-size: 0.75rem;
+    }
+  }
+
+  .project-workspace-delivery__feedback {
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid $neutral-200;
+
+    .ant-typography {
+      margin-bottom: 4px;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-delivery__facts {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 575px) {
+    .project-workspace-delivery__topline,
+    .project-workspace-delivery__actions,
+    .project-workspace-delivery__attachment {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .project-workspace-delivery__review-meta {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+
+// Workspace Audit — searchable resource activity
+.admin-list-page {
+  .project-workspace-audit__card {
+    max-width: 1180px;
+    border-color: $neutral-200;
+    box-shadow: none;
+  }
+
+  .project-workspace-audit__intro {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(320px, 1.1fr);
+    gap: 24px;
+    align-items: end;
+    padding-bottom: 18px;
+    border-bottom: 1px solid $neutral-200;
+  }
+
+  .project-workspace-audit__eyebrow {
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .project-workspace-audit__headline {
+    margin-top: 4px;
+    color: $neutral-900;
+    font-size: 1.125rem;
+    font-weight: 700;
+    line-height: 1.35;
+  }
+
+  .project-workspace-audit__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin: 16px 0;
+  }
+
+  .project-workspace-audit__metric {
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 3px;
+      color: $neutral-900;
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+  }
+
+  .project-workspace-audit__filters {
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) 180px;
+    gap: 10px;
+    margin-bottom: 14px;
+
+    .ant-input-search {
+      max-width: 420px;
+    }
+  }
+
+  @media (max-width: 991px) {
+    .project-workspace-audit__intro {
+      grid-template-columns: 1fr;
+      gap: 8px;
+      align-items: start;
+    }
+
+    .project-workspace-audit__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 575px) {
+    .project-workspace-audit__filters {
+      grid-template-columns: 1fr;
+    }
+
+    .project-workspace-audit__filters .ant-input-search {
+      max-width: none;
+    }
+  }
+}
+
+
+// People — shared operator-oriented hierarchy for CA + Super Admin
+.admin-list-page {
+  .people-page-overview {
+    max-width: 1180px;
+    margin-bottom: $admin-list-card-gap;
+    border-color: $neutral-200;
+    box-shadow: none;
+  }
+
+  .people-page-overview__topline {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+  }
+
+  .people-page-overview__copy {
+    min-width: 0;
+    max-width: 760px;
+  }
+
+  .people-page-overview__eyebrow {
+    display: block;
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .people-page-overview__title {
+    margin: 3px 0 4px;
+  }
+
+  .people-page-overview__description {
+    margin-bottom: 0;
+    max-width: 720px;
+  }
+
+  .people-page-overview__actions {
+    flex: 0 0 auto;
+  }
+
+  .people-page-overview__metrics {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 10px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid $neutral-200;
+  }
+
+  .people-page-overview__metric {
+    min-width: 0;
+    padding: 10px 12px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+
+    .ant-typography {
+      display: block;
+      font-size: 0.75rem;
+    }
+
+    > div {
+      margin-top: 2px;
+      color: $neutral-900;
+      font-size: 1.125rem;
+      font-weight: 700;
+      line-height: 1.35;
+    }
+
+    > span {
+      display: block;
+      margin-top: 2px;
+      color: $neutral-500;
+      font-size: 0.6875rem;
+      line-height: 1.4;
+    }
+  }
+
+  .people-page-overview__note {
+    margin-top: 12px;
+    padding: 9px 11px;
+    border-radius: 8px;
+    background: $neutral-50;
+    color: $neutral-600;
+    font-size: 0.8125rem;
+  }
+
+  @media (max-width: 767px) {
+    .people-page-overview__topline {
+      flex-direction: column;
+    }
+
+    .people-page-overview__actions {
+      width: 100%;
+
+      .ant-space {
+        width: 100%;
+      }
+    }
+
+    .people-page-overview__metrics {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 420px) {
+    .people-page-overview__metrics {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+
+// Super Admin dashboard — platform command center
+.admin-dashboard-platform {
+  .admin-dashboard-platform__hero {
+    max-width: 760px;
+    margin-bottom: 20px;
+  }
+
+  .admin-dashboard-platform__eyebrow {
+    display: block;
+    color: $neutral-500;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .admin-dashboard-platform__title {
+    margin: 4px 0 6px;
+    color: $neutral-900;
+    font-size: 1.5rem;
+    line-height: 1.3;
+  }
+
+  .admin-dashboard-platform__description {
+    margin-bottom: 0;
+    max-width: 680px;
+  }
+
+  .admin-dashboard-platform__grid {
+    max-width: 1040px;
+  }
+
+  .admin-dashboard-platform__grid a {
+    display: block;
+    height: 100%;
+  }
+
+  .admin-dashboard-platform__card {
+    height: 100%;
+    border-color: $neutral-200;
+    box-shadow: none;
+
+    .ant-card-body {
+      display: grid;
+      grid-template-columns: 40px minmax(0, 1fr) auto;
+      gap: 12px;
+      align-items: start;
+      min-height: 112px;
+    }
+  }
+
+  .admin-dashboard-platform__card-icon {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    background: $neutral-50;
+    color: $neutral-700;
+    font-size: 1.125rem;
+  }
+
+  .admin-dashboard-platform__card-title {
+    margin-bottom: 3px;
+    color: $neutral-900;
+    font-weight: 700;
+  }
+
+  .admin-dashboard-platform__card-copy .ant-typography {
+    margin-bottom: 0;
+  }
+
+  .admin-dashboard-platform__card-arrow {
+    align-self: center;
+    color: $neutral-400;
+  }
+
+  .admin-dashboard-platform__scope-tip {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    max-width: 1040px;
+    margin-top: 16px;
+    padding: 11px 13px;
+    border: 1px solid $neutral-200;
+    border-radius: 8px;
+    background: $neutral-50;
+    color: $neutral-600;
+    font-size: 0.8125rem;
+  }
+}
+
+.admin-activity-hub {
+  max-width: 1180px;
+}
+
+
+// Shared admin control overview — high-impact Super Admin surfaces
+.admin-control-overview {
+  margin-bottom: 16px;
+  border-color: $neutral-200;
+  box-shadow: none;
+}
+
+.admin-control-overview__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.admin-control-overview__copy { min-width: 0; max-width: 780px; }
+.admin-control-overview__eyebrow-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.admin-control-overview__eyebrow {
+  color: $neutral-500;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+.admin-control-overview__title { margin: 4px 0; color: $neutral-900; font-size: 1.125rem; line-height: 1.35; }
+.admin-control-overview__description { margin-bottom: 0 !important; max-width: 760px; }
+.admin-control-overview__actions { flex: 0 0 auto; }
+
+.admin-control-overview__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $neutral-200;
+}
+
+.admin-control-overview__metric {
+  min-width: 0;
+  padding: 9px 11px;
+  border: 1px solid $neutral-200;
+  border-radius: 8px;
+  background: $neutral-50;
+
+  .ant-typography { display: block; font-size: 0.75rem; }
+  strong { display: block; margin-top: 2px; color: $neutral-900; font-size: 1rem; line-height: 1.35; }
+  > span { display: block; margin-top: 2px; color: $neutral-500; font-size: 0.6875rem; }
+}
+
+@media (max-width: 767px) {
+  .admin-control-overview__top { flex-direction: column; }
+  .admin-control-overview__actions { width: 100%; }
+  .admin-control-overview__metrics { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 420px) {
+  .admin-control-overview__metrics { grid-template-columns: 1fr; }
+}

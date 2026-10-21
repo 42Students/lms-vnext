@@ -1,0 +1,124 @@
+.fl-d-panel-l {
+  background: #ffffff;
+  border-right: 1px solid #F1F4F9;
+  height: 100vh;
+  width: 280px;
+  display: flex;
+  flex-direction: column;
+}
+.fl-d-panel-l__body {
+  padding: 8px 16px 16px 16px;
+  max-height: 100%;
+  overflow-y: auto;
+}
+.fl-d-panel-l__body::-webkit-scrollbar {
+  width: 8px;
+}
+.fl-d-panel-l__body::-webkit-scrollbar-thumb {
+  background-color: #b8b9b9;
+  border-radius: 1px;
+}
+.fl-d-panel-l__footer {
+  padding: 25px 16px;
+  margin-top: auto;
+  z-index: 2;
+}
+@media (max-width: 767px) {
+  .fl-d-panel-l {
+    display: none !important;
+  }
+}
+
+.fl-panel-module-list__item {
+  margin-bottom: rem(12px);
+  transition: 0.2s ease-in-out;
+  border-radius: 9px;
+  position: relative;
+}
+.fl-panel-module-list__item * {
+  z-index: 1;
+}
+.fl-panel-module-list__item::after {
+  position: absolute;
+  content: "";
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 9px;
+  background: #F1F4F9;
+  opacity: 0;
+  transition: 0.2s ease-in-out;
+  z-index: 0;
+}
+.fl-panel-module-list__item.active::after {
+  opacity: 1;
+}
+.fl-panel-module-list__item.active span {
+  color: #266891;
+}
+.fl-panel-module-list__item span {
+  font-weight: 600;
+}
+.fl-panel-module-list__item:last-child {
+  margin-bottom: 0;
+}
+.fl-panel-module-list__item.active {
+  background: #F1F4F9;
+}
+.fl-panel-module-list__item.active .fl-module-link__icon {
+  opacity: 1;
+}
+.fl-panel-module-list__item.active span {
+  font-weight: 700;
+}
+.fl-panel-module-list__link {
+  width: 100%;
+  color: #266891;
+}
+.fl-panel-module-list__link:hover span {
+  color: #266891 !important;
+}
+
+.fl-module-link {
+  width: 100%;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: #3b80a6;
+  padding-inline: 15px;
+  padding-block: 12px;
+  transition: 0.1s ease-in-out;
+  border-radius: 9px;
+}
+.fl-module-link.active {
+  background: #F1F4F9;
+}
+.fl-module-link.active .fl-module-link__icon {
+  opacity: 1;
+}
+.fl-module-link.active span {
+  font-weight: 500 !important;
+  color: #196080;
+}
+.fl-module-link span {
+  display: inline-block;
+  font-size: 16px;
+  line-height: 17px;
+  font-weight: 500 !important;
+}
+.fl-module-link:hover span {
+  color: #266891;
+}
+.fl-module-link__icon {
+  margin-right: 20px;
+  width: 16px;
+  height: 16px;
+  display: flex;
+  align-items: center;
+  opacity: 0.5;
+}
+.fl-module-link__icon img {
+  width: 100%;
+  height: 100%;
+}/*# sourceMappingURL=sidenav.css.map */

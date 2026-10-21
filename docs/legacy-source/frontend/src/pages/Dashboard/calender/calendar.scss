@@ -1,0 +1,240 @@
+@import "../../../styles/components/variables";
+.calendar-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+  
+  .course-items {
+    .ant-checkbox-wrapper {
+      font-size: 15px;
+      font-weight: 500;
+    }
+    // .ant-checkbox-checked .ant-checkbox-inner {
+
+    //     border-color    : var(--selectedColor, $selectedColor) !important;
+    //     background-color: var(--selectedColor, $selectedColor) !important;
+    // }
+  }
+  .rbc-time-view,
+  .rbc-time-content {
+    border: 1px solid $tableBordersLightGreyColor;
+  }
+  // Hide internal calendar vertical scrollbars (week/day + month row containers)
+  // while keeping scroll behavior intact.
+  .rbc-time-content,
+  .rbc-row-content-scroll-container {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .rbc-time-content::-webkit-scrollbar,
+  .rbc-row-content-scroll-container::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+  }
+  .rbc-time-content > * + * > *,
+  .rbc-time-header-content {
+    border-left: 1px solid $tableBordersLightGreyColor;
+  }
+  // When internal scrollbar is hidden, react-big-calendar can still reserve
+  // scrollbar space in the header. Normalize both sections to keep columns aligned.
+  .rbc-time-header {
+    margin-right: 0 !important;
+  }
+  .rbc-time-content,
+  .rbc-time-header-content {
+    padding-right: 16px !important;
+    box-sizing: border-box !important;
+  }
+  .rbc-timeslot-group,
+  .rbc-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 62px;
+
+    border-bottom: 1px solid $tableBordersLightGreyColor;
+    .rbc-label {
+      color: $lightGreyTitleColor;
+    }
+  }
+  .all-day-text {
+    margin-top: 50px;
+    margin-left: 0 !important;
+    color: $lightGreyTitleColor;
+    text-align: center !important;
+    width: 100% !important;
+  }
+
+  .rbc-time-header {
+    .rbc-label.rbc-time-header-gutter,
+    .rbc-time-header-gutter {
+      width: 90px !important;
+      min-width: 90px !important;
+      max-width: 90px !important;
+      text-align: center !important;
+      flex: 0 0 90px !important;
+    }
+  }
+
+  .rbc-time-header-content {
+    height: 120px;
+  }
+  .rbc-row.rbc-time-header-cell {
+    height: 80px;
+  }
+  .rbc-header.rbc-today {
+    color: $activeCalendarDayColor;
+  }
+  .rbc-calendar-sunday {
+    color: $sunCalendarColor;
+  }
+  .rbc-row .rbc-date-cell:nth-child(1),
+  .rbc-month-header .rbc-header:nth-child(1) {
+    color: $sunCalendarColor;
+  }
+
+  .rbc-time-gutter {
+    width: 90px !important;
+    min-width: 90px !important;
+    max-width: 90px !important;
+    flex: 0 0 90px !important;
+
+    .rbc-time-slot {
+      margin-top: 20px;
+      text-align: center;
+    }
+  }
+  
+  // Ensure allday row gutter aligns with time gutter
+  .rbc-allday-cell {
+    .rbc-row-bg {
+      .rbc-day-bg:first-child {
+        margin-left: 0 !important;
+      }
+    }
+  }
+  
+  // Fix the time header gutter alignment on initial load
+  .rbc-time-view {
+    .rbc-time-header {
+      .rbc-time-header-gutter {
+        width: 90px !important;
+        min-width: 90px !important;
+        max-width: 90px !important;
+        flex: 0 0 90px !important;
+      }
+    }
+    
+    .rbc-time-content {
+      .rbc-time-gutter {
+        width: 90px !important;
+        min-width: 90px !important;
+        max-width: 90px !important;
+        flex: 0 0 90px !important;
+      }
+    }
+  }
+}
+
+/* Mobile responsive styles for calendar */
+@media only screen and (max-width: 768px) {
+  .calendar-wrapper {
+    .rbc-calendar {
+      min-width: 600px;
+    }
+    
+    .rbc-timeslot-group,
+    .rbc-header {
+      height: 50px;
+    }
+    
+    .rbc-time-header-content {
+      height: 100px;
+      padding-right: 12px !important;
+    }
+    
+    .rbc-row.rbc-time-header-cell {
+      height: 60px;
+    }
+    
+    .rbc-time-gutter {
+      width: 70px !important;
+      min-width: 70px !important;
+      max-width: 70px !important;
+      flex: 0 0 70px !important;
+      
+      .rbc-time-slot {
+        margin-top: 15px;
+        font-size: 11px;
+      }
+    }
+    
+    .rbc-time-header {
+      .rbc-label.rbc-time-header-gutter,
+      .rbc-time-header-gutter {
+        width: 70px !important;
+        min-width: 70px !important;
+        max-width: 70px !important;
+        flex: 0 0 70px !important;
+      }
+    }
+    
+    .rbc-time-view {
+      .rbc-time-header {
+        margin-right: 0 !important;
+        .rbc-time-header-gutter {
+          width: 70px !important;
+          min-width: 70px !important;
+          max-width: 70px !important;
+          flex: 0 0 70px !important;
+        }
+      }
+      
+      .rbc-time-content {
+        padding-right: 12px !important;
+        .rbc-time-gutter {
+          width: 70px !important;
+          min-width: 70px !important;
+          max-width: 70px !important;
+          flex: 0 0 70px !important;
+        }
+      }
+    }
+    
+    .all-day-text {
+      margin-top: 35px;
+      font-size: 10px;
+    }
+    
+    .rbc-event {
+      font-size: 11px;
+      padding: 2px 4px;
+    }
+    
+    .rbc-header {
+      font-size: 12px;
+    }
+  }
+}
+
+/* Custom scrollbar for calendar on mobile */
+.calendar-wrapper::-webkit-scrollbar {
+  height: 6px;
+}
+
+.calendar-wrapper::-webkit-scrollbar-track {
+  background: #f5f5f5;
+  border-radius: 3px;
+}
+
+.calendar-wrapper::-webkit-scrollbar-thumb {
+  background-color: #d9d9d9;
+  border-radius: 3px;
+}
+
+.calendar-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #bfbfbf;
+}

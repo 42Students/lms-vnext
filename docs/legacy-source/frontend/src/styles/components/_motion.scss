@@ -1,0 +1,78 @@
+// =============================================================================
+// _motion.scss — shared LMS motion language
+// Subtle, functional feedback only. Decorative motion stays page-specific.
+// Global reduced-motion handling lives in _accessibility.scss.
+// =============================================================================
+
+$lms-motion-fast: 120ms;
+$lms-motion-base: 180ms;
+$lms-motion-slow: 240ms;
+$lms-motion-ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+
+@media (prefers-reduced-motion: no-preference) {
+  // Route surfaces fade/settle while the next page is resolving. The persistent
+  // sidebar/header stay still, so navigation reads as content replacement rather
+  // than a full-screen remount.
+  // Route surfaces deliberately animate opacity only. A transform on the structural
+  // content wrapper creates a containing/stacking context and can re-anchor nested
+  // fixed-position drawers, sticky tools and third-party portals during navigation.
+  .lms-route-surface {
+    transition: opacity $lms-motion-base $lms-motion-ease;
+  }
+
+  .lms-route-surface.is-route-transitioning {
+    opacity: 0.76;
+    will-change: opacity;
+  }
+
+  .lms-route-surface.is-route-ready {
+    opacity: 1;
+  }
+
+  // Tab content and empty/error/loading-result panels should not pop into existence
+  // after state changes. These used to depend on a learner-only keyframe defined in
+  // _learn-layout.scss; keeping them here makes the behavior portal-agnostic.
+  .ant-tabs-tabpane-active,
+  .panel-state {
+    animation: lms-state-enter $lms-motion-base $lms-motion-ease both;
+  }
+
+  // Press feedback for the two button systems used across the LMS.
+  .ant-btn:not(:disabled):active,
+  .ln-btn:not(:disabled):active {
+    transform: translateY(1px) scale(0.99);
+  }
+
+  // Shared pill/tab navigation gets the same restrained interaction timing.
+  .learn-projects__tab {
+    transition:
+      background-color $lms-motion-fast ease,
+      border-color $lms-motion-fast ease,
+      color $lms-motion-fast ease,
+      box-shadow $lms-motion-fast ease;
+  }
+}
+
+@keyframes lms-state-enter {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+@keyframes lms-live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+}

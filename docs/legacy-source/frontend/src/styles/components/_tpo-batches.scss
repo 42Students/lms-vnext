@@ -1,0 +1,501 @@
+// Batches, Batch and Class views, the eligibility grid and the shared filter panel
+// (docs/tpo-ux/BATCHES-AND-ELIGIBILITY-DESIGN.md).
+
+$tpo-eligible: #15803d;
+$tpo-eligible-bg: #dcfce7;
+$tpo-ineligible: #b91c1c;
+$tpo-ineligible-bg: #fee2e2;
+
+// ---- Batches page ---------------------------------------------------------------------------------
+.tpo-batches {
+  &__toolbar { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin: 16px 0 8px; }
+  &__search { max-width: 320px; flex: 1 1 220px; }
+  &__undo, &__outside { margin-top: 12px; }
+  &__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; margin-top: 12px; }
+  &__finished {
+    margin-top: 16px; background: none; border: 0; padding: 0; cursor: pointer; color: $tpo-primary; font-size: $tpo-fs-sm;
+    &:hover { text-decoration: underline; }
+  }
+  @media (max-width: 767px) { &__grid { grid-template-columns: 1fr; } &__search { max-width: none; } }
+}
+
+.tpo-batch-card {
+  background: $tpo-surface; border: 1px solid $tpo-line; border-radius: $tpo-radius; box-shadow: $tpo-shadow-card;
+  padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0;
+  &.is-finished { background: $tpo-surface-soft; }
+  &__head { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
+  &__title {
+    display: flex; flex-direction: column; min-width: 0;
+    a { color: $tpo-ink; font-weight: 600; font-size: $tpo-fs-lg; overflow-wrap: anywhere; }
+    a:hover { color: $tpo-primary; }
+  }
+  &__sub { font-size: $tpo-fs-xs; }
+  &__decisions {
+    display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: $tpo-fs-sm; color: $tpo-muted;
+    strong { color: $tpo-ink; }
+    .is-eligible strong { color: $tpo-eligible; }
+    .is-ineligible strong { color: $tpo-ineligible; }
+  }
+  &__bar {
+    display: flex; height: 6px; border-radius: 999px; overflow: hidden; background: $tpo-line;
+    .is-eligible { background: $tpo-eligible; }
+    .is-ineligible { background: $tpo-ineligible; }
+  }
+  &__journey {
+    list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+    li {
+      display: flex; flex-direction: column; align-items: center; padding: 6px 2px; border-radius: $tpo-radius-sm; background: $tpo-surface-soft;
+      position: relative;
+    }
+    strong { color: $tpo-ink; font-size: $tpo-fs-md; }
+    span { color: $tpo-muted; font-size: $tpo-fs-xs; }
+  }
+  &__foot { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: auto; }
+  &__deadline { font-size: $tpo-fs-xs; }
+}
+
+// ---- Batch page -----------------------------------------------------------------------------------
+.tpo-batch {
+  &__back { display: inline-flex; gap: 6px; align-items: center; color: $tpo-muted; font-size: $tpo-fs-sm; margin-bottom: 8px; }
+  &__back:hover { color: $tpo-primary; }
+  &__head { display: flex; justify-content: space-between; gap: 16px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 12px; }
+  &__title { font-size: 22px; font-weight: 600; color: $tpo-ink; margin: 0 0 2px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  &__whole { display: inline-flex; gap: 8px; align-items: center; }
+  &__alert { margin-bottom: 12px; }
+  &__tabs { margin-top: 12px; }
+  &__classes { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+  &__registration { display: flex; flex-direction: column; gap: 16px; max-width: 720px; }
+  &__history {
+    margin-top: 8px;
+    .is-undone { opacity: 0.6; text-decoration: line-through; }
+  }
+  &__history-meta { color: $tpo-muted; font-size: $tpo-fs-xs; margin-top: 2px; }
+  @media (max-width: 767px) { &__actions { width: 100%; } }
+}
+
+.tpo-class-card {
+  background: $tpo-surface; border: 1px solid $tpo-line; border-radius: $tpo-radius; padding: 14px; display: flex; flex-direction: column; gap: 10px;
+  header { display: flex; flex-direction: column; gap: 2px; strong { color: $tpo-ink; font-size: $tpo-fs-md; } }
+  footer { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+  &__nums {
+    display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: $tpo-fs-sm; color: $tpo-muted;
+    strong { color: $tpo-ink; }
+    .is-eligible strong { color: $tpo-eligible; }
+    .is-ineligible strong { color: $tpo-ineligible; }
+  }
+  &__reason { font-size: $tpo-fs-xs; }
+}
+
+// ---- Eligibility grid -----------------------------------------------------------------------------
+.tpo-elig {
+  display: flex; flex-direction: column; gap: 10px;
+  &__classes { display: flex; flex-wrap: wrap; gap: 6px; .ant-tag-checkable { border: 1px solid $tpo-line-strong; padding: 2px 10px; font-size: $tpo-fs-sm; } }
+  &__sub { opacity: 0.75; }
+  &__toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  &__search { max-width: 320px; flex: 1 1 220px; }
+  &__counts {
+    display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: $tpo-fs-sm; color: $tpo-muted;
+    strong { color: $tpo-ink; }
+    .is-eligible strong { color: $tpo-eligible; }
+    .is-ineligible strong { color: $tpo-ineligible; }
+  }
+  &__bulk {
+    position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+    padding: 8px 12px; border-radius: $tpo-radius-sm; background: #e6f4f5; border: 1px solid $tpo-line-strong;
+  }
+  @media (max-width: 767px) { &__search { max-width: none; } }
+}
+
+.tpo-grid {
+  width: 100%; min-height: 420px;
+  &__decision { display: inline-flex; align-items: center; gap: 4px; }
+  &__level { font-size: $tpo-fs-xs; }
+  &__own {
+    display: inline-flex; align-items: center; gap: 4px; cursor: pointer; color: $tpo-muted;
+    &.is-eligible { color: $tpo-eligible; font-weight: 600; }
+    &.is-ineligible { color: $tpo-ineligible; font-weight: 600; }
+  }
+  &__caret { font-size: $tpo-fs-xs; opacity: 0.6; }
+  &__columns { display: flex; flex-direction: column; gap: 6px; max-height: 360px; overflow: auto; min-width: 180px; }
+  .is-ineligible-row { background: #fff7f7; }
+}
+
+// ---- Filter panel (every list page) ---------------------------------------------------------------
+.tpo-filter-panel .ant-drawer-body { padding: 12px 16px; }
+.tpo-filter {
+  &__group { padding: 12px 0; border-bottom: 1px solid $tpo-line; &:last-child { border-bottom: 0; } }
+  &__group-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; strong { color: $tpo-ink; font-size: $tpo-fs-md; } }
+  &__clear { background: none; border: 0; padding: 0; color: $tpo-primary; cursor: pointer; font-size: $tpo-fs-xs; }
+  &__search { margin-bottom: 8px; }
+  &__list { display: flex; flex-direction: column; gap: 2px; } // no inner scroll: long lists use "Show all", the panel scrolls once
+  &__option {
+    display: flex; align-items: center; gap: 8px; padding: 4px 2px; cursor: pointer; border-radius: 6px; font-size: $tpo-fs-sm; color: $tpo-text;
+    &:hover { background: $tpo-surface-soft; }
+    &.is-empty { color: $tpo-muted; }
+  }
+  &__option-label { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+  &__count { color: $tpo-muted; font-size: $tpo-fs-xs; font-variant-numeric: tabular-nums; }
+  &__range { display: flex; align-items: center; gap: 8px; .ant-input-number { width: 96px; } }
+  &__footer { display: flex; justify-content: space-between; gap: 8px; button:last-child { flex: 1; } }
+}
+.tpo-filter-chips {
+  display: flex; flex-wrap: wrap; gap: 6px; align-items: center;
+  .ant-tag { margin: 0; padding: 2px 8px; font-size: $tpo-fs-xs; }
+  &__clear { background: none; border: 0; padding: 0 4px; color: $tpo-primary; cursor: pointer; font-size: $tpo-fs-xs; }
+}
+
+// ---- Home: batches in placements ------------------------------------------------------------------
+.tpo-home__batch-list { display: flex; flex-direction: column; gap: 8px; }
+.tpo-home__batch {
+  display: grid; grid-template-columns: minmax(160px, 1.2fr) 2fr auto; gap: 12px; align-items: center;
+  padding: 8px 0; border-bottom: 1px solid $tpo-line;
+  &:last-child { border-bottom: 0; }
+  @media (max-width: 767px) { grid-template-columns: 1fr; gap: 6px; }
+}
+.tpo-home__batch-name { display: flex; flex-direction: column; min-width: 0; strong { color: $tpo-ink; overflow-wrap: anywhere; } }
+.tpo-home__batch-journey {
+  list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: $tpo-fs-sm; color: $tpo-muted;
+  strong { color: $tpo-ink; }
+}
+
+// ---- Batch rules ------------------------------------------------------------------------------------
+.tpo-batch-rules {
+  display: flex; flex-direction: column; gap: 16px; max-width: 760px;
+  &__list { display: flex; flex-direction: column; border: 1px solid $tpo-line; border-radius: $tpo-radius; background: $tpo-surface; }
+  &__row {
+    display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 12px 14px; border-bottom: 1px solid $tpo-line;
+    &:last-child { border-bottom: 0; }
+    &.is-own { background: $tpo-surface-soft; box-shadow: inset 3px 0 0 $tpo-primary; }
+  }
+  &__label { display: flex; flex-direction: column; min-width: 0; strong { color: $tpo-ink; font-size: $tpo-fs-md; } span { font-size: $tpo-fs-xs; } }
+}
+
+// ---- Grid: rich cells (tags, buttons, two lines) and the toolbar's saved views ------------------------------------------------
+.tpo-grid {
+  .tpo-grid__cell--rich { line-height: 1.4; padding-top: 8px; padding-bottom: 8px; display: flex; align-items: center; }
+  .tpo-grid__cell--rich .ant-tag { margin-inline-end: 4px; }
+  &.is-auto { height: auto; min-height: 0; }
+}
+.tpo-elig {
+  // The Views button is as wide as its label ("Views", or the open view's name up to 180px). The old saved-views dropdown
+  // needed a 180px minimum; the button kept it and looked oddly wide.
+}
+.tpo-grid {
+  .tpo-grid__cell--rich.is-right { justify-content: flex-end; }
+  // autoHeight grids: no empty band under a short list (AG Grid keeps room for an overlay by default)
+  .ag-layout-auto-height .ag-center-cols-viewport, .ag-layout-auto-height .ag-center-cols-container { min-height: 0 !important; }
+}
+.tpo-elig__toolbar .tpo-elig__views { flex: 0 0 auto; }
+// Results entry: the Result cell reads like the tags it replaced
+.tpo-grid {
+  .ag-cell.is-pass { color: #15803d; font-weight: 600; }
+  .ag-cell.is-fail { color: #b91c1c; }
+  .ag-cell.is-hold { color: #b45309; font-weight: 600; }
+  .ag-cell.is-absent { color: $tpo-muted; }
+  .ag-cell.is-empty { color: $tpo-muted; font-style: italic; }
+}
+// Cells you can change show a small caret, like a dropdown cell in a sheet
+.tpo-grid .ag-cell.is-editable { cursor: pointer; }
+.tpo-grid .ag-cell.is-editable::after { content: "▾"; margin-inline-start: 6px; color: $tpo-muted; font-size: $tpo-fs-xs; }
+
+// The choice editor: a dropdown that opens with its options showing
+.tpo-choice-editor {
+  display: flex; flex-direction: column; min-width: 180px; max-height: 260px; overflow: auto; padding: 4px;
+  background: $tpo-surface; border: 1px solid $tpo-line-strong; border-radius: $tpo-radius-sm; box-shadow: $tpo-shadow-card; outline: none;
+  &__option {
+    text-align: left; border: 0; background: none; padding: 7px 10px; border-radius: 6px; font-size: $tpo-fs-sm; color: $tpo-text; cursor: pointer;
+    &.is-active { background: $tpo-surface-soft; }
+    &.is-current { font-weight: 600; color: $tpo-primary; }
+  }
+}
+
+// Bulk-actions engine (components/tpo/bulk/BulkAction): preview, result.
+.tpo-bulk {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  ul { margin: 4px 0 0; padding-left: 18px; }
+  &__skipped { padding: 8px 12px; border-radius: 8px; background: #f8fafc; border: 1px solid #e2e8f0; }
+  &__consequence { margin-bottom: 0; }
+  &__undo-note { font-size: 12px; }
+  &__failed ul { max-height: 220px; overflow: auto; }
+}
+
+// Settings > Job types and Settings > After college (TPO notes items 15 and 7).
+.tpo-settings__actions { margin-top: 16px; display: flex; justify-content: flex-end; }
+
+.tpo-jobtypes {
+  &__list { border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+  &__row {
+    display: grid;
+    grid-template-columns: minmax(180px, 2fr) minmax(120px, 1fr) 70px 130px 44px;
+    gap: 12px;
+    align-items: center;
+    padding: 8px 12px;
+    border-top: 1px solid #eef2f7;
+    &:first-child { border-top: 0; }
+    &.is-off { opacity: 0.6; }
+    &--head { background: #f8fafc; font-size: 12px; font-weight: 600; color: #475569; }
+  }
+  &__builtin { margin-left: 6px; }
+  &__add { display: flex; flex-direction: column; gap: 8px; padding: 12px; border: 1px dashed #cbd5e1; border-radius: 8px; margin-bottom: 12px; }
+  &__error { color: #dc2626; font-size: 12px; margin-top: 4px; }
+  &__note { margin-top: 4px; }
+
+  @media (max-width: 640px) {
+    &__row { grid-template-columns: 1fr 1fr; }
+    &__row--head { display: none; }
+  }
+}
+
+.tpo-outcomes {
+  &__fixed { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+  &__fixed-item { padding: 6px 10px; border: 1px solid #e2e8f0; border-radius: 8px; background: #f8fafc; }
+  &__row, &__add { display: flex; margin-bottom: 8px; }
+  &__note { margin-top: 8px; font-size: 12px; }
+}
+
+// Outcomes report: "146 (98%)" stays on one line.
+.tpo-report-detail__bar-value--wide { white-space: nowrap; min-width: 84px; text-align: right; }
+
+// Filter panel sections and "Show all" (TPO audit 2026-10-04).
+.tpo-filter__section {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  margin: 10px 0 4px; padding: 6px 0; border: 0; border-bottom: 1px solid #e2e8f0; background: none;
+  font-size: 12px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: #475569; cursor: pointer; text-align: left;
+  .anticon { font-size: 12px; }
+  &:focus-visible { outline: 2px solid #0f766e; outline-offset: 2px; }
+}
+.tpo-filter__section-count { margin-left: auto; }
+.tpo-filter__more { border: 0; background: none; padding: 4px 0; color: #0f766e; font-size: 12px; cursor: pointer; }
+
+// On a phone the list comes first: pasting roll numbers and choosing columns are desk tools (TPO audit 2026-10-04).
+@media (max-width: 767px) {
+  .tpo-elig__toolbar .tpo-elig__desk-only { display: none; }
+  .tpo-elig__toolbar .tpo-elig__views { width: 100% !important; order: 10; }
+}
+
+// TPO profile (audit 2026-10-04): photo header and one details card.
+.tpo-profile-card { display: flex; flex-direction: column; gap: 16px; max-width: 820px; }
+.tpo-profile-card__note { margin: 12px 0 0; font-size: 13px; }
+// Home: the batch card a checklist or Needs you button points to.
+.tpo-home__batches.is-pointed { box-shadow: 0 0 0 3px #0f766e55; transition: box-shadow 0.3s; }
+// Batch grid: "follows class" is the normal case, so it stays quiet.
+.tpo-grid__own.is-quiet { color: #94a3b8; }
+// Lead page: small empty states and inline "Add phone".
+.tpo-recruiter-lead-detail__empty { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 0; }
+.tpo-recruiter-lead-detail__add { padding: 0; height: auto; }
+
+// Students on a phone: the registration banner is one line with its button, so the list is on the first screen.
+@media (max-width: 767px) {
+  .tpo-students__registration.ant-alert {
+    padding: 8px 10px; align-items: center; flex-wrap: wrap; gap: 6px;
+    .ant-alert-description { display: none; }
+    .ant-alert-message { font-size: 13px; margin: 0; }
+    .ant-alert-action { margin-left: auto; }
+  }
+}
+
+// TPO Home, the calm version (5 Oct 2026): one narrow column, a greeting, one Next up card, six quiet rows.
+.scroll-container.tpo-calm-home, .tpo-calm-home {
+  background: #fff;
+  min-height: 100%;
+  &__head { padding: 8px 0 24px; }
+  // Desktop: the page width, like every other page. Next up on the left, the rows on the right.
+  &__grid { display: grid; grid-template-columns: minmax(300px, 5fr) minmax(0, 7fr); gap: 32px; align-items: start; }
+  &__date { margin: 0; color: $tpo-muted; font-size: $tpo-fs-sm; }
+  &__hello { margin: 4px 0 6px; color: $tpo-ink; font-size: 30px; font-weight: 600; letter-spacing: -0.01em; line-height: 1.2; }
+  &__line { margin: 0; color: $tpo-muted; font-size: 15px; }
+
+  &__next {
+    padding: 22px 24px 20px;
+    border: 1px solid $tpo-line; border-radius: 16px; background: #fff;
+    &.is-clear { background: $tpo-surface-soft; }
+  }
+  &__next-eyebrow { margin: 0 0 6px; color: $tpo-muted; font-size: $tpo-fs-xs; letter-spacing: 0.04em; text-transform: uppercase; }
+  &__next-title { margin: 0 0 4px; color: $tpo-ink; font-size: 18px; font-weight: 600; line-height: 1.35; }
+  &__next-text { margin: 0 0 14px; color: $tpo-muted; font-size: $tpo-fs-md; line-height: 1.5; }
+  &__next.is-clear &__next-text { margin-bottom: 0; }
+
+  &__rows { display: flex; flex-direction: column; border: 1px solid $tpo-line; border-radius: 16px; background: #fff; padding: 4px 12px; }
+  &__row {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    padding: 14px 6px; border: 0; border-bottom: 1px solid $tpo-line; background: none;
+    text-align: left; cursor: pointer; border-radius: 0;
+    transition: background 0.15s;
+    &:last-child { border-bottom: 0; }
+    &:hover { background: $tpo-surface-soft; }
+    &:focus-visible { outline: 2px solid $tpo-primary; outline-offset: 2px; }
+    &:hover .tpo-calm-home__chevron { color: $tpo-primary; transform: translateX(2px); }
+  }
+  &__icon {
+    display: flex; align-items: center; justify-content: center; flex: none;
+    width: 38px; height: 38px; border-radius: 10px; background: #fff; border: 1px solid $tpo-line; color: $tpo-muted; font-size: 18px;
+  }
+  &__body { display: flex; flex-direction: column; min-width: 0; flex: 1; }
+  &__title { color: $tpo-ink; font-size: 15px; font-weight: 600; }
+  &__status { margin-top: 2px; color: $tpo-muted; font-size: $tpo-fs-sm; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  &__dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: #f59e0b; }
+  // The rows counted by "Two things need you today", labelled so the count matches what is on screen.
+  &__needs { flex: none; padding: 2px 8px; border-radius: 999px; background: #fff7e6; color: #a05a00; font-size: 12px; font-weight: 600; line-height: 18px; white-space: nowrap; }
+  &__chevron { flex: none; color: #94a3b8; font-size: $tpo-fs-xs; transition: transform 0.15s, color 0.15s; }
+
+  @media (max-width: 1023px) {
+    &__grid { grid-template-columns: 1fr; gap: 20px; }
+  }
+  @media (max-width: 767px) {
+    &__head { padding: 4px 0 16px; }
+    &__hello { font-size: 24px; }
+    &__status { white-space: normal; }
+  }
+}
+
+// Academic marks on the student grids: the mark as earned, the comparable % beside it, grey when not verified yet.
+.tpo-mark {
+  display: inline-flex; align-items: baseline; gap: 6px; font-variant-numeric: tabular-nums;
+  &.is-empty { color: var(--ant-color-text-quaternary, #bfbfbf); }
+  &.is-unverified, &.is-unverified .tpo-mark__pct { color: var(--ant-color-text-tertiary, #8c8c8c); font-style: italic; }
+}
+.tpo-mark__pct { font-size: 12px; color: var(--ant-color-text-secondary, #595959); }
+.tpo-mark__tag { align-self: center; line-height: 16px; font-size: 12px; padding: 0 4px; border-radius: 4px; background: rgba(0, 0, 0, 0.05); color: var(--ant-color-text-secondary, #595959); }
+
+// ---- Act on these students: always visible above a grid (GridWorkspace act prop) --------------------------------------------
+// Neutral until rows are ticked: the pale teal means "selected" on this page (the ticked rows), nothing else.
+.tpo-elig__act {
+  position: sticky; top: 0; z-index: 3; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+  padding: 8px 12px; border-radius: $tpo-radius-sm; background: $tpo-surface; border: 1px solid $tpo-line-strong;
+  &.is-selected { background: #e6f4f5; border-color: $tpo-primary; }
+  &-text { color: $tpo-text; font-size: $tpo-fs-md; strong { color: $tpo-ink; } }
+}
+.tpo-elig__suggest {
+  display: inline-flex; align-items: center; gap: 8px; padding-left: 12px; border-left: 1px solid $tpo-line-strong; color: $tpo-warn; font-size: $tpo-fs-sm;
+}
+.tpo-elig__counts:empty { display: none; }
+// The tick column never draws the grid's focus square over a ticked box.
+.tpo-grid .ag-cell[col-id="ag-Grid-SelectionColumn"].ag-cell-focus:not(.ag-cell-range-selected) { border-color: transparent !important; outline: none; }
+// ...nor the checkbox its own dark ring after a mouse click (the keyboard still gets a visible ring).
+.tpo-grid .ag-selection-checkbox .ag-checkbox-input-wrapper:focus-within { box-shadow: none; outline: none; }
+.tpo-grid .ag-selection-checkbox .ag-checkbox-input-wrapper:has(input:focus-visible) { box-shadow: 0 0 0 2px rgba(10, 124, 136, 0.35); }
+
+// ---- A selector in a column heading (HeaderFilter) ---------------------------------------------------------------------------
+.tpo-headfilter {
+  display: flex; align-items: center; gap: 4px; width: 100%; min-width: 0;
+  &__label {
+    display: inline-flex; align-items: center; gap: 4px; min-width: 0; padding: 0; border: 0; background: none; cursor: pointer;
+    font: inherit; font-weight: 600; color: $tpo-ink; text-align: left;
+    span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  }
+  &__icon {
+    display: inline-flex; align-items: center; justify-content: center; width: 22px; height: 22px; padding: 0; border: 0; border-radius: 6px;
+    background: none; color: $tpo-muted; cursor: pointer; flex: none;
+    &:hover { background: $tpo-surface-soft; color: $tpo-ink; }
+    &.is-active { color: $tpo-primary; background: #e6f4f5; }
+    @media (max-width: 767px) { width: 30px; height: 30px; }
+  }
+  &__list { display: flex; flex-direction: column; gap: 2px; min-width: 220px; max-width: 300px; }
+}
+
+// ---- Batch page: the plan above the sheet (Next step card + Who is in) --------------------------------------------------------
+.tpo-batch__plan {
+  display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin: 12px 0 4px;
+  @media (max-width: 991px) { grid-template-columns: 1fr; }
+}
+.tpo-nextstep {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 14px 16px; border-radius: $tpo-radius;
+  border: 1px solid $tpo-line-strong; border-left: 4px solid $tpo-primary; background: $tpo-surface;
+  &.is-warn { border-left-color: $tpo-warn; background: $tpo-warn-bg; }
+  &.is-done { border-left-color: $tpo-line-strong; }
+  &__eyebrow { font-size: $tpo-fs-xs; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: $tpo-muted; }
+  &__title { font-size: $tpo-fs-lg; color: $tpo-ink; line-height: 1.35; }
+  &__continue { display: inline-flex; align-items: center; gap: 6px; font-weight: 600; color: $tpo-primary; }
+}
+.tpo-whoisin {
+  display: flex; flex-direction: column; padding: 6px 16px; border: 1px solid $tpo-line; border-radius: $tpo-radius; background: $tpo-surface;
+  &__row {
+    display: grid; grid-template-columns: minmax(90px, auto) minmax(0, 1fr) auto; align-items: center; gap: 12px; padding: 8px 0;
+    & + & { border-top: 1px solid $tpo-line; }
+    &.is-batch .tpo-whoisin__name { font-weight: 700; }
+  }
+  &__name {
+    color: $tpo-ink; font-weight: 600; text-align: left;
+    &.is-link {
+      padding: 2px 8px; margin-left: -8px; border: 1px solid transparent; border-radius: 6px; background: none; cursor: pointer;
+      &:hover { border-color: $tpo-line-strong; }
+      &.is-on { border: 2px solid $tpo-primary; padding: 1px 7px; background: #e6f4f5; color: $tpo-primary; }
+    }
+  }
+  &__nums { color: $tpo-text; font-size: $tpo-fs-sm; .is-eligible { color: $tpo-eligible; font-weight: 600; } .is-ineligible { color: $tpo-ineligible; } }
+  &__own {
+    align-self: flex-start; margin: 4px 0 8px; padding: 2px 10px; border: 1px solid $tpo-line-strong; border-radius: 999px; background: $tpo-surface;
+    color: $tpo-text; font-size: $tpo-fs-sm; cursor: pointer;
+    &:hover { border-color: $tpo-primary; color: $tpo-primary; }
+    &.is-on { border: 2px solid $tpo-primary; padding: 1px 9px; background: #e6f4f5; color: $tpo-primary; }
+  }
+  @media (max-width: 575px) { &__row { grid-template-columns: 1fr auto; .tpo-whoisin__nums { grid-column: 1 / -1; grid-row: 2; } } }
+}
+
+// The decision on the batch sheet: a dot and words (tags on this sheet belong to Stage), where it comes from, and a caret to change it.
+.tpo-decision {
+  display: inline-flex; align-items: center; gap: 6px; cursor: pointer;
+  &__dot { width: 8px; height: 8px; border-radius: 50%; background: #94a3b8; flex: none; }
+  &.is-eligible .tpo-decision__dot { background: $tpo-eligible; }
+  &.is-ineligible .tpo-decision__dot { background: $tpo-ineligible; }
+  &__label { font-weight: 600; color: $tpo-ink; }
+  &.is-ineligible .tpo-decision__label { color: $tpo-ineligible; }
+  &__source { font-size: $tpo-fs-xs; }
+}
+// "Show me" from the sheet: the Next step card flashes once.
+@keyframes tpo-nextstep-flash { 0%, 100% { box-shadow: none; } 30% { box-shadow: 0 0 0 4px rgba(10, 124, 136, 0.35); } }
+.tpo-nextstep.is-flash { animation: tpo-nextstep-flash 1.2s ease-out 2; }
+
+// Drive page: the Next step card's "Also waiting" line, and the About line.
+.tpo-nextstep__also { display: flex; align-items: center; flex-wrap: wrap; gap: 0 4px; .ant-btn-link { padding: 0 4px; height: auto; } }
+.tpo-drive-detail__next { margin: 12px 0; }
+
+// The last-change banner: a light tint, not the theme's heavy info teal.
+.tpo-batches__undo.ant-alert-info {
+  border-color: #d6e9ec;
+  background: #f4fafb;
+}
+
+// ---------------------------------------------------------------- saved views: Views menu and manager (GridWorkspace)
+.tpo-elig__views-label { display: inline-block; max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; vertical-align: bottom; }
+.tpo-elig__views-item { display: flex; align-items: center; gap: 8px; min-width: 200px; max-width: 320px; }
+.tpo-elig__views-item > span:not([role]) { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+.tpo-views-manager__list { margin: 0; padding: 0; list-style: none; max-height: 60vh; overflow-y: auto; }
+.tpo-views-manager__row {
+  display: flex; align-items: center; gap: 10px; padding: 10px 6px; border-bottom: 1px solid #eef2f6;
+  &:last-child { border-bottom: 0; }
+  &.is-open { background: #f4fafb; border-radius: 8px; }
+}
+.tpo-views-manager__main { display: flex; flex: 1; flex-direction: column; min-width: 0; }
+.tpo-views-manager__name { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; font-weight: 600; color: #172033; }
+.tpo-views-manager__tag { margin: 0; font-weight: 500; font-size: 12px; }
+.tpo-views-manager__meta { font-size: 12.5px; }
+.tpo-views-manager__actions { display: flex; align-items: center; gap: 6px; flex: none; }
+
+@media (max-width: 640px) {
+  .tpo-views-manager__row { flex-wrap: wrap; }
+  .tpo-views-manager__actions { width: 100%; justify-content: flex-end; }
+}
+
+// Save this view dialog: name, note, and what the view will remember.
+.tpo-save-view { display: flex; flex-direction: column; gap: 6px; }
+.tpo-save-view__label { margin-top: 6px; font-weight: 600; font-size: 13px; color: #334155; }
+.tpo-save-view__optional { font-weight: 400; color: #66758d; }
+.tpo-save-view__remember { margin-top: 12px; padding: 10px 12px; border: 1px solid #e7ecf2; border-radius: 10px; background: #f8fafc; font-size: 13px; line-height: 1.55; color: #172033; }
+.tpo-save-view__remember-title { margin-bottom: 2px; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: #66758d; }
+.tpo-save-view__dup { margin-top: 10px; }
+
+// Manage views: the note and the rules under each name.
+.tpo-views-manager__note { font-size: 13px; color: #334155; }
+.tpo-views-manager__rules { font-size: 12.5px; color: #5b6b82; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tpo-views-manager__edit { display: flex; flex-direction: column; gap: 6px; margin-bottom: 4px; }
+.tpo-views-manager__edit-actions { display: flex; gap: 6px; }
+
+// Bulk confirmation (components/tpo/bulk/BulkAction.jsx): a serious action is headed by a red warning; a box to tick when final.
+.tpo-bulk__danger { margin-bottom: 12px; }
+.tpo-bulk__ack { display: flex; margin-top: 14px; padding: 10px 12px; border: 1px solid #ffccc7; border-radius: 8px; background: #fff7f6; }
+.tpo-bulk:not(.tpo-bulk--danger) .tpo-bulk__ack { border-color: #e7ecf2; background: #f8fafc; }

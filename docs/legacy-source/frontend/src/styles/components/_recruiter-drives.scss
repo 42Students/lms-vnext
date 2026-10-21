@@ -1,0 +1,367 @@
+// HR Drives — grouped recruiter drive portfolio.
+.recruiter-drives {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__plan.ant-btn {
+    min-height: 38px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 12px;
+    padding: 17px 18px;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    background: $tpo-surface-soft;
+
+    h4.ant-typography {
+      margin: 3px 0 2px !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+
+    > div:first-child > .ant-typography:last-child {
+      font-size: 12px;
+      line-height: 1.45;
+    }
+  }
+
+  &__summary-count {
+    flex: 0 0 auto;
+    min-width: 104px;
+    padding: 10px 12px;
+    border: 1px solid $tpo-line-strong;
+    border-radius: 10px;
+    background: #fff;
+    text-align: center;
+
+    strong,
+    span {
+      display: block;
+    }
+
+    strong {
+      color: $tpo-ink;
+      font-size: 24px;
+      line-height: 1;
+    }
+
+    span {
+      margin-top: 4px;
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+  }
+
+  &__metrics {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 190px));
+    gap: 10px;
+    margin-bottom: 14px;
+
+    > div {
+      padding: 11px 13px;
+      border: 1px solid $tpo-line;
+      border-radius: 10px;
+      background: #fff;
+    }
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.055em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 3px;
+      color: $tpo-ink;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+  }
+
+  &__stale-alert {
+    margin-bottom: 12px;
+    border-radius: 9px;
+  }
+
+  &__workspace.ant-card,
+  &__state-card.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+  }
+
+  &__workspace.ant-card > .ant-card-body {
+    padding: 0 !important;
+  }
+
+  &__state-card.ant-card > .ant-card-body {
+    padding: 18px !important;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    padding: 13px 16px;
+    border-bottom: 1px solid $tpo-line;
+    background: $tpo-surface;
+  }
+
+  &__tabs.ant-segmented {
+    padding: 3px;
+    border: 1px solid #e4e9f0;
+    border-radius: 9px;
+    background: $tpo-surface-soft;
+
+    .ant-segmented-item {
+      font-size: 12px;
+      font-weight: 650;
+    }
+  }
+
+  &__search.ant-input-affix-wrapper {
+    width: min(320px, 100%);
+    min-height: 38px;
+    border-radius: 8px;
+  }
+
+  &__groups.ant-list {
+    padding: 14px 16px 18px;
+
+    > .ant-spin-nested-loading > .ant-spin-container > .ant-list-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .ant-list-item {
+      padding: 0 !important;
+      border: 0 !important;
+    }
+  }
+
+  &__group.ant-card {
+    width: 100%;
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 12px;
+    box-shadow: 0 3px 14px rgba(26, 45, 72, 0.035);
+
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__group-head {
+    padding: 13px 15px 11px;
+    border-bottom: 1px solid $tpo-line;
+    background: #fafbfd;
+
+    h5.ant-typography {
+      margin: 2px 0 1px !important;
+      color: $tpo-text;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+
+    > div > .ant-typography:last-child {
+      font-size: 12px;
+    }
+  }
+
+  &__college-list.ant-list {
+    .ant-list-item {
+      padding: 11px 15px !important;
+      border-bottom: 1px solid $tpo-line !important;
+
+      &:last-child {
+        border-bottom: 0 !important;
+      }
+
+      &:hover {
+        background: $tpo-surface-soft;
+      }
+    }
+  }
+
+  &__college-row {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  &__college-copy {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 2px;
+
+    > .ant-typography:first-child {
+      overflow: hidden;
+      color: $tpo-text;
+      font-size: 12px;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    > .ant-typography:last-child {
+      font-size: 12px;
+    }
+  }
+
+  &__college-actions {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 8px;
+
+    .ant-tag {
+      margin: 0;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    .ant-btn {
+      min-height: 34px;
+      border-radius: 7px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
+  &__empty {
+    display: flex;
+    min-height: 280px;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+}
+
+@media (max-width: 767px) {
+  .recruiter-drives {
+    &__header {
+      .listing-page-header__right,
+      .recruiter-drives__plan {
+        width: 100%;
+      }
+    }
+
+    &__summary {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 9px;
+      padding: 14px 13px;
+    }
+
+    &__summary-count {
+      display: flex;
+      width: 100%;
+      min-width: 0;
+      padding: 9px 11px;
+      align-items: baseline;
+      justify-content: space-between;
+      text-align: left;
+
+      span {
+        margin-top: 0;
+      }
+    }
+
+    &__metrics {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      > div {
+        padding: 9px;
+      }
+
+      span {
+        font-size: 12px;
+      }
+
+      strong {
+        font-size: 18px;
+      }
+    }
+
+    &__toolbar {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 9px;
+      padding: 12px;
+    }
+
+    &__tabs.ant-segmented {
+      width: 100%;
+
+      .ant-segmented-group {
+        width: 100%;
+      }
+
+      .ant-segmented-item {
+        flex: 1;
+        text-align: center;
+      }
+    }
+
+    &__search.ant-input-affix-wrapper {
+      width: 100%;
+    }
+
+    &__groups.ant-list {
+      padding: 12px;
+    }
+
+    &__college-row {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    &__college-actions {
+      width: 100%;
+      justify-content: space-between;
+
+      .ant-btn {
+        flex: 1;
+      }
+    }
+  }
+}

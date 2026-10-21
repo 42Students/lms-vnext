@@ -1,0 +1,20 @@
+@import "../../../styles/components/variables";
+
+.attendance-table{
+  .ant-table-cell{
+    color: $attendanceTableCellFontColor
+  }
+  .present {
+    background-color: $presentBgColor;
+    span{
+      color: $presentMainColor
+    }
+  }
+  .absent {
+    background-color: $absentBgColor;
+    span{
+      color: $absentMainColor
+    }
+  }
+
+}

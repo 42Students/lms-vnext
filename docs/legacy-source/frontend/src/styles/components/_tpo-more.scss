@@ -1,0 +1,220 @@
+// TPO More — secondary navigation directory for mobile and lower-frequency tools.
+.tpo-more {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__intro {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 18px;
+    padding: 16px 18px;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    background: $tpo-surface-soft;
+
+    > div {
+      min-width: 0;
+    }
+
+    > .ant-typography {
+      max-width: 560px;
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.45;
+    }
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.35;
+    }
+  }
+
+  &__eyebrow.ant-typography,
+  &__group-label.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__groups {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
+    gap: 18px;
+
+    .tpo-more__group:first-child {
+      grid-row: span 2;
+    }
+  }
+
+  &__group {
+    min-width: 0;
+  }
+
+  &__group-label.ant-typography {
+    margin: 0 0 7px 4px;
+  }
+
+  &__card.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 13px;
+    box-shadow: 0 4px 18px rgba(26, 45, 72, 0.04);
+
+    > .ant-card-body {
+      padding: 0 !important;
+    }
+  }
+
+  &__item {
+    display: flex;
+    min-height: 68px;
+    padding: 12px 14px;
+    align-items: center;
+    gap: 12px;
+    border-top: 1px solid $tpo-line;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s ease, box-shadow 0.15s ease;
+
+    &:first-child {
+      border-top: 0;
+    }
+
+    &:hover,
+    &:focus-visible {
+      background: $teal-subtle;
+      outline: none;
+
+      .tpo-more__item-title,
+      .tpo-more__arrow {
+        color: $tpo-primary;
+      }
+
+      .tpo-more__arrow {
+        transform: translateX(2px);
+      }
+    }
+
+    &:focus-visible {
+      box-shadow: inset 0 0 0 2px rgba($clrThird, 0.28);
+    }
+  }
+
+  &__icon {
+    display: flex;
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid #e6ebf1;
+    border-radius: 10px;
+    background: $tpo-surface-soft;
+
+    .anticon {
+      color: $tpo-muted;
+      font-size: 20px;
+      line-height: 1;
+    }
+
+    svg {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  &__copy {
+    min-width: 0;
+    flex: 1;
+
+    > .ant-typography {
+      display: block;
+      margin-top: 2px;
+      overflow: hidden;
+      font-size: $tpo-fs-xs;
+      line-height: 1.4;
+      text-overflow: ellipsis;
+    }
+  }
+
+  &__item-title {
+    color: #27364d;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.3;
+    transition: color 0.15s ease;
+  }
+
+  &__badge {
+    flex: 0 0 auto;
+
+    .ant-badge-count {
+      box-shadow: none;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+    }
+  }
+
+  &__arrow {
+    flex: 0 0 auto;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+}
+
+@media (max-width: 899px) {
+  .tpo-more {
+    &__groups {
+      grid-template-columns: 1fr;
+
+      .tpo-more__group:first-child {
+        grid-row: auto;
+      }
+    }
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-more {
+    &__intro {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 4px;
+      padding: 14px 13px;
+
+      > .ant-typography {
+        max-width: none;
+        text-align: left;
+      }
+    }
+
+    &__groups {
+      gap: 15px;
+    }
+
+    &__item {
+      min-height: 64px;
+      padding: 11px 12px;
+    }
+
+    &__icon {
+      width: 36px;
+      height: 36px;
+    }
+  }
+}

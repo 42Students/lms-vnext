@@ -1,0 +1,3109 @@
+@import "../components/variables";
+
+/**
+ * Quizzes & Assignments - Enterprise SaaS Design
+ * 8px spacing | 24/20/16/14 typography | Nielsen + Refactoring UI + Stripe/Linear
+ */
+$qz-primary: $clrThird;
+$qz-success: $status-success;
+$qz-warning: $status-warning;
+$qz-error: $status-error;
+$qz-text: $neutral-900;
+$qz-text-muted: $neutral-500;
+$qz-border: $neutral-200;
+$qz-bg: $white;
+$qz-bg-subtle: $neutral-50;
+
+$qz-space-1: 8px;
+$qz-space-2: 16px;
+$qz-space-3: 24px;
+$qz-space-4: 32px;
+$qz-space-5: 40px;
+$qz-space-6: 48px;
+
+/* ---------------------------------------------------------------------------
+   Teacher All Quizzes - design system header
+   --------------------------------------------------------------------------- */
+.teacher-quizzes-page {
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: $qz-bg;
+
+  &.learn-quizzes-page .learn-quizzes-header {
+    flex-wrap: wrap;
+    gap: $qz-space-2;
+  }
+
+  &__head-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $qz-space-2;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__head-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__accent {
+    width: 4px;
+    height: 28px;
+    background: $qz-primary;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  &__head-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__subtitle {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: $qz-text-muted;
+    line-height: 1.4;
+  }
+
+  &__action {
+    flex-shrink: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Quizzes list page - design system
+   --------------------------------------------------------------------------- */
+.learn-quizzes-page,
+.teacher-quizzes-page {
+  .learn-quizzes-module,
+  .ln-module {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: $qz-bg;
+  }
+
+  .learn-quizzes-header,
+  .ln-module__head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $qz-space-2;
+    background: $qz-bg;
+    padding: $qz-space-3 $qz-space-3;
+    margin: 0;
+    border-radius: 0;
+    border-bottom: 1px solid $qz-border;
+  }
+
+  .learn-quizzes-page__title,
+  .ln-module__head h1,
+  .ln-module__head .h1 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: $qz-text;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .learn-quizzes-scroll,
+  .teacher-quizzes-scroll {
+    padding: $qz-space-3 $qz-space-3 $qz-space-4;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    flex: 1;
+    min-height: 0;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+
+  .learn-quizzes-wrap {
+    margin-bottom: 0;
+  }
+
+  .learn-quizzes-content .ln-table {
+    margin: 0;
+  }
+
+  .learn-quizzes-page__action {
+    display: inline-flex;
+    align-items: center;
+    gap: $qz-space-1;
+    min-height: 40px;
+  }
+
+  .ln-table {
+    background: $qz-bg;
+    border: 1px solid $qz-border;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+  }
+
+  /* Hide horizontal scrollbar on quiz table — scroll still works */
+  .learn-quizzes-wrap .ant-table-body,
+  .learn-quizzes-wrap .ant-table-content {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+  .learn-quizzes-wrap .ant-table-body::-webkit-scrollbar,
+  .learn-quizzes-wrap .ant-table-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Quiz table typography - design system */
+  .learn-quizzes-wrap .ant-table-thead > tr > th,
+  .learn-quizzes-wrap .ln-table .ant-table-thead > tr > th {
+    font-size: 12px;
+    font-weight: 600;
+    color: $qz-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: $qz-space-2 $qz-space-3;
+    border-bottom: 1px solid $qz-border;
+    background: $qz-bg;
+  }
+
+  .learn-quizzes-wrap .ant-table-tbody > tr > td,
+  .learn-quizzes-wrap .ln-table .ant-table-tbody > tr > td {
+    padding: $qz-space-2 $qz-space-3;
+    border-bottom: 1px solid $qz-border;
+    font-size: 14px;
+    color: $qz-text;
+  }
+
+  .learn-quizzes-wrap .ant-table-tbody > tr:last-child > td,
+  .learn-quizzes-wrap .ln-table .ant-table-tbody > tr:last-child > td {
+    border-bottom: none;
+  }
+
+  .learn-quizzes-wrap .ant-table-tbody > tr:hover > td,
+  .learn-quizzes-wrap .ln-table .ant-table-tbody > tr:hover > td {
+    background: rgba($qz-primary, 0.04);
+  }
+
+  .learn-quizzes-empty {
+    padding: $qz-space-6 $qz-space-4;
+    text-align: center;
+    background: $qz-bg;
+    border: 1px solid $qz-border;
+    border-radius: 12px;
+
+    .ant-empty-description {
+      font-size: 14px;
+      color: $qz-text-muted;
+    }
+  }
+
+  .learn-quizzes-loading {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 200px;
+    padding: $qz-space-6;
+  }
+
+  .learn-quizzes-skeleton-row {
+    display: flex;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid $neutral-100;
+  }
+
+  .learn-quizzes-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid $qz-border;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    background: $qz-bg;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ant-table-body,
+    .ant-table-content {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .ant-table {
+      background: $qz-bg;
+    }
+  }
+
+  .learn-quizzes-empty-state {
+    text-align: center;
+    padding: $qz-space-6 $qz-space-4;
+    background: $qz-bg-subtle;
+    border: 1px dashed $qz-border;
+    border-radius: 12px;
+
+    &__icon {
+      font-size: 48px;
+      color: $qz-border;
+      margin-bottom: $qz-space-2;
+      display: block;
+    }
+
+    p {
+      margin: 0 0 $qz-space-1 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: $qz-text;
+    }
+
+    span {
+      font-size: 14px;
+      color: $qz-text-muted;
+      line-height: 1.4;
+    }
+  }
+
+  /* Quiz status badges - design system colors */
+  .ln-syllabus-status.ln-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 28px;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  .ln-status--graded { background: rgba($qz-primary, 0.12) !important; color: $qz-primary !important; border: none !important; }
+  .ln-status--under-review { background: rgba($qz-warning, 0.12) !important; color: $qz-warning !important; border: none !important; }
+  .ln-status--pending { background: $qz-bg-subtle !important; color: $qz-text-muted !important; border: none !important; }
+  .ln-status--submitted { background: rgba($qz-primary, 0.12) !important; color: $qz-primary !important; border: none !important; }
+  .ln-status--not-submitted { background: $qz-bg-subtle !important; color: $qz-text-muted !important; border: none !important; }
+  // A not-yet-submitted quiz past its due date used to read as plain "Pending" -- indistinguishable
+  // from one that's still open -- with a fully clickable "Start Quiz" button next to it. This is the
+  // list-row half of the same "don't make them click to find out it's dead" fix already shipped for
+  // the roadmap's own list and for the live-session join link.
+  .ln-status--expired { background: rgba($qz-error, 0.12) !important; color: $qz-error !important; border: none !important; }
+
+  .ln-quiz-due-date--expired { color: $qz-error; font-weight: 600; }
+
+  .ant-tag-blue { color: $qz-primary; border-color: rgba($qz-primary, 0.3); background: rgba($qz-primary, 0.08); }
+  .ant-tag-green { color: $qz-success; border-color: rgba($qz-success, 0.3); background: rgba($qz-success, 0.08); }
+  .ant-tag-orange { color: $qz-warning; border-color: rgba($qz-warning, 0.3); background: rgba($qz-warning, 0.08); }
+  .ant-tag-default { color: $qz-text-muted; border-color: $qz-border; background: $qz-bg-subtle; }
+}
+
+/* ---------------------------------------------------------------------------
+   Quiz attempt: status panel jump buttons (mobile + webview safe)
+   --------------------------------------------------------------------------- */
+.ln-quiz-status-jump {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ln-quiz-status-jump:hover {
+  background: rgba($qz-primary, 0.06);
+}
+
+.ln-quiz-status-jump:focus-visible {
+  outline: 2px solid rgba($qz-primary, 0.35);
+  outline-offset: 2px;
+  border-radius: 8px;
+}
+
+/* ---------------------------------------------------------------------------
+   Teacher All Assignments - design system header
+   --------------------------------------------------------------------------- */
+.teacher-assignments-page {
+  overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  background: $qz-bg;
+
+  &.learn-assignments-page .learn-assignments-header {
+    flex-wrap: wrap;
+    gap: $qz-space-2;
+  }
+
+  &__head-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $qz-space-2;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__head-left {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__accent {
+    width: 4px;
+    height: 28px;
+    background: $qz-primary;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  &__head-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__subtitle {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: $qz-text-muted;
+    line-height: 1.4;
+  }
+
+  &__action {
+    flex-shrink: 0;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Assignments list page - design system
+   --------------------------------------------------------------------------- */
+.learn-assignments-page,
+.teacher-assignments-page {
+  overflow-x: hidden;
+
+  .learn-assignments-module,
+  .ln-module {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    background: $neutral-100;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .learn-assignments-module .ln-module__body,
+  .ln-module__body {
+    background: $neutral-100;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .learn-assignments-header,
+  .teacher-assignments-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: $qz-space-2;
+    width: 100%;
+    box-sizing: border-box;
+    background: $qz-bg;
+    padding: $qz-space-3 $qz-space-3;
+    margin: 0;
+    border-radius: 0;
+    border-bottom: 1px solid $qz-border;
+  }
+
+  .learn-assignments-page__head-content {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: $qz-space-2;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .learn-assignments-page__head-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .learn-assignments-page__accent {
+    width: 4px;
+    height: 28px;
+    background: $qz-primary;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+
+  .learn-assignments-page__head-text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .learn-assignments-page__title {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 600;
+    color: $qz-text;
+    line-height: 1.3;
+    letter-spacing: -0.02em;
+  }
+
+  .learn-assignments-page__subtitle {
+    margin: 4px 0 0 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: $qz-text-muted;
+    line-height: 1.4;
+  }
+
+  .learn-assignments-scroll,
+  .teacher-assignments-scroll {
+    padding: $qz-space-3 $qz-space-3 $qz-space-4;
+    overflow-x: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    flex: 1;
+    min-height: 0;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  .learn-assignments-content {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .learn-assignment-cards {
+    display: flex;
+    flex-direction: column;
+    gap: $qz-space-3;
+  }
+
+  .learn-assignment-card {
+    border: 1px solid $qz-border;
+    border-radius: 12px;
+    padding: $qz-space-3;
+    background: $qz-bg;
+    transition: box-shadow 0.2s ease, border-color 0.2s ease;
+    cursor: pointer;
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      border-color: rgba($qz-primary, 0.3);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $qz-primary;
+      outline-offset: 2px;
+    }
+
+    &__title {
+      font-size: 16px;
+      font-weight: 600;
+      color: $qz-text;
+      margin-bottom: $qz-space-1;
+    }
+
+    &__date {
+      font-size: 14px;
+      color: $qz-text-muted;
+      margin-bottom: $qz-space-2;
+    }
+
+    &__actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: $qz-space-2;
+      margin-top: $qz-space-2;
+      padding-top: $qz-space-2;
+      border-top: 1px solid $qz-border;
+    }
+
+    &__link {
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 14px;
+      font-weight: 600;
+      color: $qz-primary;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+
+      &:hover {
+        color: darken($qz-primary, 8%);
+      }
+    }
+  }
+
+  /* Edit & Delete icon buttons (faculty assignment actions) */
+  .learn-assignment-actions__icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 36px;
+    min-height: 36px;
+    padding: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: $qz-primary;
+    border-radius: 6px;
+    transition: color 0.2s, background 0.2s;
+
+    .anticon {
+      font-size: 16px;
+      color: inherit;
+    }
+
+    &:hover {
+      color: darken($qz-primary, 12%);
+      background: rgba($qz-primary, 0.08);
+    }
+
+    &:focus-visible {
+      outline: 2px solid $qz-primary;
+      outline-offset: 2px;
+    }
+
+    &--delete {
+      color: $qz-error;
+
+      .anticon {
+        color: inherit;
+      }
+
+      &:hover {
+        color: darken($qz-error, 8%);
+        background: rgba($qz-error, 0.08);
+      }
+
+      &:focus-visible {
+        outline-color: $qz-error;
+      }
+    }
+  }
+
+  .learn-assignment-actions__icons {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .learn-assignments-loading {
+    background: $qz-bg;
+    border: 1px solid $qz-border;
+    border-radius: 12px;
+    overflow: hidden;
+
+    &__row {
+      padding: $qz-space-2 $qz-space-3;
+      border-bottom: 1px solid $qz-border;
+
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+
+  .learn-assignments-table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border: 1px solid $qz-border;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    background: $qz-bg;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    /* Inner padding so table content doesn't touch the border */
+    padding: 0 $qz-space-4;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ant-table-body,
+    .ant-table-content {
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    .ant-table {
+      background: $qz-bg;
+    }
+
+    /* Extra left/right padding on first/last cells for clarity */
+    .ant-table-thead > tr > th:first-child,
+    .ant-table-thead > tr > th.ant-table-cell:first-child,
+    .ant-table-tbody > tr > td:first-child,
+    .ant-table-tbody > tr > td.ant-table-cell:first-child {
+      padding-left: $qz-space-5 !important;
+    }
+    .ant-table-thead > tr > th:last-child,
+    .ant-table-thead > tr > th.ant-table-cell:last-child,
+    .ant-table-tbody > tr > td:last-child,
+    .ant-table-tbody > tr > td.ant-table-cell:last-child {
+      padding-right: $qz-space-5 !important;
+    }
+  }
+
+  .learn-assignments-empty-state {
+    text-align: center;
+    padding: $qz-space-6 $qz-space-4;
+    background: $qz-bg-subtle;
+    border: 1px dashed $qz-border;
+    border-radius: 12px;
+
+    &__icon {
+      font-size: 48px;
+      color: $qz-border;
+      margin-bottom: $qz-space-2;
+      display: block;
+    }
+
+    &__text {
+      margin: 0 0 $qz-space-3 0;
+      font-size: 16px;
+      font-weight: 600;
+      color: $qz-text;
+    }
+
+    &__cta {
+      min-height: 44px;
+    }
+  }
+
+  .learn-assignments-empty {
+    padding: $qz-space-6 $qz-space-4;
+    text-align: center;
+    border-radius: 12px;
+    border: 1px solid $qz-border;
+
+    .ant-empty-description {
+      font-size: 14px;
+      color: $qz-text-muted;
+    }
+  }
+
+  .learn-assignments-page__action {
+    display: inline-flex;
+    align-items: center;
+    gap: $qz-space-1;
+    min-height: 40px;
+  }
+
+  .ln-table {
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  /* Table typography - design system */
+  .learn-assignments-table-wrap .ant-table-thead > tr > th,
+  .learn-assignments-content .ant-table-thead > tr > th,
+  .learn-quizzes-content .ant-table-thead > tr > th {
+    font-size: 12px;
+    font-weight: 600;
+    color: $qz-text-muted;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: $qz-space-2 $qz-space-3;
+    border-bottom: 1px solid $qz-border;
+    background: $qz-bg;
+  }
+
+  .learn-assignments-table-wrap .ant-table-tbody > tr > td,
+  .learn-assignments-content .ant-table-tbody > tr > td,
+  .learn-quizzes-content .ant-table-tbody > tr > td {
+    padding: $qz-space-2 $qz-space-3;
+    border-bottom: 1px solid $qz-border;
+    font-size: 14px;
+    color: $qz-text;
+  }
+
+  .learn-assignments-table-wrap .ant-table-tbody > tr:last-child > td,
+  .learn-assignments-content .ant-table-tbody > tr:last-child > td,
+  .learn-quizzes-content .ant-table-tbody > tr:last-child > td {
+    border-bottom: none;
+  }
+
+  .learn-assignments-table-wrap .ant-table-tbody > tr:hover > td,
+  .learn-assignments-content .ant-table-tbody > tr:hover > td,
+  .learn-quizzes-content .ant-table-tbody > tr:hover > td {
+    background: rgba($qz-primary, 0.04);
+  }
+
+  .learn-assignments-table-wrap .ant-btn-link,
+  .learn-assignments-table-wrap .learn-assignment-view-btn,
+  .learn-assignments-content .ant-btn-link {
+    color: $qz-primary;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 0;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    border: none;
+    background: transparent;
+
+    &:hover {
+      color: darken($qz-primary, 8%);
+    }
+  }
+}
+
+/* Edit & Delete icon buttons (faculty quiz actions) */
+.learn-quizzes-page .learn-quiz-actions__icon,
+.teacher-quizzes-page .learn-quiz-actions__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  min-height: 36px;
+  padding: 6px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: $qz-primary;
+  border-radius: 6px;
+  transition: color 0.2s, background 0.2s;
+
+  .anticon {
+    font-size: 16px;
+    color: inherit;
+  }
+
+  &:hover {
+    color: darken($qz-primary, 12%);
+    background: rgba($qz-primary, 0.08);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $qz-primary;
+    outline-offset: 2px;
+  }
+
+  &--delete {
+    color: $qz-error;
+
+    .anticon {
+      color: inherit;
+    }
+
+    &:hover {
+      color: darken($qz-error, 8%);
+      background: rgba($qz-error, 0.08);
+    }
+
+    &:focus-visible {
+      outline-color: $qz-error;
+    }
+  }
+}
+
+.learn-quiz-actions__icons {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Start Quiz / View Submissions buttons - shared */
+.learn-quizzes-page .learn-quiz-action-btn,
+.teacher-quizzes-page .learn-quiz-action-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: $qz-primary;
+  cursor: pointer;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+
+  &:hover {
+    color: darken($qz-primary, 8%);
+    text-decoration: underline;
+  }
+  &:focus-visible {
+    outline: 2px solid $qz-primary;
+    outline-offset: 2px;
+    border-radius: 4px;
+  }
+}
+
+.learn-quizzes-page .ant-btn.learn-quiz-action-btn--primary,
+.teacher-quizzes-page .ant-btn.learn-quiz-action-btn--primary {
+  width: max-content;
+  min-width: 104px;
+  min-height: 36px;
+  justify-content: center;
+  padding: 0 14px !important;
+  border: 1px solid $qz-primary !important;
+  border-radius: 999px !important;
+  background: $qz-primary !important;
+  color: $white !important;
+  text-decoration: none !important;
+  box-shadow: none !important;
+
+  &:hover,
+  &:focus {
+    border-color: darken($qz-primary, 8%) !important;
+    background: darken($qz-primary, 8%) !important;
+    color: $white !important;
+    text-decoration: none !important;
+  }
+
+  // The base rule's !important-laden solid-primary styling would otherwise win over antd's own
+  // :disabled treatment too, leaving a disabled "Deadline passed" button looking exactly as
+  // active/clickable as a real "Start Quiz" one -- defeating the point of disabling it at all.
+  &:disabled,
+  &[disabled] {
+    border-color: $qz-border !important;
+    background: $qz-bg-subtle !important;
+    color: $qz-text-muted !important;
+    cursor: not-allowed !important;
+
+    &:hover, &:focus {
+      border-color: $qz-border !important;
+      background: $qz-bg-subtle !important;
+      color: $qz-text-muted !important;
+    }
+  }
+}
+
+.learn-quiz-actions {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  max-width: 100%;
+}
+
+/* Assignment view & submit drawers - design system */
+.ln-assignment-view-drawer,
+.ln-assignment-submit-drawer {
+  .ln-drawer-body {
+    padding: $qz-space-4;
+    font-size: 14px;
+    color: $qz-text;
+    line-height: 1.6;
+  }
+
+  .ant-drawer-header {
+    padding: $qz-space-3 $qz-space-4;
+    border-bottom: 1px solid $qz-border;
+  }
+
+  .ant-drawer-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: $qz-text;
+  }
+
+  // Faculty-only entry point into the reused ViewSubmissionsModal (see #10 in the UX punch
+  // list) -- sits above the resource list so it's the first thing a faculty member sees, not a
+  // footer button competing with Close.
+  .ln-assignment-view-submissions-cta {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px 16px;
+    margin-bottom: $qz-space-4;
+    border: 1px solid rgba($qz-primary, 0.25);
+    border-radius: 12px;
+    background: rgba($qz-primary, 0.06);
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    .anticon {
+      font-size: 20px;
+      color: $qz-primary;
+      flex-shrink: 0;
+    }
+
+    span {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    strong {
+      font-size: 14px;
+      color: $qz-text;
+    }
+
+    small {
+      font-size: 12px;
+      color: $qz-text-muted;
+    }
+
+    &:hover {
+      background: rgba($qz-primary, 0.1);
+      border-color: rgba($qz-primary, 0.4);
+    }
+  }
+
+  .ln-assignment-pdf-wrapper {
+    padding: $qz-space-2 0;
+  }
+
+  .ln-assignment-pdf-pagenum {
+    font-size: 14px;
+    color: $qz-text-muted;
+  }
+
+  .ln-assignment-drawer-btn {
+    min-height: 44px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  @media (max-width: 767px) {
+    .ant-drawer-body {
+      padding: $qz-space-3;
+      padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+}
+
+.ln-assignment-submit-drawer {
+  .ln-lb2 {
+    font-size: 14px;
+    font-weight: 500;
+    color: $qz-text;
+  }
+
+  .ant-form-item {
+    margin-bottom: $qz-space-2;
+  }
+}
+
+/* Quiz submission view - full page (replaces drawer for full width + mobile "in page") */
+.ln-quiz-submission-page {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  background: $qz-bg-subtle;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  overscroll-behavior: contain;
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.ln-quiz-submission-page-inner {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.ln-quiz-submission-layout {
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  width: 100%;
+}
+
+.ln-quiz-submission-aside {
+  flex-shrink: 0;
+  width: 240px;
+  min-width: 200px;
+  padding: $qz-space-3;
+  background: $qz-bg;
+  border-right: 1px solid $qz-border;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: $qz-space-2;
+  }
+
+  &__title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $qz-text;
+    margin: 0;
+  }
+
+  &__list {
+    flex: 1;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+.ln-tag-stroke {
+  width: 4px;
+  height: 20px;
+  border-radius: 2px;
+  flex-shrink: 0;
+
+  &--accent {
+    background: #fae5a2;
+  }
+
+  &--purple {
+    background: #d1c6ff;
+  }
+}
+
+.ln-quiz-submission-radios {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .ant-radio-wrapper {
+    padding: 12px 0;
+    font-size: 14px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.ln-quiz-submission-student-name {
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.ln-quiz-submission-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.ln-quiz-submission-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: $qz-space-3 $qz-space-4;
+  background: $qz-bg;
+  border-bottom: 1px solid $qz-border;
+  // Prevent iOS notch overlap in webview
+  padding-top: calc(#{$qz-space-3} + env(safe-area-inset-top, 0px));
+}
+
+.ln-quiz-submission-header__title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ln-quiz-submission-header__title {
+  font-size: 16px;
+  font-weight: 600;
+  color: $qz-text;
+  margin: 0;
+}
+
+.ln-quiz-submission-back-btn {
+  flex-shrink: 0;
+  min-height: 44px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border: 1px solid $qz-border;
+  border-radius: 8px;
+  background: $qz-bg;
+  color: $qz-text;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s;
+
+  &:hover {
+    background: $qz-bg-subtle;
+    border-color: $qz-primary;
+  }
+}
+
+.ln-quiz-submission-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: $qz-space-3 $qz-space-4;
+  padding-bottom: calc(#{$qz-space-3} + env(safe-area-inset-bottom, 0px));
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+/* Legacy: Quiz-submission-drawer (syllabus quiz page still uses Drawer) */
+.Quiz-submission-drawer.ant-drawer {
+  .ant-drawer-content-wrapper {
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  .ant-drawer-body {
+    padding: $qz-space-3 $qz-space-4;
+    background: $qz-bg-subtle;
+  }
+}
+
+.Quiz-submission-sidenav {
+  padding: $qz-space-2 0;
+}
+
+.quiz-submission-layout {
+  display: grid;
+  grid-template-columns: minmax(220px, 260px) minmax(0, 1fr);
+  gap: $qz-space-3;
+  width: 100%;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.quiz-submission-layout__aside,
+.quiz-submission-layout__main {
+  min-width: 0;
+}
+
+.quiz-submission-layout__aside {
+  border-right: 1px solid $qz-border;
+  padding-right: $qz-space-3;
+}
+
+.quiz-submission-layout__main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.quiz-submission-layout__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: $qz-space-2;
+  margin-bottom: $qz-space-3;
+}
+
+.quiz-submission-layout__actions {
+  display: flex;
+  justify-content: flex-end;
+  flex-shrink: 0;
+}
+
+.ln-QZstatus-panel {
+  background-color: $qz-bg;
+  z-index: 10;
+  position: relative;
+
+  &__logo {
+    padding: 32px 24px 16px 24px;
+  }
+
+  &__body {
+    padding: 16px 32px;
+  }
+}
+
+.panel-w {
+  @media (min-width: 768px) {
+    width: 285px;
+  }
+}
+
+.ln-circular-checkbox {
+  .ant-checkbox-inner {
+    border-radius: 50% !important;
+  }
+}
+
+.ln-quiz-status-indicator {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 18px;
+  border: 1px solid $neutral-300;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  font-size: 10px;
+
+  &.is-complete {
+    border-color: $qz-primary;
+    background: $qz-primary;
+  }
+}
+
+.Question-status-list {
+  margin: 0 -16px;
+  height: calc(100vh - 225px);
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+
+  &__item {
+    padding: 10px 16px;
+    border-radius: 12px;
+    transition: background-color 0.2s ease;
+    position: relative;
+    background: $white;
+    border: 1px solid $neutral-200;
+    margin-bottom: 10px;
+
+    &.active {
+      background-color: rgba($qz-primary, 0.08);
+      border-color: rgba($qz-primary, 0.25);
+    }
+
+    .q-item {
+      padding: 0 !important;
+    }
+  }
+}
+
+.ln-quiz-status-jump {
+  width: 100%;
+  min-height: 40px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ln-quiz-status-points {
+  margin-left: 8px;
+  color: $qz-primary;
+  font-size: 12px !important;
+  font-weight: 700;
+}
+
+.ln-quiz-status-number {
+  color: $neutral-900;
+  font-size: 14px !important;
+  font-weight: 700;
+}
+
+.ln-quiz-status-meta {
+  // #14: this 32px was reserved to clear an absolutely-positioned checkbox
+  // (.Question-status-list__item .ant-checkbox, removed above) that overlapped this same row's
+  // "N pts" text -- exactly the "points and tick mark coming on each other" bug flagged in the
+  // audit. The checkbox is back in normal flex flow (.ln-quiz-status-jump's own `gap: 12px`
+  // already spaces it from this div), so reserving extra space for a checkbox that's no longer
+  // floating over it would just push "N pts" inward for no reason.
+  padding-right: 0;
+}
+
+.ln-quiz-teacher-preview {
+  // This page (unlike the student attempt/review flow, whose own containers -- .ln-quiz-question-
+  // card, .ln-quiz-submission-learner-view -- already center with a max-width) has no page shell
+  // of its own and no base padding, so its content sat pinned to the raw left edge of the viewport
+  // instead of reading as a centered page like the rest of the app.
+  max-width: min(900px, 100%);
+  margin: 0 auto;
+  padding: 24px 20px 48px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    h3 {
+      margin: 0 0 4px;
+      font-size: 24px;
+      font-weight: 700;
+      color: $neutral-900;
+    }
+
+    p {
+      margin: 0;
+      color: $neutral-500;
+    }
+  }
+
+  &__nav {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__card {
+    background: $white;
+    border: 1px solid $neutral-200;
+    border-radius: 16px;
+    padding: 20px;
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 12px;
+  }
+
+  &__meta-main {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  &__question-number,
+  &__points {
+    font-size: 13px;
+    font-weight: 700;
+    color: $neutral-500;
+  }
+
+  &__question {
+    color: $neutral-900;
+    margin-bottom: 16px;
+  }
+
+  &__answers {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &__option {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    justify-content: space-between;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid $neutral-200;
+    background: $neutral-50;
+
+    &.is-correct {
+      border-color: rgba($qz-success, 0.35);
+      background: rgba($qz-success, 0.08);
+      color: darken($qz-success, 18%);
+      font-weight: 600;
+    }
+
+    &.is-selected {
+      border-color: rgba($qz-primary, 0.28);
+      box-shadow: inset 0 0 0 1px rgba($qz-primary, 0.18);
+    }
+
+    &.is-incorrect {
+      border-color: rgba($qz-error, 0.3);
+      background: rgba($qz-error, 0.05);
+    }
+  }
+
+  &__option-copy {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    min-width: 0;
+  }
+
+  &__badges {
+    display: inline-flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-left: auto;
+  }
+}
+
+.ln-quiz-review-summary {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  &--hero {
+    background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+    border: 1px solid $neutral-200;
+    border-radius: 16px;
+    padding: 16px 18px;
+    gap: 16px;
+  }
+
+  &__metric {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 120px;
+
+    strong {
+      color: $neutral-900;
+      font-size: 18px;
+      font-weight: 700;
+    }
+  }
+
+  &__label {
+    color: $neutral-500;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+.ln-quiz-panel {
+  padding: 20px;
+  // Avoid mobile browser "black bands" and hidden controls when URL bar/keyboard changes viewport.
+  height: 100dvh;
+  overflow-y: auto !important;
+  overflow: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+  display: flex;
+  flex-direction: column;
+
+  @media (max-width: 767px) {
+    padding: 12px !important;
+  }
+
+  @media (min-width: 768px) {
+    padding: 35px;
+    width: calc(100% - 285px);
+  }
+
+  @media (min-width: 992px) {
+    padding: 35px 35px 35px 60px;
+  }
+
+  @media (min-width: 1400px) {
+    padding: 35px 35px 35px 95px;
+  }
+}
+
+/* Quiz take page - design system refinements */
+.ln-quiz-page {
+  background: $qz-bg;
+}
+
+.ln-quiz-progress-bar {
+  .ant-progress-inner {
+    height: 3px !important;
+    border-radius: 0 !important;
+    background-color: none !important;
+    position: relative !important;
+
+    &::after {
+      position: absolute;
+      content: "";
+      width: 100%;
+      height: 1px;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+      background-color: $neutral-200 !important;
+      z-index: 0;
+    }
+  }
+
+  .ant-progress-bg {
+    border-radius: 0 !important;
+    background: $qz-primary !important;
+    z-index: 9;
+  }
+}
+
+.ln-quiz-attempt-header {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  padding: 8px 0 12px;
+  background: $qz-bg;
+}
+
+.ln-quiz-step-num {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.ln-quiz-header-actions {
+  gap: 8px;
+}
+
+.ln-quiz-close-btn {
+  color: $neutral-500;
+
+  &:hover,
+  &:focus {
+    color: $danger;
+    border-color: $danger;
+  }
+}
+
+.ln-quiz-question-type-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border: 1px solid $qz-border;
+  border-radius: 999px;
+  background: $white;
+  color: $neutral-500;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.ln-quiz-question-card {
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+.ln-quiz-footer {
+  background: $qz-bg !important;
+  border-top: 1px solid $qz-border;
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 10px);
+
+  .ln-btn--regular {
+    min-height: 44px;
+  }
+}
+
+.quiz-input {
+  height: 52px;
+  border: 1px solid $qz-border;
+  border-radius: 8px;
+
+  &:focus {
+    border-color: $qz-primary;
+    box-shadow: 0 0 0 2px rgba($qz-primary, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $qz-primary !important;
+    outline-offset: 2px;
+  }
+}
+
+.quiz-textarea {
+  min-height: 200px !important;
+  border: 1px solid $qz-border;
+  border-radius: 8px;
+
+  &:focus {
+    border-color: $qz-primary;
+    box-shadow: 0 0 0 2px rgba($qz-primary, 0.15);
+  }
+
+  &:focus-visible {
+    outline: 2px solid $qz-primary !important;
+    outline-offset: 2px;
+  }
+}
+
+.ln-quiz {
+  height: calc(100dvh - 220px) !important;
+  overflow-y: auto !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+  padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 16px);
+
+  .ant-radio-group {
+    width: 100%;
+  }
+
+  .ant-checkbox-group {
+    width: 100% !important;
+
+    .ant-checkbox-group-item:nth-child(1) span::before {
+      content: "a.";
+    }
+
+    .ant-checkbox-group-item:nth-child(2) span::before {
+      content: "b.";
+    }
+
+    .ant-checkbox-group-item:nth-child(3) span::before {
+      content: "c.";
+    }
+
+    .ant-checkbox-group-item:nth-child(4) span::before {
+      content: "d.";
+    }
+
+    .ant-checkbox-group-item:nth-child(5) span::before {
+      content: "e.";
+    }
+
+    .ant-checkbox-group-item:nth-child(6) span::before {
+      content: "f.";
+    }
+
+    .ant-checkbox-group-item:nth-child(7) span::before {
+      content: "g.";
+    }
+
+    .ant-checkbox-group-item:nth-child(8) span::before {
+      content: "h.";
+    }
+  }
+
+  .ant-checkbox-group-item {
+    width: 100%;
+    margin: 0 0 12px 0 !important;
+
+    @media (min-width: 768px) {
+      width: calc(50% - 12px) !important;
+    }
+
+    .ant-checkbox {
+      // Keep the real checkbox for accessibility (keyboard + screen readers),
+      // but visually hide it (custom card UI is rendered by the wrapper styles).
+      position: absolute !important;
+      opacity: 0 !important;
+      width: 1px !important;
+      height: 1px !important;
+      overflow: hidden !important;
+      pointer-events: none !important;
+    }
+  }
+
+  .ant-checkbox-group-item span {
+    position: relative;
+
+    &::before {
+      position: absolute;
+      content: "";
+      left: -8px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+
+  .ant-radio-button-wrapper,
+  .ant-checkbox-group-item {
+    width: 100%;
+    padding: 0 28px;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    background-color: $qz-bg;
+    border-radius: 6px !important;
+    border: 0 !important;
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+    position: relative;
+
+    @media (min-width: 768px) {
+      padding-right: 60px !important;
+      min-height: 52px;
+      height: 100% !important;
+    }
+
+    &::after {
+      position: absolute;
+      content: "";
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: $qz-bg;
+      border-radius: 50%;
+      width: 28px;
+      height: 28px;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.2s ease, background-color 0.2s ease;
+
+      @media (max-width: 767px) {
+        width: 22px;
+        height: 22px;
+      }
+    }
+
+    &::before {
+      position: absolute;
+      content: "";
+      display: block;
+      width: 7px;
+      height: 12px;
+      border: solid #000000;
+      border-width: 0 2px 2px 0;
+      right: 24px;
+      top: 50%;
+      background-color: 0 !important;
+      transform: translateY(-50%) rotate(45deg);
+      z-index: 9;
+      transition: opacity 0.2s ease;
+      opacity: 0;
+
+      @media (max-width: 767px) {
+        right: 22px;
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid $qz-primary;
+      outline-offset: 2px;
+    }
+
+    &:focus-within {
+      outline: 2px solid rgba($qz-primary, 0.6);
+      outline-offset: 2px;
+    }
+
+    &.ant-radio-button-wrapper-checked,
+    &.ant-checkbox-wrapper-checked {
+      &::before {
+        background: 0 !important;
+        opacity: 1;
+      }
+
+      &::after {
+        opacity: 1;
+      }
+    }
+  }
+
+  .ant-form-item-label {
+    * {
+      margin-bottom: 0 !important;
+      font-size: 20px !important;
+      line-height: 24px !important;
+      font-weight: 600;
+      color: $neutral-900;
+      height: auto !important;
+
+      @media (min-width: 768px) {
+        margin-bottom: 65px;
+        font-size: 24px !important;
+        line-height: 28px !important;
+      }
+
+      @media (min-width: 992px) {
+        font-size: 26px !important;
+        line-height: 32px !important;
+      }
+
+      &::before {
+        display: none !important;
+        content: none !important;
+      }
+    }
+  }
+
+  .ant-form-item-label,
+  .ant-form-item-required {
+    margin-bottom: 30px;
+    font-size: 20px !important;
+    line-height: 24px !important;
+    font-weight: 600;
+    color: $neutral-900;
+    height: auto !important;
+
+    @media (min-width: 768px) {
+      margin-bottom: 5px;
+      font-size: 24px !important;
+      line-height: 28px !important;
+    }
+
+    @media (min-width: 992px) {
+      font-size: 26px !important;
+      line-height: 32px !important;
+    }
+
+    &::before {
+      display: none !important;
+      content: none !important;
+    }
+  }
+
+  .ant-checkbox-wrapper-checked {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+
+    color: $white !important;
+
+    span {
+      color: $white !important;
+    }
+  }
+
+  .ant-radio-button-wrapper-checked:first-child {
+    background-color: #000000 !important;
+    border-color: #000000 !important;
+
+    color: $white !important;
+  }
+}
+
+.ln-quiz-radio-group {
+  @media (min-width: 768px) {
+    margin: 0 -12px;
+  }
+
+  &__item {
+    @media (min-width: 768px) {
+      padding: 0 12px;
+    }
+  }
+}
+
+.ln-quiz-footer {
+  padding: 40px 0 0 0;
+  background-color: $neutral-100;
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  z-index: 9;
+
+  @media (max-width: 767px) {
+    position: fixed;
+    right: 0;
+    bottom: calc(82px + env(safe-area-inset-bottom, 0px));
+    left: 0;
+    padding: 12px 16px !important;
+    justify-content: stretch;
+    box-shadow: 0 -10px 24px rgba(15, 23, 42, 0.08);
+
+    .ant-form-item,
+    .ant-form-item-control-input,
+    .ant-form-item-control-input-content {
+      width: 100%;
+    }
+
+    .ant-form-item-control-input-content {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .ln-btn {
+      width: 100% !important;
+      margin: 0 !important;
+    }
+
+    .ln-btn:only-child {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 768px) {
+    right: 35px;
+    bottom: 60px;
+  }
+
+  * {
+    margin-bottom: 0 !important;
+  }
+
+  &--submission {
+    position: fixed;
+    right: 24px;
+    bottom: 24px;
+    background-color: $qz-bg;
+
+    @media (max-width: 767px) {
+      right: 50%;
+      transform: translateX(50%);
+    }
+  }
+}
+
+.ln-ant-btn {
+  height: 50px;
+  display: inline-flex !important;
+  align-items: center;
+
+  @media (max-width: 767px) {
+    height: 42px;
+  }
+
+  span {
+    display: inline-block !important;
+    text-align: center;
+    margin: 0 !important;
+  }
+}
+
+.w-160 {
+  width: 120px;
+
+  @media (min-width: 768px) {
+    width: 160px !important;
+  }
+}
+
+// .ln-Quiz-form {
+//     height: calc(100vh - 400px);
+// }
+
+.user-submissions {
+  height: calc(100vh - 150px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+}
+
+.marks-table-quiz {
+  border: 1px solid #000000;
+  &__item {
+    border-bottom: 1px solid #000000;
+    width: 100%;
+
+    h5 {
+      width: 50%;
+      margin-bottom: 0;
+      border-right: 1px solid #000000;
+      padding: 12px;
+    }
+
+    span {
+      width: 50%;
+      padding: 12px;
+    }
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.point-form {
+  .ant-form-item {
+    margin-bottom: 0 !important;
+  }
+}
+
+
+
+.quiz-dynamic-options {
+  margin-left: -12px;
+  .ant-checkbox-group {
+    .ant-checkbox-wrapper {
+      margin: 12px !important;
+    }
+  }
+}
+
+@keyframes blink {
+  0% {
+    opacity: 0;
+  }
+}
+
+.blink {
+  @media (prefers-reduced-motion: no-preference) {
+    animation: blink 0.3s linear 0s 3;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Quiz Submission View - shared components
+   --------------------------------------------------------------------------- */
+.scroll-container--submissions {
+  flex: 1;
+  min-height: 400px;
+  border-radius: 12px;
+  padding: $qz-space-3;
+  overflow-y: auto;
+  background: $qz-bg-subtle !important;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar { display: none; }
+
+  @media (min-width: 768px) {
+    min-height: 500px;
+    max-height: calc(100vh - 220px);
+  }
+}
+
+/* Learner submission view - card layout */
+.ln-quiz-submission-learner-view {
+  max-width: min(900px, 100%);
+  margin: 0 auto;
+  padding-bottom: $qz-space-4;
+  width: 100%;
+}
+
+.ln-quiz-submission-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $qz-space-2;
+  padding: $qz-space-3;
+  background: $qz-bg;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  margin-bottom: $qz-space-4;
+
+  &__score {
+    display: flex;
+    align-items: center;
+    gap: $qz-space-2;
+
+    .ln-quiz-submission-summary__icon {
+      font-size: 24px;
+      color: $qz-primary;
+    }
+
+    .ln-quiz-submission-summary__label {
+      font-size: 14px;
+      color: $qz-text-muted;
+    }
+
+    .ln-quiz-submission-summary__value {
+      font-size: 20px;
+      font-weight: 700;
+      color: $qz-text;
+    }
+  }
+
+  &__status {
+    font-size: 14px;
+    font-weight: 600;
+    padding: 6px 12px;
+    border-radius: 8px;
+
+    &--graded {
+      background: rgba($qz-success, 0.12);
+      color: $qz-success;
+    }
+
+    &--pending {
+      background: rgba($qz-warning, 0.12);
+      color: $qz-warning;
+    }
+  }
+}
+
+.ln-quiz-submission-questions {
+  display: flex;
+  flex-direction: column;
+  gap: $qz-space-3;
+}
+
+.ln-quiz-submission-card {
+  background: $qz-bg;
+  border-radius: 12px;
+  padding: $qz-space-3;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+  border-left: 4px solid $qz-border;
+
+  &--correct {
+    border-left-color: $qz-success;
+  }
+
+  &--incorrect {
+    border-left-color: $qz-error;
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: $qz-space-2;
+    margin-bottom: $qz-space-2;
+  }
+
+  &__num {
+    font-size: 14px;
+    font-weight: 700;
+    color: $qz-primary;
+  }
+
+  &__points {
+    font-size: 14px;
+    color: $qz-text-muted;
+    margin-left: auto;
+  }
+
+  &__icon {
+    font-size: 18px;
+
+    &--correct {
+      color: $qz-success;
+    }
+
+    &--incorrect {
+      color: $qz-error;
+    }
+  }
+
+  &__question {
+    font-size: 16px;
+    line-height: 1.5;
+    color: $qz-text;
+    margin-bottom: $qz-space-2;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  &__answers {
+    display: flex;
+    flex-direction: column;
+    gap: $qz-space-1;
+    padding-top: $qz-space-2;
+    border-top: 1px solid $qz-border;
+  }
+
+  &__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-size: 14px;
+  }
+
+  &__label {
+    color: $qz-text-muted;
+    min-width: 100px;
+  }
+
+  &__answer {
+    color: $qz-text;
+
+    &--yours {
+      font-weight: 500;
+      color: $qz-primary;
+    }
+  }
+}
+
+/* ===========================================================================
+   MOBILE OVERRIDES — Quiz Pages (max-width: 767px)
+   =========================================================================== */
+@media (max-width: 767px) {
+
+  // ── Quiz panel footer: fixed at bottom on mobile ──────────────────────────
+  .ln-quiz-footer {
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    margin: 0 !important;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    background: $qz-bg !important;
+    border-top: 1px solid $qz-border;
+    box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.06);
+    z-index: 20;
+    display: flex;
+    justify-content: center;
+    overscroll-behavior: contain;
+
+    .ant-form-item {
+      margin: 0;
+      display: flex;
+      gap: 8px;
+      width: 100%;
+    }
+  }
+
+  // ── Quiz body: auto height instead of broken calc ──────────────────────────
+  .ln-quiz {
+    height: auto !important;
+    min-height: 0 !important;
+    overflow-y: visible !important;
+  }
+
+  // ── Quiz question content: prevent overflow ─────────────────────────────
+  .ln-quiz-body-scroll {
+    padding-right: 0 !important;
+    max-width: 100%;
+    overflow-x: hidden;
+    // Avoid last lines being hidden behind the fixed footer on small screens.
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .ln-quiz-form-item-content {
+    max-width: 100%;
+    overflow-x: hidden;
+  }
+
+  .ln-Quiz-form .ant-form-item-label {
+    word-break: break-word;
+    overflow-wrap: break-word;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  // ── Quiz panel: tighter padding, full width ────────────────────────────────
+  .ln-quiz-panel {
+    padding: 12px !important;
+    width: 100% !important;
+    height: auto !important;
+    // Prefer dynamic viewport units on mobile browsers/webviews to avoid address-bar jumps.
+    min-height: 100vh;
+    min-height: 100dvh;
+    overflow-y: auto !important;
+    padding-bottom: calc(100px + env(safe-area-inset-bottom, 0px)) !important; // space for fixed footer + home bar
+  }
+
+  // ── Left status panel: collapse on mobile ──────────────────────────────────
+  .ln-QZstatus-panel {
+    display: none !important;
+  }
+
+  .panel-w {
+    width: 0 !important;
+    display: none !important;
+  }
+
+  // Status drawer should show the status panel on mobile
+  .ln-quiz-status-drawer {
+    .ln-QZstatus-panel {
+      display: block !important;
+      width: 100% !important;
+      padding: 0 !important;
+    }
+
+    .panel-w {
+      width: 100% !important;
+      display: block !important;
+    }
+  }
+
+  // ── Question status list: adapt for when shown in drawer/modal ─────────────
+  .Question-status-list {
+    height: auto;
+    max-height: calc(100vh - 200px - env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+
+    &__item {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+
+      &:active {
+        opacity: 0.7;
+        background: rgba(0, 0, 0, 0.02);
+      }
+    }
+  }
+
+  // ── Quiz progress bar: slightly thicker for visibility ─────────────────────
+  .ln-quiz-progress-bar .ant-progress-inner {
+    height: 4px !important;
+  }
+
+  // ── Radio/checkbox: word-wrap for long options, proper padding ──────────────
+  .ln-quiz .ant-radio-button-wrapper,
+  .ln-quiz .ant-checkbox-group-item {
+    padding: 8px 16px !important;
+    min-height: 44px;
+    white-space: normal !important;
+    word-break: break-word;
+    height: auto !important;
+    line-height: 1.4;
+
+    // Adjust checkmark position for smaller mobile
+    &::before {
+      right: 14px !important;
+    }
+
+    &::after {
+      right: 10px !important;
+      width: 22px;
+      height: 22px;
+    }
+  }
+
+  // ── Quiz inputs: proper sizing ─────────────────────────────────────────────
+  .quiz-input {
+    height: 44px;
+    min-height: 44px;
+    font-size: 16px; // prevents iOS zoom
+  }
+
+  .quiz-textarea {
+    min-height: 120px !important;
+    font-size: 16px; // prevents iOS zoom
+  }
+
+  // ── Quiz footer buttons: proper layout ─────────────────────────────────────
+  .ln-ant-btn {
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .w-160 {
+    width: auto;
+    min-width: 100px;
+    flex: 1;
+  }
+
+  // ── Quiz creation drawer: full width on mobile ─────────────────────────────
+  .ln-quiz-create-drawer.ant-drawer,
+  .ln-quiz-create-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  .ln-quiz-create-drawer .ant-drawer-body {
+    padding: 16px !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .ln-quiz-create-drawer .ant-drawer-header {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: $qz-bg;
+    padding: 16px !important;
+  }
+
+  // ── Submission page: sidebar collapse ──────────────────────────────────────
+  .ln-quiz-submission-aside {
+    display: none !important;
+  }
+
+  .ln-quiz-submission-main {
+    width: 100% !important;
+  }
+
+  // ── Submission header: stack vertically ────────────────────────────────────
+  .ln-quiz-submission-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+    padding: 16px !important;
+  }
+
+  .ln-quiz-submission-header__title {
+    word-break: break-word;
+    font-size: 14px;
+  }
+
+  .ln-quiz-submission-back-btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  // ── Submission content: mobile padding + safe-area ─────────────────────────
+  .ln-quiz-submission-content {
+    padding: 16px !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  // ── Submission cards: tighter padding ──────────────────────────────────────
+  .ln-quiz-submission-card {
+    padding: 16px;
+    border-radius: 10px;
+
+    &__icon {
+      font-size: 20px;
+    }
+
+    &__row {
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    &__label {
+      min-width: auto;
+      font-size: 14px;
+    }
+  }
+
+  // ── Submission summary: stack score + status ───────────────────────────────
+  .ln-quiz-submission-summary {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 16px;
+  }
+
+  // ── Scroll container for submissions ──────────────────────────────────────
+  .scroll-container--submissions {
+    padding: 16px;
+    min-height: 200px;
+    max-height: calc(100vh - 200px - env(safe-area-inset-bottom, 0px));
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
+  }
+
+  // ── User submissions sidebar ──────────────────────────────────────────────
+  .user-submissions {
+    height: auto;
+    max-height: calc(100vh - 200px - env(safe-area-inset-bottom, 0px));
+  }
+
+  // ── Quiz submission drawer: full width + safe-area ─────────────────────────
+  .Quiz-submission-drawer.ant-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  .Quiz-submission-drawer .ant-drawer-body {
+    padding: 16px !important;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .quiz-submission-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow: visible;
+  }
+
+  .quiz-submission-layout__aside {
+    width: 100%;
+    border-right: 0;
+    border-bottom: 1px solid $qz-border;
+    padding: 0 0 12px 0;
+  }
+
+  .quiz-submission-layout__main {
+    width: 100%;
+    overflow: visible;
+  }
+
+  .quiz-submission-layout__header {
+    align-items: stretch;
+    margin-bottom: 12px;
+  }
+
+  .quiz-submission-layout__header .ln-card-subtitle {
+    max-width: 100% !important;
+  }
+
+  .quiz-submission-layout__actions,
+  .quiz-submission-layout__actions .ln-syallabus-new,
+  .quiz-submission-layout__actions button {
+    width: 100%;
+  }
+
+  // ── Quiz table: horizontal scroll + touch targets ──────────────────────────
+  .learn-quizzes-table-wrap .ant-table-wrapper,
+  .learn-quizzes-wrap .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .ant-table {
+      min-width: 500px;
+    }
+  }
+
+  .learn-quizzes-table-wrap .ant-table-tbody > tr > td,
+  .learn-quizzes-wrap .ant-table-tbody > tr > td {
+    padding: 12px 16px !important;
+    min-height: 44px;
+    font-size: 14px;
+  }
+
+  .learn-quizzes-table-wrap .ant-table-thead > tr > th,
+  .learn-quizzes-wrap .ant-table-thead > tr > th {
+    padding: 12px 16px !important;
+    font-size: 14px;
+  }
+
+  // ── Grading table: horizontal scroll ──────────────────────────────────────
+  .learn-course-grading .ant-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .ant-table {
+      min-width: 500px;
+    }
+  }
+
+  // ── Empty state: mobile-friendly padding ──────────────────────────────────
+  .learn-quizzes-empty-state {
+    padding: 32px 16px calc(16px + env(safe-area-inset-bottom, 0px)) !important;
+
+    &__icon {
+      font-size: 48px;
+    }
+  }
+
+  // ── Submission footer (fixed): safe-area ──────────────────────────────────
+  .ln-quiz-footer--submission {
+    bottom: env(safe-area-inset-bottom, 0px) !important;
+    right: 50% !important;
+    transform: translateX(50%);
+    padding: 12px 16px !important;
+  }
+
+  // ── Assignment drawers: proper mobile sizing ──────────────────────────────
+  .ln-assignment-view-drawer .ant-drawer-content-wrapper,
+  .ln-assignment-submit-drawer .ant-drawer-content-wrapper {
+    width: 100% !important;
+    max-width: 100vw !important;
+  }
+
+  // ── Teacher quiz page header: stack on mobile ─────────────────────────────
+  .teacher-quizzes-page__head-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .teacher-quizzes-page__action {
+    width: 100%;
+
+    .ant-btn {
+      width: 100%;
+      min-height: 44px;
+    }
+  }
+
+  // ── Marks table: horizontal scroll ────────────────────────────────────────
+  .marks-table-quiz {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .ln-quiz .ant-radio-button-wrapper,
+  .ln-quiz .ant-checkbox-group-item,
+  .Question-status-list__item,
+  .ln-quiz-submission-back-btn {
+    transition: none !important;
+  }
+}
+
+.quiz-builder-modal {
+  .ant-modal-content {
+    border-radius: 18px;
+  }
+
+  &__questions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  &__question {
+    border: 1px solid #eef1f5;
+    border-radius: 16px;
+    padding: 16px;
+    background: #fbfcfe;
+  }
+
+  &__question-head,
+  &__footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__option {
+    width: 100%;
+
+    .ant-form-item:nth-child(2) {
+      flex: 1;
+    }
+  }
+
+  // The Type radio group and Points field previously sat in a plain <Space wrap>, where a
+  // Radio.Group's own nowrap layout kept it from shrinking, so at narrow modal widths it and the
+  // Points field crowded into the same row and overlapped instead of the row wrapping cleanly.
+  &__type-points {
+    display: flex;
+    flex-wrap: wrap;
+    row-gap: 12px;
+    width: 100%;
+
+    .ant-space-item {
+      max-width: 100%;
+    }
+
+    .ant-radio-group {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
+
+  &__footer {
+    margin-top: 20px;
+    justify-content: flex-end;
+  }
+
+  &__context {
+    margin-bottom: 18px;
+    border-radius: 14px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ln-mobile-safe-modal-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: calc(12px + env(safe-area-inset-top, 0px)) 12px calc(12px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .ln-mobile-safe-modal {
+    width: min(560px, calc(100vw - 24px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    margin: 0 auto !important;
+    top: 0 !important;
+    padding-bottom: 0 !important;
+
+    .ant-modal-content {
+      max-height: calc(100dvh - 24px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ant-modal-body {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .ant-modal-footer {
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    }
+  }
+
+  .quiz-builder-modal {
+    .ant-modal-body {
+      max-height: calc(100dvh - 148px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px));
+      overflow-y: auto;
+      padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    }
+
+    &__question {
+      padding: 12px;
+    }
+
+    &__option {
+      align-items: flex-start;
+
+      .ant-space-item:nth-child(2) {
+        flex: 1;
+        min-width: 0;
+      }
+    }
+
+    &__footer {
+      position: sticky;
+      bottom: 0;
+      padding: 12px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+      background: #fff;
+
+      .ant-btn {
+        min-height: 44px;
+        flex: 1;
+      }
+    }
+  }
+
+  .quiz-submissions-v2-modal {
+    .ant-list-item {
+      align-items: flex-start;
+      gap: 8px;
+      flex-direction: column;
+    }
+
+    .ant-typography {
+      font-size: 12px;
+    }
+  }
+
+  .quiz-create-context-modal__loading {
+    min-height: 140px;
+    display: grid;
+    place-items: center;
+  }
+}
+
+.ln-assignment-submissions-modal__content {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  gap: 18px;
+}
+
+.ln-assignment-submissions-modal__students {
+  max-height: 520px;
+  overflow: auto;
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  padding: 8px;
+
+  .ant-list-header {
+    border-bottom: 0;
+    padding: 8px 10px;
+  }
+
+  .ant-list-item {
+    border: 0;
+    border-radius: 10px;
+    padding: 2px;
+
+    &.is-active {
+      background: #e9fbfd;
+    }
+  }
+}
+
+.quiz-submissions-v2-modal .ant-list,
+.course-quiz-submissions-list {
+  max-height: min(58dvh, 560px);
+  overflow: auto;
+  padding-right: 4px;
+}
+
+// Was a plain `List.Item.Meta` -- name, a comma-joined description string, and a raw score
+// number all rendered with the same visual weight, so nothing drew the eye to who actually did
+// well and who didn't in a 30+ row submission list. Kept top-level (not nested under
+// .quiz-builder-modal above) to match .quiz-submissions-v2-modal .ant-list's own placement --
+// antd's Modal portals to document.body, outside any page-scoped wrapper, so a rule nested inside
+// one never reaches it.
+.quiz-submissions-v2-summary {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: $neutral-400;
+  margin-bottom: 10px;
+}
+
+.quiz-submission-row.ant-list-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 4px;
+}
+
+.quiz-submission-row__avatar {
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.quiz-submission-row__body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.quiz-submission-row__name {
+  font-weight: 600;
+  color: $neutral-900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quiz-submission-row__detail {
+  font-size: 12px;
+  color: $neutral-500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.quiz-submission-row__meta {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.quiz-submission-row__score {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+
+  &--high {
+    background: rgba(#166534, 0.1);
+    color: #166534;
+  }
+
+  &--mid {
+    background: rgba(#b45309, 0.1);
+    color: #b45309;
+  }
+
+  &--low {
+    background: rgba(#9f1239, 0.1);
+    color: #9f1239;
+  }
+
+  &--neutral {
+    background: $neutral-100;
+    color: $neutral-500;
+  }
+}
+
+.quiz-submission-row__date.ant-typography {
+  font-size: 11px !important;
+  white-space: nowrap;
+}
+
+.course-quiz-submissions-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.course-quiz-submissions-toggle .ant-radio-button-wrapper {
+  border-radius: 999px !important;
+}
+
+.ln-assignment-submissions-modal__main {
+  min-width: 0;
+}
+
+// The student picker exists purely as a mobile fallback for when the sidebar list (a sibling of
+// __main, hidden below 767px) isn't there -- see .ln-assignment-submissions-modal__mobile-picker.
+.ln-assignment-submissions-modal__picker {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.ln-assignment-submissions-modal__mobile-picker {
+  display: none;
+}
+
+.ln-assignment-submissions-modal__nav {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  flex-shrink: 0;
+}
+
+.ln-assignment-submissions-modal__nav-count {
+  font-size: 12px;
+  font-weight: 600;
+  color: $neutral-500;
+  white-space: nowrap;
+  min-width: 44px;
+  text-align: center;
+}
+
+// Student list rows -- tinted initials + a Graded/Pending pill, same language as the quiz
+// submissions list (.quiz-submission-row above) and the Students roster.
+.ln-submission-student-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 6px 4px;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+
+.ln-submission-student-row__avatar {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.ln-submission-student-row__name {
+  flex: 1 1 auto;
+  min-width: 0;
+  font-size: 13px;
+  color: $neutral-900;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ln-submission-student-row__status {
+  flex-shrink: 0;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+
+  &.is-graded {
+    background: rgba(#166534, 0.1);
+    color: #166534;
+  }
+
+  &.is-pending {
+    background: $neutral-100;
+    color: $neutral-500;
+  }
+}
+
+.ln-assignment-submissions-modal__preview {
+  min-height: 260px;
+  max-height: 540px;
+  overflow: auto;
+  border: 1px solid #eef2f7;
+  border-radius: 14px;
+  background: #fff;
+  padding: 14px;
+}
+
+.ln-assignment-submissions-modal__grade {
+  display: grid;
+  grid-template-columns: minmax(130px, 1fr) 150px auto;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid #eef2f7;
+}
+
+// Was plain secondary text -- the same Graded/Pending distinction the student list rows now show
+// as a colored pill gets one here too, instead of "Grade pending" and "Graded: 8 pts" reading with
+// identical visual weight.
+.ln-submission-grade-status {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+
+  &.is-graded {
+    background: rgba(#166534, 0.1);
+    color: #166534;
+  }
+
+  &.is-pending {
+    background: $neutral-100;
+    color: $neutral-500;
+  }
+}
+
+@media (max-width: 767px) {
+  .ln-assignment-submissions-modal__content {
+    display: block;
+  }
+
+  .ln-assignment-submissions-modal__students {
+    display: none;
+  }
+
+  .ln-assignment-submissions-modal__mobile-picker {
+    display: block;
+  }
+
+  .quiz-submissions-v2-modal .ant-list,
+  .course-quiz-submissions-list {
+    max-height: min(52dvh, 460px);
+  }
+
+  .course-quiz-submissions-list .ant-list-item,
+  .quiz-submissions-v2-modal .ant-list-item {
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .ln-assignment-submissions-modal__preview {
+    max-height: min(46dvh, 420px);
+    padding: 12px;
+  }
+
+  .ln-assignment-submissions-modal__grade {
+    grid-template-columns: 1fr;
+  }
+
+  .ln-assignment-submissions-modal__grade .ant-btn,
+  .ln-assignment-submissions-modal__grade .ant-input {
+    width: 100%;
+    min-height: 44px;
+  }
+}

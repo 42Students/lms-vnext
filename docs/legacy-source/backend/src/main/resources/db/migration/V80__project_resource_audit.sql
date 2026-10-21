@@ -1,0 +1,21 @@
+CREATE TABLE IF NOT EXISTS project_resource_audit (
+    id INT NOT NULL AUTO_INCREMENT,
+    created_at DATETIME NULL,
+    updated_at DATETIME NULL,
+    is_deleted BOOLEAN DEFAULT FALSE,
+    project_id INT NOT NULL,
+    project_resource_id INT NULL,
+    resource_key VARCHAR(120) NOT NULL,
+    action_type VARCHAR(40) NOT NULL,
+    actor_user_id INT NULL,
+    actor_user_type VARCHAR(20) NULL,
+    actor_name VARCHAR(160) NULL,
+    resource_order INT NULL,
+    before_json JSON NULL,
+    after_json JSON NULL,
+    changed_fields JSON NULL,
+    PRIMARY KEY (id),
+    KEY idx_project_resource_audit_project (project_id, created_at),
+    KEY idx_project_resource_audit_resource (project_id, project_resource_id, created_at),
+    CONSTRAINT fk_project_resource_audit_project FOREIGN KEY (project_id) REFERENCES project_workspace(id)
+);

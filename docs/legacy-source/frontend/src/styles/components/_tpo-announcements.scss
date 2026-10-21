@@ -1,0 +1,174 @@
+// Announcements V2 (backend docs/tpo-announcements/ANNOUNCEMENTS-V2-2026-10-12.md): one card design for the placement cell, students,
+// From 42 and super admin; and the composer's reach line.
+
+.announcement-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.announcement-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px 18px;
+  border: 1px solid $tpo-line;
+  border-radius: $tpo-radius;
+  background: $tpo-surface;
+  transition: box-shadow 0.4s ease;
+
+  &.is-pinned {
+    border-color: $tpo-line-strong;
+    box-shadow: inset 3px 0 0 $tpo-primary;
+  }
+
+  &.is-ended {
+    opacity: 0.75;
+  }
+
+  &.is-highlight {
+    box-shadow: 0 0 0 3px $tpo-primary-soft, 0 0 0 4px $tpo-primary;
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__title-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__pin {
+    color: $tpo-primary;
+  }
+
+  &__title {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: $tpo-ink;
+    overflow-wrap: anywhere;
+  }
+
+  &__meta.ant-typography {
+    font-size: $tpo-fs-xs;
+  }
+
+  &__audience {
+    align-self: flex-start;
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: $tpo-primary-soft;
+    color: $tpo-primary-hover;
+    font-size: $tpo-fs-xs;
+    font-weight: 600;
+  }
+
+  &__body {
+    margin: 0;
+    color: $tpo-text;
+    line-height: 1.55;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+
+  &__buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  &__button.ant-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 10px;
+    border-top: 1px solid $tpo-line;
+  }
+
+  &__reads {
+    flex: 1 1 220px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-width: 320px;
+
+    .ant-progress {
+      margin: 0;
+    }
+
+    .ant-typography {
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+}
+
+.announcement-composer {
+  &__reach {
+    margin: -8px 0 16px;
+    padding: 9px 12px;
+    border: 1px solid $tpo-line;
+    border-radius: 8px;
+    background: $tpo-surface-soft;
+    color: $tpo-text;
+    font-size: $tpo-fs-sm;
+
+    &.is-error {
+      border-color: #f5c7c2;
+      background: #fdf0ef;
+      color: #b42318;
+    }
+  }
+
+  &__section.ant-typography {
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  &__link {
+    margin-bottom: 6px;
+  }
+
+  &__hint.ant-typography {
+    display: block;
+    margin: 4px 0 0;
+    font-size: $tpo-fs-xs;
+  }
+
+  &__when {
+    margin-top: 12px;
+  }
+
+  &__sent {
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 767px) {
+  .announcement-card {
+    padding: 14px;
+  }
+
+  .announcement-card__reads {
+    max-width: none;
+  }
+}

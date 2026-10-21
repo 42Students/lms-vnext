@@ -1,0 +1,308 @@
+// TPO Notifications — informational activity feed, distinct from Home's action queue.
+.tpo-notifications {
+  &__header {
+    margin-bottom: 14px;
+
+    .listing-page-header__title {
+      color: $tpo-ink;
+      letter-spacing: -0.025em;
+    }
+  }
+
+  &__mark-read.ant-btn {
+    min-height: 38px;
+    border-radius: 8px;
+  }
+
+  &__pulse {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 180px));
+    gap: 10px;
+    margin-bottom: 14px;
+
+    > div {
+      padding: 12px 14px;
+      border: 1px solid $tpo-line;
+      border-radius: 11px;
+      background: $tpo-surface-soft;
+    }
+
+    span,
+    strong {
+      display: block;
+    }
+
+    span {
+      color: $tpo-muted;
+      font-size: $tpo-fs-xs;
+      font-weight: 700;
+      letter-spacing: 0.055em;
+      text-transform: uppercase;
+    }
+
+    strong {
+      margin-top: 3px;
+      color: $tpo-ink;
+      font-size: 22px;
+      line-height: 1.1;
+    }
+  }
+
+  &__pulse-item--attention {
+    border-color: rgba($tpo-primary, 0.24) !important;
+    background: $tpo-primary-soft !important;
+
+    strong {
+      color: $tpo-primary;
+    }
+  }
+
+  &__feed.ant-card,
+  &__loading.ant-card {
+    overflow: hidden;
+    border: 1px solid $tpo-line;
+    border-radius: 14px;
+    box-shadow: 0 5px 20px rgba(26, 45, 72, 0.05);
+  }
+
+  &__feed.ant-card > .ant-card-body {
+    padding: 0 !important;
+  }
+
+  &__loading.ant-card > .ant-card-body {
+    padding: 22px !important;
+  }
+
+  &__feed-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 16px 18px;
+    border-bottom: 1px solid $tpo-line;
+    background: $tpo-surface-soft;
+
+    h4.ant-typography {
+      margin: 3px 0 0 !important;
+      color: $tpo-ink;
+      font-size: 18px;
+      line-height: 1.3;
+    }
+  }
+
+  &__eyebrow.ant-typography {
+    display: block;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.09em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  &__filter.ant-segmented {
+    padding: 3px;
+    border: 1px solid #e4e9f0;
+    border-radius: 9px;
+    background: #f6f8fb;
+
+    .ant-segmented-item {
+      font-size: 12px;
+      font-weight: 600;
+    }
+  }
+
+  &__stale-alert {
+    margin: 14px 18px 0;
+    border-radius: 9px;
+  }
+
+  &__empty {
+    padding: 48px 18px;
+  }
+
+  &__groups {
+    padding: 6px 18px 18px;
+  }
+
+  &__group {
+    padding-top: 14px;
+
+    & + & {
+      margin-top: 6px;
+      border-top: 1px solid $tpo-line;
+    }
+  }
+
+  &__group-label.ant-typography {
+    display: block;
+    margin: 0 0 5px 7px;
+    color: $tpo-muted;
+    font-size: $tpo-fs-xs;
+    font-weight: 700;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+  }
+
+  &__item.ant-list-item {
+    position: relative;
+    gap: 12px;
+    margin-bottom: 4px;
+    padding: 11px 12px !important;
+    border: 1px solid transparent !important;
+    border-radius: 10px;
+    transition: background 0.15s ease, border-color 0.15s ease;
+
+    .ant-list-item-meta {
+      min-width: 0;
+      margin-bottom: 0;
+    }
+
+    .ant-list-item-meta-title {
+      margin-bottom: 3px;
+    }
+
+    &--unread {
+      border-color: #dbe9fb !important;
+      background: #f7fbff;
+    }
+
+    &--linked {
+      cursor: pointer;
+
+      &:hover {
+        border-color: #d8e3ef !important;
+        background: #f6f9fd;
+      }
+    }
+  }
+
+  &__dot {
+    flex: 0 0 auto;
+    width: 7px;
+    height: 7px;
+    margin-top: 7px;
+    border-radius: 50%;
+    background: #d5dce6;
+  }
+
+  &__item--unread &__dot {
+    background: $tpo-primary;
+    box-shadow: 0 0 0 3px rgba($tpo-primary, 0.12);
+  }
+
+  &__item-title {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 8px;
+
+    > span {
+      min-width: 0;
+      overflow: hidden;
+      color: #27364d;
+      font-weight: 600;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .ant-tag {
+      flex: 0 0 auto;
+      margin: 0;
+      border-radius: 999px;
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__item--unread &__item-title > span {
+    color: $tpo-ink;
+    font-weight: 700;
+  }
+
+  &__item-body {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 3px;
+
+    > .ant-typography:first-child {
+      color: #59677d;
+      line-height: 1.45;
+    }
+
+    > .ant-typography:last-child {
+      font-size: $tpo-fs-xs;
+    }
+  }
+
+  &__arrow {
+    flex: 0 0 auto;
+    color: $tpo-muted;
+    font-size: 12px;
+    transition: color 0.15s ease, transform 0.15s ease;
+  }
+
+  &__item--linked:hover &__arrow {
+    color: $tpo-primary;
+    transform: translateX(2px);
+  }
+}
+
+@media (max-width: 767px) {
+  .tpo-notifications {
+    &__header {
+      .listing-page-header__right,
+      .tpo-notifications__mark-read {
+        width: 100%;
+      }
+    }
+
+    &__pulse {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+
+      > div {
+        padding: 10px;
+      }
+
+      span {
+        font-size: $tpo-fs-xs;
+      }
+
+      strong {
+        font-size: 20px;
+      }
+    }
+
+    &__feed-head {
+      align-items: stretch;
+      flex-direction: column;
+      gap: 10px;
+      padding: 14px 13px 12px;
+    }
+
+    &__filter.ant-segmented {
+      width: 100%;
+
+      .ant-segmented-group {
+        width: 100%;
+      }
+
+      .ant-segmented-item {
+        flex: 1;
+        text-align: center;
+      }
+    }
+
+    &__stale-alert {
+      margin: 12px 13px 0;
+    }
+
+    &__groups {
+      padding: 5px 10px 14px;
+    }
+
+    &__item.ant-list-item {
+      padding: 10px 8px !important;
+    }
+  }
+}

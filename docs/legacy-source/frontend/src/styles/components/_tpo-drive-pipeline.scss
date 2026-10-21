@@ -1,0 +1,38 @@
+// TPO drive pipeline: one row per stage, bar length is the share of everyone who applied. Each row opens that stage's list.
+
+.tpo-drive-pipeline {
+  &__rows { display: grid; gap: 4px; }
+
+  &__row {
+    display: grid;
+    grid-template-columns: 110px minmax(0, 1fr) 48px 44px;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+    padding: 6px 8px;
+    border: 0;
+    border-radius: $tpo-radius-sm;
+    background: transparent;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+
+    &:hover { background: $teal-subtle; }
+    &:focus-visible { outline: 2px solid $clrThird; outline-offset: 1px; }
+  }
+
+  &__row-label { color: $tpo-text; font-size: $tpo-fs-md; font-weight: 600; }
+
+  &__row-track {
+    height: 10px; border-radius: 999px; background: $tpo-line; overflow: hidden;
+    i { display: block; height: 100%; border-radius: 999px; background: $clrThird; }
+  }
+
+  &__row-count { color: $tpo-ink; font-size: $tpo-fs-md; font-weight: 700; text-align: right; }
+  &__row-pct { color: $tpo-muted; font-size: $tpo-fs-sm; text-align: right; }
+
+  &__note { display: block; margin-top: 12px; font-size: $tpo-fs-xs; }
+}
+
+// Review applicants card: labelled Stage / CGPA / Skill match / Resume.
+.tpo-review__facts { margin: 12px 0; }

@@ -1,0 +1,19 @@
+.ln-recpattern {
+    position  : absolute;
+    background: $whitef8;
+    top       : 180px;
+
+    &--lg {
+        height: 615px;
+        width : 45%;
+    }
+}
+
+.-right {
+    right: 0;
+}
+
+.-left-radius500 {
+    border-top-left-radius   : 500px;
+    border-bottom-left-radius: 500px;
+}

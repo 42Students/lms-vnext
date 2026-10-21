@@ -1,0 +1,1986 @@
+html.tracker-scroll-active,
+body.tracker-scroll-active {
+  min-height: 100%;
+  overflow-y: auto !important;
+}
+
+// CSS-only fallback for the same override above: the class-based version only takes effect once
+// TrackerShell's useEffect runs post-hydration, so on a slow connection (or if JS never loads)
+// the page is stuck non-scrollable under the app-wide `html, body { overflow-y: hidden }` default
+// (see _global.scss) for however long that takes -- or permanently, if JS fails to run at all.
+// :has() lets the browser apply this from first paint, with no JS dependency: .tracker-page is
+// already present in the server-rendered HTML the moment TrackerShell renders, no client
+// JavaScript required for this selector to match.
+//
+// Deliberately no overscroll-behavior-y here: it was here originally to suppress the pull-to-
+// refresh/bounce chaining effect, but on at least some Windows input configurations it makes
+// Chromium refuse real wheel-driven scrolling on html/body entirely (confirmed: removing it is
+// what makes window.scrollY move again) -- a much worse trade than the bounce it was preventing.
+html:has(.tracker-page),
+body:has(.tracker-page) {
+  overflow-y: auto !important;
+}
+
+@import "../components/variables.scss";
+
+// -----------------------------------------------------------------------------
+// Dark mode
+// -----------------------------------------------------------------------------
+// Semantic surface/text tokens as CSS custom properties (not SCSS variables, which compile away
+// and can't be swapped at runtime) so a single html[data-tracker-theme="dark"] attribute can
+// re-theme every tracker surface at once. Declared on three separate root classes -- not just
+// .tracker-page -- because antd portals a Drawer's and a Popover's content out to (usually)
+// document.body, so it never actually sits inside .tracker-page in the real DOM; custom
+// properties don't cross that gap by inheritance the way a plain nested selector would.
+//
+// The dark override keys off html[data-tracker-theme="dark"] rather than a class on these roots
+// themselves, since html is the one ancestor guaranteed to contain a portaled node no matter where
+// its target container lives -- letting TrackerShell toggle dark mode in exactly one place.
+@mixin tracker-theme-vars {
+  --t-fill: #{$neutral-100};
+  --t-surface: #{$white};
+  --t-surface-alt: #{$neutral-50};
+  --t-border: #{$neutral-200};
+  --t-border-strong: #{$neutral-300};
+  --t-text-primary: #{$neutral-900};
+  --t-text-secondary: #{$neutral-700};
+  --t-text-muted: #{$neutral-500};
+  --t-text-faint: #{$neutral-400};
+  --t-header-bg: rgba(255, 255, 255, 0.96);
+
+  html[data-tracker-theme="dark"] & {
+    --t-fill: #15181c;
+    --t-surface: #1e2227;
+    --t-surface-alt: #23272d;
+    --t-border: #333941;
+    --t-border-strong: #3f4650;
+    --t-text-primary: #f1f4f9;
+    --t-text-secondary: #c7ccd4;
+    --t-text-muted: #9aa1ab;
+    --t-text-faint: #6b7280;
+    --t-header-bg: rgba(21, 24, 28, 0.92);
+  }
+}
+
+.tracker-page,
+.tracker-quick-drawer,
+.tracker-popover-scope {
+  @include tracker-theme-vars;
+
+  // antd's dark algorithm renders select/input placeholders at 25% white on a near-black fill
+  // (~1.9:1), so "Select reporter" etc. were nearly invisible. Use the muted text token instead.
+  .ant-select-selection-placeholder,
+  .ant-input::placeholder,
+  textarea.ant-input::placeholder,
+  .ant-input-affix-wrapper input::placeholder {
+    color: var(--t-text-muted) !important;
+    opacity: 1;
+  }
+
+  .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+    background: var(--t-surface-alt);
+  }
+}
+
+// White text on $clrThird (#26bac7) measures ~2.35:1 contrast -- well under the WCAG AA minimum
+// (4.5:1 normal text, 3:1 large/bold) -- yet antd's theme algorithm computes white as this
+// button's text color regardless, since nothing here overrode it. Dark text on the same teal
+// measures ~7.2:1 at rest and ~4.9:1 on the darker $teal-dark hover state, comfortably passing
+// both. Same three root classes as the focus-ring fix above, and for the same reason: antd portals
+// a Drawer's and a Popover's content out to document.body, so .tracker-page alone can't reach the
+// primary buttons inside TrackerQuickReportLauncher's drawer or LogsDownloadControl's popover.
+.tracker-page,
+.tracker-quick-drawer,
+.tracker-popover-scope {
+  .ant-btn-primary {
+    background: $clrThird;
+    border-color: $clrThird;
+    color: $neutral-900 !important;
+    box-shadow: none;
+    font-weight: 700;
+
+    &:hover,
+    &:focus {
+      background: $teal-dark !important;
+      border-color: $teal-dark !important;
+      color: $neutral-900 !important;
+    }
+  }
+}
+
+.tracker-page {
+  min-height: 100vh;
+
+  background: var(--t-fill);
+  color: var(--t-text-primary);
+  font-family: $font-stack;
+
+  * { box-sizing: border-box; }
+
+  &--centered {
+    display: grid;
+    place-items: center;
+    padding: $space-5;
+  }
+}
+
+.tracker-skip-link {
+  position: absolute;
+  top: -48px;
+  left: $space-4;
+  z-index: $z-modal;
+  padding: $space-2 $space-4;
+  background: $neutral-900;
+  color: $neutral-50;
+  font-weight: 600;
+  font-size: $text-sm;
+  border-radius: $radius-control;
+  text-decoration: none;
+  transition: top 0.15s ease;
+
+  &:focus,
+  &:focus-visible {
+    top: $space-3;
+    outline: 2px solid $clrThird;
+    outline-offset: 2px;
+  }
+}
+
+.tracker-header {
+  position: sticky;
+  top: 0;
+  z-index: $z-sticky;
+  min-height: 72px;
+  padding: 0 clamp(16px, 4vw, 56px);
+  background: var(--t-header-bg);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--t-border);
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto minmax(180px, 1fr);
+  align-items: center;
+  gap: $space-5;
+}
+
+.tracker-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: $space-3;
+  width: fit-content;
+  color: var(--t-text-primary);
+  text-decoration: none;
+
+  &:hover { color: var(--t-text-primary); }
+
+  > span:last-child {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+  }
+
+  strong { font-size: $text-md; font-weight: 700; }
+  small { margin-top: 3px; color: var(--t-text-muted); font-size: $text-xs; }
+}
+
+.tracker-brand-mark {
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  display: inline-grid;
+  place-items: center;
+  background: $neutral-900;
+  color: $white;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.tracker-nav {
+  height: 72px;
+  display: flex;
+  align-items: stretch;
+  gap: $space-5;
+
+  a {
+    min-width: 92px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--t-text-muted);
+    text-decoration: none;
+    font-size: $text-sm;
+    font-weight: 600;
+    position: relative;
+
+    &:hover { color: var(--t-text-primary); }
+
+    &.is-active {
+      color: var(--t-text-primary);
+
+      &::after {
+        content: "";
+        position: absolute;
+        left: 8px;
+        right: 8px;
+        bottom: 0;
+        height: 3px;
+        border-radius: 3px 3px 0 0;
+        background: $clrThird;
+      }
+    }
+  }
+}
+
+.tracker-header-end {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.tracker-theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--t-border);
+  border-radius: $radius-pill;
+  background: var(--t-surface);
+  color: var(--t-text-secondary);
+  font: inherit;
+  font-size: $text-sm;
+  font-weight: 600;
+  cursor: pointer;
+  transition: border-color $duration-fast $ease-std, color $duration-fast $ease-std;
+
+  &:hover {
+    border-color: $clrThird;
+    color: var(--t-text-primary);
+  }
+}
+
+.tracker-user {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: $space-2;
+  min-width: 0;
+
+  &__name {
+    font-size: $text-sm;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  &__role {
+    padding: 4px 8px;
+    border-radius: $radius-pill;
+    background: $teal-subtle;
+    color: $teal-text;
+    font-size: $text-xs;
+    font-weight: 700;
+  }
+}
+
+.tracker-reset {
+  border: 0;
+  background: transparent;
+  color: var(--t-text-faint);
+  cursor: pointer;
+  font-size: $text-xs;
+  padding: 6px;
+  border-radius: $radius-control;
+
+  &:hover { color: var(--t-text-secondary); background: var(--t-fill); }
+}
+
+.tracker-content {
+  width: 100%;
+  padding: clamp(28px, 5vw, 56px) clamp(16px, 4vw, 56px) 64px;
+}
+
+.tracker-report-wrap { max-width: 760px; margin: 0 auto; }
+.tracker-issues-wrap, .tracker-detail-wrap { max-width: 1120px; margin: 0 auto; }
+
+.tracker-page-heading {
+  margin-bottom: $space-5;
+
+  &--row {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: $space-5;
+  }
+
+  h1 {
+    margin: 2px 0 $space-2;
+    color: var(--t-text-primary);
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.15;
+    letter-spacing: -0.035em;
+    font-weight: 700;
+  }
+
+  p:not(.tracker-eyebrow) {
+    margin: 0;
+    color: var(--t-text-muted);
+    font-size: $text-base;
+    line-height: $leading-normal;
+  }
+}
+
+.tracker-eyebrow {
+  margin: 0 0 $space-2;
+  color: $teal-text;
+  font-size: $text-xs;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tracker-form-card,
+.tracker-detail-card,
+.tracker-success-card,
+.tracker-access-card {
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+  box-shadow: $elev-1;
+}
+
+.tracker-form-card {
+  padding: clamp(20px, 4vw, 32px);
+
+  .ant-form-item { margin-bottom: $space-5; }
+  .ant-form-item-label > label {
+    color: var(--t-text-primary);
+    font-size: $text-sm;
+    font-weight: 700;
+  }
+  .ant-form-item-extra {
+    margin-top: 6px;
+    color: var(--t-text-muted);
+    font-size: $text-xs;
+    line-height: 1.45;
+  }
+  .ant-input,
+  .ant-input-affix-wrapper,
+  .ant-select-selector,
+  .ant-cascader-picker {
+    border-color: var(--t-border) !important;
+    border-radius: $radius-control !important;
+  }
+  .ant-select-single { min-height: $touch-target; }
+  .ant-select-single .ant-select-selector { min-height: $touch-target; align-items: center; }
+  .ant-cascader, .ant-input { min-height: $touch-target; }
+  textarea.ant-input { min-height: 132px; padding: 12px 14px; }
+}
+
+.tracker-form-footer {
+  margin: $space-6 -32px -32px;
+  padding: $space-4 $space-6;
+  border-top: 1px solid var(--t-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+
+  span { color: var(--t-text-muted); font-size: $text-sm; }
+  strong { color: var(--t-text-primary); }
+
+  .ant-btn {
+    min-height: $touch-target;
+    min-width: 132px;
+    border-radius: $radius-control;
+    font-weight: 700;
+  }
+}
+
+.tracker-alert { margin-bottom: $space-4; border-radius: $radius-control; }
+
+.tracker-logs-gate-wrap {
+  display: grid;
+  place-items: center;
+  min-height: 60vh;
+}
+
+.tracker-logs-gate {
+  width: min(340px, 100%);
+  padding: clamp(28px, 6vw, 40px);
+  text-align: center;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+  box-shadow: $elev-1;
+
+  &__icon {
+    margin: 0 auto $space-4;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: var(--t-fill);
+    color: var(--t-text-secondary);
+    font-size: 22px;
+  }
+
+  h1 {
+    margin: 0 0 $space-2;
+    font-size: 22px;
+    letter-spacing: -0.02em;
+    color: var(--t-text-primary);
+  }
+
+  p {
+    margin: 0 0 $space-4;
+    color: var(--t-text-muted);
+    font-size: $text-sm;
+  }
+
+  .ant-input-affix-wrapper {
+    margin-bottom: $space-3;
+  }
+}
+
+.tracker-success-card {
+  padding: clamp(28px, 6vw, 56px);
+  text-align: center;
+
+  .tracker-success-mark {
+    margin: 0 auto $space-4;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: $status-success-bg;
+    color: $status-success;
+    font-size: 24px;
+    font-weight: 800;
+  }
+
+  h1 {
+    margin: 0 0 $space-3;
+    font-size: clamp(34px, 6vw, 48px);
+    letter-spacing: -0.04em;
+  }
+
+  > p:not(.tracker-eyebrow) {
+    max-width: 460px;
+    margin: 0 auto;
+    color: var(--t-text-muted);
+    line-height: $leading-normal;
+  }
+}
+
+.tracker-success-actions {
+  margin-top: $space-6;
+  display: flex;
+  justify-content: center;
+  gap: $space-3;
+}
+
+.tracker-button {
+  min-height: $touch-target;
+  padding: 0 18px;
+  border-radius: $radius-control;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: $text-sm;
+  font-weight: 700;
+  text-decoration: none;
+  transition: $duration-fast $ease-std;
+
+  // Dark text, not white: white-on-$clrThird measures ~2.35:1 contrast, well under WCAG AA's
+  // 4.5:1 (normal) / 3:1 (large/bold) minimums -- $neutral-900 measures ~7.2:1 at rest and ~4.9:1
+  // on the darker $teal-dark hover, comfortably passing both. See the matching .ant-btn-primary
+  // override above; this is the same fix for the plain-link version of the same button style.
+  &--primary {
+    color: $neutral-900;
+    background: $clrThird;
+    border: 1px solid $clrThird;
+    &:hover { color: $neutral-900; background: $teal-dark; border-color: $teal-dark; }
+  }
+
+  &--secondary {
+    color: var(--t-text-secondary);
+    background: var(--t-surface);
+    border: 1px solid var(--t-border);
+    &:hover { color: $teal-text; border-color: $clrThird; }
+  }
+}
+
+.tracker-filter-bar {
+  margin-bottom: $space-4;
+  padding: $space-3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: $space-3;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+
+  .tracker-filter-search { flex: 1 1 360px; min-width: 220px; }
+  .tracker-filter-select { width: 190px; flex: 0 0 190px; }
+  .ant-input, .ant-select-selector { min-height: $touch-target; border-radius: $radius-control !important; }
+  .ant-select-single .ant-select-selector { align-items: center; }
+}
+
+.tracker-issue-list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-3;
+}
+
+.tracker-issue-card {
+  display: block;
+  padding: $space-5;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: $elev-1;
+  transition: transform $duration-fast $ease-std, border-color $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+
+  &:hover {
+    color: inherit;
+    transform: translateY(-1px);
+    border-color: var(--t-border-strong);
+    box-shadow: $elev-2;
+  }
+
+  &__top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: $space-4;
+  }
+
+  &__identity {
+    min-width: 0;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: $space-2 $space-3;
+
+    strong { color: var(--t-text-primary); font-size: $text-md; }
+    span { color: var(--t-text-muted); font-size: $text-sm; }
+  }
+
+  &__pills { display: flex; gap: $space-2; flex-wrap: wrap; justify-content: flex-end; }
+
+  &__description {
+    margin: $space-3 0;
+    color: var(--t-text-primary);
+    font-size: $text-base;
+    line-height: $leading-normal;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $space-2 $space-4;
+    color: var(--t-text-muted);
+    font-size: $text-xs;
+
+    span:not(:last-child)::after {
+      content: "·";
+      margin-left: $space-4;
+      color: var(--t-text-faint);
+    }
+  }
+}
+
+.tracker-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 3px 9px;
+  border-radius: $radius-pill;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+  white-space: nowrap;
+  background: var(--t-fill);
+  color: var(--t-text-secondary);
+
+  // $status-info-bg is a flat pale color rather than a translucent tint like the other status
+  // backgrounds below, so it doesn't adapt to a dark surface on its own -- unlike the rgba() ones,
+  // which already read fine tinted over either a light or dark card.
+  &--new, &--checking {
+    background: $status-info-bg;
+    color: $teal-text;
+
+    html[data-tracker-theme="dark"] & {
+      background: rgba($clrThird, 0.16);
+      color: #6fd7e0;
+    }
+  }
+  &--fixing, &--ready_for_retest {
+    background: $status-warning-bg;
+    color: $status-warning;
+
+    html[data-tracker-theme="dark"] & { color: #f0a742; }
+  }
+  &--closed {
+    background: $status-success-bg;
+    color: $status-success;
+
+    html[data-tracker-theme="dark"] & { color: #4ade80; }
+  }
+
+  // These two use a hand-picked darker shade of their status color rather than the status color
+  // itself, for contrast against the *pale* $status-*-bg tint underneath in light mode -- a shade
+  // that goes the wrong way once that same rgba() tint reads as a much darker patch over a dark
+  // card, so dark mode swaps in a lighter shade of the same hue instead.
+  &--severity-blocker, &--severity-critical {
+    background: $status-error-bg;
+    color: #b42318;
+
+    html[data-tracker-theme="dark"] & { color: #f87171; }
+  }
+  &--severity-major {
+    background: $status-warning-bg;
+    color: #a15c00;
+
+    html[data-tracker-theme="dark"] & { color: #f0a742; }
+  }
+  &--severity-minor, &--severity-ui_only, &--severity-suggestion, &--severity-not_sure {
+    background: var(--t-fill); color: var(--t-text-secondary);
+  }
+}
+
+.tracker-pagination { display: flex; justify-content: center; margin-top: $space-6; }
+.tracker-empty { padding: 52px 16px; background: var(--t-surface); border: 1px solid var(--t-border); border-radius: $radius-card; }
+
+.tracker-back-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: $space-2;
+  color: var(--t-text-muted);
+  font-size: $text-sm;
+  font-weight: 600;
+  text-decoration: none;
+  &:hover { color: $teal-text; }
+}
+
+.tracker-detail-heading {
+  margin-bottom: $space-5;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: $space-5;
+
+  h1 {
+    margin: $space-3 0 $space-2;
+    color: var(--t-text-primary);
+    font-size: clamp(24px, 4vw, 34px);
+    line-height: 1.25;
+    letter-spacing: -0.03em;
+  }
+
+  p { margin: 0; color: var(--t-text-muted); font-size: $text-sm; }
+
+  &__id { display: flex; align-items: center; gap: $space-2; flex-wrap: wrap; }
+  &__id > span:first-child { font-weight: 800; color: var(--t-text-secondary); }
+}
+
+.tracker-status-control {
+  flex: 0 0 190px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  label { color: var(--t-text-muted); font-size: $text-xs; font-weight: 700; }
+  .ant-select { width: 100%; }
+  .ant-select-selector { min-height: $touch-target !important; align-items: center; border-radius: $radius-control !important; }
+}
+
+.tracker-detail-card {
+  padding: clamp(20px, 3vw, 28px);
+  margin-bottom: $space-4;
+}
+
+.tracker-description {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  color: var(--t-text-primary);
+  font-size: $text-md;
+  line-height: 1.7;
+}
+
+.tracker-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-5;
+
+  div { min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+  span { color: var(--t-text-muted); font-size: $text-xs; }
+  strong { color: var(--t-text-primary); font-size: $text-sm; overflow-wrap: anywhere; }
+}
+
+.tracker-evidence-link { color: $teal-text; font-weight: 700; text-decoration: none; }
+.tracker-evidence-link:hover { color: $teal-dark; text-decoration: underline; }
+
+.tracker-access-card {
+  width: min(460px, 100%);
+  padding: clamp(28px, 6vw, 48px);
+  text-align: center;
+
+  .tracker-brand-mark { margin: 0 auto $space-4; }
+  h1 { margin: 0 0 $space-3; font-size: 30px; letter-spacing: -0.03em; }
+  p { margin: 0; color: var(--t-text-secondary); line-height: $leading-normal; }
+  .tracker-access-hint { display: block; margin-top: $space-4; color: var(--t-text-faint); font-size: $text-xs; }
+}
+
+@media (max-width: 767px) {
+  .tracker-header {
+    position: static;
+    min-height: auto;
+    padding: 14px 16px 0;
+    grid-template-columns: 1fr auto;
+    gap: 12px;
+  }
+
+  .tracker-brand small { display: none; }
+  .tracker-user__role, .tracker-reset { display: none; }
+
+  .tracker-nav {
+    grid-column: 1 / -1;
+    order: 3;
+    height: 46px;
+    gap: $space-4;
+    border-top: 1px solid var(--t-fill);
+
+    a { min-width: 0; flex: 1; }
+  }
+
+  .tracker-content { padding: 28px 16px 48px; }
+
+  .tracker-page-heading--row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tracker-page-heading--row .tracker-button { width: 100%; }
+
+  .tracker-form-footer {
+    margin: $space-5 -20px -20px;
+    padding: $space-4 20px;
+    flex-direction: column;
+    align-items: stretch;
+
+    .ant-btn { width: 100%; }
+  }
+
+  .tracker-success-actions { flex-direction: column; }
+  .tracker-success-actions > * { width: 100%; }
+
+  .tracker-filter-bar { flex-direction: column; }
+  .tracker-filter-bar .tracker-filter-search,
+  .tracker-filter-bar .tracker-filter-select {
+    width: 100%;
+    min-width: 0;
+    flex: none;
+  }
+
+  .tracker-issue-card { padding: $space-4; }
+  .tracker-issue-card__top { flex-direction: column; }
+  .tracker-issue-card__pills { justify-content: flex-start; }
+
+  .tracker-detail-heading { align-items: stretch; flex-direction: column; }
+  .tracker-status-control { flex-basis: auto; width: 100%; }
+  .tracker-detail-grid { grid-template-columns: 1fr 1fr; gap: $space-4; }
+}
+
+@media (max-width: 480px) {
+  .tracker-user__name { max-width: 110px; overflow: hidden; text-overflow: ellipsis; }
+  .tracker-detail-grid { grid-template-columns: 1fr; }
+  .tracker-issue-card__meta span::after { display: none; }
+}
+
+.tracker-draft-note {
+  margin-bottom: $space-4;
+  padding: 10px 12px;
+  border: 1px solid var(--t-border);
+  border-radius: $radius-control;
+  background: var(--t-fill);
+  color: $neutral-600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+  font-size: $text-xs;
+
+  button {
+    border: 0;
+    padding: 4px 6px;
+    background: transparent;
+    color: $teal-text;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+}
+
+.tracker-screenshot-field {
+  margin-bottom: $space-5;
+}
+
+.tracker-screenshot-label {
+  margin-bottom: 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: $space-3;
+
+  span {
+    color: var(--t-text-primary);
+    font-size: $text-sm;
+    font-weight: 700;
+  }
+
+  small {
+    color: var(--t-text-muted);
+    font-size: $text-xs;
+  }
+}
+
+.tracker-screenshot-dropzone {
+  min-height: 112px;
+  padding: $space-5;
+  border: 1.5px dashed var(--t-border-strong);
+  border-radius: $radius-card;
+  background: var(--t-fill);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color $duration-fast $ease-std, background $duration-fast $ease-std;
+
+  strong {
+    color: var(--t-text-secondary);
+    font-size: $text-sm;
+  }
+
+  span {
+    color: var(--t-text-muted);
+    font-size: $text-xs;
+  }
+
+  &:hover,
+  &:focus,
+  &.is-dragging {
+    outline: none;
+    border-color: $clrThird;
+    background: $teal-subtle;
+  }
+
+  &.is-disabled {
+    opacity: 0.6;
+    pointer-events: none;
+  }
+}
+
+.tracker-screenshot-error {
+  margin-top: 7px;
+  color: $status-error;
+  font-size: $text-xs;
+}
+
+.tracker-screenshot-previews {
+  margin-top: $space-3;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+}
+
+.tracker-screenshot-preview {
+  position: relative;
+  min-width: 0;
+  border: 1px solid var(--t-border);
+  border-radius: $radius-control;
+  overflow: hidden;
+  background: var(--t-surface);
+
+  img {
+    width: 100%;
+    height: 112px;
+    display: block;
+    object-fit: cover;
+    background: var(--t-fill);
+  }
+
+  > span {
+    display: block;
+    padding: 7px 9px;
+    overflow: hidden;
+    color: $neutral-600;
+    font-size: 11px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  button {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 28px;
+    height: 28px;
+    border: 0;
+    border-radius: 50%;
+    background: rgba(26, 29, 33, 0.82);
+    color: $white;
+    display: grid;
+    place-items: center;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+}
+
+.tracker-attachment-result {
+  margin: $space-4 auto 0;
+  max-width: 540px;
+  padding: 10px 12px;
+  border-radius: $radius-control;
+  font-size: $text-sm;
+
+  &.is-uploading {
+    background: $status-info-bg;
+    color: $teal-text;
+  }
+
+  &.is-success {
+    background: $status-success-bg;
+    color: $status-success;
+  }
+
+  &.is-error {
+    background: $status-error-bg;
+    color: #b42318;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-3;
+    text-align: left;
+  }
+}
+
+.tracker-button.is-disabled {
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.tracker-evidence-grid {
+  margin-bottom: $space-4;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: $space-3;
+}
+
+.tracker-evidence-image {
+  min-width: 0;
+  border: 1px solid var(--t-border);
+  border-radius: $radius-control;
+  overflow: hidden;
+  background: var(--t-fill);
+  color: inherit;
+  text-decoration: none;
+
+  &:hover {
+    color: inherit;
+    border-color: $clrThird;
+  }
+
+  // antd's <Image> wraps the real <img> in its own .ant-image element, which defaults to
+  // inline-block/intrinsic sizing -- without this, the thumbnail grid loses the fixed-height,
+  // fill-the-cell look the plain <img> version had.
+  .ant-image {
+    display: block;
+    width: 100%;
+  }
+
+  img,
+  .ant-image img {
+    display: block;
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    background: var(--t-fill);
+    cursor: zoom-in;
+  }
+
+  span {
+    display: block;
+    padding: 8px 10px;
+    overflow: hidden;
+    color: $neutral-600;
+    font-size: $text-xs;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.is-unavailable {
+    min-height: 120px;
+    padding: $space-4;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    span { padding: 0; white-space: normal; }
+    small { margin-top: 4px; color: var(--t-text-faint); }
+  }
+}
+
+.tracker-evidence-warning {
+  margin-bottom: $space-3;
+  color: $status-warning;
+  font-size: $text-xs;
+}
+
+.tracker-evidence-grid + .tracker-evidence-link {
+  display: inline-flex;
+  margin-top: $space-2;
+}
+
+.tracker-similar-issues {
+  margin-bottom: $space-4;
+  padding: $space-3 $space-4;
+  border: 1px solid var(--t-border);
+  border-radius: $radius-control;
+  background: var(--t-surface-alt);
+}
+
+.tracker-similar-issues__title {
+  margin: 0 0 $space-2;
+  font-size: $text-xs;
+  font-weight: 600;
+  color: var(--t-text-muted);
+}
+
+.tracker-similar-issues__list {
+  display: flex;
+  flex-direction: column;
+  gap: $space-2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: $space-2;
+    flex-wrap: wrap;
+    font-size: $text-sm;
+  }
+
+  a {
+    font-weight: 600;
+  }
+}
+
+.tracker-similar-issues__location {
+  color: var(--t-text-faint);
+}
+
+// A sitewide rule (.ant-select-focused { box-shadow: none !important }) strips antd's own focus
+// ring from every Select/Cascader, and the generic :focus-visible fallback lands on the tiny
+// inner search input rather than the visible pill -- so a keyboard-only user tabbing to "Where
+// did this happen?" (or any Select/date-picker on these pages) got no visible indication it was
+// focused at all. Restoring a ring on the whole control, scoped to /tracker so it can't affect
+// other pages. Three separate root classes because antd portals a Drawer's and a Popover's
+// content out to (usually) document.body -- CSS descendant matching still works fine there, it
+// just needs an ancestor class that travels with the portaled subtree, and .tracker-page doesn't
+// (it stays behind on the original in-page element).
+.tracker-page,
+.tracker-quick-drawer,
+.tracker-popover-scope {
+  .ant-select-selection-search-input:focus-visible {
+    outline: none;
+  }
+
+  .ant-select:has(.ant-select-selection-search-input:focus-visible) .ant-select-selector,
+  .ant-picker:has(input:focus-visible) {
+    outline: 2px solid $clrThird !important;
+    outline-offset: 2px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tracker-screenshot-previews,
+  .tracker-evidence-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .tracker-screenshot-preview img,
+  .tracker-evidence-image img {
+    height: auto;
+    max-height: 320px;
+  }
+
+  .tracker-attachment-result.is-error {
+    align-items: stretch;
+    flex-direction: column;
+  }
+}
+
+.tracker-resolution-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 3px 9px;
+  border-radius: $radius-pill;
+  background: var(--t-fill);
+  color: var(--t-text-secondary);
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.tracker-retest-card {
+  margin-bottom: $space-4;
+  padding: clamp(20px, 3vw, 28px);
+  border: 1px solid rgba(217, 119, 6, 0.24);
+  border-radius: $radius-card;
+  background: $status-warning-bg;
+
+  h2 {
+    margin: 0 0 6px;
+    color: var(--t-text-primary);
+    font-size: $text-md;
+  }
+
+  > div:first-child > p:not(.tracker-eyebrow) {
+    margin: 0 0 $space-4;
+    color: var(--t-text-secondary);
+    font-size: $text-sm;
+    line-height: 1.5;
+  }
+
+  textarea.ant-input {
+    background: var(--t-surface);
+    border-color: var(--t-border);
+    border-radius: $radius-control;
+  }
+}
+
+.tracker-retest-actions {
+  margin-top: $space-3;
+  display: flex;
+  justify-content: flex-end;
+  gap: $space-2;
+
+  .ant-btn {
+    min-height: $touch-target;
+    border-radius: $radius-control;
+    font-weight: 700;
+  }
+}
+
+.tracker-engineering {
+  margin-bottom: $space-4;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+  box-shadow: $elev-1;
+  overflow: hidden;
+
+  > summary {
+    min-height: 70px;
+    padding: $space-4 $space-5;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: $space-4;
+    list-style: none;
+    cursor: pointer;
+
+    &::-webkit-details-marker { display: none; }
+
+    > span:first-child {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    strong {
+      color: var(--t-text-primary);
+      font-size: $text-sm;
+    }
+
+    small {
+      color: var(--t-text-muted);
+      font-size: $text-xs;
+      line-height: 1.4;
+    }
+  }
+
+  &[open] .tracker-engineering__chevron {
+    transform: rotate(180deg);
+  }
+
+  .ant-form-item-label > label {
+    color: var(--t-text-primary);
+    font-size: $text-sm;
+    font-weight: 700;
+  }
+
+  .ant-input,
+  .ant-select-selector {
+    border-color: var(--t-border) !important;
+    border-radius: $radius-control !important;
+  }
+
+  .ant-select-single .ant-select-selector {
+    min-height: $touch-target;
+    align-items: center;
+  }
+}
+
+.tracker-engineering__chevron {
+  flex: 0 0 auto;
+  color: var(--t-text-muted);
+  transition: transform $duration-fast $ease-std;
+}
+
+.tracker-engineering__body {
+  padding: $space-5;
+  border-top: 1px solid var(--t-border);
+  background: var(--t-surface-alt);
+}
+
+.tracker-engineering__checkbox {
+  margin-top: 28px;
+}
+
+.tracker-commit-link {
+  display: inline-block;
+  margin-top: -12px;
+  margin-bottom: 16px;
+  font-size: 12px;
+}
+
+.tracker-engineering__actions {
+  display: flex;
+  justify-content: flex-end;
+
+  .ant-btn {
+    min-height: $touch-target;
+    min-width: 120px;
+    border-radius: $radius-control;
+  }
+}
+
+.tracker-activity-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.tracker-activity-item {
+  position: relative;
+  padding: 0 0 $space-4 24px;
+  display: grid;
+  grid-template-columns: 1fr;
+
+  &:last-child { padding-bottom: 0; }
+
+  &:not(:last-child)::before {
+    content: "";
+    position: absolute;
+    left: 5px;
+    top: 12px;
+    bottom: 0;
+    width: 1px;
+    background: var(--t-border);
+  }
+
+  strong {
+    display: block;
+    color: var(--t-text-primary);
+    font-size: $text-sm;
+    font-weight: 700;
+  }
+
+  small {
+    display: block;
+    margin-top: 3px;
+    color: var(--t-text-muted);
+    font-size: $text-xs;
+  }
+
+  p {
+    margin: 5px 0 0;
+    color: var(--t-text-secondary);
+    font-size: $text-sm;
+    line-height: 1.5;
+  }
+}
+
+.tracker-activity-dot {
+  position: absolute;
+  top: 5px;
+  left: 0;
+  width: 11px;
+  height: 11px;
+  border: 2px solid var(--t-surface);
+  border-radius: 50%;
+  background: $clrThird;
+  box-shadow: 0 0 0 1px var(--t-border);
+}
+
+@media (max-width: 640px) {
+  .tracker-retest-actions {
+    flex-direction: column-reverse;
+
+    .ant-btn { width: 100%; }
+  }
+
+  .tracker-engineering > summary {
+    padding: $space-4;
+  }
+
+  .tracker-engineering__body {
+    padding: $space-4;
+  }
+
+  .tracker-engineering__checkbox {
+    margin-top: 0;
+  }
+}
+
+.tracker-quick-launcher {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 900;
+  min-height: 44px;
+  padding: 0 15px;
+  border: 0;
+  border-radius: 999px;
+  background: $neutral-900;
+  color: $white;
+  box-shadow: $elev-3;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-size: $text-sm;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+
+  &:hover,
+  &:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: $elev-4;
+    outline: none;
+  }
+}
+
+.tracker-quick-drawer {
+  .ant-drawer-header {
+    padding: 18px 22px;
+    border-bottom-color: var(--t-border);
+  }
+
+  .ant-drawer-title {
+    color: var(--t-text-primary);
+    font-weight: 700;
+  }
+
+  .ant-drawer-body {
+    padding: 22px;
+    background: var(--t-fill);
+  }
+
+  .ant-form {
+    padding: 20px;
+    background: var(--t-surface);
+    border: 1px solid var(--t-border);
+    border-radius: $radius-card;
+  }
+
+  .ant-form-item { margin-bottom: $space-4; }
+
+  .ant-form-item-label > label {
+    color: var(--t-text-primary);
+    font-size: $text-sm;
+    font-weight: 700;
+  }
+
+  .ant-input,
+  .ant-select-selector,
+  .ant-cascader-picker {
+    border-radius: $radius-control !important;
+  }
+
+  .ant-select-single .ant-select-selector {
+    min-height: $touch-target;
+    align-items: center;
+  }
+}
+
+.tracker-quick-context {
+  margin-bottom: $space-4;
+  padding: 10px 12px;
+  border-radius: $radius-control;
+  background: $teal-subtle;
+  color: $teal-text;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: $text-xs;
+
+  span { font-weight: 700; }
+  small { color: $neutral-600; }
+}
+
+.tracker-quick-grid {
+  display: grid;
+  gap: $space-3;
+
+  &--three { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+
+.tracker-quick-submit {
+  margin: $space-5 -20px -20px;
+  padding: $space-4 20px;
+  border-top: 1px solid var(--t-border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-3;
+
+  span { color: var(--t-text-muted); font-size: $text-xs; }
+
+  .ant-btn {
+    min-height: $touch-target;
+    border-radius: $radius-control;
+    font-weight: 700;
+  }
+}
+
+.tracker-quick-success {
+  padding: 40px 24px;
+  text-align: center;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+
+  .tracker-success-mark { margin: 0 auto $space-4; }
+
+  h2 {
+    margin: 0 0 $space-2;
+    color: var(--t-text-primary);
+    font-size: 30px;
+    letter-spacing: -0.03em;
+  }
+
+  > p:not(.tracker-eyebrow) {
+    margin: 0 auto;
+    max-width: 380px;
+    color: var(--t-text-muted);
+    line-height: $leading-normal;
+  }
+
+  &__actions {
+    margin-top: $space-5;
+    display: flex;
+    justify-content: center;
+    gap: $space-3;
+  }
+}
+
+.tracker-source-context {
+  margin-bottom: $space-5;
+  padding-bottom: $space-5;
+  border-bottom: 1px solid var(--t-border);
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: $space-3 $space-5;
+
+  div {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  span {
+    color: var(--t-text-muted);
+    font-size: $text-xs;
+  }
+
+  strong,
+  a {
+    color: var(--t-text-primary);
+    font-size: $text-xs;
+    font-weight: 600;
+    overflow-wrap: anywhere;
+  }
+
+  a { color: $teal-text; }
+
+  &__wide { grid-column: 1 / -1; }
+}
+
+@media (max-width: 767px) {
+  .tracker-quick-launcher {
+    right: 12px;
+    bottom: 74px;
+    min-height: 42px;
+    padding: 0 13px;
+  }
+
+  .tracker-quick-grid--three { grid-template-columns: 1fr; }
+
+  .tracker-quick-submit {
+    flex-direction: column;
+    align-items: stretch;
+
+    .ant-btn { width: 100%; }
+  }
+
+  .tracker-quick-success__actions {
+    flex-direction: column;
+
+    .ant-btn { width: 100%; }
+  }
+
+  .tracker-source-context { grid-template-columns: 1fr; }
+  .tracker-source-context__wide { grid-column: auto; }
+}
+
+.tracker-logs-wrap { max-width: 1180px; margin: 0 auto; }
+.tracker-logs-live { display:flex; align-items:center; gap:10px; min-height:$touch-target; padding:0 14px; background:var(--t-surface); border:1px solid var(--t-border); border-radius:$radius-control; color:$neutral-600; font-size:$text-xs; font-weight:700; flex-wrap: wrap; }
+.tracker-logs-deploy-chip { padding: 2px 8px; border-radius: $radius-control; background: var(--t-fill); color: var(--t-text-muted); font-weight: 600; }
+.tracker-log-detail__actions { display:flex; gap:$space-2; flex-wrap:wrap; margin: $space-3 0; }
+.tracker-log-controls { margin-bottom:$space-3; padding:$space-3; background:var(--t-surface); border:1px solid var(--t-border); border-radius:$radius-card; display:flex; align-items:center; gap:$space-3;
+  &__selects { display:flex; gap:$space-2; .ant-select { min-width:158px; } }
+  .ant-select-selector,.ant-input,.ant-input-affix-wrapper,.ant-btn { min-height:$touch-target; border-radius:$radius-control !important; }
+  .ant-select-single .ant-select-selector { align-items:center; }
+}
+.tracker-log-search { min-width:0; flex:1; display:flex; gap:$space-2; .ant-input-affix-wrapper { flex:1; } }
+.tracker-log-summary { min-height:32px; margin-bottom:$space-3; display:flex; align-items:center; flex-wrap:wrap; gap:6px $space-4; color:var(--t-text-muted); font-size:$text-xs;
+  strong { color:var(--t-text-primary); }
+  span:not(:last-child)::after { content:"·"; margin-left:$space-4; color: var(--t-text-faint); }
+}
+.tracker-log-list { display:flex; flex-direction:column; gap:8px; }
+.tracker-log-card { width:100%; padding:15px 17px; border:1px solid var(--t-border); border-radius:$radius-card; background:var(--t-surface); box-shadow:$elev-1; color:inherit; text-align:left; cursor:pointer; transition:border-color $duration-fast $ease-std, box-shadow $duration-fast $ease-std;
+  &:hover,&:focus-visible { outline:none; border-color:var(--t-border-strong); box-shadow:$elev-2; }
+  &__top { display:flex; align-items:center; gap:$space-2; min-width:0; }
+  &__message { margin-top:9px; color:var(--t-text-primary); font-size:$text-sm; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+  &__meta { margin-top:10px; display:flex; flex-wrap:wrap; gap:5px $space-3; color:var(--t-text-muted); font-size:11px;
+    span:not(:last-child)::after { content:"·"; margin-left:$space-3; color: var(--t-text-faint); }
+  }
+}
+.tracker-log-severity { display:inline-flex; align-items:center; min-height:24px; padding:3px 8px; border-radius:$radius-pill; background:var(--t-fill); color:var(--t-text-secondary); font-size:10px; font-weight:800; letter-spacing:.035em; white-space:nowrap;
+  &--emergency,&--alert,&--critical,&--error {
+    background:$status-error-bg; color:#b42318;
+    html[data-tracker-theme="dark"] & { color:#f87171; }
+  }
+  &--warning {
+    background:$status-warning-bg; color:#a15c00;
+    html[data-tracker-theme="dark"] & { color:#f0a742; }
+  }
+  &--notice,&--info {
+    background:$status-info-bg; color:$teal-text;
+    html[data-tracker-theme="dark"] & { background:rgba($clrThird, 0.16); color:#6fd7e0; }
+  }
+}
+.tracker-log-time { flex:0 0 auto; color:var(--t-text-muted); font-size:$text-xs; }
+.tracker-log-logger { min-width:0; overflow:hidden; color:var(--t-text-muted); font-family:monospace; font-size:11px; text-overflow:ellipsis; white-space:nowrap; }
+.tracker-log-load-more { margin-top:$space-5; display:flex; justify-content:center; .ant-btn { min-height:$touch-target; min-width:130px; border-radius:$radius-control; } }
+.tracker-log-drawer { .ant-drawer-header { padding:18px 22px; border-bottom-color:var(--t-border); } .ant-drawer-body { padding:22px; background:var(--t-fill); } }
+.tracker-log-detail {
+  &__headline { padding:$space-4; border:1px solid var(--t-border); border-radius:$radius-card; background:var(--t-surface); display:flex; align-items:flex-start; gap:$space-3;
+    strong { min-width:0; color:var(--t-text-primary); font-size:$text-sm; line-height:1.55; white-space:pre-wrap; overflow-wrap:anywhere; }
+  }
+  &__grid { margin-top:$space-3; padding:$space-4; border:1px solid var(--t-border); border-radius:$radius-card; background:var(--t-surface); display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:$space-4;
+    div { min-width:0; display:flex; flex-direction:column; gap:4px; } span { color:var(--t-text-muted); font-size:$text-xs; } strong { color:var(--t-text-primary); font-size:$text-xs; overflow-wrap:anywhere; }
+  }
+  &__section { margin-top:$space-3; padding:$space-4; border:1px solid var(--t-border); border-radius:$radius-card; background:var(--t-surface);
+    code { display:block; padding:10px 12px; border-radius:$radius-control; background:var(--t-fill); color:var(--t-text-secondary); font-size:12px; overflow-wrap:anywhere; white-space:pre-wrap; }
+    pre { max-height:420px; margin:0; padding:12px; border-radius:$radius-control; background:#111827; color:#f3f4f6; font-size:11px; line-height:1.55; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+  }
+  &__section-heading { margin-bottom:8px; display:flex; align-items:center; justify-content:space-between; gap:$space-3; span { color:$neutral-600; font-size:$text-xs; font-weight:700; } }
+}
+.tracker-log-raw { margin-top:$space-3; border:1px solid var(--t-border); border-radius:$radius-card; background:var(--t-surface); overflow:hidden;
+  summary { padding:13px 15px; color:var(--t-text-secondary); font-size:$text-xs; font-weight:700; cursor:pointer; }
+  pre { max-height:480px; margin:0; padding:14px; border-top:1px solid var(--t-border); background:#111827; color:#f3f4f6; font-size:11px; line-height:1.55; overflow:auto; white-space:pre-wrap; overflow-wrap:anywhere; }
+}
+@media (max-width:860px) { .tracker-log-controls { align-items:stretch; flex-direction:column; } .tracker-log-controls__selects { width:100%; .ant-select { min-width:0; flex:1; } } }
+@media (max-width:640px) { .tracker-logs-live { width:100%; justify-content:space-between; } .tracker-log-controls__selects { flex-direction:column; .ant-select { width:100%; } } .tracker-log-search { flex-wrap:wrap; .ant-input-affix-wrapper { flex-basis:100%; } .ant-btn { flex:1; } } .tracker-log-card__top { flex-wrap:wrap; } .tracker-log-detail__headline { flex-direction:column; } .tracker-log-detail__grid { grid-template-columns:1fr; } }
+
+.tracker-log-summary--stale {
+  color: #a15c00;
+}
+
+.tracker-log-refresh-state {
+  color: $teal-text;
+  font-weight: 700;
+}
+
+.tracker-log-card__stack {
+  margin-left: auto;
+  padding: 2px 7px;
+  border-radius: $radius-pill;
+  background: var(--t-fill);
+  color: $neutral-600;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+.tracker-log-detail-loading {
+  margin-top: $space-3;
+  padding: $space-4;
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+  background: var(--t-surface);
+}
+
+.tracker-log-controls {
+  position: sticky;
+  top: 84px;
+  z-index: 20;
+  box-shadow: 0 6px 18px rgba(15, 23, 42, .04);
+}
+
+@media (max-width: 640px) {
+  .tracker-log-controls {
+    position: static;
+  }
+
+  .tracker-log-card__stack {
+    margin-left: 0;
+  }
+}
+
+// Issues list: saved views + bulk selection.
+.tracker-list-toolbar {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin: -$space-2 0 $space-4;
+  flex-wrap: wrap;
+
+  .ant-btn { min-height: $touch-target; }
+}
+
+.tracker-saved-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $space-4;
+  min-width: 160px;
+}
+
+.tracker-saved-item__delete {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: 0;
+  border-radius: $radius-control;
+  background: transparent;
+  color: var(--t-text-muted);
+  cursor: pointer;
+
+  &:hover { color: #cf1322; background: rgba(207, 19, 34, 0.1); }
+}
+
+.tracker-issue-card--selectable { cursor: pointer; }
+
+.tracker-issue-card--selected {
+  border-color: $clrThird;
+  box-shadow: 0 0 0 2px rgba(38, 186, 199, 0.35);
+}
+
+.tracker-issue-card__check {
+  flex: 0 0 auto;
+  margin-right: $space-3;
+  pointer-events: none;
+}
+
+.tracker-bulk-bar {
+  position: sticky;
+  bottom: $space-4;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-3;
+  margin-top: $space-5;
+  padding: $space-3 $space-4;
+  background: var(--t-surface);
+  border: 1px solid var(--t-border-strong, var(--t-border));
+  border-radius: $radius-card;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+
+  .ant-btn, .ant-select-selector { min-height: $touch-target; }
+}
+
+.tracker-bulk-bar__count {
+  color: var(--t-text-muted);
+  font-size: $text-sm;
+  font-weight: 600;
+}
+
+.tracker-bulk-bar__select { min-width: 180px; flex: 1 1 180px; }
+
+@media (max-width: 640px) {
+  .tracker-bulk-bar { bottom: 0; border-radius: $radius-card $radius-card 0 0; }
+}
+
+// ---- Logs overhaul: header actions, health strip, card structure, triage, report, digest ----
+.tracker-logs-live {
+  padding: 0;
+  background: none;
+  border: 0;
+  gap: $space-2;
+
+  .ant-btn { min-height: $touch-target; border-radius: $radius-control; }
+}
+
+.tracker-health {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: $space-3;
+  margin-bottom: $space-3;
+}
+
+.tracker-health__note {
+  grid-column: span 3;
+  display: flex;
+  align-items: center;
+  padding: 0 $space-4;
+  border: 1px dashed var(--t-border);
+  border-radius: $radius-card;
+  color: var(--t-text-muted);
+  font-size: $text-sm;
+}
+
+.tracker-health__card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: $space-3 $space-4;
+  min-height: 68px;
+  text-align: left;
+  color: var(--t-text-primary);
+  background: var(--t-surface);
+  border: 1px solid var(--t-border);
+  border-radius: $radius-card;
+  font: inherit;
+
+  strong { font-size: 24px; line-height: 1.1; font-weight: 800; letter-spacing: -0.01em; }
+  span { color: var(--t-text-muted); font-size: $text-xs; font-weight: 600; }
+
+  &:is(button):not(:disabled) { cursor: pointer; &:hover { border-color: var(--t-border-strong); } }
+  &:is(button):disabled { cursor: default; }
+  &--danger { border-color: rgba(220, 38, 38, 0.45); strong { color: #dc2626; } }
+  &--warn { border-color: rgba(217, 119, 6, 0.45); }
+  &--deploy strong { font-family: monospace; font-size: 20px; }
+}
+
+.tracker-health__verdict {
+  margin-left: $space-2;
+  padding: 1px 7px;
+  border-radius: $radius-pill;
+  font-style: normal;
+  font-size: 10px;
+  font-weight: 800;
+  &--ok { background: rgba(22, 163, 74, 0.16); color: #15803d; }
+  &--warn { background: rgba(217, 119, 6, 0.18); color: #b45309; }
+  &--danger { background: rgba(220, 38, 38, 0.18); color: #dc2626; }
+  html[data-tracker-theme="dark"] &--ok { color: #4ade80; }
+  html[data-tracker-theme="dark"] &--warn { color: #fbbf24; }
+  html[data-tracker-theme="dark"] &--danger { color: #f87171; }
+}
+
+.tracker-log-controls {
+  flex-wrap: wrap;
+  .ant-segmented { min-height: $touch-target; }
+  .ant-segmented-item { min-height: $touch-target - 8px; line-height: $touch-target - 8px; }
+}
+
+.tracker-log-toggles {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: $space-2 $space-4;
+  flex-basis: 100%;
+  color: var(--t-text-muted);
+  font-size: $text-xs;
+  font-weight: 600;
+  label { display: inline-flex; align-items: center; gap: 6px; min-height: 32px; }
+}
+
+// The card is now an article holding a full-width button plus a footer, so a menu can live inside
+// it without nesting one interactive element in another.
+.tracker-log-card {
+  padding: 0;
+  cursor: default;
+  position: relative;
+  overflow: hidden;
+  border-left: 3px solid var(--t-border);
+
+  &--error, &--critical, &--alert, &--emergency { border-left-color: #dc2626; }
+  &--warning { border-left-color: #d97706; }
+  &--regression { box-shadow: 0 0 0 1px rgba(220, 38, 38, 0.45), $elev-1; }
+
+  &__main {
+    display: block;
+    width: 100%;
+    padding: 15px 17px;
+    border: 0;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    font: inherit;
+    cursor: pointer;
+    &:focus-visible { outline: 2px solid $clrThird; outline-offset: -2px; }
+  }
+
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    padding: 0 $space-3 $space-3;
+    margin-top: -4px;
+  }
+}
+
+.tracker-log-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 2px 8px;
+  border-radius: $radius-pill;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  background: var(--t-fill);
+  color: var(--t-text-secondary);
+  &--danger { background: rgba(220, 38, 38, 0.16); color: #dc2626; }
+  &--success { background: rgba(22, 163, 74, 0.16); color: #15803d; }
+  &--warning { background: rgba(217, 119, 6, 0.16); color: #b45309; }
+  html[data-tracker-theme="dark"] &--success { color: #4ade80; }
+  html[data-tracker-theme="dark"] &--warning { color: #fbbf24; }
+  html[data-tracker-theme="dark"] &--danger { color: #f87171; }
+}
+
+.tracker-log-chip {
+  padding: 1px 7px;
+  border-radius: $radius-pill;
+  background: var(--t-fill);
+  color: var(--t-text-secondary);
+  font-family: monospace;
+  font-size: 11px;
+  &::after { content: none !important; }
+}
+
+.tracker-log-deploy-divider {
+  display: flex;
+  align-items: center;
+  gap: $space-3;
+  margin: $space-2 0;
+  color: var(--t-text-muted);
+  font-size: $text-xs;
+  font-weight: 700;
+  &::before, &::after { content: ""; flex: 1; height: 1px; background: var(--t-border-strong, var(--t-border)); }
+  code { padding: 1px 6px; border-radius: 4px; background: var(--t-fill); color: var(--t-text-primary); }
+}
+
+.tracker-report__lead { color: var(--t-text-muted); font-size: $text-sm; margin-bottom: $space-4; }
+.tracker-report__options { display: flex; flex-direction: column; gap: $space-3; margin-bottom: $space-4; }
+.tracker-report__label { display: block; margin-bottom: 6px; color: var(--t-text-muted); font-size: $text-xs; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; }
+.tracker-report__toggle { display: inline-flex; align-items: center; gap: $space-2; color: var(--t-text-secondary); font-size: $text-sm; }
+.tracker-report__note { margin-bottom: $space-3; }
+.tracker-report__progress { display: grid; gap: $space-2; margin-bottom: $space-3; color: var(--t-text-muted); font-size: $text-sm; }
+.tracker-report__stats {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: $space-2; margin-bottom: $space-3;
+  div { padding: $space-3; border: 1px solid var(--t-border); border-radius: $radius-control; text-align: center; }
+  strong { display: block; font-size: 22px; line-height: 1.1; }
+  span { color: var(--t-text-muted); font-size: $text-xs; }
+  .is-alert { border-color: rgba(220, 38, 38, 0.5); strong { color: #dc2626; } }
+}
+.tracker-report__actions { display: flex; flex-wrap: wrap; gap: $space-2; margin-bottom: $space-3; .ant-btn { min-height: $touch-target; } }
+.tracker-report__preview {
+  summary { cursor: pointer; color: var(--t-text-muted); font-size: $text-sm; }
+  pre { max-height: 260px; overflow: auto; margin-top: $space-2; padding: $space-3; border: 1px solid var(--t-border); border-radius: $radius-control; background: var(--t-fill); font-size: 11px; white-space: pre-wrap; }
+}
+
+.tracker-triage__field {
+  display: block; margin-bottom: $space-3;
+  span { display: block; margin-bottom: 6px; font-weight: 700; font-size: $text-sm; }
+  small { display: block; margin-top: 6px; color: var(--t-text-muted); }
+}
+
+.tracker-digest {
+  h3 { margin: $space-4 0 $space-2; font-size: $text-sm; text-transform: uppercase; letter-spacing: 0.04em; color: var(--t-text-muted); }
+}
+.tracker-digest__range { color: var(--t-text-muted); font-size: $text-sm; }
+.tracker-digest__quiet { padding: $space-3 $space-4; border-radius: $radius-card; background: rgba(22, 163, 74, 0.12); color: var(--t-text-primary); font-weight: 600; }
+.tracker-digest__item { padding: $space-3; margin-bottom: $space-2; border: 1px solid var(--t-border); border-radius: $radius-control; background: var(--t-surface); }
+.tracker-digest__message { font-size: $text-sm; overflow-wrap: anywhere; margin-bottom: 6px; }
+.tracker-digest__meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px $space-3; color: var(--t-text-muted); font-size: 11px; code { font-size: 11px; } }
+
+@media (max-width: 860px) {
+  // The controls stack in a column here, where a flex-basis would become a HEIGHT.
+  .tracker-log-search, .tracker-log-toggles, .tracker-log-controls__selects { flex: 0 0 auto; width: 100%; }
+  .tracker-health { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tracker-health__note { grid-column: span 1; padding: $space-3; }
+}
+
+@media (max-width: 640px) {
+  .tracker-logs-live {
+    width: 100%;
+    justify-content: stretch;
+    .ant-btn { flex: 1; }
+    // Primary action gets its own row; Download and the compact More button share the next one.
+    > .ant-btn-primary { flex: 1 1 100%; }
+    .ant-btn-icon-only { flex: 0 0 $touch-target; width: $touch-target; }
+  }
+  .tracker-health__card strong { font-size: 20px; }
+  .tracker-report__stats { grid-template-columns: repeat(2, 1fr); }
+  .tracker-log-card__actions { justify-content: stretch; .ant-btn { width: 100%; min-height: $touch-target; } }
+  .tracker-log-controls .ant-segmented { width: 100%; .ant-segmented-item { flex: 1; text-align: center; } }
+}
+
+.tracker-issue-logs {
+  &__head { display: flex; align-items: baseline; justify-content: space-between; gap: $space-3; flex-wrap: wrap; margin-bottom: $space-3;
+    h2 { margin: 0; font-size: $text-md; }
+    span { color: var(--t-text-muted); font-size: $text-xs; }
+  }
+  &__list { list-style: none; margin: 0; padding: 0; display: grid; gap: $space-2;
+    li { display: flex; align-items: flex-start; gap: $space-2; flex-wrap: wrap; }
+    code { flex: 0 0 auto; font-size: 11px; color: var(--t-text-muted); }
+  }
+  &__message { flex: 1 1 260px; min-width: 0; overflow-wrap: anywhere; font-size: $text-sm; small { color: var(--t-text-muted); } }
+  &__empty { color: var(--t-text-muted); font-size: $text-sm; margin: $space-2 0 0; }
+}
+
+// The search box was left with whatever width the selects did not use; give it a real share.
+@media (min-width: 861px) {
+  .tracker-log-search {
+    flex: 1 1 440px;
+    min-width: 0;
+    .ant-input-affix-wrapper { flex: 1 1 160px; min-width: 120px; }
+  }
+  .tracker-log-controls__selects { flex: 0 0 auto; align-items: center; }
+}

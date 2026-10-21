@@ -1,0 +1,230 @@
+@import "./variables.scss";
+
+$learn-mobile-footer-height: 4rem !default;
+$learn-mobile-bp: 767px !default;
+
+$primary: $clrThird;
+$primary-dark: $teal-dark;
+$learn-warning: $status-warning;
+$learn-success: $status-success;
+$text: $neutral-900;
+$text-muted: $neutral-500;
+$text-subtle: $neutral-400;
+$bg: $white;
+$bg-page: $neutral-100;
+$border: $neutral-200;
+$radius: 8px;
+$radius-lg: 12px;
+
+$s1: 8px;
+$s2: 16px;
+$s3: 24px;
+$s4: 32px;
+$s6: 48px;
+$touch-min: 44px;
+
+// ---------------------------------------------------------------------------
+// Page layout
+// ---------------------------------------------------------------------------
+.learn-quizzes-page {
+  width: 100%;
+  max-width: 100%;
+  padding: 0;
+  padding-bottom: calc(#{$learn-mobile-footer-height} + $s3 + env(safe-area-inset-bottom, 0px));
+  box-sizing: border-box;
+  overflow-x: hidden;
+
+  @media (min-width: #{$learn-mobile-bp + 1}) {
+    padding: 0;
+    padding-bottom: $s6;
+  }
+
+  &.learn-placements-dashboard {
+    background: $bg-page;
+  }
+
+  &--placements {
+    background: $bg-page;
+    min-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar { display: none; }
+  }
+}
+
+// Was `background: $bg-page` — correct back when this div was the outer scrollable page. Now
+// it's ordinary content inside PageShell's white ln-module-card (see
+// src/components/Common/PageShell.jsx), so the gray showed through as a visible band.
+
+// ---------------------------------------------------------------------------
+// Quiz grid section — table floats directly on gray background
+// ---------------------------------------------------------------------------
+.learn-quizzes-grid-section {
+  margin-top: $s3;
+
+  @media (max-width: $learn-mobile-bp) {
+    margin-top: $s2;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Empty state — override Ant table default
+// ---------------------------------------------------------------------------
+.learn-quizzes-empty {
+  padding: $s6 $s4;
+  text-align: center;
+}
+
+.learn-quizzes-grid-section .ant-empty {
+  padding: $s6 $s3;
+
+  .ant-empty-description {
+    font-size: 14px;
+    line-height: 1.4;
+    color: $text-muted;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Mobile adjustments
+// ---------------------------------------------------------------------------
+.learn-quizzes-page .ln-module-card,
+.learn-quizzes-page .learn-placements-dashboard__card {
+  border: 1px solid $border;
+  border-radius: $radius-lg;
+  background: $bg;
+}
+
+.learn-quizzes-grid-section .ln-table,
+.learn-quizzes-grid-section .ant-table-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+@media (max-width: $learn-mobile-bp) {
+  // Was `.learn-placements-dashboard__body` — that wrapper div was removed when this page moved
+  // onto PageShell (src/components/Common/PageShell.jsx); its content wrapper is `.learn-projects__content`.
+  .learn-quizzes-page .learn-projects__content,
+  .teacher-quizzes-page .learn-projects__content {
+    padding: $s2;
+  }
+
+  .learn-quizzes-page .listing-page-header {
+    gap: $s2;
+  }
+
+  .learn-quizzes-page .listing-page-header__right,
+  .learn-quizzes-page .listing-page-create-btn {
+    width: 100%;
+  }
+
+  .learn-quizzes-page .listing-page-header__metrics {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .learn-quizzes-page .ln-module-card,
+  .learn-quizzes-page .learn-placements-dashboard__card {
+    border-radius: 14px;
+  }
+
+  .ln-quiz-create-drawer .ant-drawer-content-wrapper,
+  .ln-drawer-widget-root .ln-quiz-create-drawer .ant-drawer-content-wrapper {
+    width: calc(100vw - 24px) !important;
+    max-width: 520px !important;
+    height: calc(100dvh - 140px) !important;
+    top: 64px !important;
+    right: 12px !important;
+    bottom: 76px !important;
+    border-radius: 18px !important;
+    overflow: hidden;
+  }
+
+  .ln-quiz-create-drawer .ant-drawer-body,
+  .ln-quiz-create-drawer .ln-com-drw {
+    overflow-y: auto !important;
+    max-height: 100%;
+  }
+
+  .ln-quiz-create-drawer .ln-editor-wraper,
+  .ln-quiz-create-drawer .ql-container,
+  .ln-quiz-create-drawer .ql-editor {
+    max-width: 100%;
+  }
+
+  .ln-quiz-create-drawer .quiz-dynamic-options,
+  .ln-quiz-create-drawer .ant-checkbox-group,
+  .ln-quiz-create-drawer .ant-radio-group {
+    min-width: 0;
+    max-width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ln-table-filter,
+  .ln-table-filter .ant-table-wrapper {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  .learn-quiz-card,
+  .ln-quiz-submission-page,
+  .ln-quiz-submission-page-inner,
+  .ln-quiz-submission-main,
+  .ln-quiz-submission-content {
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .ln-quiz-submission-layout {
+    display: flex;
+    flex-direction: column;
+    gap: $s2;
+  }
+
+  .ln-quiz-submission-aside,
+  .ln-quiz-submission-main {
+    width: 100% !important;
+  }
+
+  .ln-quiz-submission-radios {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding-bottom: 4px;
+  }
+
+  .ln-quiz-submission-radios .ant-radio-wrapper {
+    flex: 0 0 auto;
+    max-width: 220px;
+    white-space: nowrap;
+  }
+
+  .ln-quiz-submission-header {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: $s1;
+  }
+
+  .ln-quiz-submission-back-btn {
+    width: 100%;
+    min-height: $touch-min;
+  }
+
+  .ln-quiz-submission-card,
+  .ln-quiz-submission-summary {
+    overflow: hidden;
+  }
+
+  .ln-quiz-submission-card__row,
+  .ln-quiz-submission-card__answers {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+}

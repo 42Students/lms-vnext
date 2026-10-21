@@ -1,0 +1,15 @@
+.attendance-table .ant-table-cell {
+  color: #54505D;
+}
+.attendance-table .present {
+  background-color: #E4F8F1;
+}
+.attendance-table .present span {
+  color: #8CC1B4;
+}
+.attendance-table .absent {
+  background-color: #FFF1F1;
+}
+.attendance-table .absent span {
+  color: #FF7576;
+}/*# sourceMappingURL=attendance.css.map */

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN">
+    <Properties>
+        <Property name="consoleJsonPattern">{"timestamp":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","severity":"%p","service":"lms","stage":"${env:STAGE:-unknown}","logger":"%enc{%c{1.}}{JSON}","thread":"%enc{%t}{JSON}","requestId":"%enc{%X{requestId}}{JSON}","commit":"${env:GIT_COMMIT_SHA:-unknown}","userId":"%enc{%X{userId}}{JSON}","userType":"%enc{%X{userType}}{JSON}","facultyType":"%enc{%X{facultyType}}{JSON}","collegeId":"%enc{%X{collegeId}}{JSON}","organizationId":"%enc{%X{organizationId}}{JSON}","impersonatorId":"%enc{%X{impersonatorId}}{JSON}","httpMethod":"%enc{%X{httpMethod}}{JSON}","httpPath":"%enc{%X{httpPath}}{JSON}","httpStatus":"%enc{%X{httpStatus}}{JSON}","durationMs":"%enc{%X{durationMs}}{JSON}","message":"%enc{%m}{JSON}","exception":"%enc{%throwable}{JSON}"}%n</Property>
+    </Properties>
+
+    <Appenders>
+        <!--
+            GKE collects container stdout. Emit exactly one JSON object per event so Cloud
+            Logging can parse severity/request context as structured fields. Never add query
+            strings, bodies, auth headers, cookies or tokens to this pattern.
+        -->
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${consoleJsonPattern}"/>
+        </Console>
+
+        <!-- Keep a human-readable rolling file for local/container troubleshooting. -->
+        <RollingFile name="RollingFile"
+                     fileName="./logs/lms.log"
+                     filePattern="./logs/&#36;&#36;{date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <Pattern>%d{ISO8601} %-5p [%X{requestId}] [%X{httpMethod} %X{httpPath}] %c{1.} [%t]: %m%n%throwable</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="10 MB"/>
+                <TimeBasedTriggeringPolicy/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- Root logger: only warnings/errors from frameworks and third-party libraries. -->
+        <Root level="WARN">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+
+        <!-- Application code remains INFO; request outcome logs are emitted only for selected
+             client errors, 5xx responses and unhandled exceptions. -->
+        <Logger name="com._42students" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+
+        <Logger name="org.springframework.boot.actuate" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Logger name="org.springframework.security" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Logger name="org.springframework" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Logger name="org.hibernate" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Logger name="org.apache.catalina" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+        <Logger name="org.apache.tomcat" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Logger>
+    </Loggers>
+</Configuration>
