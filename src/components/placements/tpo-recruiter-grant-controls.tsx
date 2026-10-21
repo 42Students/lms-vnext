@@ -116,14 +116,14 @@ export function TpoRecruiterRevoke({ grantId, expectedUpdatedAt, displayName }: 
   return <div className="mt-2 min-w-0 space-y-2">
     <Button type="button" variant="secondary" disabled={busy} onClick={() => setConfirmOpen(true)}
       className="min-h-11 w-full text-xs md:w-auto md:min-h-9">
-      {busy ? "Revoking..." : "Revoke access"}
+      {busy ? "Removing…" : "Remove"}
     </Button>
     {error && !confirmOpen ? <InlineNotice tone="error" message={error}/> : null}
     {notice ? <InlineNotice tone="success" message={notice}/> : null}
     <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
       title={"Remove "+displayName+"\'s access?"}
       description="They will no longer be able to use this college\'s recruiter workspace."
-      confirmLabel="Revoke access" confirmVariant="danger" pending={busy} onConfirm={()=>void revoke()}>
+      confirmLabel="Remove" confirmVariant="danger" pending={busy} onConfirm={()=>void revoke()}>
       <label className="grid gap-2 text-sm font-semibold text-body">
         Reason for removal (optional)
         <Input type="text" maxLength={500} value={reason} disabled={busy}
@@ -173,12 +173,13 @@ export function TpoRecruiterExtend({grantId,expectedUpdatedAt,displayName,ended=
   </label>
   <Button type="button" variant="secondary" disabled={busy} onClick={()=>setConfirmOpen(true)}
    className="min-h-11 md:min-h-9 text-xs">
-   {busy?"Saving…":ended?"Give access again":"Extend"}
+   {busy?"Saving…":ended?"Give access again…":"Extend…"}
   </Button>
   {error&&!confirmOpen?<div className="md:col-span-2"><InlineNotice tone="error" message={error}/></div>:null}
   {notice?<div className="md:col-span-2"><InlineNotice tone="success" message={notice}/></div>:null}
   <ConfirmDialog open={confirmOpen} onOpenChange={value=>{if(!busy)setConfirmOpen(value);}}
-    title={"Extend "+displayName+"\'s access by "+months+" months?"}
+    title={(ended?"Give access again to ":"Extend access for ")+displayName+" by "+months+" months?"}
+    description={"Access will be extended by "+months+" months from the later of the existing expiry or today. Existing company and college scope are retained."}
     confirmLabel={ended?"Give access again":"Extend"} confirmVariant="primary"
     pending={busy} onConfirm={()=>void extend()}>
     {error?<InlineNotice tone="error" message={error}/>:null}
