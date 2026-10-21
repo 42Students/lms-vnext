@@ -122,3 +122,5 @@
 - G2-13-007-055 | College academic lookup owner | Roster query errors surface safe Retry but academic-choice lookup for new student registration is handled by separate register page. Add explicit partial-form degraded state there rather than displaying empty college programs as real data.
 
 - G2-13-007-010/G2-6-001-011/013 | Identity/permission owner | Deliberately do not expose learner/mobile/gender in directory rows without need-to-know grants. Contact cards enforce per-person access; protected gender and mobile must remain out of roster list until approved scoped policy.
+
+- G2-16-005-019/022/051/072/074/076 | Cloud Logging provider and release-marker owner | Explorer now has redacted detail drawer, bounded NDJSON, initial skeleton, accessible Run query and filtered summary. True 7-day/31-day ranges and 50/page need backend provider pagination beyond its 12/page, 24-hour schema and verified namespace mapping. Portable provider-ID permalinks require exact ID lookup rather than first filtered page; never invent deploy markers.

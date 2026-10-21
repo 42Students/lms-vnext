@@ -19,6 +19,12 @@ import {Dialog} from "@/components/ui/dialog";
 type Entry={id:string;time:string;event:string;message:string;path:string;requestId:string|null;component:string|null;
   knownErrorId?:string|null;muted?:boolean|null};
 type Page={configured:boolean;items:Entry[];nextPageToken:string|null};
+function displayTime(raw:string){
+ const value=new Date(raw);
+ return Number.isFinite(value.getTime())?value.toLocaleString("en-IN",{
+  timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+  hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:false})+" IST":"Unknown time";
+}
 function mergeEntries(existing:Entry[],incoming:Entry[]):Entry[]{
   const seen=new Set(existing.map(item=>item.id));
   return [...existing,...incoming.filter(item=>{if(seen.has(item.id))return false;seen.add(item.id);return true;})];
@@ -83,6 +89,8 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   const [pending,setPending]=useState(false);
   const [notice,setNotice]=useState("");
   const [reportOpen,setReportOpen]=useState(false);
+  const [detailEntry,setDetailEntry]=useState<Entry|null>(null);
+  const [initialLoading,setInitialLoading]=useState(true);
   const [exporting,setExporting]=useState(false);
   const [muteTarget,setMuteTarget]=useState<{id:string;muted:boolean}|null>(null);
   const [muteReason,setMuteReason]=useState("");
@@ -104,7 +112,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     return [...groups.values()];
   },[groupSimilar,items]);
   async function fetchPage(pageToken?:string):Promise<Page>{
-    const params=new URLSearchParams({windowMinutes,minimumSeverity,query:query.trim()});
+    const params=new URLSearchParams({windowMinutes,minimumSeverity,query:query.trim(),size:"12"});
     if(pageToken)params.set("pageToken",pageToken);
     return apiFetch<Page>("/api/tracker/live-logs?"+params.toString(),{cache:"no-store"});
   }
@@ -112,7 +120,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     if(locked.current||(older&&currentFilters!==appliedFilters))return;
     const loadingFilters=currentFilters;
     const generation=++fetchGeneration.current;
-    locked.current=true;setPending(true);setNotice("");
+    locked.current=true;setPending(true);setNotice("");setInitialLoading(false);
     try{
       const result=await fetchPage(older?nextPage??undefined:undefined);
       if(generation!==fetchGeneration.current||loadingFilters!==currentFiltersRef.current)return;
@@ -162,6 +170,8 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         setAppliedFilters("60|WARNING|"+initialQuery.trim());
       }catch{
         if(!abort.signal.aborted)setNotice("Live logs could not be loaded. Try again.");
+      }finally{
+        if(!abort.signal.aborted)setInitialLoading(false);
       }
     };
     void initial();
@@ -187,7 +197,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     const href=URL.createObjectURL(blob);
     const anchor=document.createElement("a");anchor.href=href;
     anchor.download=format==="csv"?"tracker-logs.csv":
-      format==="ndjson"?"tracker-logs-"+environment.toLowerCase()+".ndjson":
+      format==="ndjson"?"lms-logs_"+environment+"_"+start.toISOString().slice(0,16).replaceAll(":","-")+"_"+end.toISOString().slice(0,16).replaceAll(":","-")+".ndjson":
       "tracker-logs-for-claude.md";
     anchor.click();URL.revokeObjectURL(href);
     setNotice("Downloaded "+rows.length+" log entries."+
@@ -234,12 +244,18 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   }
   return <section className="min-w-0 space-y-4 border-b border-border pb-5" aria-label="Live logs">
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-      <div><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Live Google Cloud Logging</h2>
+      <div><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Live Logs</h2>
         <p className="mt-1 text-sm text-body leading-[22px]">Redacted log entries from the configured deployment namespace. Warning and above by default.</p>
       </div>
-      <span role="status" className="text-xs text-muted-foreground">
-        {configured===false?"Not configured":configured===true?"Live source enabled":"Checking live source"}
-      </span>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button type="button" variant="secondary" disabled={!items.length}
+          onClick={()=>setReportOpen(true)}>Report for Claude</Button>
+        <Button type="button" variant="secondary" onClick={()=>void downloadRange("ndjson")}
+          disabled={pending||exporting||configured!==true}>Download logs</Button>
+        <span role="status" className="text-xs text-muted-foreground">
+          {configured===false?"Not configured":configured===true?"Live source enabled":"Checking live source"}
+        </span>
+      </div>
     </div>
     <div className="grid min-w-0 gap-3 md:grid-cols-[max-content_max-content_minmax(0,1fr)_auto] md:items-end">
       <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:w-auto md:basis-auto leading-4 text-[13px] text-[var(--lms-neutral-400)]">Time window
@@ -254,13 +270,19 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           <option value="WARNING">Warning and above</option>
         </Select>
       </label>
-      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:min-w-44 md:basis-auto md:flex-1 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search this page
-        <Input type="search" maxLength={150} value={query} onChange={event=>setQuery(event.target.value)}
-          placeholder="Message, route, reference" className="min-h-11 w-full min-w-0 md:min-h-9"/>
+      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[length:var(--lms-font-sm)] font-semibold md:min-w-44 md:basis-auto md:flex-1 leading-4 text-[13px] text-[var(--lms-neutral-400)]">Search logs
+        <Input type="search" maxLength={200} value={query} onChange={event=>setQuery(event.target.value)}
+          placeholder="Search message, route, request ID…" className="min-h-11 w-full min-w-0 md:min-h-9"/>
       </label>
-      <Button variant="primary" type="button" onClick={()=>void load()} loading={pending} disabled={pending||exporting} className="min-h-11 w-full md:min-h-9 md:w-auto">
-        {pending?"Loading…":"Refresh newer"}
-      </Button>
+      <div className="flex flex-wrap items-center gap-2">
+        <Button type="button" variant="primary" onClick={()=>void load()}
+          loading={pending} disabled={pending||exporting}>Run query</Button>
+        <Button type="button" variant="secondary" disabled={pending||exporting}
+          onClick={()=>{if(currentFilters===appliedFilters)void load();
+            else setNotice("Run query to apply changed filters before refreshing.");}}>
+          Refresh newer
+        </Button>
+      </div>
     </div>
     <div className="flex min-w-0 flex-wrap items-center gap-5 text-sm">
       <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
@@ -276,7 +298,12 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         Last loaded {lastSuccessfulAt.toLocaleTimeString("en-IN",{timeZone:"Asia/Kolkata"})} IST
       </span>:null}
     </div>
-    <Disclosure title="Export and report tools" className="border-t border-border" contentClassName="px-2 pb-3">
+    <div className="flex flex-wrap items-center justify-between gap-3 border-y border-border py-2 text-xs text-muted-foreground" role="status">
+      <span>{items.length.toLocaleString("en-IN")} events shown{nextPage?" · More available":""}{stale?" · Stale":""}</span>
+      <span>Configured deployment namespace · Updated {lastSuccessfulAt?displayTime(lastSuccessfulAt.toISOString()):"not yet"}</span>
+    </div>
+    <p className="text-xs text-muted-foreground">A release marker is required for deployment separators. Cloud Logging pages are limited to twelve redacted records; downloads disclose truncation.</p>
+    <Disclosure title="More — Export and report tools" className="border-t border-border" contentClassName="px-2 pb-3">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
         {exporting?"Exporting…":"Download logs"}
@@ -295,17 +322,23 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
     {stale?<Button type="button" variant="secondary" onClick={()=>void load()} disabled={pending}>
       Retry
     </Button>:null}
-    {items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
+    {initialLoading?<div aria-live="polite" aria-busy="true" className="space-y-3">
+      {[0,1,2].map(i=><div key={i} className="h-20 animate-pulse rounded-lg bg-[var(--lms-neutral-50)]"/>)}
+    </div>:items.length?<ol aria-live="polite" aria-busy={pending} className="min-w-0 divide-y divide-border border-y border-border">
       {grouped.map(({item,count})=><li key={item.id} id={"log-"+item.requestId}
         className="min-w-0 py-3 text-sm">
-        <Disclosure summaryClassName="min-w-0 break-words [overflow-wrap:anywhere]" title={new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" · "+item.event+" · "+item.path+(count>1?" · "+count+" similar":"")}>
+        <Disclosure summaryClassName="min-w-0 break-words [overflow-wrap:anywhere]" title={displayTime(item.time)+" · "+item.event+" · "+item.path+(count>1?" · "+count+" similar":"")}>
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
             <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>void copy(trackerLogMarkdown([item]))}
              >Copy for Claude</Button>
-            <Button variant="ghost" className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event))}
-             >Copy permalink</Button>
+            {item.id.includes(":")?<><Button variant="ghost" type="button"
+              className="min-h-11 w-full sm:w-auto md:min-h-9"
+              onClick={()=>setDetailEntry(item)}>Full details</Button>
+              <Button variant="ghost" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9"
+                onClick={()=>void copy(window.location.origin+"/tracker/logs?query="+encodeURIComponent(item.requestId??item.event)+"&detail="+encodeURIComponent(item.id))}>Copy permalink</Button></>:
+              <span className="text-xs text-muted-foreground">Full detail is unavailable without a provider reference.</span>}
             <Link href={"/tracker?context="+encodeURIComponent(
               [item.event,item.path,item.message,"Reference: "+(item.requestId??"none")].join("\n").slice(0,450))}
               className="inline-flex min-h-11 w-full items-center font-semibold text-primary-text underline sm:w-auto md:min-h-9 focus-visible:underline">Report this</Link>
@@ -322,10 +355,26 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
           </div>
         </Disclosure>
       </li>)}
-    </ol>:<EmptyState title="No live errors loaded" description="Load or refresh live logs to see the latest authorized error events."/>}
+    </ol>:<EmptyState title={configured===false?"Cloud Logging is not configured":"No matching errors"}
+      description={nextPage?"More entries may exist. Continue search.":"Load or refresh logs for the selected filters."}/>}
     {nextPage&&currentFilters===appliedFilters?<Button variant="secondary" type="button" onClick={()=>void load(true)} loading={pending} disabled={pending||exporting} className="min-h-11 w-full sm:w-auto md:min-h-9">
-      Load older
+      {items.length?"Load older":"Continue search"}
     </Button>:null}
+    <Dialog open={detailEntry!==null} onOpenChange={open=>{if(!open)setDetailEntry(null);}}
+      title={detailEntry?displayTime(detailEntry.time)+" · "+detailEntry.event:"Log details"}
+      description="Redacted Cloud Logging details"
+      className="!left-auto !right-0 !top-0 !h-[var(--lms-visual-height)] !max-h-[var(--lms-visual-height)] !w-[min(100vw,760px)] !max-w-[760px] !translate-x-0 !translate-y-0 !rounded-none"
+      footer={<Button type="button" variant="secondary" onClick={()=>setDetailEntry(null)}>Close</Button>}>
+      {detailEntry?<div className="space-y-3 text-sm">
+        <p className="break-words font-semibold">{detailEntry.path}</p>
+        <p className="whitespace-pre-wrap break-words">{detailEntry.message}</p>
+        <dl className="grid gap-2">
+          <div><dt className="font-semibold">Component</dt><dd>{detailEntry.component??"Not recorded"}</dd></div>
+          <div><dt className="font-semibold">Request ID</dt><dd className="break-all">{detailEntry.requestId??"Not recorded"}</dd></div>
+          <div><dt className="font-semibold">Provider reference</dt><dd className="break-all">{detailEntry.id}</dd></div>
+        </dl>
+      </div>:null}
+    </Dialog>
     <ConfirmDialog open={muteTarget!==null} onOpenChange={next=>{if(!next&&!mutating)setMuteTarget(null);}}
       title={muteTarget?.muted?"Unmute this known error?":"Mute this known error?"}
       description="This updates the stored error signature for every matching log. It does not erase log records."
