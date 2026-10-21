@@ -248,7 +248,7 @@ export const placementRecruiterCollegeGrants = pgTable(
     verificationStatus: varchar("verification_status", { length: 24 })
       .notNull()
       .default("PENDING"),
-    revokeReason: varchar("revoke_reason", { length: 500 }),
+    revokeReason: text("revoke_reason"),
     /** Optional migration-only, never used to authorize privileges. */
     legacyImportMetadata: jsonb("legacy_import_metadata").$type<{
       accessId?: number;
@@ -291,6 +291,10 @@ export const placementRecruiterCollegeGrants = pgTable(
       .on(table.recruiterUserId, table.validUntil)
       .where(sql`${table.status} = 'ACTIVE'`),
     check("placement_recruiter_grants_version_ck", sql`${table.version} > 0`),
+    check(
+      "placement_recruiter_grant_revoke_reason_length_ck",
+      sql`${table.revokeReason} is null or length(${table.revokeReason}) <= 500`,
+    ),
     check(
       "placement_recruiter_grant_verification_ck",
       sql`${table.verificationStatus} in ('PENDING', 'VERIFIED', 'REJECTED')`,
@@ -583,6 +587,10 @@ export const placementJobs = pgTable(
       table.seasonId,
       table.status,
     ),
+    /** Efficient deadline sweeps: only live published drives are eligible. */
+    index("placement_jobs_published_deadline_idx")
+      .on(table.applicationDeadline)
+      .where(sql`${table.status} = 'PUBLISHED' and ${table.applicationDeadline} is not null`),
     index("placement_jobs_relationship_idx").on(
       table.companyRelationshipId,
     ),
@@ -780,6 +788,8 @@ export const placementCandidateAcademicEvidence = pgTable(
     undergraduatePctBasisPoints: integer(
       "undergraduate_pct_basis_points",
     ),
+    /** For actual PG qualifications only; NULL means unprovided, not zero. */
+    postgraduatePctBasisPoints: integer("postgraduate_pct_basis_points"),
     gapYears: integer("gap_years"),
     isLateralEntry: boolean("is_lateral_entry")
       .notNull()
@@ -823,7 +833,8 @@ export const placementCandidateAcademicEvidence = pgTable(
       sql`(${table.tenthPctBasisPoints} is null or ${table.tenthPctBasisPoints} between 0 and 10000)
         and (${table.twelfthPctBasisPoints} is null or ${table.twelfthPctBasisPoints} between 0 and 10000)
         and (${table.diplomaPctBasisPoints} is null or ${table.diplomaPctBasisPoints} between 0 and 10000)
-        and (${table.undergraduatePctBasisPoints} is null or ${table.undergraduatePctBasisPoints} between 0 and 10000)`,
+        and (${table.undergraduatePctBasisPoints} is null or ${table.undergraduatePctBasisPoints} between 0 and 10000)
+        and (${table.postgraduatePctBasisPoints} is null or ${table.postgraduatePctBasisPoints} between 0 and 10000)`,
     ),
     check(
       "placement_candidate_academic_evidence_gap_ck",
@@ -881,6 +892,8 @@ export const placementJobEligibilityPolicies = pgTable(
     minUndergraduatePctBasisPoints: integer(
       "min_undergraduate_pct_basis_points",
     ),
+    /** PG eligibility only when the learner has relevant postgraduate evidence. */
+    minPostgraduatePctBasisPoints: integer("min_postgraduate_pct_basis_points"),
     /** P-S2-02: minimum percentage throughout (basis points; 75.25% = 7525). */
     minPctThroughoutBasisPoints: integer(
       "min_pct_throughout_basis_points",
@@ -931,7 +944,8 @@ export const placementJobEligibilityPolicies = pgTable(
       sql`(${table.minTenthPctBasisPoints} is null or ${table.minTenthPctBasisPoints} between 0 and 10000)
         and (${table.minTwelfthPctBasisPoints} is null or ${table.minTwelfthPctBasisPoints} between 0 and 10000)
         and (${table.minDiplomaPctBasisPoints} is null or ${table.minDiplomaPctBasisPoints} between 0 and 10000)
-        and (${table.minUndergraduatePctBasisPoints} is null or ${table.minUndergraduatePctBasisPoints} between 0 and 10000)`,
+        and (${table.minUndergraduatePctBasisPoints} is null or ${table.minUndergraduatePctBasisPoints} between 0 and 10000)
+        and (${table.minPostgraduatePctBasisPoints} is null or ${table.minPostgraduatePctBasisPoints} between 0 and 10000)`,
     ),
     check(
       "placement_job_policy_pct_throughout_ck",
