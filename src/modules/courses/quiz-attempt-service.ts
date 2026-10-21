@@ -3,6 +3,8 @@ import {
   asc,
   eq,
   inArray,
+  isNull,
+  or,
   sql,
   desc,
 } from "drizzle-orm";
@@ -15,6 +17,7 @@ import {
   quizOptions,
   quizQuestions,
   collegeMemberships,
+  learnerProfiles,
   membershipRoles,
   users,
 } from "@/db/schema";
@@ -471,7 +474,12 @@ export async function getMyQuizAttempts(
   context: RequestContext,
   quizIdInput: string,
   deliveryIdInput: string,
+  page = 1,
 ) {
+  // The legacy unpaged reader is now bounded without changing the existing
+  // page-one return type (an array).
+  if (!Number.isInteger(page) || page < 1 || page > 100000)
+    throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
   await requireOwnCourseLearnerRead(context);
   const quizId =
     courseQuizIdSchema.parse(quizIdInput);
@@ -517,13 +525,12 @@ export async function getMyQuizAttempts(
         ),
       ),
     )
-    .orderBy(
-      asc(quizAttempts.attemptNumber),
-    );
+    .orderBy(desc(quizAttempts.attemptNumber),desc(quizAttempts.id))
+    .limit(100).offset((page-1)*100);
 
   const reveal = mayRevealLearnerResults(
     quiz,
-    attempts.length,
+    await currentAttemptCount(quizId,context.membership.id),
   );
 
   const answerRows =
@@ -531,16 +538,13 @@ export async function getMyQuizAttempts(
       ? await getDb()
           .select()
           .from(quizAttemptAnswers)
-          .where(
-            inArray(
-              quizAttemptAnswers.attemptId,
-              attempts.map(
-                (attempt) => attempt.id,
-              ),
-            ),
-          )
+          .where(and(
+            inArray(quizAttemptAnswers.attemptId,attempts.map(attempt=>attempt.id)),
+            or(eq(quizAttemptAnswers.legacyDeleted,false),isNull(quizAttemptAnswers.legacyDeleted)),
+          ))
           .orderBy(
-            asc(quizAttemptAnswers.createdAt),
+            sql`(select q.sequence from quiz_questions q where q.id = ${quizAttemptAnswers.questionId}) asc`,
+            asc(quizAttemptAnswers.id),
           )
       : [];
 
@@ -572,7 +576,7 @@ export async function getMyQuizAttempts(
         pointsPossible:
           answer.pointsPossible,
         selectedOptionIds:
-          answer.selectedOptionIds,
+          answer.selectedOptionIds??[],
         ...(reveal
           ? {
               correct: answer.correct,
@@ -647,6 +651,7 @@ export async function listQuizAttempts(
       createdAt: quizAttempts.createdAt,
       learnerDisplayName: users.displayName,
       learnerEmail: users.email,
+      learnerRollNumber:learnerProfiles.rollNumber,
     })
     .from(quizAttempts)
     .innerJoin(
@@ -658,11 +663,9 @@ export async function listQuizAttempts(
     )
     .innerJoin(
       users,
-      eq(
-        users.id,
-        collegeMemberships.userId,
-      ),
+      eq(users.id,collegeMemberships.userId),
     )
+    .leftJoin(learnerProfiles,eq(learnerProfiles.membershipId,collegeMemberships.id))
     .where(
       and(
         eq(quizAttempts.quizId, quizId),
@@ -672,10 +675,7 @@ export async function listQuizAttempts(
         ),
       ),
     )
-    .orderBy(
-      asc(quizAttempts.submittedAt),
-      asc(quizAttempts.id),
-    )
+    .orderBy(desc(quizAttempts.submittedAt),desc(quizAttempts.id))
     .limit(26)
     .offset((page-1)*25);
 
@@ -684,16 +684,13 @@ export async function listQuizAttempts(
       ? await getDb()
           .select()
           .from(quizAttemptAnswers)
-          .where(
-            inArray(
-              quizAttemptAnswers.attemptId,
-              attempts.map(
-                (attempt) => attempt.id,
-              ),
-            ),
-          )
+          .where(and(
+            inArray(quizAttemptAnswers.attemptId,attempts.map(attempt=>attempt.id)),
+            or(eq(quizAttemptAnswers.legacyDeleted,false),isNull(quizAttemptAnswers.legacyDeleted)),
+          ))
           .orderBy(
-            asc(quizAttemptAnswers.createdAt),
+            sql`(select q.sequence from quiz_questions q where q.id = ${quizAttemptAnswers.questionId}) asc`,
+            asc(quizAttemptAnswers.id),
           )
       : [];
 
@@ -716,7 +713,9 @@ export async function listQuizAttempts(
     // Faculty graders may review names, but learner contact stays masked
     // unless college/course administration access has been established.
     learnerEmail:contactPermitted?attempt.learnerEmail:null,
-    answers:byAttempt.get(attempt.id) ?? [],
+    answers:(byAttempt.get(attempt.id) ?? []).map(answer=>({
+      ...answer,selectedOptionIds:answer.selectedOptionIds??[],
+    })),
   }));
 }
 
@@ -748,7 +747,8 @@ export async function resolveOwnQuizDeliveryId(
 /** Global learner own-attempt index, bounded and personally scoped. Scores
  * and answer keys are deliberately absent until quiz result release is
  * checked by getMyQuizAttempts on the detail endpoint. */
-export async function listOwnQuizAttemptHistoryIndex(context:RequestContext){
+export async function listOwnQuizAttemptHistoryIndex(context:RequestContext,page=1){
+ if(!Number.isInteger(page)||page<1||page>100000)throw new CoursesServiceError("QUIZ_ATTEMPT_CONFLICT");
  await requireOwnCourseLearnerRead(context);
  if(!context.membership)throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
  const deliveries=await listLearnerCourseDeliveries(context,{includeHistorical:true});
@@ -767,7 +767,8 @@ export async function listOwnQuizAttemptHistoryIndex(context:RequestContext){
   .innerJoin(courseLearningPaths,eq(courseLearningPaths.id,courseLessons.learningPathId))
   .where(and(eq(quizAttempts.membershipId,context.membership.id),
     inArray(quizAttempts.deliveryId,[...allowed.keys()])))
-  .orderBy(desc(quizAttempts.createdAt),desc(quizAttempts.id)).limit(201);
+  .orderBy(desc(quizAttempts.createdAt),desc(quizAttempts.id))
+  .limit(201).offset((page-1)*200);
  const matched=rows.filter(row=>
   allowed.get(row.deliveryId)===row.offeringId&&
   (!row.quizDeliveryId||row.quizDeliveryId===row.deliveryId));
@@ -776,7 +777,7 @@ export async function listOwnQuizAttemptHistoryIndex(context:RequestContext){
   title:row.title,attemptNumber:row.attemptNumber,
   submittedAt:row.submittedAt?.toISOString()??null,
   createdAt:row.createdAt.toISOString(),
- })),hasMore:rows.length>200};
+ })),hasMore:rows.length>200,page,pageSize:200};
 }
 
 

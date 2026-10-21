@@ -4,6 +4,7 @@ import {
   eq,
   isNull,
   or,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import {
@@ -73,29 +74,41 @@ export async function listCourseFacultyAcrossDeliveries(
   const courseId=validUuid?key:null;
   const slug=/^[a-z0-9][a-z0-9-]{0,127}$/.test(key)?key:null;
   if(!courseId&&!slug)throw new CoursesServiceError("COURSE_NOT_FOUND");
-  const [match]=await getDb().select({id:courses.id})
-   .from(courses)
-   .where(or(
+  // Legacy slug lookup must stay in the currently selected college.
+  const actingCollegeId=context.adminScope?.collegeId??context.membership?.collegeId;
+  if(!actingCollegeId)throw new CoursesServiceError("COURSE_NOT_FOUND");
+  const matches=await getDb().select({id:courses.id})
+   .from(courses).innerJoin(departments,eq(departments.id,courses.departmentId))
+   .where(and(eq(departments.collegeId,actingCollegeId),
+    or(
      ...(courseId?[eq(courses.id,courseId)]:[]),
      ...(slug?[eq(courses.slug,slug)]:[]),
-   )).limit(1);
-  if(!match)throw new CoursesServiceError("COURSE_NOT_FOUND");
-  const scoped=await loadCourseScope(match.id,includeEnded);
+    ))).limit(2);
+  if(matches.length!==1)throw new CoursesServiceError("COURSE_NOT_FOUND");
+  const [match]=matches;
+  const scoped=await loadCourseScope(match!.id,includeEnded);
   requirePermission(context,"courses.read",{
    collegeId:scoped.collegeId,organizationId:scoped.organizationId,
   });
   const conditions=[eq(courseOfferings.courseId,scoped.id),
     eq(departments.collegeId,scoped.collegeId),
-    eq(colleges.organizationId,scoped.organizationId)];
+    eq(colleges.organizationId,scoped.organizationId),
+    eq(collegeMemberships.collegeId,scoped.collegeId)];
   if(!includeEnded){
    conditions.push(isNull(courseTeachingAssignments.endedAt));
    conditions.push(isNull(courseSectionDeliveries.endedAt));
    conditions.push(eq(collegeMemberships.status,"ACTIVE"));
    conditions.push(eq(users.platformStatus,"ACTIVE"));
+   conditions.push(eq(courseOfferings.status,"ACTIVE"));
+   conditions.push(eq(courses.status,"ACTIVE"));
   }
   return getDb().select({
+    id:courseTeachingAssignments.id,
     membershipId:courseTeachingAssignments.membershipId,
     displayName:users.displayName,
+    departmentId:departments.id,courseId:courses.id,
+    courseName:courses.name,courseSlug:courses.slug,
+    courseCode:courses.code,courseImageUrl:courses.imageUrl,
     deliveryId:courseTeachingAssignments.deliveryId,
     role:courseTeachingAssignments.role,
     startedAt:courseTeachingAssignments.startedAt,
@@ -112,7 +125,9 @@ export async function listCourseFacultyAcrossDeliveries(
      eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
    .innerJoin(users,eq(users.id,collegeMemberships.userId))
    .where(and(...conditions))
-   .orderBy(asc(users.displayName),asc(courseTeachingAssignments.startedAt));
+   .orderBy(
+     sql`case ${courseTeachingAssignments.role} when 'PRIMARY' then 0 when 'CO_TEACHER' then 1 else 2 end`,
+     asc(users.displayName),asc(courseTeachingAssignments.id));
 }
 
 /** Exact legacy copy for the adapter presenting an authorized course mapping. */
@@ -170,6 +185,9 @@ export async function listCourseTeachingAssignments(
         courseTeachingAssignments.membershipId,
       displayName: users.displayName,
       role: courseTeachingAssignments.role,
+      courseSlug:courses.slug,courseName:courses.name,
+      courseCode:courses.code,courseImageUrl:courses.imageUrl,
+      departmentId:departments.id,
       startedAt:
         courseTeachingAssignments.startedAt,
       endedAt: courseTeachingAssignments.endedAt,
@@ -205,8 +223,8 @@ export async function listCourseTeachingAssignments(
       eq(courseSectionDeliveries.sectionId, delivery.sectionId),
     ))
     .orderBy(
-      asc(courseTeachingAssignments.role),
-      asc(users.displayName),
+      sql`case ${courseTeachingAssignments.role} when 'PRIMARY' then 0 when 'CO_TEACHER' then 1 else 2 end`,
+      asc(users.displayName),asc(courseTeachingAssignments.id),
     );
 }
 
@@ -353,6 +371,7 @@ export async function createCourseTeachingAssignment(
         subjectLabel: input.role,
         summary: "Faculty teaching assignment created",
         metadata: {
+          legacyAuditAction:"FACULTY_COURSE_ASSOCIATION_CREATE",
           after: {
             deliveryId: created.deliveryId,
             membershipId: created.membershipId,
@@ -467,6 +486,7 @@ export async function endCourseTeachingAssignment(
       subjectLabel: updated.role,
       summary: "Faculty teaching assignment ended",
       metadata: {
+        legacyAuditAction:"FACULTY_COURSE_ASSOCIATION_DELETE",
         before: {
           deliveryId: current.deliveryId,
           membershipId: current.membershipId,
@@ -581,7 +601,8 @@ export async function changeCourseTeachingAssignmentRole(
         collegeId:current.collegeId,organizationId:current.organizationId,
         subjectType:"course_teaching_assignment",subjectId:assignmentId,
         subjectLabel:updated.role,summary:"Faculty teaching role changed",
-        metadata:{before:{role:locked.role,membershipId:locked.membershipId},
+        metadata:{legacyAuditAction:"FACULTY_COURSE_ASSOCIATION_UPDATE",
+          before:{role:locked.role,membershipId:locked.membershipId},
           after:{role:updated.role,membershipId:updated.membershipId}},
       });
       return updated;
@@ -590,4 +611,83 @@ export async function changeCourseTeachingAssignmentRole(
     if(error instanceof CoursesServiceError)throw error;
     throw mapTeachingConstraint(error);
   }
+}
+
+/** A legacy faculty-to-course association is now a projection across actual
+ * classroom deliveries. Old ended rows remain visible only in history, never
+ * as a current course-access grant. A faculty member may view their own
+ * catalog; all other reads require scoped college authorization.
+ */
+export async function listFacultyTeachingCourseAssociations(
+ context:RequestContext,facultyMembershipId:string,includeEnded=false,
+){
+ const membership=await loadCourseMembership(facultyMembershipId);
+ if(context.membership?.id!==facultyMembershipId||includeEnded)
+  requirePermission(context,"courses.read",{
+   collegeId:membership.collegeId,organizationId:membership.organizationId,
+  });
+ const conditions=[
+  eq(courseTeachingAssignments.membershipId,facultyMembershipId),
+  eq(collegeMemberships.collegeId,membership.collegeId),
+  eq(departments.collegeId,membership.collegeId),
+ ];
+ if(!includeEnded)conditions.push(
+  isNull(courseTeachingAssignments.endedAt),
+  isNull(courseSectionDeliveries.endedAt),
+  eq(courseOfferings.status,"ACTIVE"),
+  eq(courses.status,"ACTIVE"),
+ );
+ return getDb().select({
+  assignmentId:courseTeachingAssignments.id,
+  courseId:courses.id,courseSlug:courses.slug,courseName:courses.name,
+  courseCode:courses.code,departmentId:departments.id,
+  deliveryId:courseTeachingAssignments.deliveryId,
+  role:courseTeachingAssignments.role,
+  courseImageUrl:courses.imageUrl,
+  startedAt:courseTeachingAssignments.startedAt,
+  endedAt:courseTeachingAssignments.endedAt,
+ }).from(courseTeachingAssignments)
+ .innerJoin(courseSectionDeliveries,
+  eq(courseSectionDeliveries.id,courseTeachingAssignments.deliveryId))
+ .innerJoin(courseOfferings,eq(courseOfferings.id,courseSectionDeliveries.offeringId))
+ .innerJoin(courses,eq(courses.id,courseOfferings.courseId))
+ .innerJoin(departments,eq(departments.id,courses.departmentId))
+ .innerJoin(collegeMemberships,
+  eq(collegeMemberships.id,courseTeachingAssignments.membershipId))
+ .where(and(...conditions))
+ .orderBy(asc(courses.name),asc(courseSectionDeliveries.id),
+  asc(courseTeachingAssignments.id));
+}
+
+/** Legacy many-faculty/many-course imports are resolved to their explicit
+ * live deliveries. No bulk call bypasses the per-row membership grant checks.
+ * Report partial successes so the UI can retry only failed associations. */
+export async function createTeachingAssignmentBatch(
+ context:RequestContext,rows:readonly {
+  deliveryId:string;membershipId:string;role?:"PRIMARY"|"CO_TEACHER"|"TA";
+ }[],
+){
+ if(rows.length<1||rows.length>100)
+  throw new CoursesServiceError("TEACHING_ASSIGNMENT_CONFLICT");
+ const results:Array<{index:number;assignmentId?:string;error?:string}>=[];
+ const seen=new Set<string>();
+ for(const [index,row] of rows.entries()){
+  const key=row.deliveryId+":"+row.membershipId;
+  if(seen.has(key)){
+   results.push({index,error:"TEACHING_ASSIGNMENT_CONFLICT"});continue;
+  }
+  seen.add(key);
+  try{
+   const created=await createCourseTeachingAssignment(context,{
+    deliveryId:row.deliveryId,membershipId:row.membershipId,role:row.role??"PRIMARY",
+   });
+   results.push({index,assignmentId:created.id});
+  }catch(cause){
+   if(cause instanceof CoursesServiceError){
+    results.push({index,error:cause.code});continue;
+   }
+   throw cause;
+  }
+ }
+ return {total:rows.length,created:results.filter(r=>r.assignmentId).length,results};
 }
