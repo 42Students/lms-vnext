@@ -2,6 +2,7 @@ import "server-only";
 
 import { getDb } from "@/db/client";
 import { db10Skills } from "@/db/schema/db10-skills-catalog.draft";
+import { invalidateSkillCatalogSearchCache } from "./catalog-service";
 
 export type LegacySkillSeedRow = {
   name: string;
@@ -95,5 +96,6 @@ export async function applyLegacySkillSeed(
       attempted+=batch.length;
     }
   });
+  invalidateSkillCatalogSearchCache();
   return {checked:rows.length,attempted,dryRun:false};
 }
