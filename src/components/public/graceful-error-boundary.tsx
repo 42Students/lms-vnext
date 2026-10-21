@@ -34,7 +34,7 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
     // Chat-16 accepts UUID report IDs; the visible 8-digit reference remains searchable.
     const reportId = `00000000-0000-4000-8000-0000${id}`;
     const timer = setTimeout(() => setRequestId(id), 0);
-    const kind = stale ? "stale_chunk" : "render";
+    const kind = stale ? "stale_chunk" : /(?:Auth|Session|Unauthorized)/i.test(error.name) ? "auth_lost" : "render";
     void fetch("/api/client-errors", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -89,6 +89,40 @@ export function GracefulErrorBoundary({ error, reset, homeHref = "/dashboard", l
     </section>;
   }
 
+  if(!stale) {
+    // Preserve the legacy public 500 hierarchy. The signed-in workspace has
+    // its own compact shell boundary, so only the root fallback uses this.
+    const reference=friendlyReference(requestId);
+    const safeBack=()=>{
+      try{
+        if(window.history.length>1&&document.referrer&&
+          new URL(document.referrer).origin===window.location.origin){
+          window.history.back();return;
+        }
+      }catch{/* The fallback must not trust a malformed referrer. */}
+      window.location.assign("/");
+    };
+    return <main role="alert" className="flex min-h-dvh w-full min-w-0 flex-col items-center justify-center bg-[#fafbfc] p-8 text-center">
+      <h1 className="m-0 text-[64px] font-extrabold leading-none text-[#1e9aa8]">500</h1>
+      <h2 className="mb-2 mt-4 text-[24px] font-semibold leading-[32px] text-[#1a1d21]">Server Error</h2>
+      <p className="mb-8 max-w-[420px] text-sm leading-[22px] text-[#6b7280]">
+        Something went wrong on our side. Please try again in a moment.
+      </p>
+      <div className="flex min-w-0 flex-wrap justify-center gap-3">
+        <button type="button" onClick={safeBack}
+          className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#1e9aa8] bg-white px-6 py-3 text-sm font-semibold text-[#1e9aa8] hover:bg-[#e8f7f8] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1e9aa8]">
+          Go back
+        </button>
+        <Link href="/" className="inline-flex min-h-11 items-center justify-center rounded-full border border-[#1e9aa8] bg-[#1e9aa8] px-6 py-3 text-sm font-semibold text-white no-underline hover:bg-[#178a96] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[#1e9aa8]">
+          Go to Home
+        </Link>
+      </div>
+      <Button type="button" variant="link" onClick={reset} className="mt-4 min-h-11 text-sm">
+        Try again
+      </Button>
+      {reference?<p className="mt-4 break-words text-xs text-[#6b7280]">{reference}</p>:null}
+    </main>;
+  }
   return <GracefulScreen title={title} message={message} retry={reset}
     homeHref={homeHref} requestId={requestId} />;
 }
