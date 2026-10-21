@@ -115,8 +115,12 @@ function ResourceForm({
           <Select value={metadata.resourceType}
             onChange={event=>onMetadata({...metadata,resourceType:event.target.value as ResourceMetadata["resourceType"]})}
             className="w-full">
-            {(["FILE","LINK","DOCUMENT","CODE","NOTE","ENVIRONMENT"] as const).map(value=>
-              <option key={value} value={value}>{value[0]+value.slice(1).toLowerCase()}</option>)}
+            <option value="LINK">Link / Video link</option>
+            <option value="DOCUMENT">Document (PDF / DOC / PPT)</option>
+            <option value="FILE">File</option>
+            <option value="CODE">Code</option>
+            <option value="NOTE">Note</option>
+            <option value="ENVIRONMENT">Environment</option>
           </Select>
         </label>
         <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Status
@@ -397,6 +401,10 @@ export function ProjectResourceActions({
   ) {
     event.preventDefault();
     setError(null);
+    if(!dirty){
+      showToast({tone:"info",title:"No changes to save"});
+      return;
+    }
     if (!description.trim() && !url.trim()) {
       setError(
         "Add a description or an HTTP(S) resource URL.",
@@ -425,15 +433,16 @@ export function ProjectResourceActions({
       setEditOpen(false);
       showToast({
         tone: "success",
-        title: "Project resource updated",
+        title: "Resources updated",
       });
       router.refresh();
     } catch (caught) {
-      setError(
-        caught instanceof Error
-          ? caught.message
-          : "Could not update the resource.",
-      );
+      const conflict=caught instanceof Error && /STALE_VERSION|409|conflict/i.test(caught.message);
+      const message=conflict?"Resources changed in another tab. Refresh before saving.":
+        "Failed to update resources";
+      setError(message);
+      showToast({tone:"error",title:"Failed to update resources",
+        description:conflict?message:undefined});
     } finally {
       setPending(false);
     }
