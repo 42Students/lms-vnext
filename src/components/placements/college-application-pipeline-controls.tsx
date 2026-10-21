@@ -122,6 +122,12 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    if(scopeEpoch.current===epoch)setBusy(false);
   }
  }
+ const filtered=Boolean(query.q||query.status!=="ALL"||query.source!=="ALL"||
+  query.stage!=="ALL"||query.screening!=="ALL"||query.departmentId||
+  query.programId||query.cohortId||query.appliedFrom||query.appliedTo);
+ const clearHref=basePath+"/jobs/"+encodeURIComponent(jobId)+"/applications";
+ const dialogTitle=action==="REINSTATE"?"Reinstate application?":
+  target==="REJECTED"?"Reject application?":"Move applications to "+stageLabel(target);
  const columns:DataTableColumn<Row>[]=[
   {key:"name",header:"Learner Name",mobilePriority:"primary",
    cell:row=><span className="font-semibold text-foreground">{row.name?.trim()||"—"}</span>},
@@ -184,7 +190,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    <label className="flex items-center gap-2"><Checkbox checked={allPage}
     disabled={busy||!eligible.length} onChange={e=>{setAllMatching(false);setSelected(e.target.checked?eligible.map(r=>r.id):[]);}} />
     Select all {eligible.length} on this page</label>
-   <strong>{selectedCount} selected</strong>
+   <strong role="status" aria-live="polite">{selectedCount} selected</strong>
    {total>eligible.length?<Button type="button" disabled={busy||total>3000}
     variant="secondary" onClick={()=>{setAllMatching(true);setSelected([]);}} >
     Select all {total.toLocaleString("en-IN")} matching this filter</Button>:null}
@@ -201,7 +207,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    </Select>
    <Button type="button" disabled={!selectedCount||busy} className="min-h-11 w-full sm:w-auto md:min-h-9" onClick={()=>chooseBulk(target)}
     >
-    Act on {selectedCount} selected</Button>
+    Update {selectedCount} selected</Button>
    <span className="text-body sm:col-span-2 lg:col-span-5">Changes are tracked with per-row results. Students receive in-app notifications; email is not available.</span>
   </div>
 
@@ -212,20 +218,22 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
    <Button type="button" variant="secondary" onClick={()=>router.refresh()}>Reload applications</Button>
   </div>:null}
   <DataTable columns={columns} rows={rows} getRowKey={row=>row.id}
-   caption="Applications pipeline" empty={<EmptyState title="No matching applications" description="No applications match these filters."/>}/>
+   caption="Applications pipeline" mobileMode="scroll"
+   empty={<EmptyState title={filtered?"No applications match these filters.":"No applications yet."}
+    description={filtered?"Try another search or clear the filters.":"Applicants will appear here when students apply for this drive."}
+    action={filtered?<Link href={clearHref} className="inline-flex min-h-11 items-center font-semibold text-link underline">Clear filters</Link>:undefined}/>}/>
   {detailId?<CollegeApplicationDetailDrawer key={detailId} jobId={jobId}
     applicationId={detailId} initialDetail={detailPayload??undefined} basePath={basePath}
     onClose={()=>{setDetailId(null);setDetailPayload(null);}}/>:null}
-  <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title="Application status update" dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
+  <Dialog open={dialog} onOpenChange={next=>{if(!next&&!busy)setDialog(false);}} title={dialogTitle} dismissible={!busy} footer={<div className="flex w-full min-w-0 flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:min-h-11 [&>button]:w-full md:[&>button]:min-h-9 md:[&>button]:w-auto">
     <Button type="button" disabled={busy} variant="secondary" onClick={()=>{setDialog(false);setError("");setOutcome(null);}}>Close</Button>
     <Button type="button" variant={target==="REJECTED"?"danger":"primary"}
       disabled={busy||reason.trim().length<3||!selectedCount}
       onClick={()=>void save()}>{busy?"Updating…":action==="REINSTATE"?"Reinstate "+selectedCount+" application(s)":
        target==="REJECTED"?"Reject "+selectedCount+" application(s)":"Confirm "+selectedCount+" application(s)"}</Button>
    </div>}>
-    <p className="text-base font-semibold">{action==="REINSTATE"?"Reinstate this application?":
-      target==="REJECTED"?"Reject selected applications":"Move applications to "+target}</p>
-    <p className="text-sm text-body leading-[22px]">{selectedCount} application(s) chosen. Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change.
+    <p className="text-base font-semibold">{dialogTitle}</p>
+    <p className="text-sm text-body leading-[22px]">{selectedCount} application(s) chosen. {action==="REINSTATE"?"Reinstate restores the previous stage while preserving recorded rejection history.":target==="REJECTED"?"Reject requires a recorded reason and is reversible only through Reinstate.":"Outcomes requiring real offers and joining confirmations cannot be fabricated from a pipeline change."}
       Students are notified in-app of successful actions. Changes that violate screening rules are reported as skipped.</p>
     {selected.length>5?<p id="pipeline-selected-scroll-cue" className="text-xs text-muted-foreground leading-5">More selected learners below ↓</p>:null}
    <ul tabIndex={0} role="region" aria-label="Selected applications" aria-describedby={selected.length>5?"pipeline-selected-scroll-cue":undefined}
@@ -233,7 +241,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
       <li key={id}>{rowMap.get(id)?.name??id}</li>)}
      {selected.length>8?<li>and {selected.length-8} more</li>:null}</ul>
     <label className="grid gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Reason
-     <Textarea rows={3} minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
+     <Textarea rows={3} required minLength={3} maxLength={1000} value={reason} onChange={e=>setReason(e.target.value)}
       className="w-full text-base sm:text-sm"/></label>
     {target==="ASSESSMENT"?<p className="text-sm text-body">Assessment links are managed through the drive's registered rounds. This status update does not send or save an assessment URL.</p>:null}
     {target==="INTERVIEW"?<p className="text-sm text-body">Moving a candidate to Interview does not schedule an appointment. Use Schedule Interview in the applicant row after the update.</p>:null}
