@@ -142,3 +142,73 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/college/placements/drives/page.tsx` | instances H2/B0/T0/F1/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: none
 - `src/app/(authenticated)/college/placements/interviews/page.tsx` | instances H2/B0/T0/F1/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: filter gap 12/16px→8px ×1
 - `src/app/(authenticated)/college/placements/jobs/[jobId]/applications/page.tsx` | instances H2/B0/T1/F1/h10 | spec/code: title30px/600/#172033=PageHeader; subtitle14px=14px; mobile20px=20px | fixes: filter gap 12/16px→8px ×1
+- `src/app/(authenticated)/college/placements/jobs/[jobId]/interviews/page.tsx` | instances H1/B0/T0/F1/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: filter 12/16px gap→8px ×1
+- `src/app/(authenticated)/college/placements/jobs/[jobId]/overview/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/college/placements/jobs/[jobId]/settings/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/college/placements/jobs/[jobId]/shortlisted/page.tsx` | instances H1/B0/T0/F1/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: filter 12/16px gap→8px ×1
+- `src/app/(authenticated)/college/placements/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/college/placements/readiness-by-department/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/college/placements/retention/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/college/placements/student-lookup/page.tsx` | instances H1/B0/T0/F1/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: filter 12/16px gap→8px ×1
+- `src/app/(authenticated)/college/profile/page.tsx` | instances H3/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/college/programs/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/heading; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/college/projects/create/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/projects/page.tsx` | instances H4/B0/T1/F1/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/projects/templates/[templateId]/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/projects/templates/page.tsx` | instances H2/B0/T0/F1/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/projects/workspaces/new/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/quizzes/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/resources/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/semester-courses/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/semesters/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/students/[membershipId]/page.tsx` | instances H1/B0/T0/F1/h10 | spec/code: title 30px/600/#172033 = shared PageHeader; subtitle 14px=shared; 375px title 20px=20px | fixes: none
+- `src/app/(authenticated)/college/students/import/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/students/register/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/verification/loading.tsx` | instances H1/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/verification/page.tsx` | instances H3/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/college/videos/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/dashboard/page.tsx` | instances H5/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/activity/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/activity/page.tsx` | instances H2/B0/T1/F1/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/calendar/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/calendar/page.tsx` | instances H2/B0/T2/F1/h10 | spec/code: page header 30px/600/#172033=shared; subtitle14px=shared; mobile20px=20px | fixes: 1 filter gap(s) 12/16→8px
+- `src/app/(authenticated)/hr/company/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/company/page.tsx` | instances H4/B0/T1/F1/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/company/reports/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/company/reports/page.tsx` | instances H3/B0/T1/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: header action 8px mobile/16px desktop
+- `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/conversations/[threadId]/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/conversations/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/conversations/page.tsx` | instances H2/B0/T2/F1/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: filter gap 12/16px→8px ×1
+- `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/[jobId]/messages/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/new/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/new/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/page.tsx` | instances H3/B0/T1/F1/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: filter spacing 1×12/16→8px
+- `src/app/(authenticated)/hr/drives/proposals/page.tsx` | instances H1/B0/T0/F1/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: filter spacing 1×12/16→8px
+- `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/home/page.tsx` | instances H3/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/messages/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/not-found.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/notifications/page.tsx` | instances H2/B0/T1/F1/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/jobs/[jobId]/not-found.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx` | instances H2/B0/T5/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/placements/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/profile/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/profile/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/round-results/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/hr/round-results/page.tsx` | instances H3/B0/T2/F0/h10 | spec/code: heading desktop30px/600/#172033=shared; subtitle14px=14px; phone20px=20px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/[assignmentId]/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/[assignmentId]/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allAssignments/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/[quizId]/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/[quizId]/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/allQuizzes/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/attendance/calendar/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none
+- `src/app/(authenticated)/learn/attendance/calendar/page.tsx` | instances H2/B0/T0/F1/h10 | spec/code: h1 30px/600/#172033=PageHeader 30px/600/var(--lms-heading); mobile20px=20px; subtitle14px=14px | fixes: none

@@ -384,7 +384,7 @@ export default async function HrCalendarPage({
                     Jump to date
                   </summary>
                   <form action="/hr/calendar" method="get"
-                    className="mt-3 grid min-w-0 gap-3 min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-end" aria-label="Filter recruiter calendar">
+                    className="mt-3 grid min-w-0 gap-[8px] min-[768px]:grid-cols-[minmax(0,1fr)_auto] min-[768px]:items-end" aria-label="Filter recruiter calendar">
                     <Input type="hidden" name="view" value={view} />
                     <Input type="hidden" name="category" value={category} />
                     <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">

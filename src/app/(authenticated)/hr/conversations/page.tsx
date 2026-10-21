@@ -111,7 +111,7 @@ export default async function RecruiterConversationsPage({searchParams}:{searchP
         key:grant.collegeId,label:grant.collegeName,
         href:"/hr/conversations?collegeId="+encodeURIComponent(grant.collegeId),
       }))}/>:null}
-   <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+   <form method="get" action="/hr/conversations" role="search" aria-label="Conversation search and sort" className="flex min-w-0 flex-wrap items-end gap-[8px] max-[767px]:flex-col max-[767px]:items-stretch">
     <Input type="hidden" name="collegeId" value={result.collegeId}/>
     <Input type="hidden" name="unreadOnly" value={parsed.data.unreadOnly}/>
     <Input type="hidden" name="scope" value={parsed.data.scope}/>
