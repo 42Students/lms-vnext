@@ -194,7 +194,7 @@ export function RecruiterLeadsWorkspace({
   initialAdd?: boolean;
   initialCompany?: string;
   initialFilters?: Partial<Record<"q"|"stage"|"owner"|"invite"|"status"|"source"|
-    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention"|"drives",string>>;
+    "company"|"reach"|"designation"|"nextFollowup"|"lastActivity"|"added"|"need"|"attention"|"drives"|"placed",string>>;
 }) {
   const router=useRouter();
   const [rows, setRows] = useState<Lead[]>([]);
@@ -261,7 +261,7 @@ export function RecruiterLeadsWorkspace({
   const [sourceFilter,setSourceFilter]=useState(initialFilters.source??"ALL");
   const [companyFilter,setCompanyFilter]=useState(initialFilters.company??"ALL");
   const [driveFilter,setDriveFilter]=useState(initialFilters.drives??"ALL");
-  const [placedFilter,setPlacedFilter]=useState("ALL");
+  const [placedFilter,setPlacedFilter]=useState(initialFilters.placed??"ALL");
   const sourceOptions=useMemo(()=>{
     const known=new Map<string,string>(SOURCE_CHOICES.map(([key,label])=>[key,label]));
     for(const row of rows)if(row.source&&!known.has(row.source))known.set(row.source,sourceLabel(row.source));
@@ -510,7 +510,7 @@ export function RecruiterLeadsWorkspace({
   }
 
   function updateFilter(kind:"owner"|"invite"|"status"|"source"|"query"|"company"|"designation"|
-     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention"|"drives",value:string){
+     "reach"|"nextFollowup"|"lastActivity"|"added"|"stage"|"need"|"attention"|"drives"|"placed",value:string){
    const params=new URLSearchParams(window.location.search);
    if(kind==="nextFollowup")params.delete("due");
    if(value&&value!=="ALL")params.set(kind==="query"?"q":kind,value);
@@ -523,6 +523,7 @@ export function RecruiterLeadsWorkspace({
    else if(kind==="source")setSourceFilter(value);
    else if(kind==="company")setCompanyFilter(value);
    else if(kind==="drives")setDriveFilter(value);
+   else if(kind==="placed")setPlacedFilter(value);
    else if(kind==="designation")setDesignationFilter(value==="ALL"?"":value);
    else if(kind==="reach")setReachFilter(value);
    else if(kind==="nextFollowup")setNextFilter(value);
@@ -861,7 +862,7 @@ export function RecruiterLeadsWorkspace({
               </label>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students placed
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={placedFilter}
-                  onChange={e=>setPlacedFilter(e.target.value)}>
+                  onChange={e=>updateFilter("placed",e.target.value)}>
                   <option value="ALL">Any number</option>
                   <option value="NONE">No confirmed placements</option>
                   <option value="ONE_TWO">1–2 students</option>
