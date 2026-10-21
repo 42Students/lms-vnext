@@ -15,7 +15,7 @@ import { RecruiterDriveLiveSearch } from "@/components/hr/recruiter-drive-live-s
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { hasActiveRecruiter } from "@/modules/identity/context";
-import {recruiterDriveListQuerySchema,recruiterDrivesHref} from "@/modules/placements/recruiter-drive-list-model";
+import {recruiterDriveListQuerySchema,recruiterDrivesHref,recruiterDefaultDriveView} from "@/modules/placements/recruiter-drive-list-model";
 import {searchOwnRecruiterDrives} from "@/modules/placements/recruiter-drive-search-service";
 import { recruiterVisiblePortfolioCounts } from "@/modules/placements/recruiter-portfolio-counts-service";
 import {countRecruiterAnswerableDriveRequests} from "@/modules/placements/hr-recruiter-open-change-counts-service";
@@ -110,6 +110,13 @@ export default async function HrDrivesPage({ searchParams }: { searchParams: Pro
     closed:pageResult.totals.closed+
       standaloneRequests.filter(req=>["REJECTED","CANCELLED"].includes(req.status)).length,
   };
+  // Choose the initial lifecycle from verified, employer-scoped counts.
+  // Never silently force ALL when a pending approval needs attention.
+  if(!first(raw.view)&&!first(raw.tab)){
+    const initialView=recruiterDefaultDriveView({waiting:totals.waiting,live:totals.live});
+    if(initialView!=="ALL")redirect(recruiterDrivesHref({...query.data,
+      collegeId:selectedCollege,view:initialView,page:1}));
+  }
   const viewOptions = [
     {view: "ALL", label: "All", count: totals.all},
     {view: "LIVE", label: "Live", count: totals.live},
