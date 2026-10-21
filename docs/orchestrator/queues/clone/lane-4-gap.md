@@ -49,26 +49,26 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/faculty-assignment.js`
 - [x] U009 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/submissions/index.js`
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Assignments.js`
-- [ ] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/FacultyAssignment.js`
-- [ ] U012 (FE page) `docs/legacy-source/frontend/src/pages/teacher/allAssignments.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/teacher/report/assignment/[contentId].js`
-- [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/colleges/CollegeSearchController.java`
-- [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobPreferencesRepository.java`
-- [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/SmsDeliveryLog.java`
-- [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java`
-- [ ] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java`
-- [ ] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LearnerContentProgress.java`
-- [ ] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Faculty.java`
-- [ ] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BugReport.java`
-- [ ] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoStudentsHubController.java`
-- [ ] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoCompanyController.java`
-- [ ] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/electives/ElectiveAdminController.java`
-- [ ] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SkillController.java`
-- [ ] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicPlacementsPageController.java`
-- [ ] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LectureHallController.java`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/tpo/team.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/audit.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ModuleAccess.js`
-- [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js`
-- [ ] U032 (Cross-cutting area) `cross/04: Notifications: in-app, email, SMS, push; every trigger, template, recipient rule, unsubscribe`
-- [ ] U033 (Cross-cutting area) `cross/24: Third-party integrations: SMS (Exotel), email (ZeptoMail), storage (R2), calendars, video, payments`
+- [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/FacultyAssignment.js`
+- [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/teacher/allAssignments.js`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/teacher/report/assignment/[contentId].js`
+- [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/colleges/CollegeSearchController.java`
+- [x] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobPreferencesRepository.java`
+- [x] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/SmsDeliveryLog.java`
+- [x] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectWorkspace.java`
+- [x] U018 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectDelivery.java`
+- [x] U019 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/LearnerContentProgress.java`
+- [x] U020 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Faculty.java`
+- [x] U021 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/BugReport.java`
+- [x] U022 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoStudentsHubController.java`
+- [x] U023 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/tpo/TpoCompanyController.java`
+- [x] U024 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/electives/ElectiveAdminController.java`
+- [x] U025 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/SkillController.java`
+- [x] U026 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/PublicPlacementsPageController.java`
+- [x] U027 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/controller/LectureHallController.java`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/tpo/team.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/[workspaceId]/audit.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/ModuleAccess.js`
+- [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSignIn.js`
+- [x] U032 (Cross-cutting area) `cross/04: Notifications: in-app, email, SMS, push; every trigger, template, recipient rule, unsubscribe`
+- [x] U033 (Cross-cutting area) `cross/24: Third-party integrations: SMS (Exotel), email (ZeptoMail), storage (R2), calendars, video, payments`
