@@ -36,7 +36,7 @@ export const placementTpoJobTypes = pgTable(
   },
   (table) => [
     uniqueIndex("placement_tpo_job_types_college_label_uq").on(table.collegeId, sql`lower(${table.label})`),
-    check("placement_tpo_job_types_label_ck", sql`length(btrim(${table.label})) between 2 and 40 and ${table.label} ~ ${"^[[:alnum:] +&/().,'-]{2,40}$"}`),
+    check("placement_tpo_job_types_label_ck", sql`length(btrim(${table.label})) between 2 and 40 and ${table.label} ~ '^[[:alnum:] +&/().,''-]{2,40}$'`),
   ],
 );
 
