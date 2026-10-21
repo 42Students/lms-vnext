@@ -63,7 +63,7 @@ export default async function HrRoundsEditorPage({params}:{
    </details>
   </section>
   <section className="min-w-0 space-y-3">
-   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-xl)] leading-[30px] min-[768px]:text-[22px] min-[768px]:leading-[32px] min-[992px]:text-[var(--lms-font-3xl)] min-[992px]:leading-[40px]">Current rounds ({rounds.length})</h2>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-lg)] leading-[26px] min-[768px]:text-[var(--lms-font-xl)] min-[768px]:leading-[28px]">Current rounds ({rounds.length})</h2>
    {rounds.length===0?<EmptyState title="No hiring rounds" description="This drive has no hiring rounds. Add a round using the form above."
     action={<Link href="#add-round" className="inline-flex min-h-11 items-center text-primary-text underline min-[768px]:min-h-9">Add a round</Link>} />:null}
    {rounds.length>0?<div className="hidden min-w-0 md:block">
@@ -80,7 +80,7 @@ export default async function HrRoundsEditorPage({params}:{
    {rounds.map(round=><article id={"round-edit-"+round.id} key={round.id}
     className={"min-w-0 scroll-mt-24 space-y-2 border-b border-border py-4 "+
      (round.editable?"":"md:hidden")}>
-    <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between md:hidden"><h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[26px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[28px] min-[992px]:text-[var(--lms-font-xl)] min-[992px]:leading-[30px]">{round.sequence}. {round.name}</h3>
+    <div className="flex min-w-0 flex-col gap-2 min-[768px]:flex-row min-[768px]:items-center min-[768px]:justify-between md:hidden"><h3 className="font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{round.sequence}. {round.name}</h3>
      <span className="flex min-w-0 flex-wrap items-center gap-2 text-sm text-body">{round.kind} · <StatusBadge tone={round.status==="PENDING"?"warning":round.status==="COMPLETED"?"success":"neutral"}>{round.status}</StatusBadge></span></div>
     {round.editable?<details className="min-w-0">
      <summary className="flex min-h-11 min-w-0 cursor-pointer items-center break-words font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] min-[768px]:min-h-9">Change {round.sequence}. {round.name}</summary>
