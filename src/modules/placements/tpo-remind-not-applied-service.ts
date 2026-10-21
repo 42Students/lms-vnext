@@ -11,6 +11,30 @@ import {placementJobIdSchema} from "./validation";
 import {placementReminderDay,placementReminderPreviewToken,tpoRemindNotAppliedSchema}
  from "./tpo-remind-not-applied-model";
 
+
+/** Documentation-only compatibility matrix; never invoke an old endpoint or
+ * use client-supplied college/learner identity as an authorization shortcut.
+ * Legacy numeric IDs require an explicit scoped mapping to vNext UUIDs.
+ */
+export const TPO_LEGACY_APPLICANT_ENDPOINT_CROSSWALK = [
+ {old:"GET /applicants",new:"TPO applicants pipeline read service",method:"GET",success:200,
+  scope:"TPO and job's persisted college",change:"UUID job/application IDs, server paging"},
+ {old:"GET /not-applied",new:"GET /api/placements/tpo/jobs/[jobId]/remind-not-applied",method:"GET",success:200,
+  scope:"TPO and published job college",change:"Eligible reminder preview count/token, not unrestricted student list"},
+ {old:"POST /remind-not-applied",new:"POST /api/placements/tpo/jobs/[jobId]/remind-not-applied",method:"POST",success:200,
+  scope:"TPO, same-origin, live job, active registered recipients",change:"Requires expectedPreviewToken; once daily dedupe; reminded/alreadySent"},
+ {old:"POST /apply-on-behalf/{learnerId}",new:"Scoped drive-add workflow",method:"POST",success:201,
+  scope:"TPO, writable college drive, learner membership",change:"No numeric learner override or unaudited direct add"},
+ {old:"POST /add-students",new:"Scoped drive-add workflow",method:"POST",success:200,
+  scope:"TPO, college/eligibility per learner",change:"Legacy includeIneligible/reason are not automatically trusted"},
+ {old:"POST /bulk-move",new:"POST /api/placements/tpo/bulk-actions/preview then confirm",method:"POST",success:200,
+  scope:"TPO, same-origin, matched applications, preview token",change:"No direct status write without preview/confirm"},
+ {old:"POST /bulk-reject",new:"POST /api/placements/tpo/bulk-actions/preview then confirm",method:"POST",success:200,
+  scope:"TPO, same-origin, matched applications, preview token",change:"Reason and state transition validated"},
+ {old:"POST /undo/{undoGroupId}",new:"Undo workflow, if supported for selected group",method:"POST",success:200,
+  scope:"TPO and original drive; deny notified/released groups",change:"Legacy 409 after student notification; no unverified alias"},
+] as const;
+
 type Db=ReturnType<typeof getDb>;
 type Tx=Parameters<Parameters<Db["transaction"]>[0]>[0];
 
