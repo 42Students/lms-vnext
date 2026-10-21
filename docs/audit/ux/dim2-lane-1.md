@@ -424,3 +424,16 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
 - `src/app/(authenticated)/tpo/drive-day/page.tsx` | instances H6/B0/T0/F1/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: filter gap 12/16→8px ×1
 - `src/app/(authenticated)/tpo/find/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title 30px/600/#172033=PageHeader shared; subtitle14px=shared; mobile20px=shared | fixes: none
+- `src/app/(authenticated)/tpo/follow-ups/page.tsx` | instances H2/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/home/page.tsx` | instances H3/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx` | instances H2/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/messages/page.tsx` | instances H3/B0/T0/F1/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/more/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/not-found.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/notifications/page.tsx` | instances H2/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx` | instances H3/B0/T0/F1/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: filter gap 12/16px→8px (1)
+- `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none
+- `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx` | instances H1/B0/T0/F0/h10 | legacy/code: title30px/600/#172033=shared; mobile20px=shared; subtitle14px=shared | fixes: none

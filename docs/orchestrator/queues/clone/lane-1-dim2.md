@@ -425,19 +425,19 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-1.md: file, number of 
 - [x] `src/app/(authenticated)/tpo/drive-day/[roundId]/no-shows/page.tsx`
 - [x] `src/app/(authenticated)/tpo/drive-day/page.tsx`
 - [x] `src/app/(authenticated)/tpo/find/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/home/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/messages/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/more/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/not-found.tsx`
-- [ ] `src/app/(authenticated)/tpo/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
+- [x] `src/app/(authenticated)/tpo/follow-ups/page.tsx`
+- [x] `src/app/(authenticated)/tpo/home/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/messages/page.tsx`
+- [x] `src/app/(authenticated)/tpo/more/page.tsx`
+- [x] `src/app/(authenticated)/tpo/not-found.tsx`
+- [x] `src/app/(authenticated)/tpo/notifications/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/about/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants-pipeline/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applicants/[applicationId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/applications-export/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/cancel-preview/page.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/candidate-schedule/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/change-requests/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/close-preview/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/closeout/page.tsx`
