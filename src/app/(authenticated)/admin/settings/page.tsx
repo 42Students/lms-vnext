@@ -43,7 +43,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
   if(!parsed) return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Tenant Settings"/>
     <ErrorState title="Invalid setting filter" description="Use a valid section or search query."
-      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>
+      action={<Link href="/admin/settings" className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Clear filters</Link>}/>
   </div>;
   const retryParams=new URLSearchParams();
   if(parsed.q)retryParams.set("q",parsed.q);
@@ -57,7 +57,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
       <PageHeader title="Tenant Settings"/>
       <ErrorState title="Tenant settings unavailable"
         description="The settings inventory could not be loaded. Your filters have not changed."
-        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading settings</Link>}/>
+        action={<Link href={"/admin/settings"+(retrySuffix?"?"+retrySuffix:"")} className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading settings</Link>}/>
     </div>;
   const {selectedCollegeName,sections:allSections}=platform.value;
   const sections=filterPlatformInventory(allSections,parsed);
@@ -144,7 +144,7 @@ export default async function SuperAdminSettingsPage({searchParams}:{searchParam
         <Link href="/admin/settings" className="inline-flex min-h-11 w-full items-center justify-center font-semibold text-primary-text underline-offset-2 transition-colors duration-150 hover:underline hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear</Link>
       </form>
       {sections.length===0 ? <EmptyState title="No visible settings" description="No visible settings match the selected filters."
-        action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/> : null}
+        action={<Link href="/admin/settings" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary w-full md:w-auto md:min-h-9">Clear filters</Link>}/> : null}
       {sections.length ? <nav
         aria-label="Settings sections"
         className="flex min-w-0 gap-[var(--lms-tab-gap)] min-[1600px]:gap-[40px] overflow-x-auto border-b border-[var(--lms-canvas-border)] pb-0"

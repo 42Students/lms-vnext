@@ -38,7 +38,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <PageHeader title="Semesters" />
       <ErrorState title="Semester access denied"
         description="Your account cannot access Super Admin semesters."
-        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Back to dashboard</Link>}/>
+        action={<Link href="/dashboard" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] md:min-h-9 active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Back to dashboard</Link>}/>
     </div>;
   }
   if (!context.adminScope?.collegeId) {
@@ -69,7 +69,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
       <ErrorState title="Semesters unavailable"
         description="The semester directory could not be loaded. Your filters were not changed."
         action={<Link href={pageHref(parsed.data)}
-          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Retry loading semesters</Link>}/>
+          className="inline-flex items-center min-h-11 md:min-h-9 font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto">Retry loading semesters</Link>}/>
     </div>;
   }
   const data=result.value;
@@ -142,7 +142,7 @@ export default async function SuperAdminSemestersPage({ searchParams }: {
           {key:"actions",header:"Actions",mobilePriority:"action",cell:row=><CollegeSemesterRowActions row={row}/>},
         ]}
         empty={<EmptyState title="No semesters found" description="No semesters match these filters. Create a program first, then add semesters."
-          action={<Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Clear filters</Link>}/>}
+          action={<Link href="/admin/semesters" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto md:min-h-9">Clear filters</Link>}/>}
       />
     </section>
     <Pagination label="Semester pages" page={data.query.page} pageCount={data.totalPages}
