@@ -15,7 +15,7 @@ const ITEMS=[
 ];
 export function CollegeAtGlancePanel({collegeId,initial}:{collegeId:string;initial:CollegeAtGlanceCounts|null}){
  const [counts,setCounts]=useState<CollegeAtGlanceCounts|null>(initial);
- const currentCounts=useRef<CollegeAtAGlanceCounts|null>(initial);
+ const currentCounts=useRef<CollegeAtGlanceCounts|null>(initial);
  const requestSequence=useRef(0);
  const currentCollegeId=useRef(collegeId);
  useEffect(()=>{
