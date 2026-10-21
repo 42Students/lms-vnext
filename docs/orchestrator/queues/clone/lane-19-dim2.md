@@ -257,18 +257,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/tpo/tpo-team-message-actions.tsx`
 - [x] `src/components/tpo/tpo-team-rename.tsx`
 - [x] `src/components/tpo/tpo-team-search.tsx`
-- [ ] `src/components/tpo/tpo-trusted-domain-editor.tsx`
-- [ ] `src/components/tracker/audit-finding-status-action.tsx`
-- [ ] `src/components/tracker/tracker-issue-bulk-actions.tsx`
-- [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
-- [ ] `src/components/ui/checkbox.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/file-upload.tsx`
-- [ ] `src/components/ui/form-field.tsx`
-- [ ] `src/components/ui/input.tsx`
-- [ ] `src/components/ui/multi-select.tsx`
-- [ ] `src/components/ui/otp-input.tsx`
-- [ ] `src/components/ui/page-size-select.tsx`
+- [x] `src/components/tpo/tpo-trusted-domain-editor.tsx`
+- [x] `src/components/tracker/audit-finding-status-action.tsx`
+- [x] `src/components/tracker/tracker-issue-bulk-actions.tsx`
+- [x] `src/components/tracker/tracker-issue-saved-views.tsx`
+- [x] `src/components/ui/checkbox.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/file-upload.tsx`
+- [x] `src/components/ui/form-field.tsx`
+- [x] `src/components/ui/input.tsx`
+- [x] `src/components/ui/multi-select.tsx`
+- [x] `src/components/ui/otp-input.tsx`
+- [x] `src/components/ui/page-size-select.tsx`
 - [ ] `src/components/ui/password-input.tsx`
 - [ ] `src/components/ui/radio.tsx`
 - [ ] `src/components/ui/range-slider.tsx`
