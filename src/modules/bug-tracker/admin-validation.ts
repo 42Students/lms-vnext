@@ -17,17 +17,26 @@ export const BUG_ENVIRONMENTS = [
   "LOCAL", "DEVELOPMENT", "UAT", "PRODUCTION", "OTHER", "NOT_SURE",
 ] as const;
 
+/** Empty filter fields in legacy URL/search forms mean "All". Explicit
+ * invalid values still fail instead of broadening a tenant-scoped query. */
+const blankAsAbsent=<T extends z.ZodType>(schema:T)=>z.preprocess(
+ value=>value===""?undefined:value,schema.optional(),
+);
+export const BUG_TRACKER_STATUS_OPTIONS=BUG_STATUSES.map(value=>({
+ value,label:value.toLowerCase().split("_").map(part=>
+   part[0].toUpperCase()+part.slice(1)).join(" "),
+}));
 export const trackerAdminListSchema = z.object({
-  status: z.enum(BUG_STATUSES,{error:"Choose a valid issue status"}).optional(),
-  severity: z.enum(BUG_SEVERITIES).optional(),
-  accountRole: z.enum(BUG_ACCOUNT_ROLES).optional(),
-  resolution: z.enum(["UNRESOLVED",...BUG_RESOLUTIONS] as const,{error:"Choose a valid resolution"}).optional(),
-  retestStatus: z.enum(["NOT_RETESTED","PASS","FAIL"]).optional(),
+  status: blankAsAbsent(z.enum(BUG_STATUSES,{error:"Choose a valid issue status"})),
+  severity: blankAsAbsent(z.enum(BUG_SEVERITIES)),
+  accountRole: blankAsAbsent(z.enum(BUG_ACCOUNT_ROLES)),
+  resolution: blankAsAbsent(z.enum(["UNRESOLVED",...BUG_RESOLUTIONS] as const,{error:"Choose a valid resolution"})),
+  retestStatus: blankAsAbsent(z.enum(["NOT_RETESTED","PASS","FAIL"])),
   productionVerified: z.boolean().optional(),
-  environment: z.enum(BUG_ENVIRONMENTS).optional(),
-  q: z.string().trim().min(1).max(200).optional(),
-  reporter: z.string().trim().min(1).max(100).optional(),
-  issueType: z.string().trim().min(1).max(80).optional(),
+  environment: blankAsAbsent(z.enum(BUG_ENVIRONMENTS)),
+  q: blankAsAbsent(z.string().trim().min(1).max(200)),
+  reporter: blankAsAbsent(z.string().trim().min(1).max(100)),
+  issueType: blankAsAbsent(z.string().trim().min(1).max(80)),
   createdFrom: z.date().optional(),
   createdBefore: z.date().optional(),
   sort: z.enum(["newest", "oldest"]).default("newest"),
@@ -67,3 +76,12 @@ export const trackerRetestSchema = z.object({
   result: z.enum(BUG_RETEST_RESULTS),
   note: z.string().trim().max(1000).nullable().optional(),
 }).strict();
+
+/** Persisted workflow writes require a current CAS revision. The legacy
+ * integer issue identifier is a presentation alias, never a mutation key. */
+export const LEGACY_TRACKER_ADMIN_CROSSWALK={
+ issueId:"UUID report identity via verified public ID",
+ publicId:"case-folded LMS-#### display key",
+ status:"status",severity:"severity",resolution:"resolution",
+ retestResult:"retestStatus",optimisticVersion:"expectedVersion",
+} as const;
