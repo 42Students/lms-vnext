@@ -100,6 +100,7 @@ export const tenantDomainCollegeIdSchema = z.string().uuid();
 export const createTenantDomainInputSchema = z.object({
   collegeId: tenantDomainCollegeIdSchema,
   host: tenantDomainHostSchema,
+  isPrimary:z.boolean().optional().default(false),
 });
 
 export const tenantDomainActionSchema = z.object({
@@ -123,4 +124,14 @@ export function tenantDomainLegacyConflict(errorCode: string):
   return {status:409,error:"DOMAIN_NOT_VERIFIED",
    message:"Verify this address before making it the main one."};
  return null;
+}
+
+// Primary selection is a two-phase workflow, never a blind create flag.
+// An unverified domain cannot become primary until its DNS claim is proven.
+export function tenantDomainPrimaryNextStep(input:{isPrimary:boolean;domainId:string;verified:boolean}){
+ return input.isPrimary&&!input.verified?{
+  action:"VERIFY_THEN_SET_PRIMARY" as const,
+  verifyHref:"/api/tenant-domains/"+encodeURIComponent(input.domainId)+"/verify",
+  primaryHref:"/api/tenant-domains/"+encodeURIComponent(input.domainId),
+ }:null;
 }

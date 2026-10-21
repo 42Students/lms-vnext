@@ -21,6 +21,8 @@ export async function GET(
     const { quizId } = await params;
     const url = new URL(request.url);
     const explicit=url.searchParams.get("deliveryId");
+    // Legacy quiz history URLs carried quizId only. Resolve only a uniquely
+    // authorized current delivery and fail closed for ambiguous enrollments.
     const deliveryId=explicit||await resolveOwnQuizDeliveryId(context,quizId);
     const attempts = await getMyQuizAttempts(context,quizId,deliveryId);
 

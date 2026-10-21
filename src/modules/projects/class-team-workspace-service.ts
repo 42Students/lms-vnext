@@ -124,9 +124,8 @@ export async function createClassTeamWorkspaces(context: RequestContext, raw: un
         })));
         const [project]=await tx.insert(projectInstances).values({
           collegeId:scope.id,templateId:assigned.templateId,templateVersionId:assigned.versionId,
-          teamGroupId:team.id,sectionId:section.id,slug:plan.slug,title:plan.title,
-          summary:input.summary??assigned.summary,status:input.initialStatus,
-          createdByUserId:context.user.id,
+          teamGroupId:team.id,sectionId:section.id,slug:plan.slug,title:plan.title,summary:assigned.summary,
+          createdByUserId:context.user.id,status:input.initialStatus,phase:input.initialPhase??null,
         }).returning({id:projectInstances.id,title:projectInstances.title});
         if (!project) throw new Error("Workspace insert failed");
         await tx.insert(projectMembers).values([
