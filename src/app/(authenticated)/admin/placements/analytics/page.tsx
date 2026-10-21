@@ -136,15 +136,12 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
       <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M12 3v12m-4-4 4 4 4-4M4 16v4h16v-4"/></svg>Export report
      </a>
     </div>
-    <details className="mt-3 min-w-0" open={Boolean(q.departmentId||q.programId||q.cohortId)}>
-     <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Academic filters</summary>
-     <div className="grid min-w-0 gap-3 pt-2 sm:grid-cols-2 xl:grid-cols-3">
-      <SuperAdminHiringAcademicFilters key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
-       departments={filters?.departments??[]} programs={filters?.programs??[]}
-       batches={filters?.batches??[]}
-       selected={{departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId}}/>
-     </div>
-    </details>
+    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3" aria-label="Academic hiring filters">
+     <SuperAdminHiringAcademicFilters key={[q.departmentId??"",q.programId??"",q.cohortId??""].join(":")}
+      departments={filters?.departments??[]} programs={filters?.programs??[]}
+      batches={filters?.batches??[]}
+      selected={{departmentId:q.departmentId,programId:q.programId,cohortId:q.cohortId}}/>
+    </div>
    </fieldset>
   </form>
   {params.size?<div role="status" className="flex min-w-0 flex-wrap items-center gap-2 text-xs print:hidden" aria-label="Active hiring filters">
