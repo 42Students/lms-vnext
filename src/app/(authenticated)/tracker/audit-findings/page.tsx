@@ -8,6 +8,7 @@ import {getCurrentRequestContext} from "@/auth/request-context";
 import {isSuperAdmin} from "@/modules/identity/context";
 import {requirePermission} from "@/modules/permissions/policy";
 import {redirect} from "next/navigation";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import {PageHeader} from "@/components/ui/page-header";
 import {Pagination} from "@/components/ui/pagination";
 import {StatusBadge} from "@/components/ui/status-badge";
@@ -41,7 +42,22 @@ export default async function IndependentFindingsPage({searchParams}:{
    Audit findings are temporarily unavailable. Please contact your platform administrator to complete setup.
    Bug reports are not substituted for independent audit findings.
   </Banner></div>;
- const [data,sync]=await Promise.all([listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx)]);
+ // The board and historical import health are separate dependencies.
+ // Never hide verified findings because importer diagnostics timed out.
+ const [findingsResult,syncResult]=await Promise.allSettled([
+  listIndependentAuditFindings(ctx,parsed),readIndependentFindingSyncState(ctx),
+ ] as const);
+ if(findingsResult.status==="rejected"){
+  if(findingsResult.reason instanceof AuthorizationError)throw findingsResult.reason;
+  return <div className="min-w-0 space-y-4">{header}
+   <Banner tone="error">Audit findings could not be loaded. The last verified data has not been modified.</Banner>
+   <ErrorState title="Audit findings could not be loaded"
+    description="Retry the same authorized search and filter set. No synchronization was attempted."
+    action={<Link href={independentFindingHref(parsed)} className="font-semibold text-link underline underline-offset-4">Retry audit findings</Link>} />
+  </div>;
+ }
+ const data=findingsResult.value;
+ const sync=syncResult.status==="fulfilled"?syncResult.value:null;
 
  const refusedColumns:DataTableColumn<NonNullable<typeof sync>["refusedFiles"][number]>[]=[
   {key:"path",header:"Source file",mobilePriority:"primary",cell:item=>
@@ -62,6 +78,28 @@ export default async function IndependentFindingsPage({searchParams}:{
   {key:"reported",header:"Reported",mobilePriority:"secondary",cell:item=><span>{item.foundBy??"Unknown"} · {item.foundAt?new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium"}).format(item.foundAt):"Date not recorded"}</span>},
  ];
  return <div className="min-w-0 space-y-5">{header}
+  <div className="space-y-2 border-b border-[var(--lms-canvas-border)] pb-3 text-sm">
+   <p className="text-body">Source: <span className="font-semibold">{sync?.source??"42Students/lms-findings"}</span>
+    {" · "}Last verified sync: {sync?.lastSyncedAt ?
+      new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",
+        timeZone:"Asia/Kolkata"}).format(sync.lastSyncedAt)+" IST" : "not recorded"}
+    {" · "}Result: {sync?.lastResult??"NOT CONFIGURED"}.
+   </p>
+   <p className="text-xs text-muted-foreground">The shared legacy tracker password was retired. This page requires an active unscoped Super Admin session and platform permission.</p>
+   <Banner tone="warning">
+    Sync now is unavailable because an authenticated, credential-verified repository importer and durable job receipt have not been configured. No import is performed when this page loads.
+   </Banner>
+   {syncResult.status==="rejected" ? <Banner tone="warning">
+    Import history could not be refreshed. Findings remain available.
+    {" "}<Link href={independentFindingHref(parsed)} className="font-semibold underline underline-offset-4">Retry import status</Link>
+   </Banner> : null}
+   {sync?.lastResult==="FAILED" ? <Banner tone="warning">
+    The last recorded repository import failed. Check server importer logs and repository credential configuration before retrying the deployment job; no sync was started here.
+   </Banner> : null}
+   {sync?.lastResult==="PARTIAL" ? <Banner tone="warning">
+    The last import was partial. Review the recorded refused files below; an import success count must not include refused files.
+   </Banner> : null}
+  </div>
   <Tabs renderPanel={false} ariaLabel="Finding views" value={parsed.view}
    items={([
      {value:"OPEN",label:"Open"},
@@ -121,7 +159,7 @@ export default async function IndependentFindingsPage({searchParams}:{
    </p>
    {sync?.lastSyncedAt?<p className="mt-1 text-body">Last recorded sync: {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"}).format(sync.lastSyncedAt)} IST · {sync.importedCount} imported · {sync.refusedCount} refused.</p>:
     <p role="status" className="mt-1 text-body">No verified import has been recorded. Independent findings already stored here remain available; automatic GitHub sync is not configured.</p>}
-   <p className="mt-1 text-xs text-muted-foreground">Manual sync requires a verified importer, repository credentials and a guarded server job. Viewing this page never triggers a sync.</p>
+   <p className="mt-1 text-xs text-muted-foreground">Manual sync is intentionally deferred pending a verified importer, repository credentials, same-origin Super Admin POST and durable job receipt. Viewing this page never triggers a sync.</p>
    {sync?.refusedCount ? <section aria-label="Files the importer refused or flagged" className="mt-4 space-y-2">
     <h3 className="font-semibold">Files the importer refused or flagged ({sync.refusedCount})</h3>
     <DataTable columns={refusedColumns} rows={sync.refusedFiles}
