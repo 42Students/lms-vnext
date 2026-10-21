@@ -97,11 +97,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-16.md: file, number of
 - [x] `src/app/(authenticated)/mentor/reports/error.tsx`
 - [x] `src/app/(authenticated)/mentor/review-history/error.tsx`
 - [x] `src/app/(authenticated)/mentor/reviews/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
-- [ ] `src/app/(authenticated)/mentor/team-coverage/error.tsx`
-- [ ] `src/app/(authenticated)/teacher/calendar/error.tsx`
+- [x] `src/app/(authenticated)/mentor/sprint-progress/error.tsx`
+- [x] `src/app/(authenticated)/mentor/task-review-history/error.tsx`
+- [x] `src/app/(authenticated)/mentor/task-reviews/error.tsx`
+- [x] `src/app/(authenticated)/mentor/team-coverage/error.tsx`
+- [x] `src/app/(authenticated)/teacher/calendar/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/calendar/page.tsx`
 - [ ] `src/app/(authenticated)/teacher/contacts/[contactsTab]/[membershipId]/error.tsx`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/assessment-health/error.tsx`
