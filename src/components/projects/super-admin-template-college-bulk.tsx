@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import {apiFetch} from "@/lib/api-fetch";
 import {ConfirmDialog} from "@/components/ui/confirm-dialog";
 import {Disclosure} from "@/components/ui/disclosure";
+import {PopoverPanel} from "@/components/ui/popover";
 
 type College={id:string;name:string;assigned:boolean;canAssign:boolean};
 type BulkOperation="assign"|"remove";
@@ -186,13 +187,29 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
        onClick={()=>setOperation("assign")}>
        Assign selected ({selected.length})
       </Button>
-      <Button type="button" variant="secondary"
-       className="w-full sm:w-auto"
-       loading={pending&&operation==="remove"}
-       disabled={pending||!selected.length}
-       onClick={()=>setOperation("remove")}>
-       Remove selected ({selected.length})
-      </Button>
+      <div className="relative w-full sm:w-auto">
+       <Button type="button" variant="secondary" className="w-full sm:w-auto"
+        disabled={pending||!selected.length} aria-expanded={operation==="remove"}
+        onClick={()=>setOperation("remove")}>
+        Remove selected ({selected.length})
+       </Button>
+       {operation==="remove"?<PopoverPanel label="Confirm removal of template assignments"
+        onDismiss={()=>{if(!pending)setOperation(null);}}
+        className="absolute bottom-full right-0 z-40 mb-2 w-[320px] max-w-[calc(100vw_-_2rem)] space-y-3">
+        <p className="m-0 text-sm font-semibold text-[var(--lms-heading)]">
+         Remove this template from {selected.length} selected colleges?
+        </p>
+        <p className="m-0 text-xs text-muted-foreground">
+         Existing workspaces remain unchanged.
+        </p>
+        <div className="flex justify-end gap-2">
+         <Button size="sm" variant="secondary" type="button" disabled={pending}
+          onClick={()=>setOperation(null)}>Cancel</Button>
+         <Button size="sm" variant="danger" type="button" loading={pending} disabled={pending}
+          onClick={()=>{void apply();}}>Remove selected</Button>
+        </div>
+       </PopoverPanel>:null}
+      </div>
      </div>
     </>
    )}
@@ -203,7 +220,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
    ) : null}
    {notice ? <Banner tone={noticeTone}>{notice}</Banner> : null}
    <ConfirmDialog
-    open={operation!==null}
+    open={operation==="assign"}
     onOpenChange={open=>{if(!open&&!pending)setOperation(null);}}
     title={operation==="remove"
      ?"Remove this template from "+selected.length+" selected colleges?"
