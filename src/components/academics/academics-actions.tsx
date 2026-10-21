@@ -18,6 +18,8 @@ import { useToast } from "@/components/ui/toast";
 import { hasUnsavedCollegeProgramEdit, updateCollegeProgramSchema } from "@/modules/academics/college-program-mutation-model";
 import { academicSetupErrorMessage } from "@/modules/academics/academic-setup-error-copy";
 
+let programArchiveInFlight = false;
+
 class AcademicMutationResponseError extends Error {
   constructor(code: string, readonly fieldErrors: Readonly<Record<string, string>>) {
     super(code);
@@ -130,8 +132,16 @@ export function ProgramActions({
   departments?: readonly {id:string;name:string}[];
   contents?: { semesters: number; batches: number; classes: number } | null;
 }) {
-  const programHasLinkedRecords = Boolean(contents &&
-    (contents.semesters > 0 || contents.batches > 0 || contents.classes > 0));
+  const blockingRecords = contents ?
+    ([
+      contents.semesters > 0 ? `${contents.semesters} semester${contents.semesters===1?"":"s"}` : null,
+      contents.batches > 0 ? `${contents.batches} batch${contents.batches===1?"":"es"}` : null,
+      contents.classes > 0 ? `${contents.classes} class${contents.classes===1?"":"es"}` : null,
+    ].filter(Boolean)) : [];
+  const programHasLinkedRecords = blockingRecords.length > 0;
+  const archiveBlockerText = blockingRecords.length
+    ? "Remove linked " + blockingRecords.join(", ") + " before archiving."
+    : "Archive this program while retaining historical records.";
   const [editOpen, setEditOpen] =
     useState(false);
   const [archiveOpen, setArchiveOpen] =
@@ -170,7 +180,7 @@ export function ProgramActions({
       return;
     }
     if (pending) return;
-    if (departmentId !== (program.departmentId ?? "") || hasUnsavedCollegeProgramEdit(program, { name, code, durationTerms: displayDurationYears ? String(Number(durationTerms)*2) : durationTerms })) {
+    if (departmentId !== (program.departmentId ?? "") || hasUnsavedCollegeProgramEdit(program, { name:name.trim(), code, durationTerms: displayDurationYears ? String(Number(durationTerms)*2) : durationTerms })) {
       setDiscardOpen(true);
     } else {
       setEditOpen(false);
@@ -181,20 +191,32 @@ export function ProgramActions({
     <>
       <div className="flex min-w-0 flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
         <Button size={compactActions ? "sm" : "md"} variant="secondary"
-          onClick={openEdit} disabled={pending}>Edit</Button>
+          aria-label={"Edit program " + program.name}
+          onClick={openEdit} disabled={pending}>
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" fill="none">
+            <path d="M4 16l3.5-.7L16 6.8 13.2 4 4.7 12.5 4 16Z"
+              stroke="currentColor" strokeWidth="1.6" strokeLinejoin="round" />
+            <path d="m12 5.2 2.8 2.8" stroke="currentColor" strokeWidth="1.6" />
+          </svg> Edit
+        </Button>
         <Button size={compactActions ? "sm" : "md"} variant="danger"
           disabled={pending || programHasLinkedRecords}
-          title={programHasLinkedRecords
-            ? "Remove linked semesters, batches and classes before archiving."
-            : "Archive this program while retaining historical records."}
-          onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>Archive</Button>
+          aria-label={"Delete program " + program.name}
+          title={archiveBlockerText}
+          onClick={() => { setArchiveError(""); setArchiveOpen(true); }}>
+          <svg viewBox="0 0 20 20" width="14" height="14" aria-hidden="true" fill="none">
+            <path d="M3 6h14M8 6V4h4v2m3 0-.8 11H5.8L5 6m3 3v5m4-5v5"
+              stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          </svg> Delete
+        </Button>
       </div>
 
       <Dialog
         open={editOpen}
         onOpenChange={requestEditOpenChange}
-        title="Edit program"
+        title={`Edit “${program.name}”`}
         description="You can change the department before any semesters, batches or learners are linked."
+        className="!max-w-[520px]" dismissible={!pending}
         footer={
           <AcademicDialogFooter>
             <Button
@@ -241,7 +263,7 @@ export function ProgramActions({
                 )
               }
             >
-              {pending ? "Saving…" : "Save"}
+              {pending ? "Saving…" : "Save Changes"}
             </Button>
           </AcademicDialogFooter>
         }
@@ -295,8 +317,8 @@ export function ProgramActions({
       <ConfirmDialog
         open={discardOpen}
         onOpenChange={setDiscardOpen}
-        title="Discard program changes?"
-        description="You have unsaved program edits. Discarding them will not modify the program."
+        title="Discard changes to this program?"
+        description={`Unsaved changes to “${program.name}” will be lost.`}
         confirmLabel="Discard changes"
         pending={pending}
         onConfirm={() => {
@@ -316,18 +338,21 @@ export function ProgramActions({
       <ConfirmDialog
         open={archiveOpen}
         onOpenChange={setArchiveOpen}
-        title={`Archive ${program.name}?`}
-        description="Archive removes the program from active directories. Any linked semester, cohort (including archived cohorts), or learner enrollment blocks archival. Confirm only if all dependencies have been cleared."
-        confirmLabel="Archive program"
+        title={`Delete “${program.name}”?`}
+        description="It has no semesters, batches or classes. Delete it? In this workspace, Delete safely archives this record and preserves historical records."
+        confirmLabel="Delete"
         pending={pending}
         onConfirm={() =>
           run(
-            () =>
-              mutate(
-                `/api/academics/programs/${program.id}`,
-                "DELETE",
-                { confirm: true },
-              ),
+            async () => {
+              if (programArchiveInFlight) throw new Error("Another program deletion is still in progress.");
+              programArchiveInFlight = true;
+              try {
+                return await mutate(`/api/academics/programs/${program.id}`, "DELETE", {confirm:true});
+              } finally {
+                programArchiveInFlight = false;
+              }
+            },
             `Archived program “${program.name}”.`,
             () => { setArchiveError(""); setArchiveOpen(false); },
             (error) => { setArchiveOpen(false); setArchiveError(academicSetupErrorMessage(error, "Program was not archived")); },
