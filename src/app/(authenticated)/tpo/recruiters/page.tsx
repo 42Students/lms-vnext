@@ -45,6 +45,8 @@ export default async function TpoRecruiterLeadsPage({ searchParams }: PageProps)
       page:first(query.page),purpose:first(query.purpose),
     })} />;
   }
+  // Stage URL is a read filter, not authorization for a manual-stage write.
+  // The server must enforce NEW/CONTACTED/NOT_NOW plus NOT_NOW reason.
   const initialView =
     requested === "board" || requested === "companies" ? requested : "table";
   return (

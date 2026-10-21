@@ -38,7 +38,7 @@ export default async function PublicPlacementSettingsPage({
    {updated==="1"?<InlineNotice tone="success" message={view.enabled?"Your placements page is live":"Your placements page is off"}/>:null}
    <p className="mt-2 text-sm text-body">
     The public page displays live, college-scoped results from the last 12 months only after you opt in.
-    Metrics below the publication threshold of five are not shown.
+    Publishing requires a consented cohort of at least five. Each student or offer statistic is independently suppressed when its group has fewer than five; passing the overall cohort threshold does not make every metric public.
    </p>
    {value.ready?<p className="mt-3 text-sm text-muted-foreground">
       Active consented placement cohort: {view.populationCount??"Unavailable"}

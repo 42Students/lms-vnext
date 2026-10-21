@@ -2,8 +2,9 @@
 const MESSAGES:Record<string,string>={
  INVALID_BODY:"Check the announcement title, message, audience and dates before saving.",
  BUTTON_URL_INVALID:"The link has to start with https://",
- TITLE_REQUIRED:"Give it a title.",
- MESSAGE_REQUIRED:"Write the announcement.",
+ TITLE_REQUIRED:"Give it a title",
+ MESSAGE_REQUIRED:"Write the announcement",
+ SAVE_FAILED:"Couldn't save",
  INVALID_VERSION:"Reload the announcement and try again.",
  INVALID_TIME:"Pick valid future dates (IST).",
  FORBIDDEN:"You do not have permission to change this announcement.",
