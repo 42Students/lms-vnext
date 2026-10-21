@@ -1,4 +1,3 @@
-import { Pagination } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Disclosure } from "@/components/ui/disclosure";
 import Link from "next/link";
@@ -99,7 +98,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
         </Disclosure>
       </div>
       <form action="/teacher/courses" method="get" key={facultyCourseListHref(query)}
-        className="min-w-0 space-y-3">
+        className="min-w-0 space-y-3 md:ml-auto">
         <FacultyCourseFilterAutoSubmit />
         <div className="grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <label className="grid gap-[6px] text-[13px] leading-4 font-semibold text-[var(--lms-neutral-400)]">Search courses
@@ -135,7 +134,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           <noscript><Button type="submit" variant="primary" className="min-h-11 w-full min-[768px]:min-h-9 min-[768px]:w-auto">Apply filters</Button></noscript>
           <Link href="/teacher/courses" className="inline-flex min-h-11 w-full items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] min-[768px]:w-auto bg-[var(--lms-surface)] px-[var(--lms-space-4)] text-[14px] font-semibold text-[var(--lms-body-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Clear filters</Link>
           <p className="text-xs text-muted-foreground" aria-live="polite">
-            Showing {visibleRows.length} of {pagination.total} matching course Sections · Page {pagination.page} of {pagination.totalPages}
+            Showing {visibleRows.length} of {pagination.total} matching course Sections
           </p>
         </div>
       </form>
@@ -146,13 +145,13 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
           action={<Link href="/teacher/courses" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline underline-offset-4 min-[768px]:min-h-9">Clear filters</Link>}
         />
       ) : (
-      <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-x-6 gap-y-0 border-y border-[var(--lms-canvas-border)] lg:grid-cols-2">
+      <div data-testid="teacher.courses.grid" className="grid min-w-0 gap-5 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface p-4 sm:grid-cols-2 lg:grid-cols-3 md:p-6">
       {visibleRows.map(({ course, workspace,thumbnailUrl }) => (
         <Link
           key={course.deliveryId}
           href={`/teacher/courses/${course.deliveryId}/home`}
           data-testid="teacher.courses.card.open"
-          className="group flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface shadow-none transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="group flex min-h-0 min-w-0 flex-col overflow-hidden rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface shadow-[0_2px_8px_rgba(17,36,49,0.06)] transition-colors hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
           <FacultyCourseCover url={thumbnailUrl??null} title={course.courseName}/>
           <div className="flex min-w-0 flex-wrap items-start gap-3 px-4 pt-4">
@@ -182,7 +181,7 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
 
           <div className="mt-3 flex min-w-0 flex-wrap gap-2 px-4 text-xs text-muted-foreground">
             <Badge  tone="neutral">
-              {course.sectionName} ({course.cohortName})
+              {course.sectionName?.trim()||"Unknown section"}{course.cohortName?.trim()?" ("+course.cohortName+")":""}
             </Badge>
             <Badge  tone="neutral">
               {course.academicPeriodName}
@@ -214,8 +213,13 @@ export function FacultyCourseList({rows,diagnostics=[],diagnosticsUnavailable=fa
       ))}
       </div>
       )}
-      {pagination.totalPages > 1 ? <Pagination label="Faculty Courses pages" page={pagination.page} pageCount={pagination.totalPages}
-        hrefForPage={page=>facultyCourseListHref({...query,page})} /> : null}
+      {pagination.page<pagination.totalPages ? <div className="flex flex-col items-center gap-2 border-t border-border pt-4">
+        <Link href={facultyCourseListHref({...query,page:pagination.page+1})}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-button-primary)] bg-[var(--lms-button-primary)] px-6 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">
+          Show more courses
+        </Link>
+        <p className="text-xs text-muted-foreground">Showing {visibleRows.length} of {pagination.total} matching sections · add up to 48 at a time</p>
+      </div> : null}
     </div>
   );
 }

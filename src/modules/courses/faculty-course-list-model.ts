@@ -34,7 +34,7 @@ export function pageFacultyCourseList<T extends {
   const totalPages = Math.max(1, Math.ceil(total / FACULTY_COURSE_LIST_PAGE_SIZE));
   const page = Math.min(query.page, totalPages);
   return {total, totalPages, page, pageSize:FACULTY_COURSE_LIST_PAGE_SIZE,
-    items:filtered.slice((page - 1) * FACULTY_COURSE_LIST_PAGE_SIZE, page * FACULTY_COURSE_LIST_PAGE_SIZE)};
+    items:filtered.slice(0, page * FACULTY_COURSE_LIST_PAGE_SIZE)};
 }
 export function facultyCourseListHref(raw: unknown) {
   const query = facultyCourseListQuerySchema.parse(raw);

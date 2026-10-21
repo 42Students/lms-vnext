@@ -10,6 +10,44 @@ export interface OutboundProvider {
   send(request: OutboundSendRequest): Promise<ProviderAcceptance>;
 }
 export type OperatorDeliveryOutcome = "SENT" | "NOT_CONFIGURED" | "SUPPRESSED" | "FAILED" | "QUEUED";
+
+/** Legacy SMS log lives in the restricted append-only sms_delivery_attempts
+ * ledger (see listSmsDeliveryAttemptsForSupport in notifications/exotel-sms).
+ * A general campaign repository cannot expose recipient phone numbers.
+ * Its privileged, persistently-authorized support reader accepts this shape
+ * and orders by created_at DESC,id DESC with a bounded 200-row page. */
+export type PrivilegedSmsAttemptSearch={
+ suffix?:string;purpose?:"otp"|"job.update"|"notification"|
+   "attendance.absence"|"attendance.correction";
+ outcome?:"PROVIDER_ACCEPTED"|"FAILED";
+ page:number;size:number;
+};
+export type SafeSmsAttempt={
+ id:string;purpose:string;provider:"EXOTEL"|string;
+ recipientSuffix:string|null;createdAt:string;
+ outcome:"PROVIDER_ACCEPTED"|"FAILED";
+ providerMessageId:string|null;safeFailureCode:string|null;
+};
+export function normalizeSmsSupportFilter(input:{
+ suffix?:string;purpose?:string;outcome?:string;page?:number;size?:number;
+}):PrivilegedSmsAttemptSearch{
+ const suffix=input.suffix?.replace(/[^0-9]/g,"").slice(-4);
+ const purpose=input.purpose;
+ const allowedPurposes=["otp","job.update","notification",
+  "attendance.absence","attendance.correction"];
+ if(purpose!==undefined&&!allowedPurposes.includes(purpose))
+  throw new Error("INVALID_SMS_SUPPORT_PURPOSE");
+ if(input.outcome!==undefined && input.outcome!=="PROVIDER_ACCEPTED" &&
+    input.outcome!=="FAILED")throw new Error("INVALID_SMS_SUPPORT_OUTCOME");
+ const page=input.page??1,size=input.size??50;
+ if(!Number.isSafeInteger(page)||page<1||page>100000||
+    !Number.isSafeInteger(size)||size<1||size>200)
+  throw new Error("INVALID_SMS_SUPPORT_PAGE");
+ return {page,size,...(suffix?{suffix}:{}),
+  ...(purpose?{purpose:purpose as PrivilegedSmsAttemptSearch["purpose"]}:{}),
+  ...(input.outcome?{outcome:input.outcome as PrivilegedSmsAttemptSearch["outcome"]}:{})};
+}
+
 export function operatorDeliveryOutcome(record: Pick<DeliveryRecord,"status"|"reason">):
   {status:OperatorDeliveryOutcome;message:string} {
   if(record.status==="SENT")return {status:"SENT",message:"Accepted by the delivery provider"};
@@ -43,7 +81,40 @@ export type DeliveryRecord = {
 export interface DeliveryRepository {
   insert(record: DeliveryRecord): Promise<void>;
   update(record: DeliveryRecord): Promise<void>;
+  /** Stores only delivery status, not the complete address or provider body.
+   * Campaign recipients/event notification receipts keep their own tenant-
+   * scoped records. This aggregate is a dashboard count, not inbox delivery. */
   auditBatch(batchId: string, summary: { sent: number; failed: number; suppressed: number }): Promise<void>;
+}
+export type DeliveryBatchRollup={
+ acceptedByProvider:number;failed:number;suppressed:number;unresolved:number;
+ status:"COMPLETED"|"RECONCILIATION_REQUIRED";
+};
+export function summarizeDeliveryBatch(records:readonly DeliveryRecord[]):DeliveryBatchRollup{
+ const acceptedByProvider=records.filter(item=>item.status==="SENT").length;
+ const failed=records.filter(item=>item.status==="FAILED").length;
+ const suppressed=records.filter(item=>item.status==="SUPPRESSED").length;
+ const unresolved=records.filter(item=>item.status==="QUEUED").length;
+ return {acceptedByProvider,failed,suppressed,unresolved,
+  status:unresolved?"RECONCILIATION_REQUIRED":"COMPLETED"};
+}
+export type TenantTransactionalSendInput={
+ batchId:string;request:OutboundSendRequest;
+ provider:OutboundProvider;repository:DeliveryRepository;
+ policyFor:(request:OutboundSendRequest)=>Promise<DeliveryPolicy>;
+ recipientKeyFor:(request:OutboundSendRequest)=>Promise<string>;
+ runtimeEnv?:Record<string,string|undefined>;
+};
+/** The old sendAsCollege facade completed one recipient at a time. Keep its
+ * per-recipient result while requiring the exact same tenant-specific sender
+ * template, opaque recipient key, policy and repository as batch dispatch.
+ * The typed result is provider acceptance, not handset/inbox delivery. */
+export async function sendTenantTransactionalMessage(
+ input:TenantTransactionalSendInput,
+):Promise<{record:DeliveryRecord;outcome:ReturnType<typeof operatorDeliveryOutcome>}>{
+ const [record]=await deliverBatch({...input,requests:[input.request]});
+ if(!record)throw new Error("EMPTY_TRANSACTIONAL_DELIVERY");
+ return {record,outcome:operatorDeliveryOutcome(record)};
 }
 /** A safe opaque identifier must be supplied for every auditable delivery batch. */
 export function validOutboundBatchId(value:string):boolean {
@@ -111,7 +182,7 @@ export async function deliverBatch(args: {
     const capacityDecision = decision.status==="QUEUED" && recipientWindowFull
       ? {status:"SUPPRESSED" as const,reason:"rate-limited" as const} :
       decision.status==="QUEUED" &&
-      Math.max(policy.sentToday,startingDailySent+acceptedInBatch)>=policy.dailyCap
+      Math.max(policy.sentToday,(startingDailySent??policy.sentToday)+acceptedInBatch)>=policy.dailyCap
       ? {status:"SUPPRESSED" as const,reason:"daily-cap" as const}:decision;
     const finalDecision = duplicate
       ? {status: "SUPPRESSED" as const, reason: "duplicate-in-batch" as const}
@@ -160,7 +231,12 @@ export async function deliverBatch(args: {
           record.reason = outcome==="NOT_CONFIGURED"?"provider-not-configured":
             outcome==="FAILED"?"provider-rejected":null;
         } catch {
-          record.status = "FAILED";
+          // A provider network timeout can happen after acceptance. Never
+          // label an ambiguous attempt FAILED and automatically replay it.
+          // The audit remains QUEUED until an operator checks the provider
+          // receipt and explicitly reconciles this specific recipient.
+          record.status = "QUEUED";
+          record.reason = "provider-result-unknown";
         }
       }
       await args.repository.update(record);

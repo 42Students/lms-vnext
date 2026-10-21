@@ -59,7 +59,7 @@ export type OutboundProviderConfig = {
   templates: Readonly<Record<string, OutboundTemplate>>;
 };
 export type OutboundProviderOutcome =
-  | { status: "ACCEPTED" }
+  | { status: "ACCEPTED"; providerSid?: string }
   | { status: "NOT_CONFIGURED"; reason: string }
   | { status: "SUPPRESSED"; reason: string }
   | { status: "FAILED"; reason: string; httpStatus?: number };
@@ -245,10 +245,17 @@ export function createOutboundProvider(
       );
       if (!response.ok) return { status: "FAILED", reason: "SMS_PROVIDER_REJECTED", httpStatus: response.status };
       const payload: unknown = await response.json();
-      if (!isExotelAcceptedResponse(payload as { SMSMessage?: { Sid?: string; Status?: string } })) {
+      if (!isExotelAcceptedResponse(payload)) {
         return { status: "FAILED", reason: "SMS_PROVIDER_NOT_ACCEPTED" };
       }
-      return { status: "ACCEPTED" };
+      const message=(payload as {SMSMessage:{Sid:string}}).SMSMessage;
+      const sid=message.Sid.trim();
+      if(!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(sid)){
+        // The acceptance ledger has a narrower SID shape than Exotel.
+        // Without an auditable receipt, do not claim an accepted SMS send.
+        return {status:"FAILED",reason:"SMS_PROVIDER_RECEIPT_INVALID"};
+      }
+      return { status: "ACCEPTED", providerSid:sid };
     } catch {
       return { status: "FAILED", reason: "SMS_PROVIDER_UNAVAILABLE" };
     }
