@@ -9,6 +9,14 @@ import { db10LogAlertSignatures as signatures, db10LogAlertStates as states, db1
 import { logAlertsRuntimeEnabled } from "./readiness";
 import { sendTelegramAlert, telegramAlertsConfigured } from "./telegram-notifier";
 
+/** Legacy environment fallback is PRODUCTION when the deployment omits it;
+ * cross-environment schedulers sharing one DB must never share poll/digest
+ * cursor keys or leases. */
+export function alertEnvironment(env: NodeJS.ProcessEnv = process.env) {
+  return env.APP_ENV === "development" || env.APP_ENV === "test" ? "DEVELOPMENT" :
+    env.APP_ENV === "uat" ? "UAT" : "PRODUCTION";
+}
+
 export function istDayAndHour(now: Date) {
   const ist = new Date(now.getTime() + 330 * 60_000);
   return { day: ist.toISOString().slice(0, 10), hour: ist.getUTCHours() };
@@ -77,8 +85,7 @@ export function burstOverflowText(count: number, environment: string): string {
 }
 
 async function flushOverflow(now: Date): Promise<boolean> {
-  const environment = process.env.APP_ENV === "production" ? "PRODUCTION" :
-    process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT";
+  const environment = alertEnvironment();
   return getDb().transaction(async (tx) => {
     const key = "TELEGRAM_BURST_" + environment;
     const [state] = await tx.select().from(states)
@@ -102,10 +109,9 @@ async function flushOverflow(now: Date): Promise<boolean> {
 
 /** Replays a post-fix regression that was counted but could not be delivered. */
 export async function sweepUndeliveredRegressions(now: Date): Promise<number> {
-  const environment = process.env.APP_ENV === "production" ? "PRODUCTION" :
-    process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT";
+  const environment = alertEnvironment();
   let delivered = 0;
-  await withScheduledLease("telegram-regression-sweep", now, async () => {
+  await withScheduledLease("telegram-regression-sweep-" + environment, now, async () => {
     const threshold = new Date(now.getTime() - 86_400_000);
     const candidates = await getDb().select({ id: signatures.id })
       .from(signatures)
@@ -188,7 +194,9 @@ export function cloudPollWindow(
     return { start: state.pollWindowStartAt, end: state.pollWindowEndAt, pageToken: state.pollPageToken };
   }
   const end = new Date(now.getTime() - 60_000);
-  const checkpoint = state?.pollCursorAt ?? new Date(now.getTime() - 600_000);
+  // Old LogAlertingService.INITIAL_LOOKBACK = 15 minutes. Ignore older
+  // historical errors on bootstrap, with one-minute ingestion safety lag.
+  const checkpoint = state?.pollCursorAt ?? new Date(now.getTime() - 15 * 60_000);
   // Replay a small overlap; provider event/request hashes suppress duplicates
   // while catching identical timestamps and delayed ingestion.
   const start = new Date(checkpoint.getTime() - (state?.pollCursorAt ? 120_000 : 0));
@@ -204,9 +212,10 @@ export async function pollCloudLoggingErrors(now = new Date()): Promise<number> 
   const settings = cloudPollSettings();
   if (!settings || !logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return 0;
   let handled = 0;
-  await withScheduledLease("telegram-cloud-log-poll", now, async () => {
+  const environment = alertEnvironment();
+  await withScheduledLease("telegram-cloud-log-poll-" + environment, now, async () => {
     const db = getDb();
-    const stateKey = "PRODUCTION_ERROR_POLL";
+    const stateKey = environment + "_ERROR_POLL";
     await db.insert(states).values({ stateKey }).onConflictDoNothing();
     const [state] = await db.select().from(states)
       .where(eq(states.stateKey, stateKey)).limit(1);
@@ -295,6 +304,7 @@ export const LOG_ALERT_TICK_CADENCE_MINUTES = 2;
 export async function runAlertTick(now = new Date()): Promise<{ acquired: boolean; digest: boolean }> {
   if (!logAlertsRuntimeEnabled() || !telegramAlertsConfigured()) return { acquired: false, digest: false };
   const { day, hour } = istDayAndHour(now);
+  const environment = alertEnvironment();
   // Burst overflow is not lost even if no subsequent error arrives to trigger a send.
   // The locked state row preserves the five-per-minute ceiling across web replicas.
   await runOptionalAlertTask(() => flushOverflow(now));
@@ -308,12 +318,13 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     noteCloudPollingFailure();
   }
   let digest = false;
-  const acquired = await withScheduledLease("telegram-digest", now, async () => {
+  const acquired = await withScheduledLease("telegram-digest-" + environment, now, async () => {
     if (hour < 9) return;
     const db = getDb();
-    await db.insert(states).values({ stateKey: "TELEGRAM_DIGEST" }).onConflictDoNothing();
+    const digestKey = "TELEGRAM_DIGEST_" + environment;
+    await db.insert(states).values({ stateKey: digestKey }).onConflictDoNothing();
     const [state] = await db.select().from(states)
-      .where(eq(states.stateKey, "TELEGRAM_DIGEST")).limit(1);
+      .where(eq(states.stateKey, digestKey)).limit(1);
     if (state?.lastDigestDay === day) return;
     // Bound the privacy-preserving event fingerprint table's growth.
     await db.delete(observed)
@@ -321,9 +332,7 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     // Digest covers the completed prior IST calendar date.
     const previous = new Date(Date.parse(day + "T00:00:00Z") - 86_400_000);
     const previousDay = previous.toISOString().slice(0, 10);
-    const predicate = and(eq(daily.dayKey, previousDay), eq(signatures.environment,
-      process.env.APP_ENV === "production" ? "PRODUCTION" :
-      process.env.APP_ENV === "uat" ? "UAT" : "DEVELOPMENT"));
+    const predicate = and(eq(daily.dayKey, previousDay), eq(signatures.environment,environment));
     const start = new Date(Date.parse(previousDay + "T00:00:00Z") - 330 * 60_000);
     const end = new Date(start.getTime() + 86_400_000);
     // Aggregate over ALL daily rows, not just the five displayed signatures.
@@ -355,7 +364,7 @@ export async function runAlertTick(now = new Date()): Promise<{ acquired: boolea
     });
     if (!await sendTelegramAlert(message)) return;
     await db.update(states).set({ lastDigestDay: day })
-      .where(eq(states.stateKey, "TELEGRAM_DIGEST"));
+      .where(eq(states.stateKey, digestKey));
     digest = true;
   });
   return { acquired, digest };

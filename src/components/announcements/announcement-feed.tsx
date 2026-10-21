@@ -33,7 +33,7 @@ function announcementTimestamp(raw: AnnouncementFeedItem["createdAt"]): Date | n
     const local = new Date(value.getTime() + 330 * 60_000);
     if (local.getUTCFullYear() !== year || local.getUTCMonth() + 1 !== month ||
         local.getUTCDate() !== day) return null;
-  } else value = new Date(raw as Date | string);
+  } else value = raw instanceof Date ? new Date(raw.getTime()) : new Date(raw as string);
   return Number.isFinite(value.getTime()) ? value : null;
 }
 
