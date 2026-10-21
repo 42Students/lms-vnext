@@ -51,8 +51,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/util/JobVisibilityCache.java`
 - [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/JobTypeService.java`
 - [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/BulkSmsAppsServiceImpl.java`
-- [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/semesters/SemesterSearchController.java`
-- [ ] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/batches/BatchSearchController.java`
+- [x] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/semesters/SemesterSearchController.java`
+- [x] U014 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/batches/BatchSearchController.java`
 - [ ] U015 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/JobApplicationRepository.java`
 - [ ] U016 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/Skill.java`
 - [ ] U017 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/ProjectTemplateCollege.java`
