@@ -1,3 +1,4 @@
 # Lane chat-17 cross-lane handoffs
 
 - `src/app/api/placements/preferences/notifications/route.ts` | G2-4-015-028 | API owner: confirm any remaining legacy callers expecting `success` and `message: "Updated successfully"` get a compatible response envelope without weakening vNext scoped membership/CAS or the existing `{preferences}` response; client toast copy fixed in lane 17.
+- `src/app/(authenticated)/learn/my-placements/offers/error.tsx` and authentication route handling | G2-13-005-027, G2-13-005-028 | Route owner: existing error.tsx renders Retry/reset with `Could not load your offers`; legacy copy says `We could not load your offers`. Verify unauthenticated versus revoked membership routing and whether wording needs exact legacy copy, without loosening access checks.
