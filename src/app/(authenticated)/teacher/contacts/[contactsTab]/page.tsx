@@ -9,7 +9,7 @@ import {
   FacultyContactsPagination,
   FacultyContactsTable,
 } from "@/components/courses/faculty-contacts-table";
-import { Input } from "@/components/ui/input";
+import { FacultyContactsLiveSearch } from "./faculty-contacts-live-search";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
 import { AuthorizationError } from "@/modules/permissions/policy";
@@ -65,7 +65,7 @@ export default async function FacultyContactsPage({
   }).then(value=>({ok:true as const,value}))
     .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
   if(!loaded.ok)return <section className="min-w-0 space-y-4">
-    <PageHeader title={selected.label} />
+    <PageHeader title="Contacts" />
     <ErrorState title={loaded.denied?"Contacts access denied":"Couldn't load contacts"}
       description={loaded.denied?"You no longer have access to these contacts.":"Something went wrong on our end. Please try again."}
       action={<Link href={loaded.denied?"/teacher/contacts":"/teacher/contacts/"+contactsTab+"?"+new URLSearchParams({
@@ -81,69 +81,25 @@ export default async function FacultyContactsPage({
 
   return (
     <div className="min-w-0 max-w-full space-y-4">
-      <PageHeader
-        title={selected.label}
-      />
+      <PageHeader title="Contacts" />
 
-      <Tabs ariaLabel="Contact types" value={contactsTab} renderPanel={false}
+      <Tabs ariaLabel="Contacts sections" value={contactsTab} renderPanel={false}
         items={Object.entries(tabs).map(([key,tab])=>({
           value:key,label:tab.label,href:`/teacher/contacts/${key}`,
         }))} />
 
-      <section className="min-w-0 border-b border-border pb-4">
-        <div className="flex min-w-0 flex-col gap-3">
-          <div>
-            <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
-            <p className="mt-1 inline-flex rounded-full border border-border bg-surface px-3 py-1 text-sm text-body leading-[22px]" role="status" aria-live="polite">
-              {result.total}{" "}
-              {result.total === 1
-                ? "contact"
-                : "contacts"}
-            </p>
-          </div>
-          <form
-            key={result.search + ":" + result.pageSize}
-            action={baseHref}
-            className="grid w-full min-w-0 items-end gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)_auto]"
-          >
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Search contacts
-              <Input
-                type="search"
-                name="q"
-                maxLength={200}
-                defaultValue={result.search}
-                placeholder="Name or department"
-              />
-            </label>
-            <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-              Contacts per page
-              <Select name="pageSize" aria-label="Contacts per page"
-                defaultValue={String(result.pageSize)}
-                className="block">
-                <option value="10">10</option>
-                <option value="20">20</option>
-                <option value="50">50</option>
-              </Select>
-            </label>
-            <Button type="submit" variant="primary" className="min-h-11 w-full sm:col-span-2 lg:col-span-1 lg:w-auto lg:min-h-9">
-              Search
-            </Button>
-          </form>
-        </div>
-        {result.search ? (
-          <div className="mt-3 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <span>
-              Results for “{result.search}”
+      <section className="min-w-0 space-y-3 border-b border-[var(--lms-canvas-border)] pb-4">
+        <p className="mb-3 text-xs text-muted-foreground">Contact fields are masked for this role. The legacy Email and Contact columns remain visible as Private; no other learner or teacher phone number is disclosed.</p>
+        <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-3">
+            <h2 className="m-0 text-[18px] font-semibold leading-[1.4] text-[var(--lms-heading)]">{selected.label}</h2>
+            <span role="status" aria-live="polite" className="inline-flex items-center gap-2 rounded-full border border-[var(--lms-field-hover-border)] bg-surface px-3 py-1 text-sm text-body">
+              <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 11a3 3 0 1 0 0-6m0 9a5 5 0 0 1 4 4v2"/></svg>
+              {result.total} {result.total === 1 ? "contact" : "contacts"}
             </span>
-            <Link
-              href={baseHref}
-              className="font-semibold text-primary-text hover:underline inline-flex min-h-11 md:min-h-9 items-center focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
-            >
-              Clear search
-            </Link>
           </div>
-        ) : null}
+          <FacultyContactsLiveSearch baseHref={baseHref} initialSearch={result.search} pageSize={result.pageSize}/>
+        </div>
       </section>
 
       <FacultyContactsTable
@@ -153,6 +109,7 @@ export default async function FacultyContactsPage({
         detailBaseHref={baseHref}
         detailQuery={facultyContactDirectoryQuery({q:result.search,page:String(result.page),pageSize:String(result.pageSize)})}
       />
+      <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
       <FacultyContactsPagination
         page={result.page}
         totalPages={result.totalPages}
@@ -160,6 +117,16 @@ export default async function FacultyContactsPage({
         search={result.search}
         pageSize={result.pageSize}
       />
+      <form method="GET" action={baseHref} className="flex min-w-0 items-end gap-2">
+        {result.search?<input type="hidden" name="q" value={result.search}/>:null}
+        <label className="flex flex-col gap-1 text-xs font-semibold text-[var(--lms-neutral-400)]">Rows per page
+          <Select name="pageSize" defaultValue={String(result.pageSize)} className="min-h-11 md:min-h-9">
+            <option value="10">10</option><option value="20">20</option><option value="50">50</option>
+          </Select>
+        </label>
+        <Button type="submit" variant="secondary" className="min-h-11 md:min-h-9">Apply</Button>
+      </form>
+      </div>
     </div>
   );
 }

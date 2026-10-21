@@ -4,6 +4,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { isSameOriginRequest } from "@/auth/origin";
 import { apiErrorResponse } from "@/lib/api-error";
 import { listPrograms } from "@/modules/academics/program-service";
+import {parseLegacyProgramPage,legacyProgramPage} from "@/modules/admin-ui/legacy-program-page-model";
 import {
   CollegeProgramMutationError,
   createCollegeProgram,
@@ -43,6 +44,12 @@ export async function GET(request: Request) {
       url.searchParams.get("collegeId") ?? "",
       url.searchParams.get("departmentId"),
     );
+    // Explicit zero-based pagination preserves the historical page contract
+    // without exposing numeric-ID aliases or cross-college unscoped reads.
+    // Calls without pagination still receive the existing vNext {programs}.
+    const page=parseLegacyProgramPage(url.searchParams);
+    if(page===false)return NextResponse.json({error:"INVALID_PAGINATION",message:"Page must be a non-negative integer and size must be between 1 and 100."},{status:400});
+    if(page)return NextResponse.json({programs:legacyProgramPage(programs,page)});
     return NextResponse.json({ programs });
   } catch (error) {
     return apiErrorResponse(error);
