@@ -73,26 +73,26 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-15.md: file, number of
 - [x] `src/app/(authenticated)/tpo/home/page.tsx`
 - [x] `src/app/(authenticated)/tpo/messages/[threadId]/page.tsx`
 - [x] `src/app/(authenticated)/tpo/placements/lifecycle/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/students/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/[token]/page.tsx`
-- [ ] `src/app/campaign-unsubscribe/confirmed/page.tsx`
-- [ ] `src/app/company-share/[token]/error.tsx`
-- [ ] `src/app/company-share/[token]/not-found.tsx`
-- [ ] `src/app/company-share/[token]/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/app/globals.css`
-- [ ] `src/app/login-shell.module.css`
-- [ ] `src/app/page.tsx`
-- [ ] `src/app/placements/page.tsx`
-- [ ] `src/components/academics/academics-create-panel.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
+- [x] `src/app/(authenticated)/tpo/reports/accreditation/page.tsx`
+- [x] `src/app/(authenticated)/tpo/settings/notices/page.tsx`
+- [x] `src/app/(authenticated)/tpo/students/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/everyone/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/[publicId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/audit-findings/page.tsx`
+- [x] `src/app/campaign-unsubscribe/[token]/page.tsx`
+- [x] `src/app/campaign-unsubscribe/confirmed/page.tsx`
+- [x] `src/app/company-share/[token]/error.tsx`
+- [x] `src/app/company-share/[token]/not-found.tsx`
+- [x] `src/app/company-share/[token]/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/app/globals.css`
+- [x] `src/app/login-shell.module.css`
+- [x] `src/app/page.tsx`
+- [x] `src/app/placements/page.tsx`
+- [x] `src/components/academics/academics-create-panel.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
 - [ ] `src/components/academics/college-cohort-management.tsx`
 - [ ] `src/components/academics/college-hall-booking-action.tsx`
 - [ ] `src/components/academics/college-promotion-confirmation.tsx`
