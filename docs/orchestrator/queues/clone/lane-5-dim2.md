@@ -534,7 +534,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-5.md: file, number of 
 - [x] `src/components/tpo/tpo-notification-refresh.tsx`
 - [x] `src/components/tpo/tpo-optional-emails-editor.tsx`
 - [x] `src/components/tpo/tpo-outcome-labels-editor.tsx`
-- [ ] `src/components/tpo/tpo-placement-cell-read-action.tsx`
+- [x] `src/components/tpo/tpo-placement-cell-read-action.tsx`
 - [ ] `src/components/tpo/tpo-prep-percentage-editor.tsx`
 - [ ] `src/components/tpo/tpo-prep-readiness-editor.tsx`
 - [ ] `src/components/tpo/tpo-recruiter-message-reply.tsx`
