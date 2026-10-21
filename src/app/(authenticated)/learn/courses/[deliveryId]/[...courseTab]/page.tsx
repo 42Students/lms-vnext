@@ -49,7 +49,8 @@ export default async function LearnerCourseTabPage({
     if(!authorizedDeliveryId)notFound();
     const safeQuery=new URLSearchParams();
     for(const [key,value] of Object.entries(query)){
-      if(!["filter","lesson","content","month"].includes(key))continue;
+      if(!["filter","lesson","content","month","cls","ref",
+       "semesterId","academicPeriodId"].includes(key))continue;
       const firstValue=Array.isArray(value)?value[0]:value;
       if(firstValue&&firstValue.length<=100)safeQuery.set(key,firstValue);
     }
