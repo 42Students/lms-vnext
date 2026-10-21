@@ -1,7 +1,7 @@
 import "server-only";
-import { asc, and, eq, isNull } from "drizzle-orm";
+import { asc, and, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
-import { colleges, courses, departments } from "@/db/schema";
+import { colleges, courses, departments, placementJobs } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import { requireTpoBatchActor } from "./tpo-batch-workspace-read-service";
 import { placementTableExists } from "./staged-tables";
@@ -22,8 +22,16 @@ export async function getTpoJobTypes(ctx:RequestContext){
   const rows=ready?await tx.select({
    id:tpoJobTypes.id,label:tpoJobTypes.label,active:tpoJobTypes.active,countsAsPlaced:tpoJobTypes.countsAsPlaced,isBuiltin:tpoJobTypes.isBuiltin,updatedAt:tpoJobTypes.updatedAt,
   }).from(tpoJobTypes).where(eq(tpoJobTypes.collegeId,collegeId))
-   .orderBy(asc(tpoJobTypes.label)):[];
-  return {ready,rows};
+   .orderBy(asc(tpoJobTypes.updatedAt),asc(tpoJobTypes.id)):[];
+  const usage=ready?await tx.select({
+   label:sql<string>`lower(${placementJobs.jobTypeLabel})`,
+   drives:sql<number>`count(*)::integer`,
+  }).from(placementJobs)
+   .where(and(eq(placementJobs.collegeId,collegeId),isNull(placementJobs.archivedAt)))
+   .groupBy(sql`lower(${placementJobs.jobTypeLabel})`):[];
+  const countByName=new Map(usage.map(row=>[row.label,row.drives]));
+  return {ready,rows:rows.map(row=>({...row,drives:countByName.get(row.label.toLowerCase())??0})),
+   usage:countByName};
  });
 }
 export async function getTpoBlockedDates(ctx:RequestContext){
