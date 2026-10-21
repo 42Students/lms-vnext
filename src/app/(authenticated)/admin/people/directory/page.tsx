@@ -33,7 +33,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
  }:{invalid:true});
  if(!query.success) return <div className="space-y-4"><PageHeader title="People Directory"/>
   <ErrorState title="Invalid directory filters" description="Review search, roles, statuses, or page."
-   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] hover:underline">Clear filters</Link>}/>
+   action={<Link href="/admin/people/directory" className="font-semibold text-primary-text focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] hover:underline">Clear filters</Link>}/>
  </div>;
  const loaded=await listSuperAdminUsers(context,query.data)
   .then(value=>({ok:true as const,value}))
@@ -46,7 +46,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
     ?"Your account can no longer view these membership records."
     :"These membership records could not be loaded. Your filters were preserved."}
    action={<Link href={loaded.denied?"/dashboard":adminUsersHref(query.data)}
-    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
+    className="font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
     {loaded.denied?"Back to dashboard":"Retry loading users"}
    </Link>}/>
  </div>;
@@ -69,11 +69,11 @@ export default async function SuperAdminUserDirectory({searchParams}:{
   <details className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-3)]">
    <summary className="inline-flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Related people views</summary>
      {!context.adminScope?.organizationId && !context.adminScope?.collegeId ?
-   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Users without college memberships →</Link> : null}
+   <Link href="/admin/people/unassigned" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Users without college memberships →</Link> : null}
   <nav aria-label="Related people views" className="flex min-w-0 flex-col items-start gap-[var(--lms-space-2)] pt-[var(--lms-space-2)] text-sm sm:flex-row sm:flex-wrap sm:items-center sm:gap-[var(--lms-space-4)]">
-   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] underline-offset-4">Student accounts</Link>
-   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] underline-offset-4">Faculty accounts</Link>
-   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary)] underline-offset-4">Teaching assignments</Link>
+   <Link href="/admin/students" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] underline-offset-4">Student accounts</Link>
+   <Link href="/admin/faculty" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] underline-offset-4">Faculty accounts</Link>
+   <Link href="/admin/faculty-assignment" className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)] underline-offset-4">Teaching assignments</Link>
   </nav>
 
   </details>
@@ -138,7 +138,7 @@ export default async function SuperAdminUserDirectory({searchParams}:{
      <span className="whitespace-nowrap text-xs text-muted-foreground">{new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeZone:"Asia/Kolkata"}).format(row.updatedAt)} IST</span>},
     {key:"action",header:"Actions",mobilePriority:"action",cell:row=>
      <Link href={`/admin/people/directory/${encodeURIComponent(row.membershipId)}`}
-      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View membership →</Link>},
+      className="inline-flex min-h-11 items-center font-semibold text-[var(--lms-link-text)] underline underline-offset-4 hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">View membership →</Link>},
    ]}/>
    :<EmptyState title="No matching users" description="No memberships match these filters within the current safety scope."/>}
   <div className="min-w-0 border-t border-border pt-[var(--lms-space-3)]"><Pagination label="Users pages" page={data.query.page} pageCount={data.totalPages}
