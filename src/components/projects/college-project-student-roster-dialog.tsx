@@ -68,6 +68,7 @@ export function CollegeProjectStudentRosterDialog({projectId,expectedUpdatedAt}:
  }
  async function save(){
   if(lock.current||!loaded)return;
+  if(!selected.length){setError("Select at least one student.");return;}
   if(selected.length>500){setError("Select no more than 500 students.");return;}
    lock.current=true;setBusy(true);setError("");
   try{

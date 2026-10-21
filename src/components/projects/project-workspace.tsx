@@ -917,7 +917,7 @@ export function ProjectWorkspace({
               <ProjectTeamRosterReconcile projectId={workspace.project.id} /> : null}
           </div>
         ) : null}
-        {mode==="ADMIN"&&!readOnly?<div className="flex justify-end">
+        {mode==="ADMIN"&&!readOnly&&!workspace.project.teamGroupId?<div className="flex justify-end">
           <AddProjectMemberControl projectId={workspace.project.id}/>
         </div>:null}
         {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
