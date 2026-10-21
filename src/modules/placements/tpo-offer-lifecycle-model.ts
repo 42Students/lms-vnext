@@ -9,6 +9,27 @@ export const TPO_OFFER_ACTIONS = [
   "EXTEND", "RECORD_ACCEPTED", "RECORD_DECLINED", "RECORD_JOINED", "WITHDRAW",
 ] as const;
 export type TpoOfferAction = (typeof TPO_OFFER_ACTIONS)[number];
+/** Preset reasons are editable starts, not evidence substitutions. */
+export const TPO_OFFER_REASON_PRESETS=[
+ "Recruiter requested expiry extension",
+ "Candidate confirmed acceptance with supporting evidence",
+ "Candidate declined after documented follow-up",
+ "Employer confirmed joining with supporting evidence",
+ "Employer withdrew the offer",
+ "Other — explain in detail",
+] as const;
+export function tpoOfferLegacyStatusCopy(status:string,actor:"COMPANY"|"STAFF"){
+ const statusLabel:Record<string,string>={
+  ISSUED:"Offer sent",ACCEPTED:"Accepted",DECLINED:"Declined",
+  WITHDRAWN:"Withdrawn",REVOKED:"Revoked",JOINED:"Joined",
+ };
+ return (statusLabel[status]??status.replaceAll("_"," "))+
+  (actor==="STAFF"?" · Recorded by placement cell":" · Company");
+}
+export function tpoOfferDistinctSelection(ids:readonly string[]){
+ const distinct=[...new Set(ids)];
+ return {ids:distinct,duplicateCount:ids.length-distinct.length};
+}
 
 export const tpoOfferLifecycleInputSchema = z.object({
   confirmed: z.literal(true),
