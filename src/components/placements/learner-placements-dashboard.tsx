@@ -1,8 +1,5 @@
 import Link from "next/link";
 import { SummaryStrip } from "@/components/ui/summary-strip";
-import { StatTile } from "@/components/ui/stat-tile";
-import metricStyles from "./learner-placement-metrics.module.css";
-import { PlacementSnapshotGlyph, type PlacementSnapshotGlyphKind } from "./learner-placement-snapshot-glyph";
 import { StatusBadge } from "@/components/ui/status-badge";
 import type { learnerPlacementDashboard } from "@/modules/placements/learner-dashboard-model";
 import { learnerDashboardPartialState,type PlacementDashboardAvailability } from "@/modules/placements/learner-dashboard-partial-model";
@@ -10,41 +7,36 @@ import { learnerPlacementOnboardingSteps } from "@/modules/placements/learner-on
 import {learnerPlacementHeroGreeting} from "@/modules/placements/learner-dashboard-greeting-model";
 import type {learnerPlacementApplicationFunnel} from "@/modules/placements/learner-dashboard-funnel-model";
 import {learnerDashboardSafeFallback} from "@/modules/placements/learner-dashboard-fallback-model";
-import {learnerDashboardMetricView} from "@/modules/placements/learner-dashboard-metric-view-model";
 import {learnerDashboardDateLabel} from "@/modules/placements/learner-dashboard-date-label-model";
-import {learnerWaitingOnYou} from "@/modules/placements/learner-waiting-on-you-model";
+import {learnerWaitingOnYou,type LearnerBookedConfirmation} from "@/modules/placements/learner-waiting-on-you-model";
 import {learnerPlacementHeroPriority} from "@/modules/placements/learner-dashboard-hero-priority-model";
 
 type Snapshot = ReturnType<typeof learnerPlacementDashboard>;
 
 const formatWhen=learnerDashboardDateLabel;
 
-function Metric({
-  label, value, href, detail, kind,
-}: {
-  label: string;
-  value: number | null;
-  href: string;
-  detail: string;
-  kind: PlacementSnapshotGlyphKind;
-}) {
-  const metric = learnerDashboardMetricView(value, label, detail);
-  return (
-    <Link href={href} aria-label={metric.ariaLabel}
-      className={metricStyles.link+" group block"}>
-      <StatTile label={label} value={metric.display}
-        className={metricStyles.tile+" h-full"}>
-        <span className={metricStyles.icon}><PlacementSnapshotGlyph kind={kind} /></span>
-        <span className={metricStyles.detail}>
-          {metric.detail} →
-        </span>
-      </StatTile>
-    </Link>
-  );
+/** Old LMS home hero CTA vocabulary, keyed by recorded priority instead
+ * of a generic first-run shortcut. Never infer attendance confirmation. */
+function legacyPlacementCta(next:{label:string;href:string;title:string},
+ booked:readonly LearnerBookedConfirmation[]):string{
+ if(next.label==="You have an offer"||next.href.startsWith("/learn/my-placements/offers?"))return "Accept or decline";
+ if(next.label==="First step"||next.label==="Registration needed")return "Register now";
+ if(next.href.startsWith("/learn/my-placements/schedule")||
+  next.label==="Interview coming up"||next.label==="Assessment coming up"){
+  const needsConfirm=booked.some(row=>row.booked&&!row.confirmed&&
+   !row.pendingMoveRequest&&row.roundKind!=="TALK"&&
+   row.startsAt!==null&&row.startsAt.getTime()>=Date.now());
+  return needsConfirm?"Confirm I'll attend":"See details";
+ }
+ if(next.label==="Congratulations"||next.label==="Placed")return "See your rules";
+ if(next.href.startsWith("/learn/my-placements/jobs"))return "See drives";
+ if(next.href.startsWith("/learn/profile"))return "Update profile";
+ if(next.label==="You chose higher studies"||next.label==="You are not taking part in placements")return "Placement cell";
+ return "See details";
 }
 
 export function LearnerPlacementsDashboard({
-  snapshot,availability,learnerName=null,applicationFunnel=null,registration=null,profileFixes=[],acceptedOffer=null,
+  snapshot,availability,learnerName=null,applicationFunnel=null,registration=null,profileFixes=[],acceptedOffer=null,bookedConfirmations=[],
 }: {
   snapshot: Snapshot;
   availability:PlacementDashboardAvailability;
@@ -53,15 +45,30 @@ export function LearnerPlacementsDashboard({
   registration?:{stage:string;choice:string|null}|null;
   profileFixes?:readonly {label:string;href:string}[];
   acceptedOffer?:boolean|null;
+  bookedConfirmations?:readonly LearnerBookedConfirmation[];
 }) {
   const display=learnerDashboardPartialState(availability,snapshot);
-  const next = learnerPlacementHeroPriority({pendingOffers:display.activeOffers,registration,acceptedOffer,fallback:display.nextAction});
+  const defaultNext=learnerPlacementHeroPriority({
+    pendingOffers:display.activeOffers,registration,acceptedOffer,fallback:display.nextAction,
+  });
+  // The legacy journey puts the earliest future round BEFORE a placed status,
+  // but AFTER all active offers and an open registration choice.
+  const scheduled=display.nextScheduledEvent;
+  const registrationNeeded=registration?.stage==="OPEN"&&!registration.choice;
+  const next=display.activeOffers===0&&!registrationNeeded&&registration!==null&&
+    scheduled&&availability.rounds ? {
+      label:"Next scheduled event",title:scheduled.roundName+" · "+scheduled.companyName,
+      detail:"Your recorded round is coming up. Review the venue and attendance steps.",
+      href:"/learn/my-placements/schedule",when:scheduled.when,
+    } : defaultNext;
+  const legacyCta=next?legacyPlacementCta(next,bookedConfirmations):null;
   const safeFallback=learnerDashboardSafeFallback(availability);
   const greeting=learnerPlacementHeroGreeting(learnerName,display.firstRun);
   const onboarding=learnerPlacementOnboardingSteps(display.firstRun,availability.preferences);
   const shownWeekEvents=display.weekDays?.reduce((count,day)=>count+day.events.length,0)??0;
   const waitingOnYou=learnerWaitingOnYou({
     pendingOffers:display.activeOffers,
+    bookedConfirmations,
     urgentAssessment:display.urgentAssessment,
     urgentInterview:display.urgentInterview,
     nextAction:next,
@@ -95,7 +102,7 @@ export function LearnerPlacementsDashboard({
             href={next.href}
             className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-5 text-sm font-[650] text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"
           >
-            {display.firstRun ? "Browse drives" : "View next step"} →
+            {legacyCta} →
           </Link>
         </div>
       </div> : (
@@ -123,7 +130,9 @@ export function LearnerPlacementsDashboard({
           </div>
           <Link href={item.href} className="inline-flex min-h-11 md:min-h-9 items-center font-semibold text-primary-text underline">Review now</Link>
         </li>)}</ul>:<p role="status" className="mt-2 text-sm text-muted-foreground">
-          No recorded offers awaiting your reply or upcoming assessments/interviews need attention right now.
+          {next&&(next.label==="You have an offer"||next.label==="First step"||next.label==="Next scheduled event")
+            ?"Nothing else is waiting on you."
+            :"Nothing to do right now. We\u0027ll list it here the moment something needs you."}
         </p>}
       </section>
       {onboarding.length>0 ? (
@@ -142,43 +151,19 @@ export function LearnerPlacementsDashboard({
         </section>
       ) : null}
 
-      <div className={metricStyles.snapshot} aria-label="Placement snapshot">
-        <Metric
-          kind="jobs" label="Published drives before deadline"
-          value={display.openJobs}
-          href="/learn/my-placements/jobs"
-          detail={`${display.eligibleJobs ?? "Unknown"} eligible · ${display.notOpenToApplyJobs ?? "Unknown"} not currently open to apply`}
-        />
-        <Metric
-          kind="applications" label="Applications"
-          value={display.applications}
-          href="/learn/my-placements/applications"
-          detail={`${display.activeApplications ?? "Unknown"} under consideration`}
-        />
-        <Metric
-          kind="assessments" label="Upcoming assessments"
-          value={display.assessments}
-          href="/learn/my-placements/assessments"
-          detail={display.thisWeekAssessments===null
-            ?"Assessment schedule unavailable"
-            :`${display.thisWeekAssessments} in next seven IST calendar dates · not employer completion`}
-        />
-        <Metric
-          kind="interviews" label="Upcoming interviews"
-          value={display.interviews}
-          href="/learn/my-placements/interviews"
-          detail={display.thisWeekInterviews===null
-            ?"Interview schedule unavailable"
-            :`${display.thisWeekInterviews} in the next seven IST calendar dates · view all scheduled`}
-        />
-      </div>
-
       <section aria-label="Application screening breakdown" className="border-b border-border pb-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <h3 className="text-base font-semibold text-foreground">Application stages</h3>
           <Link href="/learn/my-placements/applications" className="inline-flex min-h-11 md:min-h-9 items-center text-sm font-semibold text-primary-text underline">See all applications →</Link>
         </div>
-        {applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
+        {display.applications===0 ? <p role="status" className="mt-2 text-sm text-body">
+            You haven't applied to a drive yet.{" "}
+            <Link href="/learn/my-placements/jobs" className="font-semibold text-primary-text underline">Browse drives open to you</Link>
+          </p> : display.applications!==null&&display.activeApplications===0 ? (
+            <p role="status" className="mt-2 text-sm text-body">No application is in progress right now.{" "}
+              <Link href="/learn/my-placements/jobs" className="font-semibold text-primary-text underline">Browse drives open to you</Link>
+            </p>
+          ) : applicationFunnel===null ? <p role="status" className="mt-2 text-sm text-body">Application stages are currently unavailable. They have not been counted as zero.</p>
           : <SummaryStrip className="mt-3" label="Application stages"
               steps={applicationFunnel.stages.map(stage=>({label:stage.label,value:stage.count}))} />}
         <p className="mt-2 text-xs text-muted-foreground">Based on your saved application and screening stages; not offer or hiring outcomes.</p>
@@ -330,7 +315,7 @@ export function LearnerPlacementsDashboard({
               {display.fullWeekEventCount-shownWeekEvents===1?" event":" events"} are included in the full calendar.
             </p>
           ) : null}
-          <Link href="/learn/my-placements/calendar" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
+          <Link href="/learn/my-placements/schedule" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text hover:underline md:min-h-9">
             Full schedule →
           </Link>
         </section>
