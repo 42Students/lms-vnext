@@ -177,3 +177,168 @@ export async function queueOutboundDelivery(
 ) {
   return queueOutboundDeliveryInTransaction(getDb(), context, rawIntent);
 }
+
+/**
+ * DB10 durable delivery integration boundary. The DB-067 SQL functions are
+ * staged proposals: these operations remain FAIL-CLOSED until migration replay
+ * and a privileged dispatcher DB role have been independently verified.
+ * They only claim/authorize/settle persistent intents, not send providers.
+ * No web request or tenant caller may be given the worker secret or SQL grant.
+ */
+export function outboundDispatchRuntimeEnabled() {
+  return outboundQueueRuntimeEnabled() &&
+    process.env.DB10_OUTBOUND_DISPATCH_READY === "DB10_VERIFIED";
+}
+
+export class OutboundDispatchNotReadyError extends Error {
+  constructor() {
+    super("OUTBOUND_DISPATCH_NOT_READY");
+    this.name = "OutboundDispatchNotReadyError";
+  }
+}
+
+function requireOutboundDispatchReady() {
+  if (!outboundDispatchRuntimeEnabled()) throw new OutboundDispatchNotReadyError();
+}
+
+function validateDispatchWorker(value: string): string {
+  if (typeof value !== "string" || !/^[A-Za-z0-9_.:-]{1,120}$/.test(value)) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  return value;
+}
+
+export type OutboundDispatchClaim = {
+  messageId: string;
+  fence: number;
+  requestDigest: string;
+};
+
+/** Atomic, oldest-first SKIP LOCKED claim, max 100 records. The SQL routine
+ * intentionally never auto-reclaims a CLAIMED row after lease expiry because
+ * provider acceptance may be unknown; reconcile it before any new send. */
+export async function claimOutboundDispatchBatch(
+  workerRaw: string,
+  batchSize = 25,
+  leaseSeconds = 60,
+): Promise<OutboundDispatchClaim[]> {
+  requireOutboundDispatchReady();
+  const worker = validateDispatchWorker(workerRaw);
+  if (!Number.isSafeInteger(batchSize) || batchSize < 1 || batchSize > 100 ||
+      !Number.isSafeInteger(leaseSeconds) || leaseSeconds < 5 || leaseSeconds > 300) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  const result = await getDb().execute<{
+    message_id: string; fence: number; request_digest: string;
+  }>(sql`
+    select message_id, fence, request_digest
+    from db10_claim_outbound_messages(${worker}, ${batchSize}, ${leaseSeconds})
+  `);
+  return result.rows.map(row => ({
+    messageId: row.message_id,
+    fence: row.fence,
+    requestDigest: row.request_digest,
+  }));
+}
+
+/** Verify the exact claim and up-to-date local + global EMAIL suppression in
+ * the DB immediately BEFORE an external provider call. globalEmailHash is
+ * secret-derived from the decrypted and validated payload, never user input;
+ * the DB verifies its message-specific commitment and returns false if held,
+ * expired or suppressed. */
+export async function authorizeOutboundProviderSend(input: {
+  messageId: string;
+  worker: string;
+  fence: number;
+  globalEmailHash: string | null;
+}): Promise<boolean> {
+  requireOutboundDispatchReady();
+  validateDispatchWorker(input.worker);
+  if (!/^[0-9a-f-]{36}$/i.test(input.messageId) ||
+      !Number.isSafeInteger(input.fence) || input.fence < 1 ||
+      (input.globalEmailHash !== null &&
+       !/^[0-9a-f]{64}$/.test(input.globalEmailHash))) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  const result = await getDb().execute<{ authorized: boolean }>(sql`
+    select db10_check_outbound_pre_send(
+      ${input.messageId}::uuid, ${input.worker}, ${input.fence},
+      ${input.globalEmailHash}
+    ) as authorized
+  `);
+  return result.rows[0]?.authorized === true;
+}
+
+/** Only definitely-unsent provider errors are eligible for RETRY; unknown
+ * network outcomes remain CLAIMED for manual/provider reconciliation. Rows
+ * may be marked provider accepted only with a real provider message id.
+ * Completion uses exact holder/fence and the already-authorized pre-send fence. */
+export async function completeOutboundDispatch(input: {
+  messageId: string;
+  worker: string;
+  fence: number;
+  outcome: "PROVIDER_ACCEPTED" | "RETRY" | "FAILED";
+  providerMessageId?: string | null;
+  safeFailureCode?: string | null;
+  nextAttemptAt?: Date | null;
+}): Promise<boolean> {
+  requireOutboundDispatchReady();
+  validateDispatchWorker(input.worker);
+  if (!/^[0-9a-f-]{36}$/i.test(input.messageId) ||
+      !Number.isSafeInteger(input.fence) || input.fence < 1 ||
+      (input.safeFailureCode != null && !/^[A-Z0-9_]{1,40}$/.test(input.safeFailureCode))) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  const nextAttemptAt = input.nextAttemptAt ?? null;
+  if (nextAttemptAt && (!(nextAttemptAt instanceof Date) ||
+      !Number.isFinite(nextAttemptAt.getTime()))) throw new OutboundDispatchNotReadyError();
+  const result = await getDb().execute<{ completed: boolean }>(sql`
+    select db10_complete_outbound_claim(
+      ${input.messageId}::uuid, ${input.worker}, ${input.fence},
+      ${input.outcome}, ${input.providerMessageId ?? null},
+      ${input.safeFailureCode ?? null}, ${nextAttemptAt}
+    ) as completed
+  `);
+  return result.rows[0]?.completed === true;
+}
+
+/** Bounded operational backlog counters, never plaintext recipients, provider
+ * credentials, ciphertext or invitation links. QUEUED and provider-accepted
+ * are different states; a stale pending queue is not a successful delivery. */
+export async function inspectOutboundDispatchBacklog(): Promise<{
+  pending: number;
+  retry: number;
+  claimed: number;
+  providerAccepted: number;
+  failed: number;
+  oldestDueAt: Date | null;
+}> {
+  requireOutboundDispatchReady();
+  const result = await getDb().execute<{
+    pending: number | string;
+    retry: number | string;
+    claimed: number | string;
+    provider_accepted: number | string;
+    failed: number | string;
+    oldest_due_at: Date | null;
+  }>(sql`
+    select
+      count(*) filter (where status = 'PENDING')::text as pending,
+      count(*) filter (where status = 'RETRY')::text as retry,
+      count(*) filter (where status = 'CLAIMED')::text as claimed,
+      count(*) filter (where status = 'PROVIDER_ACCEPTED')::text as provider_accepted,
+      count(*) filter (where status = 'FAILED')::text as failed,
+      min(coalesce(next_attempt_at, not_before, created_at)) filter
+        (where status in ('PENDING','RETRY')) as oldest_due_at
+    from outbound_messages
+  `);
+  const row = result.rows[0];
+  return {
+    pending: Number(row?.pending ?? 0),
+    retry: Number(row?.retry ?? 0),
+    claimed: Number(row?.claimed ?? 0),
+    providerAccepted: Number(row?.provider_accepted ?? 0),
+    failed: Number(row?.failed ?? 0),
+    oldestDueAt: row?.oldest_due_at ?? null,
+  };
+}
