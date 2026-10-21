@@ -32,6 +32,9 @@ export type LearnerPlacementOfferItem = {
   applicationId: string;
   companyName: string;
   companyLogoUrl?:string|null;
+  jobId?:string|null;
+  roleOption?:string|null;
+  jobType?:string|null;
   /** Source decimal CTC survives alongside rounded INR. */
   legacyCtcLpa?:string|null;
   jobTitle: string;
@@ -75,16 +78,25 @@ function humanize(value: string) {
     .join(" ");
 }
 
-function formatMoney(value: number | null) {
-  const amount=learnerOfferCtc(value);
-  if (amount===null) return null;
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(amount);
+function offerCtcLpa(item:LearnerPlacementOfferItem):string|null{
+  const saved=item.legacyCtcLpa?.trim();
+  if(saved && /^\d+(?:\.\d+)?$/.test(saved) && Number.isFinite(Number(saved)))
+    return String(Number(saved));
+  const amount=learnerOfferCtc(item.annualCtcInr);
+  return amount===null?null:String(Number((amount/100000).toFixed(2)));
 }
-
+function offerStatusText(item:LearnerPlacementOfferItem,now:string){
+  if(item.status==="WITHDRAWN")return "Withdrawn by the company";
+  if(item.status==="ISSUED"){
+    const timing=learnerOfferResponseTiming(item,now);
+    return timing.urgency==="EXPIRED"?"Expired: no reply in time":"Waiting for your reply";
+  }
+  return humanize(item.status);
+}
+function offerJobHref(item:LearnerPlacementOfferItem):string|null{
+  return item.jobId&&/^[0-9a-f-]{8,64}$/i.test(item.jobId)
+    ? "/learn/my-placements/jobs/"+encodeURIComponent(item.jobId):null;
+}
 function safePublicOfferLogo(url:string|null|undefined){
   if(!url)return null;
   try{
@@ -294,20 +306,18 @@ export function LearnerPlacementOffers({
     } finally {URL.revokeObjectURL(url);}
   }
   if (offers.length === 0) {
-    return null;
+    return <section id="my-offers" aria-labelledby="sp-off-empty" className="space-y-3">
+      <h2 id="sp-off-empty" className="text-lg font-semibold text-foreground">No offers yet</h2>
+      <p className="text-sm text-body">When a company selects you and the placement cell releases the offer, it shows here and you get a notice. You&apos;ll have time to read it and decide.{" "}
+        <Link href="/learn/my-placements/applications" className="font-semibold text-link underline">See where your applications stand</Link>
+      </p>
+    </section>;
   }
 
   return (
     <section id="my-offers" className="scroll-mt-24 space-y-3">
       <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div className="min-w-0">
-        <h2 className="m-0 text-base font-semibold text-foreground">
-          Offers
-        </h2>
-        <p className="mt-1 text-sm text-body">
-          Review official offers separately from round results and track the joining outcome after acceptance.
-        </p>
-        </div>
+        <p className="min-w-0 text-sm text-body">Review each offer, its reply deadline and joining terms before responding.</p>
         <Button className="min-h-11 w-full shrink-0 sm:w-auto md:min-h-9" type="button" variant="secondary" onClick={downloadOwnOffers}>
           Export displayed offers CSV
         </Button>
@@ -325,31 +335,26 @@ export function LearnerPlacementOffers({
             className="scroll-mt-24 min-w-0 py-4 first:pt-0 last:pb-0 md:py-5"
           >
             <div className="flex min-w-0 flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div className="min-w-0 flex-1">
-                 {safePublicOfferLogo(item.companyLogoUrl)?(
-                   <img alt={item.companyName+" logo"}
-                     src={safePublicOfferLogo(item.companyLogoUrl)!}
-                     width={48} height={48} loading="lazy"
-                     className="mb-2 size-12 rounded-[var(--lms-control-radius)] border border-border object-contain"/>
-                 ):null}
-                <p className="m-0 break-words text-xs font-semibold uppercase tracking-[0.08em] text-primary-text">
-                  {item.companyName}
-                </p>
-                <h3 className="mt-1 break-words text-lg font-semibold text-foreground">
-                  {item.kind === "LOI" ? "Letter of intent · " : ""}
-                  {item.roleTitle}
-                </h3>
-                <p className="mt-1 break-words text-sm text-body">
-                  {item.jobTitle}
-                  {formatMoney(
-                    item.annualCtcInr,
-                  )
-                    ? " · " +
-                      formatMoney(
-                        item.annualCtcInr,
-                      )
-                    : ""}
-                </p>
+              <div className="flex min-w-0 flex-1 items-start gap-3">
+                <span className="flex size-11 shrink-0 items-center justify-center overflow-hidden rounded-[var(--lms-control-radius)] border border-border bg-primary-subtle text-base font-bold text-primary-text" aria-label={item.companyName+" avatar"}>
+                  {safePublicOfferLogo(item.companyLogoUrl) ? (
+                    <img alt={item.companyName+" logo"} src={safePublicOfferLogo(item.companyLogoUrl)!}
+                      width={44} height={44} loading="lazy" className="size-11 object-contain"/>
+                  ) : <span aria-hidden="true">{item.companyName.trim().slice(0,2).toUpperCase()||"CO"}</span>}
+                </span>
+                <div className="min-w-0">
+                  <p className="m-0 break-words text-sm font-semibold text-foreground">{item.companyName}</p>
+                  <h3 className="mt-1 break-words text-base font-semibold text-foreground">
+                    {offerJobHref(item) ? (
+                      <Link href={offerJobHref(item)!} className="text-link hover:underline focus-visible:underline">
+                        {item.roleTitle}{item.roleOption ? " · "+item.roleOption : ""}
+                      </Link>
+                    ) : <span>{item.roleTitle}{item.roleOption ? " · "+item.roleOption : ""}</span>}
+                  </h3>
+                  <p className="mt-1 break-words text-sm text-body">
+                    {item.kind==="LOI"?"Letter of intent · ":""}{item.jobTitle}
+                  </p>
+                </div>
               </div>
               <div className="flex shrink-0 flex-wrap items-center gap-2 md:justify-end">
                 <StatusBadge
@@ -363,7 +368,7 @@ export function LearnerPlacementOffers({
                         : "neutral"
                   }
                 >
-                  {item.status==="ISSUED" && learnerOfferResponseTiming(item,snapshotNowIso).canRespond ? "Waiting for your reply" : humanize(item.status)}
+                  {offerStatusText(item,snapshotNowIso)}
                 </StatusBadge>
                 {item.joining ? (
                   <StatusBadge
@@ -388,20 +393,6 @@ export function LearnerPlacementOffers({
             </div>
 
             <div className="mt-3 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-2 break-words text-sm text-body">
-              {item.letterHref && item.status==="ACCEPTED" ? (
-                <a href={item.letterHref} target="_blank" rel="noopener noreferrer"
-                  className="inline-flex min-h-[var(--lms-control-height)] max-md:min-h-11 items-center font-semibold text-primary-text underline focus-visible:underline">
-                  Offer letter
-                </a>
-              ) : null}
-              {item.respondedAt && (item.status==="ACCEPTED" || item.status==="DECLINED") ? (
-                 <span>Responded: {formatWhen(item.respondedAt) ?? "Date unavailable"} (IST)</span>
-               ) : null}
-              {item.countsAsPlaced===false ? (
-                <span>Counts as placed: No (internship or letter of intent)</span>
-              ) : item.countsAsPlaced===true ? (
-                <span>Counts as placed: Yes</span>
-              ) : null}
             </div>
 
             <nav aria-label={`Offer links for ${item.companyName}`} className="mt-2 flex min-w-0 flex-wrap items-center gap-x-4 gap-y-1 text-sm">
@@ -418,29 +409,38 @@ export function LearnerPlacementOffers({
                 </Link>
               ) : null}
             </nav>
-            <div className="mt-3 grid min-w-0 gap-x-4 gap-y-2 break-words border-t border-border pt-3 text-sm text-body sm:grid-cols-2 lg:grid-cols-3">
-              <p className="m-0">
-                <span className="font-semibold text-foreground">
-                  Issued:
-                </span>{" "}
-                {formatWhen(item.issuedAt) ?? "Date unavailable"}
-              </p>
-              <p className="m-0">
-                <span className="font-semibold text-foreground">
-                  Planned joining:
-                </span>{" "}
-                {item.joiningDate ??
-                  "Not specified"}
-              </p>
-              <p className="m-0">
-                <span className="font-semibold text-foreground">
-                  Respond by:
-                </span>{" "}
-                {formatWhen(
-                  item.expiresAt,
-                ) ?? "No expiry"}
-              </p>
-            </div>
+            <dl className="mt-3 grid min-w-0 gap-x-4 gap-y-3 border-t border-border pt-3 text-sm text-body sm:grid-cols-2">
+              {offerCtcLpa(item)!==null ? <div>
+                <dt className="text-xs text-muted-foreground">{item.jobType?.toUpperCase()==="INTERNSHIP"?"Stipend / CTC":"CTC"}</dt>
+                <dd className="mt-1 font-semibold text-foreground">₹{offerCtcLpa(item)} LPA</dd>
+              </div>:null}
+              {item.joiningDate ? <div>
+                <dt className="text-xs text-muted-foreground">Joining</dt>
+                <dd className="mt-1 font-semibold text-foreground">{formatWhen(item.joiningDate)??item.joiningDate}</dd>
+              </div>:null}
+              {item.status==="ISSUED"&&item.expiresAt ? <div>
+                <dt className="text-xs text-muted-foreground">Reply by</dt>
+                <dd className={"mt-1 font-semibold "+(learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED"||
+                  Date.parse(item.expiresAt)-Date.parse(snapshotNowIso)<86400000?"text-error":"text-foreground")}>
+                  {formatWhen(item.expiresAt)??"Date unavailable"} · {(() => {
+                    const left=Date.parse(item.expiresAt)-Date.parse(snapshotNowIso);
+                    if(!Number.isFinite(left))return "Time unavailable";
+                    if(left<=0)return "Deadline passed";
+                    if(left<3600000)return Math.ceil(left/60000)+" minutes left";
+                    if(left<86400000)return Math.ceil(left/3600000)+" hours left";
+                    return Math.ceil(left/86400000)+" days left";
+                  })()}
+                </dd>
+              </div>:null}
+              {item.respondedAt && item.status!=="ISSUED" ? <div>
+                <dt className="text-xs text-muted-foreground">{item.status==="ACCEPTED"?"Accepted":"Answered"}</dt>
+                <dd className="mt-1 font-semibold text-foreground">{formatWhen(item.respondedAt)??"Date unavailable"} (IST)</dd>
+              </div>:null}
+              {item.countsAsPlaced===false ? <div>
+                <dt className="text-xs text-muted-foreground">Counts as placed</dt>
+                <dd className="mt-1 font-semibold text-foreground">No (internship)</dd>
+              </div>:null}
+            </dl>
 
             {item.status==="ACCEPTED" && item.acceptanceChannel==="EXTERNAL_IMPORT" ? (
               <aside role="status" className="mt-4 rounded-[var(--lms-control-radius)] border border-warning bg-warning-subtle p-4 text-sm text-body">
@@ -474,7 +474,7 @@ export function LearnerPlacementOffers({
               </p>
             ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="EXPIRED" ? (
               <p role="status" className="mt-4 text-sm font-semibold text-error">
-                The offer response deadline has passed
+                Expired: no reply in time
               </p>
             ) : learnerOfferResponseTiming(item,snapshotNowIso).urgency==="SOON" ? (
               <p role="status" className={"mt-4 text-sm font-semibold "+(item.expiresAt && Date.parse(item.expiresAt)-Date.parse(snapshotNowIso)<=86400000?"text-error":"text-warning")}>
@@ -552,6 +552,13 @@ export function LearnerPlacementOffers({
         ))}
       </div>
 
+      <p className="text-sm text-muted-foreground">
+        Need more time on an offer, or got an offer outside campus?{" "}
+        <Link href="/learn/my-placements/placement#requests" className="font-semibold text-link underline">
+          Send a request to the placement cell
+        </Link>.
+      </p>
+
       <Dialog open={extensionOffer!==null}
         onOpenChange={open=>{if(!open&&pendingId===null)setExtensionOffer(null);}}
         title="Request an offer deadline extension"
@@ -593,7 +600,7 @@ export function LearnerPlacementOffers({
         open={declineOffer !== null}
         onOpenChange={(open) => { if (!open && pendingId === null) setDeclineOffer(null); }}
         title={declineOffer?"Decline "+declineOffer.companyName+"\u0027s offer?":"Decline offer?"}
-        description="This cannot be undone. The placement cell receives a record of your response; company notification depends on the recruitment workflow."
+        description="This cannot be undone. The placement cell is told; the company is notified when its recruiting workflow supports it."
         footer={<div className="flex w-full flex-col-reverse gap-2 sm:flex-row sm:justify-end">
           <Button className="min-h-11 w-full sm:w-auto md:min-h-9" variant="secondary" disabled={pendingId !== null} onClick={() => setDeclineOffer(null)}>
             Cancel
@@ -609,7 +616,7 @@ export function LearnerPlacementOffers({
             {declineOffer.companyName} · {declineOffer.roleTitle}
           </p>
           <p className="text-sm text-body">
-            Recorded CTC: {formatMoney(declineOffer.annualCtcInr) ?? "Not specified"}.
+            Recorded CTC: {offerCtcLpa(declineOffer)!==null?"₹"+offerCtcLpa(declineOffer)+" LPA":"Not specified"}.
             The server rechecks the status and deadline on confirmation.
           </p>
           <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]" htmlFor="offer-decline-reason">
@@ -640,31 +647,40 @@ export function LearnerPlacementOffers({
           <div className="space-y-3 text-sm text-body">
             <p className="font-semibold text-foreground">{preview.companyName} · {preview.roleTitle}</p>
             <p>Drive: {preview.jobTitle}</p>
-            <p>Annual CTC: {formatMoney(preview.annualCtcInr) ?? "Not specified"}</p>
+            <p>CTC: {confirmOffer&&offerCtcLpa(confirmOffer)!==null?"₹"+offerCtcLpa(confirmOffer)+" LPA":"Not specified"}</p>
             <p>Planned joining: {preview.joiningDate ?? "Not specified"}</p>
             <p>Response deadline: {formatWhen(preview.expiresAt) ?? "No expiry specified"}</p>
-            {acceptImpactBusy?<p role="status" aria-live="polite" className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>:null}
-            {acceptImpactError?<p role="alert" className="text-sm text-error">{acceptImpactError}
-              <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" variant="link" onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Retry impact preview</Button>
-            </p>:null}
+            {acceptImpactBusy?<div role="status" aria-live="polite" className="space-y-2" aria-label="Checking acceptance impacts">
+              <p className="text-sm text-body">Checking the applications and offers this acceptance would change…</p>
+              <div className="h-4 w-4/5 animate-pulse rounded bg-muted"/><div className="h-4 w-3/5 animate-pulse rounded bg-muted"/><div className="h-4 w-2/3 animate-pulse rounded bg-muted"/>
+            </div>:null}
+            {acceptImpactError?<div role="alert" className="space-y-2 text-sm text-error">
+              <p className="font-semibold">We couldn&apos;t check what accepting will change</p>
+              <p>Accepting can end your other applications and offers. Check again before you accept.</p>
+              <p className="text-xs">{acceptImpactError}</p>
+              <Button className="min-h-11 sm:min-h-9" type="button" variant="secondary"
+                onClick={()=>{if(confirmOffer)void reviewAccept(confirmOffer);}}>Check again</Button>
+            </div>:null}
             {acceptImpact?<div className="space-y-2 border-b border-border py-3">
               <h3 className="font-semibold text-foreground">What accepting this offer changes</h3>
               {([
-                ["Withdrawn",acceptImpact.withdrawn],
-                ["Other offers declined",acceptImpact.declined],
-                ["You stay in",acceptImpact.stayed],
-              ] as const).map(([label,rows])=><div key={label}>
-                <p className="font-semibold">{label} ({rows.length})</p>
-                {rows.length?<ul className="list-disc pl-5">{rows.map(row=><li key={row.id}>{row.title}</li>)}</ul>:
-                <p className="text-xs text-muted-foreground">None</p>}
-              </div>)}
+                ["Withdrawn",acceptImpact.withdrawn,"These applications end."],
+                ["Other offers declined",acceptImpact.declined,"These offers are turned down for you."],
+                ["You stay in",acceptImpact.stayed,"These carry on as before."],
+              ] as const).filter(([,rows])=>rows.length>0).map(([label,rows,note])=>(
+                <section key={label} aria-label={label}>
+                  <h4 className="font-semibold">{label} ({rows.length})</h4>
+                  <p className="text-xs text-muted-foreground">{note}</p>
+                  <ul className="list-disc pl-5">{rows.map(row=><li key={row.id}>{row.title}</li>)}</ul>
+                </section>
+              ))}
               {!acceptImpact.withdrawn.length&&!acceptImpact.declined.length&&!acceptImpact.stayed.length?
-                <p className="text-sm font-medium">Nothing else changes.</p>:null}
-              <p className="text-xs text-muted-foreground">Withdrawn applications leave the active placement process. Other offers declined cannot be accepted; applications under You stay in remain active under your college rules.</p>
+                <p className="text-sm font-medium">Nothing else changes: you have no other active applications or offers.</p>:null}
+              <p className="text-xs text-muted-foreground"><Link href="/learn/my-placements/placement#rules" className="text-link underline">How your college&apos;s rules decide this</Link></p>
               {acceptImpact.blockedByAnotherAcceptedOffer?<p role="alert" className="font-semibold text-error">
                 Another accepted offer is already recorded. You cannot accept this offer until the placement cell resolves the conflict.
               </p>:null}
-              <p className="text-xs text-muted-foreground">These are current records only. The final transaction rechecks the impacts before changing anything.</p>
+              <p className="text-xs text-muted-foreground">The placement cell receives the response immediately. Company notification depends on the recruiting workflow. These are current records only; the final transaction rechecks every impact.</p>
             </div>:null}
             {preview.expired ? (
               <p role="alert" className="font-semibold text-error">This offer has expired. Acceptance is disabled.</p>

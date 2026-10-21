@@ -57,7 +57,7 @@ export async function getLearnerCalendarExtras(
   .orderBy(asc(placementTpoBlockedDates.day)):[];
  const supplements:CareerCalendarSupplement[]=[
   ...talks.flatMap(row=>row.scheduledAt?[{
-   key:"talk:"+row.id,kind:"JOB_IMPORTANT_DATE" as const,
+   key:"talk:"+row.id,jobId:row.jobId,kind:"JOB_IMPORTANT_DATE" as const,
    day:careerDayKey(row.scheduledAt),title:"Pre-placement talk · "+row.name,
    companyName:row.title,roleTitle:"Information session",visible:true,
    note:"College-arranged employer talk. Check the drive for participation details.",
