@@ -143,7 +143,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
         {data.leads.length === 0 ? (
           <p className="mt-3 text-sm text-body">
             There are no eligible recruiter leads to schedule. Add a recruiter lead first.
-            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open recruiter leads</Link>
+            {" "}<Link href="/tpo/recruiters" className="font-semibold text-link underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center focus-visible:underline">Open recruiter leads</Link>
           </p>
         ) : (
           <div className="mt-4 grid min-w-0 gap-3 sm:grid-cols-2">
@@ -193,15 +193,15 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
               <article key={row.id} className="min-w-0 space-y-3 py-4">
                 <div className="flex min-w-0 flex-col items-stretch gap-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
+                    <Link className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline"
                       href={"/tpo/recruiters/" + encodeURIComponent(row.leadId)}>{row.leadName}</Link>
                     {row.companyName ? <p className="text-sm text-body">{row.companyName}</p> : null}
                     <p className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                       Due {displayDate(row.dueAt)} {row.overdue?<StatusBadge tone="warning">Overdue</StatusBadge>:null}
                     </p>
                     {row.canContact?<div className="mt-2 flex flex-wrap gap-3 text-sm font-semibold">
-                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Call recruiter ↗</a>:null}
-                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Open WhatsApp ↗</a>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).call?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).call!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Call recruiter ↗</a>:null}
+                      {tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp?<a href={tpoFollowupContactLinks(row.phoneNorm,row.canContact).whatsapp!} className="lms-inline-link inline-flex min-h-11 items-center text-link underline hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 focus-visible:underline">Open WhatsApp ↗</a>:null}
                     </div>:null}
                   </div>
                   <Button variant="secondary" type="button" disabled={pending}
@@ -210,7 +210,7 @@ export function TpoDueFollowupWorkspace({ data }: { data: Queue }) {
                       setActiveId(activeId === row.id ? null : row.id);
                       setDoneNote(""); setOutcome("CONTACTED");
                     }}
-                    className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground sm:w-auto md:min-h-9">
+                    className="min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-foreground sm:w-auto md:min-h-9">
                     {activeId === row.id ? "Cancel" : "Record outcome and Done"}
                   </Button>
                 </div>

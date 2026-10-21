@@ -253,18 +253,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-9.md: file, number of 
 - [x] `src/components/tpo/tpo-batch-facet-filters.tsx`
 - [x] `src/components/tpo/tpo-batch-inline-decision.tsx`
 - [x] `src/components/tpo/tpo-batch-invitation-control.tsx`
-- [ ] `src/components/tpo/tpo-batch-rule-editor.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
-- [ ] `src/components/tpo/tpo-batch-student-saved-views.tsx`
-- [ ] `src/components/tpo/tpo-bell-panel.tsx`
-- [ ] `src/components/tpo/tpo-blocked-dates-editor.tsx`
-- [ ] `src/components/tpo/tpo-bulk-action-panel.tsx`
-- [ ] `src/components/tpo/tpo-communication-settings-editors.tsx`
-- [ ] `src/components/tpo/tpo-company-create-form.tsx`
-- [ ] `src/components/tpo/tpo-company-team-conversation.tsx`
-- [ ] `src/components/tpo/tpo-drive-request-actions.tsx`
-- [ ] `src/components/tpo/tpo-due-followup-workspace.tsx`
-- [ ] `src/components/tpo/tpo-grid-column-chooser.tsx`
+- [x] `src/components/tpo/tpo-batch-rule-editor.tsx`
+- [x] `src/components/tpo/tpo-batch-student-keyboard-actions.tsx`
+- [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
+- [x] `src/components/tpo/tpo-bell-panel.tsx`
+- [x] `src/components/tpo/tpo-blocked-dates-editor.tsx`
+- [x] `src/components/tpo/tpo-bulk-action-panel.tsx`
+- [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
+- [x] `src/components/tpo/tpo-company-create-form.tsx`
+- [x] `src/components/tpo/tpo-company-team-conversation.tsx`
+- [x] `src/components/tpo/tpo-drive-request-actions.tsx`
+- [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
+- [x] `src/components/tpo/tpo-grid-column-chooser.tsx`
 - [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
 - [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
 - [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
