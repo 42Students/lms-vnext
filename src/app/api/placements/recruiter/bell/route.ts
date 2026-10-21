@@ -7,7 +7,7 @@ export const runtime="nodejs";
 export async function GET(){
  try{
   const data=await readHrRecruiterBell(await getCurrentRequestContext());
-  return NextResponse.json(data,{headers:{"Cache-Control":"private, no-store"}});
+  return NextResponse.json({...data,ok:true},{headers:{"Cache-Control":"private, no-store"}});
  }catch(error){return apiErrorResponse(error);}
 }
 export async function POST(request:Request){

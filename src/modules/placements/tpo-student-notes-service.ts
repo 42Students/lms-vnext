@@ -49,7 +49,7 @@ export async function addTpoStudentNotes(ctx:RequestContext,raw:unknown){
     metadata:{noteId:record.id,studentId:id},
    });
   }
-  return {added:saved.length,skipped:input.membershipIds.length-saved.length,
+  return {ok:true as const,added:saved.length,skipped:input.membershipIds.length-saved.length,
    savedMembershipIds:saved};
  });
 }
