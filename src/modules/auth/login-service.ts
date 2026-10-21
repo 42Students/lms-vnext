@@ -3,6 +3,7 @@ import type {
   EmailProvider,
   SmsProvider,
 } from "@/modules/notifications/types";
+import { publicWorkEmailIssue } from "@/modules/placements/public-work-email-policy";
 import type { AuthConfig } from "./config";
 import {
   codeMac,
@@ -343,6 +344,29 @@ async function assertCanSignInHere(
   throw new LoginError("NO_ACCOUNT_FOR_DOMAIN");
 }
 
+/**
+ * Corporate-email policy applies only when the person has no active college
+ * membership or platform role and is signing in solely via a recruiter grant.
+ * Never reject a learner's email just because that learner also holds a
+ * recruiter grant. Do not reveal grant existence or the blocked domain.
+ *
+ * This classification reuses the maintained work-email denylist; verified
+ * recruiter grant issuance and company-domain exceptions remain separate
+ * authorized onboarding decisions, not public login parameters.
+ */
+async function assertRecruiterOnlyWorkEmail(
+  deps: LoginDependencies,
+  user: LoginUser,
+) {
+  const memberships = await deps.repository.listMemberships(user.id);
+  if (memberships.some(membership => membership.status === "ACTIVE")) return;
+  if (await deps.repository.isSuperAdmin(user.id)) return;
+  if (!(await deps.repository.hasAnyRecruiterGrant(user.id))) return;
+  if (!user.email || publicWorkEmailIssue(user.email) !== null) {
+    throw new LoginError("NO_ACCOUNT_FOR_DOMAIN");
+  }
+}
+
 export async function startLogin(
   input: StartLoginInput,
   deps: LoginDependencies,
@@ -361,6 +385,7 @@ export async function startLogin(
   if (!user) throw new LoginError("NOT_REGISTERED");
 
   await assertCanSignInHere(deps, user, input.tenantCollegeId);
+  await assertRecruiterOnlyWorkEmail(deps, user);
 
   const fingerprint = contactFingerprint(
     deps.config.secret,
@@ -483,6 +508,7 @@ export async function sendEmailFallback(
     throw new LoginError("ACCOUNT_DISABLED");
   }
   if (!user.email) throw new LoginError("EMAIL_NOT_AVAILABLE");
+  await assertRecruiterOnlyWorkEmail(deps, user);
 
   const isTestContact = deps.config.testEmails.has(
     user.email.toLowerCase(),
@@ -648,6 +674,7 @@ export async function verifyLogin(
   const user = await deps.repository.findUserById(attempt.userId);
   if (!user) throw new LoginError("INVALID_ATTEMPT");
   await assertCanSignInHere(deps, user, input.tenantCollegeId);
+  await assertRecruiterOnlyWorkEmail(deps, user);
 
   let issued: { token: string; maxAgeSeconds: number } | null = null;
   let sessionIssue: SessionIssue | undefined;

@@ -91,6 +91,9 @@ export const placementTpoMessages = pgTable(
       .references(() => users.id, { onDelete: "restrict" }),
     kind: varchar("kind", { length: 16 }).notNull().default("MESSAGE"),
     event: varchar("event", { length: 80 }),
+    /** The DB09 request/thread job relationship is checked by the 0304
+     * same-job trigger. A request from another college must never be quoted
+     * as a valid event in this recruiter conversation. */
     changeRequestId: uuid("change_request_id")
       .references(() => placementDriveChangeRequests.id, { onDelete: "restrict" }),
     via: varchar("via", { length: 12 }).notNull().default("APP"),
