@@ -72,6 +72,10 @@ export function RecruiterProfileDetailsEditor({initialName,initialTitle,initialP
   finally{window.clearTimeout(timeout);busyRef.current=false;setBusy(false);}
  }
  return <form onSubmit={e=>void save(e)} className="min-w-0 space-y-4">
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+   <p className="font-semibold">Recruiter contact details</p>
+   {dirty?<p role="status" className="text-sm font-semibold text-warning-text">Unsaved changes</p>:null}
+  </div>
   <div className="grid min-w-0 gap-4 min-[768px]:grid-cols-2">
    {([["firstName","First name"],["lastName","Last name"],["title","Designation"],["phone","Mobile"]] as const).map(([key,label])=>
     <label key={key} className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}

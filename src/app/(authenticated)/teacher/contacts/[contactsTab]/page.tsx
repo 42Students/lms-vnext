@@ -12,7 +12,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { PageHeader } from "@/components/ui/page-header";
 import { ErrorState } from "@/components/ui/error-state";
-import { FacultyContactsFailureToast } from "@/components/courses/faculty-contacts-failure-toast";
 import { AuthorizationError } from "@/modules/permissions/policy";
 import { Tabs } from "@/components/ui/tabs";
 import { listFacultyContacts } from "@/modules/courses/faculty-contacts-service";
@@ -67,7 +66,6 @@ export default async function FacultyContactsPage({
     .catch(error=>({ok:false as const,denied:error instanceof AuthorizationError}));
   if(!loaded.ok)return <section className="min-w-0 space-y-4">
     <PageHeader title={selected.label} />
-    {!loaded.denied ? <FacultyContactsFailureToast /> : null}
     <ErrorState title={loaded.denied?"Contacts access denied":"Couldn't load contacts"}
       description={loaded.denied?"You no longer have access to these contacts.":"Something went wrong on our end. Please try again."}
       action={<Link href={loaded.denied?"/teacher/contacts":"/teacher/contacts/"+contactsTab+"?"+new URLSearchParams({
@@ -93,7 +91,6 @@ export default async function FacultyContactsPage({
         }))} />
 
       <section className="min-w-0 border-b border-border pb-4">
-        <p className="mb-3 text-xs text-muted-foreground">Contact fields are masked for this role. The legacy Email and Contact columns remain visible as Private; no other learner or teacher phone number is disclosed.</p>
         <div className="flex min-w-0 flex-col gap-3">
           <div>
             <h2 className="m-0 font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Directory results</h2>
@@ -151,6 +148,7 @@ export default async function FacultyContactsPage({
 
       <FacultyContactsTable
         items={result.items}
+        search={result.search}
         showRoles={selected.value === "ALL"}
         detailBaseHref={baseHref}
         detailQuery={facultyContactDirectoryQuery({q:result.search,page:String(result.page),pageSize:String(result.pageSize)})}
