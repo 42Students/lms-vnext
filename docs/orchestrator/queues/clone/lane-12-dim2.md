@@ -293,10 +293,10 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-12.md: file, number of
 - [x] `src/components/tpo/tpo-roster-verification-bulk.tsx`
 - [x] `src/components/tpo/tpo-students-bulk-add.tsx`
 - [x] `src/components/tpo/tpo-timed-debar-control.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/tracker/tracker-issue-logs-panel.tsx`
-- [ ] `src/components/tracker/tracker-report-form.tsx`
-- [ ] `src/components/tracker/tracker-telegram-manual-panel.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/tracker/tracker-issue-logs-panel.tsx`
+- [x] `src/components/tracker/tracker-report-form.tsx`
+- [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
 - [ ] `src/components/ui/data-table.tsx`
 - [ ] `src/components/ui/date-input.tsx`
 - [ ] `src/components/ui/tabs.tsx`

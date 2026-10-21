@@ -46,7 +46,7 @@ export function TrackerTelegramManualPanel({items,configured,deploy}:{
   const fixed=items.filter(item=>item.fixStatus==="FIXED").length;
   const muted=items.filter(item=>item.muted).length;
   return <section className="min-w-0 space-y-3 border-b border-border pb-4">
-    <h2 className="font-semibold">Telegram alerts</h2>
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Telegram alerts</h2>
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Button variant="secondary" type="button" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={pending} onClick={()=>{
         if(confirmAfterClose.current!==null){window.clearTimeout(confirmAfterClose.current);confirmAfterClose.current=null;}
