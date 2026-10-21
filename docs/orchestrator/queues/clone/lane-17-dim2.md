@@ -213,16 +213,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-17.md: file, number of
 - [x] `src/components/placements/learner-career-rounds.tsx`
 - [x] `src/components/placements/learner-placement-academic-evidence.tsx`
 - [x] `src/components/placements/learner-placement-job-detail.tsx`
-- [ ] `src/components/placements/learner-placement-jobs.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/learner-placement-offers.tsx`
-- [ ] `src/components/placements/learner-placement-requests.tsx`
-- [ ] `src/components/placements/learner-placements-dashboard.tsx`
-- [ ] `src/components/placements/learner-save-drive-button.tsx`
-- [ ] `src/components/placements/placement-calendar-workspace.tsx`
-- [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
-- [ ] `src/components/placements/placement-drive-controls.tsx`
-- [ ] `src/components/placements/placement-drive-day-overview.tsx`
+- [x] `src/components/placements/learner-placement-jobs.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/learner-placement-offers.tsx`
+- [x] `src/components/placements/learner-placement-requests.tsx`
+- [x] `src/components/placements/learner-placements-dashboard.tsx`
+- [x] `src/components/placements/learner-save-drive-button.tsx`
+- [x] `src/components/placements/placement-calendar-workspace.tsx`
+- [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
+- [x] `src/components/placements/placement-drive-controls.tsx`
+- [x] `src/components/placements/placement-drive-day-overview.tsx`
 - [ ] `src/components/placements/placement-drive-workspace.tsx`
 - [ ] `src/components/placements/placement-employer-relationships.tsx`
 - [ ] `src/components/placements/placement-job-lifecycle-controls.tsx`
