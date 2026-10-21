@@ -257,3 +257,6 @@
 
 - work2 #1 `src/modules/placements/tpo-student-notes-service.ts` | G2-4-022-028: return legacy `ok:true` acknowledgment while preserving accurate added/skipped/member IDs. No change to authorization or partial-skip semantics.
 - work2 #2 `src/app/api/placements/recruiter/bell/route.ts` | G2-10-025-037: POST retains counted `marked` and adds legacy `ok:true` acknowledgment; GET untouched.
+
+- work2 #3 `tpo-public-placement-content-editor.tsx` | G2-17-022-018: legacy load failure copy and Retry using Next router refresh; save failure retains dirty draft and explanatory retry text. No invented content GET route.
+- work2 #4 `placements/recruiter/profile/details/route.ts` | G2-10-025-030: valid JSON null body now returns HTTP 400 `BODY_REQUIRED`; malformed JSON/oversized body still retains security error contract.

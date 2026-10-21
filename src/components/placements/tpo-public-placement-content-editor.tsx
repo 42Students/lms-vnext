@@ -5,12 +5,15 @@ import {InlineNotice} from "@/components/ui/inline-notice";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Textarea } from "@/components/ui/textarea";
 import {useEffect,useRef,useState} from "react";
+import {useRouter} from "next/navigation";
 import {DEFAULT_PUBLIC_METRICS,PUBLIC_METRIC_LABELS,
  type PublicPlacementMetricKey} from "@/modules/placements/public-page/content-model";
 const ALL=Object.keys(PUBLIC_METRIC_LABELS) as PublicPlacementMetricKey[];
 export function TpoPublicPlacementContentEditor({initial}:{initial:{
  ready:boolean;about:string;metricKeys:PublicPlacementMetricKey[];updatedAt:string|null;
 }}){
+ const router=useRouter();
+ const [retrying,setRetrying]=useState(false);
  const initialMetricKeys=initial.metricKeys.length?initial.metricKeys:DEFAULT_PUBLIC_METRICS;
  const [saved,setSaved]=useState({about:initial.about,metricKeys:initialMetricKeys});
  const [about,setAbout]=useState(initial.about);
@@ -50,7 +53,7 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
    if(!response.ok||!result?.content)throw new Error("NOT_SAVED");
    setSaved({about:result.content.about,metricKeys:result.content.metricKeys});
    setVersion(result.content.updatedAt);setMessage("Saved");
-  }catch{setMessage("Couldn't save. Your text and selected numbers are still here; try again.");}
+  }catch{setMessage("Couldn't save");}
   finally{window.clearTimeout(timeout);pending.current=false;setBusy(false);}
  }
  return <section className="mt-6 space-y-4 border-t border-border pt-5" aria-label="Public placements content">
@@ -85,10 +88,16 @@ export function TpoPublicPlacementContentEditor({initial}:{initial:{
   </ol>
   </details>
   {dirty?<InlineNotice tone="info" message="Unsaved changes"/>:null}
-  {!initial.ready?<Alert tone="warning">Page content editing is temporarily unavailable until storage is ready.</Alert>:null}
+  {!initial.ready?<Alert tone="warning"><div className="space-y-2">
+   <p>Couldn't load the placements page</p>
+   <Button type="button" variant="secondary" disabled={retrying} onClick={()=>{
+    setRetrying(true);router.refresh();
+   }}>Retry</Button>
+  </div></Alert>:null}
   <Button variant="primary" type="button" disabled={busy||!initial.ready||!dirty}
    className="min-h-11 w-full sm:w-auto md:min-h-9"
    onClick={()=>void save()}>{busy?"Saving…":"Save"}</Button>
-  {message?<InlineNotice tone={message==="Saved"?"success":"error"} message={message}/>:null}
+  {message?<InlineNotice tone={message==="Saved"?"success":"error"}
+   message={message==="Couldn't save"?"Couldn't save. Your text and selected numbers are still here; try again.":message}/>:null}
  </section>;
 }
