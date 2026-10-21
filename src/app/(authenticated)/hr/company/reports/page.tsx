@@ -167,7 +167,7 @@ export default async function RecruiterCompanyReportsPage({
       <PageHeader
         title="Company Reports"
         description={`${report.company.name} · ${report.grant.collegeName}. Read-only hiring activity for this exact authorized company-college relationship.`}
-        actions={<div className="flex min-w-0 flex-wrap items-center gap-3 max-[767px]:flex-col max-[767px]:items-stretch">
+        actions={<div className="flex min-w-0 flex-wrap items-center gap-2 md:gap-4 max-[767px]:flex-col max-[767px]:items-stretch">
           <Link href={"/api/placements/recruiter/reports/export?collegeId="+encodeURIComponent(collegeId)+"&status="+query.status}
             className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] md:min-h-9">
             Export report CSV
