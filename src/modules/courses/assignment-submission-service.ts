@@ -319,6 +319,7 @@ export async function submitCourseAssignment(
           !receipt ||
           receipt.revoked ||
           receipt.consumedAt ||
+          receipt.deliveryId !== input.deliveryId ||
           receipt.expiresAt.getTime() <=
             Date.now() ||
           receipt.objectKey !==
@@ -384,6 +385,45 @@ export async function submitCourseAssignment(
 
         const attestation =
           preparedFile.attestation;
+        // Consume the locked receipt before the attested file row. The
+        // composite FK binds the file to this exact consumption snapshot.
+        const [claimed] = await tx
+          .update(courseUploadReceipts)
+          .set({
+            attestedGeneration:
+              attestation.generation,
+            actualContentType:
+              attestation.contentType,
+            actualSizeBytes:
+              attestation.sizeBytes,
+            sha256Hex:
+              attestation.sha256Hex,
+            consumedAt: new Date(),
+            consumedBySubmissionId:
+              created!.id,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(
+                courseUploadReceipts.id,
+                lockedReceipt.id,
+              ),
+              isNull(courseUploadReceipts.consumedAt),
+              sql`${courseUploadReceipts.expiresAt} > now()`,
+              eq(courseUploadReceipts.revoked, false),
+            ),
+          )
+          .returning({
+            id: courseUploadReceipts.id,
+          });
+
+        if (!claimed) {
+          throw new CoursesServiceError(
+            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
+          );
+        }
+
         await tx
           .insert(
             assignmentSubmissionFiles,
@@ -409,45 +449,6 @@ export async function submitCourseAssignment(
             sha256Hex:
               attestation.sha256Hex,
           });
-
-        const [claimed] = await tx
-          .update(courseUploadReceipts)
-          .set({
-            attestedGeneration:
-              attestation.generation,
-            actualContentType:
-              attestation.contentType,
-            actualSizeBytes:
-              attestation.sizeBytes,
-            sha256Hex:
-              attestation.sha256Hex,
-            consumedAt: new Date(),
-            consumedBySubmissionId:
-              created!.id,
-            updatedAt: new Date(),
-          })
-          .where(
-            and(
-              eq(
-                courseUploadReceipts.id,
-                lockedReceipt.id,
-              ),
-              sql`${courseUploadReceipts.consumedAt} is null`,
-              eq(
-                courseUploadReceipts.revoked,
-                false,
-              ),
-            ),
-          )
-          .returning({
-            id: courseUploadReceipts.id,
-          });
-
-        if (!claimed) {
-          throw new CoursesServiceError(
-            "ASSIGNMENT_UPLOAD_RECEIPT_INVALID",
-          );
-        }
 
         return toLearnerSubmission({
           ...created!,
@@ -760,6 +761,9 @@ export async function gradeAssignmentSubmission(
     const [updated] = await tx
       .update(assignmentSubmissions)
       .set({
+        // The old score is captured from the same CAS-updated database row,
+        // never from the earlier, potentially stale request snapshot.
+        previousPoints: sql<number | null>`${assignmentSubmissions.pointsAwarded}`,
         pointsAwarded: input.pointsAwarded,
         feedback: input.feedback ?? null,
         gradingStatus: "GRADED",
