@@ -56,7 +56,7 @@ export function TrackerIssueSavedViews({filters}:{filters:string}){
     <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text md:min-h-9">Saved views</summary>
     <div className="min-w-0 space-y-3 pt-2">
     <div className="flex min-w-0 flex-wrap items-end gap-2">
-      <label className="grid w-full min-w-0 basis-full gap-1 text-sm font-semibold md:w-[220px] md:basis-auto">View name
+      <label className="grid w-full min-w-0 basis-full gap-[6px] text-[13px] font-semibold md:w-[220px] md:basis-auto leading-4 text-[var(--lms-neutral-400)]">View name
         <Input value={name} onChange={event=>setName(event.target.value)}
           maxLength={60} className="min-h-11 w-full" placeholder="Name these filters"
          />

@@ -36,7 +36,7 @@ export function TpoTeamHandover({sourceMembershipId,sourceName,members}:{
   finally{pending.current=false;setBusy(false);}
  }
  return <section aria-label={"Hand over "+sourceName+"'s placement work"} className="mt-3 min-w-0 space-y-2 pt-3">
-  <label className="grid gap-1 text-sm text-body">Who takes over?
+  <label className="grid gap-[6px] text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Who takes over?
    <Select value={target} onChange={event=>setTarget(event.target.value)} disabled={busy}
     className="min-h-11 md:min-h-9">
     <option value="">Choose an active placement team member</option>

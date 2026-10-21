@@ -78,7 +78,7 @@ export function TrackerIssueBulkActions({rows}:{rows:readonly Row[]}){
         </label>)}
       </div>
       <div className="grid min-w-0 items-end gap-[var(--lms-space-3)] md:grid-cols-[minmax(0,220px)_auto]">
-        <label className="grid min-w-0 gap-[6px] text-sm font-semibold">Set status to…
+        <label className="grid min-w-0 gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Set status to…
           <Select value={status} onChange={event=>setStatus(event.target.value as BugStatus)}
             disabled={busy} className="min-h-11 md:min-h-9">
             {BUG_STATUSES.map(item=><option key={item} value={item}>{item.replaceAll("_"," ")}</option>)}

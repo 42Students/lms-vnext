@@ -38,7 +38,7 @@ export function TpoPrepPercentageEditor({initial,version}:{initial:number;versio
  return <section className="space-y-3 border-t border-border pt-5">
   <h3 className="text-lg font-semibold text-foreground">Readiness bar</h3>
   <p className="text-sm text-body">A student needs average progress of at least this percentage in the selected preparation courses.</p>
-  <label className="block text-sm">Average progress required (%)
+  <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Average progress required (%)
    <Input type="number" min={0} max={100} step={1} value={percent} disabled={busy}
     onChange={e=>setPercent(e.target.value===""?-1:Number(e.target.value))}
     className="mt-1 min-h-11 w-full sm:w-28 min-[768px]:min-h-9"/>
