@@ -230,7 +230,7 @@ export function MentorTaskAllocation({projectId,initialTasks,members,sprints,rel
          <p className="mt-1 text-xs font-semibold text-warning-text">
            Reassign from former member
          </p>:null}
-       {!readOnly?<label className="mt-2 block text-xs font-semibold">Assign to
+       {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4">Assign to
         <Select aria-label={"Reassign "+task.title} disabled={busy||["DONE","IN_REVIEW"].includes(task.status)}
          value={task.assigneeMembershipId??""}
          onChange={event=>void assign(task.id,event.target.value||null)}
