@@ -155,6 +155,10 @@ export function SuperAdminHrDetailDrawer({
         />
       ) : (
         <div className="min-w-0 space-y-[var(--lms-space-4)]">
+          {optionsError?<p role="alert" className="border-l-2 border-warning bg-warning-subtle px-4 py-3 text-sm text-body">
+            College options could not be loaded. Grant actions are disabled until relationships are verified.
+            Use Retry in Add a college to reload the options.
+          </p>:null}
           {actionError?<ErrorState title="Action failed" description={actionError}/>:null}
           <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]">
             <div className="flex flex-wrap items-start justify-between gap-3">
@@ -251,11 +255,11 @@ export function SuperAdminHrDetailDrawer({
             )}
 
             {account.status === "ACTIVE" ? (
-              <details className="group mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
+              <details open className="group mt-[var(--lms-space-4)] border-t border-border pt-[var(--lms-space-4)]">
                 <summary className="min-h-11 cursor-pointer text-sm font-semibold text-foreground focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Add a college</summary>
                 <p className="mt-1 text-xs leading-5 text-muted-foreground">
-                  Only active relationships for{" "}
-                  {account.companyName} are eligible.
+                  Only active company–college relationships for{" "}
+                  {account.companyName} are eligible. Choose the college to grant access.
                 </p>
 
                 <label
@@ -298,7 +302,7 @@ export function SuperAdminHrDetailDrawer({
                  <Input type="date" value={validUntil} onChange={event=>{setValidUntil(event.target.value);setExpiryError("");}}
                   className="mt-1 min-h-11 w-full md:min-h-9"/>
                  {expiryError?<span role="alert" className="mt-[var(--lms-space-2)] block text-[12px] leading-5 text-[var(--lms-error)]">{expiryError}</span>:null}
-                 <span className="mt-[var(--lms-space-2)] block text-[13px] font-normal leading-5 text-[var(--lms-muted-text)]">If blank, access expires in three months. An expired or unverified grant cannot authorize recruiter actions.</span>
+                 <span className="mt-[var(--lms-space-2)] block text-[13px] font-normal leading-5 text-[var(--lms-muted-text)]">If blank, access expires in three months by current vNext policy, unlike the legacy unlimited grant. A chosen date expires at 11:59:59 PM IST. Expired or unverified grants cannot authorize recruiter actions.</span>
                 </label>
                 {optionsLoading ? (
                   <p
@@ -310,7 +314,7 @@ export function SuperAdminHrDetailDrawer({
                 ) : null}
 
                 {optionsError ? (
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-2 space-y-2" role="alert">
                     <p
                       role="alert"
                       className="text-sm text-error"
@@ -352,7 +356,7 @@ export function SuperAdminHrDetailDrawer({
                     void grant();
                   }}
                 >
-                  {pending ? "Working…" : "Grant access"}
+                  {pending ? "Working…" : validUntil ? "Grant until selected date" : "Grant 3-month access"}
                 </Button>
               </details>
             ) : (

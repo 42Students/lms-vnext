@@ -94,11 +94,15 @@ export function PersonMembershipActions({
           tone: "error",
           title: "Role update failed",
           description:
-            role==="COLLEGE_ADMIN"&&response.status===403
-              ? "Only a Super Admin can change the College Admin role."
-              : payload?.error === "LAST_MEMBERSHIP_ROLE"
-                ? "A membership must keep at least one role."
-                : "The role could not be changed.",
+            payload?.error==="MEMBERSHIP_PROTECTED"
+              ? "Only a Super Admin can manage College Admin or TPO accounts."
+              : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
+                ? "You cannot remove your own protected access."
+                : role==="COLLEGE_ADMIN"&&response.status===403
+                  ? "Only a Super Admin can change the College Admin role."
+                  : payload?.error==="LAST_MEMBERSHIP_ROLE"
+                    ? "A membership must keep at least one role."
+                    : "The role could not be changed.",
         });
         return;
       }
@@ -160,7 +164,11 @@ export function PersonMembershipActions({
             description:
               payload?.error === "MEMBERSHIP_ENDED"
                 ? "Ended memberships cannot be reactivated or suspended."
-                : "The membership state could not be changed.",
+                : payload?.error==="MEMBERSHIP_PROTECTED"
+                  ? "Only a Super Admin can manage College Admin or TPO accounts."
+                  : payload?.error==="MEMBERSHIP_SELF_LOCKOUT"
+                    ? "You cannot suspend or end your own protected access."
+                    : "The membership state could not be changed.",
           });
           return;
         }
@@ -180,10 +188,18 @@ export function PersonMembershipActions({
         setSuspendOpen(false);
         setEndOpen(false);
         setSuspensionReason("");
+        const roleName=currentRoles.length===1
+          ? currentRoles[0]==="FACULTY"?"Faculty":
+            currentRoles[0]==="LEARNER"?"Student":null
+          :null;
+        const verb=nextStatus==="SUSPENDED"?"suspended":
+          nextStatus==="ACTIVE"?"reactivated":"ended";
         showToast({
-          tone: "success",
-          title: "Membership updated",
-          description: `${displayName} is now ${nextStatus.toLowerCase()}.`,
+          tone:"success",
+          title:roleName&&nextStatus!=="ENDED"
+            ? roleName+" "+verb
+            :"Membership updated",
+          description:`${displayName} is now ${nextStatus.toLowerCase()} in this college.`,
         });
         router.refresh();
       } catch {
@@ -268,7 +284,11 @@ export function PersonMembershipActions({
         title={`Manage roles · ${displayName}`}
         description="Roles are membership-scoped. SUPER_ADMIN is never assigned here."
       >
-        <p className="mb-3 text-sm text-body leading-[22px]">The College Admin role can only be assigned or removed by a Super Admin.</p>
+        <p className="mb-3 text-sm text-body leading-[22px]">
+          Only a Super Admin can manage College Admin or TPO access.
+          This menu manages college membership roles only; it does not unlock OTP accounts,
+          impersonate a user or delete historical identity records.
+        </p>
         <div role="group" aria-label="Membership roles" className="min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
           {MEMBERSHIP_ROLES.map((role) => {
             const checked = currentRoles.includes(role);
@@ -307,7 +327,7 @@ export function PersonMembershipActions({
         onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setSuspendOpen(next); }}
         dismissible={!lifecyclePending&&!lifecycleRequestPending.current}
         title={`Suspend ${displayName}`}
-        description="Suspension blocks this college membership without disabling the canonical user or their other college memberships."
+        description="Suspension blocks this college membership and revokes the person's existing device sessions. Other active college memberships remain eligible after a fresh sign-in."
         footer={
           <div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
             <Button
@@ -361,7 +381,7 @@ export function PersonMembershipActions({
         open={endOpen}
         onOpenChange={next => { if (!lifecycleRequestPending.current && !lifecyclePending) setEndOpen(next); }}
         title={`End ${displayName}'s membership?`}
-        description="Ending is terminal for this college membership. It does not delete the canonical user or memberships in other colleges."
+        description="Ending is terminal for this college membership and signs out existing device sessions. It does not delete the canonical user or other college memberships."
         confirmLabel="End membership" confirmVariant="danger"
         pending={lifecyclePending}
         onConfirm={() => lifecycle({ action: "END" })}
