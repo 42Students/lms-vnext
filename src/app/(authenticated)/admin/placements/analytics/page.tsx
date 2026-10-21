@@ -1,5 +1,4 @@
 import { MetricBar } from "@/components/ui/metric-bar";
-import styles from "@/components/placements/super-admin-hiring-funnel.module.css";
 import Link from "next/link";
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {requireSuperAdminSelectedCollege} from "@/modules/admin-ui/super-admin-selected-college";
@@ -85,9 +84,12 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  const funnelTotals=historicalHiringTotals(data.funnelRows);
  const funnel=hiringFunnel(funnelTotals);
  const metricKeys=["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const;
+ const visibleRows=[...reportRows,...groups.map(group=>({
+  ...group,companyId:"",jobId:"total:"+group.companyName,jobTitle:"Company total",
+ }))];
  type Row=(typeof data.rows)[number];
  const columns:DataTableColumn<Row>[]=[
-  {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.companyName},
+  {key:"company",header:COMPANY_HIRING_COLUMNS[0]??"Company",mobilePriority:"primary",cell:row=>row.jobId.startsWith("total:")?<strong>{row.companyName} total</strong>:row.companyName},
   {key:"drive",header:COMPANY_HIRING_COLUMNS[1]??"Job",mobilePriority:"secondary",cell:row=>row.jobId.startsWith("total:")?<strong>Company total</strong>:
    <Link href={"/admin/placements/jobs/"+encodeURIComponent(row.jobId)}
     className="inline-flex min-h-11 items-center break-words font-semibold text-primary-text underline md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] underline-offset-4">
@@ -160,47 +162,50 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
   {data.truncated?<Banner tone="warning">
     This report reached its 5,000-drive safety limit. The headline metrics, funnel, company totals and CSV may be incomplete. Narrow the filters before using these figures for decisions.
   </Banner>:null}
-  <dl className="grid min-w-0 grid-cols-2 gap-0 border-y border-border sm:grid-cols-3 lg:grid-cols-5">{(["totalApplications","applied","shortlisted","assessment","interview","offered","hired","rejected","withdrawn","waitlisted"] as const).map(key=>
-   <div key={key} className="min-w-0 border-b border-r border-border px-[var(--lms-space-3)] py-[var(--lms-space-3)]"><dt className="text-[13px] font-semibold leading-4 capitalize text-[var(--lms-neutral-400)]">{hiringMetricLabel(key)}</dt>
-    <dd className="mt-2 text-[16px] font-semibold leading-6 tabular-nums text-[var(--lms-heading)]">{totals[key]}</dd></div>)}</dl>
-  <section className="min-w-0 border-b border-border pb-[var(--lms-space-4)]" aria-label="Hiring Funnel">
-   <div className="flex flex-wrap items-start justify-between gap-3">
-    <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Hiring Funnel</h2>
-    <p className="text-sm text-muted-foreground">Historical milestones ever reached · conversion is relative to the previous milestone, including withdrawn or subsequently rejected applications.</p>
-   </div>
-   <ol className="mt-[var(--lms-space-3)] grid min-w-0 gap-[var(--lms-space-3)] sm:grid-cols-2 lg:grid-cols-3">{funnel.map((step,index)=>
-    <li key={step.key} className={styles.step}>
-     <span className={styles.label}>{step.label}</span>
-     <strong className={styles.count}>{step.count.toLocaleString("en-IN")}</strong>
-     <p className={styles.percent}>{step.percentPrevious===null?(index===0?"Starting milestone":"Conversion unavailable (no prior milestone)") :step.percentPrevious+"% of previous"}</p>
-     <MetricBar className={styles.track+" mt-2"} role="img"
-      label={step.label+": "+step.count+" applications"}
-      value={step.widthPercent} maximum={100} unit="percent" />
-    </li>)}</ol>
+  <section aria-label="Hiring metrics" className="min-w-0">
+   <h2 className="sr-only">Hiring metrics</h2>
+   <dl className="grid min-w-0 grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+    {metricKeys.map((key,index)=><div key={key} className={"min-w-0 rounded-[8px] border border-border bg-surface px-3 py-4 "+(index===0?"col-span-2 sm:col-span-2":"")}>
+     <dt className="text-[13px] font-medium text-muted-foreground">{hiringMetricLabel(key)}</dt>
+     <dd className="mt-2 text-2xl font-semibold tabular-nums text-[var(--lms-heading)]">{totals[key].toLocaleString("en-IN")}</dd>
+    </div>)}
+   </dl>
+  </section>
+  <section className="min-w-0 rounded-[8px] border border-border bg-surface p-4" aria-label="Hiring Funnel">
+   <h2 className="mb-4 text-[var(--lms-font-lg)] font-semibold text-[var(--lms-heading)]">Hiring Funnel</h2>
+   {totals.totalApplications===0?
+    <p role="status" className="text-sm text-muted-foreground">No funnel data</p>:
+    <ol className="max-w-[500px] space-y-3">{funnel.map((step,index)=>
+     <li key={step.key} className="min-w-0">
+      <div className="mb-1 flex min-w-0 flex-wrap items-center justify-between gap-2 text-sm">
+       <div className="flex min-w-0 flex-wrap items-center gap-2">
+        <strong>{step.label}</strong>
+        {step.percentPrevious!==null?<span className="rounded-full border border-[var(--lms-info-border)] bg-[var(--lms-info-subtle)] px-2 py-0.5 text-xs text-primary-text">
+         {step.percentPrevious}% of {funnel[index-1]?.label??"previous stage"}
+        </span>:null}
+       </div>
+       <span className="font-semibold tabular-nums">{step.count.toLocaleString("en-IN")}</span>
+      </div>
+      <MetricBar className="h-6 overflow-hidden rounded bg-muted" role="img"
+       label={step.label+": "+step.count+" applications"}
+       value={step.widthPercent} maximum={100} unit="percent"/>
+     </li>)}</ol>}
   </section>
   <p className="text-sm text-muted-foreground">Avg. time to shortlist: Not recorded. Stage-transition timestamps are required for an accurate duration.</p>
-  <section aria-label="Company hiring results" className="min-w-0 space-y-4">
-   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company hiring results</h2>
-   <DataTable columns={columns} rows={reportRows} getRowKey={row=>row.jobId}
-     caption="Company hiring report" empty={<EmptyState title="No hiring results" description="No hiring results match these filters."/>}/>
+  <section aria-label="Company-wise Hiring Report" className="min-w-0 space-y-3 rounded-[8px] border border-border bg-surface p-4">
+   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company-wise Hiring Report</h2>
+   <DataTable columns={columns} rows={visibleRows} getRowKey={row=>row.jobId}
+    caption="Company-wise Hiring Report" mobileMode="scroll"
+    className="min-w-0 [&_table]:min-w-[950px]"
+    empty={<EmptyState title={params.size?"No companies match these filters — try widening the date range or clearing filters":"No hiring data yet"}
+     description={params.size?"Widen the selected date range or clear filters to review available hiring data.":"No hiring activity has been recorded for the selected college."}
+     action={params.size?<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Clear filters</Link>:undefined}/>}/>
+   {groups.length?<p className="text-xs text-muted-foreground">Company total rows summarize all matching drives across report pages, not just the currently visible page.</p>:null}
    {data.rows.length>10?<div className="flex min-w-0 flex-col gap-3 border-t border-border pt-3 text-sm sm:flex-row sm:items-center sm:justify-between">
     <span>Showing {(reportPage-1)*10+1}–{Math.min(reportPage*10,data.rows.length)} of {data.rows.length} drives</span>
     <Pagination page={reportPage} pageCount={reportPages} label="Company hiring results pagination" hrefForPage={reportPageHref}/>
    </div>:null}
   </section>
-  {groups.length?<section aria-label="Company totals" className="space-y-3">
-   <h2 className="text-[var(--lms-font-lg)] font-semibold leading-7 text-[var(--lms-heading)]">Company totals</h2>
-   <div className="grid min-w-0 gap-[var(--lms-space-3)] lg:grid-cols-2">{groups.map(group=>
-     <article key={group.companyName} className="min-w-0 border-b border-border py-[var(--lms-space-4)]">
-      <h3 className="break-words font-semibold text-[var(--lms-heading)] text-[var(--lms-font-md)] leading-[24px] min-[768px]:text-[var(--lms-font-lg)] min-[768px]:leading-[26px]">{group.companyName}</h3>
-      <dl className="mt-3 grid grid-cols-2 gap-3 text-sm">
-       {metricKeys.map(key=><div key={key} className="min-w-0">
-        <dt className="break-words text-body">{hiringMetricLabel(key)}</dt>
-        <dd className="tabular-nums font-semibold text-foreground">{group[key]}</dd>
-       </div>)}
-      </dl>
-     </article>)}</div>
-  </section>:null}
-  <p className="text-xs text-muted-foreground">Company totals above show current application stages. The funnel uses cumulative stage history, including later rejected and withdrawn applicants. Confirmed joining requires accepted-offer evidence. No private candidate contacts are inferred.</p>
+  <p className="text-xs text-muted-foreground">Stage counts are current persisted application stages, not historical transitions. Hired stage is not a substitute for confirmed joining. This report does not infer match scores or private candidate contacts.</p>
  </div>;
 }
