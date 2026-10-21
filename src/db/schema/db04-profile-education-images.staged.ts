@@ -57,6 +57,12 @@ export const learnerProfileEducationEntries = pgTable(
     legacyField: varchar("legacy_field", { length: 100 }),
     legacyScore: varchar("legacy_score", { length: 100 }),
     legacyDescription: text("legacy_description"),
+    /** Source-only provenance: never treat a historical upload URL as an authorized file. */
+    legacyQualificationId: integer("legacy_qualification_id"),
+    legacyCertificateUpload: text("legacy_certificate_upload"),
+    legacyStartYearRaw: varchar("legacy_start_year_raw", { length: 32 }),
+    legacyEndYearRaw: varchar("legacy_end_year_raw", { length: 32 }),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
 
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -76,6 +82,9 @@ export const learnerProfileEducationEntries = pgTable(
       .where(
         sql`${table.archivedAt} is null and ${table.isRecentEducation} = true`,
       ),
+    index("learner_profile_education_legacy_source_idx")
+      .on(table.learnerMembershipId, table.legacyQualificationId)
+      .where(sql`${table.legacyQualificationId} is not null`),
     index("learner_profile_education_active_idx").on(
       table.learnerMembershipId,
       table.archivedAt,
@@ -190,6 +199,10 @@ export const learnerProfileImages = pgTable(
       .notNull()
       .default("PROFILE_IMAGE"),
     displayOrder: integer("display_order").notNull().default(0),
+    /** Historical image identity/URL is a quarantined source snapshot, not a signed URL. */
+    legacyImageId: integer("legacy_image_id"),
+    legacyImageUrl: text("legacy_image_url"),
+    legacyWasDeleted: boolean("legacy_was_deleted"),
     isActive: boolean("is_active").notNull().default(true),
     createdAt: timestamp("created_at", { withTimezone: true })
       .notNull()
@@ -214,6 +227,9 @@ export const learnerProfileImages = pgTable(
       table.learnerMembershipId,
       table.receiptId,
     ),
+    index("learner_profile_images_legacy_source_idx")
+      .on(table.learnerMembershipId, table.legacyImageId)
+      .where(sql`${table.legacyImageId} is not null`),
     index("learner_profile_images_active_order_idx")
       .on(table.learnerMembershipId, table.displayOrder)
       .where(sql`${table.isActive} = true`),

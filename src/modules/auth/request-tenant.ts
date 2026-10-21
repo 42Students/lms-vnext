@@ -22,6 +22,9 @@ export type RequestTenant =
       host: string;
       collegeId: string;
       organizationId: string;
+      /** Only an independently verified PRIMARY domain may be suggested. */
+      canonicalHost?: string;
+      shouldRedirectToCanonicalHost?: boolean;
     }
   | { kind: "unknown"; host: string }
   | { kind: "unavailable"; host: string };
@@ -38,16 +41,21 @@ function hostWithoutPort(raw: string) {
 export async function resolveRequestTenant(
   hostHeader: string | null | undefined,
 ): Promise<RequestTenant> {
-  const host = hostWithoutPort(hostHeader ?? "");
+  const rawHost = hostWithoutPort(hostHeader ?? "");
 
-  if (!host) return { kind: "unknown", host };
+  if (!rawHost) return { kind: "unknown", host: rawHost };
 
-  if (getPlatformHosts().has(host)) {
-    return { kind: "platform", host };
+  if (getPlatformHosts().has(rawHost)) {
+    return { kind: "platform", host: rawHost };
   }
-  // A malformed Host is a rejected request, never a transient DB outage.
-  // Validate before consulting the resolver or poisoning negative cache state.
-  try{normalizeRequestHost(host);}catch{return {kind:"unknown",host};}
+  // Never infer a tenant from www, X-Forwarded-Host, a scheme, or an alias.
+  // Normalize the sole trusted Host header before looking up/cache-keying.
+  let host: string;
+  try {
+    host = normalizeRequestHost(rawHost);
+  } catch {
+    return { kind: "unknown", host: rawHost };
+  }
 
   const hit = cache.get(host);
   if (hit && hit.expiresAt > Date.now()) return hit.value;
@@ -58,14 +66,42 @@ export async function resolveRequestTenant(
       host,
       drizzleTenantDomainRepository,
     );
-    value = resolved
-      ? {
-          kind: "college",
-          host,
-          collegeId: resolved.collegeId,
-          organizationId: resolved.organizationId,
-        }
-      : { kind: "unknown", host };
+    if (resolved) {
+      // The repository's verified host lookup has already proved tenant scope.
+      // Only a verified primary for that exact college may trigger an alias
+      // redirect; an unverified/foreign or guessed primary must never do so.
+      let canonicalHost: string | undefined;
+      try {
+        const domains = await drizzleTenantDomainRepository.listByCollege(
+          resolved.collegeId,
+        );
+        const primary = domains.find(
+          (domain) =>
+            domain.isPrimary &&
+            domain.isVerified &&
+            domain.collegeId === resolved.collegeId &&
+            domain.organizationId === resolved.organizationId,
+        );
+        if (primary) canonicalHost = normalizeRequestHost(primary.host);
+      } catch {
+        // Optional canonical metadata may fail independently. A verified
+        // tenant remains usable; omit redirect rather than guessing.
+      }
+      value = {
+        kind: "college",
+        host,
+        collegeId: resolved.collegeId,
+        organizationId: resolved.organizationId,
+        ...(canonicalHost
+          ? {
+              canonicalHost,
+              shouldRedirectToCanonicalHost: host !== canonicalHost,
+            }
+          : {}),
+      };
+    } else {
+      value = { kind: "unknown", host };
+    }
   } catch {
     // A transient domain lookup failure is not evidence that a college host is unknown.
     // Do not cache a false "unknown" response after a database outage.
