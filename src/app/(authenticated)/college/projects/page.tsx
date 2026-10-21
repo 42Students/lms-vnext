@@ -116,7 +116,7 @@ export default async function CollegeProjectsPage({
       />
 
       <details className="group min-w-0 border-b border-border pb-3">
-        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9">
+        <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 font-semibold text-primary-text marker:hidden [&::-webkit-details-marker]:hidden md:min-h-9 flex-wrap">
           <span>Project workspace tools</span><span aria-hidden="true" className="shrink-0 transition-transform group-open:rotate-180">⌄</span>
         </summary>
         <nav aria-label="Project workspace tools" className="flex min-w-0 flex-col items-stretch gap-2 pt-3 md:flex-row md:flex-wrap md:items-center">

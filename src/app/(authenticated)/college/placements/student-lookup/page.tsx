@@ -22,7 +22,7 @@ export default async function CollegePlacementStudentLookup({searchParams}:{
  const data=q.length>=3?await lookupCollegeStudentPlacement(await getCurrentRequestContext(),q):null;
  return <div className="min-w-0 max-w-full space-y-4">
   <PageHeader title="Student placement lookup"
-   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Analytics</Link>}/>
+   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 md:min-h-9 inline-flex items-center hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center">Analytics</Link>}/>
   <form action="/college/placements/student-lookup" role="search" aria-label="Student placement search" className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)] sm:grid-cols-[minmax(0,2fr)_auto_auto]">
    <label className="grid min-w-0 w-full max-w-xl gap-[6px] font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Name, roll number or email
     <Input type="search" name="q" minLength={3} maxLength={150} required defaultValue={q}

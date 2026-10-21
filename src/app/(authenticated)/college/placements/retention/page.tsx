@@ -18,7 +18,7 @@ export default async function CollegeRetentionPage(){
  return <div className="min-w-0 space-y-[var(--lms-space-4)]">
   <PageHeader title="Data retention report"
    description="Rejected or withdrawn applications idle for 180+ days."
-   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 inline-flex items-center lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Analytics</Link>}/>
+   actions={<Link href="/college/hiring-dashboard" className="font-semibold text-link underline min-h-11 inline-flex items-center lms-inline-link md:min-h-9 hover:text-[var(--lms-primary-text)] hover:underline active:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] w-full md:w-auto justify-center">Analytics</Link>}/>
   <section className="min-w-0 border-t border-[var(--lms-canvas-border)] pt-[var(--lms-space-4)]">
    <h2 className="font-semibold text-[16px] leading-6 text-[var(--lms-heading)] md:text-[18px]">Review candidates ({data.total})</h2>
    <p className="my-[var(--lms-space-3)] max-w-[85ch] break-words text-sm leading-[22px] text-muted-foreground">Cutoff: {fmt.format(data.cutoff)} IST. {data.note}</p>
