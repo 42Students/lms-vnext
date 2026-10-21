@@ -123,8 +123,27 @@ export function LearnerQuizAttempt() {
   const cancelPendingReturn = useRef<(() => void) | null>(null);
   useEffect(() => () => { cancelPendingReturn.current?.(); }, []);
   const [error, setError] = useState<string | null>(null);
-  const storageKey = quizId && deliveryId
-    ? `learner-quiz:${deliveryId}:${quizId}`
+  const [accountScope,setAccountScope]=useState<string|null>(null);
+  useEffect(()=>{
+    const controller=new AbortController();
+    void fetch("/api/auth/memberships",{cache:"no-store",signal:controller.signal})
+      .then(async response=>{
+        if(!response.ok)return;
+        const data:unknown=await response.json();
+        if(!data||typeof data!=="object"||!("memberships" in data))return;
+        const raw=(data as {memberships:unknown}).memberships;
+        if(!Array.isArray(raw)||raw.length===0)return;
+        const ids=raw.map((entry:unknown)=>entry&&typeof entry==="object"&&
+          "id" in entry?(entry as {id:unknown}).id:null);
+        if(ids.some(id=>typeof id!=="string"||!/^[a-f0-9-]{36}$/i.test(id)))return;
+        if(!controller.signal.aborted)setAccountScope((ids as string[]).sort().join(":"));
+      }).catch(()=>{ /* No identity scope means no browser draft persistence. */ });
+    return ()=>controller.abort();
+  },[]);
+  // Cross-account draft isolation: the authenticated membership roster is
+  // unique to a user; never restore or persist if that scope is unavailable.
+  const storageKey = quizId && deliveryId && accountScope
+    ? `learner-quiz:${accountScope}:${deliveryId}:${quizId}`
     : "";
   const submitLockKey = storageKey ? `${storageKey}:submit-lock` : "";
 
@@ -132,7 +151,7 @@ export function LearnerQuizAttempt() {
     if (!quizId || !deliveryId) {
       setLoadedScopeKey(storageKey);
       setQuiz(null);
-      setError("This quiz link is incomplete. Open the quiz again from All Quizzes.");
+      setError("Cannot submit: Quiz not loaded. Open the quiz from the syllabus or quiz list.");
       setLoading(false);
       return;
     }
@@ -149,6 +168,10 @@ export function LearnerQuizAttempt() {
       const quizBody = await quizResponse.json();
       const attemptsBody = await attemptsResponse.json();
       requireLearnerQuizResponseId(quizId, quizBody.quiz?.quiz?.id);
+      const received=quizBody.quiz?.questions;
+      if(!Array.isArray(received)||received.some((item:unknown)=>!item||typeof item!=="object"||
+        !("type" in item)||!["SINGLE_CHOICE","MULTIPLE_CHOICE"].includes(String(item.type))))
+        throw new Error("This quiz contains an unsupported question type. Open it from your current course syllabus.");
       if (!learnerQuizRequestCurrent(signal)) return;
       const loadedAtMs = Date.now();
       const deadlinePassed = !learnerQuizSubmitDeadlineOpen(
@@ -269,7 +292,7 @@ export function LearnerQuizAttempt() {
     const confirmedAtMs = Date.now();
     if (!learnerQuizSubmitDeadlineOpen(quiz.quiz.dueAt, confirmedAtMs)) {
       setNowMs(confirmedAtMs);
-      setError("This quiz deadline has passed. Your answers were not submitted.");
+      setError("Deadline passed — This quiz deadline has passed. Your answers cannot be submitted now.");
       return;
     }
 
@@ -327,7 +350,8 @@ export function LearnerQuizAttempt() {
         () => router.replace("/learn/allQuizzes"), 2000, window.setTimeout.bind(window), window.clearTimeout.bind(window),
       );
     } catch (cause) {
-      setError(friendlyApiError({ network: true }));
+      setError("Quiz was not submitted. "+(cause instanceof Error?cause.message:
+        friendlyApiError({network:true})));
     } finally {
       submittingRef.current = false;
       setSubmitting(false);
@@ -352,7 +376,9 @@ export function LearnerQuizAttempt() {
         <Alert tone="error" className="mt-2">{error}</Alert>
         <div className="mt-4 flex flex-wrap gap-2">
           <Button onClick={() => void load()} className="min-h-11 md:min-h-9">Try Again</Button>
-          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">All Quizzes</Link>
+          <Button type="button" variant="secondary" onClick={()=>window.location.reload()}
+            className="min-h-11 md:min-h-9">Refresh page</Button>
+          <Link href="/learn/allQuizzes" className="inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)] min-[768px]:min-h-[var(--lms-control-height)]">Back to quizzes</Link>
         </div>
       </div>
     );
@@ -440,7 +466,7 @@ export function LearnerQuizAttempt() {
           router.replace("/learn/allQuizzes");
         }} />
       <ConfirmDialog open={submitOpen} onOpenChange={setSubmitOpen} pending={submitting} confirmDisabled={!attemptable}
-        title="Submit quiz attempt?" description={answerProgress.total > answerProgress.answered
+        title={answerProgress.total>answerProgress.answered?"Unanswered Questions":"Submit quiz attempt?"} description={answerProgress.total > answerProgress.answered
           ? `You have ${answerProgress.total-answerProgress.answered} unanswered question${answerProgress.total-answerProgress.answered === 1 ? "" : "s"}. Your quiz will still be submitted. Submit this quiz attempt? You cannot edit this attempt after submission.`
           : "Submit this quiz attempt? You cannot edit this attempt after submission."}
         confirmLabel="Submit" confirmVariant="primary" onConfirm={() => void submit()} />
