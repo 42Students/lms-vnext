@@ -86,7 +86,7 @@ export function TpoCampaignCompose({deliveryReady=false,selectedLeadIds=[]}:{del
   <p className="text-sm text-body">Step 1 of 2 · Write the email and review its eligible recipients. Save a draft, then open it to confirm sending. Nothing is sent from this form.</p>
   <form onSubmit={e=>{e.preventDefault();void save();}} className="space-y-4">
    <label className="block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Campaign name
-    <Input value={title} maxLength={160} required className={field}
+    <Input value={title} maxLength={160} aria-required="true" className={field}
      onChange={e=>setTitle(e.target.value)}/>
    </label>
    {selectedLeadIds.length?<p role="status" className="text-sm font-semibold">Draft for {selectedLeadIds.length} specifically selected recruiter contacts. Eligibility and suppression rules still apply; no email will be sent when saving.</p>:null}
