@@ -347,3 +347,6 @@
 
 - work2 #61 `tpo/reports/failure-reasons/page.tsx` | G2-13-031-090: plotted applied FAIL shares using applied-decision denominator (not total adverse events), excluded unknown denominator from percentage chart instead of reporting zero, and explicitly named absent reasons.
 - work2 #62 `api/college/departments/[departmentId]/route.ts` | G2-18-027-017: documented standardized 409 DEPARTMENT_HAS_DEPENDENCIES mapping with safe message/usage/requestId and no-store archive response. Did not leak raw legacy exception text.
+
+- work2 #63 `app/globals.css` | G2-3-033-032: removed unsupported 26px mobile page title override; now inherits base 30px. Old shell's phone rules address header/nav only; alternate mobile typography awaits rendered legacy measurement.
+- work2 #64 `project-admin-collection-controls.tsx` | G2-10-028-020/G2-7-019-027: documented five historical labels and avoided false Ready=COMPLETED or Blocked=ARCHIVED aliases; authorized at-risk link exposes Blocked workbench, while canonical status filter remains accurate. Full legacy filter query needs domain rollup.

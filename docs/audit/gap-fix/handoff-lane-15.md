@@ -184,3 +184,5 @@
 - Mentor release rollup G2-17-017-005/015: parent loader must supply verified `readiness` with readyToShip, completedSprintCount, committedPoints, completedPoints from tenant-scoped persisted release/sprint/task service; Ship stays disabled without those authoritative fields and server reconfirms gate.
 
 - Department archive legacy client G2-18-027-017: map DEPARTMENT_HAS_DEPENDENCIES 409+usage+safe message from current apiErrorResponse to old status ERROR conflict UI; do not reproduce raw server exception detail.
+
+- Legacy project workspace status filters G2-10-028-020/G2-7-019-027: build authorized five-state projection combining lifecycle and readiness/risk, extend URL parser & service before rendering noncanonical Select options. Never incorrectly alias Ready to COMPLETED or Blocked to ARCHIVED.
