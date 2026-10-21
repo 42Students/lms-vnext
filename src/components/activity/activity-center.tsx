@@ -4,6 +4,13 @@ import {Fragment,type ReactNode} from "react";
 import { StatusBadge } from "@/components/ui/status-badge";
 import { EmptyState } from "@/components/ui/empty-state";
 
+/** The raw forensic view is a different presentation from the readable
+ * Activity feed. Historical IP/user-agent fields are not collected by this
+ * tenant-safe event store; keep their columns and state "Not retained". */
+export const RAW_AUDIT_FORENSIC_HEADERS=[
+ "Time","Action","Entity","Org","College","Actor","IP","User Agent",
+] as const;
+export const RAW_AUDIT_MISSING_TRANSPORT="Not retained";
 export type ActivityCenterGroup = {
   key: string;
   count: number;
