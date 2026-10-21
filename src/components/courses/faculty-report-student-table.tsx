@@ -1,102 +1,98 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { EmptyState } from "@/components/ui/empty-state";
-import { useMemo, useState } from "react";
-import { Input } from "@/components/ui/input";
-import { DataTable } from "@/components/ui/data-table";
-import { facultyReportIstTimestamp } from "@/modules/courses/faculty-report-time";
-import { facultyReportStudentPage, type FacultyReportStudentRow } from "@/modules/courses/faculty-report-students";
+import {EmptyState} from "@/components/ui/empty-state";
+import {useMemo,useState} from "react";
+import {Input} from "@/components/ui/input";
+import {DataTable} from "@/components/ui/data-table";
+import type {FacultyReportStudentRow} from "@/modules/courses/faculty-report-students";
 
-export function FacultyReportStudentTable({
-  rows,
-  title,
-  emptyMessage = "No learners have submitted yet.",
-}: {
-  rows: readonly FacultyReportStudentRow[];
-  title: string;
-  emptyMessage?: string;
-}) {
-  const [search, setSearch] = useState("");
-  const [requestedPage, setRequestedPage] = useState(1);
-  const result = useMemo(
-    () => facultyReportStudentPage(rows, search, requestedPage),
-    [rows, search, requestedPage],
-  );
-  const formatDate = facultyReportIstTimestamp;
-
-  return (
-    <section aria-label={title} className="min-w-0 space-y-3">
-      <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
-          <p aria-live="polite" className="mt-1 text-xs text-muted-foreground">
-            Showing {result.rows.length===0?0:(result.page-1)*20+1}–{Math.min(result.count,result.page*20)} of {result.count} learners · Highest scores first · 20 per page
-          </p>
-        </div>
-        {rows.length > 8 ? (
-          <label className="w-full min-w-0 text-[length:var(--lms-font-sm)] sm:max-w-sm font-semibold leading-4 text-[var(--lms-neutral-400)]">
-            Search students
-            <Input
-              aria-label="Search report students"
-              className="mt-[6px] min-h-11 md:min-h-9"
-              value={search}
-              onChange={(event) => { setSearch(event.target.value); setRequestedPage(1); }}
-              placeholder="Name"
-            />
-          </label>
-        ) : null}
-      </div>
-
-      {rows.length === 0 ? (
-        <EmptyState title={emptyMessage} />
-      ) : result.rows.length === 0 ? (
-        <EmptyState title="No students match this search." />
-      ) : (
-        <div className="mt-4 min-w-0">
-          <DataTable
-            caption={title}
-            rows={result.rows}
-            getRowKey={student=>student.id}
-            empty={<EmptyState title="No students match this search." />}
-            columns={[
-              {key:"learner",header:"Learner",mobilePriority:"primary" as const,
-                cell:(student)=><strong className="break-words text-foreground">{student.name}</strong>},
-              {key:"score",header:"Score",mobilePriority:"secondary" as const,
-                cell:(student)=><span>
-                  <strong className="text-foreground">{student.percent===null?"Not graded":student.percent+"%"}</strong>
-                  <span className="block text-xs text-muted-foreground">{student.score}</span>
-                </span>},
-              {key:"submitted",header:"Submitted",mobilePriority:"secondary" as const,
-                cell:(student)=>formatDate(student.submittedAt)},
-              {key:"details",header:"Details",mobilePriority:"secondary" as const,
-                cell:(student)=>student.note},
-            ]}
-          />
-        </div>
-
-      )}
-
-      {result.pages > 1 ? (
-        <nav aria-label="Report student pages" className="mt-4 flex min-w-0 items-center justify-between gap-2 flex-wrap">
-          <Button variant="secondary"
-            type="button"
-            disabled={result.page === 1}
-            onClick={() => setRequestedPage(result.page - 1)}
-            className="min-h-11 min-w-24 md:min-h-9"
-          >
-            Previous
-          </Button>
-          <span role="status" className="text-xs font-semibold text-muted-foreground">Page {result.page} of {result.pages}</span>
-          <Button variant="secondary"
-            type="button"
-            disabled={result.page >= result.pages}
-            onClick={() => setRequestedPage(result.page + 1)}
-            className="min-h-11 min-w-24 md:min-h-9"
-          >
-            Next
-          </Button>
-        </nav>
-      ) : null}
-    </section>
-  );
+const avatarTints=[
+ {bg:"#e0f2f1",fg:"#0f766e"},{bg:"#ede9fe",fg:"#5b21b6"},
+ {bg:"#fef3c7",fg:"#92400e"},{bg:"#e0e7ff",fg:"#3730a3"},
+ {bg:"#fce7f3",fg:"#9d174d"},{bg:"#dcfce7",fg:"#166534"},
+] as const;
+function initials(name:string){
+ const parts=name.trim().split(/\s+/).filter(Boolean);
+ return ((parts.length>=2?parts[0][0]+parts[parts.length-1][0]:parts[0]?.[0])??"?").toUpperCase();
+}
+function tint(seed:string){
+ let hash=0;
+ for(const char of seed)hash=(hash*31+char.charCodeAt(0))>>>0;
+ return avatarTints[hash%avatarTints.length];
+}
+function submittedText(value:string|null){
+ if(!value)return "—";
+ const date=new Date(value);
+ if(!Number.isFinite(date.getTime()))return "—";
+ return new Intl.DateTimeFormat("en-IN",{
+  timeZone:"Asia/Kolkata",month:"short",day:"numeric",
+  hour:"numeric",minute:"2-digit",hour12:true,
+ }).format(date);
+}
+export function FacultyReportStudentTable({rows,title,emptyMessage="No learners have submitted yet."}:{
+ rows:readonly FacultyReportStudentRow[];title:string;emptyMessage?:string;
+}){
+ const [search,setSearch]=useState("");
+ const filtered=useMemo(()=>{
+  const query=search.trim().toLocaleLowerCase();
+  return rows.filter(student=>!query||student.name.toLocaleLowerCase().includes(query))
+   .sort((left,right)=>(right.percent??-1)-(left.percent??-1));
+ },[rows,search]);
+ const clear=()=>setSearch("");
+ const missing="No students match “"+search+"”.";
+ return <section aria-label={title} className="min-w-0 space-y-3">
+  <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+   <div>
+    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">{title}</h2>
+    <p role="status" aria-live="polite" className="mt-1 text-xs text-muted-foreground">
+     {filtered.length} {filtered.length===1?"student":"students"} · Highest scores first
+    </p>
+   </div>
+   {rows.length>8?<label className="w-full min-w-0 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:max-w-sm">
+    <span className="sr-only">Search students</span>
+    <div className="relative mt-[6px]">
+     <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" stroke="currentColor"
+      strokeWidth="1.8" strokeLinecap="round" className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground">
+      <circle cx="8" cy="8" r="5"/><path d="m12 12 5 5"/>
+     </svg>
+     <Input type="search" aria-label="Search students" className="min-h-11 w-full pl-9 pr-10 md:min-h-9"
+      placeholder="Search students…" value={search} onChange={event=>setSearch(event.target.value)}/>
+     {search?<button type="button" onClick={clear} aria-label="Clear student search"
+      className="absolute right-1 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded text-muted-foreground hover:bg-muted focus-visible:outline-2 focus-visible:outline-[var(--lms-primary)]">
+      <svg aria-hidden="true" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8" className="size-3"><path d="M3 3l10 10M13 3 3 13"/></svg>
+     </button>:null}
+    </div>
+   </label>:null}
+  </div>
+  {rows.length===0?<EmptyState title={emptyMessage}/>:
+   filtered.length===0?<div role="status" aria-live="polite"><EmptyState title={missing}/></div>:
+   <DataTable caption={title} rows={filtered} getRowKey={student=>student.id}
+    mobileMode="cards" empty={<EmptyState title={missing}/>}
+    columns={[
+     {key:"student",header:"Student",mobilePriority:"primary" as const,
+      cell:student=>{
+       const colors=tint(student.id||student.name);
+       return <div className="flex min-w-0 items-center gap-3">
+        <span aria-hidden="true" className="flex size-9 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+         style={{backgroundColor:colors.bg,color:colors.fg}}>{initials(student.name)}</span>
+        <strong className="min-w-0 break-words text-sm font-semibold text-[var(--lms-heading)]">{student.name||"Unnamed student"}</strong>
+       </div>;
+      }},
+     {key:"score",header:"Score",mobilePriority:"secondary" as const,
+      cell:student=>student.percent===null?<span className="text-muted-foreground">—</span>:
+       <span className="block">
+        <strong className={"block text-base font-semibold tabular-nums "+(student.percent<60?"text-error":"text-[var(--lms-heading)]")}>
+         {student.percent}%
+        </strong>
+        <small className="block text-xs tabular-nums text-muted-foreground">{student.score}</small>
+       </span>},
+     {key:"submitted",header:"Submitted",mobilePriority:"secondary" as const,
+      cell:student=><div className="min-w-0 space-y-1">
+       <span className="block tabular-nums" title="Displayed in India Standard Time">{submittedText(student.submittedAt)}</span>
+       {/late/i.test(student.note)?<span className="inline-flex rounded-full bg-[#fff7e6] px-2 py-0.5 text-xs font-semibold text-[#ad6800]">Late</span>:null}
+       {student.note&& !/^late$/i.test(student.note.trim())?
+        <span className="block break-words text-xs text-muted-foreground">{student.note}</span>:null}
+      </div>},
+    ]}/>
+  }
+ </section>;
 }

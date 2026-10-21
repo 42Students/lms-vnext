@@ -27,8 +27,8 @@ export async function POST(request:Request){
   }
   const assignments=await createCourseTeachingAssignmentsBatch(context,body);
   return NextResponse.json({assignments,createdCount:assignments.length,
-    message:assignments.length===1?"Association created successfully.":
-      "Created "+assignments.length+" teaching assignments for this class."},{status:201,
+    message:assignments.length===1?"Assignment created successfully":
+      assignments.length+" assignments created"},{status:201,
     headers:{"Cache-Control":"private, no-store"}});
  }catch(error){
   return apiErrorResponse(error);

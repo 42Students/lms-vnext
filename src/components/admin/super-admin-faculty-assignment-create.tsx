@@ -75,14 +75,14 @@ export function SuperAdminFacultyAssignmentCreate({
     // for successive assignments. Only clear the chosen courses.
     setDeliveryId("");setOtherDeliveryIds([]);setCourseQuery("");
     const success=deliveryIds.length===1
-      ?"Created teaching assignment for this class."
-      :"Created "+deliveryIds.length+" teaching assignments for this class.";
+      ?"Assignment created successfully"
+      :deliveryIds.length+" assignments created";
     setNotice(success);
     showToast({tone:"success",title:success});
     router.refresh();
    }catch(caught){
     setError(caught instanceof FriendlyFetchError?caught.message:
-      "Could not assign this faculty member. Check the teaching role and active class.");
+      "Failed to create assignment. Please check the supplied details.");
    }
   });
  }
@@ -94,7 +94,7 @@ export function SuperAdminFacultyAssignmentCreate({
    </p>:null}
    {notice?<Alert tone="success">{notice}</Alert>:null}
    <form onSubmit={e=>void submit(e)} className="grid min-w-0 gap-3 border-b border-border pb-5 sm:grid-cols-2">
-    <p className="md:col-span-2 text-sm text-body leading-[22px]">Select a course and class in the current college. Only active faculty can be assigned.</p>
+    <p className="md:col-span-2 text-sm text-body leading-[22px]">Select a course and class in the current college. Only active faculty can be assigned. Choose 1–10 active deliveries from the same semester; the batch is atomic. Imported date-only start and end values are historical metadata, not editable overrides to the active delivery.</p>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch
      <Select required className={inputClass} value={batchName}
        onChange={e=>{setBatchName(e.target.value);setSectionId("");setPeriodName("");setDeliveryId("");setOtherDeliveryIds([]);}}>
@@ -211,7 +211,7 @@ export function SuperAdminTeachingRoleEdit({
       body:JSON.stringify({role,expectedUpdatedAt:revision}),
     });
     setOpen(false);
-    showToast({tone:"success",title:"Updated assignment #"+assignmentId+"."});
+    showToast({tone:"success",title:"Assignment updated successfully"});
     router.refresh();
    }catch(cause){
     setNotice(cause instanceof FriendlyFetchError&&cause.status===409

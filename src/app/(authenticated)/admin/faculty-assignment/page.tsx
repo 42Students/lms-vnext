@@ -100,7 +100,7 @@ export default async function SuperAdminFacultyAssignmentPage({searchParams}:{
         contentClassName="flex min-w-0 flex-col items-start gap-2 pb-3 pt-2">
         <p className="m-0 text-xs text-body">End assignment {row.id}</p>
         <p className="m-0 max-w-prose text-xs text-muted-foreground">
-          Delete teaching assignment? Ending it preserves auditable teaching history,
+          Deactivate teaching assignment? Hard delete is retired. Ending it preserves auditable teaching history,
           and the assignment can no longer create new sessions.
         </p>
         <TeachingAssignmentActions legacyCopy assignment={{

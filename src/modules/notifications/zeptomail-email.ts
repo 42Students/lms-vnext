@@ -83,8 +83,8 @@ export function readZeptoMailConfig(
     apiUrl: env.ZEPTOMAIL_API_URL ?? "https://api.zeptomail.in/v1.1/email/template",
     // Never restore the embedded credential from the old LMS, including in dev.
     token: (env.ZEPTOMAIL_TOKEN ?? "").trim().replace(/^"|"$/g, ""),
-    otpTemplateKey: env.ZEPTOMAIL_OTP_TEMPLATE_KEY ??
-      "2518b.4c361928d9526a75.k1.aea6cef0-4e4a-11f1-97e6-e256a66a52e4.19e1e1f015f",
+    otpTemplateKey: (env.ZEPTOMAIL_OTP_TEMPLATE_KEY ??
+      "2518b.4c361928d9526a75.k1.aea6cef0-4e4a-11f1-97e6-e256a66a52e4.19e1e1f015f").trim(),
     fromAddress: env.ZEPTOMAIL_FROM_ADDRESS ?? "hello@42lms.com",
     fromName: env.ZEPTOMAIL_FROM_NAME ?? "42Learn",
   };
@@ -115,8 +115,12 @@ function safeHeaderName(value: string): string {
 }
 
 function isTemplateId(value: string): boolean {
-  return value.length <= 200 && /^[a-zA-Z0-9][a-zA-Z0-9._:/-]*$/.test(value) &&
-    value !== "TEMP_ID_PLACEHOLDER";
+  // Provider template keys are opaque. Legacy accepted any trimmed nonempty
+  // value. Block placeholders and control characters rather than incorrectly
+  // applying the campaign identifier regex to a provider-managed ID.
+  return value.length > 0 && value.length <= 200 &&
+    !/[\x00-\x1f\x7f]/.test(value) &&
+    value.toUpperCase() !== "TEMP_ID_PLACEHOLDER";
 }
 
 export type ZeptoMailPurpose =
