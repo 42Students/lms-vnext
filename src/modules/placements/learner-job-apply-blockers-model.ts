@@ -11,8 +11,8 @@ export function learnerJobApplyBlockers(input:{
 }): string[]{
   if(input.hasApplication)return ["An application for this role is already recorded."];
   const reasons:string[]=[];
-  if(input.registrationState==="REGISTER_FIRST")reasons.push("Register for placements to participate in campus drives.");
-  if(input.registrationState==="CHOSE_OTHER")reasons.push("Your current registration does not include campus placements.");
+  if(input.registrationState==="REGISTER_FIRST")reasons.push("Register for placements first. It takes a minute, and then you can apply.");
+  if(input.registrationState==="CHOSE_OTHER")reasons.push("You told the placement cell you\'re not taking part in placements. Change that in Placement cell to apply.");
   if(input.debarred)reasons.push("A current placement restriction needs placement-cell review.");
   if(!input.canSelfApply)reasons.push("Self-application is not currently enabled for your batch.");
   if(input.deadlinePassed)reasons.push("The application deadline has passed.");
@@ -59,4 +59,15 @@ export function learnerJobApplyGate(input:Parameters<typeof learnerJobApplyBlock
  if(!input.heldOfferEligible)return denied("HELD_OFFER",
   "Your college's held-offer limit or upgrade rule does not allow this application.","RULES");
  return {code:"OPEN",reason:null,action:null,href:null,canApply:true};
+}
+
+
+/** Exact ApplyGate action labels for the legacy registration chooser. */
+export function learnerApplyRegistrationCta(code:LearnerJobApplyCode):{
+ label:string;href:string|null
+}{
+ if(code==="REGISTER_FIRST"||code==="CHOSE_OTHER")
+  return {label:code==="REGISTER_FIRST"?"Register for placements":"Change placement choice",
+   href:"/learn/my-placements#registration"};
+ return {label:"",href:null};
 }
