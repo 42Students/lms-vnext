@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
 import {
@@ -8,7 +8,8 @@ import {
   placementJoiningOutcomes,
   placementOffers,
 } from "@/db/schema";
-import type { RequestContext } from "@/modules/identity/context";
+import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
+import {AuthorizationError} from "@/modules/permissions/policy";
 import { requirePlacementManageScope } from "./scope";
 import { deriveCompanyDriveFacts } from "./company-drive-facts-policy";
 
@@ -71,4 +72,51 @@ export async function getManagedCompanyDriveFacts(
     relationshipExists: true,
     ...deriveCompanyDriveFacts(rows),
   };
+}
+
+/** vNext intentionally has no unlinked name-only jobs: the UUID company
+ * relationship is mandatory. Fuzzy company-name fallback can cross a tenant
+ * boundary and must never be used on a college-scoped report. Historical
+ * legacy name-only drives need explicit import into scoped canonical identity.
+ */
+export const COMPANY_DRIVE_FACTS_LEGACY_FALLBACK_POLICY={
+ nameOnlyMatch:false,
+ reason:"Historical name-only drives require tenant-scoped identity import before reporting.",
+} as const;
+
+/** Organization-wide/global canonical company facts are visible only to a
+ * Super Admin outside any acting-college or organization scope. Aggregate
+ * SQL avoids reading individual applicant/offer rows into server memory. */
+export async function getSuperAdminCompanyDriveFacts(
+ context:RequestContext,companyIdInput:unknown,
+){
+ const companyId=z.string().uuid().parse(companyIdInput);
+ if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE" ||
+    context.adminScope?.collegeId || context.adminScope?.organizationId)
+  throw new AuthorizationError("placements.manage");
+ const eligible=sql`${placementJobs.archivedAt} is null
+    and ${placementJobs.status} in ('PUBLISHED','CLOSED')`;
+ const [totals]=await getDb().select({
+  plannedDriveCount:sql<number>`count(distinct ${placementJobs.id})
+   filter (where ${eligible})::int`,
+  acceptedOfferDriveCount:sql<number>`count(distinct ${placementJobs.id})
+   filter (where ${eligible} and ${placementOffers.status}='ACCEPTED')::int`,
+  confirmedJoinedDriveCount:sql<number>`count(distinct ${placementJobs.id})
+   filter (where ${eligible} and ${placementOffers.status}='ACCEPTED'
+     and ${placementJoiningOutcomes.status}='JOINED')::int`,
+ }).from(placementCompanyRelationships)
+  .innerJoin(placementJobs,and(
+   eq(placementJobs.companyRelationshipId,placementCompanyRelationships.id),
+   eq(placementJobs.collegeId,placementCompanyRelationships.collegeId),
+  ))
+  .leftJoin(placementApplications,eq(placementApplications.jobId,placementJobs.id))
+  .leftJoin(placementOffers,eq(placementOffers.applicationId,placementApplications.id))
+  .leftJoin(placementJoiningOutcomes,eq(placementJoiningOutcomes.offerId,placementOffers.id))
+  .where(eq(placementCompanyRelationships.companyId,companyId));
+ const planned=totals?.plannedDriveCount??0;
+ const accepted=totals?.acceptedOfferDriveCount??0;
+ const joined=totals?.confirmedJoinedDriveCount??0;
+ return {companyId,plannedDriveCount:planned,acceptedOfferDriveCount:accepted,
+  confirmedJoinedDriveCount:joined,hasDrivePlanned:planned>0,
+  hasAcceptedOffer:accepted>0,hasConfirmedJoin:joined>0};
 }
