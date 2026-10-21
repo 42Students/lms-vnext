@@ -47,30 +47,30 @@ export function PublicRecruitFromUs({collegeName,enabled}:{collegeName:string;en
    </p>:<form className="mt-4 max-w-2xl space-y-4" onSubmit={e=>{
     e.preventDefault();void submit(sent?"recruit":"send-code");
    }}>
-    <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.workEmail}
+    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">{PUBLIC_RECRUIT_COPY.workEmail}
      <Input className={control+" mt-1"} required type="email" maxLength={150} autoComplete="email"
       disabled={Boolean(sent)} value={email} onChange={e=>setEmail(e.target.value)}/>
      <span className="block mt-1 text-xs font-normal">Your company email. We send a code to it.</span>
     </label>
     {sent ? <div className="grid min-w-0 gap-4 sm:grid-cols-2">
-    <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.name}
+    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">{PUBLIC_RECRUIT_COPY.name}
      <Input className={control+" mt-1"} required maxLength={120}
       value={name} onChange={e=>setName(e.target.value)}/>
     </label>
-    <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.company}
+    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">{PUBLIC_RECRUIT_COPY.company}
      <Input className={control+" mt-1"} required maxLength={150}
       value={company} onChange={e=>setCompany(e.target.value)}/>
     </label>
-    <label className="block text-sm font-semibold text-body">{PUBLIC_RECRUIT_COPY.mobile}
+    <label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">{PUBLIC_RECRUIT_COPY.mobile}
      <Input className={control+" mt-1"} type="tel" maxLength={30}
       value={mobile} onChange={e=>setMobile(e.target.value)}/>
     </label>
-    <label className="block min-w-0 text-sm font-semibold text-body sm:col-span-2">{PUBLIC_RECRUIT_COPY.hiringFor}
+    <label className="block min-w-0 text-[length:var(--lms-font-sm)] font-semibold text-body sm:col-span-2 leading-4">{PUBLIC_RECRUIT_COPY.hiringFor}
      <Textarea className={control+" mt-1 py-2"} maxLength={1500}
       value={hiringFor} onChange={e=>setHiringFor(e.target.value)}/>
     </label>
     </div> : null}
-    {sent?<label className="block text-sm font-semibold text-body">Code sent to {sent}
+    {sent?<label className="block text-[length:var(--lms-font-sm)] font-semibold text-body leading-4">Code sent to {sent}
       <Input className={control+" mt-1"} inputMode="numeric" pattern="[0-9]{6}"
        required maxLength={6} value={code} onChange={e=>setCode(e.target.value)}/>
       <span className="block mt-1 text-xs font-normal">{PUBLIC_RECRUIT_COPY.code}</span>

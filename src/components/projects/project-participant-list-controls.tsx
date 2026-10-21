@@ -71,7 +71,7 @@ export function ProjectParticipantListControls({
       action={basePath}
       className={mentor?"grid min-w-0 items-end gap-3 border-b border-border pb-4 md:grid-cols-2 xl:grid-cols-4 [&_label]:min-w-0":"grid min-w-0 items-end gap-3 border-b border-border pb-4 min-[768px]:grid-cols-2 lg:grid-cols-4 [&_label]:min-w-0"}
     >
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">
         Search
         <Input
           name="search"
@@ -83,7 +83,7 @@ export function ProjectParticipantListControls({
         />
       </label>
 
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">
         Status
         <Select
           name="status"
@@ -105,7 +105,7 @@ export function ProjectParticipantListControls({
       </label>
 
       {mentor || learner ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">
           Attention
           <Select
             name="attention"
@@ -137,11 +137,11 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
 
-      {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Sort
+      {mentor ? (<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">Sort
         <Select name="sort" defaultValue={query.sort ?? "RECENT"} className="w-full">
           <option value="RECENT">Recently updated</option><option value="TITLE">Title A–Z</option><option value="PROGRESS">Least recorded progress first</option><option value="PROGRESS_DESC">Most recorded progress first</option><option value="OPEN_TASKS">Most open tasks first</option><option value="TEAM_SIZE_DESC">Largest active team first</option><option value="TEAM_SIZE_ASC">Smallest active team first</option>
         </Select></label>) : null}
-      {mentor ? (<label className="grid gap-1 text-xs font-semibold text-muted-foreground">Assignment
+      {mentor ? (<label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">Assignment
         <Select name="assignment" defaultValue={query.assignment ?? ""}
           className="w-full">
           <option value="">All Mentor assignments</option><option value="PRIMARY">Primary mentor</option><option value="SUPPORTING">Supporting mentor</option>
@@ -149,7 +149,7 @@ export function ProjectParticipantListControls({
       </label>) : null}
 
       {mentor ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">
           Recorded task coverage
           <Select name="work" defaultValue={query.work ?? ""}
             className="w-full">
@@ -162,7 +162,7 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
       {learner ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">
           Work attention
           <Select name="work" defaultValue={query.work ?? ""}
             className="w-full">
@@ -173,7 +173,7 @@ export function ProjectParticipantListControls({
         </label>
       ) : null}
       {learner ? (
-        <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+        <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">
           Sort projects
           <Select name="sort" defaultValue={query.sort ?? "RECENT"}
             className="w-full">
@@ -183,7 +183,7 @@ export function ProjectParticipantListControls({
           </Select>
         </label>
       ) : null}
-      <label className="grid gap-1 text-xs font-semibold text-muted-foreground">
+      <label className="grid gap-1 text-[length:var(--lms-font-sm)] font-semibold text-muted-foreground leading-4">
         Rows
         <Select
           name="pageSize"
