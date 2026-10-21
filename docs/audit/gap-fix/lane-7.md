@@ -59,3 +59,7 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 - `NEW_docs_audit_gap2_lane-13_l18-u026-new-program-controller.md.md` | 14/14 audit findings mapped to current Academics program APIs/service/model/schema target files. No lane-owned code changes; legacy integer IDs and duration-year fields need explicit safe conversion. **Handoff, not fixed**; static review only.
 
 - `NEW_docs_audit_gap2_lane-2_admin-attendance-policy-controller.md.md` | 14/14 audit findings mapped to current Attendance policy editor/service and college attendance page target files. No lane-owned code changes; per-key inheritance/CAS and Admin mutation rights need a coordinated policy decision. **Handoff, not fixed**; static review only.
+
+- `NEW_docs_audit_gap2_lane-2_l15-u030-hiring-dashboard.md.md` | 14/14 findings recorded as cross-lane handoff by ID and target. 0 edits to shared hiring dashboard analytics/services and table; organization-wide permission/csv export must be designed by owning lane. **Not fixed**, no CI.
+
+- `NEW_docs_audit_gap2_lane-2_admin-assignment-controller.md.md` | 13/13 findings recorded as cross-lane handoff by ID and target. 0 edits to shared assignment directory/service/schema; section-specific filtering and degraded stat rows must be implemented by Courses owner. **Not fixed**, no CI.
