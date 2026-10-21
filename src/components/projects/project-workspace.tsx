@@ -343,7 +343,6 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                     projectId={workspace.project.id}
                     status={workspace.project.status}
                     expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
-                    deleted={Boolean(workspace.project.deletedAt)}
                   />
                 ) : null}
                 {mode === "ADMIN" ? (
@@ -352,6 +351,7 @@ export function ProjectWorkspaceHeader({workspace,mode,backHref,backLabel}: {
                     projectTitle={workspace.project.title}
                     status={workspace.project.status}
                     expectedUpdatedAt={workspace.project.updatedAt.toISOString()}
+                    deleted={Boolean(workspace.project.deletedAt)}
                   />
                 ) : null}
               </div>
@@ -388,6 +388,11 @@ export function ProjectWorkspace({
   polishAdminSection?: boolean;
 }) {
   const { readiness } = workspace;
+  // A missing readiness snapshot must never take down the other workspace tabs.
+  // Keep a useful retry state in preference to dereferencing absent server data.
+  if (!readiness) {
+    return <WorkspaceReadinessSnapshot workspace={workspace} />;
+  }
   const authoredBrief=parseWorkspaceBrief(workspace.project.authoredBrief);
   const templateBrief=mentorAuthoredBrief(workspace.templateOverview);
   const isAuthored=Boolean(authoredBrief.goal||authoredBrief.description||
@@ -865,7 +870,7 @@ export function ProjectWorkspace({
             </h2>
             <p className="mt-1 text-sm text-body">
               See who is assigned, what role they play, and how the project is staffed.
-              {" "}{workspace.members.length} member(s)
+              {" "}{workspace.members.length} {workspace.members.length === 1 ? "member" : "members"}
             </p>
           </div>
           {mode === "ADMIN" && !readOnly ? (
@@ -902,9 +907,10 @@ export function ProjectWorkspace({
         })() : null}
         {workspace.project.teamGroupId ? (
           <p className="min-w-0 border-y border-[var(--lms-canvas-border)] py-3 text-sm text-body">
-            Learner assignments in this workspace come from its managed class team.
-            Only College Admin or Super Admin may change team membership in the class team workspace;
-            mentors can review Project work but cannot edit team membership.
+            <strong className="block font-semibold text-foreground">This workspace is a team</strong>
+            Its learners are kept by the team it was created with. Only College Admin or
+            Super Admin may change team membership in the class team workspace; mentors
+            can review Project work but cannot edit team membership.
           </p>
         ) : null}
         {mode==="ADMIN"?<ProjectRosterTable projectId={workspace.project.id} rows={workspace.members.map(member=>{
@@ -1025,10 +1031,15 @@ export function ProjectWorkspace({
                   then use Add sprint inside that release. The Board and Task Allocation will appear here.</p>}
             />:null}
           {mode!=="MENTOR"&&workspace.releases.length===0?
-            <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
-              description={mode==="ADMIN"
-                ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
-                :"Add the sprints this project should be measured against."}/>:null}
+            <div className="space-y-2">
+              <EmptyState title={mode==="ADMIN"?"No releases on this project yet":"No sprints yet"}
+                description={mode==="ADMIN"
+                  ?"A sprint must belong to a release. Create or seed a project release before adding a new sprint."
+                  :"Add the sprints this project should be measured against."}/>
+              {mode==="ADMIN"?<Link href={"?retry=1"} className="inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+                Retry releases
+              </Link>:null}
+            </div>:null}
         </div>
         {mode==="LEARNER"?<div role="status" className="rounded-[var(--lms-control-radius)] border border-border p-3 text-sm text-body">
           {(()=>{
