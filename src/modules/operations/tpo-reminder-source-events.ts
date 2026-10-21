@@ -8,7 +8,6 @@
 import type {ScheduledJobFence} from "./scheduled-job-runner";
 
 const IST_OFFSET_MS=330*60_000;
-const DAY_MS=24*60*60_000;
 function dayInIndia(value:Date):string {
   if(!(value instanceof Date)||!Number.isFinite(value.getTime()))
     throw new Error("INVALID_TPO_REMINDER_DATE");
@@ -49,7 +48,7 @@ export function generateDeadlineTodayEvents(
   const today=dayInIndia(now),events:TpoReminderEvent[]=[],seen=new Set<string>();
   for(const row of rows.slice(0,500)){
     if(!row.published||row.deleted||!safeId(row.jobId)||!safeId(row.collegeId)||
-       dayInIndia(row.deadlineAt)!==today)continue;
+       (!(row.deadlineAt instanceof Date)||!Number.isFinite(row.deadlineAt.getTime())||dayInIndia(row.deadlineAt)!==today))continue;
     const applied=new Set(row.appliedLearnerMembershipIds);
     for(const memberId of row.eligibleLearnerMembershipIds.slice(0,5001)){
       if(!safeId(memberId)||applied.has(memberId))continue;
@@ -75,7 +74,7 @@ export function generateShortlistTomorrowEvents(
     const email=row.recipientEmail?.trim()??"";
     if(row.revoked||row.alreadyRemindedOnIstDate||!safeId(row.shareId)||
       !safeId(row.collegeId)||!validEmail(email)||
-      dayInIndia(row.shortlistBy)!==tomorrow)continue;
+      (!(row.shortlistBy instanceof Date)||!Number.isFinite(row.shortlistBy.getTime())||dayInIndia(row.shortlistBy)!==tomorrow))continue;
     const eventKey=`shortlist-tomorrow:${today}:${row.shareId}`;
     if(seen.has(eventKey))continue;
     seen.add(eventKey);

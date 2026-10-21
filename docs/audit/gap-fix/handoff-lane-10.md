@@ -106,3 +106,23 @@
 - G2-17-002-062/G2-9-008-031 | College lesson/metrics client cache owner | Error boundaries now display exact legacy retry warnings. Last-good filtered data across a failed server refresh requires an authenticated scope-keyed in-memory cache on the successful page, not browser persistence or invented stale data.
 
 - G2-12-024-040/G2-15-018-029 | DB10 deployment/migrations owner | Known Errors now reports schema-not-ready and precise environment validation. Migrations must be applied/verified by DB operators before setting DB10_LOG_ALERTS_READY; route must fail closed meanwhile.
+
+- G2-13-007-002/004/G2-6-001-003/004 | `src/app/(authenticated)/college/layout.tsx` shell owner | Already mounts CollegeLegacyGroupTabs with People/Faculty/Students, while layout redirects unaffiliated users before role workspace. Component now provides explicit missing-college guidance if rendered; render equivalent guidance in layout to make it reachable without weakening membership checks.
+
+- G2-13-007-027/041/081/G2-6-001-010/013 | Faculty/student detail and person edit modal owners | Directory rows now expose authorized full-profile and audit actions; field-order parity, 20 legacy profile sections and safe gender display require changes in role-specific profile/read endpoints, not role directory shortcuts. No unscoped private PII.
+
+- G2-13-007-020/072/G2-6-001-019/061/066 | Directory suggestions service/UI owner | Input currently provides native datalist suggestions for up to fifteen scoped page rows and server-scope q search. Historic popular-learner rankings require a persisted access/popularity ledger, scoped 15/10 suggestions and keyboard-complete combobox; do not fabricate popularity from latest membership.
+
+- G2-13-007-059/060/G2-6-001-055 | Student/faculty import and visible-export service owners | Role directory now groups register/import links and includes truthful 10–200 server paging; CSV template and exact legacy column order, including permissioned mobile and gender, must be implemented on importer/export provider while retaining 1000-row cap.
+
+- G2-13-007-024/054/G2-6-001-005/006 | Registration flow owners | Role directory provides an explicit Register students collapsible entry and separate bulk link, faculty creation is a modal; the actual validated form is `/college/students/register` with selected college from secure membership. Only reuse form inline with cached scoped academic options if performance and lifecycle state are proven.
+
+- G2-13-007-063/064/065/G2-6-001-020/060 | Shared table/action presentation owner | Desktop directory now has a right-side Actions column plus explicit name-bearing profile/action links, mobile record actions. Sticky pin across overflow, accessibly-labelled icon-only eight-button legacy actions and 375/768/1280 visual test need shared DataTable/UI changes, not unsafe icon dependencies.
+
+- G2-13-007-055 | College academic lookup owner | Roster query errors surface safe Retry but academic-choice lookup for new student registration is handled by separate register page. Add explicit partial-form degraded state there rather than displaying empty college programs as real data.
+
+- G2-13-007-010/G2-6-001-011/013 | Identity/permission owner | Deliberately do not expose learner/mobile/gender in directory rows without need-to-know grants. Contact cards enforce per-person access; protected gender and mobile must remain out of roster list until approved scoped policy.
+
+- G2-16-005-019/022/051/072/074/076 | Cloud Logging provider and release-marker owner | Explorer now has redacted detail drawer, bounded NDJSON, initial skeleton, accessible Run query and filtered summary. True 7-day/31-day ranges and 50/page need backend provider pagination beyond its 12/page, 24-hour schema and verified namespace mapping. Portable provider-ID permalinks require exact ID lookup rather than first filtered page; never invent deploy markers.
+
+- G2-16-002-006/009/021/024/047/067/069/079 | Tracker signed screenshot storage, reporter select UI and similar-search provider owners | Report form now has legacy-style context grid, evidence order, auto similar checks, stale guard, draft flush and session-only non-sensitive context retention. Actual screenshot pick/drop/scan/upload, 3-level searchable cascading select, approved persisted reporter context (privacy), and a safe public suggestion endpoint need storage/security/role-specific service bindings before enabling; a disabled picker truthfully reports unavailability.

@@ -49,3 +49,65 @@
 
 .loadingHost { margin-top: 24px; text-align: left; }
 .loadingHost > :global(section) { border: none; background: transparent; padding: 0; box-shadow: none; }
+
+/* Public 404/500 keep the old LMS borderless status anatomy rather than the
+   branded sign-in recovery card. Shared theme tokens remain the source. */
+.legacyErrorPage {
+  display: grid;
+  min-height: 100dvh;
+  place-items: center;
+  background: #fafbfc;
+  color: var(--lms-heading, #172033);
+  font-family: var(--font-inter), Inter, Lato, system-ui, sans-serif;
+}
+.legacyErrorPage .center {
+  display: flex;
+  min-height: 70vh;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+  padding: max(32px, env(safe-area-inset-top)) 32px max(32px, env(safe-area-inset-bottom));
+}
+.legacyErrorPage .card {
+  width: min(100%, 540px);
+  padding: 32px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  text-align: center;
+}
+.statusNumeral {
+  display: block;
+  font-size: 64px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.045em;
+  color: var(--lms-primary-text, #168993);
+}
+.legacyTitle {
+  margin: 12px 0 0;
+  color: var(--lms-heading, #172033);
+  font-size: 26px;
+  line-height: 1.4;
+  font-weight: 650;
+}
+.legacyErrorPage .secondary {
+  border: 1px solid var(--lms-primary-text, #168993);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--lms-primary-text, #168993);
+  padding: 9px 22px;
+}
+.legacyErrorPage .primary {
+  border-radius: 999px;
+  padding: 9px 22px;
+}
+.legacyErrorPage a:focus-visible, .legacyErrorPage button:focus-visible {
+  outline: 2px solid var(--lms-primary-text, #168993);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .legacyErrorPage .center { min-height: 70vh; padding: 24px 16px; }
+  .legacyErrorPage .card { padding: 32px 12px; }
+}
