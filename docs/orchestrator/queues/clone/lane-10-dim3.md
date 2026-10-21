@@ -11,31 +11,31 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of instances checked, at least 3 spec-versus-code value pairs, fixes made. Tick [x] in this queue in the same push. If a file has zero instances write 'none' as the proof and tick it.
 
 
-- [ ] `src/app/(authenticated)/tpo/students/[membershipId]/participation/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
-- [ ] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
-- [ ] `src/app/company-share/[token]/error.tsx`
-- [ ] `src/components/academics/college-academic-directory.tsx`
-- [ ] `src/components/college/college-department-insights.tsx`
-- [ ] `src/components/courses/college-live-classes-directory.tsx`
-- [ ] `src/components/placements/learner-placement-job-detail.tsx`
-- [ ] `src/components/profile/learner-profile-workspace.tsx`
-- [ ] `src/components/projects/super-admin-template-subview-page.tsx`
-- [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/projects/learner-board-task-detail-dialog.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/project-admin-collection-controls.tsx`
-- [ ] `src/components/projects/project-participant-list-controls.tsx`
-- [ ] `src/components/projects/super-admin-template-create-form.tsx`
-- [ ] `src/components/shell/topbar/topbar.module.css`
-- [ ] `src/components/tpo/recruiter-leads-workspace.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/ui/bottom-sheet.tsx`
-- [ ] `src/components/ui/drawer.tsx`
-- [ ] `src/components/ui/graceful-page-loading.tsx`
-- [ ] `src/components/ui/needs-doing-chips.tsx`
-- [ ] `src/components/ui/stat-tile.tsx`
+- [x] `src/app/(authenticated)/tpo/students/[membershipId]/participation/error.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [x] `src/app/(authenticated)/tracker/issues/[publicId]/page.tsx`
+- [x] `src/app/company-share/[token]/error.tsx`
+- [x] `src/components/academics/college-academic-directory.tsx`
+- [x] `src/components/college/college-department-insights.tsx`
+- [x] `src/components/courses/college-live-classes-directory.tsx`
+- [x] `src/components/placements/learner-placement-job-detail.tsx`
+- [x] `src/components/profile/learner-profile-workspace.tsx`
+- [x] `src/components/projects/super-admin-template-subview-page.tsx`
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/projects/learner-board-task-detail-dialog.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/project-admin-collection-controls.tsx`
+- [x] `src/components/projects/project-participant-list-controls.tsx`
+- [x] `src/components/projects/super-admin-template-create-form.tsx`
+- [x] `src/components/shell/topbar/topbar.module.css`
+- [x] `src/components/tpo/recruiter-leads-workspace.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/ui/bottom-sheet.tsx`
+- [x] `src/components/ui/drawer.tsx`
+- [x] `src/components/ui/graceful-page-loading.tsx`
+- [x] `src/components/ui/needs-doing-chips.tsx`
+- [x] `src/components/ui/stat-tile.tsx`
 - [ ] `src/styles/legacy-skin.css`
 - [ ] `src/components/projects/learner-board-task-index.tsx`
 - [ ] `src/components/projects/mentor-product-backlog.tsx`
