@@ -82,12 +82,20 @@ export async function saveProjectTaskPlan(
       // Legacy key is a human-facing label. Keep the stable templateKey/ID for
       // existing foreign keys, and prevent duplicate effective labels in the plan.
       const editsById = new Map(input.tasks.map(row => [row.id, row]));
-      const seenKeys = new Set<string>();
+      const editedKeyIds = new Set(changed.filter(({ prior, next }) =>
+        (prior!.legacyTaskKey || prior!.templateKey).toLowerCase() !== next.key.toLowerCase()
+      ).map(({ next }) => next.id));
+      const seenKeys = new Map<string, string>();
       for (const task of current.filter(row => !row.deletedAt)) {
         const effectiveKey = editsById.get(task.id)?.key ?? (task.legacyTaskKey || task.templateKey);
-        const lookup = effectiveKey.toLocaleLowerCase("en");
-        if (seenKeys.has(lookup)) throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
-        seenKeys.add(lookup);
+        const lookup = effectiveKey.toLowerCase();
+        const previous = seenKeys.get(lookup);
+        // Existing historical label duplicates are not grounds to block a
+        // metadata-only save. Reject new collisions introduced by this edit.
+        if (previous && (editedKeyIds.has(previous) || editedKeyIds.has(task.id))) {
+          throw new ProjectsServiceError("PROJECT_TASK_INVALID_STATE");
+        }
+        if (!previous) seenKeys.set(lookup, task.id);
       }
       const nextSequence = new Map<string, number>();
       for (const task of current) {
