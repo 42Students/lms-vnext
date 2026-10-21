@@ -12,10 +12,10 @@ type Delivery={offeringId:string;deliveryId:string;sectionName:string;sectionCod
 
 /** College Admin may grade a shared offering assignment in each of its classes. */
 export function CollegeAssignmentReview({
- assignmentId,offeringId,specificDeliveryId,maxPoints,status,deliveries,filesEnabled,
+ assignmentId,offeringId,specificDeliveryId,maxPoints,status,deliveries,filesEnabled,gradedLearners,
 }:{
  assignmentId:string;offeringId:string;specificDeliveryId:string|null;
- maxPoints:number;status:string;deliveries:Delivery[];filesEnabled:boolean;
+ maxPoints:number;status:string;deliveries:Delivery[];filesEnabled:boolean;gradedLearners?:number;
 }){
  const options=deliveries.filter(item=>item.offeringId===offeringId&&
   (!specificDeliveryId||item.deliveryId===specificDeliveryId));
@@ -87,15 +87,18 @@ export function CollegeAssignmentReview({
    <FacultyAssignmentReview key={selected.deliveryId} reviewScope="COLLEGE"
     assignmentId={assignmentId} deliveryId={selected.deliveryId}
     maxPoints={maxPoints} status={status as "DRAFT"|"PUBLISHED"} filesEnabled={filesEnabled}/>
-   {status==="PUBLISHED"?<Button variant="primary" type="button" loading={bulkBusy} disabled={bulkBusy} onClick={()=>setConfirmBulk({deliveryId:selected.deliveryId,retryOnly:null})}
+   {status==="PUBLISHED"?<Button variant="primary" type="button" loading={bulkBusy} disabled={bulkBusy||gradedLearners===0}
+   title={gradedLearners===0?"Nothing graded yet":undefined}
+   onClick={()=>setConfirmBulk({deliveryId:selected.deliveryId,retryOnly:null})}
     className="min-h-11 md:min-h-9">
     {bulkBusy?"Publishing…":"Publish grades"}
    </Button>:null}
    {status==="PUBLISHED"&&options.length>1&&!specificDeliveryId?
-    <Button variant="secondary" type="button" loading={bulkBusy} disabled={bulkBusy}
+    <Button variant="secondary" type="button" loading={bulkBusy} disabled={bulkBusy||gradedLearners===0}
      onClick={()=>setConfirmBulk({deliveryId:null,retryOnly:null})}
      className="min-h-11 md:min-h-9">Publish all sections</Button>:null}
   </div>
+  {status==="PUBLISHED"&&gradedLearners===0?<p role="status" className="text-xs text-muted-foreground">Nothing graded yet</p>:null}
   {bulkBusy?<Alert tone="info" role="status">Publishing graded submissions for this assignment. {progress}</Alert>:null}
   {bulkStatus?<Alert tone={retryAllowed?"warning":"success"} role="status">{bulkStatus}</Alert>:null}
   {retryAllowed&&status==="PUBLISHED"?<Button variant="secondary" type="button" disabled={bulkBusy}
