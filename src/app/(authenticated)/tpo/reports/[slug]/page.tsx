@@ -14,7 +14,23 @@ export default async function UnknownTpoReportPage({
   if (!context.membership || !hasMembershipRole(context, "TPO")) {
     redirect("/dashboard");
   }
-  await params;
+  const { slug } = await params;
+  // Map legacy report names to the current layout while retaining role scoping.
+  const aliases: Record<string, string> = {
+    summary: "placement-summary", placement: "placement-summary",
+    branch: "by-branch", branches: "by-branch",
+    company: "by-company", companies: "by-company",
+    packages: "ctc", package: "ctc",
+    "unplaced-students": "unplaced",
+    offers: "offers-acceptance", acceptance: "offers-acceptance",
+    joining: "joining-status", outcomes: "joining-status",
+    reasons: "failure-reasons", failure: "failure-reasons",
+    "recruiter-leads": "leads", "recruiter-engagement": "leads",
+    "lead-funnel": "leads", naac: "accreditation", nirf: "accreditation",
+    aftercollege: "after-college",
+  };
+  const destination = aliases[slug.trim().toLowerCase()];
+  if (destination) redirect("/tpo/reports/" + destination);
   return (
     <div className="min-w-0 space-y-4">
       <PageHeader

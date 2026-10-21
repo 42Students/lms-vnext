@@ -4,6 +4,9 @@ export const driveInterviewsQuerySchema = z.object({
   kind: z.enum(["ALL","INTERVIEW","GD"]).default("ALL"),
   status: z.enum(["ALL","PENDING","SCHEDULED","COMPLETED","CANCELLED"]).default("ALL"),
   applicationId: z.string().uuid().optional(),
+  appointmentStatus: z.enum(["ALL","UPCOMING","COMPLETED","CANCELLED"]).optional(),
+  appointmentMode: z.enum(["ALL","ON_CAMPUS","VIRTUAL"]).optional(),
+  appointmentSearch: z.string().trim().max(120).optional(),
   page: z.coerce.number().int().min(1).max(1000).default(1),
 }).strict();
 export type DriveInterviewsQuery = z.infer<typeof driveInterviewsQuerySchema>;
@@ -11,7 +14,7 @@ export const DRIVE_INTERVIEW_PAGE_SIZE = 25;
 
 export function driveInterviewsParams(raw: Record<string,string|string[]|undefined>) {
   const filtered: Record<string,string> = {};
-  for (const key of ["kind","status","applicationId","page"] as const) {
+  for (const key of ["kind","status","applicationId","page","appointmentStatus","appointmentMode","appointmentSearch"] as const) {
     const value = raw[key];
     if (Array.isArray(value)) return null;
     if (typeof value === "string" && value !== "") filtered[key] = value;
@@ -25,6 +28,9 @@ export function driveInterviewsHref(jobId: string, query: DriveInterviewsQuery) 
   if (query.kind !== "ALL") params.set("kind",query.kind);
   if (query.status !== "ALL") params.set("status",query.status);
   if (query.applicationId) params.set("applicationId",query.applicationId);
+  if (query.appointmentStatus && query.appointmentStatus !== "ALL") params.set("appointmentStatus",query.appointmentStatus);
+  if (query.appointmentMode && query.appointmentMode !== "ALL") params.set("appointmentMode",query.appointmentMode);
+  if (query.appointmentSearch) params.set("appointmentSearch",query.appointmentSearch);
   if (query.page>1) params.set("page",String(query.page));
   return "/college/placements/jobs/" + encodeURIComponent(jobId) + "/interviews" +
     (params.size ? "?" + params.toString() : "");
@@ -32,4 +38,34 @@ export function driveInterviewsHref(jobId: string, query: DriveInterviewsQuery) 
 export function driveRoundTime(value: Date | null, timezone: string | null) {
   if (!value) return "Not scheduled";
   return value.toISOString() + (timezone ? " · " + timezone : " · Timezone not recorded");
+}
+
+export type CandidateInterviewFilter = {
+  appointmentStatus?: "ALL" | "UPCOMING" | "COMPLETED" | "CANCELLED";
+  mode?: "ALL" | "ON_CAMPUS" | "VIRTUAL";
+  search?: string;
+};
+export function filterDriveCandidateAppointments<T extends {
+  status: string; scheduledAt: string; mode: string; applicationId: string;
+}>(rows: readonly T[], filter: CandidateInterviewFilter, now: Date = new Date()): T[] {
+  const search = filter.search?.trim().toLowerCase() ?? "";
+  return rows.filter(row => {
+    const state = row.status.toUpperCase();
+    const when = Date.parse(row.scheduledAt);
+    const bucket = state === "CANCELLED" || state === "NO_SHOW" ? "CANCELLED"
+      : state === "COMPLETED" || (Number.isFinite(when) && when < now.getTime())
+        ? "COMPLETED" : "UPCOMING";
+    return (!filter.appointmentStatus || filter.appointmentStatus === "ALL" ||
+      bucket === filter.appointmentStatus) &&
+      (!filter.mode || filter.mode === "ALL" || row.mode === filter.mode) &&
+      (!search || row.applicationId.toLowerCase().includes(search));
+  });
+}
+export function driveInterviewFilterError(raw: Record<string, string | string[] | undefined>) {
+  if (raw.applicationId && typeof raw.applicationId === "string" &&
+      !z.string().uuid().safeParse(raw.applicationId).success)
+    return "name is required and must be a valid value";
+  if (raw.page !== undefined && !z.coerce.number().int().min(1).max(1000).safeParse(raw.page).success)
+    return "Page must be a valid number";
+  return "Invalid interview filters";
 }
