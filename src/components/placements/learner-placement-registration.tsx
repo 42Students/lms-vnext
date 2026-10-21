@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import {useToast} from "@/components/ui/toast";
 import { useState } from "react";
+import Link from "next/link";
 import {
   learnerPlacementChoices, LEARNER_REGISTRATION_COPY,
   type LearnerPlacementChoice,
@@ -14,6 +15,7 @@ type Props = {
     stage: "NOT_INVITED" | "FINISHED" | "OPEN" | "CLOSED";
     deadline: string | null;
     choice: LearnerPlacementChoice | null;
+    batchName?: string | null;
   };
 };
 const errors: Record<string,string> = {
@@ -28,13 +30,13 @@ const errors: Record<string,string> = {
 export function LearnerPlacementRegistration({registration}:Props) {
   const router = useRouter();
   const {showToast}=useToast();
-  const [choice,setChoice] = useState<LearnerPlacementChoice>(registration.choice ?? "PLACEMENTS");
+  const [choice,setChoice] = useState<LearnerPlacementChoice|null>(registration.choice);
   const [consent,setConsent] = useState(false);
   const [busy,setBusy] = useState(false);
   const [message,setMessage] = useState("");
   const [error,setError] = useState("");
   async function submit() {
-    if (registration.stage !== "OPEN" || busy) return;
+    if (registration.stage !== "OPEN" || busy || !choice || choice===registration.choice) return;
     if (choice === "PLACEMENTS" && !consent) {
       setError(errors.DB08_REGISTRATION_CONSENT_REQUIRED); return;
     }
@@ -45,9 +47,9 @@ export function LearnerPlacementRegistration({registration}:Props) {
         headers:{"Content-Type":"application/json"},
         body:JSON.stringify({choice,acceptedConsent: choice==="PLACEMENTS" && consent}),
       });
-      const data = await response.json() as {error?:string;ok?:boolean;choice?:LearnerPlacementChoice;version?:number};
+      const data = await response.json().catch(()=>({})) as {error?:string;ok?:boolean;choice?:LearnerPlacementChoice;version?:number};
       if(!response.ok){
-        if(response.status===409&&data.error==="DB08_REGISTRATION_WINDOW_CLOSED")
+        if(response.status===409&&(!data.error||data.error==="DB08_REGISTRATION_WINDOW_CLOSED"))
           throw Error(LEARNER_REGISTRATION_COPY.closed);
         throw Error(errors[data.error??""] ?? LEARNER_REGISTRATION_COPY.failure);
       }
@@ -61,7 +63,7 @@ export function LearnerPlacementRegistration({registration}:Props) {
     } finally {setBusy(false);}
   }
   return <section id="registration" aria-label="Registration" className="scroll-mt-24 min-w-0 space-y-3 border-b border-border pb-6">
-    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{LEARNER_REGISTRATION_COPY.title}</h2>
+    <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{LEARNER_REGISTRATION_COPY.title}{registration.batchName?" · "+registration.batchName:""}</h2>
     <fieldset disabled={busy || registration.stage!=="OPEN"} className="space-y-2">
       <legend className="text-sm font-semibold">{LEARNER_REGISTRATION_COPY.choice}</legend>
       {learnerPlacementChoices.map(item=><label key={item.value} className="flex min-h-11 min-w-0 items-start gap-3 border-b border-border px-2 py-3 transition-colors duration-150 hover:bg-[var(--lms-primary-subtle)] focus-within:outline-2 focus-within:outline-offset-[3px] focus-within:outline-[var(--lms-primary)] motion-reduce:transition-none has-[:disabled]:cursor-not-allowed has-[:disabled]:opacity-50">
@@ -71,20 +73,25 @@ export function LearnerPlacementRegistration({registration}:Props) {
           <span className="block break-words text-sm text-muted-foreground">{item.hint}</span></span>
       </label>)}
       {choice==="PLACEMENTS"&&registration.choice==="PLACEMENTS"?
-        <p className="text-sm text-muted-foreground">You previously chose Placements. To update or reconfirm this registration, please agree to the sharing statement again.</p>:null}
+        <p className="text-sm text-muted-foreground">You are already registered for Placements. Select a different choice to update your registration.</p>:null}
       {choice==="PLACEMENTS"?<label className="flex min-h-11 min-w-0 items-start gap-2 py-2 text-sm">
         <Checkbox checked={consent} onChange={e=>setConsent(e.target.checked)}/>
         <span>{LEARNER_REGISTRATION_COPY.consent}</span>
       </label>:null}
     </fieldset>
     {registration.stage==="OPEN"?<>
-      {registration.deadline?<p className="text-sm leading-[22px]">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric"})}.</p>:null}
-      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy} onClick={()=>void submit()}>
+      {registration.deadline?<p className="text-sm leading-[22px]">{LEARNER_REGISTRATION_COPY.deadline} {new Date(registration.deadline).toLocaleString("en-IN",{timeZone:"Asia/Kolkata",day:"numeric",month:"short",year:"numeric",hour:"numeric",minute:"2-digit",hour12:true})+" IST"}.</p>:null}
+      <Button className="min-h-11 w-full sm:w-auto md:min-h-9" type="button" disabled={busy||!choice||choice===registration.choice||(choice==="PLACEMENTS"&&!consent)} onClick={()=>void submit()}>
         {busy?"Saving…":registration.choice?LEARNER_REGISTRATION_COPY.update:LEARNER_REGISTRATION_COPY.register}
       </Button>
     </>:<p className="text-sm leading-[22px]" role="status">{registration.stage==="NOT_INVITED"?
-      LEARNER_REGISTRATION_COPY.notInvited:LEARNER_REGISTRATION_COPY.closed}</p>}
-    {registration.choice?<p className="text-sm leading-[22px]">Your choice: {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label}</p>:null}
+      LEARNER_REGISTRATION_COPY.notInvited:LEARNER_REGISTRATION_COPY.closed}
+      <Link href="/learn/my-placements/placement#requests" className="ml-2 inline-flex min-h-11 items-center font-semibold text-link underline md:min-h-9">
+        Contact the placement cell
+      </Link></p>}
+    {registration.choice?<p className="text-sm leading-[22px]" role="status">
+      You are registered for {learnerPlacementChoices.find(item=>item.value===registration.choice)?.label??"your selected option"}.
+    </p>:<p className="text-sm leading-[22px] text-muted-foreground">Choose an option to register. Eligibility is checked for each published drive.</p>}
     {message?<p role="status" className="text-sm leading-[22px]">{message}</p>:null}
     {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
   </section>;
