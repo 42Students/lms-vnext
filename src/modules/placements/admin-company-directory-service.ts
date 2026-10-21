@@ -85,7 +85,9 @@ export async function listSuperAdminCompanyDirectory(context: RequestContext, ra
     verifiedAt: placementCompanies.verifiedAt,
     website: placementCompanies.websiteUrl,
     industry: placementCompanies.industry,
-    addedByType:sql<string>`(case when exists(
+    addedByType:sql<string>`(case when ${placementCompanies.legacyCreatedByRole} in ('SUPER_ADMIN','SUPERADMIN') then '42 platform'
+      when ${placementCompanies.legacyCreatedByRole} in ('COLLEGE_ADMIN','TPO','FACULTY') then 'College user'
+      when exists(
       select 1 from system_roles sr
       where sr.user_id=${placementCompanies.createdByUserId} and sr.role='SUPER_ADMIN')
       then '42 platform' else 'College user' end)`,
@@ -188,7 +190,8 @@ export async function listSuperAdminGlobalCompanyCatalogue(
     .where(and(eq(placementCompanyDomains.companyId,placementCompanies.id),
       ilike(placementCompanyDomains.domain,needle)))));
   conditions.push(query.searchField==="NAME"?nameSearch!:
-    query.searchField==="DOMAIN"?domainSearch!:or(nameSearch,domainSearch)!);
+    query.searchField==="DOMAIN"?domainSearch!:or(nameSearch,domainSearch,
+      ilike(placementCompanies.industry,needle))!);
  }
  const filter=conditions.length?and(...conditions):undefined;
  const db=getDb();
@@ -203,6 +206,7 @@ export async function listSuperAdminGlobalCompanyCatalogue(
    // historic college membership. Do not guess a college for multi-college
    // users or imply a linked college necessarily created the global identity.
    addedByLabel:sql<string|null>`(case
+     when ${placementCompanies.legacyCreatedByRole} in ('SUPER_ADMIN','SUPERADMIN') then '42'
      when exists(select 1 from system_roles sr where sr.user_id=${placementCompanies.createdByUserId}
        and sr.role='SUPER_ADMIN') then '42'
      else (select case when count(distinct m.college_id)=1 then min(c.name) else null end
@@ -232,13 +236,50 @@ export async function listSuperAdminGlobalCompanyCatalogue(
        where r.company_id=${placementCompanies.id} and j.status!='ARCHIVED')`),
        asc(placementCompanies.id)]
     :query.sort==="LAST_ACTIVE"?
+      // Legacy global catalogue, unlike per-college activity, is unverified
+      // first and then newest canonical identity.
       [sql`case when ${placementCompanies.verifiedAt} is null then 0 else 1 end`,
        desc(placementCompanies.createdAt),asc(placementCompanies.id)]
-    :[asc(placementCompanies.name),asc(placementCompanies.id)]))
-   .limit(50).offset((query.page-1)*50),
+    :query.sort==="LAST_ACTIVE_ASC"?
+      [sql`case when ${placementCompanies.verifiedAt} is null then 1 else 0 end`,
+       asc(placementCompanies.createdAt),asc(placementCompanies.id)]
+    :query.sort==="DRIVES_ASC"?
+      [asc(sql`(select count(*) from placement_jobs j
+       inner join placement_company_relationships r on r.id=j.company_relationship_id
+       where r.company_id=${placementCompanies.id} and j.status!='ARCHIVED')`),
+       asc(placementCompanies.id)]
+    :[query.sort==="NAME_DESC"?desc(placementCompanies.name):asc(placementCompanies.name),
+      asc(placementCompanies.id)]))
+   .limit(10).offset((query.page-1)*10),
  ]);
  const total=Number(totals[0]?.total??0);
  return {query,scope:{collegeId:null,organizationId:null},rows:companies,
-  total,cap:50,totalPages:Math.max(1,Math.ceil(total/50)),
-  truncated:query.page*50<total};
+  total,cap:10,totalPages:Math.max(1,Math.ceil(total/10)),
+  truncated:query.page*10<total};
+}
+
+/** Exact canonical-name lookup is intentionally separate from LIKE search.
+ * Repeated company names are not globally unique; callers get an explicit
+ * ambiguity signal instead of the first unrelated college relationship.
+ */
+export async function getSuperAdminCompanyIdentityByName(
+ context:RequestContext,rawName:string,
+):Promise<{status:"NOT_FOUND"|"AMBIGUOUS"|"FOUND";
+ company:{id:string;name:string;verified:boolean}|null}>{
+ if(!isSuperAdmin(context)||context.adminScope?.collegeId||
+    context.adminScope?.organizationId)throw new AuthorizationError("placements.read");
+ requirePermission(context,"placements.read",{});
+ const name=rawName.trim();
+ if(name.length<2||name.length>150)return {status:"NOT_FOUND",company:null};
+ const rows=await getDb().select({
+  id:placementCompanies.id,name:placementCompanies.name,
+  verifiedAt:placementCompanies.verifiedAt,
+ }).from(placementCompanies).where(and(
+  eq(placementCompanies.status,"ACTIVE"),
+  sql`lower(btrim(${placementCompanies.name})) = lower(${name})`,
+ )).orderBy(asc(placementCompanies.id)).limit(2);
+ if(rows.length===0)return {status:"NOT_FOUND",company:null};
+ if(rows.length>1)return {status:"AMBIGUOUS",company:null};
+ return {status:"FOUND",company:{id:rows[0].id,name:rows[0].name,
+  verified:rows[0].verifiedAt!==null}};
 }
