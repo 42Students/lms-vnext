@@ -832,6 +832,7 @@ export function RecruiterLeadsWorkspace({
             </div>:null}
             {filterOpen?<div id="engage-filter-panel" role="group" aria-label="Recruiter filters"
               className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4">
+                            <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Pipeline</h3>
               <label className="text-sm">Status
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={statusFilter}
                   onChange={e=>updateFilter("status",e.target.value)}>
@@ -855,57 +856,7 @@ export function RecruiterLeadsWorkspace({
                    <option key={item} value={item}>{item==="ALL"?"All invites":inviteLabel(item)}</option>)}
                 </Select>
               </label>
-              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
-                <Select className={inputStyle+" mt-1.5 min-w-0"} value={sourceFilter}
-                  onChange={e=>updateFilter("source",e.target.value)}>
-                  <option value="ALL">All sources</option>
-                  {[...new Set(rows.map(r=>r.source).filter((name):name is string=>Boolean(name)))]
-                   .sort().map(name=><option key={name} value={name}>{name.replaceAll("_"," ")}</option>)}
-                </Select>
-              </label>
-              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
-                <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyFilter}
-                  onChange={e=>updateFilter("company",e.target.value)}>
-                  <option value="ALL">All companies</option>
-                  {[...new Set(rows.map(row=>row.companyName).filter((name):name is string=>Boolean(name)))]
-                    .sort().map(name=><option key={name} value={name}>{name}</option>)}
-                </Select>
-              </label>
-              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drives that ran
-                <Select className={inputStyle+" mt-1.5 min-w-0"} value={driveFilter}
-                  onChange={e=>updateFilter("drives",e.target.value)}>
-                  <option value="ALL">Any drive count</option>
-                  <option value="NONE">No drives</option>
-                  <option value="ONE_TWO">1–2 drives</option>
-                  <option value="THREE_FIVE">3–5 drives</option>
-                  <option value="SIX_PLUS">6 or more drives</option>
-                </Select>
-              </label>
-              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students placed
-                <Select className={inputStyle+" mt-1.5 min-w-0"} value={placedFilter}
-                  onChange={e=>updateFilter("placed",e.target.value)}>
-                  <option value="ALL">Any number</option>
-                  <option value="NONE">No confirmed placements</option>
-                  <option value="ONE_TWO">1–2 students</option>
-                  <option value="THREE_PLUS">3 or more students</option>
-                </Select>
-              </label>
-              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation
-                <Input className={inputStyle+" mt-1.5 min-w-0"} value={designationFilter}
-                  placeholder="Search designation" maxLength={100}
-                  onChange={e=>updateFilter("designation",e.target.value)}/>
-              </label>
-              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Can be reached by
-                <Select className={inputStyle+" mt-1.5 min-w-0"} value={reachFilter}
-                  onChange={e=>updateFilter("reach",e.target.value)}>
-                  <option value="ALL">Any contact method</option>
-                  <option value="EMAIL">Has an email</option>
-                  <option value="PHONE">Has a phone</option>
-                   <option value="BOTH">Has both</option>
-                   <option value="EITHER">Email or phone</option>
-                  <option value="NEITHER">Neither</option>
-                </Select>
-              </label>
+              <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Timing</h3>
               <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Next follow-up
                 <Select className={inputStyle+" mt-1.5 min-w-0"} value={nextFilter}
                   onChange={e=>updateFilter("nextFollowup",e.target.value)}>
@@ -937,10 +888,63 @@ export function RecruiterLeadsWorkspace({
                   <option value="EARLIER">Earlier</option>
                 </Select>
               </label>
+              <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Contact</h3>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Designation
+                <Input className={inputStyle+" mt-1.5 min-w-0"} value={designationFilter}
+                  placeholder="Search designation" maxLength={100}
+                  onChange={e=>updateFilter("designation",e.target.value)}/>
+              </label>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Can be reached by
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={reachFilter}
+                  onChange={e=>updateFilter("reach",e.target.value)}>
+                  <option value="ALL">Any contact method</option>
+                  <option value="EMAIL">Has an email</option>
+                  <option value="PHONE">Has a phone</option>
+                   <option value="BOTH">Has both</option>
+                   <option value="EITHER">Email or phone</option>
+                  <option value="NEITHER">Neither</option>
+                </Select>
+              </label>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Source
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={sourceFilter}
+                  onChange={e=>updateFilter("source",e.target.value)}>
+                  <option value="ALL">All sources</option>
+                  {[...new Set(rows.map(r=>r.source).filter((name):name is string=>Boolean(name)))]
+                   .sort().map(name=><option key={name} value={name}>{name.replaceAll("_"," ")}</option>)}
+                </Select>
+              </label>
+              <h3 className="col-span-full mt-2 border-b border-border pb-2 text-sm font-semibold text-[var(--lms-heading)]">Company</h3>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={companyFilter}
+                  onChange={e=>updateFilter("company",e.target.value)}>
+                  <option value="ALL">All companies</option>
+                  {[...new Set(rows.map(row=>row.companyName).filter((name):name is string=>Boolean(name)))]
+                    .sort().map(name=><option key={name} value={name}>{name}</option>)}
+                </Select>
+              </label>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Drives that ran
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={driveFilter}
+                  onChange={e=>updateFilter("drives",e.target.value)}>
+                  <option value="ALL">Any drive count</option>
+                  <option value="NONE">No drives</option>
+                  <option value="ONE_TWO">1–2 drives</option>
+                  <option value="THREE_FIVE">3–5 drives</option>
+                  <option value="SIX_PLUS">6 or more drives</option>
+                </Select>
+              </label>
+              <label className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Students placed
+                <Select className={inputStyle+" mt-1.5 min-w-0"} value={placedFilter}
+                  onChange={e=>updateFilter("placed",e.target.value)}>
+                  <option value="ALL">Any number</option>
+                  <option value="NONE">No confirmed placements</option>
+                  <option value="ONE_TWO">1–2 students</option>
+                  <option value="THREE_PLUS">3 or more students</option>
+                </Select>
+              </label>
               <Button variant="secondary" type="button" className={buttonStyle} onClick={()=>{
                 for(const key of ["owner","invite","status","source","query","company","designation",
                   "reach","nextFollowup","lastActivity","added","drives"] as const)updateFilter(key,"ALL");
-                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");setPlacedFilter("ALL");
+                updateFilter("stage","ALL");updateFilter("attention","ALL");updateFilter("need","ALL");updateFilter("placed","ALL");
               }}>Clear filters</Button>
             </div>:null}
           </div>
