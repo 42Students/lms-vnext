@@ -13,10 +13,10 @@ export type FriendlyErrorInput = {
 
 export const FRIENDLY_MESSAGES = {
   unexpected: "Something went wrong on our side. Please try again in a moment.",
-  session: "Your session has ended. Please sign in again.",
+  session: "Please sign in again to continue.",
   forbidden: "You do not have permission to do this. Please contact your administrator if needed.",
   missing: "We could not find that. Please refresh and try again.",
-  conflict: "This changed while you were working. Refresh and try again.",
+  conflict: "This changed elsewhere. Refresh the latest data before trying again.",
   invalid: "Please check the highlighted fields and try again.",
   tooLarge: "This file is too large. Please choose a smaller file.",
   fileType: "This file type is not supported. Please choose another file.",
@@ -24,12 +24,13 @@ export const FRIENDLY_MESSAGES = {
   rateLimit: "Too many attempts. Please wait a minute and try again.",
   maintenance: "We are making a quick update. Please try again in a minute.",
   databaseUnavailable: "Temporarily unavailable, please try again in a minute.",
-  timeout: "This is taking longer than expected. Please try again.",
+  timeout: "The LMS took too long to respond. Try again.",
   offline: "You appear to be offline. Check your connection and try again.",
 } as const;
 
 /** Keep only intentional, customer-readable domain overrides. */
 const domainMessages: Readonly<Record<string, string>> = {
+  ADMIN_SCOPE_NOT_FOUND: "Invalid college or organization selection. Choose an active scope and try again.",
   TPO_CRM_CONTACT_REQUIRED: "Please add a contact before continuing.",
   TPO_CRM_LEAD_NOT_FOUND: "We could not find that lead. Refresh and try again.",
   TPO_CRM_FOLLOWUP_NOT_FOUND: "We could not find that follow-up. Refresh and try again.",
