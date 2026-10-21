@@ -923,16 +923,16 @@ export function PlacementDriveControls({
                             item.membershipId
                           ]!.override ? (
                             <p className="mt-2 text-xs leading-5 text-body">
-                              Manual{" "}
-                              {eligibilityReviews[
-                                item.membershipId
-                              ]!.override!.decision.toLowerCase()}
-                              :{" "}
-                              {
-                                eligibilityReviews[
-                                  item.membershipId
-                                ]!.override!.reason
-                              }
+                              <span className="font-semibold text-foreground">
+                                {eligibilityReviews[item.membershipId]!.override!.decision === "INCLUDE"
+                                  ? "Added by college"
+                                  : "Excluded by college"}
+                              </span>
+                              {" — "}
+                              {eligibilityReviews[item.membershipId]!.override!.reason}
+                              <span className="block text-muted-foreground">
+                                Manual eligibility decision recorded with the college's reason.
+                              </span>
                             </p>
                           ) : null}
 
@@ -1013,7 +1013,7 @@ export function PlacementDriveControls({
                                   )
                                 }
                               >
-                                Force include
+                                Include in drive
                               </Button>
                               <Button
                                 size="sm"
@@ -1029,7 +1029,7 @@ export function PlacementDriveControls({
                                   )
                                 }
                               >
-                                Force exclude
+                                Exclude from drive
                               </Button>
                               {eligibilityReviews[
                                 item.membershipId
