@@ -1,7 +1,7 @@
 import Link from "next/link";
 import type { getOwnLearnerPlacementAlerts } from "@/modules/placements/learner-placement-alerts-service";
 import {learnerAlertsHistoryHref} from "@/modules/placements/learner-alerts-history-navigation-model";
-import {learnerAlertSafeDate} from "@/modules/placements/learner-alert-safe-date-model";
+import {learnerAlertSafeDate,learnerAlertRelativeDay} from "@/modules/placements/learner-alert-safe-date-model";
 import {LearnerPlacementAlertAction} from "./learner-placement-alert-action";
 
 type Alerts = Awaited<ReturnType<typeof getOwnLearnerPlacementAlerts>>;
@@ -35,8 +35,9 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
       </aside>:null}
       {alerts.length === 0 ? (
         <div role="status" className="mt-4 flex min-h-40 flex-col items-center justify-center gap-3 px-3 py-6 text-center text-sm leading-6 text-body">
-          {filtered ? "No loaded personal placement alerts match this search." : "No personal placement alerts have been delivered to you yet."}{" "}
-          This does not establish that your college has published no notices.
+          {filtered ? "No loaded personal placement alerts match this search." :
+            "No updates yet. When a round is booked, an offer comes in or your application moves, it shows here."}
+          <p className="text-xs text-muted-foreground">This does not establish that your college has published no notices.</p>
         </div>
       ) : (
         <ol className="mt-4 divide-y divide-border">
@@ -51,7 +52,7 @@ export function LearnerPlacementAlerts({ alerts, filtered=false, unreadOnly=fals
                   <p className="mt-1 whitespace-pre-wrap break-words text-[length:var(--lms-font-sm)] leading-[1.5] text-body md:text-[length:var(--lms-font-base)]">{alert.body}</p>
                 </div>
                 <time dateTime={learnerAlertSafeDate(alert.createdAt).iso??undefined}
-                  className="shrink-0 text-xs text-muted-foreground leading-5">{learnerAlertSafeDate(alert.createdAt).label}</time>
+                  className="shrink-0 text-xs text-muted-foreground leading-5">{learnerAlertRelativeDay(alert.createdAt)}</time>
               </div>
               <LearnerPlacementAlertAction id={alert.id} href={alert.actionHref} unread={alert.unread}/>
             </li>
