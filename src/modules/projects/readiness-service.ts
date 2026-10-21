@@ -4,6 +4,7 @@ import {
   eq,
   and,
   isNull,
+  sql,
 } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { readProjectReadinessOverride } from "./readiness-override-service";
@@ -14,6 +15,7 @@ import {
   projectSprints,
   projectSubmissions,
   projectTasks,
+  projectTaskSubmissions,
 } from "@/db/schema";
 import type { RequestContext } from "@/modules/identity/context";
 import {
@@ -37,6 +39,7 @@ export async function getProjectReadiness(
     sprints,
     tasks,
     submissionRows,
+    proofRows,
   ] = await Promise.all([
     db
       .select({ status: projectReleases.status })
@@ -69,6 +72,13 @@ export async function getProjectReadiness(
         eq(projectSubmissions.projectId, projectId),
       )
       .orderBy(desc(projectSubmissions.version)),
+    db.select({covered:sql<number>`count(distinct ${projectTaskSubmissions.taskId})::integer`})
+      .from(projectTaskSubmissions)
+      .innerJoin(projectTasks,eq(projectTasks.id,projectTaskSubmissions.taskId))
+      .where(and(eq(projectTaskSubmissions.projectId,projectId),
+        eq(projectTasks.projectId,projectId),eq(projectTasks.status,"DONE"),
+        isNull(projectTasks.deletedAt),
+        sql`length(trim(${projectTaskSubmissions.submissionUrl})) > 0`)),
   ]);
 
   const latestSubmission =
@@ -131,6 +141,7 @@ export async function getProjectReadiness(
       tasks: {
         total: tasks.length,
         done: doneTasks,
+        proofCovered: Math.min(doneTasks,Number(proofRows[0]?.covered??0)),
       },
     },
     finalSubmission: {
