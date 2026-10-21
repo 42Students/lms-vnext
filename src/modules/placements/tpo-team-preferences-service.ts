@@ -12,6 +12,15 @@ import {assertPersistedPlatformPermission} from "@/modules/permissions/persisted
 import {requirePlacementManageScope} from "./scope";
 import {placementTableExists} from "./staged-tables";
 
+/** A pair conversation has no separate participant membership to delete.
+ * Legacy Leave is represented as UNFOLLOW plus MUTE without deleting the
+ * durable conversation or another participant's access. Muted/unfollowed
+ * threads must never generate an unread notification badge for this actor.
+ */
+export function tpoTeamThreadNotificationEnabled(following:boolean,muted:boolean):boolean{
+ return following&&!muted;
+}
+
 async function scope(context:RequestContext,threadId:string){
  const member=context.membership;
  if(!member||member.status!=="ACTIVE"||context.user.platformStatus!=="ACTIVE"||
@@ -35,13 +44,16 @@ export async function getTpoTeamThreadPreferences(context:RequestContext,threadI
        eq(placementTpoInternalThreads.invitedMembershipId,member.id)),
    )).limit(1);
   if(!thread)throw new Error("TEAM_THREAD_NOT_FOUND");
-  if(!ready)return {status:"NOT_REGISTERED" as const,following:true,muted:false};
+  if(!ready)return {status:"NOT_REGISTERED" as const,following:true,muted:false,
+   notificationEnabled:true,canLeave:false};
   const [prefs]=await tx.select({following:placementTpoInternalReads.following,
    mutedAt:placementTpoInternalReads.mutedAt}).from(placementTpoInternalReads)
    .where(and(eq(placementTpoInternalReads.threadId,thread.id),
     eq(placementTpoInternalReads.membershipId,member.id),
     eq(placementTpoInternalReads.collegeId,college.id))).limit(1);
-  return {status:"READY" as const,following:prefs?.following??true,muted:!!prefs?.mutedAt};
+  const following=prefs?.following??true,muted=!!prefs?.mutedAt;
+  return {status:"READY" as const,following,muted,
+   notificationEnabled:tpoTeamThreadNotificationEnabled(following,muted),canLeave:false};
  });
 }
 export async function updateTpoTeamThreadPreferences(context:RequestContext,raw:unknown){
@@ -67,7 +79,8 @@ export async function updateTpoTeamThreadPreferences(context:RequestContext,raw:
     eq(placementTpoInternalReads.collegeId,college.id),
     eq(placementTpoInternalReads.membershipId,member.id))).for("update").limit(1);
   const {following,mutedAt,changed}=planTpoThreadPreferenceChange(current,input.action,new Date());
-  if(!changed)return {following,muted:!!mutedAt};
+  if(!changed)return {following,muted:!!mutedAt,
+   notificationEnabled:tpoTeamThreadNotificationEnabled(following,!!mutedAt)};
   await tx.insert(placementTpoInternalReads).values({
    collegeId:college.id,threadId:thread.id,membershipId:member.id,
    readThrough:current?.readThrough??new Date(0),following,mutedAt,
@@ -75,6 +88,7 @@ export async function updateTpoTeamThreadPreferences(context:RequestContext,raw:
    target:[placementTpoInternalReads.threadId,placementTpoInternalReads.membershipId],
    set:{following,mutedAt},
   });
-  return {following,muted:!!mutedAt};
+  return {following,muted:!!mutedAt,
+   notificationEnabled:tpoTeamThreadNotificationEnabled(following,!!mutedAt)};
  });
 }
