@@ -95,12 +95,23 @@ export default async function TpoRecruiterAccessPage({
     );
   }
 
-  const [data, linkedCompanies, publicLink,communication] = await Promise.all([
+  const loaded=await Promise.all([
     listTpoRecruiterAccess(context, parsed),
     getTpoTrustedCompanies(context, context.membership.collegeId),
     getTpoPublicJoinLinkStatus(context, "COLLEGE"),
     getTpoCommunicationSettings(context),
-  ]);
+  ]).then(values=>({ok:true as const,values}))
+   .catch(()=>({ok:false as const}));
+  if(!loaded.ok)return <div className="min-w-0 space-y-4">
+   <PageHeader title="Recruiter access"/>
+   <TpoSettingsNav active="recruiters" compact/>
+   <ErrorState title="Couldn't load your recruiters"
+    description="Recruiter access records are temporarily unavailable. No changes were made."
+    action={<a href="/tpo/settings/recruiters" className="inline-flex min-h-11 items-center font-semibold text-link underline">
+     Retry
+    </a>}/>
+  </div>;
+  const [data,linkedCompanies,publicLink,communication]=loaded.values;
 
   const {
     query,
@@ -133,27 +144,35 @@ export default async function TpoRecruiterAccessPage({
       />
       <TpoSettingsNav active="recruiters" compact />
 
-      <TpoRecruiterGrantForm companies={linkedCompanies.companies.map((company) => ({
-        relationshipId: company.relationshipId,
-        name: company.name,
-      }))} />
       <Alert tone="info">
         Recruiter access lasts six months by default unless changed below. Legacy
         recruiter approval and AFTER_REVIEW visibility settings have not been
         migrated as a combined policy; verify individual grants before sharing details.
       </Alert>
-      <Disclosure title="Recruiter link and duration" className="min-w-0 border-t border-border pt-3" contentClassName="min-w-0 space-y-4 pt-3">
+      <Disclosure title="Recruiter access rules" defaultOpen
+       className="min-w-0 border-t border-border pt-3"
+       contentClassName="min-w-0 space-y-4 pt-3">
 
       {communication.ready?<TpoRecruiterDurationEditor key={context.membership.collegeId} initial={communication.recruiterAccessMonths} version={communication.version}/>:
        <Alert tone="warning">Recruiter access duration settings are not available yet.</Alert>}
       <TpoPublicJoinLinkCard initial={publicLink} scope="COLLEGE" />
       </Disclosure>
-
+      <section aria-label="Grant recruiter access" className="min-w-0 space-y-2 border-b border-border pb-4">
+       <Disclosure title="Give recruiter access" className="min-w-0" contentClassName="pt-3">
+        <TpoRecruiterGrantForm companies={linkedCompanies.companies.map(company=>({
+         relationshipId:company.relationshipId,name:company.name,
+        }))}/>
+       </Disclosure>
+      </section>
       <section className="border-t border-border pt-4">
         <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
-          College recruiter grants
+          Recruiters with access to your college
         </h2>
 
+        <Link href="/tpo/recruiters?stage=INVITED"
+         className="mt-1 inline-flex min-h-11 items-center text-sm font-semibold text-link underline md:min-h-9">
+         Invites not yet accepted
+        </Link>
         <p className="mt-1 text-sm leading-6 text-body">
           Each row represents one persisted
           recruiter-to-college-company grant.
@@ -216,7 +235,7 @@ export default async function TpoRecruiterAccessPage({
       <section className="space-y-3">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <h2 className="text-base font-semibold leading-6 text-foreground md:text-lg md:leading-7 min-[992px]:text-xl">
-            Grant records
+            Access records (including history)
           </h2>
           <Disclosure title="Export grants" className="min-w-0" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
             <a href={tpoRecruiterGrantExportHref(query)}
@@ -266,26 +285,36 @@ export default async function TpoRecruiterAccessPage({
                   {item.displayName}
                   <p className="mt-1 text-xs font-normal text-muted-foreground">
                     {item.designation??"Designation not recorded"}
-                    {" · "}{item.joinedVia}
                   </p>
                 </div>},
               {key:"company",header:"Company",mobilePriority:"secondary",cell:item=>item.companyName},
-              {key:"grant",header:"Grant status",mobilePriority:"secondary",cell:item=>
-                <div className="space-y-2">
-                  <StatusBadge tone={item.status==="ACTIVE"?"success":"neutral"}>
-                    {item.ended?"Ended or removed":item.status==="ACTIVE"?"Active":"Revoked"}
-                  </StatusBadge>
-                  {item.status==="ACTIVE"&&item.grantId&&item.expectedUpdatedAt?
-                    <Disclosure title="Manage access" className="min-w-0" contentClassName="flex min-w-0 flex-wrap gap-2 pt-2">
-                      <TpoRecruiterExtend grantId={item.grantId}
-                        expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName} ended={item.ended}/>
-                      <TpoRecruiterRevoke grantId={item.grantId}
-                        expectedUpdatedAt={item.expectedUpdatedAt} displayName={item.displayName}/>
-                    </Disclosure>:null}
-                </div>},
+              {key:"joinedVia",header:"Joined through",mobilePriority:"secondary",cell:item=>item.joinedVia||"—"},
+              {key:"access",header:"Access",mobilePriority:"secondary",cell:item=>
+               <div className="space-y-1">
+                <StatusBadge tone={item.status!=="ACTIVE"?"neutral":item.ended?"warning":"success"}>
+                 {item.status!=="ACTIVE"?"Removed":item.ended?"Ended":
+                  item.validUntilDate?"Until "+item.validUntilDate:"No end date"}
+                </StatusBadge>
+                <p className="text-xs text-muted-foreground">
+                 {item.capabilities.join(", ")||"No capabilities"}
+                </p>
+               </div>},
+              {key:"actions",header:"Actions",mobilePriority:"action",cell:item=>
+               <div className="flex min-w-0 flex-wrap items-center gap-2">
+                {item.status==="ACTIVE"&&item.grantId&&item.expectedUpdatedAt?<>
+                 <TpoRecruiterExtend grantId={item.grantId}
+                  expectedUpdatedAt={item.expectedUpdatedAt}
+                  displayName={item.displayName} ended={item.ended}/>
+                 {!item.ended?<TpoRecruiterRevoke grantId={item.grantId}
+                  expectedUpdatedAt={item.expectedUpdatedAt}
+                  displayName={item.displayName}/>:null}
+                </>:<span className="text-xs text-muted-foreground">
+                  {item.status==="ACTIVE"?"Expired":"Removed"}
+                </span>}
+               </div>},
               {key:"granted",header:"Granted",mobilePriority:"secondary",cell:item=>item.grantedDate},
-              {key:"valid",header:"Valid through (IST)",mobilePriority:"secondary",cell:item=>item.validUntilDate??"No expiry on record"},
-              {key:"access",header:"Access & verification",mobilePriority:"secondary",cell:item=><span>{item.capabilities.join(", ")||"No capabilities"}{" · "}{item.verificationStatus}</span>},
+              {key:"valid",header:"Valid through (IST)",mobilePriority:"secondary",cell:item=>item.validUntilDate??"No end date"},
+              {key:"verification",header:"Verification",mobilePriority:"secondary",cell:item=>item.verificationStatus},
               {key:"revoked",header:"Revoked",mobilePriority:"secondary",cell:item=>item.revokedDate??"—"},
             ]}
           />
@@ -336,8 +365,8 @@ export default async function TpoRecruiterAccessPage({
         This page does not expose recruiter emails,
         telephone numbers or internal identifiers,
         and can grant or revoke an existing user access through explicit
-        confirmation and immutable audit. Full legacy recruiter invites,
-        exact modal UX and browser parity remain open.
+        confirmation and immutable audit. The primary table follows legacy
+        labels while the additional audit columns remain visible for grant history.
       </p>
       </Disclosure>
     </div>
