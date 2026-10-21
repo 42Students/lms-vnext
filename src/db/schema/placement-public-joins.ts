@@ -11,6 +11,11 @@ export const placementPublicJoinLinks = pgTable(
     collegeId: uuid("college_id")
       .notNull()
       .references(() => colleges.id, { onDelete: "restrict" }),
+    /** Original college_public_link is keyed by INTEGER college_id, not token UUID. */
+    legacyCollegeId: integer("legacy_college_id"),
+    /** Raw nonce was a secret reconstructing the old HMAC token; store only
+     * a separately keyed digest for reconciliation and rotate the public URL. */
+    legacyNonceDigest: varchar("legacy_nonce_digest", { length: 64 }),
     companyId: uuid("company_id"),
     companyDomain: varchar("company_domain", { length: 254 }),
     scope: varchar("scope", { length: 12 }).notNull(),
@@ -25,6 +30,8 @@ export const placementPublicJoinLinks = pgTable(
   (table) => [
     check("placement_public_join_links_opens_count_ck", sql`${table.opensCount} >= 0`),
     check("placement_public_join_links_joins_count_ck", sql`${table.joinsCount} >= 0`),
+    check("placement_public_join_links_legacy_nonce_ck",
+      sql`${table.legacyNonceDigest} is null or ${table.legacyNonceDigest} ~ '^[a-f0-9]{64}$'`),
     uniqueIndex("public_join_links_hash_uq").on(table.tokenHash),
     index("public_join_links_college_idx").on(table.collegeId, table.scope),
     check("placement_public_join_links_token_ck", sql`${table.tokenHash} ~ '^[a-f0-9]{64}$'`),
