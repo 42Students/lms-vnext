@@ -600,19 +600,98 @@ export function PlacementEmployerRelationships({
                 </p>
               ) : null}
             </div>
-            <div className="space-y-2 border-t border-[var(--lms-canvas-border)] pt-4 text-sm">
-              <h3 className="font-semibold text-foreground">College contact and internal notes</h3>
-              <p className="text-body">
-                {historyData.company.contactName || "No contact recorded"}
-                {historyData.company.contactEmail ? " · " + historyData.company.contactEmail : ""}
-                {historyData.company.contactPhone ? " · " + historyData.company.contactPhone : ""}
-              </p>
-              <p className="whitespace-pre-wrap break-words text-body">
-                {historyData.company.internalNotes || "No internal notes recorded."}
-              </p>
-              <p className="text-xs text-muted-foreground">
-                These details are private to this college, not shown to students.
-              </p>
+            <div className="space-y-3 border-t border-[var(--lms-canvas-border)] pt-4 text-sm">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <h3 className="font-semibold text-foreground">College contact and internal notes</h3>
+                {!historyEditing && historyData.company.relationshipStatus === "ACTIVE" ? (
+                  <Button variant="secondary" size="sm" className="min-h-11 md:min-h-9"
+                    onClick={() => { setHistorySaveError(null); setHistoryEditing(true); }}>
+                    Edit college details
+                  </Button>
+                ) : null}
+              </div>
+              {historyEditing ? (
+                <form className="grid min-w-0 gap-3 sm:grid-cols-2"
+                  onSubmit={(event) => { event.preventDefault(); void saveHistoryContact(); }}>
+                  <label className="grid min-w-0 gap-1 font-semibold text-body">
+                    Contact person
+                    <Input value={historyDraft.contactPersonName} maxLength={150}
+                      disabled={historySaving} placeholder="Recruiter contact name"
+                      onChange={(event) => setHistoryDraft((current) => ({
+                        ...current, contactPersonName: event.target.value,
+                      }))} />
+                  </label>
+                  <label className="grid min-w-0 gap-1 font-semibold text-body">
+                    Contact email
+                    <Input type="email" value={historyDraft.contactEmail} maxLength={150}
+                      disabled={historySaving} placeholder="recruiter@company.com"
+                      onChange={(event) => setHistoryDraft((current) => ({
+                        ...current, contactEmail: event.target.value,
+                      }))} />
+                  </label>
+                  <label className="grid min-w-0 gap-1 font-semibold text-body">
+                    Contact phone
+                    <Input type="tel" value={historyDraft.contactPhone} maxLength={30}
+                      disabled={historySaving} placeholder="Contact phone"
+                      onChange={(event) => setHistoryDraft((current) => ({
+                        ...current, contactPhone: event.target.value,
+                      }))} />
+                  </label>
+                  <label className="grid min-w-0 gap-1 font-semibold text-body sm:col-span-2">
+                    Internal notes
+                    <span className="font-normal text-xs text-muted-foreground">
+                      Visible only to your placement team, not to students.
+                    </span>
+                    <Textarea rows={2} value={historyDraft.internalNotes}
+                      maxLength={2000} disabled={historySaving}
+                      onChange={(event) => setHistoryDraft((current) => ({
+                        ...current, internalNotes: event.target.value,
+                      }))} />
+                    <span className="text-right font-normal text-xs text-muted-foreground">
+                      {historyDraft.internalNotes.length}/2000
+                    </span>
+                  </label>
+                  {historySaveError ? (
+                    <p role="alert" className="text-sm text-error sm:col-span-2">
+                      Company was not saved. {historySaveError}
+                    </p>
+                  ) : null}
+                  <div className="flex flex-wrap gap-2 sm:col-span-2">
+                    <Button type="submit" variant="primary" disabled={historySaving}
+                      className="min-h-11 md:min-h-9">
+                      {historySaving ? "Saving…" : "Save"}
+                    </Button>
+                    <Button type="button" variant="secondary" disabled={historySaving}
+                      className="min-h-11 md:min-h-9"
+                      onClick={() => {
+                        setHistoryEditing(false);
+                        setHistorySaveError(null);
+                        setHistoryDraft({
+                          contactPersonName: historyData.company.contactName ?? "",
+                          contactEmail: historyData.company.contactEmail ?? "",
+                          contactPhone: historyData.company.contactPhone ?? "",
+                          internalNotes: historyData.company.internalNotes ?? "",
+                        });
+                      }}>
+                      Cancel
+                    </Button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <p className="text-body">
+                    {historyData.company.contactName || "No contact recorded"}
+                    {historyData.company.contactEmail ? " · " + historyData.company.contactEmail : ""}
+                    {historyData.company.contactPhone ? " · " + historyData.company.contactPhone : ""}
+                  </p>
+                  <p className="whitespace-pre-wrap break-words text-body">
+                    {historyData.company.internalNotes || "No internal notes recorded."}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    These details are private to this college, not shown to students.
+                  </p>
+                </>
+              )}
             </div>
           </div>
         ) : null}
