@@ -51,12 +51,13 @@ export async function getMyTrackerReport(context:RequestContext,rawPublicId:stri
 /** A reporter may read only their own issue's public-status history.
  * Engineering notes, actor identifiers and private file object keys stay admin-only.
  * The ownership predicate is included in each read rather than inferred from a
- * caller-provided report identifier.
+ * caller-provided report identifier. Historical imported rows without a verified
+ * reporter_user_id remain private even if a display name happens to match.
  */
 export async function listMyTrackerReportHistory(context:RequestContext,rawPublicId:string){
   requireReporter(context);
   const publicId=trackerPublicIdSchema.parse(rawPublicId);
-  return getDb().select({
+  const rows=await getDb().select({
     id:db10BugReportActivities.id,
     type:db10BugReportActivities.type,
     fromValue:db10BugReportActivities.fromValue,
@@ -67,6 +68,9 @@ export async function listMyTrackerReportHistory(context:RequestContext,rawPubli
     .where(and(eq(db10BugReports.reporterUserId,context.user.id),
       sql`lower(${db10BugReports.publicId})=${publicId.toLowerCase()}`))
     .orderBy(desc(db10BugReportActivities.createdAt),desc(db10BugReportActivities.id)).limit(50);
+  // Retain the latest fifty permitted events, then render chronologically
+  // (oldest to newest) as the legacy Activity timeline did.
+  return rows.reverse();
 }
 
 /** A reporter's own screenshot filenames and sizes, never storage keys or

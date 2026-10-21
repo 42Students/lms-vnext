@@ -1,4 +1,7 @@
-import { notFound, redirect } from "next/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { PageHeader } from "@/components/ui/page-header";
+import { Alert } from "@/components/ui/alert";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { DriveDayRoster } from "@/components/placements/drive-day-roster";
 import { TpoRoundDriveDayReadOnly } from "@/components/placements/tpo-round-drive-day-read-only";
@@ -26,13 +29,9 @@ export default async function DriveDayRoundPage({
 
   const { roundId } = await params;
 
-  // Preserve the existing learner-coordinator route for
-  // learner memberships, including mixed-role memberships.
-  // A TPO-only membership receives the new read-only view.
-  if (
-    hasMembershipRole(context, "TPO") &&
-    !hasMembershipRole(context, "LEARNER")
-  ) {
+  // This TPO route opens the operator workspace for TPO memberships,
+  // even when that same membership also has a learner role.
+  if (hasMembershipRole(context, "TPO")) {
     let data: Awaited<
       ReturnType<typeof getTpoRoundDriveDay>
     >;
@@ -43,13 +42,19 @@ export default async function DriveDayRoundPage({
         roundId,
       );
     } catch (error) {
-      if (
-        error instanceof PlacementsServiceError &&
-        error.code === "PLACEMENT_ROUND_NOT_FOUND"
-      ) {
-        notFound();
-      }
-      throw error;
+      const unavailable = error instanceof PlacementsServiceError &&
+        (error.code === "PLACEMENT_ROUND_NOT_FOUND" ||
+         error.code === "PLACEMENT_DRIVE_DAY_ACCESS_DENIED");
+      return <section role="alert" className="min-w-0 space-y-4">
+        <PageHeader title="Drive day" />
+        <Alert tone="error">{unavailable
+          ? "This drive day isn't available to you."
+          : "Could not load this drive day. Try again."}</Alert>
+        <Link href={"/tpo/drive-day/" + encodeURIComponent(roundId) + "?retry=1"}
+          className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle">
+          Retry
+        </Link>
+      </section>;
     }
 
     return <TpoRoundDriveDayReadOnly data={data} />;
@@ -64,7 +69,14 @@ export default async function DriveDayRoundPage({
       roundId,
     );
   } catch {
-    redirect("/tpo/drive-day");
+    return <section role="alert" className="min-w-0 space-y-4">
+      <PageHeader title="Drive day" />
+      <Alert tone="error">This drive day isn't available to you.</Alert>
+      <Link href={"/tpo/drive-day/" + encodeURIComponent(roundId) + "?retry=1"}
+        className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-link hover:bg-primary-subtle">
+        Retry
+      </Link>
+    </section>;
   }
 
   return (

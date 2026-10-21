@@ -7,7 +7,7 @@ import {independentFindingActionSchema} from "./independent-finding-actions-mode
 import {canTransitionIndependentFinding,type IndependentFindingStatus} from "./independent-finding-transition-model";
 import {isSuperAdmin,type RequestContext} from "@/modules/identity/context";
 import {AuthorizationError,requirePermission} from "@/modules/permissions/policy";
-import {ACTIVE_FINDING_STATUSES,INDEPENDENT_AUDIT_PAGE_SIZE,type FindingFilters} from "./independent-audit-findings-model";
+import {ACTIVE_FINDING_STATUSES,RELEASE_BLOCKER_FINDING_STATUSES,INDEPENDENT_AUDIT_PAGE_SIZE,type FindingFilters} from "./independent-audit-findings-model";
 
 export function independentAuditFindingsReady(){
  return process.env.DB10_AUDIT_FINDINGS_READY==="DB10_VERIFIED";
@@ -32,30 +32,38 @@ export async function listIndependentAuditFindings(context:RequestContext,query:
   ilike(sql<string>`${db10AuditFindings.endpoints}::text`,pattern),
  ):undefined;
  if(searchPredicate)predicates.push(searchPredicate);
- const areas=query.area.split(",").map(value=>value.trim()).filter(Boolean);
- const areaPredicate=areas.length?inArray(db10AuditFindings.area,areas):undefined;
- if(areaPredicate)predicates.push(areaPredicate);
+ // The importer admits only the 23 legacy source areas. A malformed area
+ // selection must never broaden the result to an all-area search.
+ const allowedAreas=new Set([
+  "login","course","lesson-content","quiz","assignment","attendance",
+  "classroom","notifications","calendar","projects","placements-tpo",
+  "recruiter","student-placements","college-admin","super-admin",
+  "groups-electives","people-accounts","reports","tracker","mobile",
+  "platform","security","other",
+ ]);
+ const areas=[...new Set(query.area.split(",").map(value=>value.trim()).filter(Boolean))];
+ if(areas.some(value=>!allowedAreas.has(value)))predicates.push(sql`false`);
+ else if(areas.length)predicates.push(inArray(db10AuditFindings.area,areas));
  if(query.statuses.length)predicates.push(inArray(db10AuditFindings.status,query.statuses));
  if(query.severities.length)predicates.push(inArray(db10AuditFindings.severity,query.severities));
  if(query.kinds.length)predicates.push(inArray(db10AuditFindings.kind,query.kinds));
- if(query.view!=="ALL")predicates.push(inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]));
- if(query.view==="RELEASE")predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
- // Counts must not collapse to a single selected chip. Keep query, area,
- // kind and view scope but exclude the selected status and severity.
- const facetsWhere=and(searchPredicate,areaPredicate,
-  query.kinds.length?inArray(db10AuditFindings.kind,query.kinds):undefined,
-  query.view!=="ALL"?inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]):undefined,
-  query.view==="RELEASE"?inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]):undefined,
- );
+ if(query.view==="OPEN")predicates.push(inArray(db10AuditFindings.status,[...ACTIVE_FINDING_STATUSES]));
+ if(query.view==="RELEASE"){
+  predicates.push(inArray(db10AuditFindings.status,[...RELEASE_BLOCKER_FINDING_STATUSES]));
+  predicates.push(inArray(db10AuditFindings.severity,["CRITICAL","HIGH"]));
+ }
+ // These dashboard facets summarize ALL imported findings, independent of
+ // the current search, page, area, severity, status and view selections.
+ // The list predicate above remains fully scoped to the active filters.
  const where=and(...predicates);
  const db=getDb();
  const [total,items,facets]=await Promise.all([
   db.select({n:count()}).from(db10AuditFindings).where(where),
   db.select().from(db10AuditFindings).where(where)
-   .orderBy(sql<number>`case ${db10AuditFindings.severity} when 'CRITICAL' then 0 when 'HIGH' then 1 when 'MEDIUM' then 2 when 'LOW' then 3 else 4 end`,desc(db10AuditFindings.foundAt),asc(db10AuditFindings.id))
+   .orderBy(sql<number>`case ${db10AuditFindings.severity} when 'CRITICAL' then 0 when 'HIGH' then 1 when 'MEDIUM' then 2 when 'LOW' then 3 else 4 end`,desc(db10AuditFindings.foundAt),asc(db10AuditFindings.externalId))
    .limit(INDEPENDENT_AUDIT_PAGE_SIZE).offset((query.page-1)*INDEPENDENT_AUDIT_PAGE_SIZE),
   db.select({status:db10AuditFindings.status,severity:db10AuditFindings.severity,n:count()})
-   .from(db10AuditFindings).where(facetsWhere)
+   .from(db10AuditFindings)
    .groupBy(db10AuditFindings.status,db10AuditFindings.severity),
  ]);
  const statusCounts:Record<string,number>={};

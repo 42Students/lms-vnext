@@ -99,7 +99,15 @@ async function MentorNotificationsContent({
     : [];
   const projectOptions=mentorAttentionProjectOptions(alerts,
     assigned.map(row=>({id:row.project.id,title:row.project.title})));
-  const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data);
+  // Legacy priority: announcements first, then reviews/meeting requests,
+  // stalled projects, and finally meetings coming up soon. Timestamp is the
+  // tie-breaker within a priority rather than the only sort key.
+  const visibleAlerts=selectMentorAttention(alerts,kind.data,projectId.data,attentionOrder.data)
+    .slice().sort((a,b)=>{
+      const rank={REVIEW:0,REQUESTED:0,STALLED:1,MEETING_SOON:2} as const;
+      return rank[a.kind]-rank[b.kind] ||
+        b.occurredAt.localeCompare(a.occurredAt) || a.key.localeCompare(b.key);
+    });
   const attentionFiltered=Boolean(projectId.data)||kind.data!=="ALL"||attentionOrder.data!=="RECENT";
   const items:NotificationListItem[] = (inbox?.page.items ?? []).map(({notification,event})=>({
     id:notification.id,title:notification.title,body:notification.body,
@@ -110,6 +118,8 @@ async function MentorNotificationsContent({
   }));
   const nextHref = inbox?.page.nextCursor
     ? mentorInboxPageHref(inbox.query.view,inbox.page.nextCursor) : null;
+  const allRelevantFailed=!inbox && announcementResult.status==="rejected" &&
+    (!projectAccess?.projects.enabled || failedSources.includes("Project attention"));
   const allSourcesEmpty = failedSources.length===0 && items.length===0 &&
     visibleAlerts.length===0 && announcements.length===0 && !nextHref;
   const retryParams = new URLSearchParams();
@@ -121,10 +131,12 @@ async function MentorNotificationsContent({
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
     <PageHeader title="Notifications"
       description="Announcements, submissions waiting for review, stalled projects, and meetings coming up soon." />
-    {failedSources.length ? <Alert tone="warning" role="alert">
-      <h2 className="m-0 text-[var(--lms-font-md)] font-semibold leading-6 text-[var(--lms-heading)]">Some notification sources are unavailable</h2>
+    {failedSources.length ? <Alert tone={allRelevantFailed?"error":"warning"} role="alert">
+      <h2 className="m-0 text-[var(--lms-font-md)] font-semibold leading-6 text-[var(--lms-heading)]">
+        {allRelevantFailed?"We couldn't load your notifications.":"Some notification sources are unavailable"}
+      </h2>
       <p className="mt-1 text-sm text-body leading-[22px]">
-        Could not load: {failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.
+        {allRelevantFailed?"No verified notification source could be loaded.":`Could not load: ${failedSources.join(", ")}. Everything else below is current, but this page may be incomplete.`}
       </p>
       <Link href={retryHref}
         className="mt-3 inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">Retry sources</Link>
@@ -136,33 +148,13 @@ async function MentorNotificationsContent({
       </svg>
       <p className="text-sm font-semibold text-body">Nothing needs your attention right now.</p>
     </div>:null}
-    {!allSourcesEmpty?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
-      <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
-        Personal notifications
-      </h2>
-      {inbox ? <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}
-        baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
-        confirmMarkAll /> : null}
-      {inbox?.cursor.invalid
-        ? <Alert tone="error" role="alert">
-            The notification page link is invalid.{" "}
-            <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
-              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
-              Return to newest notifications
-            </Link>
-          </Alert>
-        : <>
-            <NotificationList items={items} readEndpoint="/api/mentor/notifications"
-              emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
-            {nextHref ? <div className="flex justify-center">
-              <Link href={nextHref}
-                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:underline">
-                Older notifications
-              </Link>
-            </div> : null}
-          </>}
-    </section>:null}
-    {!allSourcesEmpty?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
+    {!allSourcesEmpty&&!allRelevantFailed?<AnnouncementFeed enabled={announcementsEnabled}
+      items={announcements.map(item=>({
+        id:item.id,title:item.title,message:item.message,
+        senderType:item.senderType,receiverType:item.receiverType,
+        isPinned:item.isPinned,createdAt:item.createdAt,
+      }))} />:null}
+    {!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-attention" className="min-w-0 space-y-3">
       <h2 id="mentor-attention" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
         Project attention ({visibleAlerts.length} of {alerts.length})
       </h2>
@@ -219,12 +211,33 @@ async function MentorNotificationsContent({
                 <p className="mt-2 text-sm text-body leading-[22px]">{alert.description}</p>
               </Link>)}</div>}
     </section>:null}
-    {!allSourcesEmpty?<AnnouncementFeed enabled={announcementsEnabled}
-      items={announcements.map(item=>({
-        id:item.id,title:item.title,message:item.message,
-        senderType:item.senderType,receiverType:item.receiverType,
-        isPinned:item.isPinned,createdAt:item.createdAt,
-      }))} />:null}
+    {!allSourcesEmpty&&!allRelevantFailed?<section aria-labelledby="mentor-personal-notifications" className="min-w-0 space-y-4">
+      <h2 id="mentor-personal-notifications" className="font-semibold text-lg leading-7 text-[var(--lms-heading)]">
+        Personal notifications
+      </h2>
+      {inbox ? <NotificationToolbar view={inbox.query.view} unreadCount={inbox.unreadCount}
+        baseHref={MENTOR_INBOX} markAllEndpoint="/api/mentor/notifications/read-all"
+        confirmMarkAll /> : null}
+      {inbox?.cursor.invalid
+        ? <Alert tone="error" role="alert">
+            The notification page link is invalid.{" "}
+            <Link href={mentorInboxPageHref(inbox?.query.view ?? parsed.data.view)}
+              className="inline-flex min-h-11 min-[768px]:min-h-9 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:text-[var(--lms-primary-text)]">
+              Return to newest notifications
+            </Link>
+          </Alert>
+        : <>
+            <NotificationList items={items} readEndpoint="/api/mentor/notifications"
+              emptyText={!inbox ? "Personal notifications are temporarily unavailable." : inbox.query.view === "unread" ? "No unread notifications." : "No personal notifications yet."} />
+            {nextHref ? <div className="flex justify-center">
+              <Link href={nextHref}
+                className="inline-flex min-h-11 min-[768px]:min-h-9 items-center rounded-[var(--lms-control-radius,9px)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-foreground hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:underline">
+                Older notifications
+              </Link>
+            </div> : null}
+          </>}
+    </section>:null}
+
 
   </div>;
 }
