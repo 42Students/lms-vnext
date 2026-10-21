@@ -51,27 +51,27 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U010 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/applications.js`
 - [x] U011 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/index.js`
 - [x] U012 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/interviews.js`
-- [ ] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/settings.js`
-- [ ] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js`
-- [ ] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/all.js`
-- [ ] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/index.js`
-- [ ] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/lecture-halls.js`
-- [ ] U018 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/programs.js`
-- [ ] U019 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/semesters.js`
-- [ ] U020 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/verification.js`
-- [ ] U021 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/colleges/index.js`
-- [ ] U022 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/batch-promotion.js`
-- [ ] U023 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/batches.js`
-- [ ] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/departments.js`
-- [ ] U025 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminResources.js`
-- [ ] U026 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditHub.js`
-- [ ] U027 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditLogs.js`
-- [ ] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js`
-- [ ] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Batches.js`
-- [ ] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeBranding.js`
-- [ ] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSubdomain.js`
-- [ ] U032 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Colleges.js`
-- [ ] U033 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Companies.js`
-- [ ] U034 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js`
-- [ ] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Dashboard.js`
-- [ ] U036 (Cross-cutting area) `cross/09: Settings, feature flags and module toggles (what turns each module on/off and who controls it)`
+- [x] U013 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/settings.js`
+- [x] U014 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/[jobId]/shortlisted.js`
+- [x] U015 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/all.js`
+- [x] U016 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/jobs/index.js`
+- [x] U017 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/lecture-halls.js`
+- [x] U018 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/programs.js`
+- [x] U019 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/semesters.js`
+- [x] U020 (FE page) `docs/legacy-source/frontend/src/pages/college-admin/verification.js`
+- [x] U021 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/colleges/index.js`
+- [x] U022 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/batch-promotion.js`
+- [x] U023 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/batches.js`
+- [x] U024 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/departments.js`
+- [x] U025 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AdminResources.js`
+- [x] U026 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditHub.js`
+- [x] U027 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/AuditLogs.js`
+- [x] U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/BatchPromotion.js`
+- [x] U029 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Batches.js`
+- [x] U030 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeBranding.js`
+- [x] U031 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CollegeSubdomain.js`
+- [x] U032 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Colleges.js`
+- [x] U033 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Companies.js`
+- [x] U034 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/CompanyCuration.js`
+- [x] U035 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/sections/Dashboard.js`
+- [x] U036 (Cross-cutting area) `cross/09: Settings, feature flags and module toggles (what turns each module on/off and who controls it)`
