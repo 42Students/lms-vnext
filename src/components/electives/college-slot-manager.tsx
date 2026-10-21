@@ -28,8 +28,10 @@ type Options = {
 };
 
 const fieldClass = "min-h-11 md:min-h-9 w-full rounded-[var(--lms-control-radius,9px)] border border-border bg-surface px-3 text-foreground";
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
-  return <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}{children}</label>;
+function Field({ label, error, children }: { label: string; error?: string; children: React.ReactNode }) {
+  return <label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">{label}{children}
+    {error ? <span role="alert" className="text-xs text-error">{error}</span> : null}
+  </label>;
 }
 
 export function CollegeSlotManager({ options, row }: {
@@ -177,14 +179,19 @@ export function CollegeSlotManager({ options, row }: {
 
   return <div className="min-w-0">
     <Button variant={editing ? "secondary" : "primary"} type="button" disabled={pending || (!editing && options.programs.length === 0)}
-      onClick={() => setOpen(!open)}
+      onClick={openEditor}
       className="min-h-11 w-full sm:w-auto md:min-h-9">
       {row ? "Edit slot" : "New elective slot"}
     </Button>
-    {open ? <form onSubmit={submit} className="mt-[var(--lms-space-3)] grid min-w-0 max-w-[920px] gap-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] bg-surface py-[var(--lms-space-4)] md:grid-cols-2">
-      {row?<p role="note" className="md:col-span-2 text-xs text-muted-foreground">Academic identity is locked after creation. Changing existing learner picks, credits or choice limits is checked by the server before saving.</p>:null}
+    <Dialog open={open} onOpenChange={next => { if (!next) requestClose(); else openEditor(); }}
+      title={editing ? "Edit Elective Slot" : "Create Elective Slot"} dismissible={!pending}
+      className="max-w-[640px]">
+    <form noValidate onSubmit={submit} className="grid min-w-0 gap-[var(--lms-space-3)] md:grid-cols-2">
+      {row ? <p role="note" className="md:col-span-2 text-xs text-muted-foreground">
+        Program, semester and academic-year identity are currently immutable in vNext. Credits and choice-limit changes are checked against enrollment history before saving.
+      </p> : null}
       {!row ? <>
-        <Field label="Program"><Select required className={fieldClass} value={programId}
+        <Field label="Program" error={fieldErrors.programId}><Select className={fieldClass} value={programId}
           onChange={event => setProgramId(event.target.value)}>
           {options.programs.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
@@ -193,21 +200,21 @@ export function CollegeSlotManager({ options, row }: {
           <option value="">No period linked</option>
           {options.periods.map(p => <option key={p.id} value={p.id}>{p.name}</option>)}
         </Select></Field>
-        <Field label="Semester number"><Input required type="number" min={1} max={Math.min(12, limit)}
+        <Field label="Semester number" error={fieldErrors.term}><Input type="number" min={1} max={Math.min(12, limit)}
           className={fieldClass} value={term} onChange={event => setTerm(event.target.value)} /></Field>
-        <Field label="Academic year (optional, YYYY-YY)"><Input maxLength={9}
+        <Field label="Academic year (optional, YYYY-YY)" error={fieldErrors.year}><Input maxLength={7}
           placeholder="2026-27" className={fieldClass} value={year}
           onChange={event => setYear(event.target.value)} /></Field>
       </> : null}
-      <Field label="Slot name"><Input required maxLength={150} className={fieldClass}
+      <Field label="Slot name" error={fieldErrors.name}><Input maxLength={150} error={Boolean(fieldErrors.name)} className={fieldClass}
         value={name} onChange={event => setName(event.target.value)} /></Field>
       <Field label="Description"><Input maxLength={1000} className={fieldClass}
         value={description} onChange={event => setDescription(event.target.value)} /></Field>
-      <Field label="Credits"><Input type="number" required min={0} max={30}
+      <Field label="Credits" error={fieldErrors.credits}><Input type="number" min={0} max={30}
         className={fieldClass} value={credits} onChange={event => setCredits(event.target.value)} /></Field>
-      <Field label="Minimum choices"><Input type="number" required min={0} max={100}
+      <Field label="Minimum choices" error={fieldErrors.minPick}><Input type="number" min={0} max={100}
         className={fieldClass} value={minPick} onChange={event => setMinPick(event.target.value)} /></Field>
-      <Field label="Maximum choices"><Input type="number" required min={1} max={100}
+      <Field label="Maximum choices" error={fieldErrors.maxPick}><Input type="number" min={1} max={10} title="You can select up to 10 electives"
         className={fieldClass} value={maxPick} onChange={event => setMaxPick(event.target.value)} /></Field>
       {error ? <p role="alert" className="md:col-span-2 text-sm text-error">{error}</p> : null}
       <div className="flex min-w-0 flex-col-reverse gap-[var(--lms-space-2)] sm:flex-row md:col-span-2 [&>button]:min-h-11 [&>button]:w-full sm:[&>button]:w-auto md:[&>button]:min-h-9">
@@ -215,11 +222,17 @@ export function CollegeSlotManager({ options, row }: {
           >
           {pending ? "Saving…" : editing ? "Confirm update" : "Confirm create"}
         </Button>
-        <Button variant="secondary" type="button" disabled={pending} onClick={() => setOpen(false)}
+        <Button variant="secondary" type="button" disabled={pending} onClick={requestClose}
           >
           Cancel
         </Button>
       </div>
-    </form> : null}
+    </form>
+    </Dialog>
+    <ConfirmDialog open={discardOpen} onOpenChange={setDiscardOpen}
+      title={row ? "Discard elective slot edits?" : "Discard this elective slot draft?"}
+      description="Changes you have not saved will be lost."
+      cancelLabel="Keep editing" confirmLabel="Discard changes"
+      onConfirm={discard} />
   </div>;
 }
