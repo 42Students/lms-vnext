@@ -106,6 +106,7 @@ export default async function SuperAdminLessonsPage({
         </p>:null}
       </aside>
       <section aria-label="Lessons table" className="min-w-0 rounded-[var(--lms-radius-card)] border border-[var(--lms-canvas-border)] bg-surface p-4">
+        {/* Right-hand legacy Lessons card: the toolbar and table share one surface. */}
         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
           <h2 className="text-lg font-semibold text-foreground">Lessons</h2>
           <div className="flex flex-wrap items-center gap-2">
