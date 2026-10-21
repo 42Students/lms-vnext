@@ -290,3 +290,6 @@
 
 - work2 #23 `college-shortlisted-query.ts` | G2-9-014-005/024: typed ASSESSMENT default and URL stage/status/source/department/program/batch UUID filters; deep-link HREF retains active filters and ignores defaults. Existing page already uses canonical driveApplicationsParams; form/query wiring for department/program/batch handed off.
 - work2 #24 `tpo/profile/error.tsx` | G2-19-030-023/024: restored legacy error heading and in-place Retry, no unsupported assertion that faculty record actually missing. Stale-profile warning only when real retained card exists, so handed to profile data component rather than claiming nonexistent cache.
+
+- work2 #25 `project-template-catalogue-model.ts` | G2-7-006-038: restores exact Title/Version/Summary CSV headers and filename remains caller-owned; optional summary field additive to avoid breaking existing consumers. Template loader must populate real summary, handed off.
+- work2 #26 `learner-application-detail-model.ts` | G2-5-015-025/037: immutable latest REJECTED transition uses prior recorded stage for exact Not shortlisted, Not cleared: Assessment/Interview, Waitlist ended labels; unknown stage neutral and no inferred rejection.
