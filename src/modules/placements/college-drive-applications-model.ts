@@ -42,7 +42,18 @@ export function driveApplicationsParams(raw: Record<string,string|string[]|undef
   for (const key of ["status","stage","source","screening"] as const) {
     if (input[key] && !allowed[key].includes(input[key])) delete input[key];
   }
-  if (input.page && !/^[1-9]\\d{0,3}$/.test(input.page)) delete input.page;
+  if (input.page && !/^[1-9]\d{0,3}$/.test(input.page)) delete input.page;
+  // Legacy callers use appliedAfter/appliedBefore. Resolve their aliases to
+  // the canonical IST-inclusive filter names without silently widening scope
+  // when both spellings disagree or contain repeated values.
+  for (const [legacy, canonical] of [["appliedAfter", "appliedFrom"], ["appliedBefore", "appliedTo"]] as const) {
+    const alternate = raw[legacy];
+    if (Array.isArray(alternate)) return null;
+    if (typeof alternate === "string" && alternate !== "") {
+      if (input[canonical] && input[canonical] !== alternate) return null;
+      input[canonical] = alternate;
+    }
+  }
   const result = driveApplicationsQuerySchema.safeParse(input);
   if(!result.success || (result.data.appliedFrom && result.data.appliedTo &&
      result.data.appliedFrom>result.data.appliedTo) ||
