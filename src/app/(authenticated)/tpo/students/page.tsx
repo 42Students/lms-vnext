@@ -442,7 +442,7 @@ export default async function TpoStudentsPage({
 
       <Disclosure title="Advanced student filters" className="min-w-0 border-b border-border py-3" contentClassName="pt-3">
       <form role="search" aria-label="tpo students filters" action="/tpo/students" method="get"
-        className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-2 xl:grid-cols-4 xl:items-end">
+        className="grid min-w-0 gap-3 border-b border-border py-4 md:grid-cols-2 xl:grid-cols-4 xl:items-end">
         {/* Program and Class are selected in the single grid filter panel.
             Preserve them through this separate advanced-filter form. */}
         <Input type="hidden" name="programId" value={query.programId??""}/>
@@ -602,7 +602,7 @@ export default async function TpoStudentsPage({
            defaultValue={value??""} placeholder="Any"
            className="w-28"/>
          </label>)}
-        <Button variant="secondary" type="submit" className="min-h-11 w-full px-4 sm:w-auto md:min-h-9">Show students</Button>
+        <Button variant="secondary" type="submit" className="min-h-11 w-full px-4 md:w-auto md:min-h-9">Show students</Button>
       </form>
       </Disclosure>
       {query.batchId?<p className="text-sm text-muted-foreground">
@@ -926,7 +926,7 @@ export default async function TpoStudentsPage({
           <div className="md:col-span-2 lg:col-span-4">
             <Button variant="primary"
               type="submit"
-              className="min-h-11 w-full px-6 sm:w-auto md:min-h-9"
+              className="min-h-11 w-full px-6 md:w-auto md:min-h-9"
             >
               Apply filters
             </Button>

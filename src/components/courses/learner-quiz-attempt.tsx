@@ -471,7 +471,7 @@ export function LearnerQuizAttempt() {
       <div className="grid min-w-0 lg:grid-cols-[220px_minmax(0,1fr)]">
         <aside className="order-2 min-w-0 border-t border-border p-4 lg:order-1 lg:border-r lg:border-t-0">
           <p className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Progress</p>
-          <div className="mt-3 grid grid-cols-4 gap-2 sm:grid-cols-5 md:grid-cols-6 lg:grid-cols-3">
+          <div className="mt-3 grid grid-cols-4 gap-2 md:grid-cols-5 md:grid-cols-6 lg:grid-cols-3">
             {questions.map((question, index) => (
               <Button
                 key={question.id}
