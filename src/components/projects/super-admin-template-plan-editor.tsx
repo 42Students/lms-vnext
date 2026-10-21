@@ -178,7 +178,7 @@ export function SuperAdminTemplatePlanEditor(props: Props) {
     {expanded ? <form className="mt-4 grid min-w-0 gap-4" onSubmit={save}>
       {props.section === "sprints" ? <>
         <p className="m-0 text-xs text-muted-foreground leading-[20px]">
-          No start/end dates here on purpose — a template seeds many workspaces, each starting on a different day.
+          Template releases and sprints use relative due labels rather than fixed dates, so workspaces created later can retain the same plan. Task type, due label, approach and backlog items are saved together.
         </p>
         {draft.releases.length === 0 ? <p className="text-sm leading-[22px]">No releases saved yet.</p> : null}
         {draft.releases.map((release, index) => <label key={release.key} className={label}>

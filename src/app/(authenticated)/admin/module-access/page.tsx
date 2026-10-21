@@ -7,10 +7,10 @@ import { requirePermission } from "@/modules/permissions/policy";
 import { getModuleAccessOverviewMetrics } from "@/modules/module-access/admin-overview-metrics-service";
 import SuperAdminCollegeModuleAccessPage from "@/app/(authenticated)/admin/features/[collegeId]/page";
 
-/**
- * Legacy Module Access follows the active college selector, never a global
- * list of other colleges. The college page remains the sole scoped editor.
- */
+/** Legacy hierarchy editor follows the active college selector, not a
+ * global list. The embedded college page exposes editable college,
+ * department, program, batch, class and learner decisions with lock tracing.
+ * The permission boundary is always rechecked in the write services. */
 export default async function SuperAdminModuleAccessPage({
   searchParams,
 }: {
