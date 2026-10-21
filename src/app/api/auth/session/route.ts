@@ -24,6 +24,8 @@ export async function DELETE(request: Request) {
     );
   }
 
+  // Opaque first-party sessions do not use legacy refresh tokens. On expiry,
+  // the client must return to sign-in rather than retrying a refresh endpoint.
   const token = (await cookies()).get(SESSION_COOKIE_NAME)?.value;
   let revokeFailed = false;
   if (token) {
@@ -39,7 +41,9 @@ export async function DELETE(request: Request) {
   }
 
   const response = NextResponse.json(
-    revokeFailed ? { ok: false, error: "LOGOUT_REVOKE_FAILED" } : { ok: true },
+    revokeFailed
+      ? { ok: false, error: "LOGOUT_REVOKE_FAILED", message: "Could not complete sign-out. Please retry.", retryable: true, reloginRequired: true }
+      : { ok: true, message: "Logged out", reloginRequired: true },
     { status: revokeFailed ? 503 : 200 },
   );
   // PUB-auth-public-38: clear per-person drafts, cached reminders and quiz state
