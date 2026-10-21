@@ -62,11 +62,8 @@ export default async function FacultyProfilePage({searchParams}:{searchParams:Pr
         <Link href="#faculty-profile-sections" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-[var(--lms-on-primary)] hover:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px]">Edit About &amp; profile sections →</Link>
       </div>} />
       <section aria-label="Faculty profile identity" aria-busy={false} className="flex min-w-0 flex-wrap items-center gap-5 border-b border-[var(--lms-canvas-border)] pb-5">
-        <div aria-hidden="true" className="flex h-[120px] w-[120px] shrink-0 items-center justify-center rounded-[12px] border border-[var(--lms-canvas-border)] bg-[var(--lms-primary-subtle)] text-3xl font-semibold text-[var(--lms-primary-text)]">
-          {initials || "F"}
-        </div>
+        <FacultyAvatarUpload initialVersion={selfDocument?.version??0} initials={initials || "F"}/>
         <div className="min-w-0 space-y-1">
-          <FacultyAvatarUpload initialVersion={selfDocument?.version??0}/>
           <h2 className="break-words text-xl font-semibold text-[var(--lms-heading)]">{person.user.displayName}</h2>
           <p className="break-all text-sm text-body">{person.user.email || "No email recorded"}</p>
           <p className="text-sm text-muted-foreground">{profile?.academicTitle || "Faculty"} · {profile?.employmentType || "Faculty type not specified"} · College-managed identity</p>
