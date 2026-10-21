@@ -217,6 +217,70 @@ export async function listCourseQuizzes(
     );
 }
 
+/** Cross-lesson list uses database paging after authorizing each lesson.
+ * Unlike a per-lesson unbounded fanout, the database returns one requested
+ * page plus a scoped total for the teacher's All quizzes view. */
+export async function listCourseQuizzesAcrossLessonsPage(
+  context: RequestContext,
+  lessonIds: readonly string[],
+  options: { deliveryId?: string | null; includeArchived?: boolean; page?: number; pageSize?: number } = {},
+) {
+  const ids = [...new Set(lessonIds.map(id => courseLessonIdSchema.parse(id)))];
+  if (ids.length > 500) throw new CoursesServiceError("QUIZ_DISCOVERY_TOO_LARGE");
+  const page = options.page ?? null;
+  const pageSize = options.pageSize ?? 20;
+  if ((page !== null && (!Number.isSafeInteger(page) || page < 1 || page > 100000)) ||
+      !Number.isSafeInteger(pageSize) || pageSize < 1 || pageSize > 100) {
+    throw new CoursesServiceError("INVALID_PAGINATION");
+  }
+  const deliveryId = options.deliveryId
+    ? courseSectionDeliveryIdSchema.parse(options.deliveryId) : null;
+  const eligible: string[] = [];
+  let learner = false;
+  for (const id of ids) {
+    const lesson = await loadCourseLessonScope(id, options.includeArchived ?? false);
+    let access: Awaited<ReturnType<typeof requireLearningReadAccess>>;
+    try {
+      access = await requireLearningReadAccess(context, lesson.offeringId, deliveryId);
+    } catch (error) {
+      if (error instanceof CoursesServiceError &&
+          ["LEARNING_ACCESS_DENIED", "LESSON_NOT_FOUND", "LEARNING_PATH_NOT_PUBLISHED"].includes(error.code)) {
+        continue;
+      }
+      throw error;
+    }
+    if (access === "LEARNER" &&
+        (!lesson.visibleToStudents || lesson.learningPathStatus !== "PUBLISHED")) continue;
+    if (options.includeArchived && !can(context, "courses.manage", {
+      collegeId: lesson.collegeId, organizationId: lesson.organizationId,
+    })) throw new CoursesServiceError("LEARNING_ACCESS_DENIED");
+    learner ||= access === "LEARNER";
+    eligible.push(id);
+  }
+  if (eligible.length === 0) return { quizzes: [], total: 0 };
+  const conditions = [
+    inArray(courseQuizzes.lessonId, eligible),
+    deliveryId
+      ? or(isNull(courseQuizzes.deliveryId), eq(courseQuizzes.deliveryId, deliveryId))
+      : isNull(courseQuizzes.deliveryId),
+  ];
+  if (learner) conditions.push(inArray(courseQuizzes.status, ["PUBLISHED", "CLOSED"]));
+  else if (!options.includeArchived) conditions.push(ne(courseQuizzes.status, "ARCHIVED"));
+  const where = and(...conditions);
+  const db = getDb();
+  const [count] = await db.select({total:sql<number>`count(*)::int`})
+    .from(courseQuizzes).where(where);
+  const total = count?.total ?? 0;
+  if (page === null && total > 5000) {
+    throw new CoursesServiceError("QUIZ_DISCOVERY_TOO_LARGE");
+  }
+  const quizzes = await db.select().from(courseQuizzes).where(where)
+    .orderBy(asc(courseQuizzes.createdAt), asc(courseQuizzes.id))
+    .limit(page === null ? 5000 : pageSize)
+    .offset(page === null ? 0 : (page - 1) * pageSize);
+  return {quizzes, total};
+}
+
 export async function getCourseQuiz(
   context: RequestContext,
   quizIdInput: string,
@@ -736,6 +800,18 @@ export async function transitionCourseQuiz(
       .where(eq(courseQuizzes.id,quizId)).for("update").limit(1);
     if (!locked || locked.status !== current.status)
       throw new CoursesServiceError("INVALID_QUIZ_TRANSITION");
+    if (input.action === "ARCHIVE") {
+      if (input.confirmed !== true) throw new CoursesServiceError("QUIZ_CONFIRMATION_REQUIRED");
+      // Legacy delete was a soft-delete and could not erase a published or
+      // submitted assessment from its assessment history.
+      const [attempt] = await tx.select({id:quizAttempts.id}).from(quizAttempts)
+        .where(eq(quizAttempts.quizId,quizId)).limit(1);
+      if (attempt || locked.status === "CLOSED" || locked.resultsPublished ||
+          (locked.status === "PUBLISHED" && locked.dueAt !== null &&
+           locked.dueAt.getTime() <= Date.now())) {
+        throw new CoursesServiceError("QUIZ_ARCHIVE_LOCKED");
+      }
+    }
     if (input.action === "UNPUBLISH") {
       const [attempt] = await tx.select({id:quizAttempts.id}).from(quizAttempts)
         .where(eq(quizAttempts.quizId,quizId)).limit(1);
