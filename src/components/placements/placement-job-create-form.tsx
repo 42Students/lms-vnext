@@ -1611,7 +1611,19 @@ export function PlacementJobCreateForm({
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment URL
             <Input name="assessmentUrl" type="url" maxLength={2048} className={inputClass} placeholder="https://..."
               onChange={event=>setAssessmentUrlLength(event.target.value.length)}/>
-            <span className="text-xs font-normal text-muted-foreground">{assessmentUrlLength}/2048 characters · HTTP or HTTPS</span>
+            <div className="flex items-center justify-between gap-2">
+              <span className="text-xs font-normal text-muted-foreground">{assessmentUrlLength}/2048 characters · HTTP or HTTPS</span>
+              <Button type="button" variant="secondary" disabled={assessmentUrlLength===0}
+                className="min-h-9 px-2 text-xs md:min-h-8"
+                onClick={()=>{
+                  const field=formRef.current?.elements.namedItem("assessmentUrl");
+                  if(!(field instanceof HTMLInputElement))return;
+                  field.value="";
+                  setAssessmentUrlLength(0);
+                  markDirty();
+                  if(formRef.current)saveBrowserDraft(formRef.current);
+                }}>Clear</Button>
+            </div>
           </label>
           <label className="grid min-w-0 gap-2 text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Assessment deadline (IST)
             <Input name="assessmentDeadline" type="datetime-local" className={inputClass}/>
@@ -1717,7 +1729,7 @@ export function PlacementJobCreateForm({
                 Eligible programs
               </legend>
               <p className="mb-3 mt-0 text-xs leading-5 text-muted-foreground">
-                Leave all unchecked to make the opportunity available across programs.
+                Leave empty for every batch in placements. All programs are included unless you narrow the audience.
               </p>
               {visiblePrograms.length === 0 ? (
                 <p className="m-0 text-sm text-muted-foreground">
