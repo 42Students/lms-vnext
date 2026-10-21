@@ -25,6 +25,25 @@ WITH ranked AS (
 UPDATE "placement_tpo_job_types" jt SET sort_order = ranked.pos
  FROM ranked WHERE jt.id = ranked.id;
 --> statement-breakpoint
+-- Preserve the original label grammar and complete boolean placement rule.
+UPDATE "placement_tpo_job_types" SET "counts_as_placed" =
+ CASE WHEN lower("label") = 'internship' THEN false ELSE true END
+ WHERE "counts_as_placed" IS NULL;
+--> statement-breakpoint
+ALTER TABLE "placement_tpo_job_types"
+ ALTER COLUMN "counts_as_placed" SET DEFAULT true,
+ ALTER COLUMN "counts_as_placed" SET NOT NULL,
+ ALTER COLUMN "label" TYPE varchar(40);
+--> statement-breakpoint
+ALTER TABLE "placement_tpo_job_types" DROP CONSTRAINT IF EXISTS "placement_tpo_job_types_label_ck";
+--> statement-breakpoint
+ALTER TABLE "placement_tpo_job_types" ADD CONSTRAINT "placement_tpo_job_types_label_ck"
+ CHECK (length(btrim("label")) between 2 and 40 AND "label" ~ '^[[:alnum:] +&/().,''-]{2,40}
+DROP INDEX IF EXISTS "placement_tpo_job_types_college_label_uq";
+--> statement-breakpoint
+CREATE UNIQUE INDEX "placement_tpo_job_types_college_label_uq"
+ ON "placement_tpo_job_types"("college_id", lower("label")););
+--> statement-breakpoint
 -- Prevent two custom types with names differing only by case from being persisted.
 DROP INDEX IF EXISTS "placement_tpo_job_types_college_label_uq";
 --> statement-breakpoint
