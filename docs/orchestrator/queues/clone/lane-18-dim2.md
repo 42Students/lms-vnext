@@ -316,7 +316,7 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-18.md: file, number of
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx`
 - [x] `src/app/(authenticated)/hr/drives/page.tsx`
 - [x] `src/app/(authenticated)/hr/notifications/page.tsx`
-- [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/hr/round-results/page.tsx`
 - [ ] `src/app/(authenticated)/learn/courses/[deliveryId]/attendance-summary/page.tsx`
 - [ ] `src/app/(authenticated)/learn/my-placements/announcements/page.tsx`
