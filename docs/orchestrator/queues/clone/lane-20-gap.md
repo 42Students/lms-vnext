@@ -49,8 +49,8 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U008 (FE page) `docs/legacy-source/frontend/src/pages/universities.js`
 - [x] U009 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/utils/R2StorageUtils.java`
 - [x] U010 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/tpo/RecruiterMessageEmailService.java`
-- [ ] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/JobApplicationStatusHistoryServiceImpl.java`
-- [ ] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/JobService.java`
+- [x] U011 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/impl/JobApplicationStatusHistoryServiceImpl.java`
+- [x] U012 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/service/JobService.java`
 - [ ] U013 (BE controller) `docs/legacy-source/backend/src/main/java/com/_42students/lms/search/departments/DepartmentSearchController.java`
 - [ ] U014 (BE job/integration/template) `docs/legacy-source/backend/src/main/java/com/_42students/lms/repository/LearnerSavedJobRepository.java`
 - [ ] U015 (BE entity (table parity)) `docs/legacy-source/backend/src/main/java/com/_42students/lms/model/StudentImage.java`
