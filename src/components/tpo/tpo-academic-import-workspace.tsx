@@ -108,7 +108,7 @@ export function TpoAcademicImportWorkspace() {
       className="mt-3 w-full min-w-0 max-w-4xl space-y-3 border-y border-border py-4">
       <h2 className="text-lg font-semibold">Import academic details</h2>
       <details className="border-b border-border pb-3 text-sm text-muted-foreground">
-        <summary className="cursor-pointer py-2 text-[13px] font-semibold">Academic CSV requirements</summary><p>
+        <summary className="cursor-pointer py-2 text-[13px] font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Academic CSV requirements</summary><p>
         One row per student, matched by student membership ID. Upload a CSV with
         CGPA (0–10) and active backlogs. The first row must be the column headings.
         Nothing is saved until you review the matches and confirm import.

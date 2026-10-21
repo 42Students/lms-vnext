@@ -730,7 +730,7 @@ export function PlacementJobCreateForm({
           ) : (
             <p className="m-0 text-sm font-semibold text-danger">
               No active placement season. Start one from Drives before creating a drive.
-              <a href={basePath+"/seasons"} className="ml-2 inline-flex font-semibold underline focus-visible:ring-2 focus-visible:ring-primary">Open placement seasons →</a>
+              <a href={basePath+"/seasons"} className="ml-2 inline-flex font-semibold underline focus-visible:ring-2 focus-visible:ring-primary max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open placement seasons →</a>
             </p>
           )}
         </div>
@@ -839,7 +839,7 @@ export function PlacementJobCreateForm({
                 {existingDrive?
                   <p role="alert" className="mt-2 font-semibold text-[var(--lms-gold-accent)]">
                     A drive for {selectedEmployer.name} · {existingDrive.title} already exists ({tpoDriveStatusLabel(existingDrive.status)}).{" "}
-                    <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline">Open it</Link> before creating another.
+                    <Link href={`${basePath}/jobs/${encodeURIComponent(existingDrive.jobId)}`} className="underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Open it</Link> before creating another.
                   </p>:null}
               </aside></details>:null}
             </div>
@@ -1466,7 +1466,7 @@ export function PlacementJobCreateForm({
         </div>
       </section>
       {uncertainCreate?<div role="alert" className="space-y-2 rounded-[var(--lms-control-radius)] border border-warning p-3 text-sm text-body">
-        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline">Review Drives</Link> before retrying.
+        The previous create request may have succeeded. <Link href={basePath} className="font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center">Review Drives</Link> before retrying.
         <Button variant="secondary" type="button" className="mt-[var(--lms-space-2)] min-h-11 w-full font-semibold text-primary-text underline sm:ml-[var(--lms-space-3)] sm:mt-0 sm:w-auto md:min-h-9"
           onClick={()=>{try{localStorage.removeItem(uncertainKey);}catch{}setUncertainCreate(false);}}>
           I checked Drives — allow another attempt
@@ -1479,7 +1479,7 @@ export function PlacementJobCreateForm({
         setRestoredBackup(false);
       }} className="min-h-11 rounded-[var(--lms-control-radius)] border border-border px-3 text-xs font-semibold text-primary-text md:min-h-9">Discard saved browser backup</Button>:null}
       {partialJobId?<p role="alert" className="text-sm text-body">A draft exists. If setup did not finish, retry without changing the form or
-        <a className="ml-1 font-semibold text-primary-text underline" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
+        <a className="ml-1 font-semibold text-primary-text underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={basePath+"/jobs/"+encodeURIComponent(partialJobId)}>open the existing draft</a>.
         Do not submit a second drive.
       </p>:null}
       {dirty ? <p role="status" className="text-xs text-muted-foreground">You have unsaved changes. Save this draft before leaving the page.</p> : null}

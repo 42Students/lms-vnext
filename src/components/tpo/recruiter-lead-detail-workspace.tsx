@@ -567,7 +567,7 @@ export function RecruiterLeadDetailWorkspace({
                   {ACTIVITY_TYPES.map(type=><FilterChip type="button" key={type} aria-pressed={logType===type}
                     onClick={()=>{setLogType(type);setLogOutcome("");}}>{type==="CALL"?"Call":type==="EMAIL"?"Email":type==="MEETING"?"Meeting":"Note"}</FilterChip>)}
                 </div>
-                <details className="border-b border-border pb-3"><summary className="cursor-pointer py-2 text-[13px] font-semibold">Choose interaction type</summary><label className="block text-[13px] font-semibold leading-4">Type
+                <details className="border-b border-border pb-3"><summary className="cursor-pointer py-2 text-[13px] font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Choose interaction type</summary><label className="block text-[13px] font-semibold leading-4">Type
                   <Select className="mt-1.5 min-w-0 min-h-11 md:min-h-9" value={logType}
                     onChange={e => {setLogType(e.target.value as typeof logType);setLogOutcome("");}}>
                     {ACTIVITY_TYPES.map(type => <option value={type} key={type}>{type}</option>)}

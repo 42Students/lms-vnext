@@ -150,7 +150,7 @@ export function RecruiterPlacementPortfolio({
                   {counts?.[item.job.id]?.sharedApplicants??0} shared applicants
                 </Link>
                 <Link
-                  className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]"
+                  className="font-semibold text-primary-text underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center"
                   href={"/recruiter/drives/"+item.job.id+"?tab=offers"+(returnTo?"&returnTo="+encodeURIComponent(returnTo):"")}>
                   {counts?.[item.job.id]?.offers??0} offers
                 </Link>
