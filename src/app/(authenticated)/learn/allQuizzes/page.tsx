@@ -39,20 +39,23 @@ export default async function LearnerQuizzesPage({searchParams}:{searchParams:Pr
   // learners' or other colleges' quizzes by an unscoped legacy integer.
   const linkedContent=Array.isArray(query.content)?query.content[0]:query.content;
   let linkedWarning:string|null=null;
+  let legacyLookupFailed=false;
   if(linkedContent){
     let linkedQuiz=overview.quizzes.find(item=>item.id===linkedContent);
     if(!linkedQuiz&&/^[1-9][0-9]{0,9}$/.test(linkedContent)&&overview.quizzes.length){
       const [matching]=await getDb().select({id:courseQuizzes.id}).from(courseQuizzes)
        .where(and(eq(courseQuizzes.legacyQuizId,Number(linkedContent)),
         inArray(courseQuizzes.id,overview.quizzes.map(item=>item.id)))).limit(1)
-       .catch(()=>[] as {id:string}[]);
+       .catch(()=>{legacyLookupFailed=true;return [] as {id:string}[];});
       if(matching)linkedQuiz=overview.quizzes.find(item=>item.id===matching.id);
     }
     if(linkedQuiz&&linkedQuiz.attemptsUsed>0){
       redirect("/learn/allQuizzes/"+encodeURIComponent(linkedQuiz.id)+
        "?deliveryId="+encodeURIComponent(linkedQuiz.deliveryId));
     }
-    linkedWarning=linkedQuiz
+    linkedWarning=legacyLookupFailed
+     ?"Could not resolve the old quiz link right now. Refresh the quiz list and try again."
+     :linkedQuiz
      ?"No submitted attempt was found for the linked quiz. You can open it from the list below."
      :"That old quiz link could not be matched in your current courses. Only quizzes assigned to you can be opened.";
   }
