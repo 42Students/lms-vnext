@@ -75,4 +75,4 @@ One unit at a time: finish the unit file completely before opening the next. Tic
 - [x] U034 (FE page) `docs/legacy-source/frontend/src/pages/recruiter-invite/[token].js`
 - [x] U035 (FE page) `docs/legacy-source/frontend/src/pages/recruiter/profile.js`
 - [x] U036 (Cross-cutting area) `cross/01: Authentication: login, OTP, tokens, sessions, logout, password/identity rules, rate limits, error messages`
-- [ ] U037 (Cross-cutting area) `cross/21: Error, loading and empty states, offline behaviour, session expiry handling`
+- [x] U037 (Cross-cutting area) `cross/21: Error, loading and empty states, offline behaviour, session expiry handling`
