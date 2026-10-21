@@ -36,8 +36,12 @@ export async function createTpoJobType(context:RequestContext,raw:unknown){
   const [{count}]=await tx.select({count:sql<number>`count(*)::integer`}).from(placementTpoJobTypes)
    .where(and(eq(placementTpoJobTypes.collegeId,collegeId),eq(placementTpoJobTypes.isBuiltin,false)));
   if(count>=30)throw new TpoConfigError("TPO_JOB_TYPE_LIMIT");
+  const [order]=await tx.select({
+   next:sql<number>`(coalesce(max(${placementTpoJobTypes.sortOrder}),0)+1)::integer`,
+  }).from(placementTpoJobTypes).where(eq(placementTpoJobTypes.collegeId,collegeId));
   const [created]=await tx.insert(placementTpoJobTypes).values({
    collegeId,label:input.label,active:true,countsAsPlaced:input.countsAsPlaced,isBuiltin:false,
+   sortOrder:order?.next??1,
   }).returning({id:placementTpoJobTypes.id,label:placementTpoJobTypes.label});
   await tx.insert(activityEvents).values({
    organizationId:college.organizationId,collegeId,actorUserId:context.user.id,
