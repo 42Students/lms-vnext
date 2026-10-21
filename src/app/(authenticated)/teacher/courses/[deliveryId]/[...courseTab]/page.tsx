@@ -35,6 +35,22 @@ export default async function FacultyCourseTabPage({
   const lessonId=requestedLesson??owningLesson?.id??null;
   if(lessonId&&!workspace.lessons.some(lesson=>lesson.id===lessonId))notFound();
   if(requestedLesson&&owningLesson&&requestedLesson!==owningLesson.id)notFound();
+  const segment=courseTab.length===1?courseTab[0]!.toLowerCase():"";
+  const aliases:Record<string,string>={
+   "attendance":"attendanceDetail","attendancereport":"attendanceDetail",
+   "attendancedetail":"attendanceDetail","attendance-report":"attendanceDetail",
+   "discussion":"discussions","discussions":"discussions",
+   "students":"students","classmates":"students",
+  };
+  const alias=aliases[segment];
+  if(alias){
+   const safe=new URLSearchParams();
+   if(filter!=="ALL")safe.set("filter",filter);
+   if(lessonId)safe.set("lesson",lessonId);
+   if(requestedContent)safe.set("content",requestedContent);
+   redirect("/teacher/courses/"+encodeURIComponent(deliveryId)+"/"+alias+
+      (safe.size?"?"+safe.toString():""));
+  }
   if (courseTab.length !== 1 || (courseTab[0] !== "home" && courseTab[0] !== "blueprint")) {
     const safe=new URLSearchParams();
     if(filter!=="ALL")safe.set("filter",filter);
