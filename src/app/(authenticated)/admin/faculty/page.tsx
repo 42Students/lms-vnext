@@ -1,6 +1,8 @@
 import {getCurrentRequestContext} from "@/auth/request-context";
 import {ScopedMembershipLifecycleActions} from "@/components/admin/scoped-membership-lifecycle-actions";
 import {CollegePersonEditAction} from "@/components/college/college-person-edit-action";
+import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
+import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
 import Link from "next/link";
 import { Disclosure } from "@/components/ui/disclosure";
 import {PersonOnboardDialog} from "@/components/admin/person-onboard-dialog";
@@ -37,7 +39,9 @@ export default async function SuperAdminFacultyPage({searchParams}:{
     {peopleFilters?<CollegePersonEditAction membershipId={row.id} kind="FACULTY" departments={peopleFilters.departments}/>:null}
     <Disclosure title="More faculty actions" className="min-w-0"
       contentClassName="flex min-w-0 flex-col items-start gap-3 pb-2 pt-2 sm:flex-row sm:flex-wrap">
-      <ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status}/>
+      <ScopedMembershipLifecycleActions membershipId={row.id} displayName={row.title} status={row.status} roleLabel="Faculty"/>
+      <CollegePersonAuditModal membershipId={row.id} name={row.title} kind="FACULTY"/>
+      <CollegePersonProfileOverviewModal membershipId={row.id} name={row.title} kind="FACULTY"/>
       {facultyPicker?<SuperAdminFacultyScheduleReassignAction sourceMembershipId={row.id} sourceName={row.title}
         candidates={facultyPicker.faculty} truncated={facultyPicker.truncated}/>:null}
     </Disclosure>
