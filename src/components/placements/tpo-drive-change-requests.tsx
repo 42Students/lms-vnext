@@ -33,7 +33,14 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
     body:JSON.stringify(body),
    });
    const payload:unknown=await response.json().catch(()=>null);
-   if(!response.ok)throw Error("Could not save change request.");
+   if(!response.ok){
+    const reason=payload&&typeof payload==="object"&&!Array.isArray(payload)?
+      payload as {error?:unknown;message?:unknown}:null;
+    const safe=typeof reason?.message==="string"&&reason.message.length<=240&&
+      !/[<>\\r\\n]/.test(reason.message)?reason.message:null;
+    throw Error(safe??(response.status===409?"This change request has changed. Refresh and retry.":
+      response.status===403?"You do not have permission for this change.":"Could not save change request."));
+   }
    const receipt=payload&&typeof payload==="object"&&!Array.isArray(payload)
      ?payload as Record<string,unknown>:null;
    const statuses:Record<string,string>={CREATE:"OPEN",COMMENT:"COMMENTED",ACCEPT:"ACCEPTED",ANSWER:"ANSWERED",DECLINE:"DECLINED",WITHDRAW:"WITHDRAWN"};
@@ -48,7 +55,7 @@ export function TpoDriveChangeRequests({jobId,party,userId,requests}:{jobId:stri
    if(body.action==="CREATE"){setValue("");setReason("");}
    if(typeof body.requestId==="string")setNotes(previous=>({...previous,[body.requestId as string]:""}));
    router.refresh();
-  }catch{setError("Could not save change request.");}finally{inFlightRef.current=false;setBusy(false);}
+  }catch(cause){setError(cause instanceof Error?cause.message:"Could not save change request.");}finally{inFlightRef.current=false;setBusy(false);}
  }
  return <div className="min-w-0 space-y-5">
   {error?<InlineNotice tone="error" message={error}/>:null}
