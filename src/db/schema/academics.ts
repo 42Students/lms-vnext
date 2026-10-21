@@ -365,6 +365,8 @@ export const groupBackedClassOfferings = pgTable(
     uniqueIndex("group_backed_offerings_period_group_uq").on(
       t.academicPeriodId, t.rosterGroupId,
     ),
+    // Composite target for elective group-backed class identity; no cross-roster attachment.
+    uniqueIndex("group_backed_offerings_id_group_uq").on(t.id, t.rosterGroupId),
     index("group_backed_offerings_group_status_idx").on(t.rosterGroupId, t.status),
     check("group_backed_offerings_status_ck", sql`${t.status} in ('ACTIVE', 'ARCHIVED')`),
     check("group_backed_offerings_name_ck", sql`length(trim(${t.name})) > 0`),
