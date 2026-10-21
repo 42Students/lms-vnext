@@ -1,6 +1,7 @@
 "use client";
 import {useState} from "react";
 import {useRouter} from "next/navigation";
+import {Button} from "@/components/ui/button";
 export function FacultyAvatarUpload({initialVersion}:{initialVersion:number}){
  const router=useRouter();
  const [pending,setPending]=useState(false),[notice,setNotice]=useState("");
@@ -47,13 +48,13 @@ export function FacultyAvatarUpload({initialVersion}:{initialVersion:number}){
        onChange={event=>{const file=event.currentTarget.files?.[0];
          if(file)void upload(file);}}/>
    </label>
-   {awaiting?<button type="button" disabled={pending}
-      className="min-h-11 rounded border border-border px-3 font-semibold"
+   {awaiting?<Button variant="secondary" type="button" disabled={pending}
+      
       onClick={()=>{setPending(true);void confirm(awaiting).catch(()=>{
         setNotice("Security scan pending. Try confirming later.");
       }).finally(()=>setPending(false));}}>
       Confirm after scan
-    </button>:null}
+    </Button>:null}
    {notice?<p role="status">{notice}</p>:null}
  </div>;
 }

@@ -184,17 +184,62 @@ export default async function AnnouncementsPage({
     <div className="min-w-0 space-y-6">
       <PageHeader
         title="Announcements"
-        description="Target, schedule, pin, edit, soft-delete and restore college communications."
-        actions={<div className="flex flex-wrap items-center gap-2">
-          <SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>
-          <Link
-            href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
-            className="inline-flex min-h-11 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-[650] text-foreground md:min-h-9 hover:text-[var(--lms-primary-text)] active:text-[var(--lms-primary-text)] hover:underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)]"
-          >
+        description="To placement cells. Each one gets a bell and reads it under Announcements > From 42."
+        actions={<SuperAdminCollegeBroadcastForm colleges={broadcastColleges}/>} 
+      />
+      <section aria-label="Announcements to placement cells" className="min-w-0 space-y-4">
+        <h2 className="m-0 text-lg font-semibold text-foreground">Announcements to placement cells</h2>
+        {broadcastFeed.length === 0 ? (
+          <p className="border-y border-border py-6 text-sm text-muted-foreground">
+            {params.q || params.receiverType || params.visibility || params.pinned || params.senderType || includeDeleted
+              ? "No announcements match the selected filters." : "Nothing sent yet."}
+          </p>
+        ) : (
+          <div className="divide-y divide-border border-y border-border">
+            {broadcastFeed.map(({id, copies, first})=>{
+              const reached = copies.reduce((total,copy)=>total+(receipts.get(copy.id)?.cellRead ?? 0),0);
+              const ended = first.expiresAt !== null && first.expiresAt.getTime() <= now;
+              const state = first.deletedAt ? "Deleted" : ended ? "Ended"
+                : first.scheduledAt && first.scheduledAt.getTime() > now ? "Scheduled" : "Live";
+              return <article key={id} className="py-4">
+                <div className="flex flex-wrap items-center justify-between gap-3">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span>From 42</span>
+                    {first.isPinned ? <StatusBadge tone="info">Pinned</StatusBadge> : null}
+                    <StatusBadge tone={state==="Live"?"success":state==="Scheduled"?"warning":"neutral"}>{state}</StatusBadge>
+                  </div>
+                  <time className="text-xs text-muted-foreground" dateTime={first.createdAt.toISOString()}>
+                    {first.createdAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST
+                  </time>
+                </div>
+                <h3 className="mt-2 text-base font-semibold text-foreground">{first.title}</h3>
+                <p className="mt-1 whitespace-pre-wrap text-sm text-body">{first.message}</p>
+                {first.buttonLabel && first.buttonUrl && /^https:\/\/[^\s]+$/i.test(first.buttonUrl)
+                  ? <a href={first.buttonUrl} className="mt-2 inline-flex min-h-9 items-center text-sm font-semibold text-primary-text underline">{first.buttonLabel} ↗</a> : null}
+                <div className="mt-3 flex flex-wrap gap-x-5 gap-y-1 text-xs text-muted-foreground">
+                  <span>Sent to {copies.length} placement {copies.length === 1 ? "cell" : "cells"} on this page</span>
+                  <span>{reached} of {copies.length} placement cells read on this page</span>
+                  {first.expiresAt ? <span>Show until {first.expiresAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
+                  {first.updatedAt.getTime() !== first.createdAt.getTime()
+                    ? <span>Updated {first.updatedAt.toLocaleString("en-IN",{timeZone:"Asia/Kolkata",dateStyle:"medium",timeStyle:"short"})} IST</span> : null}
+                </div>
+              </article>;
+            })}
+          </div>
+        )}
+        {page.nextCursor ? <p className="text-xs text-muted-foreground">
+          This feed shows one authorized page at a time. Continue to Older announcements below to see earlier placement-cell broadcasts.
+        </p> : null}
+      </section>
+      <section aria-label="Announcement management" className="min-w-0 space-y-4 border-t border-border pt-6">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div><h2 className="m-0 text-lg font-semibold text-foreground">Announcement management</h2>
+            <p className="mt-1 text-sm text-muted-foreground">Search, filter, export and manage authorized announcements. Placement-cell broadcasts are grouped above.</p></div>
+          <Link href={"/admin/announcements?" + new URLSearchParams({ ...(includeDeleted ? {} : {deleted:"1"}), ...(params.q ? {q:params.q} : {}), ...(params.receiverType ? {receiverType:params.receiverType} : {}), ...(params.visibility ? {visibility:params.visibility} : {}), ...(params.pinned ? {pinned:params.pinned} : {}), ...(params.senderType ? {senderType:params.senderType} : {}) }).toString()}
+            className="inline-flex min-h-9 items-center rounded-[var(--lms-control-radius)] border border-border px-4 text-sm font-semibold text-foreground hover:bg-[var(--lms-primary-subtle)]">
             {includeDeleted ? "Active only" : "Include deleted"}
           </Link>
-        </div>}
-      />
+        </div>
       <form method="get" role="search" aria-label="Announcement filters" className="grid min-w-0 grid-cols-1 items-end gap-[8px] border-b border-border pb-4 min-[768px]:grid-cols-[minmax(0,1fr)_auto_auto]">
         {includeDeleted ? <Input type="hidden" name="deleted" value="1"/> : null}
         <label className="min-w-0 w-full text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search announcement title or message
