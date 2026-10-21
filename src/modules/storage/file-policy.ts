@@ -103,6 +103,77 @@ const KIND_SPECS: Record<StorageFileKind, KindSpec> = {
   },
 };
 
+/**
+ * Legacy folder translation: declared old folder names never authorize a new
+ * upload. Null namespace means no vNext writer exists for that category.
+ * Dedicated writers must enforce these narrower caps and their own scope.
+ */
+const legacyMiB=1024*1024;
+export const LEGACY_FILE_UPLOAD_CAPS={
+ genericBytes:50*legacyMiB,lectureBytes:50*legacyMiB,
+ presentationBytes:100*legacyMiB,imageBytes:10*legacyMiB,
+ legacyVideoBytes:5120*legacyMiB,vNextVideoBytes:MAX_VIDEO_BYTES,
+} as const;
+type LegacyFolderPolicy={
+ validatorKind:StorageFileKind;maxBytes:number;
+ allowedMimes:readonly string[];namespace:StorageFileNamespace|null;
+};
+const wordMimes=[
+ "application/pdf","application/msword",
+ "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+] as const;
+const imageMimes=["image/jpeg","image/png","image/webp"] as const;
+const identityMimes=["application/pdf","image/jpeg","image/png"] as const;
+export const LEGACY_FOLDER_POLICY={
+ "lesson-content":{validatorKind:"project-resource",maxBytes:50*legacyMiB,
+  allowedMimes:DOCUMENT_TYPES.map(spec=>spec.mime),namespace:null},
+ "profile-images":{validatorKind:"lesson-video-thumbnail",maxBytes:5*legacyMiB,
+  allowedMimes:imageMimes,namespace:null},
+ "video-intros":{validatorKind:"lesson-video",maxBytes:MAX_VIDEO_BYTES,
+  allowedMimes:VIDEO_TYPES.map(spec=>spec.mime),namespace:null},
+ "resumes":{validatorKind:"project-resource",maxBytes:50*legacyMiB,
+  allowedMimes:wordMimes,namespace:null},
+ "assignments":{validatorKind:"assignment-submission",maxBytes:MAX_DOCUMENT_BYTES,
+  allowedMimes:DOCUMENT_TYPES.map(spec=>spec.mime),namespace:"assignment-submission"},
+ "course-images":{validatorKind:"lesson-video-thumbnail",maxBytes:5*legacyMiB,
+  allowedMimes:imageMimes,namespace:null},
+ "identity-docs":{validatorKind:"project-resource",maxBytes:50*legacyMiB,
+  allowedMimes:identityMimes,namespace:null},
+ "marksheets":{validatorKind:"project-resource",maxBytes:5*legacyMiB,
+  allowedMimes:identityMimes,namespace:null},
+ "college-branding":{validatorKind:"lesson-video-thumbnail",maxBytes:5*legacyMiB,
+  allowedMimes:["image/png"],namespace:null},
+ "offer-letters":{validatorKind:"project-resource",maxBytes:10*legacyMiB,
+  allowedMimes:identityMimes,namespace:null},
+ "jd-files":{validatorKind:"project-resource",maxBytes:5*legacyMiB,
+  allowedMimes:wordMimes,namespace:null},
+} as const satisfies Record<string,LegacyFolderPolicy>;
+export type LegacyUploadFolder=keyof typeof LEGACY_FOLDER_POLICY;
+
+/** Validation only, never a storage grant. Strict JD, offer, branding and
+ * marksheet formats remain narrower than generic project-resource types. */
+export function validateLegacyFolderDeclaration(
+ folder:LegacyUploadFolder,raw:StorageDeclaration,
+):StorageDeclarationResult {
+ const policy:LegacyFolderPolicy=LEGACY_FOLDER_POLICY[folder];
+ const generic=validateStorageDeclaration(policy.validatorKind,raw);
+ if(!generic.ok)return generic;
+ if(!policy.allowedMimes.includes(generic.value.contentType))
+  return {ok:false,code:"STORAGE_TYPE_NOT_ALLOWED"};
+ if(generic.value.sizeBytes>policy.maxBytes)
+  return {ok:false,code:"STORAGE_FILE_TOO_LARGE"};
+ return generic;
+}
+/** Keep the legacy zero-versus-negative size copy without altering
+ * stable STORAGE_SIZE_INVALID/FILE_TOO_LARGE API codes and statuses. */
+export function legacyStorageSizeFailure(sizeBytes:number,maxBytes:number):string|null{
+ if(!Number.isSafeInteger(sizeBytes))return "Enter a valid file size.";
+ if(sizeBytes<0)return "File size cannot be negative.";
+ if(sizeBytes===0)return "File is empty.";
+ if(sizeBytes>maxBytes)return "Choose a file between 1 byte and "+Math.floor(maxBytes/legacyMiB)+" MiB.";
+ return null;
+}
+
 export function maxBytesFor(kind: StorageFileKind) {
   return KIND_SPECS[kind].maxBytes;
 }
