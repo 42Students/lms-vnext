@@ -280,6 +280,11 @@ export function LearnerCourseDiscussion({
     }
   },[deliveryId,load]);
 
+  useEffect(()=>{
+    const interval=window.setInterval(()=>setTimeReference(Date.now()),60000);
+    return ()=>window.clearInterval(interval);
+  },[]);
+
   useEffect(() => {
     // Defer initial fetch to avoid synchronous cascading state updates.
     const first = window.setTimeout(() => void load(), 0);
@@ -492,7 +497,7 @@ export function LearnerCourseDiscussion({
 
 
       {pinned ? (
-        <section className="flex min-w-0 items-start gap-3 rounded-[var(--lms-control-radius)] border border-[#d8e7ea] bg-[#eff8fa] px-3 py-3">
+        <section className="flex min-w-0 items-start gap-2.5 rounded-[14px] border border-[#d8e7ea] bg-[#f6fbfb] px-[14px] py-3">
           <span className="mt-0.5 shrink-0 text-[#1a95a1]"><DiscussionPinIcon filled /></span>
           <div className="min-w-0 flex-1">
           <p className="break-words text-sm font-semibold text-foreground">{pinned.messageText}</p>
@@ -551,7 +556,7 @@ export function LearnerCourseDiscussion({
           ref={scrollRef}
           onScroll={handleScroll}
           role="region" aria-label="Course discussion messages" tabIndex={0}
-          className="max-h-[52dvh] min-h-56 overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 md:max-h-[31rem] md:min-h-80 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
+          className="max-h-[min(62vh,640px)] min-h-[320px] overflow-y-auto overscroll-contain px-2 py-3 sm:px-3 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"
         >
           {loading ? (
             <div className="flex min-h-64 items-center justify-center" aria-busy="true"
@@ -611,7 +616,7 @@ export function LearnerCourseDiscussion({
                 row.kind === "day" ? (
                   <div
                     key={row.key}
-                    className="flex items-center gap-3 py-2"
+                    className="sticky top-0 z-[2] flex items-center gap-3 py-2"
                     aria-label={row.label}
                   >
                     <span className="h-px flex-1 bg-border" />
@@ -623,13 +628,13 @@ export function LearnerCourseDiscussion({
                 ) : (
                   <article
                     key={row.key}
-                    className={`flex max-w-full min-w-0 items-start gap-3 break-words
-                      ${row.grouped ? "pt-1" : "pt-3"}
-                      ${row.item.isMine ? "bg-[#f7fbfb]" : "bg-white"}`}
+                    className={`group grid max-w-full min-w-0 grid-cols-[36px_minmax(0,1fr)_auto] items-start gap-3 break-words rounded-[12px] px-3 py-2
+                      ${row.grouped ? "mt-0" : "mt-4"}
+                      ${row.item.isMine ? "bg-[#f0fafa] hover:bg-[#e7f7f7]" : "bg-white hover:bg-[#f9fafb]"}`}
                   >
                     {row.grouped?<span aria-hidden="true" className="w-8 shrink-0"/>:
                       <span aria-hidden="true" title={row.item.senderRole}
-                        className="inline-flex size-8 shrink-0 items-center justify-center rounded-full text-xs font-bold"
+                        className="inline-flex size-9 shrink-0 items-center justify-center rounded-full text-[13px] font-bold"
                         style={{backgroundColor:avatarTint(row.item.senderMembershipId,row.item.senderName).bg,
                           color:avatarTint(row.item.senderMembershipId,row.item.senderName).fg}}>
                         {initials(row.item.senderName)}
@@ -652,7 +657,7 @@ export function LearnerCourseDiscussion({
                       </p>
                     </div>
                     {(canPost || moderate) ? (
-                      <div className="flex shrink-0 items-center gap-1">
+                      <div className="flex shrink-0 items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
                         {canPost ? <Button type="button" variant="ghost"
                           className="min-h-11 !text-[var(--lms-primary-text)] underline md:min-h-9"
                           onClick={() => {
@@ -744,7 +749,7 @@ export function LearnerCourseDiscussion({
               Enter to send · Shift+Enter for a new line
               {draft.length>3400? " · "+draft.length+"/"+LEARNER_DISCUSSION_MESSAGE_MAX_LENGTH:""}
             </span>
-            <Button type="submit" className="min-h-11 w-full sm:w-auto md:min-h-9" disabled={!learnerDiscussionDraftValid(draft) || posting}>
+            <Button type="submit" className="min-h-9 w-auto" disabled={!learnerDiscussionDraftValid(draft) || posting}>
               {posting ? "Sending…" : "Send"}
             </Button>
           </div>
