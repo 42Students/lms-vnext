@@ -52,7 +52,7 @@ export default async function IndependentFindingsPage({searchParams}:{
  const findingColumns:DataTableColumn<(typeof data.items)[number]>[]=[
   {key:"finding",header:"Finding",mobilePriority:"primary",cell:item=><div className="min-w-0">
     <Link href={"/tracker/audit-findings/"+encodeURIComponent(item.externalId)}
-      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary)]">{item.externalId}</Link>
+      className="inline-flex min-h-11 items-center md:min-h-9 break-all font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{item.externalId}</Link>
     <p className="mt-1 max-w-md break-words [overflow-wrap:anywhere] text-sm leading-5 text-body">{item.title}</p>
    </div>},
   {key:"area",header:"Area / Kind",mobilePriority:"secondary",cell:item=><span>{item.area} · {item.kind}</span>},
