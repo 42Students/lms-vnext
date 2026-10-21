@@ -112,7 +112,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_admin-readiness-overrides-service.ts.md` (edit src/modules/projects/admin-readiness-overrides-service.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_college-projects-query-model.ts.md` (edit src/modules/projects/college-projects-query-model.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-overload-model.ts.md` (edit src/modules/projects/mentor-overload-model.ts; 2 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-project-list-query.ts.md` (edit src/modules/projects/mentor-project-list-query.ts; 2 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_mentor-project-list-query.ts.md` (edit src/modules/projects/mentor-project-list-query.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_admin-risk-query-model.ts.md` (edit src/modules/projects/admin-risk-query-model.ts; 2 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-1/src_modules_projects_template-college-availability-model.ts.md` (edit src/modules/projects/template-college-availability-model.ts; 2 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-1/src_components_projects_project-template-view.tsx.md` (edit src/components/projects/project-template-view.tsx; 2 findings; best P1)
