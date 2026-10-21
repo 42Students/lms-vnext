@@ -81,7 +81,7 @@ export default async function MentorReviewOverviewPage({
  </p></section>
  <p className="text-sm text-body leading-[22px]">{data.total} registered delivery version{data.total===1?"":"s"}</p>
  {data.items.length===0?<EmptyState title="No registered final delivery"
- description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history." action={filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>:<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Delivery workspace</Link>}/>
+ description="There is no persisted final-delivery version for this authorized project. Nothing was submitted or reviewed here in the registered history." action={filtered?<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"/review-overview"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>:<Link href={"/mentor/projects/"+encodeURIComponent(projectId)+"?tab=delivery"} className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Delivery workspace</Link>}/>
  :<ol className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item=>
  <li key={item.id} className="py-[var(--lms-space-3)]">
  <div className="flex flex-wrap items-center justify-between gap-3">

@@ -104,7 +104,7 @@ export default async function MentorReviewHistoryPage({
       </p>
       {data.items.length===0
         ? <EmptyState title="No recorded delivery reviews"
-            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." action={<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline md:min-h-9">Clear</Link>} />
+            description="No persisted final-delivery decisions match this filter for your currently assigned projects. Historical records before migration are not reconstructed." action={<Link href="/mentor/review-history" className="inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">Clear</Link>} />
         : <ol aria-label="mentor review history entries" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">{data.items.map(item =>
           <li key={item.id} className="py-[var(--lms-space-3)]">
             <div className="flex flex-wrap items-center justify-between gap-3">
