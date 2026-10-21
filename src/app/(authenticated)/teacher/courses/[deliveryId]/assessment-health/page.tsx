@@ -28,7 +28,7 @@ export default async function FacultyCourseAssessmentHealthPage({
     deliveryId,kind:first(raw.kind) ?? undefined,
     page:first(raw.page) ?? undefined,
   });
-  if (!parsed.success) return <section role="alert" className="space-y-3">
+  if (!parsed.success) return <section role="alert" className="min-w-0 space-y-3">
     <PageHeader title={"Invalid Section report filters"} />
     <Link href="/teacher/courses" className="text-primary-text underline inline-flex min-h-11 items-center focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9 hover:text-[var(--lms-primary-text)]">Back to courses</Link>
   </section>;
