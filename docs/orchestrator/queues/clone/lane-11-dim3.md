@@ -66,11 +66,11 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-11.md: file, number of
 - [x] `src/components/projects/super-admin-template-subview-page.tsx`
 - [x] `src/components/tpo/tpo-team-ask-panel.tsx`
 - [x] `src/components/ui/page-loading.tsx`
-- [ ] `src/components/tpo/tpo-student-nudge-panel.tsx`
-- [ ] `src/components/tpo/tpo-team-away-form.tsx`
-- [ ] `src/components/tpo/tpo-timed-debar-control.tsx`
-- [ ] `src/components/tracker/tracker-issue-saved-views.tsx`
-- [ ] `src/components/ui/legacy-overlays.css`
+- [x] `src/components/tpo/tpo-student-nudge-panel.tsx`
+- [x] `src/components/tpo/tpo-team-away-form.tsx`
+- [x] `src/components/tpo/tpo-timed-debar-control.tsx`
+- [x] `src/components/tracker/tracker-issue-saved-views.tsx`
+- [x] `src/components/ui/legacy-overlays.css`
 - [ ] `src/app/(authenticated)/teacher/courses/[deliveryId]/students/error.tsx`
 - [ ] `src/app/(authenticated)/tpo/batches/[batchId]/students/page.tsx`
 - [ ] `src/app/(authenticated)/tpo/recruiters/campaigns/page.tsx`
