@@ -235,7 +235,10 @@ function normalizedState(
             ?.trim()
             .slice(0, 150) ?? ""
         : "",
-    jobId: audience !== "TPO" && /^[a-f0-9-]{36}$/i.test(first(searchParams.jobId) ?? "")
+    // Only canonical UUIDs are eligible for the current vNext job scope;
+    // legacy numeric aliases require a separately authorized alias resolver.
+    jobId: audience !== "TPO" &&
+      /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(first(searchParams.jobId) ?? "")
       ? first(searchParams.jobId)! : "",
     focus: audience === "TPO" && ["OVERDUE","BLOCKED","BUSY"].includes(first(searchParams.focus) ?? "")
       ? first(searchParams.focus) as "OVERDUE" | "BLOCKED" | "BUSY"
