@@ -842,7 +842,7 @@ export function ProjectEvaluationControl({
                   />
                 </label>
               </div>
-              <label className="mt-3 block">
+              <label className="mt-3 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                 <span className="mb-[6px] block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                   Feedback
                 </span>
