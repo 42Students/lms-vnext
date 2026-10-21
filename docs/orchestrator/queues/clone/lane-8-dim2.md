@@ -291,22 +291,22 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-8.md: file, number of 
 - [x] `src/components/tracker/tracker-live-logs-explorer.tsx`
 - [x] `src/components/tracker/tracker-quick-report-launcher.tsx`
 - [x] `src/components/tracker/tracker-telegram-manual-panel.tsx`
-- [ ] `src/components/ui/bottom-sheet.tsx`
-- [ ] `src/components/ui/confirm-action-dialog.tsx`
-- [ ] `src/components/ui/confirm-dialog.tsx`
-- [ ] `src/components/ui/date-input.tsx`
-- [ ] `src/components/ui/dialog.tsx`
-- [ ] `src/components/ui/drawer.tsx`
-- [ ] `src/components/ui/dropdown.tsx`
-- [ ] `src/components/ui/filter-bar.tsx`
-- [ ] `src/components/ui/modal.tsx`
-- [ ] `src/components/ui/popover.tsx`
-- [ ] `src/components/ui/searchable-select.tsx`
-- [ ] `src/components/ui/split-button.tsx`
-- [ ] `src/components/ui/tooltip.tsx`
-- [ ] `src/components/ui/use-confirm-flow.tsx`
-- [ ] `src/components/verification/CollegeVerificationPanel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/components/verification/TpoVerificationPanel.tsx`
-- [ ] `src/components/verification/VerificationReviewDrawer.tsx`
-- [ ] `src/styles/micro-details.css`
+- [x] `src/components/ui/bottom-sheet.tsx`
+- [x] `src/components/ui/confirm-action-dialog.tsx`
+- [x] `src/components/ui/confirm-dialog.tsx`
+- [x] `src/components/ui/date-input.tsx`
+- [x] `src/components/ui/dialog.tsx`
+- [x] `src/components/ui/drawer.tsx`
+- [x] `src/components/ui/dropdown.tsx`
+- [x] `src/components/ui/filter-bar.tsx`
+- [x] `src/components/ui/modal.tsx`
+- [x] `src/components/ui/popover.tsx`
+- [x] `src/components/ui/searchable-select.tsx`
+- [x] `src/components/ui/split-button.tsx`
+- [x] `src/components/ui/tooltip.tsx`
+- [x] `src/components/ui/use-confirm-flow.tsx`
+- [x] `src/components/verification/CollegeVerificationPanel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/components/verification/TpoVerificationPanel.tsx`
+- [x] `src/components/verification/VerificationReviewDrawer.tsx`
+- [x] `src/styles/micro-details.css`
