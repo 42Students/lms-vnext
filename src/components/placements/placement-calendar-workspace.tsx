@@ -953,7 +953,7 @@ export async function PlacementCalendarWorkspace({
       {isTpo&&state.view==="week"?<TpoWeekHourCalendar days={window.days}
        nowIso={now.toISOString()} collegeId={collegeId} canCreate={calendarFollowupsWritable}
        blockedDates={blockedDays?.rows.map(row=>row.day)??[]} blockedDatesAvailable={blockedDays?.ready??false}
-       events={(state.kind==="BLOCKED"?[]:audienceEvents).map(item=>({
+       events={visibleEvents.filter(item=>item.kind!=="BLOCKED").map(item=>({
         id:item.id,title:item.title,companyName:item.companyName,kind:item.kind,
         roundKind:item.roundKind,status:item.status,jobId:item.jobId,roundId:item.roundId,followupId:item.followupId,
         startsAt:item.startsAt.toISOString(),endsAt:item.endsAt?.toISOString()??null,
