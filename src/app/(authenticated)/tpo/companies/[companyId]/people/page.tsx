@@ -29,7 +29,7 @@ export default async function TpoCompanyPeoplePage({
         <Disclosure title="Add or edit contact person" className="border-b border-[var(--lms-canvas-border)]" contentClassName="pt-3"><TpoCompanyPersonEditor companyId={companyId} contacts={company.contacts}/></Disclosure>
       ) : <Alert tone="warning">DB09 contact writes are unavailable.</Alert>}
       {company.contacts.length === 0
-        ? <EmptyState title="No contact people are linked to this company yet." action={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)} className="inline-flex min-h-11 items-center font-semibold text-link underline">← Back to company</Link>}/>
+        ? <EmptyState title="No contact people are linked to this company yet." action={<Link href={"/tpo/companies/"+encodeURIComponent(companyId)} className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">← Back to company</Link>}/>
         : <ul className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
             {company.contacts.map(contact => (
               <li key={contact.id} className="min-w-0 space-y-1 py-4 text-sm">

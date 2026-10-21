@@ -137,7 +137,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
       className="lms-inline-link inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Show older batches</Link>
     </Alert>:showOlder?<Link href={tpoBatchPageHref({...pageFilters,showOlder:""},1,pageParsed.data.pageSize)}
       className="lms-inline-link inline-flex min-h-11 items-center text-sm font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Hide older batches</Link>:null}
-  <p role="status" className="text-sm text-muted-foreground">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
+  <p role="status" className="text-sm text-muted-foreground leading-[1.6]">{batches.length} matching batches · Showing {batchPage.from}–{batchPage.to} · Page {batchPage.page} of {batchPage.totalPages}</p>
   {pageParsed.data.page!==batchPage.page?<Alert tone="warning">The requested batch page no longer exists for these filters. Showing the last available page.</Alert>:null}
   {batches.length===0?<EmptyState
     title={tpoBatchEmptyReason(data.batches.length,batches.length)==="NO_BATCHES"?"No placement batches or academic cohorts are available to list yet.":"No batches match these filters."}
@@ -149,7 +149,7 @@ export default async function TpoBatchesPage({searchParams}:{searchParams:Promis
     {tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))?<p className="text-xs text-muted-foreground">{tpoBatchCardDeadlineLabel(b.deadline,data.ready,Boolean(b.finishedAt))}</p>:null}
     {(() => {
       const summary = eligibility?.get(b.id);
-      if (!summary) return <p role="status" className="text-sm leading-[22px]">Eligibility counts unavailable.</p>;
+      if (!summary) return <p role="status" className="text-sm leading-[1.6]">Eligibility counts unavailable.</p>;
       const split = [
         { key: "eligible", label: "Eligible", count: summary.eligible, color: "bg-success" },
         { key: "ineligible", label: "Ineligible", count: summary.ineligible, color: "bg-error" },

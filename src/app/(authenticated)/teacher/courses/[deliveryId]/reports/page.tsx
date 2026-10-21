@@ -22,7 +22,7 @@ export default async function FacultyReportsHubPage({
   if (!parsed.success) {
     return <section className="min-w-0 space-y-4">
       <PageHeader title="Invalid report filters" />
-      <p role="alert" className="text-sm leading-6 text-body">Use the Section reports page to choose valid filters.</p>
+      <p role="alert" className="text-sm leading-[1.6] text-body">Use the Section reports page to choose valid filters.</p>
       <Link href="/teacher/courses" className={reportLink}>Courses</Link>
     </section>;
   }

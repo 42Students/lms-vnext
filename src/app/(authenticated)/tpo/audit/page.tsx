@@ -358,7 +358,7 @@ export default async function TpoAuditPage({
                 : "This page number is outside the available result range. Return to the first page or adjust the filters."
             }
             action={<Link href={summary.total===0?"/tpo/audit":tpoAuditHref({...paginationFilters,page:1})}
-              className="inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{summary.total===0?"Clear filters":"First page"}</Link>}
+              className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">{summary.total===0?"Clear filters":"First page"}</Link>}
           />
         ) : (
           <TpoAuditGrid rows={items}/>

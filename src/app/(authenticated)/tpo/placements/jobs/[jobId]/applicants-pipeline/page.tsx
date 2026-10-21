@@ -103,7 +103,7 @@ export default async function TpoApplicantPipelinePage({params,searchParams}:Pro
     </div>
    </details>
   </form>
-  <p role="status" className="text-sm text-body">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
+  <p role="status" className="text-sm text-body leading-[1.6]">{data.totalMatching} matching applications · Page {data.page} of {data.totalPages}.
    Stage counts cover all matching student/role records across every page.</p>
   {data.rows.length > 0 && context.membership &&
     can(context, "placements.manage", {collegeId: context.membership.collegeId}) ?

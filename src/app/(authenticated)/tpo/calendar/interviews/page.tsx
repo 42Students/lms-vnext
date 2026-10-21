@@ -38,8 +38,8 @@ export default async function TpoInterviewReadinessPage({searchParams}:Props){
    {Object.entries(data.counts).map(([key,n])=><StatTile key={key} className={tpoTileStyles.tile}
     label={key.replaceAll(/([A-Z])/g," $1")} value={n} />)}
   </section>
-  <p role="status" className="text-sm text-body leading-[22px]">Interview rounds page {data.page}: {data.rows.length} actionable results. Pages are drawn from the persisted round book.</p>
-  {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found." action={<Link href="/tpo/calendar/interviews" className="inline-flex min-h-11 items-center font-semibold text-link underline">Apply</Link>}/>:
+  <p role="status" className="text-sm text-body leading-[1.6]">Interview rounds page {data.page}: {data.rows.length} actionable results. Pages are drawn from the persisted round book.</p>
+  {data.rows.length===0?<EmptyState title="No interview rounds in this view" description="No persisted pending or relevant scheduled interview rounds were found." action={<Link href="/tpo/calendar/interviews" className="md:min-h-9 inline-flex min-h-11 items-center font-semibold text-link underline">Apply</Link>}/>:
    <section aria-label="Interview rounds" className="divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)]">
    {data.rows.map(r=><article key={r.id} className="min-w-0 space-y-2 py-4">
     <h2 className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">{r.companyName} · {r.jobTitle}</h2>
