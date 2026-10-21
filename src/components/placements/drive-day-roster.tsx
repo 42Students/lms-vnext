@@ -185,7 +185,7 @@ export function DriveDayRoster({
         actions={
           <Link
             href="/tpo/drive-day"
-            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-foreground transition hover:bg-muted md:min-h-9"
+            className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-3 text-sm font-[650] text-foreground transition hover:bg-muted md:min-h-9 hover:underline"
           >
             Back
           </Link>
