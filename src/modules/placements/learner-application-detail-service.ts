@@ -34,7 +34,20 @@ async function loadOwnedApplication(
   context: RequestContext,
   rawApplicationId: string,
 ) {
-  const applicationId = placementApplicationIdSchema.parse(rawApplicationId);
+  // Imported legacy links may contain an integer application ID. Resolve that
+  // only inside the learner-owned college/membership predicate below, never
+  // as a globally readable lookup or another learner's authority.
+  const parsedUuid = placementApplicationIdSchema.safeParse(rawApplicationId);
+  const legacyApplicationId =
+    !parsedUuid.success && /^[1-9][0-9]{0,9}$/.test(rawApplicationId) &&
+      Number(rawApplicationId) <= 2147483647
+      ? Number(rawApplicationId) : null;
+  if (!parsedUuid.success && legacyApplicationId === null) {
+    placementApplicationIdSchema.parse(rawApplicationId);
+  }
+  const applicationFilter=parsedUuid.success
+    ? eq(placementApplications.id,parsedUuid.data)
+    : eq(placementApplications.legacyApplicationId,legacyApplicationId!);
   const membership = await requireLearnerPlacementAccess(context);
   requirePermission(context, "placements.read", {
     collegeId: membership.collegeId,
@@ -85,7 +98,7 @@ async function loadOwnedApplication(
     )
     .where(
       and(
-        eq(placementApplications.id, applicationId),
+        applicationFilter,
         eq(placementApplications.membershipId, membership.id),
         eq(collegeMemberships.userId, context.user.id),
         eq(collegeMemberships.collegeId, membership.collegeId),
@@ -123,9 +136,18 @@ export async function getOwnLearnerApplicationHistory(
       asc(placementApplicationStatusHistory.id),
     );
 
-  // Some migrated applications have no historical status events. Recover
-  // their original persisted submission, without inventing round decisions.
-  const initialAt = application.firstAppliedAt ?? application.submittedAt;
+  // Imported and pre-history applications still need an accessible initial
+  // status. This synthetic learner-facing event is read-only: no database
+  // status write, no guessed round outcomes, no internal actor or free-text
+  // staff reason. Chronology is changed-at ascending, with UUID as tie-breaker.
+  // The learner feed may have thousands of historic transitions: this reader
+  // intentionally returns the full scoped history rather than hiding old rows
+  // behind an arbitrary LIMIT, matching legacy service behavior.
+  const initialAt = application.firstAppliedAt ?? application.submittedAt ??
+    application.statusUpdatedAt ?? new Date();
+  const currentAt = application.statusUpdatedAt &&
+    application.statusUpdatedAt.getTime()>=initialAt.getTime()
+      ? application.statusUpdatedAt : initialAt;
   const synthetic: {id:string;fromStatus:string|null;toStatus:string;occurredAt:Date}[] =
     rows.length === 0 ? [{
       id: application.applicationId + ":initial",
@@ -133,14 +155,12 @@ export async function getOwnLearnerApplicationHistory(
       toStatus: "SUBMITTED",
       occurredAt: initialAt,
     }] : [];
-  if (rows.length === 0 && application.applicationStatus !== "SUBMITTED" &&
-      application.statusUpdatedAt &&
-      application.statusUpdatedAt.getTime() >= initialAt.getTime()) {
+  if (rows.length === 0 && application.applicationStatus !== "SUBMITTED") {
     synthetic.push({
       id: application.applicationId + ":current",
       fromStatus: "SUBMITTED",
       toStatus: application.applicationStatus,
-      occurredAt: application.statusUpdatedAt,
+      occurredAt: currentAt,
     });
   }
   return {
@@ -150,6 +170,10 @@ export async function getOwnLearnerApplicationHistory(
     // Numeric legacy IDs and routing UUIDs are never applicant references.
     externalAtsReference: application.publicRef,
     legacyImportApplicationId: application.legacyApplicationId,
+    // Render as AXXXXXXXXXX for legacy-imported references without exposing
+    // its internal routing UUID. Native vNext references remain unguessable.
+    legacyDisplayReference: application.legacyApplicationId===null?null:
+      "A"+String(application.legacyApplicationId).padStart(10,"0"),
     roleTitle: application.roleTitle,
     companyName: application.companyName,
     currentStatus: application.applicationStatus,
