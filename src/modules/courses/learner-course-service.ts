@@ -14,6 +14,8 @@ import {learnerQuizResultsReleased} from "./learner-quiz-result-release-policy";
 import {learnerVisibleContentExternalUrl} from "./learner-live-link-availability-model";
 import {
   academicPeriods,
+  electiveOfferings,
+  electiveSlots,
   cohorts,
   assignmentSubmissions,
   courseAssignments,
@@ -94,6 +96,9 @@ export async function listLearnerCourseDeliveries(
       legacySemesterCourseId:courseOfferings.legacySemesterCourseId,
       legacyClassId:sections.legacyClassId,
       legacyWasElective:courseOfferings.legacyWasElective,
+      isElective:sql<boolean>`${courseOfferings.type} = 'ELECTIVE' or coalesce(${courseOfferings.legacyWasElective},false)`,
+      electiveSlotName:sql<string|null>`null`,
+      legacySortOrder:courseOfferings.legacySortOrder,
       courseName: courses.name,
       courseCode: courses.code,
       courseDescription: courses.description,
@@ -228,6 +233,7 @@ export async function listLearnerCourseDeliveries(
           learnerProgramEnrollments.membershipId,
           membership.id,
         ),
+        eq(programs.collegeId,membership.collegeId),
         includeHistorical
           ? inArray(
               learnerProgramEnrollments.status,
@@ -256,7 +262,7 @@ export async function listLearnerCourseDeliveries(
     )
     .orderBy(
       desc(academicPeriods.startDate),
-      asc(courseOfferings.displayOrder),
+      asc(sql`coalesce(${courseOfferings.legacySortOrder},${courseOfferings.displayOrder})`),
       asc(courses.name),
     );
   // Group-backed electives do not change the student's primary section
@@ -280,6 +286,9 @@ export async function listLearnerCourseDeliveries(
       legacySemesterCourseId:courseOfferings.legacySemesterCourseId,
       legacyClassId:sections.legacyClassId,
       legacyWasElective:courseOfferings.legacyWasElective,
+      isElective:sql<boolean>`true`,
+      electiveSlotName:electiveSlots.name,
+      legacySortOrder:courseOfferings.legacySortOrder,
       courseName: courses.name,
       courseCode: courses.code,
       courseDescription: courses.description,
@@ -314,12 +323,18 @@ export async function listLearnerCourseDeliveries(
     .innerJoin(cohorts, eq(cohorts.id, sections.cohortId))
     .innerJoin(programs, eq(programs.id, cohorts.programId))
     .innerJoin(academicPeriods, eq(academicPeriods.id, courseOfferings.academicPeriodId))
+    .leftJoin(electiveOfferings,and(
+      eq(electiveOfferings.backedDeliveryId,courseSectionDeliveries.id),
+      eq(electiveOfferings.status,"ACTIVE"),isNull(electiveOfferings.deletedAt),
+    ))
+    .leftJoin(electiveSlots,eq(electiveSlots.id,electiveOfferings.slotId))
     .leftJoin(courseLearningPaths, and(
       eq(courseLearningPaths.offeringId, courseOfferings.id),
       ne(courseLearningPaths.status, "ARCHIVED"),
     ))
     .where(and(
       inArray(courseSectionDeliveries.id, groupDeliveryIds),
+      eq(programs.collegeId,membership.collegeId),
       eq(courseOfferings.status, "ACTIVE"),
       eq(courses.status, "ACTIVE"),
       eq(courses.enabled, true),
@@ -330,11 +345,23 @@ export async function listLearnerCourseDeliveries(
       eq(sections.academicPeriodId, courseOfferings.academicPeriodId),
       isNull(courseSectionDeliveries.endedAt),
     ))
-    .orderBy(desc(academicPeriods.startDate), asc(courseOfferings.displayOrder), asc(courses.name));
+    .orderBy(desc(academicPeriods.startDate),
+      asc(sql`coalesce(${courseOfferings.legacySortOrder},${courseOfferings.displayOrder})`),
+      asc(courses.name));
 
-  // An elective-backed course appears once, even if this learner is also in
-  // its host section; eligibility remains group-owned.
-  return [...primaryRows.filter(row => !bound.has(row.deliveryId)), ...groupRows];
+  // Group-backed electives stay connected to the actual roster, not the
+  // learner's host section. Preserve legacy semester ordering and a stable
+  // same-period course de-duplication key without collapsing different terms.
+  const combined=[...groupRows,...primaryRows.filter(row=>!bound.has(row.deliveryId))]
+   .sort((a,b)=>String(b.periodStartDate).localeCompare(String(a.periodStartDate))||
+    (a.legacySortOrder??a.displayOrder)-(b.legacySortOrder??b.displayOrder)||
+    a.courseName.localeCompare(b.courseName)||a.deliveryId.localeCompare(b.deliveryId));
+  const seen=new Set<string>();
+  return combined.filter(row=>{
+   const key=row.academicPeriodId+":"+row.courseId;
+   if(seen.has(key))return false;
+   seen.add(key);return true;
+  });
 
 }
 
@@ -401,16 +428,16 @@ export async function listLearnerCourseInstructors(
       ),
     )
     .orderBy(
-      asc(courseTeachingAssignments.role),
-      asc(users.displayName),
+      sql`case ${courseTeachingAssignments.role} when 'PRIMARY' then 0 when 'CO_TEACHER' then 1 else 2 end`,
+      asc(users.displayName),asc(courseTeachingAssignments.membershipId),
     );
 
   const active = rows.filter(
     (row) => !row.endedAt,
   );
-  const visible = active.length > 0
-    ? active
-    : rows;
+  // Historical assignments may still be visible through a separate staff
+  // audit view. They are not active faculty for today's learner timetable.
+  const visible = active;
 
   return visible.map((row) => ({
     membershipId: row.membershipId,
@@ -724,6 +751,7 @@ export async function getLearnerCourseWorkspace(
     status:
       | "PUBLISHED"
       | "CLOSED";
+    availability:"NOT_SCHEDULED"|"AVAILABLE"|"MISSED"|"REVIEW_ONLY";
     resultsPublished: boolean;
     attemptsUsed: number;
     attemptsRemaining: number;
@@ -1105,16 +1133,15 @@ export async function getLearnerCourseWorkspace(
             : "PUBLISHED",
         // The authoring flag alone must not disclose answer availability.
         // Match the attempt-service embargo: closed, published, deadline elapsed.
+        availability:!row.dueAt?"NOT_SCHEDULED":
+          completedAt?"REVIEW_ONLY":
+          missed?"MISSED":"AVAILABLE",
         resultsPublished:
           learnerQuizResultsReleased(row,snapshotNowMs),
         attemptsUsed: attempts.length,
         attemptsRemaining:
-          row.status === "PUBLISHED"
-            ? Math.max(
-                0,
-                row.maxAttempts -
-                  attempts.length,
-              )
+          row.status === "PUBLISHED"&&row.dueAt&&row.dueAt.getTime()>now
+            ? Math.max(0,row.maxAttempts-attempts.length)
             : 0,
         progress,
       });
