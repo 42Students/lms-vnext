@@ -55,7 +55,21 @@ export default async function TpoNotificationsPage({
       </section>
     );
   }
-  const inbox = await getTpoPersonalInbox(context, parsed.data);
+  let inbox: Awaited<ReturnType<typeof getTpoPersonalInbox>>;
+  try {
+    inbox = await getTpoPersonalInbox(context, parsed.data);
+  } catch {
+    return <section className="min-w-0 space-y-4">
+      <PageHeader title="Notifications" />
+      <Alert tone="error">
+        Could not load notifications.{" "}
+        <Link href={TPO_NOTIFICATIONS_PATH}
+          className="inline-flex min-h-11 items-center font-semibold text-primary-text underline md:min-h-9">
+          Retry
+        </Link>
+      </Alert>
+    </section>;
+  }
   const items: NotificationListItem[] = inbox.page.items.map(({ notification, event }) => ({
     id: notification.id,
     title: notification.title,
