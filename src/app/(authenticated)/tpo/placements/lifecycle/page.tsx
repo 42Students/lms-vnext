@@ -144,7 +144,7 @@ export default async function TpoDriveLifecyclePage({ searchParams }: { searchPa
 
       <label className="min-w-[180px] flex-1 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Company or drive
        <Input name="search" defaultValue={data.search} maxLength={100}
-        className="mt-2 block w-full"/>
+        className="mt-[6px] block w-full"/>
       </label>
       </div>
       <div className="flex min-w-0 flex-wrap items-start gap-3">
