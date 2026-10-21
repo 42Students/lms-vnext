@@ -10,7 +10,7 @@ export type ProjectAdminCollectionQuery = {
   view?:"cards"|"table";
   fromMentorId?: string;
   riskBucket?: "STALLED" | "BLOCKER" | "REVIEW";
-  riskSort?: "INACTIVE" | "WORKSPACE" | "SEVERITY";
+  riskSort?: "INACTIVE" | "INACTIVE_DESC" | "WORKSPACE" | "SEVERITY";
   q?: string;
   status?:
     | "PLANNED"
@@ -70,12 +70,14 @@ export function ProjectAdminFilters({
   includeSubmissionStatus = false,
   includeRiskSort = false,
   legacyWorkspaces = false,
+  fixedRiskPageSize = false,
   filterView,
 }: {
   query: ProjectAdminCollectionQuery;
   includeSubmissionStatus?: boolean;
   includeRiskSort?: boolean;
   legacyWorkspaces?: boolean;
+  fixedRiskPageSize?: boolean;
   filterView?: "NOT_SUBMITTED";
 }) {
   const router=useRouter();
@@ -144,7 +146,8 @@ export function ProjectAdminFilters({
           <Select name="riskSort" defaultValue={query.riskSort??"INACTIVE"}
             onChange={event=>updateUrl("riskSort",event.target.value)}
             className="w-full">
-            <option value="INACTIVE">Inactive</option>
+            <option value="INACTIVE">Inactive (most days first)</option>
+            <option value="INACTIVE_DESC">Inactive (fewest days first)</option>
             <option value="SEVERITY">Severity</option>
             <option value="WORKSPACE">Workspace</option>
           </Select>
@@ -168,7 +171,7 @@ export function ProjectAdminFilters({
           </Select>
         </label>
       ) : null}
-      <label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
+      {fixedRiskPageSize?<input type="hidden" name="pageSize" value="25"/>:<label className="grid min-w-0 gap-[6px] text-[var(--lms-font-sm)] font-semibold leading-4 text-[var(--lms-neutral-400)] text-[13px]">
         Rows
         <Select
           name="pageSize"
@@ -182,7 +185,13 @@ export function ProjectAdminFilters({
             </option>
           ))}
         </Select>
-      </label>
+      </label>}
+      <Button
+        type="submit"
+        className="min-h-11 w-full md:min-h-9"
+      >
+        Apply
+      </Button>
       <Link
         href={filterView?"?view=NOT_SUBMITTED":"?"}
         className="inline-flex min-h-11 w-auto items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-sm font-semibold text-primary-text hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9"

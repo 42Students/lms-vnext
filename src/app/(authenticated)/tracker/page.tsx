@@ -5,6 +5,7 @@ import { getCurrentRequestContext } from "@/auth/request-context";
 import { TrackerAdminNav } from "@/components/tracker/tracker-admin-nav";
 import { TrackerReportForm } from "@/components/tracker/tracker-report-form";
 import { PageHeader } from "@/components/ui/page-header";
+import { Tabs } from "@/components/ui/tabs";
 import { isSuperAdmin } from "@/modules/identity/context";
 import { trackerAdminRuntimeEnabled } from "@/modules/bug-tracker/readiness";
 
@@ -29,15 +30,17 @@ export default async function TrackerReportPage({
   </section>;
   const ready = trackerAdminRuntimeEnabled();
   return <div className="min-w-0 max-w-full space-y-4 md:space-y-6">
-    <PageHeader title="What went wrong?"
-      description="Report an LMS issue · Pick the context, describe the problem, and submit."
+    <PageHeader eyebrow="42 Tracker" title="What went wrong?"
+      description="Report an LMS issue · Pick the context, describe the problem, and submit. Sign-in is required to keep reports linked to your account."
       actions={!isSuperAdmin(context)?<Link href="/tracker/mine" className="inline-flex min-h-11 min-[768px]:min-h-9 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-canvas-border)] bg-white px-4 text-[14px] font-[650] text-[var(--lms-body-text)] transition-colors duration-[150ms] hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary-subtle)] hover:text-[var(--lms-primary-text)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] motion-reduce:transition-none">My reports</Link>:undefined}/>
-    {isSuperAdmin(context)?<TrackerAdminNav />:null}
-    <Banner tone="info">This issue tracker requires a signed-in reporter account; anonymous submissions from the old LMS are not enabled.</Banner>
+    {isSuperAdmin(context)?<TrackerAdminNav />:<Tabs renderPanel={false} value="report" ariaLabel="42 Tracker"
+      items={[{value:"report",label:"Report Issue",href:"/tracker"},{value:"mine",label:"My reports",href:"/tracker/mine"}]}/>}
+    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Report an LMS issue</p>
     {!ready ? <Banner tone="warning">
       <strong>Reports are temporarily unavailable.</strong>
       <span>Try again soon. Your report has not been submitted.</span>
-    </Banner> : <TrackerReportForm contextPrefill={contextPrefill} canSearchSimilar={isSuperAdmin(context)}
-      knownErrorId={isSuperAdmin(context)?knownErrorId:undefined} />}
+    </Banner> : <section aria-label="Report Issue" className="min-w-0 max-w-4xl rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 md:p-6">
+      <TrackerReportForm contextPrefill={contextPrefill} canSearchSimilar={isSuperAdmin(context)}
+      knownErrorId={isSuperAdmin(context)?knownErrorId:undefined}/></section>}
   </div>;
 }

@@ -639,6 +639,7 @@ export async function listProjectAdminRiskQueue(
         .from(projectInstances)
         .where(where)
         .orderBy(
+          query.riskSort==="INACTIVE_DESC"?desc(lastActivityAt):
           query.riskSort==="WORKSPACE"?asc(projectInstances.title):
           query.riskSort==="INACTIVE"?asc(lastActivityAt):
             sql`${reasonCount} desc`,

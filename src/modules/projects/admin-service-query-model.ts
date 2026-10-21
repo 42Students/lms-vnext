@@ -13,7 +13,7 @@ const decimalPage = (min: number, max: number, fallback: number) => z.union([
 // fail closed rather than silently being accepted as query selectors.
 export const projectAdminServiceQuerySchema = z.strictObject({
   riskBucket: z.enum(["STALLED", "BLOCKER", "REVIEW"]).optional(),
-  riskSort: z.enum(["INACTIVE", "WORKSPACE", "SEVERITY"]).optional(),
+  riskSort: z.enum(["INACTIVE", "INACTIVE_DESC", "WORKSPACE", "SEVERITY"]).optional(),
   q: z.string().trim().max(120).optional(),
   status: z.enum(["PLANNED", "ACTIVE", "COMPLETED", "ARCHIVED"]).optional(),
   page: decimalPage(1, 100000, 1),

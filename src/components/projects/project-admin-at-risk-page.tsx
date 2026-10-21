@@ -115,7 +115,7 @@ export async function ProjectAdminAtRiskPage({
             {title} <span className="tabular-nums">{value}</span>
           </FilterChipLink>)}
       </nav>
-      <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort /></FilterBar>
+      <FilterBar title="Filters"><ProjectAdminFilters query={query} includeRiskSort fixedRiskPageSize /></FilterBar>
       <ListToolbar label="At-risk workspaces" viewCount={result.total}
         exportAction={<ProjectAtRiskPageExport collegeId={collegeId}
           rows={result.items.map(project=>({
