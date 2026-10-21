@@ -368,7 +368,7 @@ export function LearnerQuizAttempt() {
           description="Quiz review"
           actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 md:min-h-9">← Back</Button>}
         />
-        {!learnerQuizReviewQuestionNotice(questions.length, Boolean(latestAttempt)) ? <p className="mt-2 text-sm text-body">
+        {!learnerQuizReviewQuestionNotice(questions.length, Boolean(latestAttempt)) ? <p className="mt-2 text-sm text-body leading-[22px]">
               {latestAttempt
                 ? latestAttempt.resultsVisible
                   ? `Attempt ${latestAttempt.attemptNumber} · ${learnerAttemptResultLabel(latestAttempt)}`
@@ -392,7 +392,7 @@ export function LearnerQuizAttempt() {
         {error ? <Alert tone="error" className="mt-4">{error}</Alert> : null}
         {learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt)) ? (
           <Alert tone="info" className="mt-6">
-            <p className="text-sm text-body">{learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))}</p>
+            <p className="text-sm text-body leading-[22px]">{learnerQuizReviewQuestionNotice(questions.length,Boolean(latestAttempt))}</p>
             <Link href="/learn/allQuizzes" className="mt-3 inline-flex min-h-11 items-center text-sm font-semibold text-primary-text underline md:min-h-9">
               Return to All Quizzes
             </Link>
@@ -405,7 +405,7 @@ export function LearnerQuizAttempt() {
             return (
               <article key={question.id} className="border-b border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)]">
                 <div className="flex items-start justify-between gap-3">
-                  <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] text-sm font-semibold text-foreground">Question {index + 1}. {question.prompt}</h2>
+                  <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Question {index + 1}. {question.prompt}</h2>
                   <span className="shrink-0 text-xs font-semibold text-muted-foreground">{question.points} pts</span>
                 </div>
                 <div className="mt-3 space-y-2">
@@ -448,10 +448,10 @@ export function LearnerQuizAttempt() {
         <PageHeader title={quiz.quiz.title}
           actions={<Button type="button" onClick={leaveQuiz} variant="ghost" className="min-h-11 md:min-h-9">Back</Button>}
         />
-        <p className="mt-2 text-xs font-semibold text-muted-foreground">
+        <p className="mt-2 text-xs font-semibold text-muted-foreground leading-[20px]">
           Question {step + 1} / {questions.length} · {quiz.attemptsRemaining} attempt(s) remaining
         </p>
-        <p className="mt-1 text-xs text-muted-foreground">Due {formatDate(quiz.quiz.dueAt)}</p>
+        <p className="mt-1 text-xs text-muted-foreground leading-[20px]">Due {formatDate(quiz.quiz.dueAt)}</p>
         {learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable) ? (
           <Alert tone="warning" className="mt-2 font-semibold">{learnerQuizDeadlineWarning(quiz.quiz.dueAt,nowMs,attemptable)}</Alert>
         ) : null}
@@ -470,7 +470,7 @@ export function LearnerQuizAttempt() {
 
       <div className="grid min-w-0 lg:grid-cols-[220px_minmax(0,1fr)]">
         <aside className="order-2 min-w-0 border-t border-border p-4 lg:order-1 lg:border-r lg:border-t-0">
-          <p className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground">Progress</p>
+          <p className="text-xs font-bold uppercase tracking-[0.08em] text-muted-foreground leading-[20px]">Progress</p>
           <div className="mt-3 grid grid-cols-4 gap-2 md:grid-cols-5 md:grid-cols-6 lg:grid-cols-3">
             {questions.map((question, index) => (
               <Button
@@ -494,10 +494,10 @@ export function LearnerQuizAttempt() {
           {current ? (
             <>
               <div className="flex items-start justify-between gap-4">
-                <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] text-lg font-semibold leading-7 text-foreground">{current.prompt}</h2>
+                <h2 className="m-0 min-w-0 flex-1 break-words [overflow-wrap:anywhere] font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{current.prompt}</h2>
                 <span className="shrink-0 text-xs font-semibold text-muted-foreground">{current.points} pts</span>
               </div>
-              <p className="mt-2 text-xs text-muted-foreground">
+              <p className="mt-2 text-xs text-muted-foreground leading-[20px]">
                 {current.type === "MULTIPLE_CHOICE" ? "Select all that apply." : "Select one answer."}
               </p>
               <div className="mt-5 space-y-3">
@@ -534,7 +534,7 @@ export function LearnerQuizAttempt() {
             </Button>
             {showReview ? (
               <section aria-label="Your quiz answer review" className="mt-3 border-y border-[var(--lms-canvas-border)] bg-transparent py-[var(--lms-space-4)]">
-                <p className="text-sm text-body">Review your responses. These are not grading results.</p>
+                <p className="text-sm text-body leading-[22px]">Review your responses. These are not grading results.</p>
                 <ol className="mt-3 grid gap-2 md:grid-cols-2">
                   {reviewRows.map((item,index)=>(
                     <li key={item.questionId}>

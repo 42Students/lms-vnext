@@ -188,15 +188,15 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   }}>
   <TpoAfterCollegeBulkEditor rows={rows} current={afterCollege} available={afterCollegeAvailable} />
   <TpoStudentClipboardActions rows={rows} selected={noteSelection} onSelect={setNoteSelection}/>
-  <p role="status" aria-live="polite" className="text-xs text-muted-foreground">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
-   {!xlsxHref&&selectedScoped.length>200?<p role="status" className="text-xs text-warning-text">Export up to 200 individually selected students or select all matching students.</p>:null}
+  <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">{selectedScoped.length} selected of {shared?.totalCount??rows.length} in the authorized view.</p>
+   {!xlsxHref&&selectedScoped.length>200?<p role="status" className="text-xs text-warning-text leading-[20px]">Export up to 200 individually selected students or select all matching students.</p>:null}
   <Button variant="secondary" type="button" disabled={!noteSelection.some(id=>rows.some(row=>row.membershipId===id))}
     onClick={downloadSelection} >
     Export selected CSV
   </Button>
-  {downloadError?<p role="alert" className="text-xs text-error">{downloadError}</p>:null}
+  {downloadError?<p role="alert" className="text-xs text-error leading-[20px]">{downloadError}</p>:null}
   <Disclosure title="Bulk Add a note" className="border-y border-border py-3 [&>summary]:font-semibold">
-   <p className="mt-2 text-xs text-muted-foreground">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
+   <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Choose up to 100 students on this visible roster page; no student is added outside your current filtered page.</p>
    <label className="mt-3 flex min-h-11 items-center gap-2 text-sm"><Checkbox 
      checked={rows.length>0&&rows.every(r=>noteSelection.includes(r.membershipId))}
      indeterminate={rows.some(r=>noteSelection.includes(r.membershipId))&&
@@ -209,7 +209,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
        onChange={e=>setNoteSelection(ids=>e.target.checked?[...ids,row.membershipId]:ids.filter(id=>id!==row.membershipId))}/>
      {row.displayName}</label>)}
    </div>
-   <p className="text-sm">{noteSelection.length} selected</p>
+   <p className="text-sm leading-[22px]">{noteSelection.length} selected</p>
    <TpoStudentNoteEditor membershipIds={noteSelection} afterSave={()=>setNoteSelection([])}/>
   </Disclosure>
   <label className="flex min-h-11 min-w-0 flex-wrap items-center gap-3 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Sort visible roster page
@@ -247,7 +247,7 @@ export function TpoStudentsSpreadsheet({rows,programs,classes,afterCollege,after
   {active?<TpoStudentQuickPanel key={active.membershipId} student={active} rows={sortedRows}
     recordedOutcome={afterCollege[active.membershipId]?.outcome??null}
     onNavigate={open} onClose={()=>open(null)} />:null}
-  {selected&&!active?<p role="status" className="text-sm">
+  {selected&&!active?<p role="status" className="text-sm leading-[22px]">
     Selected student is not on this roster page. Clear the student panel selection or change filters.
     <Button variant="ghost" type="button" className="ml-2 underline text-link px-0" onClick={()=>open(null)}>Clear selection</Button>
   </p>:null}

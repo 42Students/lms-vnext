@@ -141,8 +141,8 @@ export function TpoBulkRoundResultRecorder({
   return (
     <section aria-label="Bulk stage round results" className="min-w-0 space-y-4 border-b border-border pb-4">
       <div>
-        <h2 className="text-base font-semibold text-foreground">Bulk stage round results</h2>
-        <p className="mt-1 text-sm text-body">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Bulk stage round results</h2>
+        <p className="mt-1 text-sm text-body leading-[22px]">
           Stage a common outcome for up to 25 applicants without an existing result.
           Each row is separately verified, transactionally stored and audited.
           Applying final results is a separate, deliberate action.
@@ -168,7 +168,7 @@ export function TpoBulkRoundResultRecorder({
                 className="min-h-11 w-full px-4 font-[650] text-primary-text sm:w-auto md:min-h-9">Clear selection</Button>
             </div>
             <Disclosure title="Paste application IDs from a spreadsheet" className="min-w-0 border-y border-border py-3">
-              <p className="mt-2 text-xs text-body">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
+              <p className="mt-2 text-xs text-body leading-[20px]">Paste exact application IDs or roll numbers, one per line or comma-separated. Unknown, repeated or ambiguous roll numbers are rejected.</p>
               <Textarea rows={3} value={pastedIds} onChange={e=>setPastedIds(e.target.value)} maxLength={2500}
                 className="mt-2 block min-h-24 w-full min-w-0 rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-sm"/>
               <Button variant="secondary" type="button" disabled={busy} className="mt-2 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border px-4 text-sm sm:w-auto md:min-h-9"
@@ -191,7 +191,7 @@ export function TpoBulkRoundResultRecorder({
                 </label>
               ))}
             </div>
-            {visible.length===0?<p role="status" className="py-3 text-sm text-muted-foreground">No unmarked learners match this search.</p>:null}
+            {visible.length===0?<p role="status" className="py-3 text-sm text-muted-foreground leading-[22px]">No unmarked learners match this search.</p>:null}
           </fieldset>
           <label className="block text-[length:var(--lms-font-sm)] font-semibold print:hidden leading-4 text-[13px] text-[var(--lms-neutral-400)]">
             Staged outcome
@@ -218,7 +218,7 @@ export function TpoBulkRoundResultRecorder({
                 className="mt-1 h-4 w-4 accent-primary"/>
               Stage Not cleared for every other unmarked applicant ({unselected.length})
             </label>
-            <p className="text-xs text-body">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
+            <p className="text-xs text-body leading-[20px]">Opt in explicitly. All affected learners receive an audited staged result, but nothing is published until Apply results. This bulk action is limited to 25 total applicants; for larger rosters use the reviewed import.</p>
           </fieldset>
           </details>
           {(outcome !== "PASS" || failUnselected) ? (

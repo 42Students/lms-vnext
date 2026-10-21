@@ -49,10 +49,10 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   {error?<InlineNotice tone="error" message={error}/>:null}
   {message?<InlineNotice tone="success" message={message}/>:null}
   {reschedules.length?<section className="space-y-3 border-b border-border pb-6">
-   <h2 className="font-semibold">Pending reschedule requests · {reschedules.length}</h2>
-   <p className="text-sm text-body">Move a learner to an available slot, or Keep the current booking and answer the request. Decisions and student notifications are recorded.</p>
+   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Pending reschedule requests · {reschedules.length}</h2>
+   <p className="text-sm text-body leading-[22px]">Move a learner to an available slot, or Keep the current booking and answer the request. Decisions and student notifications are recorded.</p>
    {reschedules.map(req=><div key={req.id} className="space-y-3 border-b border-border py-4">
-    <p className="min-w-0 break-words text-sm"><strong>{req.name??"Learner"}</strong> · {req.reason}</p>
+    <p className="min-w-0 break-words text-sm leading-[22px]"><strong>{req.name??"Learner"}</strong> · {req.reason}</p>
     <div className="flex flex-wrap gap-3">
      <Select value={requestTarget[req.id]??""} aria-label={"New slot for "+(req.name??"learner")}
       onChange={e=>setRequestTarget(p=>({...p,[req.id]:e.target.value}))}
@@ -76,9 +76,9 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
    </div>)}
   </section>:null}
   {recruiterProposals.length?<div className="min-w-0 space-y-3 border-y border-border py-4">
-   <h2 className="font-semibold">Recruiter-proposed interview slots</h2>
+   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Recruiter-proposed interview slots</h2>
    {recruiterProposals.map(p=><div key={p.id} className="grid min-w-0 gap-3 border-b border-border py-3 sm:grid-cols-2">
-    <p className="text-sm">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
+    <p className="text-sm leading-[22px]">{format(p.startsAt)} · {p.mode} · {p.panelLabel??"Recruiter panel"}</p>
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Venue or meeting link
      <Input value={venue[p.id]??p.meetingLocation??""} onChange={e=>setVenue(v=>({...v,[p.id]:e.target.value}))}
       className="min-h-11 w-full min-w-0 md:min-h-9"/>
@@ -94,8 +94,8 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   <details open={slots.length===0} className="group min-w-0 border-t border-border pt-4">
    <summary className="min-h-11 cursor-pointer py-3 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9">Interview day setup</summary>
   <div className="min-w-0 border-t border-border pt-4">
-   <h2 className="font-semibold text-foreground">Generate interview day</h2>
-   <p className="mt-1 text-sm text-body">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
+   <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Generate interview day</h2>
+   <p className="mt-1 text-sm text-body leading-[22px]">Create unassigned start-time slots in each room. Existing bookings stay unchanged; overlapping room times are refused.</p>
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 lg:grid-cols-3">
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Start time (IST)<Input type="datetime-local" required value={date} onChange={e=>setDate(e.target.value)}
       className="min-h-11 w-full min-w-0 md:min-h-9"/></label>
@@ -121,7 +121,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   </div>
   <details className="group min-w-0 border-t border-border pt-3">
    <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-2 text-sm font-semibold text-[var(--lms-link-text)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary [&::-webkit-details-marker]:hidden">Assign rooms by roll range <span aria-hidden="true" className="text-muted-foreground group-open:rotate-180">⌄</span></summary>
-   <p className="mt-1 text-sm text-body">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
+   <p className="mt-1 text-sm text-body leading-[22px]">Preview the affected roll range, then assign a room. Overlapping room bookings are skipped and reported.</p>
    <div className="mt-3 grid min-w-0 gap-3 sm:grid-cols-2 xl:grid-cols-3">
     <label className="grid gap-[6px] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">From roll<Input value={fromRoll} onChange={e=>setFromRoll(e.target.value)}
      className="min-h-11 md:min-h-9 "/></label>
@@ -131,7 +131,7 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
      className="min-h-11 md:min-h-9 "/></label>
    </div>
    {fromRoll&&toRoll&&fromRoll.localeCompare(toRoll,"en",{numeric:true})>0?<InlineNotice tone="error" message="The ending roll must be after the starting roll."/>:null}
-   {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm">
+   {fromRoll&&toRoll?<p role="status" className="mt-3 text-sm leading-[22px]">
     {roster.filter(r=>r.roll&&r.roll.localeCompare(fromRoll,"en",{numeric:true})>=0&&
      r.roll.localeCompare(toRoll,"en",{numeric:true})<=0&&taken.has(r.applicationId)).length} booked students in the requested roll range.
    </p>:null}
@@ -141,14 +141,14 @@ export function TpoInterviewSlotPlanner({jobId,roundId,slots,roster,recruiterPro
   </details>
   </details>
   <div className="min-w-0 border-t border-border pt-4">
-   <h2 className="font-semibold">Interview slots · {booked.length} booked · {free.length} available · {waiting.length} students unassigned</h2>
-   <p className="mt-1 text-sm text-body">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
+   <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Interview slots · {booked.length} booked · {free.length} available · {waiting.length} students unassigned</h2>
+   <p className="mt-1 text-sm text-body leading-[22px]">Booking, changing or cancelling a student slot sends a placement notification and records an audit event.</p>
    <div className="mt-3 min-w-0 divide-y divide-border">{slots.map(slot=>{
     const student=roster.find(r=>r.applicationId===slot.applicationId);
     return <article key={slot.id} className="min-w-0 space-y-2 py-4">
      <div className="flex min-w-0 flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
       <div><p className="font-semibold text-foreground">{format(slot.startsAt)} · {slot.room}</p>
-       <p className="text-sm text-body">{slot.status==="BOOKED"?(student?.name??"Assigned learner"):"Available"} · Until {format(slot.endsAt)}</p></div>
+       <p className="text-sm text-body leading-[22px]">{slot.status==="BOOKED"?(student?.name??"Assigned learner"):"Available"} · Until {format(slot.endsAt)}</p></div>
       {slot.status==="AVAILABLE"?<div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
        <Select aria-label="Select learner for slot" value={pick[slot.id]??""} onChange={e=>setPick(p=>({...p,[slot.id]:e.target.value}))}
         className="min-h-11 w-full min-w-0 sm:w-auto md:min-h-9 text-sm">

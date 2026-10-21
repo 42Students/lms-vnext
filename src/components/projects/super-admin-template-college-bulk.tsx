@@ -137,7 +137,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
     </>
    )}
    {pending&&progress ? (
-    <p role="status" aria-live="polite" className="text-xs leading-5 text-muted-foreground">
+    <p role="status" aria-live="polite" className="text-xs text-muted-foreground leading-[20px]">
      Updating {progress.done} of {progress.total} college assignments…
     </p>
    ) : null}
@@ -167,7 +167,7 @@ export function SuperAdminTemplateCollegeBulk({templateId,colleges,published}:{
       ))}
      </ul>
      {targets.length>5 ? (
-      <p className="m-0 text-xs text-muted-foreground">
+      <p className="m-0 text-xs text-muted-foreground leading-[20px]">
        And {targets.length-5} more.
       </p>
      ) : null}

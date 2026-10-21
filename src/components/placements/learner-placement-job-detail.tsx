@@ -102,8 +102,8 @@ export function LearnerPlacementJobDetail({
       {availability ? (
         <aside role="status" aria-label="Application availability"
           className="min-w-0 border-b border-[var(--lms-canvas-border)] py-4">
-          <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{availability.title}</h2>
-          <p className="mt-2 text-sm leading-6 text-body">{availability.detail}</p>
+          <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{availability.title}</h2>
+          <p className="mt-2 text-sm text-body leading-[22px]">{availability.detail}</p>
           {availability.kind!=="OPEN" && availability.kind!=="APPLIED" ? (
             <ul className="mt-3 list-disc space-y-1 pl-5 text-sm text-body" aria-label="Application blockers">
               {[...new Set(items.flatMap(row=>row.applicationBlockers??[]))].map(reason=>
@@ -133,20 +133,20 @@ export function LearnerPlacementJobDetail({
 
       <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5"
         aria-label="Registration and evidence requirements">
-        <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">Requirements &amp; preferences</h2>
-        <p className="mt-2 text-sm leading-6 text-body">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Requirements &amp; preferences</h2>
+        <p className="mt-2 text-sm text-body leading-[22px]">
           These are role-specific eligibility checks from your college placement data.
           Separate placement registration or consent status is not established by this checklist.
         </p>
         <ul className="mt-3 grid min-w-0 gap-x-4 gap-y-2 sm:grid-cols-2 lg:grid-cols-3">
           {requirements.map(role=>(
             <li key={role.id} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
-              <p className="break-words text-sm font-semibold text-foreground">{role.title}</p>
-              <p className="mt-2 text-xs text-body">
+              <p className="break-words text-sm font-semibold text-foreground leading-[22px]">{role.title}</p>
+              <p className="mt-2 text-xs text-body leading-[20px]">
                 {role.checked===0?"No detailed requirement checks available":
                  `${role.passed} met · ${role.missing} missing evidence · ${role.failed} not met`}
               </p>
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                 {role.actionable?"Application action currently available":
                  "Review the role status and any missing evidence below"}
               </p>
@@ -167,12 +167,12 @@ export function LearnerPlacementJobDetail({
 
       <div className="grid items-start gap-5 lg:grid-cols-[minmax(0,1.25fr)_minmax(0,1fr)]">
         <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5" aria-labelledby="about-drive">
-          <h2 id="about-drive" className="m-0 text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">About this opportunity</h2>
-          <p className="mt-4 whitespace-pre-wrap break-words text-sm leading-7 text-body">
+          <h2 id="about-drive" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">About this opportunity</h2>
+          <p className="mt-4 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
             {item.job.description || "No additional description was published for this drive."}
           </p>
           <h3 className="mt-6 text-base font-semibold text-foreground">Key dates</h3>
-          <p className="mt-2 text-sm text-body">Applications close: {learnerJobDeadlineLabel(item.job.applicationDeadline)}</p>
+          <p className="mt-2 text-sm text-body leading-[22px]">Applications close: {learnerJobDeadlineLabel(item.job.applicationDeadline)}</p>
           <h3 className="mt-6 text-base font-semibold text-foreground">Company & role details</h3>
           <dl className="mt-4 grid min-w-0 gap-4 min-[768px]:grid-cols-2">
             <div>
@@ -197,10 +197,10 @@ export function LearnerPlacementJobDetail({
         </section>
 
         <section className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5" aria-labelledby="eligibility-title">
-          <h2 id="eligibility-title" className="m-0 text-lg font-semibold text-foreground">
+          <h2 id="eligibility-title" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
             Eligibility breakdown
           </h2>
-          <p className="mt-2 text-sm leading-6 text-body">
+          <p className="mt-2 text-sm text-body leading-[22px]">
             Your college&apos;s published eligibility rules are checked separately for each role.
           </p>
           <div className="mt-4 flex flex-wrap gap-2">
@@ -213,7 +213,7 @@ export function LearnerPlacementJobDetail({
             ) : null}
           </div>
           {items.every((row) => row.eligibility.checks.length === 0) ? (
-            <p className="mt-4 rounded-lg bg-surface-subtle p-4 text-sm leading-6 text-body">
+            <p className="mt-4 rounded-lg bg-surface-subtle p-4 text-sm text-body leading-[22px]">
               {summary.appliedCount
                 ? "Your existing application is recorded. The individual eligibility evidence is not repeated after submission."
                 : "No individual eligibility checks were returned for these role options."}
@@ -234,18 +234,18 @@ export function LearnerPlacementJobDetail({
                                 check.status === "FAIL" ? "Does not meet rule" : "Evidence needed"}
                             </StatusBadge>
                           </div>
-                          <p className="m-0 text-xs leading-5 text-body">{check.detail}</p>
-                          <p className="m-0 text-xs text-muted-foreground">
+                          <p className="m-0 text-xs text-body leading-[20px]">{check.detail}</p>
+                          <p className="m-0 text-xs text-muted-foreground leading-[20px]">
                             Yours: {detailValue(check.actual)} · Required: {detailValue(check.required)}
                           </p>
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p className="mt-2 text-xs text-body">Detailed evidence unavailable for this role.</p>
+                    <p className="mt-2 text-xs text-body leading-[20px]">Detailed evidence unavailable for this role.</p>
                   )}
                   {row.eligibility.override ? (
-                    <p className="mt-3 text-xs text-body">
+                    <p className="mt-3 text-xs text-body leading-[20px]">
                       College decision: {humanize(row.eligibility.override.decision)} · {row.eligibility.override.reason}
                     </p>
                   ) : null}
@@ -254,7 +254,7 @@ export function LearnerPlacementJobDetail({
             </div>
           )}
           {failed.length || summary.missingCount ? (
-            <p className="mt-4 text-sm leading-6 text-body">
+            <p className="mt-4 text-sm text-body leading-[22px]">
               If your academic evidence is missing or incorrect, review your Learner profile
               or contact your placement team before the deadline.
             </p>
@@ -263,8 +263,8 @@ export function LearnerPlacementJobDetail({
       </div>
 
       <section aria-labelledby="drive-pay-title" className="min-w-0 border-b border-[var(--lms-canvas-border)] pb-5 pt-4 min-[768px]:pb-6 min-[768px]:pt-5">
-        <h2 id="drive-pay-title" className="text-lg font-semibold text-foreground">Pay</h2>
-        <p className="mt-1 text-sm text-body">Published compensation for each role. Missing amounts are not estimated.</p>
+        <h2 id="drive-pay-title" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Pay</h2>
+        <p className="mt-1 text-sm text-body leading-[22px]">Published compensation for each role. Missing amounts are not estimated.</p>
         <ul className="mt-4 divide-y divide-border">{items.map(row=>{
           const pay=learnerDrivePayFacts({...row.roleOption,stipendPerMonthInr:row.job.stipendPerMonthInr??null});
           return <li key={row.roleOption.id} className="border-t border-border pt-4">
@@ -283,10 +283,10 @@ export function LearnerPlacementJobDetail({
       <section id="job-role-options" className="scroll-mt-24 space-y-4" aria-labelledby="role-options-title">
         <div className="flex min-w-0 flex-wrap items-end justify-between gap-3">
           <div>
-            <h2 id="role-options-title" className="m-0 text-lg font-semibold text-foreground">
+            <h2 id="role-options-title" className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
               Roles and application status
             </h2>
-            <p className="mt-1 text-sm text-body">
+            <p className="mt-1 text-sm text-body leading-[22px]">
               Your current application is authoritative. A withdrawn, closed or ineligible role cannot be submitted here.
             </p>
           </div>

@@ -67,7 +67,7 @@ export function ApplicantNotesPanel({
 
   return (
     <section aria-labelledby="applicant-notes-title" className="space-y-3 border-b border-border pb-6">
-      <h2 id="applicant-notes-title" className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
+      <h2 id="applicant-notes-title" className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">
         Private notes
       </h2>
       <p className="text-xs text-body leading-[20px]">Visible only to {audience}. Notes cannot be edited or deleted; add a new note to correct one.</p>

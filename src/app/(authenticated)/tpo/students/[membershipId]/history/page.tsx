@@ -85,7 +85,7 @@ export default async function TpoLearnerPlacementHistoryPage({
         ))}
       </section>
       </Disclosure>
-      <p className="text-sm text-body">
+      <p className="text-sm text-body leading-[22px]">
         Membership status: {history.learner.membershipStatus}. Offer counts are historical
         versions, not necessarily distinct accepted placements. Joining is confirmed only
         when an accepted offer has a recorded JOINED outcome.
@@ -98,11 +98,11 @@ export default async function TpoLearnerPlacementHistoryPage({
             <article key={item.id} className="min-w-0 space-y-4 border-b border-border py-4">
               <div className="flex flex-wrap items-start justify-between gap-3">
                 <div>
-                  <h2 className="text-[16px] font-semibold leading-[26px] text-foreground min-[768px]:text-[18px] min-[768px]:leading-7 min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.jobTitle}</h2>
-                  <p className="mt-1 text-sm text-body">
+                  <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">{item.jobTitle}</h2>
+                  <p className="mt-1 text-sm text-body leading-[22px]">
                     {item.companyName} · {item.seasonName} · {item.roleTitle}
                   </p>
-                  {item.addedByCollege?<p className="mt-1 text-sm font-semibold">Added by the college</p>:null}
+                  {item.addedByCollege?<p className="mt-1 text-sm font-semibold leading-[22px]">Added by the college</p>:null}
                   {item.jobId?<Link href={"/tpo/placements/jobs/"+encodeURIComponent(item.jobId)}
                     className="lms-inline-link mt-2 inline-flex min-h-11 items-center font-semibold text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-9">Open drive</Link>:null}
                 </div>
@@ -110,7 +110,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   {item.applicationStatus}
                 </span>
               </div>
-              <p className="text-sm text-body">
+              <p className="text-sm text-body leading-[22px]">
                 Applied {dateFormat.format(new Date(item.submittedAt))} IST ·
                 Channel: {item.channel}
               </p>
@@ -120,7 +120,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   Application status history
                 </h3>
                 {item.applicationEvents.length === 0 ? (
-                  <p className="text-sm text-body">
+                  <p className="text-sm text-body leading-[22px]">
                     No separate application status events are recorded.
                   </p>
                 ) : (
@@ -141,7 +141,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                     Applied round results ({item.appliedRounds.length})
                   </h3>
                   {item.appliedRounds.length === 0 ? (
-                    <p className="text-sm text-body">No applied round outcomes recorded.</p>
+                    <p className="text-sm text-body leading-[22px]">No applied round outcomes recorded.</p>
                   ) : (
                     <ul className="space-y-2">
                       {item.appliedRounds.map((round) => (
@@ -153,7 +153,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                   )}
                   <Disclosure title={"All recorded round result versions ("+item.resultVersions.length+")"} className="mt-4 border-y border-border py-3">
                     {item.resultVersions.length === 0 ? (
-                      <p className="mt-2 text-sm text-body">
+                      <p className="mt-2 text-sm text-body leading-[22px]">
                         No staged, superseded or applied result versions are recorded.
                       </p>
                     ) : (
@@ -162,7 +162,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                           <li key={version.id} className="border-b border-border py-3">
                             {version.name} · version {version.version}:{" "}
                             <strong>{version.status}</strong> · {version.outcome}
-                            <p className="mt-1 text-xs text-muted-foreground">
+                            <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                               Recorded {dateFormat.format(new Date(version.submittedAt))} IST.
                               {version.status !== "APPLIED"
                                 ? " Not an applied final outcome."
@@ -180,7 +180,7 @@ export default async function TpoLearnerPlacementHistoryPage({
                     Offer history ({item.offers.length} version(s))
                   </h3>
                   {item.offers.length === 0 ? (
-                    <p className="text-sm text-body">No persisted offers recorded.</p>
+                    <p className="text-sm text-body leading-[22px]">No persisted offers recorded.</p>
                   ) : (
                     <ul className="space-y-2">
                       {item.offers.map((offer) => (
@@ -236,7 +236,7 @@ export default async function TpoLearnerPlacementHistoryPage({
         </div>
       </nav>
       <Disclosure title="History sources and limitations" className="min-w-0" contentClassName="pt-2">
-      <p className="text-xs leading-5 text-muted-foreground">
+      <p className="text-xs text-muted-foreground leading-[20px]">
         Source is registered in-app placement data, including archived historical drives.
         External offers, registration choices and background verification are not
         inferred from these records. STAGED/SUPERSEDED round results are audit

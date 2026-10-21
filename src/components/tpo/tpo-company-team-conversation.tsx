@@ -138,7 +138,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    className="min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
    <div className="min-w-0 flex-1">
-    <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Team · {companyName}</h2>
+    <h2 className="break-words font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Team · {companyName}</h2>
     <p className="mt-1 text-xs text-body leading-[20px]">
      Only your placement team sees this. Recruiters and students never do.
     </p>
