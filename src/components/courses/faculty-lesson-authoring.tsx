@@ -664,7 +664,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("ASSIGNMENT")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/assignments/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
             + Assignment · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("ASSIGNMENT")}>
             + Assignment
@@ -673,7 +673,7 @@ export function FacultyLessonAuthoring({
           {(!availableModes || availableModes.includes("QUIZ")) ? (
           deliveryId?<Link
             href={"/teacher/courses/"+encodeURIComponent(deliveryId)+"/quizzes/manage"}
-            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-[var(--lms-control-height)]">
+            className="inline-flex min-h-11 min-w-0 items-center justify-center break-words text-center rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-[650] text-primary-text transition-colors hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)] md:min-h-[var(--lms-control-height)]">
             + Quiz · Full builder
           </Link>:<Button size="md" variant="secondary" onClick={()=>setMode("QUIZ")}>
             + Quiz
