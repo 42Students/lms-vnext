@@ -182,3 +182,13 @@ Source: legacy listing-page-header.scss, old-lms-shell-spec.md, globals.css and 
 - `src/app/(authenticated)/hr/conversations/page.tsx` | instances H2/B0/T2/F1/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: filter gap 12/16px→8px ×1
 - `src/app/(authenticated)/hr/drives/[jobId]/interview-slots/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
 - `src/app/(authenticated)/hr/drives/[jobId]/messages/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: h1 30px/600/#172033=shared PageHeader; subtitle14px=14px; mobile title20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/new/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/new/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/drives/page.tsx` | instances H3/B0/T1/F1/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: filter spacing 1×12/16→8px
+- `src/app/(authenticated)/hr/drives/proposals/page.tsx` | instances H1/B0/T0/F1/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: filter spacing 1×12/16→8px
+- `src/app/(authenticated)/hr/drives/recorded-outside/page.tsx` | instances H2/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/home/page.tsx` | instances H3/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
+- `src/app/(authenticated)/hr/messages/error.tsx` | instances H1/B0/T0/F0/h10 | spec/code: title desktop30px/600/#172033=PageHeader; subtitle14px=shared; mobile20px=20px | fixes: none
