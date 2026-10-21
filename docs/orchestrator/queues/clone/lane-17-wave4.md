@@ -24,7 +24,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-1/W3_src_components_projects_class-team-workspace-creator.tsx.md` (edit src/components/projects/class-team-workspace-creator.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_NEW_docs_audit_gap2_lane-17_public-job-response-dto.md.md` (new; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_recruiters_leadId_page.tsx.md` (edit src/app/(authenticated)/tpo/recruiters/[leadId]/page.tsx; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_recruiters_page.tsx.md` (edit src/app/(authenticated)/tpo/recruiters/page.tsx; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_app_authenticated_tpo_recruiters_page.tsx.md` (edit src/app/(authenticated)/tpo/recruiters/page.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-12/W2_src_components_tpo_tpo-outcome-labels-editor.tsx.md` (edit src/components/tpo/tpo-outcome-labels-editor.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave3/packets/lane-8/W3_src_components_academics_college-section-lifecycle-action.tsx.md` (edit src/components/academics/college-section-lifecycle-action.tsx; 1 findings; best P1)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-4/W2_src_app_api_placements_recruiter_access_grantId_route.ts.md` (edit src/app/api/placements/recruiter/access/[grantId]/route.ts; 1 findings; best P2)
