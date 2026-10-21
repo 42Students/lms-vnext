@@ -28,7 +28,7 @@ const instant = z.union([
   z.iso.datetime({ offset: true }),
   z.iso.datetime({ local: true }),
 ]).transform((value) => new Date(
-  /(?:Z|[+-]\\d{2}:\\d{2})$/i.test(value) ? value : value + "+05:30",
+  /(?:Z|[+-][0-9]{2}:[0-9]{2})$/i.test(value) ? value : value + "+05:30",
 ));
 
 // Announcement text is persisted as plain text and rendered escaped, not as
