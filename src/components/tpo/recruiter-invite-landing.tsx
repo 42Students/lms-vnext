@@ -140,7 +140,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if(state === "load_error") {
     return shell(<div className="space-y-4 text-center">
       <PageHeader title={RECRUITER_INVITE_LOAD_ERROR_HEADING} />
-      <p className="text-sm text-muted-foreground">Check your connection and try again. Your invitation has not been consumed.</p>
+      <p className="text-sm text-muted-foreground leading-[22px]">Check your connection and try again. Your invitation has not been consumed.</p>
       <Button type="button" className="min-h-11 w-full md:min-h-9" onClick={()=>{
         setState("loading");setRetrySequence(i=>i+1);
       }}>Retry</Button>
@@ -151,7 +151,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     return shell(
       <div className="text-center">
         <PageHeader title="This link is no longer valid" />
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
           It may have expired or already been used. Ask the placement cell to send you a new one.
         </p>
       </div>,
@@ -161,7 +161,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   if(state==="joined"){
     return shell(<div className="text-center space-y-3">
       <PageHeader title={"You now have access to "+invite.collegeName} />
-      <p className="text-sm text-muted-foreground">Sign in with your work email, {invite.contactEmail}. We&apos;ll email you a code each time.</p>
+      <p className="text-sm text-muted-foreground leading-[22px]">Sign in with your work email, {invite.contactEmail}. We&apos;ll email you a code each time.</p>
       <Link className={actionLink} href="/login">Sign in</Link>
     </div>);
   }
@@ -169,7 +169,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
     return shell(
       <div className="text-center">
         <PageHeader title="Thank you, we have told the placement cell" />
-        <p className="mt-2 text-sm text-muted-foreground">
+        <p className="mt-2 text-sm text-muted-foreground leading-[22px]">
           You will not be contacted about this again.
         </p>
       </div>,
@@ -179,7 +179,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
   return shell(
     <>
       <PageHeader title={invite.collegeName+" would like you to hire from their students"} />
-      <p className="mt-3 text-sm leading-6 text-muted-foreground">
+      <p className="mt-3 text-sm text-muted-foreground leading-[22px]">
         {invite.companyName ? "You are joining as " + invite.companyName + ". " : ""}
         You can request placement drives and review the students who apply.
         Contact details are shared only as the placement cell allows.
@@ -231,7 +231,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
             <Button className="min-h-11 w-full md:min-h-9" variant="secondary" type="button" disabled={busy} onClick={()=>void sendCode()}>Send a new code</Button>
           </>
         )}
-        <p className="text-xs text-muted-foreground">
+        <p className="text-xs text-muted-foreground leading-[20px]">
           This proves the email is yours.
         </p>
       </div>
@@ -247,7 +247,7 @@ export function RecruiterInviteLanding({ token }: { token: string }) {
         </Button>
       </div>
 
-      <p className="mt-5 text-center text-xs text-muted-foreground">
+      <p className="mt-5 text-center text-xs text-muted-foreground leading-[20px]">
         Already have an account? <Link className="lms-inline-link inline-flex min-h-11 items-center text-link underline md:min-h-9 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary" href="/login">Sign in</Link>
       </p>
     </>,

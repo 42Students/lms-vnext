@@ -165,13 +165,13 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
          description="Review every imported row before creating any recruiter leads.">
           <section className="min-w-0 space-y-4">
             <div className="min-w-0">
-                <p id="recruiter-import-help" className="text-sm text-body">
+                <p id="recruiter-import-help" className="text-sm text-body leading-[22px]">
                   Upload CSV or Excel (.xlsx), with the required headings:
                   name, email, phone, companyName, designation, source.
                   Maximum {TPO_LEAD_CSV_MAX_ROWS} data rows. Column order may vary; company is also accepted for companyName. Name and one contact method are required.
                 </p>
             </div>
-            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
+            <details className="border-b border-border pb-3 text-sm text-body"><summary className="cursor-pointer py-2 font-semibold max-[767px]:flex max-[767px]:min-h-11 max-[767px]:items-center">Import steps</summary><p aria-label="Recruiter import steps" className="text-xs text-muted-foreground leading-[20px]">Choose a CSV or Excel file → Preview new, duplicate and invalid contacts → Review the import → Confirm and download results.</p></details>
             <a
               download="recruiter-leads-template.csv"
               href={"data:text/csv;charset=utf-8," + encodeURIComponent(template)}
@@ -182,15 +182,15 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
             <FileUpload ref={fileRef} className="print:hidden [&_input]:min-h-11 md:[&_input]:min-h-9" label="Choose CSV or Excel file" maxBytes={10_000_000}
               accept=".csv,.xlsx,text/csv,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
               disabled={busy} onFiles={files => void chooseFile(files?.[0])}/>
-            {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+            {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
             {preview ? (
               <div className="space-y-3">
-                <p className="text-sm text-body" role="status">
+                <p className="text-sm text-body leading-[22px]" role="status">
                   {preview.total} rows: {preview.valid} valid, {preview.invalid} invalid.
                   {previewStatus==="checking"?" Checking for existing recruiters…":previewStatus==="ready"?" Existing contacts checked in this college.":" Existing recruiter check is required before import."}
                   {preview.ignoredHeaders.length? " Ignored columns: "+preview.ignoredHeaders.join(", ")+".":""}
                 </p>
-                <p className="text-sm text-body" role="status">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
+                <p className="text-sm text-body leading-[22px]" role="status">New: {newRows} to import · Already recruiters: {existing.length} · To fix: {preview.invalid}. Uncheck any valid row to Skip row.</p>
                 <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap print:hidden">
                   <Button className="w-full sm:w-auto min-h-11 md:min-h-9" type="button" variant="secondary" disabled={busy||Boolean(result)}
                     onClick={()=>{setReviewReady(false);
@@ -226,7 +226,7 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                         onChange={event=>{setReviewReady(false);setSkipRows(previous=>event.target.checked?previous.filter(row=>row!==item.row):[...previous,item.row]);}}/> Include</label>},
                     ]}/>
                 </ScrollCue>
-                {reviewReady&&!result ? <p role="status" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body">
+                {reviewReady&&!result ? <p role="status" className="border-l-[3px] border-warning-border bg-warning-subtle px-4 py-3 text-sm text-body leading-[22px]">
                   Import {newRows} recruiter lead row(s) from {fileName}. {preview.invalid} invalid row(s) will be skipped. Existing contacts will be reported as duplicates. Each created lead receives an audit entry.
                 </p>:null}
                 {!result ? (
@@ -264,9 +264,9 @@ export function RecruiterLeadCsvImport({ onImported }: { onImported: () => void 
                   Copy rows not imported
                 </Button>
                 </div>
-                {copyNotice?<p role="status" aria-live="polite" className="text-xs text-body">{copyNotice}</p>:null}
-                <h3 className="font-semibold text-foreground">Import results</h3>
-                <p className="text-sm text-body">
+                {copyNotice?<p role="status" aria-live="polite" className="text-xs text-body leading-[20px]">{copyNotice}</p>:null}
+                <h3 className="font-semibold text-[var(--lms-heading)]">Import results</h3>
+                <p className="text-sm text-body leading-[22px]">
                   {result.counts.created} created, {result.counts.duplicate} duplicate,
                   {" "}{result.counts.invalid} invalid, {result.counts.skipped??0} skipped. {result.counts.total} rows processed.
                 </p>

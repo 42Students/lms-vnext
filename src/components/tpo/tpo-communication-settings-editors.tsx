@@ -34,8 +34,8 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
   }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-4 border-t border-border pt-5">
-  <h2 className="text-lg font-semibold">SMS</h2>
-  <p className="font-semibold text-sm">Always sent (email and SMS), never counted against the limit</p>
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">SMS</h2>
+  <p className="font-semibold text-sm leading-[22px]">Always sent (email and SMS), never counted against the limit</p>
   <div className="flex flex-wrap gap-2">{[
    "Round scheduled or changed","Offer released, expiring, expired or withdrawn",
    "Drive cancelled","Application deadline today","Debarred or marked absent",
@@ -45,8 +45,8 @@ export function TpoSmsCapEditor({initial,version}: {initial:number;version:strin
     onChange={event=>setValue(event.target.value===""?-1:Number(event.target.value))}
     className="mt-2 min-h-11 w-40 min-[768px]:min-h-9 print:hidden"/>
   </label>
-  <p className="hidden text-sm print:block">Optional SMS monthly limit: {value}</p>
-  <p className="text-xs text-muted-foreground">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
+  <p className="hidden text-sm print:block leading-[22px]">Optional SMS monthly limit: {value}</p>
+  <p className="text-xs text-muted-foreground leading-[20px]">SMS used this month: unavailable until delivery usage is connected. Saving a limit does not enable SMS delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value||value<0||value>100000||!Number.isInteger(value)}
    className="min-h-11 min-[768px]:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
@@ -73,19 +73,19 @@ export function TpoEmailSignatureEditor({initial,version}:{initial:string;versio
   }catch(e){setError(e instanceof Error?e.message:"Settings were not saved.");}finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-4 border-t border-border pt-5">
-  <h2 className="hidden font-semibold print:block">Email signature preview</h2>
+  <h2 className="hidden font-semibold print:block text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Email signature preview</h2>
   <label className="block text-[13px] font-semibold print:hidden leading-4 text-[var(--lms-neutral-400)]">Email signature
    <Textarea rows={3} maxLength={300} value={value} disabled={busy}
     placeholder={"Training and Placement Cell\nYour college's name"}
     onChange={event=>setValue(event.target.value)}
     className="mt-2 w-full"/>
   </label>
-  <p className="text-right text-xs text-muted-foreground print:hidden">{value.length}/300</p>
+  <p className="text-right text-xs text-muted-foreground print:hidden leading-[20px]">{value.length}/300</p>
   <div className="border-y border-dashed border-border py-4">
-   <p className="mb-2 text-sm text-muted-foreground">How the end of an invite looks</p>
-   <p className="whitespace-pre-line text-sm text-body">{value.trim()||"No signature yet"}</p>
+   <p className="mb-2 text-sm text-muted-foreground leading-[22px]">How the end of an invite looks</p>
+   <p className="whitespace-pre-line text-sm text-body leading-[22px]">{value.trim()||"No signature yet"}</p>
   </div>
-  <p className="text-xs text-muted-foreground print:hidden">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
+  <p className="text-xs text-muted-foreground print:hidden leading-[20px]">Saved signature is available for future invite and placement email templates. Sending requires configured email delivery.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===value}
    className="min-h-11 w-full min-[768px]:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}
@@ -115,7 +115,7 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
   finally{inFlight.current=false;setBusy(false);}
  }
  return <section className="space-y-3 border-t border-border pt-5">
-  <h2 className="font-semibold">Recruiter access lasts</h2>
+  <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Recruiter access lasts</h2>
   <label className="block text-[13px] print:hidden font-semibold leading-4 text-[var(--lms-neutral-400)]">Access granted to a recruiter lasts
    <Select value={[3,6,12,24].includes(months)?months:6}
     onChange={event=>setMonths(Number(event.target.value))} disabled={busy}
@@ -123,8 +123,8 @@ export function TpoRecruiterDurationEditor({initial,version}:{initial:number;ver
     {[3,6,12,24].map(value=><option key={value} value={value}>{value} months</option>)}
    </Select>
   </label>
-  <p className="hidden text-sm print:block">New recruiter access duration: {months} months</p>
-  <p className="text-xs text-muted-foreground">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
+  <p className="hidden text-sm print:block leading-[22px]">New recruiter access duration: {months} months</p>
+  <p className="text-xs text-muted-foreground leading-[20px]">This duration is applied to new recruiter grants. Existing access expires on its recorded date. No end date is unavailable until a corresponding grant-expiry policy is approved.</p>
   <Button type="button" onClick={()=>void save()} disabled={busy||saved===months}
    className="min-h-11 w-full sm:w-auto min-[768px]:min-h-9 print:hidden">Save</Button>
   {error?<InlineNotice tone="error" message={error}/>:null}

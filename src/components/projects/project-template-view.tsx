@@ -38,7 +38,7 @@ function list(
 ) {
   if (!value?.length) {
     return (
-      <p className="m-0 text-sm text-muted-foreground">
+      <p className="m-0 text-sm text-muted-foreground leading-[22px]">
         None recorded.
       </p>
     );
@@ -67,22 +67,22 @@ export function ProjectTemplateView({
   return (
     <div className="min-w-0 max-w-full space-y-6">
       <section className="min-w-0 border-b border-border pb-4">
-        <h2 className="m-0 text-lg font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           Overview
         </h2>
-        <p className="mt-2 whitespace-pre-wrap break-words text-sm leading-6 text-body">
+        <p className="mt-2 whitespace-pre-wrap break-words text-sm text-body leading-[22px]">
           {data.overview?.goal?.trim() ||
             "No project goal recorded."}
         </p>
         <div className="mt-4 grid min-w-0 gap-4 md:grid-cols-2">
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-foreground">
+            <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">
               Deliverables
             </h3>
             {list(data.overview?.deliverables)}
           </div>
           <div>
-            <h3 className="mb-2 text-sm font-semibold text-foreground">
+            <h3 className="mb-2 text-sm font-semibold text-[var(--lms-heading)]">
               Definition of done
             </h3>
             {list(data.overview?.definitionOfDone)}
@@ -130,7 +130,7 @@ function TemplateRows({
   return (
     <section className="border-b border-border pb-[16px]">
       <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
-        <h2 className="m-0 text-base font-semibold text-foreground">
+        <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">
           {title}
         </h2>
         <Badge tone="neutral">
@@ -138,7 +138,7 @@ function TemplateRows({
         </Badge>
       </div>
       {!rows?.length ? (
-        <p className="mb-0 mt-3 text-sm text-muted-foreground">
+        <p className="mb-0 mt-3 text-sm text-muted-foreground leading-[22px]">
           None configured.
         </p>
       ) : (
@@ -148,18 +148,18 @@ function TemplateRows({
               key={row.key ?? index}
               className="min-w-0 py-[var(--lms-space-3)]"
             >
-              <p className="m-0 break-words text-sm font-semibold text-foreground">
+              <p className="m-0 break-words text-sm font-semibold text-foreground leading-[22px]">
                 {row.title?.trim() ||
                   row.key?.trim() ||
                   "Untitled"}
               </p>
               {row.description ? (
-                <p className="mt-1 break-words text-xs leading-5 text-body">
+                <p className="mt-1 break-words text-xs text-body leading-[20px]">
                   {row.description}
                 </p>
               ) : null}
               {row.priority ? (
-                <p className="mb-0 mt-2 break-words text-xs text-muted-foreground">
+                <p className="mb-0 mt-2 break-words text-xs text-muted-foreground leading-[20px]">
                   Priority: {row.priority}
                 </p>
               ) : null}

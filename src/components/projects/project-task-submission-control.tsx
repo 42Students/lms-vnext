@@ -139,7 +139,7 @@ export function ProjectTaskSubmissionControl({
           {error ? (
             <p
               role="alert"
-              className="m-0 text-sm font-semibold text-error"
+              className="m-0 text-sm font-semibold text-error leading-[22px]"
             >
               {error}
             </p>

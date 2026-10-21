@@ -157,10 +157,10 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     }
   }
   return <div className="min-w-0 space-y-4 md:space-y-5">
-    <p className="text-sm text-body">Choose one team, split a class into teams, or give each learner a workspace.</p>
-    {mode==="TEAMS" ? <p className="border-l-2 border-border pl-3 text-sm text-body">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
-    {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body">{emptyMessages.classes}</p>:null}
-    {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body">{emptyMessages.templates}</p>:null}
+    <p className="text-sm text-body leading-[22px]">Choose one team, split a class into teams, or give each learner a workspace.</p>
+    {mode==="TEAMS" ? <p className="border-l-2 border-border pl-3 text-sm text-body leading-[22px]">Pick a class and a team size, preview the teams, move anyone between teams, then create. Each team gets its own workspace named after the title (“Title - Team 1”, “Title - Team 2”…), with the same template and mentor.</p> : null}
+    {emptyMessages.classes?<p role="status" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.classes}</p>:null}
+    {emptyMessages.templates?<p role="alert" className="border-b border-border py-3 text-sm text-body leading-[22px]">{emptyMessages.templates}</p>:null}
     <div className="grid min-w-0 grid-cols-1 gap-3 md:grid-cols-2">
       <label className="block space-y-1 text-sm font-medium">Class
         <Select value={classId} onChange={e=>setClassId(e.target.value)} disabled={loading||pending}>
@@ -205,12 +205,12 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
     {classId?<div className="flex min-w-0 flex-col items-start gap-2 sm:flex-row sm:flex-wrap sm:items-center">
       <Button variant="secondary" className="min-h-11 w-full sm:min-h-9 sm:w-auto" disabled={!canRefreshClassTeamRoster(classId,rosterLoading,pending)}
         onClick={()=>setRosterRefreshKey(value=>value+1)}>Refresh class roster</Button>
-      <p className="text-xs text-muted-foreground">Refresh after enrollment changes or a stale preview before retrying creation.</p>
+      <p className="text-xs text-muted-foreground leading-[20px]">Refresh after enrollment changes or a stale preview before retrying creation.</p>
     </div>:null}
     {rosterLoading?<p role="status">Loading current class roster…</p>:null}
-    {roster?<p className="text-sm text-muted-foreground">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
+    {roster?<p className="text-sm text-muted-foreground leading-[22px]">{roster.className} · {roster.members.length} active learners · {groups.length} {mode==="TEAMS"?"teams":"group"}</p>:null}
     {mode==="INDIVIDUAL"&&currentPreflight?<section aria-label="Before creating: one workspace per student" className="border-b border-border pb-5 text-sm">
-      <h2 className="font-semibold">Before creating: one workspace per student</h2>
+      <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Before creating: one workspace per student</h2>
       <p>{currentPreflight.toCreate} to create · {currentPreflight.alreadyCovered} already covered · {currentPreflight.duplicates} duplicates · {currentPreflight.eligible} eligible</p>
       <div className="max-h-72 min-w-0 overflow-y-auto overscroll-contain focus-visible:outline-2 focus-visible:outline-[var(--lms-teal-deep)]" role="region" aria-label="Learner creation preflight details" tabIndex={0}>
         <DataTable
@@ -228,11 +228,11 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
           empty={<EmptyState title="No eligible learners" description="No eligible learners in this preview." />}
         />
       </div>
-      <p className="text-xs text-muted-foreground">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
+      <p className="text-xs text-muted-foreground leading-[20px]">The server will recheck class enrollment, duplicates and existing workspaces before it creates anything. Already covered learners are skipped.</p>
     </section>:null}
     {groups.length>0?<div className="grid min-w-0 grid-cols-1 gap-3 xl:grid-cols-2" aria-label="Adjustable team preview">
       {groups.map((team,index)=><section key={index} className="min-w-0 border-b border-[var(--lms-canvas-border)] py-3">
-        <h2 className="font-semibold">{team.name} · {team.membershipIds.length}</h2>
+        <h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">{team.name} · {team.membershipIds.length}</h2>
         <ul className="mt-2 space-y-2">{team.membershipIds.map(id=>{
           const learner=names.get(id);
           return <li key={id} className="flex min-w-0 flex-col gap-2 border-t border-border py-2 text-sm md:flex-row md:flex-wrap md:items-center">
@@ -260,13 +260,13 @@ export function ClassTeamWorkspaceCreator({collegeId,basePath,templates,initialT
         })}</ul>
       </section>)}
     </div>:null}
-    {!balanced&&groups.length>0?<p role="alert" className="text-sm text-error">Teams must have sizes differing by at most one.</p>:null}
-    {error?<p role="alert" className="text-sm text-error">{error}</p>:null}
-    {notice?<p role="status" className="text-sm">{notice}</p>:null}
+    {!balanced&&groups.length>0?<p role="alert" className="text-sm text-error leading-[22px]">Teams must have sizes differing by at most one.</p>:null}
+    {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
+    {notice?<p role="status" className="text-sm leading-[22px]">{notice}</p>:null}
     {outcome&&mode==="INDIVIDUAL"?<section className="space-y-2 border-b border-border pb-5">
       <h3 className="font-semibold">Latest cohort creation outcome</h3>
-      <p className="text-sm">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
-      <p role="status" className="text-sm">{outcome.created.length===0
+      <p className="text-sm leading-[22px]">{outcome.created.length} created · {outcome.alreadyCovered} already covered</p>
+      <p role="status" className="text-sm leading-[22px]">{outcome.created.length===0
         ? "No workspaces were created — the selected class may have no active learners."
         : outcome.created.length<outcome.requested-outcome.alreadyCovered
           ? outcome.created.length+" workspace(s) created; "+(outcome.requested-outcome.alreadyCovered-outcome.created.length)+" student(s) failed. Review or export the report below before retrying."

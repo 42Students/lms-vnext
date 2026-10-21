@@ -104,14 +104,14 @@ type CompanySummary = {
 /** The company tab is a distinct authorized sheet, not the global company directory. */
 const EngageCompanyTpoGrid=dynamic<TpoSpreadsheetGridProps<CompanySummary>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<CompanySummary>),
- {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground">Loading company contacts…</p>},
+ {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground leading-[22px]">Loading company contacts…</p>},
 );
 
 type Phase = "loading" | "ready" | "error" | "migration-pending";
 /** Quartz table is browser-only; all rows remain college-scoped page data. */
 const RecruiterTpoGrid=dynamic<TpoSpreadsheetGridProps<RosterGridRow>>(
  ()=>import("./grid/tpo-grid").then(module=>module.TpoGrid<RosterGridRow>),
- {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground">Loading recruiter spreadsheet…</p>},
+ {ssr:false,loading:()=> <p role="status" className="py-4 text-sm text-muted-foreground leading-[22px]">Loading recruiter spreadsheet…</p>},
 );
 
 type NewLead = {
@@ -692,7 +692,7 @@ export function RecruiterLeadsWorkspace({
         {companiesError} Showing the last company list we loaded.
         <Button variant="secondary" type="button" className={buttonStyle+" ml-2"} onClick={()=>void loadCompanies()}>Retry companies</Button>
       </div>:null}
-      {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm">{actionToast}</p>:null}
+      {actionToast?<p role="status" className="border-l-2 border-primary bg-primary-subtle px-3 py-3 text-sm leading-[22px]">{actionToast}</p>:null}
       {phase !== "ready" && view!=="companies" ? (
         <div role={phase === "loading" ? "status" : "alert"}
           className="border-l-2 border-warning bg-warning-subtle px-4 py-3">
@@ -722,12 +722,12 @@ export function RecruiterLeadsWorkspace({
                 Unassigned ({needCounts.unassigned})</FilterChip>:null}
             </div>:null}
             {needsExpanded&&!rows.some(row=>row.chips?.some(chip=>["OVERDUE","NO_NEXT_STEP","QUIET"].includes(chip)))&&
-             needCounts.unassigned===0?<p role="status" className="text-sm">Nothing right now.</p>:null}
+             needCounts.unassigned===0?<p role="status" className="text-sm leading-[22px]">Nothing right now.</p>:null}
             <Link className="lms-inline-link inline-flex min-h-11 items-center text-sm text-link underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary md:min-h-9"
               href="/tpo/settings/recruiters">
               {rows.filter(row=>Boolean(row.recruiterUserId)).length} recruiters with access
             </Link>
-            {!needsExpanded?<p className="text-xs text-muted-foreground">Show needs doing to review outreach priorities.</p>:null}
+            {!needsExpanded?<p className="text-xs text-muted-foreground leading-[20px]">Show needs doing to review outreach priorities.</p>:null}
           </section>
           <div className="grid min-w-0 gap-3 border-b border-border py-4 sm:grid-cols-[minmax(0,1fr)_minmax(10rem,auto)]">
             <label className="min-w-48 flex-1 text-sm">
@@ -874,12 +874,12 @@ export function RecruiterLeadsWorkspace({
               }}>Clear filters</Button>
             </div>:null}
           </div>
-          <p className="text-sm text-muted-foreground" aria-live="polite">
+          <p className="text-sm text-muted-foreground leading-[22px]" aria-live="polite">
             {visible.length} of {rows.length} in this view
           </p>
           {freshInvite ? (
             <section className="min-w-0 border-l-2 border-warning bg-warning-subtle px-3 py-3" aria-label="Fresh recruiter invite link">
-              <p className="text-sm text-body">Copy this link now. It is shown only once. No email has been sent.</p>
+              <p className="text-sm text-body leading-[22px]">Copy this link now. It is shown only once. No email has been sent.</p>
               <div className="mt-2 flex flex-wrap gap-2">
                 <Input readOnly aria-label="Invite link" value={freshInvite.url}
                   onFocus={event=>event.currentTarget.select()}
@@ -901,7 +901,7 @@ export function RecruiterLeadsWorkspace({
                 <Button variant="secondary" type="button" className={buttonStyle} disabled={!visible.length} onClick={()=>void copyRows()}>Copy rows</Button>
                 {selectedIds.length>0?<Button variant="secondary" type="button" className={buttonStyle}
                   onClick={()=>setSelectedIds([])}>Clear selection</Button>:null}
-                {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
+                {exportFeedback?<p role="status" className="text-sm text-body leading-[22px]">{exportFeedback}</p>:null}
               </div>:null}
               {view==="board"?<RecruiterSavedViewControls columns={visibleColumns}/>:null}
               {visible.some(row=>selectedIds.includes(row.id))?<Button variant="secondary" type="button" className={buttonStyle}
@@ -909,7 +909,7 @@ export function RecruiterLeadsWorkspace({
                 onClick={()=>window.location.assign("/tpo/recruiters/campaigns/new?selected="+encodeURIComponent(visible.filter(row=>selectedIds.includes(row.id)).map(row=>row.id).join(",")))}>
                 Send an email to selected ({visible.filter(row=>selectedIds.includes(row.id)).length})
               </Button>:null}
-              {visible.filter(row=>selectedIds.includes(row.id)).length>100?<p role="alert" className="text-sm text-warning">Select at most 100 recruiters for an email campaign. No one has been contacted.</p>:null}
+              {visible.filter(row=>selectedIds.includes(row.id)).length>100?<p role="alert" className="text-sm text-warning leading-[22px]">Select at most 100 recruiters for an email campaign. No one has been contacted.</p>:null}
               <RecruiterBulkInviteControls collegeId={collegeId}
                 rows={visible.filter(row=>selectedIds.includes(row.id))} onUpdated={()=>void load()}/>
               <RecruiterBulkStageControls rows={visible} onUpdated={() => void load()} />
@@ -963,15 +963,15 @@ export function RecruiterLeadsWorkspace({
                   setCompanySearch("");setCompanyContacts("ALL");setCompanyHistory("ALL");setCompanyAliases(false);setCompanyCommunicationFilter("ALL");
                 }}>Clear company filters</Button>
               </div>
-              <p role="status" className="text-xs text-body">{visibleCompanies.length} of {companies.length} companies</p>
-              {!communicationReady?<p role="status" className="text-xs text-muted-foreground">Communication changes are unavailable until company status storage is registered.</p>:null}
-              {communicationError?<p role="alert" className="text-sm text-warning">{communicationError}</p>:null}
+              <p role="status" className="text-xs text-body leading-[20px]">{visibleCompanies.length} of {companies.length} companies</p>
+              {!communicationReady?<p role="status" className="text-xs text-muted-foreground leading-[20px]">Communication changes are unavailable until company status storage is registered.</p>:null}
+              {communicationError?<p role="alert" className="text-sm text-warning leading-[22px]">{communicationError}</p>:null}
               {companiesPhase !== "ready" ? (
-                <p role="alert" className="text-sm text-body">
+                <p role="alert" className="text-sm text-body leading-[22px]">
                   {companiesPhase==="loading"?"Loading companies…":companiesError}
                 </p>
               ) : visibleCompanies.length===0 ? (
-                <p className="border-y border-border py-6 text-sm">
+                <p className="border-y border-border py-6 text-sm leading-[22px]">
                   No companies match the current filters.
                 </p>
               ) : (
@@ -1024,7 +1024,7 @@ export function RecruiterLeadsWorkspace({
               onExportXlsx={selected=>exportRows(selected?"selected":"shown","xlsx")}
               onCopyRows={()=>void copyRows()}>
               {visibleKeys=><>
-               {exportFeedback?<p role="status" className="text-sm text-body">{exportFeedback}</p>:null}
+               {exportFeedback?<p role="status" className="text-sm text-body leading-[22px]">{exportFeedback}</p>:null}
               <RecruiterRosterDisplayControls columns={visibleColumns} onColumns={changeVisibleColumns}
                 sort={rosterSort} onSort={changeRosterSort} ascending={sortAscending} onAscending={changeSortAscending}
                  showColumns={false}/>
@@ -1069,7 +1069,7 @@ export function RecruiterLeadsWorkspace({
                     event.preventDefault();
                     void moveBoardLeadToContacted(draggedBoardId);
                   }}>
-                  <p className="mb-2 text-xs text-muted-foreground">
+                  <p className="mb-2 text-xs text-muted-foreground leading-[20px]">
                     {column==="NEW"?"New contacts are moved when outreach is recorded":
                      column==="CONTACTED"?"Manually move or log a follow-up":
                      column==="NOT_NOW"?"Requires a recorded reason":
@@ -1096,7 +1096,7 @@ export function RecruiterLeadsWorkspace({
                            {lead.ownerName?<span className="text-xs text-muted-foreground">Owner: {lead.ownerName}</span>:null}
                          </div>
                          <Dropdown mobileSheet align="end" label={"Actions for "+lead.name} trigger="Move to… / Actions" className="mt-2 max-w-full text-xs">
-                           <p className="mt-1 text-xs leading-5 text-muted-foreground">
+                           <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                              Invited, Joined, Drive planned and Recruited update automatically.
                              Not now requires a reason.
                            </p>
@@ -1138,7 +1138,7 @@ export function RecruiterLeadsWorkspace({
               value={form.phone} onChange={e => field("phone", e.target.value)} /></label>
             <Button variant="secondary" type="button" className={buttonStyle} disabled={checking || !(form.email || form.phone)}
               onClick={() => void checkContact()}>{checking ? "Checking…" : "Check for existing contact"}</Button>
-            {duplicate ? <p role="alert" className="text-sm text-foreground">
+            {duplicate ? <p role="alert" className="text-sm text-foreground leading-[22px]">
               Contact already exists: <Link className="underline max-[767px]:inline-flex max-[767px]:min-h-11 max-[767px]:items-center" href={"/tpo/recruiters/" + duplicate.id}>{duplicate.name}</Link>.
             </p> : null}
             <label className="block min-w-0 text-[13px] font-semibold leading-4">Company *<Input className={inputStyle + " mt-1.5 min-w-0"} required maxLength={150}
@@ -1182,7 +1182,7 @@ export function RecruiterLeadsWorkspace({
                 Edit details
               </Button>
             </div>:null}
-            {saveError && <p role="alert" className="break-words text-sm text-error">{saveError}</p>}
+            {saveError && <p role="alert" className="break-words text-sm text-error leading-[22px]">{saveError}</p>}
             <div className="flex flex-col-reverse gap-2 border-t border-border pt-4 sm:flex-row sm:justify-end">
               <Button variant="secondary" type="button" className="w-full sm:w-auto" onClick={()=>closeAddDialog()} disabled={saving}>Cancel</Button>
               <Button variant="primary" type="submit" loading={saving} className={primaryStyle+" w-full sm:w-auto"}

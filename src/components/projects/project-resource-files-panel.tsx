@@ -184,14 +184,14 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
     }catch(error){problem(error);}finally{setBusy(false);}
   }
   return <section className="min-w-0 space-y-4 border-b border-border pb-5 [overflow-wrap:anywhere]">
-    <h3 className="m-0 text-base font-semibold text-foreground">Attached</h3>
+    <h3 className="m-0 text-base font-semibold text-[var(--lms-heading)]">Attached</h3>
     {canUpload&&<form onSubmit={upload} className="min-w-0 space-y-3 border-b border-border pb-4">
       <label className="block text-sm font-medium text-body" htmlFor={"project-file-"+projectId}>Or upload a file</label>
       <Input ref={fileInputRef} id={"project-file-"+projectId} type="file" accept={acceptAttributeFor("project-resource")}
         disabled={busy||files.length>=PROJECT_FILE_LIMIT}
         onChange={event=>{setSelected(event.target.files?.[0]??null);setFeedback(null);}}
         className="block min-h-11 w-full min-w-0 max-w-full text-sm text-body file:mr-3 file:rounded-[var(--lms-control-radius)] file:border-0 file:bg-primary-subtle file:px-3 file:py-1 file:text-link"/>
-      <p className="text-xs text-muted-foreground">{limitsSummary("project-resource")}</p>
+      <p className="text-xs text-muted-foreground leading-[20px]">{limitsSummary("project-resource")}</p>
       <Disclosure title="File details (optional)" defaultOpen={Boolean(uploadTitle||uploadDescription||linkedResourceId)} contentClassName="grid min-w-0 grid-cols-1 gap-3 pt-3">
       <div className="grid min-w-0 gap-3 sm:grid-cols-2">
         <label className="text-sm font-medium text-body">Title
@@ -235,19 +235,19 @@ export function ProjectResourceFilesPanel({projectId,initialFiles,resources=[],c
           <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
             <div className="min-w-0 flex-1">
               <p className="break-words font-semibold text-foreground [overflow-wrap:anywhere]">{file.title}</p>
-              <p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground">
+              <p className="break-words [overflow-wrap:anywhere] text-xs text-muted-foreground leading-[20px]">
                 {file.originalName} · {formatFileSize(file.sizeBytes)}
               </p>
-              {file.description&&<p className="mt-1 break-words text-sm text-body">{file.description}</p>}
+              {file.description&&<p className="mt-1 break-words text-sm text-body leading-[22px]">{file.description}</p>}
               {file.resourceId&&resources.some(item=>item.id===file.resourceId)?
-                <p className="mt-1 text-xs font-semibold text-body">Resource: {resources.find(item=>item.id===file.resourceId)?.title}</p>:null}
-              <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-xs font-semibold text-body leading-[20px]">Resource: {resources.find(item=>item.id===file.resourceId)?.title}</p>:null}
+              <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
                 Last updated: <time dateTime={file.completedAt??file.createdAt}>
                   {new Intl.DateTimeFormat("en-IN",{dateStyle:"medium",timeStyle:"short",timeZone:"Asia/Kolkata"})
                     .format(new Date(file.completedAt??file.createdAt))} IST
                 </time>
               </p>
-              <p role="status" className="mt-1 text-xs text-body" title={descriptor.detail}>
+              <p role="status" className="mt-1 text-xs text-body leading-[20px]" title={descriptor.detail}>
                 {descriptor.label}
               </p>
             </div>

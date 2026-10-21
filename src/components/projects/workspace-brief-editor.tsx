@@ -47,7 +47,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt}:{
      <label key={item.label} className="text-[13px] font-semibold">{item.label} · one per line
       <Textarea value={item.value} onChange={e=>item.change(e.target.value)}
        className={field}/></label>)}
-   <p className="text-xs text-muted-foreground">Up to 50 rows per group, 500 characters per row.</p>
+   <p className="text-xs text-muted-foreground leading-[20px]">Up to 50 rows per group, 500 characters per row.</p>
    <div className="flex gap-2">
     <Button type="button" disabled={busy} onClick={()=>void save()}
       variant="primary">
@@ -56,7 +56,7 @@ export function WorkspaceBriefEditor({projectId,initial,updatedAt}:{
       variant="secondary">Cancel</Button>
    </div>
   </div>:null}
-  {error?<p role="alert" className="mt-2 text-sm text-error">{error}</p>:null}
+  {error?<p role="alert" className="mt-2 text-sm text-error leading-[22px]">{error}</p>:null}
    {dialog}
  </section>;
 }

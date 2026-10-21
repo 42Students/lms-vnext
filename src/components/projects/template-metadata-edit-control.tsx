@@ -51,7 +51,7 @@ export function TemplateMetadataEditControl({ templateId, title, summary, curren
           value={changeNote} onChange={event => setNote(event.target.value)} /></label>
         <label className="flex min-w-0 items-start gap-3 border-t border-[var(--lms-canvas-border)] py-3 text-[13px] leading-5 text-body"><Checkbox className="size-5" checked={confirmed} disabled={pending}
           onChange={event => setConfirmed(event.target.checked)} />I confirm that this creates a new version and preserves pinned snapshots.</label>
-        {error ? <p role="alert" className="text-sm text-error-text">{error}</p> : null}
+        {error ? <p role="alert" className="text-sm text-error-text leading-[22px]">{error}</p> : null}
         <div className="flex flex-col-reverse gap-2 border-t border-[var(--lms-canvas-border)] pt-4 sm:flex-row sm:justify-end"><Button className="min-h-11 w-full sm:min-h-9 sm:w-auto" variant="secondary" disabled={pending} onClick={() => setOpen(false)}>Cancel</Button>
           <Button className="min-h-11 w-full sm:min-h-9 sm:w-auto" type="submit" loading={pending} disabled={pending || !confirmed || !editedTitle.trim() || !changeNote.trim()}>{pending ? "Saving…" : "Save new version"}</Button></div>
       </form>

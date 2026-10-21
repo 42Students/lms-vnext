@@ -57,7 +57,7 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         value: segment, label, href: basePath+"/"+projectId+"/"+segment,
       }))} />
     <section className="border-b border-border py-5">
-      <h2 className="m-0 text-base font-semibold leading-6 text-[var(--lms-heading)]">Current readiness</h2>
+      <h2 className="m-0 font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Current readiness</h2>
       <dl className="mt-4 grid min-w-0 divide-y divide-[var(--lms-canvas-border)] border-y border-[var(--lms-canvas-border)] text-[14px] leading-5 min-[768px]:grid-cols-3 min-[768px]:divide-x min-[768px]:divide-y-0">
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">State</dt><dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.state??"Automatic"}</dd></div>
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Reason</dt><dd className="mt-2 whitespace-pre-wrap break-words text-[var(--lms-body-text)]">{readiness.readinessOverride.note??
@@ -65,8 +65,8 @@ export async function ProjectWorkspaceReadiness({projectId,basePath}:{projectId:
         <div className="min-w-0 px-4 py-3"><dt className="text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Submission status</dt>
           <dd className="mt-2 break-words text-[var(--lms-body-text)]">{readiness.finalSubmission.latest?.status??"Not submitted"}</dd></div>
       </dl>
-      {readiness.readinessOverride.overriddenBy ? <p className="mt-3 text-xs text-muted-foreground">Overridden by {readiness.readinessOverride.overriddenBy}</p> : null}
-      {readiness.readinessOverride.occurredAt?<p className="mt-3 text-xs text-muted-foreground">
+      {readiness.readinessOverride.overriddenBy ? <p className="mt-3 text-xs text-muted-foreground leading-[20px]">Overridden by {readiness.readinessOverride.overriddenBy}</p> : null}
+      {readiness.readinessOverride.occurredAt?<p className="mt-3 text-xs text-muted-foreground leading-[20px]">
         Override recorded {formatProjectAdminActivityDateIst(readiness.readinessOverride.occurredAt)}
       </p>:null}
       {([

@@ -138,8 +138,8 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    className="min-w-0 space-y-4 border-t border-border pt-4 [overflow-wrap:anywhere]">
   <div className="flex min-w-0 flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
    <div className="min-w-0 flex-1">
-    <h2 className="break-words font-semibold text-foreground">Team · {companyName}</h2>
-    <p className="mt-1 text-xs text-body">
+    <h2 className="break-words font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Team · {companyName}</h2>
+    <p className="mt-1 text-xs text-body leading-[20px]">
      Only your placement team sees this. Recruiters and students never do.
     </p>
    </div>
@@ -167,13 +167,13 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
    {data.messages.length===0?<EmptyState title="Nothing here yet." description="Write the first message. @ someone to bring them in, or Ask someone to give a task a name and a date."/>:null}
    <ScrollCue axis="y" label="Company Team message history" viewportClassName="max-h-[35rem]"><ol role="log" aria-live="polite" aria-label="Company Team messages" className="space-y-3">
     {data.messages.map((m,index)=><li key={m.id} id={"company-team-"+m.id} className="border-b border-border px-1 py-4">
-      {(index===0||data.messages[index-1].dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body">{m.dayLabel}</p>:null}
-      <p className="text-xs text-muted-foreground">
+      {(index===0||data.messages[index-1].dayKey!==m.dayKey)?<p className="mb-2 text-center text-xs font-semibold text-body leading-[20px]">{m.dayLabel}</p>:null}
+      <p className="text-xs text-muted-foreground leading-[20px]">
         {m.authorMembershipId===actorMembershipId?"You":m.authorName??"Team member"} · {m.createdLabel}
         {m.editedAt?" · edited":""}
       </p>
       {m.decision&&!m.deletedAt?<strong className="text-xs text-success">Decision</strong>:null}
-      <p className="mt-1 whitespace-pre-wrap break-words text-sm leading-6 text-body [overflow-wrap:anywhere]">
+      <p className="mt-1 whitespace-pre-wrap break-words text-sm text-body [overflow-wrap:anywhere] leading-[22px]">
        {m.deletedAt?"Message removed":formatTokens(m.body,data.members)}
       </p>
       {m.askAssigneeMembershipId?<div className="mt-2 min-w-0 border-l-2 border-[var(--lms-canvas-border)] py-1 pl-3 text-xs text-body">
@@ -229,7 +229,7 @@ export function TpoCompanyTeamConversation({companyId,companyName,actorMembershi
           <option key={m.membershipId} value={m.membershipId}>{m.name}</option>)}
       </Select>
     </label>
-    <p className="text-xs text-muted-foreground">Use @team to notify the placement team or #drive:&lt;UUID&gt; and #company:&lt;UUID&gt; to link authorized records.</p>
+    <p className="text-xs text-muted-foreground leading-[20px]">Use @team to notify the placement team or #drive:&lt;UUID&gt; and #company:&lt;UUID&gt; to link authorized records.</p>
     <div className="grid min-w-0 grid-cols-1 gap-3 sm:grid-cols-2">
      <label className="grid gap-1 text-sm">Ask someone (optional)
        <Select value={assignee} disabled={busy} onChange={event=>updateDraft({body,decision,assignee:event.target.value,dueAt:event.target.value?dueAt:""})}

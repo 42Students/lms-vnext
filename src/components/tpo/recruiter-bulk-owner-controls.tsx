@@ -164,8 +164,8 @@ export function RecruiterBulkOwnerControls({
       aria-label="Bulk recruiter lead owner assignment"
     >
       <div>
-        <h2 className="font-semibold text-foreground">Bulk assign lead owner</h2>
-        <p className="mt-1 text-xs text-muted-foreground">
+        <h2 className="font-semibold text-[var(--lms-heading)] text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px]">Bulk assign lead owner</h2>
+        <p className="mt-1 text-xs text-muted-foreground leading-[20px]">
           Select up to 100 filtered leads and one active college placement staff member.
           Joined and unsubscribed contacts can be assigned a placement-cell owner. Each reassignment is audited.
         </p>
@@ -175,7 +175,7 @@ export function RecruiterBulkOwnerControls({
           Load eligible owners
         </Button>
       ) : ownersState === "loading" ? (
-        <p role="status" className="text-sm text-body">Loading placement staff…</p>
+        <p role="status" className="text-sm text-body leading-[22px]">Loading placement staff…</p>
       ) : ownersState === "error" ? (
         <Button variant="secondary" type="button" className={fieldClass} onClick={() => void loadOwners()}>
           Retry eligible owners
@@ -183,7 +183,7 @@ export function RecruiterBulkOwnerControls({
       ) : (
         <>
           {owners.length === 0 ? (
-            <p role="status" className="text-sm text-body">
+            <p role="status" className="text-sm text-body leading-[22px]">
               No eligible owner memberships were found. No assignment can be made.
             </p>
           ) : (
@@ -205,7 +205,7 @@ export function RecruiterBulkOwnerControls({
             </label>
           )}
           {assignable.length === 0 ? (
-            <p role="status" className="text-sm text-body">
+            <p role="status" className="text-sm text-body leading-[22px]">
               No assignable leads match the current filters.
             </p>
           ) : (
@@ -226,7 +226,7 @@ export function RecruiterBulkOwnerControls({
               ))}
             </div>
           )}
-          {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm">
+          {reviewOpen&&reviewSignature===currentSignature?<p role="status" className="border-l-2 border-warning bg-warning-subtle px-3 py-3 text-sm leading-[22px]">
             Assign {selections.length} recruiter lead(s) to {owners.find(item=>item.membershipId===ownerId)?.displayName??"selected staff member"}.
             Each changed lead receives an audit record.
             <Button variant="secondary" type="button" className="lms-inline-link ml-2 inline-flex min-h-11 items-center text-link underline focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]" onClick={()=>setReviewOpen(false)}>Edit</Button>
@@ -245,11 +245,11 @@ export function RecruiterBulkOwnerControls({
         </>
       )}
       </div>
-      {error ? <p role="alert" className="text-sm text-error">{error}</p> : null}
+      {error ? <p role="alert" className="text-sm text-error leading-[22px]">{error}</p> : null}
       {results.length > 0 ? (
         <section aria-live="polite">
-          <h3 className="text-sm font-semibold text-foreground">Per-lead results</h3>
-          {runAuditId?<p className="mt-1 text-xs text-muted-foreground">Audited batch: <code>{runAuditId}</code></p>:null}
+          <h3 className="text-sm font-semibold text-[var(--lms-heading)]">Per-lead results</h3>
+          {runAuditId?<p className="mt-1 text-xs text-muted-foreground leading-[20px]">Audited batch: <code>{runAuditId}</code></p>:null}
           {undoRunId?<div className="mt-3 rounded-lg border border-border p-3 text-sm">
            <p>Undo these owner assignments within five minutes. If a changed lead has since been edited, nothing is restored.</p>
            {undoReview?<p role="status" className="mt-2">Restore the previous owner for every changed recruiter in this batch?</p>:null}
@@ -259,12 +259,12 @@ export function RecruiterBulkOwnerControls({
             {undoReview?<Button variant="secondary" type="button" className={fieldClass} onClick={()=>setUndoReview(false)}>Cancel</Button>:null}
            </div>
           </div>:null}
-          <p className="text-xs text-body">Updated: {results.filter(row=>row.status==="updated").length};
+          <p className="text-xs text-body leading-[20px]">Updated: {results.filter(row=>row.status==="updated").length};
             unchanged: {results.filter(row=>row.status==="unchanged").length};
             ineligible: {results.filter(row=>row.status==="ineligible").length}.</p>
           {tpoBulkFailedLines(results).length>0?<Button variant="secondary" type="button"
             className={fieldClass+" mt-2"} onClick={()=>void copyFailed()}>Copy failed</Button>:null}
-          {copyNotice?<p role="status" className="text-xs text-body">{copyNotice}</p>:null}
+          {copyNotice?<p role="status" className="text-xs text-body leading-[20px]">{copyNotice}</p>:null}
           {retryable.length>0?<Button variant="secondary" type="button" disabled={busy} className={fieldClass+" mt-2"}
             onClick={()=>{setChosen(retryable.slice(0,100).map(item=>item.leadId));setReviewOpen(false);setError("");
               setCopyNotice("Failed rows selected for review. Refresh owners and leads before retrying.");}}>
