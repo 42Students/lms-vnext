@@ -38,6 +38,15 @@ function validateValue(spec:LegacyTenantSettingSpec,raw:string):string|null{
  }
  return null;
 }
+function normalizedSettingValue(spec:LegacyTenantSettingSpec,value:string):string{
+ const trimmed=value.trim();
+ if(!trimmed)return "";
+ if(spec.type==="int"||spec.type==="decimal"){
+  const number=Number(trimmed);
+  return Number.isFinite(number)?String(number):trimmed;
+ }
+ return trimmed;
+}
 function runtimeHint(spec:LegacyTenantSettingSpec):string{
  if(spec.key.startsWith("sms.")){
   return "Exotel sender/provider setup and India's registered DLT template must match the approved text and variable order exactly. Use approved {#var#} placeholders or the registered provider mapping; do not paste credentials here. A stored override is not proof of SMS delivery.";
@@ -70,7 +79,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  const inFlight=useRef(false);
  const [saving,setSaving]=useState(false),[results,setResults]=useState<Result[]>([]),
   [error,setError]=useState("");
- const changed=keys.filter(item=>draft[item.key]!== (existing.get(item.key)?.value??""));
+ const changed=keys.filter(item=>normalizedSettingValue(item,draft[item.key]??"")!==normalizedSettingValue(item,existing.get(item.key)?.value??""));
  const impact=changed.some(item=>item.dangerous);
  const dirty=changed.length>0||otherDirty;
  const invalid=changed.flatMap(spec=>{
@@ -146,38 +155,57 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
  }
  const groups=[...new Set(keys.map(spec=>spec.group))];
  return <section ref={sectionRef} aria-label="Edit Tenant Settings" className="min-w-0 space-y-4 border-b border-border pb-4 print:hidden">
-  <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit Tenant Settings</h2>
+  <div className="flex min-w-0 flex-wrap items-center justify-between gap-3">
+   <div className="min-w-0 space-y-1">
+    <h2 className="text-lg font-semibold text-[var(--lms-heading)]">Edit Tenant Settings</h2>
+    <p className="text-xs font-semibold uppercase tracking-wide text-primary-text">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}</p>
+   </div>
+   <div className="flex min-w-0 flex-wrap gap-2">
+    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={dirty||saving}
+     onClick={()=>router.refresh()}>Refresh</Button>
+    <Button type="button" variant="secondary" className="min-h-11 md:min-h-9" disabled={!dirty||saving}
+     onClick={()=>setDraft(Object.fromEntries(keys.map(spec=>[spec.key,existing.get(spec.key)?.value??""])))}>Reset edits</Button>
+    <Button type="button" loading={saving} disabled={!ready||saving||!changed.length||invalid.length>0}
+     className="min-h-11 md:min-h-9" onClick={()=>void save()}>Save changes</Button>
+   </div>
+  </div>
   <p className="max-w-prose text-sm leading-[22px] text-body">Scope: {scopeType==="GLOBAL"?"Global":"Selected college"}. Blank values restore the source default.
    Each field has its legacy validation range. Platform security overrides require a separate rollout before taking effect.</p>
   {!ready?<Alert tone="warning">The tenant-settings migration is pending. This form is read-only.</Alert>:null}
   {dirty?<Alert tone="warning" role="status">
    You have unsaved changes. Switching the college or scope, navigating to another page, or reloading may discard the draft. Save settings or confirm leaving without saving.
   </Alert>:null}
-  {groups.map((group,index)=><Disclosure key={group} title={<span className="flex min-w-0 flex-wrap items-center gap-2">
+  {groups.map(group=><Disclosure key={group} title={<span className="flex min-w-0 flex-wrap items-center gap-2">
     <span className="text-sm font-semibold">{group}</span>
     {changed.some(item=>item.group===group)?<span className="text-xs font-normal text-muted-foreground">{changed.filter(item=>item.group===group).length} changed</span>:null}
-   </span>} defaultOpen={index===0} className="border-t border-border" contentClassName="px-2 pb-3">
+   </span>} defaultOpen className="rounded-[8px] border border-border bg-surface px-3 py-2" contentClassName="px-2 pb-3">
    <fieldset disabled={!ready||saving} className="min-w-0">
     <legend className="sr-only">{group}</legend>
     <div className="grid min-w-0 gap-3 md:grid-cols-2">
-    {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className="grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">
-     <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="warning">High impact</StatusBadge>:null}</span>
+    {keys.filter(spec=>spec.group===group).map(spec=><label key={spec.key} className={"grid min-w-0 gap-[6px] border-b border-border py-3 text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4 "+(spec.type==="textarea"?"md:col-span-2":"")}>
+     <span className="flex flex-wrap items-center gap-2 font-semibold">{spec.label}{spec.dangerous?<StatusBadge tone="error">High impact</StatusBadge>:null}</span>
      <span className="break-all font-mono text-xs text-muted-foreground">{spec.key}</span>
      {spec.dangerous||spec.key.startsWith("otp.")?<StatusBadge tone="warning">Stored · runtime activation unverified</StatusBadge>:null}
-     <span className="text-xs font-normal leading-5 text-body">{runtimeHint(spec)}</span>
+     <span id={"tenant-help-"+spec.key} className="text-xs font-normal leading-5 text-body">{spec.help??runtimeHint(spec)}</span>
      {spec.type==="textarea"?<Textarea rows={3} maxLength={4096} value={draft[spec.key]??""}
+      placeholder={spec.placeholder??"Use source default"}
+      aria-label={spec.label+" for "+(scopeType==="GLOBAL"?"global settings":"selected college")}
       aria-invalid={Boolean(invalidKeys.get(spec.key))}
-      aria-describedby={invalidKeys.has(spec.key)?"tenant-invalid-"+spec.key:undefined}
+      aria-describedby={"tenant-help-"+spec.key+(invalidKeys.has(spec.key)?" tenant-invalid-"+spec.key:"")}
       onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
       className="min-h-11 md:min-h-9 w-full"/>:
       <Input type={spec.type==="int"||spec.type==="decimal"?"number":"text"}
        min={"min" in spec?spec.min:undefined} max={"max" in spec?spec.max:undefined}
-       step={spec.type==="int"?1:spec.type==="decimal"?"any":undefined}
+       step={spec.type==="int"?1:spec.type==="decimal"?0.01:undefined}
+       placeholder={spec.placeholder??(spec.type==="decimal"?"0.15":spec.type==="int"?"0":"Enter "+spec.label.toLowerCase())}
        value={draft[spec.key]??""} maxLength={4096}
+       aria-label={spec.label+" for "+(scopeType==="GLOBAL"?"global settings":"selected college")}
        aria-invalid={Boolean(invalidKeys.get(spec.key))}
-       aria-describedby={invalidKeys.has(spec.key)?"tenant-invalid-"+spec.key:undefined}
+       aria-describedby={"tenant-help-"+spec.key+(invalidKeys.has(spec.key)?" tenant-invalid-"+spec.key:"")}
        onChange={event=>setDraft(prev=>({...prev,[spec.key]:event.target.value}))}
        className="min-h-11 md:min-h-9 w-full"/>}
+     {draft[spec.key]?<button type="button" className="justify-self-start text-xs font-semibold text-primary-text underline" disabled={saving||!ready}
+       onClick={()=>setDraft(old=>({...old,[spec.key]:""}))} aria-label={"Clear "+spec.label}>Clear</button>:null}
      {invalidKeys.has(spec.key)?<span id={"tenant-invalid-"+spec.key} role="alert"
       className="text-xs font-semibold text-error">{invalidKeys.get(spec.key)}</span>:null}
      {"min" in spec&&spec.min!==undefined?<span className="text-xs text-muted-foreground">
@@ -186,7 +214,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
     </div>
    </fieldset>
   </Disclosure>)}
-  <Disclosure title="Other stored keys" className="border-t border-border" contentClassName="pt-3">
+  <Disclosure title="Other stored keys" defaultOpen className="rounded-[8px] border border-border bg-surface px-3 py-2" contentClassName="pt-3">
    <div onInput={()=>setOtherDirty(true)}>
    {otherDirty?<p role="status" className="mb-3 text-xs text-warning-text">
     An unlisted-key add draft may still be unsaved. Scope navigation remains guarded until this editor is reloaded.
@@ -196,7 +224,7 @@ export function TenantSettingsEditor({scopeType,collegeId,ready,entries}:{
   </Disclosure>
   <div className="flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
    <Button variant="primary" type="button" loading={saving} disabled={!ready||saving} className="min-h-11 w-full sm:min-h-9 sm:w-auto" onClick={()=>void save()}>
-    {saving?"Saving…":changed.length?"Save "+changed.length+" changed setting"+(changed.length===1?"":"s"):"Save settings"}
+    {saving?"Saving…":"Save changes"}
    </Button>
    <span className="text-xs text-muted-foreground">Each key is saved independently, with an audit record.</span>
   </div>
