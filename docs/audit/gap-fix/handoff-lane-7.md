@@ -132,3 +132,35 @@ Source checked: current `/college/projects` page provides active/archived list; 
 - G2-7-018-028 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Match title/description in shell
 - G2-7-018-030 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Use exact error banner and retry control
 - G2-7-018-031 | `src/app/(authenticated)/college/projects/page.tsx + new deleted route` | Prevent false No deleted workspaces empty state after fetch failure
+
+## Packets L17-U023 LearnerOfferController, parts 1–2 (Placements ownership)
+
+Source checked: actual canonical learner response is `POST /api/placements/offers/[offerId]/actions` with strict action validation; there is no requirement to recreate legacy numeric-ID accept endpoint. Existing placement offer service and schema are outside lane-7's wave-1 file ownership. Preserve the intentional vNext issued/accepted/declined status model until the Placements owner approves a crosswalk. Every finding follows with requested fix; these are **handoffs, not patches**.
+
+- G2-17-23-002 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Document old route→new route, int→UUID ID crosswalk and update any remaining old deep links/clients; do not expose unsafe numeric alias
+- G2-17-23-015 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Add explicit legacy numeric↔UUID offer ID reconciliation in migration/integration ledger; reject malformed identifiers before DB
+- G2-17-23-016 | `src/modules/placements/validation.ts` | Make accept intent explicit and reject absent/nonboolean legacy accept; never silently convert malformed payload into decline
+- G2-17-23-018 | `src/db/schema/placements.ts` | Crosswalk RELEASED→ISSUED and legacy SELECTED/PENDING_VERIFICATION separately; never conflate unpublished selection with issued offer
+- G2-17-23-020 | `src/db/schema/placements.ts` | Verify cascade correlation is durable/readable from both new offer and status-history records and historical reports, not just request result
+- G2-17-23-026 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Retain vNext strict validation; document legacy bug, never provide a compatibility adapter that interprets missing accept as DECLINE
+- G2-17-23-036 | `src/modules/placements/offer-service.ts` | Ensure denial for foreign offer uses indistinguishable response timing/status from nonexistent offer and no app ID leaks
+- G2-17-23-037 | `src/modules/placements/learner-offer-action-error-model.ts` | Use 409 business conflict (not legacy erroneous 404) and display appropriate "already accepted another offer" remediation
+- G2-17-23-038 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Canonicalize on strict schema so old controller and alternative controller cannot produce opposite outcome for malformed body
+- G2-17-23-047 | `src/db/schema/placements.ts` | Document application-vs-offer state ownership; ensure all reports and learner timeline reflect accepted/declined decision without legacy HIRED/REJECTED column
+- G2-17-23-048 | `src/modules/placements/offer-service.ts` | Crosswalk legacy six active statuses and statuses now modeled as SUBMITTED; prove all eligible sibling applications, not just one subset, transition correctly
+- G2-17-23-049 | `src/modules/placements/offer-service.ts` | Verify one-offer-per-application and LOI behavior, ensure accepted offer and sibling offer histories converge without stale open offer
+- G2-17-23-051 | `src/db/schema/placements.ts` | Ensure offer state, application history, timeline and cascade identifier are consistently joined; avoid double historical events on replay
+- G2-17-23-052 | `src/modules/placements/offer-service.ts` | Crosswalk old TPO bell/audit activity to vNext TPO inbox and learner activity, preserving college/actor/job/application/offer IDs
+- G2-17-23-055 | `src/modules/placements/learner-participation-guard.ts` | Product decision: when module/eligibility revoked after offer release, provide secure access to legally required pending response instead of silent lockout (or document intentional block)
+- G2-17-23-056 | `src/modules/placements/offer-service.ts` | Avoid offering an ID/status enumeration oracle in any compatibility route; require owner-scope before revealing offer state or deadline
+- G2-17-23-058 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Explicitly map old offer/application dual states to new issued state; detect inconsistent legacy-migrated rows before accepting
+- G2-17-23-061 | `src/modules/placements/offer-service.ts` | Confirm internship/LOI policy exception and cross-college accepted offers; show clear conflict rather than generic error
+- G2-17-23-062 | `src/modules/placements/offer-service.ts` | Create explicit old/new decision matrix for Dream, internship, LOI, placement category and uplift; avoid accidental blanket withdrawal
+- G2-17-23-077 | `src/modules/placements/offer-service.ts` | Benchmark worst-case student with many offers/interviews and ensure consistent lock ordering, bounded work, no timeout-induced partial writes
+- G2-17-23-079 | `src/app/api/placements/offers/[offerId]/actions/route.ts + src/modules/placements/validation.ts` | Resolve contradictory idempotency contract: either allow exact same-actor retry before expectedStatus rejection or intentionally return 409; cover deadline crossover
+- G2-17-23-080 | `src/db/schema/placements.ts` | Verify no deadlocks for simultaneous accept/decline/withdraw/interview updates and no dual accepted outcomes; preserve deterministic lock order
+- G2-17-23-081 | `src/db/schema/placements.ts` | Define one authoritative Asia/Kolkata business deadline converted to UTC instant; guard at lock time and format IST correctly
+- G2-17-23-083 | `src/modules/placements/offer-service.ts` | Reconcile durable event/outbox delivery semantics and post-commit notification guarantees; add audit event correlation IDs
+- G2-17-23-085 | `src/db/schema/placements.ts` | Maintain legacy id/type crosswalk in DB08 migration for records, reports and external links; do not cast numeric IDs to UUID
+- G2-17-23-086 | `src/db/schema/placements.ts` | Map SELECTED/PENDING_VERIFICATION/RELEASED and REVOKED separately to vNext issuance/withdrawal; validate archival cases before importing
+- G2-17-23-088 | `src/db/schema/placements.ts` | Ensure report timeline can relate offer, application, actor, status, cascade and notification from both models
