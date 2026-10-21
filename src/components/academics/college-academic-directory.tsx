@@ -57,9 +57,15 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
         </div>
         <section className="min-w-0 overflow-hidden rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface min-[1200px]:col-span-14"
           aria-label={semesters ? "Existing Semesters" : "Existing Batches"}>
-          <h2 className="border-b border-border px-4 py-3 text-base font-semibold text-foreground">
-            {semesters ? "Semesters" : "Existing Batches"}
-          </h2>
+          <header className="flex flex-wrap items-center justify-between gap-2 border-b border-border px-4 py-3">
+            <h2 className="text-base font-semibold text-foreground">
+              {semesters ? "Semesters" : "Existing Batches"}
+            </h2>
+            <a href={academicDirectoryHref(data.kind,data.query)} aria-label={"Refresh " + title.toLowerCase()}
+              className="inline-flex min-h-9 items-center gap-2 rounded-[var(--lms-control-radius)] border border-border px-3 text-sm font-semibold text-link hover:bg-muted">
+              <span aria-hidden="true">↻</span> Refresh
+            </a>
+          </header>
       <FilterBar title="Filters"
         search={<label className="grid min-w-0 gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
           {semesters ? "Semester or program" : "Batch or program"}
@@ -261,21 +267,28 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
         {data.items.length === 0 ? (
           <div role="status" className="space-y-2 p-6 text-sm text-body">
            <p>
-            {data.total === 0
-              ? semesters
-                ? "No semesters match these filters."
-                : "No cohorts match these filters. Batch membership or progression is not inferred from other records."
+            {data.total === 0 ? hasFilters
+              ? semesters ? "No semesters match these filters." : "No batches match search/filters."
+              : semesters ? "No semesters found. Create a program first, then add semesters."
+                : "No batches yet. Create a program first."
               : "No records exist on this page. Select an earlier page."}
            </p>
-           <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">Clear filters and view all {title.toLowerCase()}</Link>
+           {hasFilters ? <Link href={path}
+             className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">
+             Clear filters and view all {title.toLowerCase()}</Link> :
+             <Link href="/college/programs"
+               className="inline-flex min-h-11 items-center font-semibold text-link lms-inline-link">
+               Go to Programs</Link>}
           </div>
         ) : (
           <>{data.kind === "SEMESTERS" ? (
             <DataTable
               caption="Semester directory"
+              mobileMode="scroll"
               rows={data.items}
               getRowKey={item=>item.id}
-              empty={<p>No semesters match these filters.</p>}
+              empty={<p>{hasFilters ? "No semesters match these filters." :
+                "No semesters found. Create a program first, then add semesters."}</p>}
               columns={[
                 {key:"program",header:"Program",mobilePriority:"secondary",className:"whitespace-nowrap",cell:item=>
                   <span>{item.programName || "Program name unavailable"}</span>},
@@ -297,9 +310,10 @@ export function CollegeAcademicDirectory({ data, batchPeriods = [], prepend, act
           ) : (
             <DataTable
               caption="Batch directory"
+              mobileMode="scroll"
               rows={data.items}
               getRowKey={item=>item.id}
-              empty={<p>No batches match these filters.</p>}
+              empty={<p>{hasFilters ? "No batches match search/filters." : "No batches yet. Create a program first."}</p>}
               columns={[
                 {key:"batch",header:"Batch Name",mobilePriority:"primary",className:"whitespace-nowrap",cell:item=>
                   <span className="font-semibold text-foreground">{item.name}</span>},
