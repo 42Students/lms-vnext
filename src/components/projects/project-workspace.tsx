@@ -546,7 +546,13 @@ export function ProjectWorkspace({
       ) : null}
       {show("readiness") ? <WorkspaceReadinessSnapshot workspace={workspace} /> : null}
       {mode==="ADMIN"&&show("summary")&&!readOnly?<CollegeProjectSummaryEditorFull
-        project={workspace.project} taskProgress={readiness.execution.tasks}/>:null}
+        project={workspace.project}
+        taskProgress={{
+          done: readiness.execution.tasks.done + readiness.execution.sprints.completed,
+          total: readiness.execution.tasks.total + readiness.execution.sprints.total,
+        }}
+        estimatedTaskCount={workspace.tasks.filter(task =>
+          !task.deletedAt && task.estimatePoints !== null).length}/>:null}
       {show("summary") || (mode === "MENTOR" && show("overview")) ? (
         <div className="grid min-w-0 grid-cols-2 gap-x-4 gap-y-0 border-t border-[var(--lms-canvas-border)] xl:grid-cols-4">
           <Metric
