@@ -186,7 +186,7 @@ function LearnerHourlyGrid({days,eventsForDay,courseBasePath,onSelectDay}:{
   const columns=days.map(day=>({day,rows:eventsForDay(day)}));
   const hours=learnerHourlySlots(columns.flatMap(col=>col.rows));
   return <div className={styles.hourFrame} aria-label="Hourly class schedule">
-    <div className={styles.hourGrid+" "+(days.length===1?"grid-cols-[5rem_minmax(17.5rem,1fr)]":"grid-cols-[5rem_repeat(7,minmax(9.375rem,1fr))]")}>
+    <div className={styles.hourGrid+" "+(days.length===1?"grid-cols-[55px_minmax(17.5rem,1fr)] sm:grid-cols-[70px_minmax(17.5rem,1fr)] lg:grid-cols-[90px_minmax(17.5rem,1fr)]":"grid-cols-[55px_repeat(7,minmax(9.375rem,1fr))] sm:grid-cols-[70px_repeat(7,minmax(9.375rem,1fr))] lg:grid-cols-[90px_repeat(7,minmax(9.375rem,1fr))]")}>
       <div className={styles.hourHeader}>ALL DAY</div>
       {columns.map(col=><div key={localDayKey(col.day)}
         className={styles.hourDayHeader}>
@@ -560,21 +560,35 @@ export function LearnerClassSchedule({
       ) : null}
 
       {upcoming.length > 0 ? (
-        <Disclosure
-          title={<span className="flex min-w-0 flex-1 items-center justify-between gap-3 flex-wrap"><span>Next classes</span><span className="text-xs font-semibold text-muted-foreground">Next {upcoming.length}</span></span>}
-          className="min-w-0 border-b border-border pb-2"
-          contentClassName="pt-3"
-        >
+        <section aria-label="Next classes" className="min-w-0 rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-3">
+          <div className="mb-2 flex items-center justify-between gap-3">
+            <h2 className="text-sm font-semibold text-foreground">Next classes</h2>
+            <span className="text-xs font-semibold text-muted-foreground">Next 3 upcoming</span>
+          </div>
           <div className={styles.upcomingList}>
-            {upcoming.map((event) => (
-              <EventCard courseBasePath={courseBasePath}
-                key={event.id}
-                event={event}
-                compact
-              />
+            {upcoming.map(event => (
+              <Button key={event.id} type="button" variant="ghost"
+                aria-label={"View next class: " + (event.courseName || event.title || "Scheduled Class")}
+                className="!h-auto !min-h-14 !w-full !justify-start !whitespace-normal rounded-md border-b border-border py-3 text-left last:border-0"
+                onClick={() => { setSelectedEvent(event); setMetricDialog("NEXT"); }}>
+                <span className="grid w-full min-w-0 grid-cols-[minmax(6rem,auto)_minmax(0,1fr)_minmax(6rem,auto)] items-center gap-3">
+                  <span className="text-xs font-semibold text-primary-text">
+                    {new Intl.DateTimeFormat("en-US",{weekday:"short",month:"short",day:"numeric",timeZone:"Asia/Kolkata"})
+                      .format(new Date(event.startsAt))}
+                  </span>
+                  <span className="min-w-0 truncate text-sm font-semibold text-foreground">
+                    {event.courseName || event.title || "Scheduled Class"}
+                  </span>
+                  <span className="text-right text-xs text-body">
+                    {new Intl.DateTimeFormat("en-US",{hour:"numeric",minute:"2-digit",hour12:true,timeZone:"Asia/Kolkata"})
+                      .format(new Date(event.startsAt))}
+                    {event.facultyName ? <span className="block max-w-[150px] truncate">{event.facultyName}</span> : null}
+                  </span>
+                </span>
+              </Button>
             ))}
           </div>
-        </Disclosure>
+        </section>
       ) : null}
 
       <section className={styles.calendarCard}>
