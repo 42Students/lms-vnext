@@ -40,7 +40,7 @@ export function projectResourceAuditDelta(before:ResourceAuditSnapshotInput|null
 export function projectResourceAuditInput(
  action:"CREATED"|"UPDATED"|"ARCHIVED",
  scope:{projectId:string;collegeId:string;organizationId:string},
- resource:{id:string;title:string;resourceOrder?:number|null},
+ resource:{id:string;title:string;sequence?:number;resourceOrder?:number|null;templateKey?:string|null},
  nonce?:string,
  creatorRole?:"LEARNER"|"MENTOR"|"ADMIN",
  snapshots?:{before?:ResourceAuditSnapshotInput|null;after?:ResourceAuditSnapshotInput|null},
@@ -49,17 +49,23 @@ export function projectResourceAuditInput(
   action==="UPDATED"?ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_UPDATED:
   ACTIVITY_EVENT_TYPES.PROJECTS_RESOURCE_ARCHIVED;
  const verb=action==="CREATED"?"added":action==="UPDATED"?"updated":"archived";
+ // The append-only activity table already has a per-project group/time/id
+ // index. Store the legacy audit columns in indexed event metadata rather
+ // than writing to a second, staged-only project_resource_audit table.
+ const resourceOrder=resource.sequence??resource.resourceOrder;
+ const resourceKey=resource.templateKey?.trim()||resource.id;
  return {
   eventType,collegeId:scope.collegeId,organizationId:scope.organizationId,
   subjectType:"project_resource",subjectId:resource.id,
   subjectLabel:legacyProjectResourceAuditLabel(resource.title),
   summary:"Project resource "+verb,
   metadata:{
-   projectId:scope.projectId,resourceId:resource.id,
+   projectId:scope.projectId,resourceId:resource.id,resourceKey,
+   actionType:action==="CREATED"?"CREATE":action==="UPDATED"?"UPDATE":"DELETE",
    ...projectResourceAuditDelta(snapshots?.before??null,snapshots?.after??resource),
-   ...(resource.resourceOrder!==undefined&&resource.resourceOrder!==null&&
-      Number.isSafeInteger(resource.resourceOrder)&&resource.resourceOrder>=0
-    ? {resourceOrder:resource.resourceOrder}:{}) ,
+   ...(typeof resourceOrder==="number"&&
+      Number.isSafeInteger(resourceOrder)&&resourceOrder>=0
+    ? {resourceOrder}:{}) ,
    ...(action==="CREATED"&&creatorRole ? {
      creatorRole,originalActorType:creatorRole,
    } : {}),
