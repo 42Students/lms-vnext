@@ -20,6 +20,13 @@ import { colleges } from "./colleges";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
 
+/** Legacy placement import contract. vNext uses UUID and timestamptz (IST
+ * source civil dates require explicit timezone conversion), never reuses
+ * integer IDs as authorization identifiers. Legacy soft-deleted companies
+ * import as ARCHIVED and retain the source tombstone. Global company identity
+ * is canonical; college relationships carry CRM notes and access grants.
+ * Domain trust is per placement_company_domains row, not inferred from
+ * placement_companies.verifiedAt. No historical data is auto-migrated. */
 export const placementCompanies = pgTable(
   "placement_companies",
   {
@@ -1085,6 +1092,15 @@ export const placementEligibilityOverrides = pgTable(
 );
 
 
+/** Historical application crosswalk: old learner_id -> scoped membership_id,
+ * job_id -> canonical job UUID; old applied_at -> first_applied_at, last
+ * submission -> submitted_at; old rejection text -> candidate-facing screening
+ * message, other internal notes -> private artifacts. Legacy one-application
+ * per job differs intentionally from vNext one-per-role-option enrollment.
+ * Old APPLIED displays as SUBMITTED; WITHDRAWN is not a shortlist stage.
+ * Offer letters and score provenance are joined from offers and screening,
+ * never from a fabricated application score. Imported legacy_deleted rows
+ * must not be silently resurrected as active applications. */
 export const placementApplications = pgTable(
   "placement_applications",
   {
@@ -1747,6 +1763,11 @@ export const placementRoundResults = pgTable(
 );
 
 
+/** Offer migration crosswalk: respondBy -> expiresAt, letterUrl ->
+ * offerLetterUrl, legacy createdAt -> legacyCreatedAt, source numeric ID ->
+ * legacyOfferId, and version -> per-application issuance ordinal. Joining date
+ * is a civil DATE, not an instant. Provider acceptance is not learner response.
+ * Staff/audited release and terminal withdrawal are separate lifecycle facts. */
 export const placementOffers = pgTable(
   "placement_offers",
   {

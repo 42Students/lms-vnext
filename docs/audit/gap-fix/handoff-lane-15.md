@@ -191,3 +191,45 @@
 - College lessons partial load G2-17-007-033: maintain last valid rows in list component state when a subsequent partial scope fetch fails; show warning `Couldn't refresh lessons` plus Retry while retaining actual cached rows; error.tsx alone can't render the old list.
 
 - Class schedule creator UI G2-2-032-046: show verified create success toast and legacy duration from UI design source only after authorized POST acknowledgment; never show success on 401/403.
+
+## Wave 2 placements part 1 (schema-owned and downstream cross-file findings)
+- G2-15-019-001 — src/modules/placements/company-service.ts / admin-company directory: Map historical identity, retire old source without replacing canonical company
+- G2-15-019-004 — src/modules/placements/company-service.ts / admin-company directory: Align API length validation or approve expanded length
+- G2-15-019-005 — src/modules/placements/company-service.ts / admin-company directory: Document max length conversion and API validations
+- G2-15-019-006 — src/modules/placements/company-service.ts / admin-company directory: Map creator records and freeze historical role provenance
+- G2-15-019-018 — src/modules/placements/application-service.ts / application detail presentation: Explicit ID/time/status migration crosswalk
+- G2-15-019-021 — src/modules/placements/company-service.ts / admin-company directory: Migrate URL to public asset or signed storage representation
+- G2-15-019-031 — src/modules/placements/application-service.ts / application detail presentation: Document no-migration vNext identity choice and import compatibility
+- G2-15-019-032 — src/modules/placements/company-service.ts / admin-company directory: Provide column-by-column transformation checklist
+- G2-1-009-013 — src/app/(authenticated)/learn/profile/academic-record/page.tsx: Show gap years, distinguish unknown vs zero and source.
+- G2-1-009-051 — src/app/(authenticated)/learn/profile/academic-record/page.tsx: Convert integer basis points exactly; preserve fraction rounding and `0` vs null.
+- G2-10-004-048 — src/modules/placements/company-domain-service.ts / domain verification UI: Check verification propagates across all domains and recruiter drive company matching
+- G2-10-011-083 — src/modules/placements/offer-service.ts / offer detail presentation: Create field-level mapping for all statuses/notes/offers and preserve unique learner/job constraints.
+- G2-10-012-080 — src/modules/placements/job-service.ts / job detail presentation: Provide explicit legacy job status mapping including expired independent of state.
+- G2-12-020-001 — src/modules/placements/company-domain-service.ts / domain verification UI: Keep child/global primary-domain synchronization and explicit source of truth.
+- G2-12-020-045 — src/modules/placements/company-domain-service.ts / domain verification UI: Restore per-domain 'Verified by 42' badge copy/status.
+- G2-12-019-003 — src/modules/placements/offer-service.ts / offer detail presentation: Project same field groupings from normalized relations into detail UI.
+- G2-12-019-004 — src/modules/placements/offer-service.ts / offer detail presentation: Preserve applicant identity and offer-letter display via joins.
+- G2-12-019-009 — src/modules/placements/job-service.ts / job detail presentation: Retain firstAppliedAt/history timestamps on reapplication.
+- G2-12-019-010 — src/modules/placements/job-service.ts / job detail presentation: Project last actor/time using history and avoid exposing internal actors to learners.
+- G2-12-019-016 — src/modules/placements/job-service.ts / job detail presentation: Project candidate-facing reason, enforce 500 char equivalent.
+- G2-12-019-018 — src/modules/placements/offer-service.ts / offer detail presentation: Expose issued offer letter with time through offer relation.
+- G2-12-019-019 — src/modules/placements/job-service.ts / job detail presentation: Project fair score and partial-data flag from screening evaluation.
+- G2-12-019-024 — src/modules/placements/job-service.ts / job detail presentation: Make duplicate policy explicit in Apply CTA and API.
+- G2-12-019-025 — src/modules/placements/company-service.ts / admin-company directory: Restore company portal reference field with controlled max length.
+- G2-12-019-027 — src/modules/placements/job-service.ts / job detail presentation: Add PAP toggle or documented moved feature.
+- G2-12-019-041 — src/modules/placements/job-service.ts / job detail presentation: Track later eligibility reversal/flag timestamp.
+- G2-12-019-043 — src/modules/placements/job-service.ts / job detail presentation: Define imported legacy fallback and error for missing role option.
+- G2-12-019-044 — src/modules/placements/offer-service.ts / offer detail presentation: Distinguish missing vs zero score in admin view.
+- G2-12-019-047 — src/modules/placements/offer-service.ts / offer detail presentation: Pass approved candidate-specific link and status transitions through notice payload.
+- G2-12-019-050 — src/modules/placements/offer-service.ts / offer detail presentation: Restore old stage wording and explanatory labels.
+- G2-12-019-052 — src/modules/placements/job-service.ts / job detail presentation: Benchmark applicant retrieval by drive/learner with one-per-job semantics.
+- G2-12-019-058 — src/modules/placements/application-service.ts / application detail presentation: Define archive/soft-delete migration and retention rules.
+- G2-13-010-012 — src/modules/placements/job-service.ts / job detail presentation: Maintain withdrawn terminal and reapply alternate flow only with prior-status gate.
+- G2-13-010-061 — src/modules/placements/job-service.ts / job detail presentation: Repair migrated null stage to explicit initial stage; no untracked null workflow.
+- G2-13-015-011 — src/modules/placements/offer-service.ts / offer detail presentation: Map respondBy→expiresAt and letterUrl→offerLetterUrl, with null 'to be announced' display
+- G2-13-015-015 — src/modules/placements/offer-service.ts / offer detail presentation: Order latest by source created timestamp with version tie-breaker; ensure stable multi-version display
+- G2-13-015-016 — src/modules/placements/offer-service.ts / offer detail presentation: Wire scheduled expiration and external-dispute finalization with explicit parity outcomes
+- G2-13-015-037 — src/modules/placements/offer-service.ts / offer detail presentation: Specify application status after offer withdrawal and exact learner notification semantics
+- G2-13-015-052 — src/modules/placements/offer-service.ts / offer detail presentation: Add expiry/status partial index if recurring sweeps become expensive across colleges
+- G2-13-015-056 — src/modules/placements/offer-service.ts / offer detail presentation: Specify migration table mapping, history versioning and legacy ID preservation
