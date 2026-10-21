@@ -17,3 +17,6 @@ Re-fetched edited `college-dashboard-risk-service.ts`, `college-dashboard-attend
 
 - `NEW_docs_audit_gap2_lane-7_u018-college-admin-deleted-workspaces.md.part1of2.md` | 0 code edits to shared Projects area; 20/20 findings audited and handed off with exact target path and fix. Existing archive restore is not equivalent to deleted soft-state, partial recoverability or mentorless BLOCKED restore; **handoff, not fixed**.
 - `NEW_docs_audit_gap2_lane-7_u018-college-admin-deleted-workspaces.md.part2of2.md` | 0 code edits to shared Projects area; 8/8 findings handed off, including distinct deleted lifecycle and fetch/retry/empty states. Legacy IDs are not silently reused for UUID project instances; **handoff, not fixed**.
+
+- `NEW_docs_audit_gap2_lane-13_l17-u023-learneroffer.md.part1of2.md` | 0 Placements code edits; 20/20 findings routed with IDs and exact fixes to placements API, service, schema, learner guard, and action model. Strict action schema and vNext UUIDs preserved; legacy missing-accept silent decline is a bug, not a behavior to restore. **Handoff, not fixed**.
+- `NEW_docs_audit_gap2_lane-13_l17-u023-learneroffer.md.part2of2.md` | 0 Placements code edits; 7/7 findings routed (idempotent replay, concurrency, IST deadline, event/outbox and historical-ID mapping). No runtime or migration performed. **Handoff, not fixed**.
