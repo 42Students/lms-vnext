@@ -8,6 +8,7 @@ import {CollegePersonEditAction} from "@/components/college/college-person-edit-
 import {CollegePersonAuditModal} from "@/components/college/college-person-audit-modal";
 import {CollegePersonProfileOverviewModal} from "@/components/college/college-person-profile-overview-modal";
 import {Alert} from "@/components/ui/alert";
+import {StatusBadge} from "@/components/ui/status-badge";
 import {StudentClassMoveAction} from "@/components/college/student-class-move-action";
 import {SuperAdminStudentBulkAccess} from "@/components/admin/super-admin-student-bulk-access";
 import Link from "next/link";
@@ -62,7 +63,7 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   <PageHeader title="Students"
    description="Manage student identity, academic placement and account access from one roster."
    actions={context.adminScope?.collegeId?<div className="flex w-full min-w-0 flex-col items-stretch gap-2 md:w-auto md:flex-row md:flex-wrap md:items-center md:justify-end">
-    {choices?<a href="#register-student" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] active:border-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Register New Student ↓</a>:null}
+    {choices?<a href="#register-student-heading" className="inline-flex min-h-11 items-center justify-center gap-2 rounded-[var(--lms-control-radius)] bg-[var(--lms-button-primary)] px-4 text-sm font-semibold text-on-primary md:min-h-9 hover:border-[var(--lms-button-primary-hover)] hover:bg-[var(--lms-button-primary-hover)] active:bg-[var(--lms-button-primary-hover)] focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]"><span aria-hidden="true">＋</span>Register students</a>:null}
     <Link href="/admin/people" className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-border bg-surface px-4 text-sm font-semibold text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">
       Manage memberships, profiles and account status →
     </Link>
@@ -76,20 +77,31 @@ export default async function SuperAdminStudentsPage({searchParams}:{
   {filtersUnavailable?<Alert tone="warning">Academic filter choices could not be loaded. Student directory rows remain available; edit and class-move actions are temporarily disabled. <Link href="/admin/students" className="font-semibold underline">Retry academic filters</Link></Alert>:null}
   {choicesUnavailable?<Alert tone="warning">Registration and bulk-import academic choices could not be loaded. Those actions are disabled until the selected college's options can be verified. <Link href="/admin/students" className="font-semibold underline">Retry registration options</Link></Alert>:null}
   {historyUnavailable?<Alert tone="warning">Recent bulk import history is unavailable; no empty import history is implied. <Link href="/admin/students" className="font-semibold underline">Retry import history</Link></Alert>:null}
-  <AdminScopedReadPage headingMode="section" intro={<>
-  {choices?<section id="register-student" aria-labelledby="register-student-heading" className="min-w-0 scroll-mt-24 space-y-3 border-b border-border pb-4"><h2 id="register-student-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Register New Student</h2><CollegeStudentRegisterForm choices={choices}/></section>:null}
-  {choices?<section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 border-b border-border pb-4">
-    <div className="flex min-w-0 flex-col items-stretch gap-3 md:flex-row md:items-center md:justify-between">
-      <h2 id="bulk-register-students-heading" className="font-semibold text-[18px] leading-[1.4] text-[var(--lms-heading)]">Bulk Register Students</h2>
-      {historyUnavailable?<span role="status" className="text-xs text-muted-foreground">History unavailable</span>:<SuperAdminStudentImportHistory runs={importRuns}/>}
+  <AdminScopedReadPage headingMode="section" intro={choices?
+   <details id="register-student" className="group min-w-0 scroll-mt-24 rounded-[var(--lms-canvas-radius)] border border-[var(--lms-canvas-border)] bg-surface">
+    <summary className="flex min-h-11 cursor-pointer items-center gap-2 px-[var(--lms-space-4)] py-[var(--lms-space-3)] text-sm font-semibold text-[var(--lms-heading)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)] [&::-webkit-details-marker]:hidden">
+     <span aria-hidden="true" className="inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-border text-lg leading-none">＋</span>
+     Register students (one at a time or bulk CSV)
+     <span aria-hidden="true" className="ml-auto text-muted-foreground group-open:rotate-180">⌄</span>
+    </summary>
+    <div className="grid min-w-0 gap-[var(--lms-space-4)] border-t border-[var(--lms-canvas-border)] p-[var(--lms-space-4)] lg:grid-cols-2">
+     <section aria-labelledby="register-student-heading" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+      <h2 id="register-student-heading" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Register New Student</h2>
+      <CollegeStudentRegisterForm choices={choices}/>
+     </section>
+     <section aria-labelledby="bulk-register-students-heading" className="min-w-0 space-y-3 rounded-[var(--lms-canvas-radius)] border border-border p-3">
+      <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+       <h2 id="bulk-register-students-heading" className="text-base font-semibold leading-6 text-[var(--lms-heading)]">Bulk Register Students</h2>
+       {historyUnavailable?<StatusBadge tone="warning">History unavailable</StatusBadge>:<SuperAdminStudentImportHistory runs={importRuns}/>}
+      </div>
+      <p className="text-sm leading-[22px] text-body">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
+      <details className="min-w-0 border-t border-border pt-3">
+       <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show CSV import form</summary>
+       <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
+      </details>
+     </section>
     </div>
-    <p className="text-sm text-body leading-[22px]">Validate a selected Program, Batch and Class roster before creating students. Imports can&apos;t be undone in one step, to protect students&apos; work. Correct or suspend individual accounts instead.</p>
-    <details className="min-w-0">
-      <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-primary-text underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-[3px] focus-visible:outline-[var(--lms-primary-text)]">Show CSV import form</summary>
-      <div className="min-w-0 pt-3"><CollegeStudentCsvImport choices={choices}/></div>
-    </details>
-  </section>:null}
-  </>} peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
+   </details>:null} peopleFilters={peopleFilters?{...peopleFilters,kind:"LEARNER"}:undefined} title="Registered Students" path="/admin/students" statuses={statuses}
   exportPath="/api/admin/students/export" exportFilename="students.csv"
   description="Manage student identity, academic placement and account access from one roster. Bulk registration and high-impact access changes stay explicit and reviewable."
   searchParams={searchParams}

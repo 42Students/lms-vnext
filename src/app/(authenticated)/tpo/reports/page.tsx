@@ -177,8 +177,29 @@ export default async function TpoReportsPage({
     // Never display invented metric totals when the read failed.
   }
 
-  const legacyGroups=groups.map(group=>({...group,cards:group.cards.map(legacyTpoReportCard)}));
-  // Keep legacy's intentional report order: placement health, outcomes, relationships.
+  // Legacy reports are a fixed eleven-card journey, not an alphabetical
+  // catalog. New vNext report modules appear after their original neighbors.
+  const legacyReportOrder=[
+   ["/tpo/reports/placement-summary","/tpo/reports/by-branch","/tpo/reports/by-company","/tpo/reports/ctc"],
+   ["/tpo/reports/unplaced","/tpo/reports/offers-acceptance","/tpo/reports/joining-status","/tpo/reports/failure-reasons"],
+   ["/tpo/reports/recruiter-leads","/tpo/reports/outcomes","/tpo/reports/accreditation"],
+  ] as const;
+  const indexedCards=groups.flatMap(group=>group.cards);
+  const legacyPaths=new Set<string>(legacyReportOrder.flat());
+  const legacyGroups=groups.map((group,index)=>({
+   ...group,
+   eyebrow:["Placement health","Student outcomes","Relationships and compliance"][index],
+   cards:[
+    ...legacyReportOrder[index].flatMap(path=>indexedCards.filter(card=>card.path===path)),
+    ...group.cards.filter(card=>!legacyPaths.has(card.path)),
+   ].map(card=>{
+    const legacyAlias=card.path==="/tpo/reports/recruiter-leads"?"/tpo/reports/leads":
+     card.path==="/tpo/reports/outcomes"?"/tpo/reports/after-college":card.path;
+    const withCopy=legacyTpoReportCard({...card,path:legacyAlias});
+    return {...card,title:withCopy.title,description:withCopy.description};
+   }),
+  }));
+  // Preserve legacy order while displaying explicit additional report types afterward.
   const visibleGroups = filterTpoReportGallery(legacyGroups,parsedSearch.data,parsedGroup.data);
   if (!workspace) {
     return <div className="min-w-0 space-y-6">
@@ -190,12 +211,12 @@ export default async function TpoReportsPage({
       </Alert>
       {visibleGroups.length === 0 ? <EmptyState title="No matching reports" description="Clear filters to see the full report directory." /> : null}
       {visibleGroups.map(group => <section key={group.heading} className="space-y-3 border-b border-border pb-4">
-        <h2 className="text-lg font-semibold">{group.heading}</h2>
+        <p className="text-xs font-bold uppercase tracking-wide text-muted-foreground">{group.eyebrow}</p><h2 className="text-lg font-semibold">{group.heading}</h2>
         <p className="text-sm text-body">{group.description}</p>
         <div className="grid gap-3 sm:grid-cols-2">
-          {group.cards.map(card => <Link key={card.path} href={card.path} className="block border-b border-border py-3 hover:text-link focus-visible:outline-2">
-            <h3 className="font-semibold text-link">{card.title}</h3>
-            <p className="text-sm text-body">{card.description}</p>
+          {group.cards.map(card => <Link key={card.path} href={card.path} className="group block rounded-[var(--lms-canvas-radius)] border border-border bg-surface p-4 hover:border-primary hover:bg-primary-subtle focus-visible:outline-2">
+            <div className="flex items-start justify-between gap-3"><h3 className="font-semibold text-link">{card.title}</h3><span aria-hidden="true" className="text-link transition-transform group-hover:translate-x-1">→</span></div>
+            <p className="mt-2 text-sm text-body">{card.description}</p>
           </Link>)}
         </div>
       </section>)}
@@ -283,6 +304,7 @@ export default async function TpoReportsPage({
       {visibleGroups.map((group) => (
         <section key={group.heading} className="space-y-3">
           <div>
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.06em] text-muted-foreground">{group.eyebrow}</p>
             <h2 className="text-lg font-semibold text-foreground">
               {group.heading}
             </h2>
@@ -294,21 +316,19 @@ export default async function TpoReportsPage({
           {group.cards.length > 0 ? (
             <div className="grid gap-3 md:grid-cols-2">
               {group.cards.map((card) => (
-                <Link
-                  key={card.path}
-                  href={reportHref(card.path, workspace)}
-                  className="block border-b border-border py-4 transition hover:border-primary hover:bg-primary-subtle"
-                >
-                  <h3 className="font-semibold text-link">
-                    {card.title}
-                  </h3>
-                  {card.path==="/tpo/reports/placement-summary"?<p className="mt-1 text-xs font-semibold text-link">Start here</p>:null}
-                  <p className="mt-2 text-sm leading-6 text-body">
-                    {card.description}
-                  </p>
-                  <p className="mt-3 text-sm font-semibold text-link">
-                    Open report →
-                  </p>
+                <Link key={card.path} href={reportHref(card.path,workspace)}
+                  className={"group block min-w-0 rounded-[var(--lms-canvas-radius)] border bg-surface p-4 transition hover:border-primary hover:bg-primary-subtle focus-visible:outline-2 focus-visible:outline-offset-2 "+(card.path==="/tpo/reports/placement-summary"?"border-primary ring-1 ring-[var(--lms-primary)]":"border-border")}>
+                  {card.path==="/tpo/reports/placement-summary"?
+                   <p className="mb-1 text-xs font-bold uppercase tracking-wide text-link">Start here</p>:null}
+                  <div className="flex items-start justify-between gap-3">
+                   <h3 className="font-semibold text-[var(--lms-heading)]">{card.title}</h3>
+                   <svg aria-hidden="true" className="size-4 shrink-0 text-link transition-transform group-hover:translate-x-1"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                     <path d="M5 12h14m-6-6 6 6-6 6"/>
+                   </svg>
+                  </div>
+                  <p className="mt-2 text-sm leading-6 text-body">{card.description}</p>
+                  {!legacyPaths.has(card.path)?<p className="mt-2 text-xs font-semibold text-muted-foreground">Additional report</p>:null}
                 </Link>
               ))}
             </div>

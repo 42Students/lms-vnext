@@ -141,7 +141,7 @@ export function CollegeApplicationPipelineControls({jobId,rows,total,query,baseP
   {key:"college",header:"College",mobilePriority:"secondary",cell:row=>row.collegeName?.trim()||"—"},
   {key:"roll",header:"Roll",mobilePriority:"secondary",cell:row=>row.rollNumber?.trim()||"—"},
   {key:"role",header:"Role",mobilePriority:"secondary",cell:row=>row.roleTitle?.trim()||"—"},
-  {key:"source",header:"Source",mobilePriority:"secondary",cell:row=><StatusBadge tone="info">{row.source==="EXTERNAL"?"External":"Internal"}</StatusBadge>},
+  {key:"source",header:"Source",mobilePriority:"secondary",cell:row=><StatusBadge tone="info">{row.source==="EXTERNAL"?"External":row.source==="INTERNAL"?"Internal":row.source||"—"}</StatusBadge>},
   {key:"date",header:"Applied Date",mobilePriority:"secondary",
    cell:row=>Number.isFinite(new Date(row.submittedAt).getTime())?istDay.format(new Date(row.submittedAt)):"—"},
   {key:"age",header:"Age",mobilePriority:"secondary",cell:row=>{
