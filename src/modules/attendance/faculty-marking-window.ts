@@ -1,8 +1,10 @@
 export type FacultyAttendanceMarkingWindow = "OPEN" | "NOT_STARTED" | "WINDOW_EXPIRED";
 
-/** Legacy Faculty attendance: never mark before class start; after end, only
+/** Intentional vNext Faculty policy: never mark before class start; after end, only
  * the college's correction-window period remains writable by Faculty.
  * College Admin corrections have separate authorization and are not gated here.
+ * The legacy Ready to mark button allowed early marking; any relaxation here
+ * must be paired with a server-side policy, per-college setting and audit.
  */
 export function facultyAttendanceMarkingWindow(input: {
   startsAt: Date;

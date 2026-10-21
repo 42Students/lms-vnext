@@ -31,6 +31,9 @@ export const superAdminHrListQuerySchema = z
   })
   .strict();
 
+/** Global recruiter accounts still require an approved company relation here;
+ * an unscoped legacy create cannot bypass verified tenant/company linkage.
+ */
 export const createSuperAdminHrInputSchema = z
   .object({
     companyRelationshipId: superAdminHrRelationshipIdSchema.optional(),
@@ -130,4 +133,15 @@ export function parseSuperAdminHrPageParams(raw:Record<string,string|string[]|un
  };
  const result=superAdminHrListQuerySchema.safeParse(normalized);
  return result.success?result.data:null;
+}
+
+/** UI-only name projection for legacy split-name forms.
+ * Never replace the canonical displayName or assume contact mail equals
+ * the platform sign-in credential.
+ */
+export function recruiterLegacyNameParts(displayName:string){
+ const clean=displayName.trim().replace(/\s+/g," ");
+ const index=clean.indexOf(" ");
+ return {firstName:index<0?clean:clean.slice(0,index),
+  lastName:index<0?"":clean.slice(index+1)};
 }
