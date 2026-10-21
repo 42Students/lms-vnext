@@ -235,15 +235,15 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/placements/tpo-report-record-links.tsx`
 - [x] `src/components/placements/tpo-round-apply-control.tsx`
 - [x] `src/components/placements/tpo-round-reorder.tsx`
-- [ ] `src/components/placements/tpo-round-result-entry-form.tsx`
-- [ ] `src/components/placements/tpo-round-results-import.tsx`
-- [ ] `src/components/placements/tpo-season-controls.tsx`
-- [ ] `src/components/placements/tpo-settings-nav.tsx`
-- [ ] `src/components/profile/learner-verification-withdraw.tsx`
-- [ ] `src/components/projects/admin-readiness-workspace-picker.tsx`
-- [ ] `src/components/projects/class-team-workspace-creator.tsx`
-- [ ] `src/components/projects/mentor-lane-board.tsx`
-- [ ] `src/components/projects/mentor-meeting-notes-editor.tsx`
+- [x] `src/components/placements/tpo-round-result-entry-form.tsx`
+- [x] `src/components/placements/tpo-round-results-import.tsx`
+- [x] `src/components/placements/tpo-season-controls.tsx`
+- [x] `src/components/placements/tpo-settings-nav.tsx`
+- [x] `src/components/profile/learner-verification-withdraw.tsx`
+- [x] `src/components/projects/admin-readiness-workspace-picker.tsx`
+- [x] `src/components/projects/class-team-workspace-creator.tsx`
+- [x] `src/components/projects/mentor-lane-board.tsx`
+- [x] `src/components/projects/mentor-meeting-notes-editor.tsx`
 - [ ] `src/components/projects/mentor-product-backlog.tsx`
 - [ ] `src/components/projects/mentor-release-editor.tsx`
 - [ ] `src/components/projects/mentor-task-create.tsx`
