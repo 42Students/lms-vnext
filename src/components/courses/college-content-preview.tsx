@@ -65,7 +65,7 @@ export function CollegeContentPreview({ data, playback=null,discussion=null }: {
       </Button>
       <Dialog
         open={open}
-        onOpenChange={next=>{setOpen(next);if(!next){setVideoUrl(null);setVideoError(null);}}}
+        onOpenChange={next=>{setOpen(next);if(!next){setVideoUrl(null);setVideoError(null);setShowDiscussion(false);}}}
         title={data.title}
         description="Content preview"
         footer={
