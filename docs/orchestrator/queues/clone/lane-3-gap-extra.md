@@ -9,7 +9,7 @@ Order of work: finish the unit you are on in your main queue, then continue the 
 - [x] L11-U013 (FE page) `docs/legacy-source/frontend/src/pages/tpo/drives/new.js`
 - [x] L11-U016 (FE page) `docs/legacy-source/frontend/src/pages/tpo/messages.js`
 - [x] L11-U019 (FE page) `docs/legacy-source/frontend/src/pages/tpo/recruiters/[recruiterLeadId].js`
-- [ ] L11-U022 (FE page) `docs/legacy-source/frontend/src/pages/tpo/reports/index.js`
+- [x] L11-U022 (FE page) `docs/legacy-source/frontend/src/pages/tpo/reports/index.js`
 - [ ] L11-U025 (FE page) `docs/legacy-source/frontend/src/pages/tpo/verification.js`
 - [ ] L11-U028 (FE page) `docs/legacy-source/frontend/src/pages/superadmin/projects/workspaces/deleted.js`
 - [ ] L12-U009 (FE page) `docs/legacy-source/frontend/src/pages/Dashboard/course/Classroom/classroom.js`
