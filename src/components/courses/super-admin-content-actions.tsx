@@ -64,8 +64,6 @@ export function SuperAdminContentActions({item}:{item:Content}){
    }else if(notes.trim())changes={...changes,notes:notes.trim()};
   }
   if(item.contentType==="YOUTUBE"){
-   if(!replacementUrl.trim()&&item.status==="DRAFT")
-    setError("Please enter a YouTube URL");
    const seconds=Number(duration);
    if(!duration||!Number.isInteger(seconds)||seconds<1||seconds>86400){
     setError("Video length must be 1–86400 seconds.");return;
