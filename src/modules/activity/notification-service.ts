@@ -10,6 +10,7 @@ import {
   isNull,
   lt,
   or,
+  sql,
 } from "drizzle-orm";
 import { z } from "zod";
 import { getDb } from "@/db/client";
@@ -308,6 +309,24 @@ async function assertScopedNotificationRecipients(
   }
 }
 
+/**
+ * Course/class filters use producer-authored, server-persisted activity
+ * metadata. They never broaden the personal recipient scope.
+ */
+function appendNotificationContextFilters(
+  conditions: ReturnType<typeof eq>[],
+  options: { classId?: string; courseId?: string },
+) {
+  if (options.classId) {
+    const classId = z.string().uuid().parse(options.classId);
+    conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'classId'`, classId));
+  }
+  if (options.courseId) {
+    const courseId = z.string().uuid().parse(options.courseId);
+    conditions.push(eq(sql<string>`${activityEvents.metadata} ->> 'courseId'`, courseId));
+  }
+}
+
 function sanitizeNotificationRow<T extends { actionHref: string | null }>(row: T) {
   return {
     ...row,
@@ -529,6 +548,8 @@ export async function listOwnNotifications(
     unreadSince?: Date;
     limit?: number;
     collegeId?: string;
+    classId?: string;
+    courseId?: string;
   } = {},
 ) {
   const limit = z
@@ -551,6 +572,8 @@ export async function listOwnNotifications(
       ),
     );
   }
+
+  appendNotificationContextFilters(conditions, options);
 
   const rows = await getDb()
     .select({
@@ -734,6 +757,8 @@ export async function listOwnNotificationPage(
     unreadSince?: Date;
     beforeId?: string;
     collegeId?: string;
+    classId?: string;
+    courseId?: string;
   } = {},
 ) {
   const limit = z.number().int().min(1).max(100)
@@ -747,6 +772,7 @@ export async function listOwnNotificationPage(
     conditions.push(isNull(inAppNotifications.readAt));
     if(options.unreadSince)conditions.push(gte(inAppNotifications.createdAt,options.unreadSince));
   }
+  appendNotificationContextFilters(conditions, options);
   if (options.beforeCreatedAt && options.beforeId) {
     const at = z.date().parse(options.beforeCreatedAt);
     const id = z.string().uuid().parse(options.beforeId);
