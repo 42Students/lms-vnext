@@ -25,9 +25,21 @@ export function OrganizationActions({
   const { showToast } = useToast();
   const [renameOpen, setRenameOpen] = useState(false);
   const [archiveOpen, setArchiveOpen] = useState(false);
+  const [discardRenameOpen,setDiscardRenameOpen]=useState(false);
   const [nextName, setNextName] = useState(name);
   const [pending, startTransition] = useTransition();
   const inFlightRef=useRef(false);
+  function requestRenameClose(){
+    if(pending||inFlightRef.current)return;
+    if(nextName.trim()!==name.trim()){setDiscardRenameOpen(true);return;}
+    setRenameOpen(false);
+  }
+  function discardRename(){
+    if(pending||inFlightRef.current)return;
+    setDiscardRenameOpen(false);
+    setNextName(name);
+    setRenameOpen(false);
+  }
 
   function rename() {
     if(pending||inFlightRef.current||!nextName.trim())return;
@@ -53,6 +65,7 @@ export function OrganizationActions({
       }
 
       setRenameOpen(false);
+      setDiscardRenameOpen(false);
       showToast({
         tone: "success",
         title: "Updated organization “"+nextName.trim()+"”.",
@@ -106,7 +119,7 @@ export function OrganizationActions({
 
       <Dialog
         open={renameOpen}
-        onOpenChange={next=>{if(!pending)setRenameOpen(next);}}
+        onOpenChange={next=>{if(next)setRenameOpen(true);else requestRenameClose();}}
         dismissible={!pending}
         title="Rename organization"
         description="The active-name uniqueness rule is enforced by the server."
@@ -116,7 +129,7 @@ export function OrganizationActions({
               variant="secondary"
               className="min-h-11 w-full md:min-h-9 md:w-auto"
               disabled={pending}
-              onClick={() => setRenameOpen(false)}
+              onClick={requestRenameClose}
             >
               Cancel
             </Button>
@@ -150,6 +163,15 @@ export function OrganizationActions({
           maxLength={255}
         />
       </Dialog>
+
+      <ConfirmDialog
+        open={discardRenameOpen}
+        onOpenChange={next=>{if(!next&&!pending)setDiscardRenameOpen(false);}}
+        title="Discard changes to this organization?"
+        description="Your unsaved edits will be lost."
+        confirmLabel="Discard changes" confirmVariant="danger"
+        onConfirm={discardRename}
+      />
 
       <ConfirmDialog
         open={archiveOpen}

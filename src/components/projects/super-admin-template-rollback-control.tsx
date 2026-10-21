@@ -13,9 +13,10 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
  const router=useRouter();
  const {askConfirm,dialog}=useConfirmFlow();
  const [busy,setBusy]=useState(false),[error,setError]=useState(""),[notice,setNotice]=useState("");
+ const [reviewed,setReviewed]=useState(false);
  const enabled=selectedVersion.version!==currentVersion&&status!=="ARCHIVED";
  async function rollback(){
-  if(!enabled||busy)return;
+  if(!enabled||busy||!reviewed)return;
   if(!(await askConfirm("Roll back to version "+selectedVersion.version+"? "+
    "This creates version "+(currentVersion+1)+" from the older snapshot. "+
    "Existing workspaces and the published version are unchanged until you publish again.")))return;
@@ -33,7 +34,18 @@ export function SuperAdminTemplateRollbackControl({templateId,selectedVersion,
   <h2 className="text-sm font-semibold text-foreground">Restore this snapshot</h2>
   <p className="text-xs text-body">Review the compared changes above. Rollback creates a new editable version;
    assigned colleges and existing workspaces keep their current pinned versions.</p>
-  <Button variant="secondary" type="button" disabled={!enabled||busy} onClick={()=>void rollback()}
+  <label className="flex min-h-11 items-center gap-2 text-sm font-semibold text-body">
+    <input type="checkbox" checked={reviewed} disabled={!enabled||busy}
+      onChange={event=>setReviewed(event.target.checked)}
+      className="size-4 accent-[var(--lms-primary)]"/>
+    I reviewed these changes
+  </label>
+  <p className="text-xs text-muted-foreground">
+    Review is tied to this template, selected snapshot and current version.
+    If someone publishes another version before you confirm, the server must reject
+    the stale expectedTemplateVersion rather than silently accept a different diff.
+  </p>
+  <Button variant="secondary" type="button" disabled={!enabled||busy||!reviewed} onClick={()=>void rollback()}
    className="min-h-11 w-full sm:min-h-9 sm:w-auto">
    {busy?"Rolling back…":"Roll back"}
   </Button>

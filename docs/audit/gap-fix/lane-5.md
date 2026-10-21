@@ -235,3 +235,27 @@
 
 ## Wave 1 — packet 47: Super Admin feature controls matrix
 - Packet: `docs/audit/gap-fix-work/packets/lane-5/src_app_authenticated_admin_features_page.tsx.md` | 9 findings reviewed. G2-10-007-010/018 and G2-9-036-010/018: already fixed page-local honest labels (project/placement on-this-page, total matching filters); refined total metric label to "Colleges matching current filters" and authorized query scope, did not mislabel 20 visible rows as scope-wide enabled denominator. G2-10-007-014/G2-9-036-014/100: guarded Projects/Placements quick Turn on/Turn off action now displayed directly in each matrix cell with existing check/impact/persisted-store confirmation; preserved versioned Inherit/Lock model and three vNext optional modules, Electives editor remains a disclosure. Immediate one-click legacy switch was not introduced because it would bypass mandatory confirmation and might alter descendant policy. G2-10-007-039/G2-9-036-039: no dynamic module-catalog fetch exists (compile-time OPTIONAL_MODULE_KEYS), so its outage fallback is inapplicable unless dynamic catalog restored. Scope-wide absolute on/off totals require permissioned aggregated service read and are handed off. No app code/tests/CI run; TSX/JSX and imports manually reread.
+
+## Packet 48 — College setup overview
+- Work: validate selected college UUID, render legacy missing-id recovery, catch non-auth lookup errors, and retain authorized/not-found behavior. Added honest routing guidance for the separated setup sections.
+- Findings G2-5-030-009/024/025/028/039/058 need cross-page dirty/busy registry, which the read-only server overview cannot implement. Listed for handoff. Clean close has no toast.
+
+## Packet 49 — Tenant creation
+- Work: existing organization creation already forwards verified organizationId, and college creation already changes scope before opening setup. Clarified this behavior on-screen, indicated authorized prefill, and changed failed scope-selection message to legacy wording.
+- Existing typed create response and safe scope handoff retained. No code execution, tests, or CI. Reviewed JSX and imports.
+
+## Packet 50 — Super Admin placement drive overview
+- Completed scoped UUID check with legacy "Could not load this drive." recovery. Selected-college safety gate shows "Select a college to continue".
+- Split core job identity from pipeline metrics with settled reads; metrics failure presents "Could not load pipeline metrics." inside the existing drive workspace without hiding actions. Unauthorized errors propagate. Other optional workspace services remain a downstream handoff (G2-10-012-071).
+- G2-10-012-028/029/031/039/053 addressed on owned page; G2-10-012-071 partly addressed. No code, tests or CI run.
+
+## Packet 51 — Organization actions
+- Dirty Rename cancel, X and Escape request the exact discard confirmation and preserve unsaved field when declined (G2-6-018-020/032). Existing dynamic success "Updated organization X" was already parity-compliant.
+- Archive is intentionally non-destructive, so "Archived organization" is retained rather than falsely reporting legacy physical deletion. Archive currently blocks active colleges but not archived children; confirm legacy mapping and lifecycle with domain owner (G2-6-018-041/028). Read-only scope restriction remains service-driven, needs explicit parent access hint (G2-6-018-029).
+- No app execution, test or CI run.
+
+## Packet 52 — Hiring analytics failure recovery
+- Placement analytics error boundary now says "Couldn't refresh hiring metrics" while retaining visible retry; it does not claim cross-scope last-good rows. The analytics page displays precise failing jobs/departments/programs/batches filter names provided by existing settled filter service and retains verified metrics on partial filter failure. Full last-good report needs selected-college/filter-keyed client cache. No code/tests/CI run.
+
+## Packet 53 — Project template historical comparison
+- Historical comparison now marks unreadable snapshot specifically and never exposes rollback on failed comparison. The rollback control requires explicit "I reviewed these changes" acknowledgement, keyed to template+selected snapshot+current template version; mutation still sends expectedTemplateVersion to server and prompts again. Copy discloses that lifecycle publication/archive fields are not restored from blueprint snapshots. Full server-side compare digest token and historical full-snapshot migration require backend changes. No code/tests/CI run.

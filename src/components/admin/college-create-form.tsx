@@ -79,7 +79,7 @@ export function CollegeCreateForm({
         setSuccess("College created");
         if(advanceToSetup){
           if(!request){
-            setError("College created, but the setup handoff was unavailable. Select it from the scope switcher.");
+            setError("College created, but couldn't auto-select it — pick it from the header. The setup handoff was unavailable.");
             router.refresh();return;
           }
           try{
@@ -88,7 +88,7 @@ export function CollegeCreateForm({
               body:JSON.stringify(request),
             });
           }catch{
-            setError("College created, but selecting it failed. Choose the new college in the scope switcher before setup.");
+            setError("College created, but couldn't auto-select it — pick it from the header.");
             router.refresh();return;
           }
           router.push("/admin/tenants/setup");router.refresh();return;

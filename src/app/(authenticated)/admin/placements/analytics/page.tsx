@@ -52,8 +52,8 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
  ]);
  if(reportResult.status==="rejected")return <div className="min-w-0 space-y-4 md:space-y-6">
   <PageHeader title="Placement Analytics"/>
-  <ErrorState title="Failed to load hiring dashboard"
-   description="The selected college's hiring report could not be loaded. Please try again; no zero counts are implied."
+  <ErrorState title="Failed to load hiring data"
+   description="Couldn't refresh hiring metrics. The selected college's hiring report could not be verified. Retry the current filters; no zero counts are implied."
    action={<Link href="/admin/placements/analytics" className="font-semibold text-primary-text underline">Retry hiring dashboard</Link>}/>
  </div>;
  const data=reportResult.value;
@@ -107,7 +107,10 @@ export default async function SuperAdminPlacementAnalytics({searchParams}:{
     className="inline-flex min-h-11 items-center justify-center rounded-[var(--lms-control-radius)] border border-[var(--lms-field-hover-border)] bg-surface px-4 text-sm font-[650] text-primary-text md:min-h-9 hover:border-[var(--lms-primary)] hover:bg-[var(--lms-primary)] hover:text-white active:border-[var(--lms-primary-hover)] active:bg-[var(--lms-primary-hover)] active:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--lms-primary)]">
     Export report</a>}/>
   {filters===null?<Banner tone="warning" action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
-   Department, program, batch and drive choices could not be loaded. The verified hiring results remain visible.
+   Jobs, departments, programs and batches could not be loaded for filtering. The verified hiring results remain visible.
+  </Banner>:filters.filtersError?<Banner tone="warning" role="status"
+    action={<Link href={reportPageHref(reportPage)} className="font-semibold underline">Retry dropdown choices</Link>}>
+    {filters.filtersError}
   </Banner>:null}
   <form method="get" action="/admin/placements/analytics" className="min-w-0 space-y-[var(--lms-space-3)] border-b border-[var(--lms-canvas-border)] pb-[var(--lms-space-4)]">
    <div className="grid min-w-0 grid-cols-1 items-end gap-[var(--lms-space-3)] sm:grid-cols-2 md:grid-cols-[minmax(0,1fr)_minmax(0,13rem)_auto]">
