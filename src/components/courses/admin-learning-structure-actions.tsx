@@ -477,6 +477,7 @@ export function LessonActions({
     description: string | null;
     sequence: number;
     updatedAt: Date | string;
+    visibleToStudents?: boolean;
   };
 }) {
   const [editOpen, setEditOpen] = useState(false);
@@ -485,13 +486,16 @@ export function LessonActions({
   const [typedArchiveName, setTypedArchiveName] = useState("");
   const [name, setName] = useState(lesson.name);
   const [description, setDescription] = useState(lesson.description ?? "");
+  const [visibleToStudents,setVisibleToStudents]=useState(lesson.visibleToStudents??true);
+  const {showToast}=useToast();
   const [editFailure, setEditFailure] = useState("");
   const [archiveFailure, setArchiveFailure] = useState("");
   const { pending, run } = useLearningMutation();
-  const dirty = name !== lesson.name || description !== (lesson.description ?? "");
+  const dirty = name !== lesson.name || description !== (lesson.description ?? "") ||
+    (lesson.visibleToStudents!==undefined && visibleToStudents!==lesson.visibleToStudents);
   const validName = name.trim().length > 0 && name.trim().length <= 255;
   function dismissEdit(next: boolean) {
-    if (pending) return;
+    if (pending) {showToast({tone:"warning",title:"Wait for the lesson save to finish."});return;}
     if (!next && dirty) { setDiscardOpen(true); return; }
     setEditOpen(next);
   }
@@ -499,6 +503,7 @@ export function LessonActions({
     if (pending) return;
     setName(lesson.name);
     setDescription(lesson.description ?? "");
+    setVisibleToStudents(lesson.visibleToStudents??true);
     setEditFailure("");
     setDiscardOpen(false);
     setEditOpen(true);
@@ -512,19 +517,27 @@ export function LessonActions({
   return (
     <>
       <div className="flex flex-wrap items-center justify-end gap-[var(--lms-space-2)]">
-        <Button size="sm" variant="secondary" disabled={pending} onClick={openEdit}>Edit</Button>
-        <Dropdown trigger="More" label={"Lesson actions for " + lesson.name}
-          mobileSheet align="end" triggerClassName="md:!min-h-9">
-          <Menu className="w-full min-w-0">
-            <MenuItem disabled={pending} onClick={openArchive}>Archive</MenuItem>
-          </Menu>
-        </Dropdown>
+        <Button size="sm" variant="secondary" disabled={pending} onClick={openEdit}
+         aria-label={"Edit lesson "+lesson.name} className="min-h-11 gap-1.5 md:min-h-9">
+         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
+          strokeLinejoin="round"><path d="m15 5 4 4M4 20l5-1 11-11a2 2 0 0 0-4-4L5 15z"/></svg>
+         Edit
+        </Button>
+        <Button size="sm" variant="danger" disabled={pending} onClick={openArchive}
+         aria-label={"Delete lesson "+lesson.name} className="min-h-11 gap-1.5 md:min-h-9">
+         <svg aria-hidden="true" width="15" height="15" viewBox="0 0 24 24"
+          fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"
+          strokeLinejoin="round"><path d="M3 6h18M8 6V4h8v2M5 6l1 14h12l1-14M10 10v6m4-6v6"/></svg>
+         Delete
+        </Button>
       </div>
       <Dialog
         open={editOpen}
         onOpenChange={dismissEdit}
-        dismissible={!pending}
-        title="Edit Lesson"
+        dismissible
+        className="max-w-[520px]"
+        title={"Edit lesson “"+lesson.name+"”"}
         description="Course membership is managed by the Learning Path. Use the Reorder tool to change lesson order and the Visibility control to show or hide the lesson."
         footer={<div className="flex w-full flex-col-reverse gap-[var(--lms-space-2)] md:flex-row md:justify-end [&>button]:w-full md:[&>button]:w-auto">
           <Button variant="secondary" disabled={pending} onClick={() => dismissEdit(false)}>Cancel</Button>
@@ -534,13 +547,14 @@ export function LessonActions({
               () => requestJson("/api/courses/lessons/" + lesson.id, "PATCH", {
                 name: name.trim(),
                 description: description.trim() || null,
+                ...(lesson.visibleToStudents!==undefined?{visibleToStudents}:{}),
                 expectedUpdatedAt: new Date(lesson.updatedAt).toISOString(),
               }),
               "Updated lesson “" + name.trim() + "”.",
               () => {setEditOpen(false);setEditFailure("");},
               error => setEditFailure(error instanceof Error ? error.message : "Review your changes and retry."),
             );
-          }}>{pending ? "Saving…" : "Save"}</Button>
+          }}>{pending ? "Saving…" : "Save Changes"}</Button>
         </div>}
       >
         <div className="grid min-w-0 gap-[var(--lms-space-4)]">
@@ -556,6 +570,15 @@ export function LessonActions({
             <span className="mb-[var(--lms-space-2)] block text-xs font-semibold text-body">Description</span>
             <Textarea value={description} onChange={event=>setDescription(event.target.value)} maxLength={5000}/>
           </label>
+          {lesson.visibleToStudents!==undefined?<label className="flex min-h-11 items-center gap-3 text-sm font-semibold text-body">
+            <input type="checkbox" className="h-4 w-4 accent-[var(--lms-primary)]"
+             checked={visibleToStudents} disabled={pending}
+             onChange={event=>setVisibleToStudents(event.target.checked)}/>
+            Visible to students
+          </label>:null}
+          <p className="text-xs text-muted-foreground">
+           The parent course and learning path are immutable. Change lesson order using Reorder.
+          </p>
           {editFailure?<div role="alert" className="space-y-2 rounded border border-danger p-3">
             <p className="text-sm font-semibold text-error">Lesson changes were not saved</p>
             <p className="text-sm text-body">{editFailure}</p>
@@ -569,9 +592,9 @@ export function LessonActions({
         onConfirm={()=>{setDiscardOpen(false);setEditOpen(false);setEditFailure("");}}/>
       <ConfirmDialog open={archiveOpen}
         onOpenChange={next=>{if(!pending){setArchiveOpen(next);if(!next)setTypedArchiveName("");}}}
-        title="Archive lesson"
-        description="Students and teachers lose this lesson straight away. Uploaded files and historical progress are kept so the lesson can be restored. No files are deleted."
-        confirmLabel="Archive Lesson"
+        title={"Delete lesson “"+lesson.name+"”?"}
+        description="This archives the lesson: students and teachers lose access immediately. Uploaded files, learner progress and submissions are retained for restoration. No files are deleted."
+        confirmLabel="Delete lesson"
         pending={pending}
         confirmDisabled={typedArchiveName!==lesson.name}
         onConfirm={()=>{
@@ -579,7 +602,7 @@ export function LessonActions({
           setArchiveFailure("");
           run(
             () => requestJson("/api/courses/lessons/" + lesson.id, "DELETE"),
-            "Archived “" + lesson.name + "”. Its uploaded files and progress are kept for restoration.",
+            "Lesson deleted successfully. Uploaded files and learner progress are kept for restoration.",
             () => {setArchiveOpen(false);setTypedArchiveName("");},
             error => setArchiveFailure(error instanceof Error ? error.message : "Archive failed; refresh and try again."),
           );
@@ -589,7 +612,7 @@ export function LessonActions({
             Type the lesson name to confirm: <strong>{lesson.name}</strong>
             <Input value={typedArchiveName} autoComplete="off" disabled={pending}
               onChange={event=>setTypedArchiveName(event.target.value)}
-              aria-label="Type exact lesson name to archive"
+              aria-label={"Type lesson name to confirm deleting "+lesson.name}
               className="mt-2" />
           </label>
           {archiveFailure?<p role="alert" className="text-sm text-error">
