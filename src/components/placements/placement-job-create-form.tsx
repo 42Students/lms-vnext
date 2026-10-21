@@ -896,6 +896,8 @@ export function PlacementJobCreateForm({
                 ) ?? "",
               ),
             ),
+          minPostgraduatePercentage:
+            nullableDecimal(String(data.get("minPostgraduatePercentage") ?? "")),
           minPctThroughout:nullableDecimal(String(data.get("minPctThroughout")??"")),
           requireVerifiedEvidence:data.get("requireVerifiedEvidence")==="on",
           allowedPassingYears:
@@ -1871,6 +1873,7 @@ export function PlacementJobCreateForm({
               "Minimum UG %",
               "0.01",
             ],
+            ["minPostgraduatePercentage","Minimum PG % (PG students only)","0.01"],
             ["minPctThroughout","Percentage throughout","0.01"],
           ].map(
             ([name, label, step]) => (
