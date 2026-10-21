@@ -1,0 +1,8 @@
+# Lane chat-2 — cross-owner handoffs
+
+- `src/db/schema/placements.ts` + migration | G2-3-011-034, G2-3-011-028, G2-3-011-054, G2-6-011-024, G2-6-011-042 | Persist custom job type identity and effective counts-as-placed on drives, keyed by college; provide transaction-safe rename/answer propagation so report/eligibility/held offers agree. Current `employment_type` enum cannot encode these values.
+- `src/db/schema/placements.ts` + historical import | G2-13-031-099 | `season_id` is NOT NULL; legacy seasonless drives must be explicitly mapped to the college's current season during import with audit rather than silently excluded.
+- `src/db/schema/tpo-configuration.ts` + migration | G2-3-011-046 | Replace case-sensitive `(college_id,label)` uniqueness with case-folded unique index `(college_id,lower(label))`, deduplicating historical rows first.
+- `src/db/schema/tpo-configuration.ts` + migration | G2-6-011-011 | Backfill and constrain nullable `counts_as_placed` with legacy unknown-type default true while preserving built-in overrides.
+- TPO Job Types API route and `src/components/tpo/tpo-job-types-editor.tsx` | G2-3-011-018, G2-3-011-021, G2-6-011-018 | Expose `deleteUnusedTpoJobType` with updated-at CAS, in-use tooltip and exact legacy error-copy mapping; removal remains conservative until drive linkage exists.
+- TPO report route/components | G2-11-021-013, G2-11-021-022, G2-11-022-047 | Wire batch/branch/company/mode/category to the report service, render per-report legacy columns, disclose denominator and unavailable POOL/SUPER_DREAM semantics; never conflate absence with zero.
