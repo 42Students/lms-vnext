@@ -8,7 +8,7 @@ export const templateDirectoryQuerySchema=z.object({
     .pipe(z.number().int().min(1).max(1000)),
 ]).default(1),
 }).strict();
-export const TEMPLATE_DIRECTORY_PAGE_SIZE=20;
+export const TEMPLATE_DIRECTORY_PAGE_SIZE=10;
 export function templateDirectoryPages(total:number){
  if(!Number.isFinite(total)||total<0)return 1;
  return Math.max(1,Math.ceil(total/TEMPLATE_DIRECTORY_PAGE_SIZE));
@@ -27,8 +27,14 @@ export function templateDirectoryHref(query:z.infer<typeof templateDirectoryQuer
 export function parseSuperAdminTemplateDirectoryQuery(
   params:Record<string,string|string[]|undefined>,
 ){
-  if(Object.keys(params).some(key=>!["q","status","page"].includes(key))||
+  if(Object.keys(params).some(key=>!["q","search","status","page"].includes(key))||
      Object.values(params).some(Array.isArray))
     return templateDirectoryQuerySchema.safeParse(null);
-  return templateDirectoryQuerySchema.safeParse(params);
+  const normalized={...params};
+  delete normalized.search;
+  if(params.search!==undefined&&params.q===undefined)normalized.q=params.search;
+  if(typeof normalized.status==="string"&&
+      !["ALL","DRAFT","PUBLISHED","ARCHIVED"].includes(normalized.status))
+    normalized.status="ALL";
+  return templateDirectoryQuerySchema.safeParse(normalized);
 }
