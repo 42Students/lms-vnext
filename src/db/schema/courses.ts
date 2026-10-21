@@ -23,6 +23,7 @@ import {
 import { departments } from "./departments";
 import { collegeMemberships } from "./memberships";
 import { users } from "./users";
+import { organizations } from "./organizations";
 import {
   courseOfferingStatusEnum,
   courseOfferingTypeEnum,
@@ -48,6 +49,8 @@ export const courses = pgTable(
     // Legacy IDs must be resolved from scoped import maps before storing UUIDs.
     slug: varchar("slug", { length: 64 }),
     parentCourseId: uuid("parent_course_id"),
+    createdByOrganizationId: uuid("created_by_organization_id")
+      .references(() => organizations.id, { onDelete: "restrict" }),
     // SA-academics-people-50: distinct legacy catalogue presentation metadata.
     shortTitle: varchar("short_title", { length: 120 }),
     officialCode: varchar("official_code", { length: 64 }),
@@ -61,6 +64,12 @@ export const courses = pgTable(
     // Separate old overview heading, image and ordered bullet list.
     introductionHeading: text("introduction_heading"),
     imageUrl: text("image_url"),
+    imageUrlLearningPath: text("image_url_learning_path"),
+    thumbnailUrl: text("thumbnail_url"),
+    // Only render sanitized HTML with an explicitly reviewed sanitizer.
+    legacyIntroductionHtml: text("legacy_introduction_html"),
+    legacyCourseStartDateText: text("legacy_course_start_date_text"),
+    legacyCourseEndDateText: text("legacy_course_end_date_text"),
     orderedTakeaways: jsonb("ordered_takeaways").$type<string[]>(),
     legacyAllowedForDisplay: integer("legacy_allowed_for_display"),
     version: bigint("version", { mode: "number" }).notNull().default(0),
@@ -97,6 +106,10 @@ export const courses = pgTable(
     ),
     uniqueIndex("courses_slug_uq").on(table.slug)
       .where(sql`${table.slug} is not null`),
+    // Legacy short-title duplicates must be reconciled before 0205 is applied.
+    uniqueIndex("courses_active_department_short_title_uq")
+      .on(table.departmentId, sql`lower(${table.shortTitle})`)
+      .where(sql`${table.status} = 'ACTIVE' and ${table.shortTitle} is not null`),
     index("courses_visible_department_idx")
       .on(table.departmentId, table.status, table.enabled)
       .where(sql`${table.deletedAt} is null`),
@@ -545,6 +558,8 @@ export const learnerContentProgress = pgTable(
     )
       .notNull()
       .default(0),
+    // Preserve recorded duration when lesson-content media is unavailable.
+    durationSeconds: integer("duration_seconds").notNull().default(0),
     completedAt: timestamp("completed_at", {
       withTimezone: true,
     }),
@@ -585,6 +600,8 @@ export const learnerContentProgress = pgTable(
       "learner_content_progress_position_ck",
       sql`${table.lastPositionSeconds} >= 0`,
     ),
+    check("learner_content_progress_duration_ck",
+      sql`${table.durationSeconds} >= 0`),
     check(
       "learner_content_progress_attempt_ck",
       sql`${table.attempt} >= 1`,

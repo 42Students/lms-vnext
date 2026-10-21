@@ -17,3 +17,11 @@
 - `src/modules/courses/learner-content-progress-service.ts` (courses owner): G2-2-015-092/-017-052 — change reads to select latest attempt with deterministic ordering and lock resets before registering 0203 uniqueness change.
 - `src/db/schema/academics.ts` and calendar importer (other lane): G2-18-006-065 — legacy class_schedule section/course/faculty/hall joins, India-local time mapping, attendance_marked_at projection.
 - `src/modules/courses/super-admin-lesson-bulk-visibility.ts`, `src/modules/courses/college-lesson-order-service.ts` (courses owner): G2-18-002-120, G2-18-002-076 — reconcile active-name/sequence uniqueness across multiple learning paths without silently deleting colliding legacy rows.
+
+- `src/modules/courses/progress-service.ts` (courses owner): G2-4-019-012/-013/-014/-044/-047/-064/-067/-070/-071 — per-attempt stored duration, immutable firstCompletedAt, explicit retake reset and latest attempt reads under DB lock before registering 0203.
+- `src/modules/courses/faculty-course-service.ts` and legacy importer (courses owner): G2-14-027-002/-006/-031/-047, G2-4-011-057/-080/-082 — aggregate historic course-wide faculty links read-only; map duplicates/active state, do not grant all deliveries.
+- `src/modules/courses/course-service.ts` + route adapter (courses owner): G2-3-008-077/-078, G2-3-014-052, G2-8-020-002/-043/-044/-045 — canonical role visibility, UUID slug redirect, archived restore and no-delete-with-children policy, course version CAS.
+- `src/modules/courses/student-course-service.ts` and migration adapters (courses owner): G2-3-025-067 — legacy semester_course type/credits/order/mandatory -> offering/cohort/period after tenant mapping.
+- `src/modules/courses/lesson-content-service.ts` (courses owner): G2-3-027-082 — legacy int author/class/course/content and active/enabled/soft delete/version crosswalk without exposing draft media.
+- `src/components/courses/admin-course-actions.tsx` and course data validator (UI/courses owner): G2-8-020-007/-014/-050/-051 — old card image/thumbnail/media link validation, explicit sanitized intro HTML, editor for all 14 legacy metadata fields.
+- `src/modules/courses/course-service.ts` (courses owner): G2-8-020-042/-067/-068 — case-insensitive shortTitle conflict, creator-org provenance and code precedence, collision preflight before 0205.
