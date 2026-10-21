@@ -38,6 +38,7 @@ import { loadPlacementHeldOfferFacts } from "./held-offer-facts-service";
 import { resolveSelfApplyRegistrationChoice } from "./batch-registration-policy";
 import { isPlacementApplicationDeadlinePassed } from "./application-deadline-policy";
 import {placementJobIdSchema} from "./validation";
+import {getOwnLearnerApplicationCompany} from "./learner-application-detail-service";
 import {
   evaluatePlacementEligibility,
   isPlacementJobTargetCohort,
@@ -377,4 +378,38 @@ export async function listLearnerPlacementBulkDecisions(
    })),
   }];
  });
+}
+
+/** The learner's employer-facing preview is available only after a persisted
+ * application. Read the same allowlisted company-share projection used by the
+ * application page; never spread the eligibility, debarment, readiness, staff
+ * comments or internal college profile into a recruiter-shaped object.
+ */
+export async function getOwnLearnerJobCompanySharePreview(
+ context:RequestContext,rawJobId:unknown,
+){
+ const membership=requireLearner(context);
+ await requireLearnerPlacementAccess(context);
+ const jobId=placementJobIdSchema.parse(rawJobId);
+ const [application]=await getDb().select({id:placementApplications.id})
+  .from(placementApplications).innerJoin(placementJobs,
+   eq(placementJobs.id,placementApplications.jobId))
+  .where(and(eq(placementApplications.jobId,jobId),
+   eq(placementApplications.membershipId,membership.id),
+   eq(placementJobs.collegeId,membership.collegeId)))
+  .orderBy(desc(placementApplications.submittedAt),desc(placementApplications.id))
+  .limit(1);
+ if(!application)return null;
+ const detail=await getOwnLearnerApplicationCompany(context,application.id);
+ if(!detail)return null;
+ const projection=detail.companySharePreview;
+ return {
+  columns:projection.fields,
+  preview:{
+   applicantReference:projection.applicantReference,
+   learnerName:projection.learnerName,
+   email:projection.email,
+  },
+  currentlyShared:projection.currentlyShared,
+ };
 }
