@@ -283,14 +283,14 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/placements/tpo-bulk-round-result-recorder.tsx`
 - [x] `src/components/placements/tpo-drive-act-on-panel.tsx`
 - [x] `src/components/placements/tpo-drive-saved-views.tsx`
-- [ ] `src/components/placements/tpo-drive-workspace-nav.tsx`
-- [ ] `src/components/placements/tpo-general-requests-panel.tsx`
-- [ ] `src/components/placements/tpo-outside-participants-editor.tsx`
-- [ ] `src/components/placements/tpo-public-placement-content-editor.tsx`
-- [ ] `src/components/placements/tpo-report-record-links.tsx`
-- [ ] `src/components/placements/tpo-request-bulk-decision.tsx`
-- [ ] `src/components/placements/tpo-round-drive-day-read-only.tsx`
-- [ ] `src/components/placements/tpo-round-reorder.tsx`
+- [x] `src/components/placements/tpo-drive-workspace-nav.tsx`
+- [x] `src/components/placements/tpo-general-requests-panel.tsx`
+- [x] `src/components/placements/tpo-outside-participants-editor.tsx`
+- [x] `src/components/placements/tpo-public-placement-content-editor.tsx`
+- [x] `src/components/placements/tpo-report-record-links.tsx`
+- [x] `src/components/placements/tpo-request-bulk-decision.tsx`
+- [x] `src/components/placements/tpo-round-drive-day-read-only.tsx`
+- [x] `src/components/placements/tpo-round-reorder.tsx`
 - [ ] `src/components/placements/tpo-settings-nav.tsx`
 - [ ] `src/components/profile/learner-profile-workspace.tsx`
 - [ ] `src/components/profile/learner-skill-catalog-input.tsx`
