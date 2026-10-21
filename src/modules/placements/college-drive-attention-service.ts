@@ -2,7 +2,7 @@ import "server-only";
 import {and,desc,eq,inArray,isNull,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {collegeMemberships,placementApplications,placementApplicationScreenings,
- placementJobs} from "@/db/schema";
+ placementJobs,placementCompanies,placementCompanyRelationships} from "@/db/schema";
 import {placementCollegeApplicationStages} from "@/db/schema/placement-college-application-stages";
 import type {RequestContext} from "@/modules/identity/context";
 import {requireCollegePlacementAdmin} from "./college-drive-read-service";
@@ -20,9 +20,16 @@ export async function getCollegeDriveAttention(context:RequestContext){
  const allDriveCount=driveCounts?.all??0;
  const activeDriveCount=driveCounts?.published??0;
  const jobs=await db.select({id:placementJobs.id,title:placementJobs.title,
+  companyName:placementCompanies.name,
   deadline:placementJobs.applicationDeadline,status:placementJobs.status})
-  .from(placementJobs).where(and(eq(placementJobs.collegeId,collegeId),
-    eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt))).orderBy(desc(placementJobs.createdAt)).limit(60);
+  .from(placementJobs)
+  .innerJoin(placementCompanyRelationships,and(
+    eq(placementCompanyRelationships.id,placementJobs.companyRelationshipId),
+    eq(placementCompanyRelationships.collegeId,collegeId)))
+  .innerJoin(placementCompanies,eq(placementCompanies.id,placementCompanyRelationships.companyId))
+  .where(and(eq(placementJobs.collegeId,collegeId),
+    eq(placementJobs.status,"PUBLISHED"),isNull(placementJobs.archivedAt)))
+  .orderBy(desc(placementJobs.createdAt)).limit(60);
  if(!jobs.length)return {jobs:[],total:0,categories:[] as {
   jobId:string;title:string;category:CollegeAttentionCategory;count:number;href:string;
  }[],hasOfferLetterEvidence:true,lookbackDays:DEFAULT_STALE_DAYS,
