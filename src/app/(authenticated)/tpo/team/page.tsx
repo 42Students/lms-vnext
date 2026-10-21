@@ -85,7 +85,7 @@ export default async function TpoTeamPage({searchParams}:{
      value:item, label:item==="people"?"People":"Conversations", href:"/tpo/team?tab="+item,
    }))} />
   {tab==="people"?<section className="min-w-0 space-y-4">
-    <p role="status" className="text-sm text-body">{people.length} people</p>
+    <p role="status" className="text-sm text-body leading-[1.6]">{people.length} people</p>
     {unowned?.ready?<TpoTeamAssignUnowned drives={unowned.drives} companies={unowned.companies}
       members={activeTeam.filter(member=>member.roles.includes("TPO")||member.roles.includes("COLLEGE_ADMIN"))
        .map(member=>({membershipId:member.membershipId,displayName:member.displayName}))}/>:null}

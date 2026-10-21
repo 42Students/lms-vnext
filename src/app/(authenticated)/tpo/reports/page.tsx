@@ -239,7 +239,7 @@ export default async function TpoReportsPage({
       ) : null}
 
 
-      <p role="status" className="text-sm text-body">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>
+      <p role="status" className="text-sm text-body leading-[1.6]">{countVisibleTpoReportCards(visibleGroups)} matching reports in the selected scope.</p>
       {visibleGroups.length===0?<EmptyState title="No matching reports"
         description="No available report matches this search and category. Clear filters to see the full gallery."/>:null}
       {visibleGroups.map((group) => (

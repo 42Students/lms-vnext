@@ -104,7 +104,7 @@ export default async function IndependentFindingsPage({searchParams}:{
     </div>
    </details>
   </form>
-  <p role="status" className="text-sm text-body">
+  <p role="status" className="text-sm text-body leading-[1.6]">
    {data.total.toLocaleString("en-IN")} matching independent findings · page {data.page} of {data.pages} · 50 per page.
   </p>
   <DataTable columns={findingColumns} rows={data.items} getRowKey={item=>item.id}
