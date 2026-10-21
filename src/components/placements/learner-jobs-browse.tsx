@@ -226,8 +226,8 @@ export function LearnerJobsBrowse({
             <span>{mobileOpen?"Hide filters":learnerJobsMobileFilterLabel(filters)}</span>
             <span aria-hidden="true">{mobileOpen?"−":"+"}</span>
           </Button>
-          {mobileOpen?<button type="button" aria-label="Close drive filters"
-            className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={closeMobileFilters}/>:null}
+          {mobileOpen?<Button variant="secondary" type="button" aria-label="Close drive filters"
+            className="fixed inset-0 z-40 md:hidden" onClick={closeMobileFilters}/>:null}
           <div id="learner-drive-filters"
             className={(mobileOpen?"flex":"hidden")+
              " fixed inset-x-0 bottom-0 z-50 max-h-[82dvh] min-w-0 flex-col gap-4 overflow-y-auto rounded-t-[var(--lms-control-radius)] border border-border bg-surface p-4 shadow-lg md:static md:col-span-3 md:flex md:max-h-none md:flex-row md:items-start md:gap-3 md:overflow-visible md:rounded-none md:border-0 md:bg-transparent md:p-0 md:shadow-none"}>
