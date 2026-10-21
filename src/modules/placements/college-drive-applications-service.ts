@@ -27,7 +27,8 @@ export async function listCollegeDriveApplications(
   context: RequestContext,
   jobIdInput: unknown,
   raw: unknown,
-  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number } = {},
+  options: { exportAll?: boolean; bulkAll?: boolean; pageSize?: number;
+    sort?:"AGE_ASC"|"AGE_DESC"|"SCORE_ASC"|"SCORE_DESC"|"SUBMITTED_DESC"; } = {},
 ) {
   const jobId = collegeDriveIdSchema.parse(jobIdInput);
   const query = driveApplicationsQuerySchema.parse(raw);
@@ -37,8 +38,9 @@ export async function listCollegeDriveApplications(
   const appliedTo=query.appliedTo?new Date(new Date(`${query.appliedTo}T00:00:00+05:30`).getTime()+86_400_000):null;
   const collegeId = await requireCollegePlacementAdmin(context);
   const db = getDb();
-  const pageSize = options.pageSize === undefined ? DRIVE_APPLICATIONS_PAGE_SIZE
-    : Math.max(1, Math.min(100, Math.floor(options.pageSize)));
+  const pageSize = options.pageSize===undefined||!Number.isFinite(options.pageSize)
+    ?DRIVE_APPLICATIONS_PAGE_SIZE
+    :Math.max(1,Math.min(100,Math.floor(options.pageSize)));
   const [drive] = await db.select({ id: placementJobs.id, title: placementJobs.title,
     companyName: placementCompanies.name, legacyJobId: placementJobs.legacyJobId,
   }).from(placementJobs)
@@ -64,7 +66,9 @@ export async function listCollegeDriveApplications(
     name: users.displayName,
     email: users.email,
     collegeName: colleges.name,
-    ageDays: sql<number>`greatest(0,floor(extract(epoch from (now() - ${placementApplications.submittedAt}))/86400))::integer`.as("age_days"),
+    lastStatusUpdatedAt:sql<Date>`greatest(${placementApplications.submittedAt},${placementApplications.statusUpdatedAt},${placementCollegeApplicationStages.movedAt},${placementApplicationScreenings.updatedAt})`.as("last_status_updated_at"),
+    // A stage move or application status update resets Age, but never rewrites submission time.
+    ageDays: sql<number>`greatest(0,floor(extract(epoch from (now() - greatest(${placementApplications.submittedAt},${placementApplications.statusUpdatedAt},${placementCollegeApplicationStages.movedAt},${placementApplicationScreenings.updatedAt})))/86400))::integer`.as("age_days"),
     source: placementApplications.channel,
     rollNumber: learnerProfiles.rollNumber,
     roleTitle: placementJobRoleOptions.title,
@@ -127,16 +131,31 @@ export async function listCollegeDriveApplications(
     query.maxScore===undefined?undefined:lte(base.screeningScore,query.maxScore),
   )).as("college_scoped_applicants");
 
+  // Every order ends in a stable application UUID to prevent rows changing
+  // positions between pages when score or status age ties.
+  const order=options.sort==="AGE_ASC"?[asc(source.lastStatusUpdatedAt),asc(source.id)]:
+    options.sort==="AGE_DESC"?[desc(source.lastStatusUpdatedAt),asc(source.id)]:
+    options.sort==="SCORE_ASC"?[sql`${source.screeningScore} asc nulls first`,asc(source.id)]:
+    options.sort==="SCORE_DESC"?[sql`${source.screeningScore} desc nulls last`,asc(source.id)]:
+    [desc(source.submittedAt),asc(source.id)];
   const [totalRows, items, stageCountRows] = await Promise.all([
     db.select({ total: count() }).from(source),
-    db.select().from(source).orderBy(desc(source.submittedAt), asc(source.id))
+    db.select().from(source).orderBy(...order)
       .limit(options.bulkAll ? DRIVE_APPLICATION_BULK_CAP + 1 : options.exportAll ? DRIVE_APPLICATION_EXPORT_CAP : pageSize)
       .offset(options.exportAll || options.bulkAll ? 0 : (query.page - 1) * pageSize),
     db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   ]);
   const total = totalRows[0]?.total ?? 0;
-  return { drive, query, items:items.map(item=>({...item,name:item.name??""})), total,
-    pageSize,scoreSortAvailable:false as const,
+  const shortAppliedDate=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+  });
+  return { drive, query, items:items.map(item=>({
+    ...item,name:item.name??"",
+    appliedDateIst:shortAppliedDate.format(item.submittedAt),
+    ageLabel:item.ageDays===0?"today":item.ageDays+"d",
+    ageDotColor:item.ageDays>=14?"#ad6800":item.ageDays>=7?"#8c8c8c":"#d9d9d9",
+  })), total,
+    pageSize,scoreSortAvailable:true as const,
     stageCounts:Object.fromEntries(stageCountRows.map(row=>[row.stage,row.total])),
     truncated: options.exportAll && total > DRIVE_APPLICATION_EXPORT_CAP,
     totalPages: Math.max(1, Math.ceil(total / pageSize)),
@@ -166,8 +185,9 @@ export async function exportCollegeDriveApplicationsCsv(
  * compatibility adapter. The canonical vNext college roster stays 1-based
  * and never interprets a stage as an offer or automated score. */
 export const legacyCollegeApplicationsQuerySchema=z.object({
- page:z.coerce.number().int().min(0).max(999).default(0),
- size:z.coerce.number().int().min(1).max(100).default(20),
+ page:z.coerce.number().int().transform(page=>Math.max(0,Math.min(999,page))).default(0),
+ size:z.coerce.number().int().transform(size=>size<=0?20:Math.min(100,size)).default(20),
+ sort:z.enum(["AGE_ASC","AGE_DESC","SCORE_ASC","SCORE_DESC","SUBMITTED_DESC"]).optional(),
  applicationStatus:z.enum(["ALL","APPLIED","SHORTLISTED","ASSESSMENT",
   "INTERVIEW","WAITLISTED","OFFERED","HIRED","REJECTED","WITHDRAWN"]).default("ASSESSMENT"),
  status:z.enum(["ALL","SUBMITTED","WITHDRAWN"]).default("ALL"),
@@ -182,11 +202,36 @@ export async function listLegacyCollegeDriveApplications(
  context:RequestContext,jobId:unknown,raw:unknown,
 ){
  const query=legacyCollegeApplicationsQuerySchema.parse(raw);
- return listCollegeDriveApplications(context,jobId,{
-  page:query.page+1,stage:query.applicationStatus,status:query.status,
+ const filters={
+  stage:query.applicationStatus,status:query.status,
   source:query.source,q:query.q,
   departmentId:query.departmentId,programId:query.programId,cohortId:query.cohortId,
- },{pageSize:query.size});
+ };
+ const sort=query.sort??(query.applicationStatus==="ASSESSMENT"?
+  "SUBMITTED_DESC":"AGE_ASC");
+ const firstRead=await listCollegeDriveApplications(context,jobId,{
+  ...filters,page:query.page+1,
+ },{pageSize:query.size,sort});
+ const pageCount=Math.ceil(firstRead.total/query.size);
+ const effectivePage=Math.min(query.page,Math.max(0,pageCount-1));
+ // An out-of-range browser bookmark uses the last valid page, without
+ // changing filters or accidentally exposing another college.
+ const result=query.page>effectivePage&&firstRead.total>0?
+  await listCollegeDriveApplications(context,jobId,{
+   ...filters,page:effectivePage+1,
+  },{pageSize:query.size,sort}):firstRead;
+ return {
+  ...result,
+  // The legacy Spring page response is zero-based. Keep the canonical
+  // vNext page/index model unchanged for its existing consumers.
+  content:result.items,number:effectivePage,size:query.size,
+  totalElements:result.total,totalPages:pageCount,
+  numberOfElements:result.items.length,
+  first:effectivePage===0,last:pageCount===0||effectivePage>=pageCount-1,
+  empty:result.items.length===0,
+  hasPrevious:effectivePage>0,hasNext:effectivePage+1<pageCount,
+  emptyLabel:"No applications",sort,
+ };
 }
 
 /** Legacy CSV has application identifiers and audit actor alongside the
