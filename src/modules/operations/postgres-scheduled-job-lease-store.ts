@@ -121,6 +121,8 @@ export async function assertPostgresScheduledJobLeaseReady(): Promise<void> {
  */
 export const postgresScheduledJobLeaseStore: ScheduledJobLeaseStore = {
   async acquire(input) {
+    // Migration/schema readiness is a hard gate, not an optional fallback.
+    await assertPostgresScheduledJobLeaseReady();
     const jobName = safeJobName(input.jobName);
     const holderId = safeHolder(input.holderId);
     const ttlMs = safeTtl(input.ttlMs);
