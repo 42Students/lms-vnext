@@ -57,6 +57,20 @@ R2 presigned GET URLs (SigV4 query auth, `host` as the only signed header) accep
 
 `src/modules/storage/video-source.ts` defines `VideoSource` with `R2VideoSource` (default) and `GcsVideoSource` (GOOG4-RSA-SHA256 V4 signed URL implemented with `node:crypto`). GCS is **disabled by default**: it needs `GCS_VIDEO_ENABLED=true`, `GCS_VIDEO_BUCKET`, `GCS_VIDEO_CLIENT_EMAIL`, `GCS_VIDEO_PRIVATE_KEY` (PEM, `\n` escaped); otherwise `resolveVideoSource("GCS")` throws `STORAGE_NOT_CONFIGURED`. Secrets are never committed. Because the legacy LMS actually used R2, the more likely future need is an R2 adapter pointed at the legacy bucket with legacy keys (`org-<id>/college-<id>/lesson-content/<uuid>.<ext>`). The adapters are **not wired into `lesson_video_assets`** yet: that table constrains `object_key` to the private key layout. Wiring a `storage_source` column for legacy videos is future work.
 
+## Legacy paste-link import and Google Drive decision
+
+Legacy LMS supported video import from an external URL. vNext deliberately
+does not fetch user-supplied Google Drive, YouTube or arbitrary external URLs,
+because remote redirects, private-network SSRF, spoofed MIME and unscanned
+bytes would bypass the tenant-scoped direct upload path. The faculty video
+drawer now explains the supported alternative: save an authorized local copy,
+upload it through the signed PUT, wait for verification, then publish.
+
+This is an intentional retirement, not an absence in legacy. Reintroduction
+requires redirect-safe hostname/IP checks, bounded fetching, authorization,
+per-object scanning and the same audit requirements as local uploads. No
+unrestricted remote-fetching proxy is implemented.
+
 ## 6. Known limits and follow-ups
 
 * Single-PUT upload only (max 4900 MiB per video); multipart/resumable upload is not implemented.
