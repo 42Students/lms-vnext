@@ -210,9 +210,9 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/placements/learner-recent-placement-activity.tsx`
 - [x] `src/components/placements/learner-schedule-reschedule.tsx`
 - [x] `src/components/placements/learner-support-cancel.tsx`
-- [ ] `src/components/placements/placement-candidate-evidence-editor.tsx`
-- [ ] `src/components/placements/placement-drive-day-overview.tsx`
-- [ ] `src/components/placements/placement-employer-relationships.tsx`
+- [x] `src/components/placements/placement-candidate-evidence-editor.tsx`
+- [x] `src/components/placements/placement-drive-day-overview.tsx`
+- [x] `src/components/placements/placement-employer-relationships.tsx`
 - [ ] `src/components/placements/placement-offer-controls.tsx`
 - [ ] `src/components/placements/placement-operations-overview.tsx`
 - [ ] `src/components/placements/placement-role-options.tsx`
