@@ -68,6 +68,10 @@ type SignInput = {
 };
 
 function prefixedKey(config: S3Config, key: string) {
+  // A resource grant may never substitute another bucket, URL or parent path.
+  if (!key || key.length > 1024 || key.startsWith("/") || key.includes("\\") ||
+      key.split("/").some(part => part === "." || part === "..") ||
+      /[\x00-\x1f\x7f]/.test(key)) throw new Error("S3_OBJECT_KEY_INVALID");
   return `${config.keyPrefix ?? ""}${key}`;
 }
 
@@ -83,6 +87,9 @@ function objectLocation(config: S3Config, key: string) {
 
 /** Builds a presigned URL (query-string authentication). */
 export function presignUrl(config: S3Config, input: SignInput) {
+  if (input.expiresSeconds !== undefined &&
+      (!Number.isSafeInteger(input.expiresSeconds) || input.expiresSeconds < 1 ||
+       input.expiresSeconds > 604800)) throw new Error("S3_PRESIGN_EXPIRES_INVALID");
   const region = config.region ?? "auto";
   const now = input.now ?? new Date();
   const stamp = amzDate(now);
@@ -186,6 +193,8 @@ export async function getObjectStream(
   key: string,
   range?: { start: number; end: number },
 ) {
+  if (range && (!Number.isSafeInteger(range.start) || !Number.isSafeInteger(range.end) ||
+      range.start < 0 || range.end < range.start)) throw new Error("S3_RANGE_INVALID");
   const url = presignUrl(config, { method: "GET", key, expiresSeconds: 60 });
   const response = await fetch(url, {
     method: "GET",
@@ -201,6 +210,12 @@ export async function getObjectStream(
     contentType: response.headers.get("content-type") ?? "",
     sizeBytes: Number(response.headers.get("content-length") ?? 0),
   };
+}
+
+/** Legacy doesObjectExist parity without swallowing credential/network errors.
+ * A 404 is false; all other failed HEAD responses remain actionable errors. */
+export async function objectExists(config:S3Config,key:string):Promise<boolean>{
+  return (await headObject(config,key))!==null;
 }
 
 export async function deleteObject(config: S3Config, key: string) {

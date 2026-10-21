@@ -431,6 +431,83 @@ export async function getAdminAttendanceGrid(
   };
 }
 
+/** A class/course/period must resolve to an authorized delivery. A legacy
+ * date-range query may include several explicitly selected deliveries, each
+ * keeping its own Section roster and academic-period identity.
+ */
+export async function getAdminAttendanceDateRangeReport(context:RequestContext,raw:unknown) {
+ const input=z.strictObject({
+  collegeId:uuid,deliveryIds:z.array(uuid).min(1).max(4),
+  startDate:z.iso.date(),endDate:z.iso.date(),onlyAbsent:z.boolean().default(false),
+ }).parse(raw);
+ const start=new Date(input.startDate+"T00:00:00+05:30");
+ const end=new Date(input.endDate+"T00:00:00+05:30");
+ if(input.startDate>input.endDate||!Number.isFinite(start.getTime())||
+  !Number.isFinite(end.getTime())||end.getTime()-start.getTime()>186*86400000)
+  throw new CoursesServiceError("ATTENDANCE_RANGE_INVALID");
+ const months:string[]=[];
+ const first=input.startDate.slice(0,7),last=input.endDate.slice(0,7);
+ const [year,month]=first.split("-").map(Number);
+ for(let i=0;i<=6;i++){
+  const cursor=new Date(Date.UTC(year,month-1+i,1)).toISOString().slice(0,7);
+  if(cursor>last)break;
+  months.push(cursor);
+ }
+ if(!months.length||months[months.length-1]!==last)
+  throw new CoursesServiceError("ATTENDANCE_RANGE_INVALID");
+ const deliveryIds=[...new Set(input.deliveryIds)];
+ const grids=await Promise.all(deliveryIds.flatMap(deliveryId=>months.map(async month=>({
+  deliveryId,grid:await getAdminAttendanceGrid(context,{
+   collegeId:input.collegeId,deliveryId,month,
+  }),
+ }))));
+ const indiaDay=(date:Date):string=>{
+  const parts=new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Kolkata",
+   year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(date);
+  const part=(type:string)=>parts.find(x=>x.type===type)?.value??"";
+  return part("year")+"-"+part("month")+"-"+part("day");
+ };
+ const schedules=grids.flatMap(({deliveryId,grid})=>{
+  const rosterById=new Map(grid.roster.map(row=>[row.membershipId,row]));
+  return grid.sessions.filter(session=>{
+   const day=indiaDay(session.startsAt);
+   return day>=input.startDate&&day<=input.endDate;
+  }).map(session=>{
+   const records=grid.records.filter(row=>row.scheduleEventId===session.id);
+   const mapped=records.map(row=>({
+    membershipId:row.membershipId,
+    name:rosterById.get(row.membershipId)?.displayName??"Name not recorded",
+    status:row.status,markedAt:row.markedAt,
+   }));
+   return {
+    scheduleId:session.id,deliveryId,sectionId:grid.delivery.sectionId,
+    academicPeriodId:grid.delivery.academicPeriodId,
+    sectionName:grid.delivery.sectionName,courseName:grid.delivery.courseName,
+    title:session.title,startsAt:session.startsAt,endsAt:session.endsAt,
+    attendanceStatus:session.attendanceStatus,rosterCount:grid.roster.length,
+    absentees:mapped.filter(row=>row.status==="ABSENT"),
+    attendees:mapped.filter(row=>row.status!=="ABSENT"),
+   };
+  });
+ });
+ const filtered=input.onlyAbsent?schedules.filter(row=>row.absentees.length>0):schedules;
+ return {collegeId:input.collegeId,startDate:input.startDate,endDate:input.endDate,
+  deliveryIds,onlyAbsent:input.onlyAbsent,schedules:filtered,
+  totalSessions:filtered.length,
+  totalAbsences:filtered.reduce((sum,row)=>sum+row.absentees.length,0),
+  note:"Active delivery enrollment defines report membership. Unmarked sessions are not presumed present."};
+}
+
+/** Exotel DLT template and guardian consent are required for SMS. Failure is
+ * queued/observable separately; a successful attendance write is not a
+ * guarantee that a provider accepted the SMS request. */
+export const ADMIN_ATTENDANCE_SMS_STATUS_COPY={
+ NOT_CONFIGURED:"Guardian SMS is unavailable. Attendance was still saved.",
+ PENDING:"Guardian SMS is queued; delivery has not been confirmed.",
+ FAILED:"Guardian SMS could not be delivered. Attendance was still saved.",
+ SENT:"Guardian SMS request was sent to the provider.",
+} as const;
+
 /** Read a fresh tenant-scoped record and a stable optimistic token. */
 export async function getAdminCurrentAttendanceRecord(context:RequestContext,raw:unknown) {
   const input=z.strictObject({
