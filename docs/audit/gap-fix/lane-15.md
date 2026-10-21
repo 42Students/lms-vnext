@@ -281,3 +281,6 @@
 
 - work2 #17 `tpo-company-detail-read-service.ts` | G2-11-007-066: preserved strict canonical UUID/relationship detail route while documenting separate job-only college-scoped company-memory route. No unsafe synthetic recruiter relationship; route owner handoff for name-based legacy bookmark.
 - work2 #18 `tpo-builtin-job-types-editor.tsx` | G2-3-011-023: exact `Job types were not saved` failure, server reason, dismiss and Retry with fresh version via router.refresh; retains controls and no stale blind resubmission.
+
+- work2 #19 `learner-support-request-model.ts` | G2-14-023-026: added discriminated, chronologically ordered personal request history projection across placement and general request kinds without fake Job references. Authenticated dual-table service and combined post-merge filtering/pagination handed off.
+- work2 #20 `mentor/not-found.tsx` | G2-12-004-009/010: verified 404 fallback is not the dynamic legacy bookmark handler; did NOT redirect all unknown mentor routes (conflicting behavior). Documented exact dynamic route handoff for silent redirect without toast or UUID validation.

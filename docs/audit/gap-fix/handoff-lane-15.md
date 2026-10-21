@@ -130,3 +130,6 @@
 - Legacy Super Admin audit adapter G2-18-024-025: current activity route is cursor-paginated; actorNames/targetNames dictionaries now supplied. For old page/size/total API, implement separately authenticated, scope-checked count+offset adapter (not false total from cursor) if required by old consumers.
 
 - Legacy TPO company memory route G2-11-007-066: implement separate college-scoped job/lead name lookup for job-only entries not yet tied to a canonical recruiter-company relationship; never require fictitious association or leak ungranted companies. Canonical `getTpoCompanyDetailReadOnly` remains strict for UUID identities.
+
+- `src/modules/placements/learner-support-request-service.ts` G2-14-023-026: query `placement_learner_general_requests` with SAME current learner membership and college alongside placement requests, combine using `mergeLearnerPersonalRequestHistory`; apply type/status filters and pagination across combined history, not separately.
+- NEW `src/app/(authenticated)/mentor/courses/[courseId]/page.tsx` G2-12-004-009/010: redirect any legacy courseId segment to `/mentor/projects` with Next.js `redirect()`, no validation/toast. Do not alter generic mentor/not-found behavior.
