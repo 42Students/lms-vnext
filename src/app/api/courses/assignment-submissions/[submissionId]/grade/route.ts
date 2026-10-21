@@ -5,6 +5,7 @@ import { apiErrorResponse } from "@/lib/api-error";
 import {
   gradeAssignmentSubmission,
 } from "@/modules/courses/assignment-submission-service";
+import { gradeAssignmentSubmissionInputSchema } from "@/modules/courses/assignment-validation";
 
 export const runtime = "nodejs";
 
