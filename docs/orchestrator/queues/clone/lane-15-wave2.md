@@ -113,7 +113,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_membership-switcher.tsx.md` (edit src/components/shell/membership-switcher.tsx; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_faculty-course-associations.ts.md` (edit src/db/schema/faculty-course-associations.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_components_shell_legacy-mobile-footer.css.md` (edit src/components/shell/legacy-mobile-footer.css; 1 findings; best P2)
-- [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_drizzle_0093_recruiter_invite_code.sql.md` (edit drizzle/0093_recruiter_invite_code.sql; 1 findings; best P2)
+- [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_drizzle_0093_recruiter_invite_code.sql.md` (edit drizzle/0093_recruiter_invite_code.sql; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_db_schema_college-signin.ts.md` (edit src/db/schema/college-signin.ts; 1 findings; best P2)
 - [ ] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_app_api_admin_faculty-assignment_batch_route.ts.md` (edit src/app/api/admin/faculty-assignment/batch/route.ts; 1 findings; best P2)
 - [x] `docs/audit/gap-fix-work/wave2/packets/lane-15/W2_src_modules_courses_faculty-assessment-route-boundary.ts.md` (edit src/modules/courses/faculty-assessment-route-boundary.ts; 1 findings; best P2)
