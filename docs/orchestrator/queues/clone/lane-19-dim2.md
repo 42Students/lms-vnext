@@ -221,18 +221,18 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-19.md: file, number of
 - [x] `src/components/tpo/tpo-batch-student-saved-views.tsx`
 - [x] `src/components/tpo/tpo-communication-settings-editors.tsx`
 - [x] `src/components/tpo/tpo-company-create-form.tsx`
-- [ ] `src/components/tpo/tpo-company-team-composer.tsx`
-- [ ] `src/components/tpo/tpo-custom-job-type-rename.tsx`
-- [ ] `src/components/tpo/tpo-debar-control.tsx`
-- [ ] `src/components/tpo/tpo-debounced-student-search.tsx`
-- [ ] `src/components/tpo/tpo-drive-request-actions.tsx`
-- [ ] `src/components/tpo/tpo-everyone-controls.tsx`
-- [ ] `src/components/tpo/tpo-find-shortcut.tsx`
-- [ ] `src/components/tpo/tpo-grid-filter-panel.tsx`
-- [ ] `src/components/tpo/tpo-inbox-search.tsx`
-- [ ] `src/components/tpo/tpo-job-types-editor.tsx`
-- [ ] `src/components/tpo/tpo-new-followup-modal.tsx`
-- [ ] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
+- [x] `src/components/tpo/tpo-company-team-composer.tsx`
+- [x] `src/components/tpo/tpo-custom-job-type-rename.tsx`
+- [x] `src/components/tpo/tpo-debar-control.tsx`
+- [x] `src/components/tpo/tpo-debounced-student-search.tsx`
+- [x] `src/components/tpo/tpo-drive-request-actions.tsx`
+- [x] `src/components/tpo/tpo-everyone-controls.tsx`
+- [x] `src/components/tpo/tpo-find-shortcut.tsx`
+- [x] `src/components/tpo/tpo-grid-filter-panel.tsx`
+- [x] `src/components/tpo/tpo-inbox-search.tsx`
+- [x] `src/components/tpo/tpo-job-types-editor.tsx`
+- [x] `src/components/tpo/tpo-new-followup-modal.tsx`
+- [x] `src/components/tpo/tpo-new-recruiter-conversation.tsx`
 - [ ] `src/components/tpo/tpo-notice-delete-confirm.tsx`
 - [ ] `src/components/tpo/tpo-notice-schedule-controls.tsx`
 - [ ] `src/components/tpo/tpo-notice-undo-toast.tsx`

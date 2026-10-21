@@ -83,7 +83,7 @@ export function TpoFindShortcut(){
   </Button>
   <Dialog open={open} onOpenChange={value=>{setOpen(value);if(value)requestAnimationFrame(()=>inputRef.current?.focus());}}
     title="Find a student, recruiter or company" description="Search records in your college. Use arrow keys to navigate, Enter to open and Esc to close.">
-   <label className="block text-sm font-semibold">Search records
+   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Search records
     <Input ref={inputRef} autoFocus value={query} onKeyDown={handleKeyDown}
       role="combobox" aria-autocomplete="list" aria-haspopup="listbox" aria-expanded={open}
       aria-controls="tpo-find-results" aria-activedescendant={active>=0&&active<showing.length?"tpo-find-result-"+active:undefined}

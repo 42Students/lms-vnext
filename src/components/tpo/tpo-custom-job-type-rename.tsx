@@ -29,7 +29,7 @@ export function TpoCustomJobTypeRename({id,label,version}:{id:string;label:strin
   finally{setBusy(false);}
  }
  return <div className="min-w-0 space-y-1">
-  <label className="text-xs text-muted-foreground">Custom job type name
+  <label className="text-[13px] text-[var(--lms-neutral-400)] font-semibold leading-4">Custom job type name
    <Input value={name} maxLength={40} disabled={busy} onChange={e=>setName(e.target.value)}
     className="mt-1 min-h-11 min-[768px]:min-h-9 min-w-0 text-sm"/>
   </label>

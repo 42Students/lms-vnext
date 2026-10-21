@@ -108,7 +108,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
     </Button>
    </div>}>
     <form id={formId} className="space-y-3" onSubmit={event=>{event.preventDefault();void save();}}>
-     <label className="grid gap-1 text-sm font-semibold text-body">Recruiter
+     <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">Recruiter
       <Select value={leadId} onChange={event=>{setLeadId(event.target.value);setError("");}}
        disabled={saving||loading} className={field} required>
        <option value="">{loading?"Loading recruiters…":"Choose a recruiter"}</option>
@@ -117,7 +117,7 @@ export function TpoNewFollowupModal({collegeId}:{collegeId:string}){
        </option>)}
       </Select>
      </label>
-     <label className="grid gap-1 text-sm font-semibold text-body">When (IST)
+     <label className="grid gap-[6px] text-[13px] font-semibold text-[var(--lms-neutral-400)] leading-4">When (IST)
       <Input type="datetime-local" required value={when} onChange={event=>{setWhen(event.target.value);setError("");}}
        disabled={saving} className={field}/>
      </label>
