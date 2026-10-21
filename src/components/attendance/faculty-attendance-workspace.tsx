@@ -607,7 +607,6 @@ export function FacultyAttendanceWorkspace({
           <p className="text-sm font-semibold text-foreground">
             {workspace.course.courseName} · {workspace.course.sectionName} · {workspace.course.academicPeriodName}
           </p>
-          <Button variant="secondary" onClick={() => openScheduleDrawer()}>Schedule Class</Button>
         </div>
 
         <SegmentedControl
@@ -654,12 +653,13 @@ export function FacultyAttendanceWorkspace({
                     )
                   }
                 >
-                  ←
+                  <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
                 </Button>
                 <label className="grid min-w-0 gap-2 text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                  Jump to month
+                  <span className="sr-only">Jump to month</span>
                   <Input
-                    className="w-full"
+                    aria-label="Jump to month"
+                    className="w-40"
                     type="month"
                     value={month}
                     onChange={(event) => {
@@ -678,7 +678,7 @@ export function FacultyAttendanceWorkspace({
                     )
                   }
                 >
-                  →
+                  <svg aria-hidden="true" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
                 </Button>
               </div>
             </div>
@@ -909,8 +909,13 @@ export function FacultyAttendanceWorkspace({
         </>
       ) : (
         <>
-          {workspace.sessions.length === 0 ? (
+          {dateSessions.length === 0 ? (
             <div className="space-y-3">
+              <label className="block max-w-xs text-[13px] font-semibold text-muted-foreground">
+                Select Date
+                <Input type="date" aria-label="Select Date" className="mt-[6px] w-full" value={selectedDate}
+                  onChange={event => chooseDate(event.target.value)} />
+              </label>
               <EmptyState title="No class scheduled for this date"
                 description="Use Schedule Class to create a class session before marking attendance." />
               <Button type="button" variant="secondary" onClick={openScheduleDrawer}>Schedule Class</Button>
@@ -921,13 +926,14 @@ export function FacultyAttendanceWorkspace({
                 <div>
                   <label className="block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
                     Date
-                    <Input type="date" className="mt-[6px]" value={selectedDate}
+                    <Input type="date" aria-label="Select Date" className="mt-[6px]" value={selectedDate}
                       onChange={event=>chooseDate(event.target.value)}/>
                   </label>
                   <label htmlFor={sessionSelectId} className="mt-3 block text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
-                    Class session
+                    Class Start Time
                   </label>
                   <Select
+                    aria-label="Select Class"
                     id={sessionSelectId}
                     className="w-full"
                     value={selectedSessionId}
@@ -942,9 +948,7 @@ export function FacultyAttendanceWorkspace({
                           key={session.id}
                           value={session.id}
                         >
-                          {session.title} ·{" "}
-                          {new Intl.DateTimeFormat("en-IN",{timeZone:"Asia/Kolkata",timeStyle:"short"})
-                            .format(new Date(session.startsAt))} IST
+                          {legacyClockTime(session.startsAt)}
                         </option>
                       ),
                     )}
@@ -960,10 +964,11 @@ export function FacultyAttendanceWorkspace({
                       {legacySessionDate(selectedSession.startsAt)}
                     </p>
                     <p className="mt-1 text-xs text-muted-foreground">{selectedSession.title}</p>
-                    <div className="mt-2">
+                    <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
                       <StatusBadge tone={markingWindow === "OPEN" ? "success" : "warning"}>
                         {markingWindow === "OPEN" ? "Ready to mark" : "Marking unavailable"}
                       </StatusBadge>
+                      <Button type="button" variant="secondary" onClick={openScheduleDrawer}>Schedule Class</Button>
                     </div>
                     <p className="mt-1">
                       {legacyClockTime(selectedSession.startsAt)} - {legacyClockTime(selectedSession.endsAt)}
@@ -994,7 +999,7 @@ export function FacultyAttendanceWorkspace({
               </div> : null}
               <div className="take-attendance-panel__tools mt-[var(--lms-space-4)] flex min-w-0 flex-col items-stretch gap-[var(--lms-space-3)] md:flex-row md:items-center md:justify-between">
                 <div className="flex min-w-0 items-center gap-2 md:max-w-sm md:flex-1">
-                  <span aria-hidden="true" className="text-muted-foreground">⌕</span>
+                  <svg aria-hidden="true" className="shrink-0 text-muted-foreground" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><circle cx="11" cy="11" r="7" /><path d="m16 16 5 5" /></svg>
                   <Input className="min-w-0 w-full" aria-label="Find a student by name"
                     placeholder="Find a student by name" value={search}
                     onChange={(event) => setSearch(event.target.value)} />
@@ -1064,12 +1069,9 @@ export function FacultyAttendanceWorkspace({
                           <div className="grid grid-cols-2 gap-2 [&>button]:w-full" role="group" aria-label={"Attendance for "+learnerName(learner)}>
                               <Button
                                 size="md"
-                                className="min-h-11 md:min-h-9"
-                                variant={
-                                  !isAbsent
-                                    ? "primary"
-                                    : "secondary"
-                                }
+                                className={"min-h-11 rounded-lg border px-[14px] text-[13px] font-semibold md:min-h-9 " +
+                                  (!isAbsent ? "!border-[rgba(34,139,83,0.28)] !bg-[rgba(34,139,83,0.08)] !text-[#228b53]" : "!border-[#dce0e8] !bg-[#f8f9fb] !text-[#64748b]")}
+                                variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={!isAbsent}
                                 aria-label={`Mark ${learnerName(
@@ -1086,12 +1088,9 @@ export function FacultyAttendanceWorkspace({
                               </Button>
                               <Button
                                 size="md"
-                                className="min-h-11 md:min-h-9"
-                                variant={
-                                  isAbsent
-                                    ? "danger"
-                                    : "secondary"
-                                }
+                                className={"min-h-11 rounded-lg border px-[14px] text-[13px] font-semibold md:min-h-9 " +
+                                  (isAbsent ? "!border-[rgba(220,38,38,0.28)] !bg-[rgba(220,38,38,0.08)] !text-[#dc2626]" : "!border-[#dce0e8] !bg-[#f8f9fb] !text-[#64748b]")}
+                                variant="secondary"
                                 disabled={markingWindow !== "OPEN" || submitting}
                                 aria-pressed={isAbsent}
                                 aria-label={`Mark ${learnerName(
@@ -1309,7 +1308,7 @@ export function FacultyAttendanceWorkspace({
             >
               {scheduling
                 ? "Scheduling…"
-                : "Schedule Class"}
+                : "Schedule"}
             </Button>
           </div>
         }
@@ -1318,7 +1317,7 @@ export function FacultyAttendanceWorkspace({
           id="faculty-schedule-class-form"
           autoComplete="off"
           onSubmit={createSession}
-          className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2"
+          className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)]"
         >
           <label className="grid min-w-0 gap-2 font-semibold md:col-span-2 text-[13px] leading-4 text-[var(--lms-neutral-400)]">
             Class title
