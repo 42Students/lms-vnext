@@ -23,13 +23,15 @@ function structuredStudentRowsAsCsv(
 ): string {
   const quote = (value: string) => '"' + value.replaceAll('"', '""') + '"';
   return [
-    STUDENT_CSV_COLUMNS.join(","),
+    EXTENDED_STUDENT_CSV_COLUMNS.join(","),
     ...entries.map(entry => [
       entry.displayName || [entry.firstName, entry.lastName].filter(Boolean).join(" "),
       entry.phoneE164 || entry.mobileNumber || "",
       entry.email || "",
       entry.programId || defaults.programId || "",
       entry.cohortId || defaults.cohortId || "",
+      entry.sectionId || defaults.sectionId || "",
+      entry.rollNumber || "",
     ].map(value => quote(value)).join(",")),
   ].join("\r\n");
 }
@@ -64,6 +66,8 @@ const csvRowSchema = z.object({
 export type StudentCsvRow = z.infer<typeof csvRowSchema>;
 export type StudentCsvResult = { row: number; status: "VALID" | "INVALID" | "IMPORTED" | "FAILED" | "PARTIAL"; detail: string; membershipId?: string; enrollmentId?: string };
 export const STUDENT_CSV_COLUMNS = ["displayName","phoneE164","email","programId","cohortId"] as const;
+/** Structured legacy bulk rows retain both class placement and roll number. */
+export const EXTENDED_STUDENT_CSV_COLUMNS = [...STUDENT_CSV_COLUMNS,"sectionId","rollNumber"] as const;
 export const MAX_STUDENT_CSV_ROWS = 500;
 export const LEGACY_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Roll Number","Mobile Number","Email"] as const;
 const PRIOR_STUDENT_CSV_COLUMNS = ["First Name","Last Name","Mobile Number","Email","Roll Number"] as const;
@@ -91,6 +95,9 @@ export function tokenizeStudentCsv(input: string): string[][] {
       if (fields.some(v => v.trim() !== "")) result.push(fields);
       fields = []; afterQuote = false;
     } else {
+      // Legacy bulkCsvParse accepts insignificant spaces after a closing
+      // quote but not unquoted data following it (CSV injection ambiguity).
+      if (afterQuote && (ch === " " || ch === "\t")) continue;
       if (afterQuote) throw Error("INVALID_CSV_AFTER_QUOTE: Unexpected character after quoted field in record " + (result.length + 1) + ".");
       field += ch;
     }
@@ -116,7 +123,8 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   const prior = header.join(",") === PRIOR_STUDENT_CSV_COLUMNS.join(",");
   const picker = header.join(",") === PICKER_STUDENT_CSV_COLUMNS.join(",");
   const canonical = header.join(",") === STUDENT_CSV_COLUMNS.join(",");
-  if (!legacy && !prior && !picker && !canonical) {
+  const extended = header.join(",") === EXTENDED_STUDENT_CSV_COLUMNS.join(",");
+  if (!legacy && !prior && !picker && !canonical && !extended) {
     return { entries: [], structuralErrors: ["INVALID_CSV_HEADER"] };
   }
   if ((legacy || prior || picker) && (!defaults.programId || !defaults.cohortId)) {
@@ -130,8 +138,15 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
   const seenRollNumbers = new Set<string>();
   const entries = rows.slice(1).map((cells, index) => {
     const row = index + 2;
-    if (cells.length !== (picker ? 4 : 5)) return { row, errors: ["COLUMN_COUNT_MISMATCH"] };
-    const record = canonical ? { ...Object.fromEntries(STUDENT_CSV_COLUMNS.map(
+    const expected=picker?4:extended?7:5;
+    if (cells.length !== expected) return { row,
+      errors: ["COLUMN_COUNT_MISMATCH: Record " + row + " has " + cells.length +
+       " columns; expected " + expected + "."] };
+    const record = extended ? {
+        ...Object.fromEntries(EXTENDED_STUDENT_CSV_COLUMNS.map(
+          (key,i)=>[key,cells[i]?.trim()??""])),
+        sectionId:cells[5]?.trim()||defaults.sectionId,
+      } : canonical ? { ...Object.fromEntries(STUDENT_CSV_COLUMNS.map(
       (key, i) => [key, cells[i]?.trim() ?? ""])), sectionId: defaults.sectionId } : (legacy || prior) ? {
         displayName: [cells[0],cells[1]].map(v=>v?.trim()).filter(Boolean).join(" "),
         phoneE164: (cells[legacy ? 3 : 2]?.trim() ?? "").replace(/^([0-9]{10})$/, "+91$1"),
@@ -172,6 +187,27 @@ export function parseStudentCsv(raw: string, defaults: {programId?: string;cohor
     return { row, data, errors };
   });
   return { entries, structuralErrors: rows.length < 2 ? ["NO_ROWS"] : [] };
+}
+
+/** Exact legacy-friendly explanatory copy, without echoing sensitive rows. */
+export function studentCsvStructuralIssueMessage(code:string):string {
+  switch(code){
+    case "NO_ROWS":return "The CSV file must contain a header and at least one data row.";
+    case "INVALID_CSV_HEADER":return "The CSV header does not match the expected template.";
+    case "ROW_LIMIT_EXCEEDED":return "You can import up to 500 students at a time.";
+    case "CHOOSE_PROGRAM_AND_BATCH":return "Choose a program and batch before importing.";
+    case "INVALID_CSV_FORMAT":return "The CSV format is invalid. Please check the quotation marks.";
+    default:return code.startsWith("COLUMN_COUNT_MISMATCH") ? code :
+      "The student import could not be read. Review the template and retry.";
+  }
+}
+
+/** A legacy class picker is an optional vNext section assignment: students
+ * can join the selected college-owned cohort before their Section is chosen.
+ * No learner is silently assigned to a Section in another college. */
+export const STUDENT_IMPORT_CLASS_HELP = "Class is optional. Students without a class will be enrolled in the selected program and batch.";
+
+/** Escape CSV fields and neutralize spreadsheet formulas, including leading whitespace. */
 }
 
 /** Escape CSV fields and neutralize spreadsheet formulas, including leading whitespace. */
