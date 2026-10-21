@@ -173,16 +173,16 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-10.md: file, number of
 - [x] `src/app/(authenticated)/hr/conversations/[threadId]/error.tsx`
 - [x] `src/app/(authenticated)/hr/conversations/error.tsx`
 - [x] `src/app/(authenticated)/hr/drives/[jobId]/messages/error.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/error.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/new/error.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/page.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/error.tsx`
-- [ ] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
-- [ ] `src/app/(authenticated)/hr/home/error.tsx`
-- [ ] `src/app/(authenticated)/hr/messages/error.tsx`
-- [ ] `src/app/(authenticated)/hr/notifications/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/messages/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/[jobId]/rounds/editor/remove/[roundId]/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/new/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/page.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/error.tsx`
+- [x] `src/app/(authenticated)/hr/drives/proposals/page.tsx`
+- [x] `src/app/(authenticated)/hr/home/error.tsx`
+- [x] `src/app/(authenticated)/hr/messages/error.tsx`
+- [x] `src/app/(authenticated)/hr/notifications/page.tsx`
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/error.tsx`
 - [ ] `src/app/(authenticated)/hr/placements/jobs/[jobId]/page.tsx`
 - [ ] `src/app/(authenticated)/hr/profile/error.tsx`
