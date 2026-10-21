@@ -64,7 +64,9 @@ export async function listCollegeDriveApplications(
     name: users.displayName,
     email: users.email,
     collegeName: colleges.name,
-    ageDays: sql<number>`greatest(0,floor(extract(epoch from (now() - ${placementApplications.submittedAt}))/86400))::integer`.as("age_days"),
+    lastStatusUpdatedAt:sql<Date>`greatest(${placementApplications.submittedAt},${placementApplications.statusUpdatedAt},${placementCollegeApplicationStages.movedAt},${placementApplicationScreenings.updatedAt})`.as("last_status_updated_at"),
+    // A stage move or application status update resets Age, but never rewrites submission time.
+    ageDays: sql<number>`greatest(0,floor(extract(epoch from (now() - greatest(${placementApplications.submittedAt},${placementApplications.statusUpdatedAt},${placementCollegeApplicationStages.movedAt},${placementApplicationScreenings.updatedAt})))/86400))::integer`.as("age_days"),
     source: placementApplications.channel,
     rollNumber: learnerProfiles.rollNumber,
     roleTitle: placementJobRoleOptions.title,
@@ -135,7 +137,15 @@ export async function listCollegeDriveApplications(
     db.select({stage:base.stage,total:count()}).from(base).groupBy(base.stage),
   ]);
   const total = totalRows[0]?.total ?? 0;
-  return { drive, query, items:items.map(item=>({...item,name:item.name??""})), total,
+  const shortAppliedDate=new Intl.DateTimeFormat("en-GB",{
+    timeZone:"Asia/Kolkata",day:"2-digit",month:"short",year:"numeric",
+  });
+  return { drive, query, items:items.map(item=>({
+    ...item,name:item.name??"",
+    appliedDateIst:shortAppliedDate.format(item.submittedAt),
+    ageLabel:item.ageDays===0?"today":item.ageDays+"d",
+    ageDotColor:item.ageDays>=14?"#ad6800":item.ageDays>=7?"#8c8c8c":"#d9d9d9",
+  })), total,
     pageSize,scoreSortAvailable:false as const,
     stageCounts:Object.fromEntries(stageCountRows.map(row=>[row.stage,row.total])),
     truncated: options.exportAll && total > DRIVE_APPLICATION_EXPORT_CAP,
