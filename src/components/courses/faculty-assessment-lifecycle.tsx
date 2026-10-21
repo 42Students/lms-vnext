@@ -3,7 +3,8 @@ import { Alert } from "@/components/ui/alert";
 
 
 
-import {useRef,useState} from "react";
+import {useEffect,useRef,useState} from "react";
+import {useToast} from "@/components/ui/toast";
 import {useRouter} from "next/navigation";
 import {Button} from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -25,6 +26,7 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
  owned:boolean;
 }){
  const router=useRouter();
+ const {showToast}=useToast();
  const [pending,setPending]=useState<FacultyAssessmentLifecycleAction|null>(null);
  const inFlight=useRef(false);
  const [saved,setSaved]=useState(false);
@@ -32,6 +34,11 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
  const [error,setError]=useState<string|null>(null);
  const [confirmAction,setConfirmAction]=useState<FacultyAssessmentLifecycleAction|null>(null);
  const actions=facultyAssessmentLifecycleActions({kind,status,owned});
+ useEffect(()=>{
+  if(!saved)return;
+  const timer=window.setTimeout(()=>setSaved(false),2000);
+  return ()=>window.clearTimeout(timer);
+ },[saved]);
  if(!actions.length)return null;
 
  async function run(action:FacultyAssessmentLifecycleAction){
@@ -56,6 +63,9 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
        return;
      }
      setSaved(true);setLastAction(action);setConfirmAction(null);
+     showToast({tone:"success",title:action==="ARCHIVE"
+       ?kind==="ASSIGNMENT"?"Assignment deleted.":"Quiz deleted successfully."
+       :action==="PUBLISH"?"Assessment published.":"Assessment updated."});
      router.refresh();
    }catch(err){
      setError(err instanceof Error?err.message:"The assessment could not be changed. Refresh and try again.");
@@ -72,9 +82,13 @@ export function FacultyAssessmentLifecycle({kind,id,deliveryId,status,updatedAt,
          action==="PUBLISH"?"Publish":"Delete"}
      </Button>)}
    </div>
-   {saved?<Alert tone="success">
+   {saved?<Alert tone="success" role="status">
      {lastAction==="ARCHIVE"?(kind==="QUIZ"?"Quiz deleted successfully.":"Assignment deleted."):"Change saved. Refreshing Section state…"}
    </Alert>:null}
+   {status==="DRAFT"&&kind==="ASSIGNMENT"?<p className="text-xs text-muted-foreground">
+     Legacy assignments became visible immediately on creation. In vNext the builder selects
+     Publish now by default; this Draft can be published to students when ready.
+   </p>:null}
    {error?<Alert tone="error">{error}</Alert>:null}
  <ConfirmDialog
    open={confirmAction!==null}
