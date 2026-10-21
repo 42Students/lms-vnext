@@ -342,3 +342,92 @@ export async function inspectOutboundDispatchBacklog(): Promise<{
     oldestDueAt: row?.oldest_due_at ?? null,
   };
 }
+
+/**
+ * A bounded expiry sweep for definitely UNSENT PENDING/RETRY intents only.
+ * The database intentionally leaves expired CLAIMED intents quarantined until
+ * provider reconciliation; blindly reclaiming them can send duplicates.
+ */
+export async function expireUnclaimedOutboundBatch(maxRows = 100): Promise<number> {
+  requireOutboundDispatchReady();
+  if (!Number.isSafeInteger(maxRows) || maxRows < 1 || maxRows > 1000) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  const result = await getDb().execute<{ expired: number }>(sql`
+    select db10_expire_unclaimed_outbound(${maxRows}) as expired
+  `);
+  return Number(result.rows[0]?.expired ?? 0);
+}
+
+export type OutboundChannelReceipt = {
+  channel: "EMAIL" | "SMS" | "WHATSAPP";
+  status: "PENDING" | "CLAIMED" | "RETRY" | "PROVIDER_ACCEPTED" | "DELIVERED" |
+    "SUPPRESSED" | "BOUNCED" | "FAILED" | "EXPIRED";
+  createdAt: Date;
+  providerAcceptedAt: Date | null;
+  deliveredAt: Date | null;
+  safeFailureCode: string | null;
+};
+
+/**
+ * Tenant-scoped, sanitized status of a producer event, NOT a delivery-attempt
+ * history. No addresses, phone numbers, provider IDs, message bodies, links,
+ * invitation variables or encrypted payloads are exposed. Full SMS provider
+ * attempts need their own table and permissions before API parity is claimed.
+ */
+export async function readOutboundEventReceipts(
+  context: RequestContext,
+  scope: { organizationId: string; collegeId: string; sourceEventId: string },
+): Promise<OutboundChannelReceipt[]> {
+  requireOutboundDispatchReady();
+  requirePermission(context, "placements.manage", {
+    collegeId: scope.collegeId, organizationId: scope.organizationId,
+  });
+  if (!/^[0-9a-f-]{36}$/i.test(scope.organizationId) ||
+      !/^[0-9a-f-]{36}$/i.test(scope.collegeId) ||
+      !/^[0-9a-f-]{36}$/i.test(scope.sourceEventId)) {
+    throw new OutboundDispatchNotReadyError();
+  }
+  const result = await getDb().execute<{
+    channel: OutboundChannelReceipt["channel"];
+    status: OutboundChannelReceipt["status"];
+    created_at: Date;
+    provider_accepted_at: Date | null;
+    delivered_at: Date | null;
+    last_safe_failure_code: string | null;
+  }>(sql`
+    select channel, status, created_at, provider_accepted_at, delivered_at,
+           last_safe_failure_code
+    from outbound_messages
+    where organization_id = ${scope.organizationId}::uuid
+      and college_id = ${scope.collegeId}::uuid
+      and source_event_id = ${scope.sourceEventId}::uuid
+    order by created_at desc limit 100
+  `);
+  return result.rows.map(row => ({
+    channel: row.channel,
+    status: row.status,
+    createdAt: row.created_at,
+    providerAcceptedAt: row.provider_accepted_at,
+    deliveredAt: row.delivered_at,
+    safeFailureCode: row.last_safe_failure_code,
+  }));
+}
+
+/** Operational state deliberately reports disabled or stalled as different
+ * from an empty, successful queue. A lease claim isn't proof of provider send. */
+export async function inspectOutboundDispatcherReadiness(): Promise<
+  | { state: "DISABLED"; reason: "DISPATCH_NOT_VERIFIED" }
+  | { state: "STALLED" | "UNCONFIRMED" | "EMPTY_UNCONFIRMED"; pending: number; retry: number;
+      claimed: number; failed: number; providerAccepted: number; oldestDueAt: Date | null }
+> {
+  if (!outboundDispatchRuntimeEnabled()) {
+    return { state: "DISABLED", reason: "DISPATCH_NOT_VERIFIED" };
+  }
+  const backlog = await inspectOutboundDispatchBacklog();
+  return {
+    state: backlog.pending + backlog.retry + backlog.claimed > 0 ? "STALLED" :
+      backlog.providerAccepted + backlog.failed > 0 ? "UNCONFIRMED" : "EMPTY_UNCONFIRMED",
+    ...backlog,
+  };
+}

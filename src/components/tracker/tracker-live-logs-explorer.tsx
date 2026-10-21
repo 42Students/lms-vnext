@@ -7,7 +7,8 @@ import { Select } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 
-import {useEffect,useRef,useState} from "react";
+import {useEffect,useMemo,useRef,useState} from "react";
+import { Checkbox } from "@/components/ui/checkbox";
 import Link from "next/link";
 import {apiFetch,FriendlyFetchError} from "@/lib/api-fetch";
 import {friendlyApiError} from "@/lib/friendly-error";
@@ -47,9 +48,14 @@ export function trackerLogCsv(rows:readonly Entry[]):string{
 }
 export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}){
   const [windowMinutes,setWindowMinutes]=useState("60");
-  const [minimumSeverity,setMinimumSeverity]=useState<"ERROR"|"WARNING">("ERROR");
+  const [minimumSeverity,setMinimumSeverity]=useState<"ERROR"|"WARNING">("WARNING");
+  const [groupSimilar,setGroupSimilar]=useState(true);
+  const [autoRefresh,setAutoRefresh]=useState(false);
+  const [rateLimited,setRateLimited]=useState(false);
+  const [stale,setStale]=useState(false);
+  const [lastSuccessfulAt,setLastSuccessfulAt]=useState<Date|null>(null);
   const [query,setQuery]=useState(initialQuery);
-  const [appliedFilters,setAppliedFilters]=useState("60|ERROR|"+initialQuery.trim());
+  const [appliedFilters,setAppliedFilters]=useState("60|WARNING|"+initialQuery.trim());
   const currentFilters=windowMinutes+"|"+minimumSeverity+"|"+query.trim();
   const [items,setItems]=useState<Entry[]>([]);
   const [nextPage,setNextPage]=useState<string|null>(null);
@@ -62,6 +68,21 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   const [muteReason,setMuteReason]=useState("");
   const [mutating,setMutating]=useState(false);
   const locked=useRef(false);
+  const currentFiltersRef=useRef(currentFilters);
+  currentFiltersRef.current=currentFilters;
+  const fetchGeneration=useRef(0);
+  const periodicReload=useRef<()=>Promise<void>>(async()=>{});
+  const grouped=useMemo(()=>{
+    if(!groupSimilar)return items.map(item=>({item,count:1}));
+    const groups=new Map<string,{item:Entry;count:number}>();
+    for(const item of items){
+      const key=[item.event,item.path,item.component??"",item.message].join("|");
+      const existing=groups.get(key);
+      if(existing)existing.count+=1;
+      else groups.set(key,{item,count:1});
+    }
+    return [...groups.values()];
+  },[groupSimilar,items]);
   async function fetchPage(pageToken?:string):Promise<Page>{
     const params=new URLSearchParams({windowMinutes,minimumSeverity,query:query.trim()});
     if(pageToken)params.set("pageToken",pageToken);
@@ -70,28 +91,55 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   async function load(older=false){
     if(locked.current||(older&&currentFilters!==appliedFilters))return;
     const loadingFilters=currentFilters;
+    const generation=++fetchGeneration.current;
     locked.current=true;setPending(true);setNotice("");
     try{
       const result=await fetchPage(older?nextPage??undefined:undefined);
+      if(generation!==fetchGeneration.current||loadingFilters!==currentFiltersRef.current)return;
       setConfigured(result.configured);
+      setRateLimited(false);setStale(false);setLastSuccessfulAt(new Date());
       setAppliedFilters(loadingFilters);
-      setItems(previous=>older?mergeEntries(previous,result.items):result.items);
+      setItems(previous=>older?mergeEntries(previous,result.items):
+        loadingFilters===appliedFilters?mergeEntries(result.items,previous):result.items);
       setNextPage(result.nextPageToken);
       if(!result.configured)setNotice("Live Cloud Logging is not configured. Known Errors remain available below.");
       else if(!older&&!result.items.length)setNotice("No matching errors in the selected page and time window.");
     }catch(error){
-      setNotice(error instanceof FriendlyFetchError?error.message:friendlyApiError({}));
+      if(generation!==fetchGeneration.current||loadingFilters!==currentFiltersRef.current)return;
+      const status=error instanceof FriendlyFetchError?error.status:0;
+      if(status===429){setRateLimited(true);setAutoRefresh(false);}
+      setStale(items.length>0);
+      setNotice(status===429?"Too many requests. Auto-refresh paused; try again later.":
+        status===403?"You do not have permission to view these logs.":
+        status===401?"Your session has expired. Sign in again.":
+        status===502||status===503?"The live log service is temporarily unavailable. Try again.":
+        error instanceof FriendlyFetchError?error.message:friendlyApiError({}));
     }finally{locked.current=false;setPending(false);}
   }
+  periodicReload.current=()=>load(false);
+  useEffect(()=>{
+    if(!autoRefresh||rateLimited)return;
+    const refresh=()=>{
+      if(document.hidden||reportOpen||muteTarget!==null||pending)return;
+      void periodicReload.current();
+    };
+    const timer=window.setInterval(refresh,30_000);
+    document.addEventListener("visibilitychange",refresh);
+    return ()=>{
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange",refresh);
+    };
+  },[autoRefresh,rateLimited,reportOpen,muteTarget,pending]);
   useEffect(()=>{
     const abort=new AbortController();
     const initial=async()=>{
       try{
-        const initialParams=new URLSearchParams({windowMinutes:"60",minimumSeverity:"ERROR",query:initialQuery});
+        const initialParams=new URLSearchParams({windowMinutes:"60",minimumSeverity:"WARNING",query:initialQuery});
         const r=await apiFetch<Page>("/api/tracker/live-logs?"+initialParams.toString(),{signal:abort.signal});
-        if(abort.signal.aborted)return;
+        if(abort.signal.aborted||currentFiltersRef.current!=="60|WARNING|"+initialQuery.trim())return;
         setItems(r.items);setNextPage(r.nextPageToken);setConfigured(r.configured);
-        setAppliedFilters("60|ERROR|"+initialQuery.trim());
+        setStale(false);setLastSuccessfulAt(new Date());
+        setAppliedFilters("60|WARNING|"+initialQuery.trim());
       }catch{
         if(!abort.signal.aborted)setNotice("Live logs could not be loaded. Try again.");
       }
@@ -146,7 +194,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       setItems(previous=>previous.map(item=>item.knownErrorId===muteTarget.id?
         {...item,muted:nextMuted}:item));
       setMuteTarget(null);setMuteReason("");
-      setNotice(nextMuted?"Known error muted.":"Known error unmuted.");
+      setNotice(nextMuted?"Muted — this error type won’t be surfaced as noise going forward.":"Unmuted — this error type will be surfaced again.");
     }catch(error){
       setNotice(error instanceof FriendlyFetchError?error.message:
         "Could not update this known error. Try again.");
@@ -155,7 +203,7 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
   return <section className="min-w-0 space-y-4 border-b border-border pb-5" aria-label="Live logs">
     <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
       <div><h2 className="font-semibold text-[16px] leading-[26px] min-[768px]:text-[18px] min-[768px]:leading-[28px] min-[992px]:text-[20px] min-[992px]:leading-[30px] text-[var(--lms-heading)]">Live Google Cloud Logging</h2>
-        <p className="mt-1 text-sm text-body leading-[22px]">Redacted error entries (ERROR and above) from the configured deployment namespace.</p>
+        <p className="mt-1 text-sm text-body leading-[22px]">Redacted log entries from the configured deployment namespace. Warning and above by default.</p>
       </div>
       <span role="status" className="text-xs text-muted-foreground">
         {configured===false?"Not configured":configured===true?"Live source enabled":"Checking live source"}
@@ -182,6 +230,20 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
         {pending?"Loading…":"Refresh newer"}
       </Button>
     </div>
+    <div className="flex min-w-0 flex-wrap items-center gap-5 text-sm">
+      <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
+        <Checkbox checked={groupSimilar} onChange={event=>setGroupSimilar(event.target.checked)} />
+        Group similar
+      </label>
+      <label className="inline-flex min-h-11 cursor-pointer items-center gap-2 md:min-h-9">
+        <Checkbox checked={autoRefresh} disabled={rateLimited}
+          onChange={event=>setAutoRefresh(event.target.checked)} />
+        Auto-refresh every 30 seconds
+      </label>
+      {lastSuccessfulAt?<span className="text-xs text-muted-foreground">
+        Last loaded {lastSuccessfulAt.toLocaleTimeString("en-IN",{timeZone:"Asia/Kolkata"})} IST
+      </span>:null}
+    </div>
     <Disclosure title="Export and report tools" className="border-t border-border" contentClassName="px-2 pb-3">
      <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap">
       <Button variant="secondary" type="button" onClick={()=>void downloadRange("csv")} loading={exporting} disabled={pending||exporting||configured!==true} className="min-h-11 w-full sm:w-auto md:min-h-9">
@@ -192,11 +254,16 @@ export function TrackerLiveLogsExplorer({initialQuery=""}:{initialQuery?:string}
       </Button>
      </div>
     </Disclosure>
-    {notice?<InlineNotice tone={/could not|unavailable|failed/i.test(notice)?"error":"info"} message={notice}/>:null}
+    {stale?<InlineNotice tone="warning" message="Showing previously loaded results. Refresh or retry for the latest logs."/>:null}
+    {rateLimited?<InlineNotice tone="warning" message="Rate limit reached. Automatic refresh is paused."/>:null}
+    {notice?<InlineNotice tone={/could not|unavailable|failed|expired|permission|too many/i.test(notice)?"error":"info"} message={notice}/>:null}
+    {stale?<Button type="button" variant="secondary" onClick={()=>void load()} disabled={pending}>
+      Retry
+    </Button>:null}
     {items.length?<ol className="min-w-0 divide-y divide-border border-y border-border">
-      {items.map(item=><li key={item.id} id={"log-"+item.requestId}
+      {grouped.map(({item,count})=><li key={item.id} id={"log-"+item.requestId}
         className="min-w-0 py-3 text-sm">
-        <Disclosure summaryClassName="min-w-0 break-words [overflow-wrap:anywhere]" title={new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" · "+item.event+" · "+item.path}>
+        <Disclosure summaryClassName="min-w-0 break-words [overflow-wrap:anywhere]" title={new Date(item.time).toLocaleString("en-IN",{timeZone:"Asia/Kolkata"})+" · "+item.event+" · "+item.path+(count>1?" · "+count+" similar":"")}>
           <p className="mt-2 whitespace-pre-wrap break-words text-body">{item.message}</p>
           <p className="mt-2 text-xs text-muted-foreground leading-[20px]">Reference: {item.requestId??"Not recorded"} · {item.component??"server"}</p>
           <div className="mt-3 flex min-w-0 flex-col items-stretch gap-2 sm:flex-row sm:flex-wrap sm:items-center">
