@@ -48,7 +48,7 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
   const path = classes ? "/college/classes" : "/college/electives";
   const filtered = Object.entries(data.query).some(([key,value]) =>
     !["page","pageSize"].includes(key) && value !== undefined && value !== null &&
-    value !== "" && value !== "ALL");
+    value !== "" && value !== "ALL" && !(key==="status" && value==="ACTIVE"));
   const exportUrl = data.kind === "CLASSES" ? classesExportHref(data.query) : "";
   return (
     <div className="min-w-0 space-y-[var(--lms-space-4)]">
@@ -94,10 +94,10 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
         <form id="college-structure-directory-filters" method="get" action={path} className="flex min-w-0 flex-wrap items-end gap-[var(--lms-space-3)]">
           {classes && data.kind === "CLASSES" ? <CollegeClassScopeFilters programs={data.programs} cohorts={classOptions?.cohorts ?? []}
             selectedProgram={data.query.programId} selectedBatch={data.query.cohortCode} /> : null}
-          {!classes ? <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[165px]">
             Program
             <Select name="programId" defaultValue={data.query.programId ?? ""}
-              className="min-h-11 min-w-0 md:min-h-9">
+              className="min-h-11 w-full md:min-h-9">
               <option value="">All programs</option>
               {data.programs.map(program => (
                 <option key={program.id} value={program.id}>
@@ -106,20 +106,20 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               ))}
             </Select>
           </label> : null}
-          {!classes ? <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+          {!classes ? <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[165px]">
             Status
             <Select name="status" defaultValue={data.query.status}
-              className="min-h-11 min-w-0 md:min-h-9">
-              <option value="ACTIVE">Active</option>
-              <option value="ARCHIVED">Archived</option>
-              <option value="ALL">All</option>
+              className="min-h-11 w-full md:min-h-9">
+              <option value="ACTIVE">Active only</option>
+              <option value="ALL">Incl. archived</option>
+              <option value="ARCHIVED">Archived only</option>
             </Select>
           </label> : null}
           {data.kind === "ELECTIVES" ? (
-            <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">
+            <label className="grid w-full gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)] sm:w-[165px]">
               Semester
               <Select name="semesterNumber" defaultValue={String(data.query.semesterNumber ?? "")}
-                className="min-h-11 min-w-0 md:min-h-9">
+                className="min-h-11 w-full md:min-h-9">
                 <option value="">All semesters</option>
                 {Array.from({length: 12}, (_, i) => i + 1).map(number =>
                   <option key={number} value={number}>Semester {number}</option>)}
@@ -405,7 +405,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
               ? classes
                 ? (data.query.q || data.query.programId || data.query.cohortCode || data.query.status !== "ALL"
                   ? "No classes match these filters." : "No classes yet. Create your first class/section.")
-                : "No electives match these filters."
+                : filtered ? "No elective slots match search/filters." :
+                "No elective slots yet. Choose New slot to create your first."
               : "No rows on this page. Choose an earlier page."}
            </p>
            {filtered ? <Link href={path} className="inline-flex min-h-11 items-center font-semibold text-primary-text">
@@ -447,7 +448,8 @@ export function CollegeStructureDirectory({ data, electiveOptions, classOptions,
           ) : (
             <DataTable caption="Elective slot directory" rows={data.items}
               getRowKey={item=>item.id}
-              empty={<p>No elective slots match these filters.</p>}
+              empty={<p>{filtered ? "No elective slots match search/filters." :
+                "No elective slots yet. Choose New slot to create your first."}</p>}
               mobileMode="scroll"
               columns={[
                 {key:"slot",header:"Slot",mobilePriority:"primary",className:"min-w-[180px]",cell:item=>
