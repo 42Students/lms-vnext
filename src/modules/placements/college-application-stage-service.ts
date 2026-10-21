@@ -74,7 +74,7 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      throw new PlacementsServiceError("PLACEMENT_JOB_READ_ONLY");
     const [application]=await tx.select({
      id:placementApplications.id,status:placementApplications.status,
-     userId:collegeMemberships.userId,
+     source:placementApplications.channel,userId:collegeMemberships.userId,
     }).from(placementApplications)
      .innerJoin(collegeMemberships,eq(collegeMemberships.id,placementApplications.membershipId))
      .where(and(eq(placementApplications.id,applicationId),
@@ -82,6 +82,8 @@ export async function mutateCollegeApplicationStages(context:RequestContext,rawJ
      .for("update",{of:placementApplications}).limit(1);
     if(!application||application.status!=="SUBMITTED")
      throw new PlacementsServiceError("PLACEMENT_SCREENING_APPLICATION_INACTIVE");
+    if(application.source==="EXTERNAL"&&input.assessmentUrl)
+     throw Error("External applicant assessment links are read-only in the college workspace.");
     const [old]=await tx.select().from(placementCollegeApplicationStages)
      .where(and(eq(placementCollegeApplicationStages.jobId,jobId),
       eq(placementCollegeApplicationStages.applicationId,applicationId))).for("update").limit(1);
