@@ -3,12 +3,16 @@ import { Alert } from "@/components/ui/alert";
 import { TpoUnifiedJobTypesEditor } from "@/components/tpo/tpo-unified-job-types-editor";
 import { getCurrentRequestContext } from "@/auth/request-context";
 import { TpoSettingsNav } from "@/components/placements/tpo-settings-nav";
-import { getTpoJobTypes } from "@/modules/placements/tpo-configuration-read-service";
+import { getTpoJobTypes, listPlacementJobTypeChoices } from "@/modules/placements/tpo-configuration-read-service";
 import { TPO_BUILTIN_JOB_TYPES, isTpoBuiltinJobType } from "@/modules/placements/tpo-builtin-job-types";
 
 export const dynamic = "force-dynamic";
 export default async function JobTypesSettings() {
-  const { ready, rows, usage } = await getTpoJobTypes(await getCurrentRequestContext());
+  const context=await getCurrentRequestContext();
+  const [{ready,rows,usage},choices]=await Promise.all([
+    getTpoJobTypes(context),
+    listPlacementJobTypeChoices(context,context.membership?.collegeId??null),
+  ]);
   const builtin = TPO_BUILTIN_JOB_TYPES.map(fixed => {
     const stored = rows.find(row => row.label.toLowerCase() === fixed.label.toLowerCase());
     return {
@@ -37,7 +41,16 @@ export default async function JobTypesSettings() {
           The job types drives can have, and whether an offer of each counts as placed. Add your own; switch off the ones you never use.
         </p>
         {!ready ? <Alert tone="warning">Job types storage is awaiting migration registration.</Alert> :
-          <TpoUnifiedJobTypesEditor types={[...builtin, ...custom]}/>}
+          <div className="space-y-4">
+            <TpoUnifiedJobTypesEditor types={[...builtin,...custom]}/>
+            <section aria-label="Choices available to drive users" className="border-t border-border pt-3">
+              <h3 className="font-semibold">Visible choices for drives</h3>
+              <p className="text-xs text-muted-foreground">The same authorized read-only selection is available at /api/placements/job-types. Disabled choices remain on existing drives but are not offered for new ones.</p>
+              {choices.length?<ul className="mt-2 flex flex-wrap gap-2">{choices.map(item=>
+                <li key={item.label} className="rounded border border-border px-2 py-1 text-sm">{item.label}</li>
+              )}</ul>:<p className="text-sm text-muted-foreground">No active job types.</p>}
+            </section>
+          </div>}
       </section>
     </div>
   </div>;

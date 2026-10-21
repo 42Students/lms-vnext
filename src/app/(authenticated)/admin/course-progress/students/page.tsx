@@ -11,6 +11,7 @@ import {DataTable} from "@/components/ui/data-table";
 import {Alert} from "@/components/ui/alert";
 import {Select} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
+import {AdminProgressRetakeAction} from "@/components/courses/admin-progress-retake-action";
 
 export default async function SuperAdminStudentCourseProgressPage({searchParams}:{
  searchParams:Promise<Record<string,string|string[]|undefined>>
@@ -109,6 +110,8 @@ export default async function SuperAdminStudentCourseProgressPage({searchParams}
       {key:"videos",header:"Videos",mobilePriority:"secondary",cell:row=>row.videos+"/"+row.totalVideos},
       {key:"assignments",header:"Assignments",mobilePriority:"secondary",cell:row=>row.assignments+"/"+row.totalAssignments},
       {key:"quizzes",header:"Quizzes",mobilePriority:"secondary",cell:row=>row.quizzes+"/"+row.totalQuizzes},
+      {key:"retake",header:"Progress attempt",mobilePriority:"action",cell:row=>
+        <AdminProgressRetakeAction offeringId={offeringId} membershipId={row.membershipId} learnerName={row.studentName}/>},
       {key:"progress",header:<Link href={reportHref(1,pageSize,sort==="percent-asc"?"percent-desc":"percent-asc")}
         className="inline-flex min-h-11 items-center text-primary-text underline underline-offset-2 md:min-h-9">
         Progress {sort==="percent-asc"?"↑":"↓"}
