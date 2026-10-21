@@ -158,7 +158,9 @@ export async function listLearnerPlacementJobs(
     .orderBy(
       asc(placementJobs.applicationDeadline),
       asc(placementJobs.title),
+      asc(placementJobs.id),
       asc(placementJobRoleOptions.title),
+      asc(placementJobRoleOptions.id),
     );
 
   // A learner may only discover published jobs targeting the persisted
@@ -307,6 +309,9 @@ export async function listLearnerPlacementBulkDecisions(
  context:RequestContext,requestedJobIds:readonly string[],
  now:Date=new Date(),
 ){
+ // Even empty/invalid requests require the same authenticated learner grant.
+ requireLearner(context);
+ await requireLearnerPlacementAccess(context);
  // Bound expensive per-job eligibility evaluation and preserve request order.
  if(requestedJobIds.length>100)
   throw new Error("Choose no more than 100 placement jobs.");
