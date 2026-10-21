@@ -32,7 +32,6 @@ import {
   createCourseLessonInputSchema,
   learningPathIdSchema,
   updateCourseLessonInputSchema,
-  type CreateCourseLessonInput,
   type UpdateCourseLessonInput,
 } from "./validation";
 
