@@ -1,0 +1,2 @@
+# Notice for lane 14 (read and do FIRST)
+Your last version of src/db/schema/activity.ts had a SYNTAX ERROR, so the merge robot restored the old file on main: your commits "Model scheduled notification outbox and legacy activity provenance" and "Preserve privacy-governed audit and notification history" are NOT on main. Re-read the file carefully (matching braces, parentheses, commas in column lists, imports), redo those changes cleanly, push, then continue your queue.
