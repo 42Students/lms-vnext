@@ -85,7 +85,7 @@ Packets:
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_components_tracker_tracker-issue-copy-actions.tsx.md` (edit src/components/tracker/tracker-issue-copy-actions.tsx; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/NEW_docs_audit_gap2_lane-16_u004-tracker-issues-index.md.md` (new; 3 findings; best P1)
 - [x] `docs/audit/gap-fix-work/packets/lane-10/src_components_tracker_tracker-issue-bulk-actions.tsx.md` (edit src/components/tracker/tracker-issue-bulk-actions.tsx; 3 findings; best P1)
-- [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_api_tracker_issues_publicId_route.ts.md` (edit src/app/api/tracker/issues/[publicId]/route.ts; 3 findings; best P1)
+- [x] `docs/audit/gap-fix-work/packets/lane-10/src_app_api_tracker_issues_publicId_route.ts.md` (edit src/app/api/tracker/issues/[publicId]/route.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_app_api_tracker_live-logs_route.ts.md` (edit src/app/api/tracker/live-logs/route.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_modules_operations_postgres-scheduled-job-lease-store.ts.md` (edit src/modules/operations/postgres-scheduled-job-lease-store.ts; 3 findings; best P1)
 - [ ] `docs/audit/gap-fix-work/packets/lane-10/src_modules_inbound-mail_message-model.ts.md` (edit src/modules/inbound-mail/message-model.ts; 3 findings; best P1)
