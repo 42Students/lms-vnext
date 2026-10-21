@@ -2,8 +2,8 @@ import "server-only";
 import { and, desc, eq, sql } from "drizzle-orm";
 import { getDb } from "@/db/client";
 import { messagingDeliveryBatches } from "@/db/schema/messaging-receipts";
-import { hasMembershipRole, type RequestContext } from "@/modules/identity/context";
-import { AuthorizationError } from "@/modules/permissions/policy";
+import { hasMembershipRole, isSuperAdmin, type RequestContext } from "@/modules/identity/context";
+import { AuthorizationError, requirePermission } from "@/modules/permissions/policy";
 import { assertPersistedPlatformPermission } from "@/modules/permissions/persisted-actor";
 import { requirePlacementManageScope } from "@/modules/placements/scope";
 import { messagingHistoryQuerySchema, projectMessagingHistory, legacyMessagingHistoryPaging } from "./receipt-history-model";
@@ -97,6 +97,10 @@ export async function listSupportSmsDeliveryHistory(
  context:RequestContext,
  raw:{recipientSuffix?:unknown;purpose?:unknown;page?:unknown;size?:unknown}={},
 ){
+ if(!isSuperAdmin(context)||context.user.platformStatus!=="ACTIVE"||
+    context.adminScope?.collegeId||context.adminScope?.organizationId)
+  throw new AuthorizationError("admin-scope.select");
+ requirePermission(context,"admin-scope.select");
  const {listSmsDeliveryAttemptsForSupport}=await import("@/modules/notifications/exotel-sms");
  const suffix=typeof raw.recipientSuffix==="string"
   ?raw.recipientSuffix.replace(/[^0-9]/g,"").slice(-4):"";
