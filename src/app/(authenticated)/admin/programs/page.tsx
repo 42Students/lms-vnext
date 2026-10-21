@@ -26,7 +26,8 @@ export default async function SuperAdminProgramsPage() {
     return (
       <div className="min-w-0 space-y-5">
         <PageHeader  title="Programs"
-          description="Select a college first. Choose a college scope before managing programs." />
+          description="Select an Organization + College in the header above to view programs." />
+        <Alert tone="warning" role="alert">⚠ Select a college to continue. Choose an Organization + College in the header above before managing programs.</Alert>
         <EmptyState title="Select a college to continue"
           description="Choose a college in the header above to see its programs." />
       </div>

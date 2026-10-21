@@ -68,6 +68,7 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
    </div>
    <p className="text-sm text-body"><span className="font-semibold">Velocity</span> · {velocity} points completed</p>
   </div>
+  {!readOnly&&targets.length===0?<Alert tone="warning" role="status">No active sprints found. You can create backlog tasks now, but cannot pull them into a sprint until a sprint is active.</Alert>:null}
   {!readOnly?<section className="space-y-2">
     <Button variant="primary" type="button" aria-expanded={adding} aria-controls={draftId} onClick={()=>adding?guard.requestClose():setAdding(true)}
       className="min-h-11 px-3">
@@ -122,9 +123,13 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Done when<Textarea maxLength={4000}
         value={criteria} onChange={e=>setCriteria(e.target.value)}
         className="mt-1 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface p-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
-      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimate points<Input type="number" min={0} max={1000}
+      <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Estimate points
+        <span className="mt-1 block text-xs font-normal text-body">Select a classic story-point estimate (1, 2, 3, 5, 8, 13) or enter a custom whole number (0–1000).</span>
+        <Input type="number" list={draftId+"-estimates"} min={0} max={1000}
         value={points} onChange={e=>setPoints(e.target.value)}
-        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/></label>
+        className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"/>
+        <datalist id={draftId+"-estimates"}>{[1,2,3,5,8,13].map(n=><option key={n} value={n}/>)}</datalist>
+      </label>
       <label className="font-semibold text-[13px] leading-4 text-[var(--lms-neutral-400)]">Task type
         <Select value={taskType} onChange={e=>setTaskType(e.target.value)}
           className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-3 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
@@ -170,14 +175,14 @@ export function MentorProductBacklog({projectId,tasks,sprints,readOnly=false}:{
           dueDate={task.dueDate} blockerReason={task.blockerReason}/>
       </div>:null}
     {!readOnly?<label className="mt-2 block text-[length:var(--lms-font-sm)] font-semibold leading-4 text-[13px] text-[var(--lms-neutral-400)]">Pull into sprint
-     <Select disabled={busy} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
+     <Select disabled={busy||targets.length===0} value="" onChange={e=>{const id=e.target.value;if(id)setMoveRequest({task,targetSprintId:id});}}
       className="mt-1 min-h-11 w-full rounded-[var(--lms-control-radius)] border border-border bg-surface px-2 text-base focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary">
       <option value="">Choose sprint</option>
       {targets.map(s=><option key={s.id} value={s.id}>{s.title}</option>)}
      </Select>
     </label>:null}
    </article>)}
-   {!backlog.length?<div><EmptyState title="Backlog is empty." description="No backlog tasks to display." /></div>:null}
+   {!backlog.length?<div><EmptyState title="No backlog tasks yet" description="Add backlog tasks, then pull them into a sprint when the plan is ready." /></div>:null}
   </div>
   {!readOnly&&returnable.length>0?<Disclosure title="Return unfinished tasks to backlog">
     <div className="mt-2 space-y-2">

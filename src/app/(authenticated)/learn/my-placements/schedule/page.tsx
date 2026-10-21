@@ -129,6 +129,7 @@ export default async function LearnerPlacementSchedulePage({searchParams}:{
     return <div className="min-w-0 mt-2 space-y-2 text-sm text-body">
       <p>{row.roundKind.replaceAll("_"," ")} · {mode==="VIRTUAL"?"Online":mode==="ON_CAMPUS"?"On campus":mode} · {row.durationMinutes!=null?row.durationMinutes+" minutes":"Duration to be told"}</p>
       <p>{venue?"Venue: "+venue:"Venue to be told"}</p>
+      <p className="whitespace-pre-wrap break-words">{row.whatToBring?.trim()?"What to bring: "+row.whatToBring:"What to bring: No instructions recorded."}</p>
       <div className="flex flex-wrap gap-3">
         {join&&/^https:\/\//i.test(join)?<ThirdPartyLink href={join} label="Join link" />:null}
         {row.testUrl&&/^https:\/\//i.test(row.testUrl)?<ThirdPartyLink href={row.testUrl} label="Open test" ariaLabel="Open test · Take online assessment" />:null}
