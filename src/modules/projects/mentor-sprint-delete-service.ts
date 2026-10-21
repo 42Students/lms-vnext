@@ -1,5 +1,5 @@
 import "server-only";
-import {and,eq,or} from "drizzle-orm";
+import {and,eq,isNull} from "drizzle-orm";
 import {z} from "zod";
 import {getDb} from "@/db/client";
 import {projectInstances,projectMeetings,projectReleases,projectSprints,projectTasks} from "@/db/schema";
@@ -23,7 +23,7 @@ export async function deleteMentorProjectSprint(context:RequestContext,rawPath:u
    throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   await assertPersistedProjectMutationActor(tx,context,scope);
   const [sprint]=await tx.select().from(projectSprints)
-    .where(and(eq(projectSprints.id,path.sprintId),eq(projectSprints.projectId,scope.project.id)))
+    .where(and(eq(projectSprints.id,path.sprintId),eq(projectSprints.projectId,scope.project.id),isNull(projectSprints.deletedAt)))
     .for("update").limit(1);
   if(!sprint||sprint.status!=="PLANNED"||
       sprint.updatedAt.getTime()!==Date.parse(input.expectedUpdatedAt))
@@ -43,13 +43,13 @@ export async function deleteMentorProjectSprint(context:RequestContext,rawPath:u
     sprintId:null,carriedFromSprintId:sprint.id,carriedOverAt:new Date(),updatedAt:new Date(),
   }).where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.sprintId,sprint.id)))
     .returning({id:projectTasks.id});
-  // Moving task identities to the backlog preserves all task comments and submissions.
-  // FK carriedFromSprintId cannot reference a deleted row, so clear that reference
-  // for this explicit removal (the activity record preserves the origin).
-  if(moved.length)await tx.update(projectTasks).set({carriedFromSprintId:null})
-    .where(and(eq(projectTasks.projectId,scope.project.id),eq(projectTasks.carriedFromSprintId,sprint.id)));
-  const [removed]=await tx.delete(projectSprints).where(and(eq(projectSprints.id,sprint.id),
-    eq(projectSprints.projectId,scope.project.id))).returning({id:projectSprints.id});
+  // Preserve a workspace-deleted sprint as a template merge tombstone, and keep
+  // carriedFromSprintId references so task history retains the source sprint.
+  const [removed]=await tx.update(projectSprints).set({
+    deletedAt:new Date(),deletedByWorkspace:true,updatedAt:new Date(),
+  }).where(and(eq(projectSprints.id,sprint.id),
+    eq(projectSprints.projectId,scope.project.id),isNull(projectSprints.deletedAt)))
+    .returning({id:projectSprints.id});
   if(!removed)throw new ProjectsServiceError("PROJECT_SPRINT_INVALID_STATE");
   await recordActivityEventInTransaction(tx,context,{
     eventType:ACTIVITY_EVENT_TYPES.PROJECTS_SPRINT_UPDATED,
