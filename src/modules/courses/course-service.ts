@@ -383,6 +383,7 @@ export async function createCourse(
           shortTitle:input.shortTitle??input.name.slice(0,64),
           officialCode:input.officialCode??null,
           cardColor:input.cardColor??null,
+          thumbnailUrl:input.thumbnailUrl||null,
           takeaways:input.takeaways??null,
           orderedTakeaways:input.takeaways?.split(/\r?\n/)
            .map(value=>value.trim()).filter(Boolean)??null,

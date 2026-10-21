@@ -34,7 +34,7 @@ type PeriodOption = Option & {
   endDate: string;
 };
 type SectionOption = Option & { cohortId: string; academicPeriodId: string };
-type CourseOption = Option & { code:string; departmentName:string; departmentId:string;description:string|null;shortTitle?:string|null;officialCode?:string|null;cardColor?:string|null;takeaways?:string|null;introductionHeading?:string|null;enabled?:boolean };
+type CourseOption = Option & { code:string; departmentName:string; departmentId:string;description:string|null;shortTitle?:string|null;officialCode?:string|null;cardColor?:string|null;takeaways?:string|null;introductionHeading?:string|null;thumbnailUrl?:string|null;enabled?:boolean };
 type OfferingOption = {
   id: string;
   courseName: string;
@@ -121,6 +121,7 @@ export function AdminCourseCreatePanel({
   const [shortTitle,setShortTitle]=useState((duplicated?.shortTitle??copy?.name??"").slice(0,120));
   const [officialCode,setOfficialCode]=useState((duplicated?.officialCode??"").slice(0,40));
   const [cardColor,setCardColor]=useState(duplicated?.cardColor??"");
+  const [coverUrl,setCoverUrl]=useState(duplicated?.thumbnailUrl??"");
   const [takeaways,setTakeaways]=useState(duplicated?.takeaways??"");
   const takeawayItems=takeaways.split(/\r?\n/).filter(item=>item.trim().length>0);
   function updateTakeaway(index:number,value:string){
@@ -148,7 +149,7 @@ export function AdminCourseCreatePanel({
   const superAdmin=courseBasePath.startsWith("/admin/");
 
   const [courseDescription, setCourseDescription] = useState(copy?.description??"");
-  const [createErrors, setCreateErrors] = useState<Partial<Record<"department"|"name"|"shortTitle"|"code"|"heading"|"description"|"cardColor",string>>>({});
+  const [createErrors, setCreateErrors] = useState<Partial<Record<"department"|"name"|"shortTitle"|"code"|"heading"|"description"|"cardColor"|"coverUrl",string>>>({});
 
   const [offeringCourseId, setOfferingCourseId] = useState("");
   const [offeringCohortId, setOfferingCohortId] = useState("");
@@ -240,6 +241,9 @@ export function AdminCourseCreatePanel({
       issues.description = "Enter course description";
     if (superAdmin && cardColor.trim() && !/^#[0-9a-fA-F]{6}$/.test(cardColor.trim()))
       issues.cardColor = "Enter a valid card colour (#RRGGBB).";
+    if(coverUrl.trim()&&(!/^https:\/\/[^\s/@]+(?:\/[^\s]*)?$/i.test(coverUrl.trim())||
+       /https:\/\/(?:localhost|127\.|0\.0\.0\.0)/i.test(coverUrl.trim())))
+      issues.coverUrl="Enter a valid HTTPS course cover URL.";
     setCreateErrors(issues);
     if (Object.keys(issues).length > 0) {
       const field = issues.department ? "course-department"
@@ -247,7 +251,7 @@ export function AdminCourseCreatePanel({
         : issues.shortTitle ? "course-short-title"
         : issues.code ? (superAdmin ? "course-official-code" : "course-code")
         : issues.heading ? "course-introduction-heading"
-        : issues.description ? "course-description" : "course-card-color";
+        : issues.description ? "course-description" : issues.coverUrl ? "course-cover-url" : "course-card-color";
       document.getElementById(field)?.focus();
       return;
     }
@@ -259,6 +263,7 @@ export function AdminCourseCreatePanel({
         shortTitle:superAdmin?shortTitle.trim():undefined,
         officialCode:superAdmin?officialCode.trim()||null:undefined,
         cardColor:superAdmin?cardColor.trim()||null:null,
+        thumbnailUrl:coverUrl.trim()||null,
         takeaways:superAdmin?takeaways.trim()||null:undefined,
         introductionHeading:superAdmin?introductionHeading.trim():undefined,
         enabled:visibleToStudents,
@@ -266,7 +271,7 @@ export function AdminCourseCreatePanel({
       }),
       `Created course “${courseName.trim()}”.`,
       (result) => { const id=createdRecordId(result,"course");if(id){setOfferingCourseId(id);setNextSetupStep("OFFERING");}
-        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setIntroductionHeading("In this Course");setVisibleToStudents(true);setCreateErrors({});if(copy)router.replace(courseBasePath); },
+        setCourseName("");setCourseCode("");setCourseDescription("");setShortTitle("");setOfficialCode("");setTakeaways("");setIntroductionHeading("In this Course");setCoverUrl("");setVisibleToStudents(true);setCreateErrors({});if(copy)router.replace(courseBasePath); },
       COLLEGE_COURSES_COPY.createFailed,
     );
   }
@@ -423,6 +428,23 @@ export function AdminCourseCreatePanel({
             <Input id="course-code" value={courseCode} onChange={(event) => {setCourseCode(event.target.value);setCreateErrors(previous=>({...previous,code:undefined}));}} placeholder="CS201" maxLength={64} required />
             {createErrors.code ? <p role="alert" className="mt-1 text-xs text-danger">{createErrors.code}</p> : null}
           </div>}
+          <div className="md:col-span-2">
+            <FieldLabel htmlFor="course-cover-url">Course cover image (HTTPS)</FieldLabel>
+            <Input id="course-cover-url" type="url" value={coverUrl} maxLength={2048}
+              aria-invalid={Boolean(createErrors.coverUrl)}
+              onChange={event=>{setCoverUrl(event.currentTarget.value);setCreateErrors(old=>({...old,coverUrl:undefined}));}}
+              placeholder="https://example.edu/course-cover.jpg" />
+            <p className="mt-1 text-xs text-muted-foreground">
+              This image is shown on the course catalogue card. Use a publicly approved HTTPS asset.
+              Private file uploads must use verified storage before publication.
+            </p>
+            {coverUrl.trim()&&!createErrors.coverUrl&&/^https:\/\//i.test(coverUrl.trim())?
+              <a href={coverUrl.trim()} target="_blank" rel="noopener noreferrer"
+                className="mt-2 inline-flex text-sm font-semibold text-link underline">
+                Preview course cover
+              </a>:null}
+            {createErrors.coverUrl?<p role="alert" className="mt-1 text-xs text-danger">{createErrors.coverUrl}</p>:null}
+          </div>
           {superAdmin?<div className="md:col-span-2">
             <FieldLabel htmlFor="course-introduction-heading">In this Course – Heading</FieldLabel>
             <Input id="course-introduction-heading" value={introductionHeading}

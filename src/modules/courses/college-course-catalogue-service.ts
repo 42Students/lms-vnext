@@ -1,5 +1,5 @@
 import "server-only";
-import {and,asc,desc,count,eq,ilike,isNull,or,inArray} from "drizzle-orm";
+import {and,asc,desc,count,eq,ilike,isNull,or,inArray,sql} from "drizzle-orm";
 import {getDb} from "@/db/client";
 import {courses,departments} from "@/db/schema";
 import {hasMembershipRole,isSuperAdmin,type RequestContext} from "@/modules/identity/context";
@@ -59,6 +59,12 @@ export async function listCollegeCourseCatalogue(
   description:courses.description,status:courses.status,
   enabled:courses.enabled,legacyAllowedForDisplay:courses.legacyAllowedForDisplay,
   thumbnailUrl:courses.thumbnailUrl,imageUrl:courses.imageUrl,
+  // The public catalogue uses a safe HTTPS source; never expose private
+  // object keys or legacy unverified image hosts as direct URLs.
+  coverUrl:sql<string|null>`case
+    when ${courses.thumbnailUrl} like 'https://%' then ${courses.thumbnailUrl}
+    when ${courses.imageUrl} like 'https://%' then ${courses.imageUrl}
+    else null end`.as("cover_url"),
   departmentId:courses.departmentId,departmentName:departments.name,
   createdAt:courses.createdAt,updatedAt:courses.updatedAt,
  }).from(courses)

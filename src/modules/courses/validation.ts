@@ -53,6 +53,17 @@ export const createCourseInputSchema = z.object({
   shortTitle:courseShortTitleSchema.optional(),
   officialCode:courseOfficialCodeSchema.optional(),
   cardColor:courseCardColorSchema.optional(),
+  /** Legacy public course cover is a verified HTTPS image URL. A private
+   * uploaded object must first be promoted to a signed/public safe asset. */
+  thumbnailUrl:z.string().trim().max(2048).refine(value=>{
+    if(!value)return true;
+    try{
+      const url=new URL(value);
+      return url.protocol==="https:"&&Boolean(url.hostname)&&
+        !/^(localhost|127(?:\.\d+){3}|0\.0\.0\.0)$/i.test(url.hostname)&&
+        !url.username&&!url.password;
+    }catch{return false;}
+  },"Enter a valid HTTPS course cover URL").nullable().optional(),
   takeaways:z.string().trim().max(2000).nullable().optional(),
   introductionHeading:z.string().trim().min(1,"Enter the heading").max(255,"Maximum 255 characters").optional(),
   enabled:z.boolean().optional(),
