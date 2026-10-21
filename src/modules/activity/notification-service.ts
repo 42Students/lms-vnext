@@ -59,6 +59,10 @@ type NotificationWriter = Pick<
  */
 const releasedNotificationEvent = sql<boolean>`
   coalesce(${activityEvents.metadata} ->> 'deliveryStatus', 'SENT') = 'SENT'
+  and (
+    ${activityEvents.metadata} ->> 'scheduledAt' is null
+    or ${activityEvents.metadata} ->> 'deliveryStatus' = 'SENT'
+  )
   and ${activityEvents.metadata} ->> 'deletedAt' is null
 `;
 
@@ -233,18 +237,38 @@ export async function requireStaffNotificationAudience(
   }
 
   const db = getDb();
-  // Resolve the optional legacy course slug before checking persisted scope.
-  // The slug takes precedence over any submitted course ID.
+  // Resolve a legacy slug within a verified academic/actor scope. Slugs are
+  // not guaranteed to be unique across colleges: never choose an arbitrary
+  // cross-tenant match with LIMIT 1.
   let resolvedCourseId = draft.courseId ?? null;
   if (draft.courseSlug) {
-    const [bySlug] = await db.select({ id: courses.id }).from(courses)
+    const [selectedSection] = draft.classId
+      ? await db.select({ collegeId: academicPeriods.collegeId })
+          .from(sections)
+          .innerJoin(academicPeriods, eq(academicPeriods.id, sections.academicPeriodId))
+          .where(eq(sections.id, draft.classId))
+          .limit(1)
+      : [];
+    const scopedCollegeId = selectedSection?.collegeId ??
+      (isSuperAdmin(context)
+        ? context.adminScope?.collegeId
+        : context.membership?.collegeId) ?? null;
+    const scopedOrganizationId = (isSuperAdmin(context)
+      ? context.adminScope?.organizationId
+      : context.membership?.organizationId) ?? null;
+    const slugMatches = await db.select({ id: courses.id })
+      .from(courses)
+      .innerJoin(departments, eq(departments.id, courses.departmentId))
+      .innerJoin(colleges, eq(colleges.id, departments.collegeId))
       .where(and(
         eq(courses.slug, draft.courseSlug),
         eq(courses.status, "ACTIVE"),
         isNull(courses.deletedAt),
-      )).limit(1);
-    if (!bySlug) throw new Error("Course not found for slug");
-    resolvedCourseId = bySlug.id;
+        ...(scopedCollegeId ? [eq(departments.collegeId, scopedCollegeId)] : []),
+        ...(scopedOrganizationId ? [eq(colleges.organizationId, scopedOrganizationId)] : []),
+      )).limit(2);
+    if (slugMatches.length !== 1) throw new Error("Course not found for slug");
+    resolvedCourseId = slugMatches[0].id;
   }
   const [scope] = draft.classId
     ? await db.select({
@@ -681,6 +705,8 @@ async function writeInAppNotification(
   if (event.subjectType === "NOTIFICATION" &&
       (event.metadata.deletedAt != null ||
        (event.metadata.deliveryStatus != null &&
+        event.metadata.deliveryStatus !== "SENT") ||
+       (event.metadata.scheduledAt != null &&
         event.metadata.deliveryStatus !== "SENT"))) {
     throw new ActivityServiceError("NOTIFICATION_NOT_FOUND");
   }
@@ -768,6 +794,9 @@ export async function listScopedAdminNotificationPage(
   rawOptions: {
     organizationId?: string;
     collegeId?: string;
+    classId?: string;
+    courseId?: string;
+    deliveryStatus?: "SENT" | "SCHEDULED" | "PROCESSING" | "FAILED" | "DELETED";
     pageNo?: number;
     pageSize?: number;
   } = {},
@@ -778,6 +807,9 @@ export async function listScopedAdminNotificationPage(
   const options = z.object({
     organizationId: z.string().uuid().optional(),
     collegeId: z.string().uuid().optional(),
+    classId: z.string().uuid().optional(),
+    courseId: z.string().uuid().optional(),
+    deliveryStatus: z.enum(["SENT", "SCHEDULED", "PROCESSING", "FAILED", "DELETED"]).optional(),
     pageNo: z.number().int().min(0).default(0),
     // Legacy clamps the requested size to [1, 200] instead of failing.
     pageSize: z.number().int().transform((size) => Math.min(200, Math.max(1, size))).default(50),
@@ -798,14 +830,29 @@ export async function listScopedAdminNotificationPage(
   }
   requirePermission(context, "activity.read", { organizationId, collegeId });
 
-  const conditions = [eq(activityEvents.subjectType, "NOTIFICATION")];
-  if (collegeId) conditions.push(eq(activityEvents.collegeId, collegeId));
+  const scopeConditions = [eq(activityEvents.subjectType, "NOTIFICATION")];
+  if (collegeId) scopeConditions.push(eq(activityEvents.collegeId, collegeId));
   else if (organizationId) {
-    conditions.push(eq(activityEvents.organizationId, organizationId));
+    scopeConditions.push(eq(activityEvents.organizationId, organizationId));
   }
+  // Historical rows without a status are SENT only when they were not
+  // scheduled. Recalled rows remain accessible to authorized admin audits.
+  const status = sql<string>`
+    case
+      when ${activityEvents.metadata} ->> 'deletedAt' is not null then 'DELETED'
+      when ${activityEvents.metadata} ->> 'deliveryStatus' is not null
+        then ${activityEvents.metadata} ->> 'deliveryStatus'
+      when ${activityEvents.metadata} ->> 'scheduledAt' is not null
+        then 'SCHEDULED'
+      else 'SENT'
+    end
+  `;
+  const conditions = [...scopeConditions];
+  appendNotificationContextFilters(conditions, options);
+  if (options.deliveryStatus) conditions.push(eq(status, options.deliveryStatus));
   const where = and(...conditions);
   const db = getDb();
-  const [[totalRow], items] = await Promise.all([
+  const [[totalRow], items, statusRows] = await Promise.all([
     db.select({ total: count() }).from(activityEvents).where(where),
     db.select({
       id: activityEvents.id,
@@ -817,9 +864,13 @@ export async function listScopedAdminNotificationPage(
       summary: activityEvents.summary,
       metadata: activityEvents.metadata,
       occurredAt: activityEvents.occurredAt,
+      deliveryStatus: status,
     }).from(activityEvents).where(where)
       .orderBy(desc(activityEvents.occurredAt), desc(activityEvents.id))
       .limit(options.pageSize).offset(options.pageNo * options.pageSize),
+    db.select({ deliveryStatus: status, total: count() })
+      .from(activityEvents).where(and(...scopeConditions))
+      .groupBy(status),
   ]);
   return {
     items: items.map((item) => ({
@@ -831,6 +882,9 @@ export async function listScopedAdminNotificationPage(
       pageSize: options.pageSize,
       total: totalRow?.total ?? 0,
     },
+    deliveryStatusCounts: Object.fromEntries(
+      statusRows.map((row) => [row.deliveryStatus, row.total]),
+    ),
   };
 }
 
