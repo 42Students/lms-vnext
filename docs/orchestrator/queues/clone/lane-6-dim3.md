@@ -60,22 +60,22 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-6.md: file, number of 
 - [x] `src/components/tpo/tpo-due-followup-workspace.tsx`
 - [x] `src/components/ui/empty-state.tsx`
 - [x] `src/components/tpo/tpo-recruiter-message-reply.tsx`
-- [ ] `src/components/tpo/tpo-students-bulk-debar.tsx`
-- [ ] `src/components/tpo/tpo-team-handover.tsx`
-- [ ] `src/components/tracker/known-errors-workspace.tsx`
-- [ ] `src/components/tracker/tracker-workflow-panel.tsx`
-- [ ] `src/components/verification/SuperAdminVerificationPanel.tsx`
-- [ ] `src/app/(authenticated)/teacher/report/quiz/[quizId]/error.tsx`
-- [ ] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
-- [ ] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
-- [ ] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
-- [ ] `src/components/admin/placement-panel-error-boundary.tsx`
-- [ ] `src/components/courses/admin-offering-learning-overview.tsx`
-- [ ] `src/components/courses/faculty-assignment-review.tsx`
-- [ ] `src/components/courses/learner-course-workspace.tsx`
-- [ ] `src/components/placements/college-drive-legacy-nav.tsx`
-- [ ] `src/components/placements/learner-placement-journey.tsx`
-- [ ] `src/components/placements/recruiter-interview-slot-form.tsx`
+- [x] `src/components/tpo/tpo-students-bulk-debar.tsx`
+- [x] `src/components/tpo/tpo-team-handover.tsx`
+- [x] `src/components/tracker/known-errors-workspace.tsx`
+- [x] `src/components/tracker/tracker-workflow-panel.tsx`
+- [x] `src/components/verification/SuperAdminVerificationPanel.tsx`
+- [x] `src/app/(authenticated)/teacher/report/quiz/[quizId]/error.tsx`
+- [x] `src/app/(authenticated)/tpo/placements/jobs/[jobId]/interview-slots/page.tsx`
+- [x] `src/app/(authenticated)/tpo/team/[threadId]/page.tsx`
+- [x] `src/app/e2e/chat17-ui-kit/ui-harness.tsx`
+- [x] `src/components/admin/placement-panel-error-boundary.tsx`
+- [x] `src/components/courses/admin-offering-learning-overview.tsx`
+- [x] `src/components/courses/faculty-assignment-review.tsx`
+- [x] `src/components/courses/learner-course-workspace.tsx`
+- [x] `src/components/placements/college-drive-legacy-nav.tsx`
+- [x] `src/components/placements/learner-placement-journey.tsx`
+- [x] `src/components/placements/recruiter-interview-slot-form.tsx`
 - [ ] `src/components/projects/learner-project-tabs.tsx`
 - [ ] `src/components/projects/project-workspace-readiness.tsx`
 - [ ] `src/components/shell/topbar/tpo-notification-cluster.tsx`
