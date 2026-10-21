@@ -40,6 +40,8 @@ export async function PATCH(
         delete fields.environment;
         body=fields;
       }
+      if(fields.action==="STATUS" && (typeof fields.status!=="string" || !fields.status.trim()))
+        return NextResponse.json({error:"INVALID_REQUEST",field:"status",message:"status is required"},{status:400});
     }
     const item = await mutateKnownErrorForAdmin(context, signatureId, body);
     return NextResponse.json({ item });
