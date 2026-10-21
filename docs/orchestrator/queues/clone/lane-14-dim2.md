@@ -166,17 +166,17 @@ Record ONE proof line per file in docs/audit/ux/dim2-lane-14.md: file, number of
 - [x] `src/components/admin/tenant-settings-other-keys.tsx`
 - [x] `src/components/announcements/super-admin-college-broadcast-form.tsx`
 - [x] `src/components/attendance/admin-attendance-parent-contact-editor.tsx`
-- [ ] `src/components/attendance/admin-attendance-workspace.tsx`
-- [ ] `src/components/attendance/college-attendance-policy-form.tsx`
-- [ ] `src/components/college/college-faculty-assignment-actions.tsx`
-- [ ] `src/components/college/college-faculty-csv-import.tsx`
-- [ ] `src/components/college/college-faculty-reassign-action.tsx`
-- [ ] `src/components/college/college-faculty-schedule-reassign.tsx`
-- [ ] `src/components/college/college-offering-metadata-action.tsx`
-- [ ] `src/components/college/college-person-profile-overview-modal.tsx`
-- [ ] `src/components/college/college-student-import-history.tsx`
-- [ ] `src/components/college/student-class-move-action.tsx`
-- [ ] `src/components/courses/admin-course-display-editor.tsx`
+- [x] `src/components/attendance/admin-attendance-workspace.tsx`
+- [x] `src/components/attendance/college-attendance-policy-form.tsx`
+- [x] `src/components/college/college-faculty-assignment-actions.tsx`
+- [x] `src/components/college/college-faculty-csv-import.tsx`
+- [x] `src/components/college/college-faculty-reassign-action.tsx`
+- [x] `src/components/college/college-faculty-schedule-reassign.tsx`
+- [x] `src/components/college/college-offering-metadata-action.tsx`
+- [x] `src/components/college/college-person-profile-overview-modal.tsx`
+- [x] `src/components/college/college-student-import-history.tsx`
+- [x] `src/components/college/student-class-move-action.tsx`
+- [x] `src/components/courses/admin-course-display-editor.tsx`
 - [ ] `src/components/courses/admin-offering-learning-overview.tsx`
 - [ ] `src/components/courses/assignment-multipart-parts-editor.tsx`
 - [ ] `src/components/courses/college-assignment-review.tsx`
