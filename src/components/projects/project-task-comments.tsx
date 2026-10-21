@@ -90,7 +90,7 @@ export function ProjectTaskComments({projectId,taskId,updatedAt,canPost}:{
      {canPost && !body.trim() ? <p className="text-xs text-muted-foreground leading-[20px]">
        Add a note before posting.
      </p> : null}
-     {canPost?<Button className="w-full sm:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
+     {canPost?<Button className="w-full md:w-auto" size="sm" loading={busy} disabled={busy||!body.trim()} onClick={()=>void post()}>Post comment</Button>:null}
    </div>:null}
    {error?<p role="alert" className="text-sm text-error leading-[22px]">{error}</p>:null}
  </div>;

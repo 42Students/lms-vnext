@@ -118,7 +118,7 @@ export function ProjectAdminWorkspaceList({
           </div>
           <p className="mt-1 break-words text-sm text-body">{item.summary ?? "Project workspace."}</p>
           <p className="mt-2 break-words text-xs text-muted-foreground">{item.templateTitle ? "Template: "+item.templateTitle : "No template — attach one"}</p>
-          <dl className="mt-2 grid min-w-0 gap-x-4 gap-y-2 text-xs sm:grid-cols-3">
+          <dl className="mt-2 grid min-w-0 gap-x-4 gap-y-2 text-xs md:grid-cols-3">
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Mentor</dt><dd className="break-words text-foreground">{item.mentorName??"Unassigned"}</dd></div>
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Members</dt><dd className="text-foreground">{item.memberCount}</dd></div>
             <div className="min-w-0"><dt className="font-semibold text-muted-foreground">Progress</dt><dd className="text-foreground">{safeProjectProgressPercent(item.progressPercent)===null?"Unavailable":safeProjectProgressPercent(item.progressPercent)+"%"}</dd></div>
@@ -163,7 +163,7 @@ export function ProjectAdminWorkspaceList({
               "Project workspace."}
           </p>
 
-          <div className="mt-4 grid min-w-0 grid-cols-2 gap-2 border-y border-border py-3 text-xs sm:grid-cols-3 [&>*]:min-w-0 [&>*]:py-1">
+          <div className="mt-4 grid min-w-0 grid-cols-2 gap-2 border-y border-border py-3 text-xs md:grid-cols-3 [&>*]:min-w-0 [&>*]:py-1">
             <Metric
               label="Mentor"
               value={
@@ -218,7 +218,7 @@ function Metric({
       <p className="m-0 font-semibold text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1 truncate font-semibold text-foreground">
+      <p className="mt-1 truncate font-semibold text-foreground min-w-0">
         {value}
       </p>
     </div>
