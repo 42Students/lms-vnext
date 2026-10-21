@@ -113,7 +113,7 @@ export function CollegeCohortCreateForm({ programs, periods, academicSetupHref =
             {periods.map(p => <option key={p.id} value={p.id}>{p.name} ({p.code})</option>)}
           </Select>
         </label>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
@@ -283,7 +283,7 @@ export function CollegeCohortRowActions({ row, periods }: {
       <form onSubmit={save} className="grid min-w-0 grid-cols-1 items-start gap-[var(--lms-space-4)] md:grid-cols-2">
         
         <p className="text-sm text-muted-foreground md:col-span-2 leading-[22px]">Program and starting period cannot change after creation.</p>
-        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch name
+        <label className="grid gap-[var(--lms-space-2)] text-[13px] font-semibold leading-4 text-[var(--lms-neutral-400)]">Batch Name
           <Input required maxLength={255} value={name} onChange={e => setName(e.target.value)}
             className="min-h-11 min-w-0 md:min-h-9" />
         </label>
